@@ -1,0 +1,586 @@
+diff --git a/docs/项目现状与下一步.md b/docs/项目现状与下一步.md
+index 2a3c27b6..6be52c42 100644
+--- a/docs/项目现状与下一步.md
++++ b/docs/项目现状与下一步.md
+@@ -15,6 +15,8 @@
+ 
+ 全量 Python 回归最近一次已记录结果为 1,880 项中 4 项失败、2 项错误、9 项跳过；未与干净基线对照，也未将这些失败/错误归因于基线或 Issue #39。本次 slug follow-up 未重跑全量 Python 套件；以上 64 项定向通过不替代全量回归，故仍不能宣称完整回归无回归或直接合并。GitCode 实际下载、浏览器用户流程 E2E、部署环境和生产 8765 均未验证；没有扫描真实仓库或确认漏洞。本次 slug follow-up 留在此专用分支上，未推送、未创建 PR、未合并。
+ 
++2026-10-21 下载可见性与显式重试增量：Git clone 启用进度输出并由 Worker 持续排空 stderr，规范化对象阶段、百分比、对象计数、Git 报告的已接收字节/速率，写入持久化操作事件；操作详情 API 返回最新 `download_progress`，工作台显示阶段和进度。百分比是 Git 当前对象阶段的比例，不是仓库总字节或剩余时间；Git 不提供总量时不推算。导入失败、Worker 中断或超时时，操作详情可通过 `POST /api/v1/operations/{id}/retry` 显式创建新操作；新任务复制原预览摘要、分支与完整 Commit，原操作保持不变，重复提交同一失败操作幂等返回该重试任务；只有再次对最新失败尝试操作才会生成下一次重试。活动、成功、取消及其他类型操作不允许重试。定向导入测试 19/19；相关 `test_workbench_operations` 单独运行 21/21；Web Node 71/71、TypeScript 检查与生产构建、compileall、`git diff --check` 通过。两个 Python 模块合并顺序运行时有 1 项端到端测试失败（扫描创建返回 404、缺少 `plan_sha256`）；该测试单独及所属模块单独均通过，原因尚未查明，因此不宣称组合回归全绿。未跑全仓 Python 回归、未在浏览器验收、未真实下载 GitCode 仓库，也未推送或合并。
++
+ ## 2026-10-20 多版本自动研判产品迭代（Draft PR #44，未合并）
+ 
+ 开发分支 `feat/multimode-authorized-auto-triage-20261020` 从 `main@c380a474718e8ec4497aff55b18a1dd38bafa13f` 切出，PR [#44](https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/pull/44) 继续保持 Draft，不能视为 8765 或 `main` 已更新。与 PR #38 的风险展示改动相互独立，后续集成需注意 API/前端版本一致。
+diff --git a/src/workbench/operations.py b/src/workbench/operations.py
+index 37694e6f..4c0539f4 100644
+--- a/src/workbench/operations.py
++++ b/src/workbench/operations.py
+@@ -290,7 +290,23 @@ def execute(settings, store, ops, task):
+     if kind == "repository_import_scan":
+         from .repository_import import import_and_queue_scan
+         ops.event(task["id"], "repository_import", "Importing the catalog-selected immutable revision and queueing a static scan")
+-        return import_and_queue_scan(settings, store, spec)
++        def report_import_progress(progress):
++            try:
++                ops.event(task["id"], "repository_import_progress",
++                          json.dumps(progress, sort_keys=True, ensure_ascii=False,
++                                     separators=(",", ":")))
++            except Exception as exc:
++                # Progress is best-effort: a telemetry write must not orphan a running
++                # Git process or change the outcome of fixed-source validation.
++                print("repository import progress event unavailable: " + type(exc).__name__,
++                      flush=True)
++        try:
++            return import_and_queue_scan(settings, store, spec,
++                                         progress=report_import_progress)
++        except Exception:
++            report_import_progress({"state": "failed", "phase": "failed",
++                                    "message": "固定版本导入失败；请查看错误详情后重试"})
++            raise
+     if kind == "source_sync":
+         url = approved_url(spec["url"])
+         from .repository_import import _choose_root, git_environment
+diff --git a/src/workbench/operations_api.py b/src/workbench/operations_api.py
+index 5af966b4..c09dd46f 100644
+--- a/src/workbench/operations_api.py
++++ b/src/workbench/operations_api.py
+@@ -7,7 +7,7 @@ import uuid
+ from pathlib import Path
+ from typing import Literal
+ from fastapi import APIRouter, FastAPI, HTTPException
+-from fastapi.responses import FileResponse, Response
++from fastapi.responses import FileResponse, JSONResponse, Response
+ from pydantic import BaseModel, ConfigDict, Field, field_validator
+ from .operations import (approved_url, date_selection, enqueue_branch_comparison, enqueue_range,
+                          range_plan, multimode_triage_preview, bind_multimode_triage)
+@@ -1896,6 +1896,17 @@ def install_routes(app: FastAPI, settings, store):
+     def operation(key: str):
+         item = ops.get(key)
+         item["events"] = ops.events(key)
++        if item["kind"] == "repository_import_scan":
++            for event in reversed(item["events"]):
++                if event["stage"] != "repository_import_progress":
++                    continue
++                try:
++                    progress = json.loads(event["message"])
++                except (TypeError, ValueError):
++                    break
++                if isinstance(progress, dict) and isinstance(progress.get("phase"), str):
++                    item["download_progress"] = {**progress, "updated_at": event["created_at"]}
++                break
+         if item["result_sha256"]:
+             item["result"] = ops.result(key)
+         item["agent_reviews"] = ops.agent_reviews(key) if item["kind"] == "agent_investigation" else []
+@@ -1941,6 +1952,17 @@ def install_routes(app: FastAPI, settings, store):
+             item["intelligent_review_progress"] = endpoint_progress
+         return item
+ 
++    @router.post("/operations/{key}/retry")
++    def retry_repository_import(key: str):
++        try:
++            item = ops.retry_repository_import(key)
++        except KeyError:
++            raise HTTPException(status_code=404, detail="operation not found") from None
++        except ValueError as exc:
++            raise HTTPException(status_code=409, detail=str(exc)) from None
++        reused = item.pop("retry_reused", False)
++        return JSONResponse(status_code=200 if reused else 201, content=item)
++
+     @router.post("/operations/{key}/agent-reviews", status_code=201)
+     def agent_human_review(key: str, body: AgentHumanReviewRequest):
+         task = ops.get(key)
+diff --git a/src/workbench/operations_store.py b/src/workbench/operations_store.py
+index dfbf9197..26d39230 100644
+--- a/src/workbench/operations_store.py
++++ b/src/workbench/operations_store.py
+@@ -251,6 +251,42 @@ class Operations:
+         self.event(key, "queued", "Immutable operation plan saved")
+         return self.get(key)
+ 
++    def retry_repository_import(self, key):
++        """Queue a new attempt for a failed import without mutating its original plan."""
++        retryable = {"failed", "interrupted", "timed_out"}
++        new_key = uuid.uuid4().hex
++        stamp = now()
++        with self.store.connect() as db:
++            db.execute("BEGIN IMMEDIATE")
++            original = self.row(db.execute(
++                "SELECT * FROM operations WHERE id=?", (key,)).fetchone())
++            if original["kind"] != "repository_import_scan":
++                raise ValueError("only repository import operations can be retried here")
++            existing = []
++            for row in db.execute("SELECT * FROM operations WHERE kind='repository_import_scan'"):
++                spec = json.loads(row["spec"])
++                if spec.get("retry_of") == key:
++                    existing.append(self.row(row))
++            if existing:
++                # Repeated HTTP submissions return the same attempt, including after it
++                # completes. To deliberately retry again, submit the latest failed attempt.
++                retry = existing[0]
++                retry["retry_reused"] = True
++                return retry
++            if original["status"] not in retryable:
++                raise ValueError("repository import can be retried only after failed, interrupted, or timed-out status")
++            active = db.execute(
++                "SELECT count(*) FROM operations WHERE status IN ('queued','running') AND kind!='candidate_review_batch'").fetchone()[0]
++            if active >= 100:
++                raise ValueError("operation queue full")
++            retry_spec = {**original["spec"], "retry_of": key}
++            db.execute("INSERT INTO operations(id,kind,spec,status,created_at) VALUES(?,?,?,?,?)",
++                       (new_key, "repository_import_scan", json.dumps(retry_spec, sort_keys=True),
++                        "queued", stamp))
++            db.execute("INSERT INTO operation_events(operation_id,created_at,stage,message) VALUES(?,?,?,?)",
++                       (new_key, stamp, "retry_queued", "Explicit retry of failed repository import " + key))
++        return self.get(new_key)
++
+     def create_agent_batch(self, specs):
+         """Atomically queue a small, explicitly approved set of candidate reviews."""
+         if not specs or len(specs) > 5:
+diff --git a/src/workbench/repository_import.py b/src/workbench/repository_import.py
+index f178565e..709a2936 100644
+--- a/src/workbench/repository_import.py
++++ b/src/workbench/repository_import.py
+@@ -3,6 +3,8 @@ import fcntl
+ import hashlib
+ import os
+ from pathlib import Path
++import re
++import selectors
+ import shutil
+ import signal
+ import subprocess
+@@ -129,13 +131,44 @@ def _terminate_clone(process):
+         process.communicate()
+ 
+ 
++_GIT_PROGRESS = re.compile(
++    r"^(Enumerating|Counting|Compressing|Receiving|Resolving) objects:\s*"
++    r"(\d+)%\s*\(([\d,]+)/([\d,]+)\)"
++    r"(?:,\s*([0-9.]+)\s*(bytes|KiB|MiB|GiB))?"
++    r"(?:\s*\|\s*([0-9.]+)\s*(bytes|KiB|MiB|GiB)/s)?"
++)
++
++
++def _parse_git_progress(line):
++    match = _GIT_PROGRESS.match(line.strip())
++    if not match:
++        return None
++    phase, percent, completed, total, amount, amount_unit, speed, speed_unit = match.groups()
++
++    def to_bytes(value, unit):
++        if value is None:
++            return None
++        multiplier = {"bytes": 1, "KiB": 1024, "MiB": 1024 ** 2, "GiB": 1024 ** 3}[unit]
++        return int(float(value) * multiplier)
++
++    return {
++        "phase": phase.lower() + "_objects",
++        "percent": int(percent),
++        "completed_objects": int(completed.replace(",", "")),
++        "total_objects": int(total.replace(",", "")),
++        "received_bytes": to_bytes(amount, amount_unit),
++        "bytes_per_second": to_bytes(speed, speed_unit),
++    }
++
++
+ def _fetch_to_stage(stage, slug, branch, commit, timeout, *, cache_root=None,
+-                    cache_used_before=0, cache_max_bytes=0, minimum_free_bytes=0):
++                    cache_used_before=0, cache_max_bytes=0, minimum_free_bytes=0,
++                    progress=None):
+     url = approved_clone_url(slug)
+     env = git_environment()
+     command = ["git", "-c", "core.hooksPath=/dev/null", "-c", "http.followRedirects=false",
+                "-c", "protocol.file.allow=never", "-c", "protocol.ext.allow=never",
+-               "-c", "credential.helper=", "clone", "--no-checkout", "--no-recurse-submodules",
++               "-c", "credential.helper=", "clone", "--progress", "--no-checkout", "--no-recurse-submodules",
+                "--depth=1", "--single-branch", "--no-tags", "--branch", branch,
+                "--", url, str(stage)]
+     process = subprocess.Popen(command, env=env, stdout=subprocess.DEVNULL,
+@@ -143,7 +176,60 @@ def _fetch_to_stage(stage, slug, branch, commit, timeout, *, cache_root=None,
+     start = time.monotonic()
+     last_check = 0.0
+     failure = None
+-    while process.poll() is None:
++    last_progress = 0.0
++    last_percent = -1
++    last_phase = None
++    stderr_tail = bytearray()
++    pending = bytearray()
++    selector = selectors.DefaultSelector()
++    stderr_pipe = getattr(process, "stderr", None)
++    if stderr_pipe is not None:
++        selector.register(stderr_pipe, selectors.EVENT_READ)
++
++    def consume_progress(chunk):
++        nonlocal last_progress, last_percent, last_phase
++        stderr_tail.extend(chunk)
++        if len(stderr_tail) > 65536:
++            del stderr_tail[:-65536]
++        pending.extend(chunk)
++        while True:
++            separators = [index for index in (pending.find(b"\r"), pending.find(b"\n")) if index >= 0]
++            if not separators:
++                if len(pending) > 8192:
++                    del pending[:-8192]
++                return
++            index = min(separators)
++            line = bytes(pending[:index]).decode("utf-8", "replace")
++            del pending[:index + 1]
++            parsed = _parse_git_progress(line)
++            if parsed is None or progress is None:
++                continue
++            now = time.monotonic()
++            percent = parsed["percent"]
++            phase = parsed["phase"]
++            if (phase != last_phase or percent == 100 or percent - last_percent >= 5
++                    or now - last_progress >= 3):
++                progress({"state": "running", **parsed,
++                          "message": "Git 正在接收固定版本对象" if phase == "receiving_objects"
++                          else "Git 正在处理仓库对象"})
++                last_phase, last_percent, last_progress = phase, percent, now
++
++    while True:
++        if selector.get_map():
++            for key, _ in selector.select(timeout=0.1):
++                try:
++                    chunk = os.read(key.fileobj.fileno(), 4096)
++                except OSError:
++                    chunk = b""
++                if chunk:
++                    consume_progress(chunk)
++                else:
++                    selector.unregister(key.fileobj)
++        elif process.poll() is None:
++            time.sleep(0.1)
++
++        if process.poll() is not None and not selector.get_map():
++            break
+         elapsed = time.monotonic() - start
+         if elapsed > timeout:
+             failure = subprocess.TimeoutExpired(command, timeout)
+@@ -161,13 +247,15 @@ def _fetch_to_stage(stage, slug, branch, commit, timeout, *, cache_root=None,
+             except OSError as exc:
+                 failure = exc
+                 break
+-        time.sleep(0.1)
++    selector.close()
+     if failure is not None:
+         _terminate_clone(process)
+         raise failure
+     stderr = process.communicate()[1]
++    if pending:
++        consume_progress(b"\n")
+     if process.returncode:
+-        detail = stderr.decode("utf-8", "replace")[:1000]
++        detail = (bytes(stderr_tail) + stderr)[-65536:].decode("utf-8", "replace")[:1000]
+         if "redirect" in detail.lower():
+             raise ValueError("Git redirect refused; repository was not imported")
+         if "no space left" in detail.lower() or "disk quota" in detail.lower():
+@@ -186,7 +274,11 @@ def _fetch_to_stage(stage, slug, branch, commit, timeout, *, cache_root=None,
+     return tree
+ 
+ 
+-def import_and_queue_scan(settings, store, spec):
++def import_and_queue_scan(settings, store, spec, progress=None):
++    def report(state, phase, message, **extra):
++        if progress is not None:
++            progress({"state": state, "phase": phase, "message": message, **extra})
++
+     slug = spec["slug"]
+     branch = validate_branch(spec["branch"])
+     commit = validate_commit(spec["commit"])
+@@ -197,6 +289,7 @@ def import_and_queue_scan(settings, store, spec):
+     if estimated is not None and (not isinstance(estimated, int) or isinstance(estimated, bool) or estimated < 0):
+         raise ValueError("invalid catalog repository size metadata")
+     expected_bytes = (estimated or 0) * 1024
++    report("running", "preparing", "正在准备固定版本下载")
+     lockdir = Path(settings.data_dir) / "sync-locks"
+     if lockdir.is_symlink():
+         raise ValueError("repository import lock directory is unsafe")
+@@ -249,6 +342,7 @@ def import_and_queue_scan(settings, store, spec):
+             raise ValueError("repository cache target is unsafe")
+         stage = family / ("." + commit + ".import-" + uuid.uuid4().hex)
+         if target.exists():
++            report("running", "cache_check", "正在校验已有的固定版本缓存")
+             if target.is_symlink() or not _within(target, namespace):
+                 raise ValueError("repository cache target is unsafe")
+             service.check_repository(settings, str(target))
+@@ -257,8 +351,10 @@ def import_and_queue_scan(settings, store, spec):
+                 raise ValueError("cached repository is pinned to a different commit; explicit cache refresh is required")
+             tree = _git(target, "rev-parse", commit + "^{tree}").decode().strip()
+             fetched = False
++            report("running", "cache_hit", "已复用固定版本缓存，无需重新下载", percent=100)
+         else:
+             try:
++                report("running", "download_start", "正在从 GitCode 下载固定 Commit", percent=0)
+                 used_before = _directory_size(root)
+                 if settings.repository_cache_max_bytes and (
+                         used_before + expected_bytes > settings.repository_cache_max_bytes):
+@@ -266,7 +362,9 @@ def import_and_queue_scan(settings, store, spec):
+                 tree = _fetch_to_stage(stage, slug, branch, commit, timeout,
+                                        cache_root=root, cache_used_before=used_before,
+                                        cache_max_bytes=settings.repository_cache_max_bytes,
+-                                       minimum_free_bytes=settings.repository_cache_min_free_bytes)
++                                       minimum_free_bytes=settings.repository_cache_min_free_bytes,
++                                       progress=progress)
++                report("running", "verifying", "下载完成，正在校验 Commit、Tree 和子模块策略", percent=100)
+                 size = _directory_size(stage)
+                 if expected_bytes and size > max(expected_bytes * 2, expected_bytes + 1024 ** 2):
+                     raise OSError("download exceeded the catalog size estimate; cache import stopped")
+@@ -287,12 +385,15 @@ def import_and_queue_scan(settings, store, spec):
+             raise ValueError("repository cache path is registered under a conflicting name")
+         repo_for_plan = repo or {"id": "pending-registration", "name": "openharmony/" + slug,
+                                  "path": str(target)}
++        report("running", "registering", "固定源码已就绪，正在登记仓库并创建扫描任务")
+         service.check_repository(settings, repo_for_plan["path"])
+         scan_spec = service.make_spec(repo_for_plan, commit, spec["include_paths"], spec["detector_ids"],
+                                      spec["scan_timeout_seconds"], spec["memory_mb"])
+         if scan_spec["commit"] != commit or scan_spec["git_tree"] != tree:
+             raise ValueError("locally resolved tree does not match the immutable preview binding")
+         repo, job = store.register_repository_and_create_job("openharmony/" + slug, str(target), scan_spec)
++        report("completed", "scan_queued", "静态扫描任务已创建并排队", percent=100,
++               repository_id=repo["id"], scan_job_id=job["id"], commit=commit)
+         return {"status": "completed", "repository": {"id": repo["id"], "name": repo["name"]},
+                 "commit": commit, "git_tree": tree, "scan_job": {"id": job["id"], "status": "queued"},
+                 "cache": "downloaded" if fetched else "hit",
+diff --git a/tests/test_repository_import.py b/tests/test_repository_import.py
+index 46b5eb74..38dfc62d 100644
+--- a/tests/test_repository_import.py
++++ b/tests/test_repository_import.py
+@@ -77,10 +77,65 @@ class RepositoryImportTests(unittest.TestCase):
+                         str(self.source), str(stage)], check=True, capture_output=True)
+         return git(stage, "rev-parse", commit + "^{tree}")
+ 
+-    def run_import(self):
++    def run_import(self, progress=None):
+         with patch.object(repository_import.service, "make_spec", return_value={
+                 "commit": self.commit, "git_tree": self.tree, "timeout_seconds": 30}):
+-            return repository_import.import_and_queue_scan(self.settings, self.store, self.spec)
++            return repository_import.import_and_queue_scan(self.settings, self.store, self.spec,
++                                                            progress=progress)
++
++    def test_git_progress_output_is_normalized_for_the_operation_api(self):
++        parsed = repository_import._parse_git_progress(
++            "Receiving objects: 42% (123/456), 1.25 MiB | 512.00 KiB/s")
++        self.assertEqual(parsed, {
++            "phase": "receiving_objects", "percent": 42,
++            "completed_objects": 123, "total_objects": 456,
++            "received_bytes": 1310720, "bytes_per_second": 524288,
++        })
++        self.assertIsNone(repository_import._parse_git_progress("fatal: repository unavailable"))
++
++    def test_clone_progress_pipe_is_drained_and_forwarded(self):
++        stage = self.cache / "openharmony" / "fixture" / ("." + self.commit + ".progress-test")
++        stage.parent.mkdir(parents=True, exist_ok=True)
++        subprocess.run(["git", "clone", "--no-checkout", str(self.source), str(stage)],
++                       check=True, capture_output=True)
++        original_popen = subprocess.Popen
++        progress = []
++
++        class ProgressProcess:
++            def __init__(self):
++                read_fd, write_fd = os.pipe()
++                self.stderr = os.fdopen(read_fd, "rb", buffering=0)
++                self.returncode = None
++                self.pid = 12345
++
++                def write_progress():
++                    os.write(write_fd, b"Receiving objects: 42% (123/456), 1.25 MiB | 512.00 KiB/s\r")
++                    os.close(write_fd)
++                    self.returncode = 0
++
++                self.thread = threading.Thread(target=write_progress)
++                self.thread.start()
++
++            def poll(self):
++                return self.returncode
++
++            def communicate(self):
++                self.thread.join(timeout=2)
++                self.stderr.close()
++                return b"", b""
++
++        def popen(command, **kwargs):
++            return ProgressProcess() if "clone" in command else original_popen(command, **kwargs)
++
++        with patch.object(repository_import, "approved_clone_url",
++                          return_value="https://gitcode.com/openharmony/fixture.git"), patch.object(
++                repository_import.subprocess, "Popen", side_effect=popen):
++            tree = repository_import._fetch_to_stage(stage, "fixture", self.branch, self.commit,
++                                                      5, progress=progress.append)
++        self.assertEqual(tree, self.tree)
++        self.assertEqual(progress[0]["phase"], "receiving_objects")
++        self.assertEqual(progress[0]["percent"], 42)
++        self.assertEqual(progress[0]["received_bytes"], 1310720)
+ 
+     def test_success_downloads_fixed_commit_and_queues_static_job_without_checkout(self):
+         with patch.object(repository_import, "_fetch_to_stage", side_effect=self.fake_fetch) as fetch:
+@@ -310,12 +365,92 @@ class RepositoryImportTests(unittest.TestCase):
+     def test_durable_operation_worker_dispatches_repository_import_scan(self):
+         ops = Operations(self.store)
+         task = ops.create("repository_import_scan", self.spec)
++        def successful_import(settings, store, spec, progress=None):
++            progress({"state": "running", "phase": "receiving_objects", "percent": 42,
++                      "completed_objects": 123, "total_objects": 456,
++                      "message": "Git 正在接收固定版本对象"})
++            return {"status": "completed", "cache": "hit"}
+         with patch.object(repository_import, "import_and_queue_scan",
+-                          return_value={"status": "completed", "cache": "hit"}) as run_import:
++                          side_effect=successful_import) as run_import:
+             result = execute_operation(self.settings, self.store, ops, task)
+-        run_import.assert_called_once_with(self.settings, self.store, self.spec)
++        self.assertEqual(run_import.call_args.args, (self.settings, self.store, self.spec))
++        self.assertTrue(callable(run_import.call_args.kwargs["progress"]))
+         self.assertEqual(result, {"status": "completed", "cache": "hit"})
+-        self.assertEqual(ops.events(task["id"])[-1]["stage"], "repository_import")
++        self.assertIn("repository_import", [event["stage"] for event in ops.events(task["id"])])
++        client = TestClient(create_app(self.settings))
++        self.addCleanup(client.close)
++        detail = client.get("/api/v1/operations/" + task["id"])
++        self.assertEqual(detail.status_code, 200, detail.text)
++        self.assertEqual(detail.json()["download_progress"]["phase"], "receiving_objects")
++        self.assertEqual(detail.json()["download_progress"]["percent"], 42)
++
++    def test_failed_repository_import_can_be_explicitly_retried_once_per_attempt(self):
++        ops = Operations(self.store)
++        original = ops.create("repository_import_scan", self.spec)
++        claimed = ops.claim()
++        self.assertEqual(claimed["id"], original["id"])
++        ops.finish(original["id"], error="GitCode temporarily unavailable", state="failed")
++        client = TestClient(create_app(self.settings))
++        self.addCleanup(client.close)
++
++        response = client.post("/api/v1/operations/" + original["id"] + "/retry", headers=HEADERS)
++        self.assertEqual(response.status_code, 201, response.text)
++        retried = response.json()
++        self.assertEqual(retried["kind"], "repository_import_scan")
++        self.assertEqual(retried["status"], "queued")
++        self.assertEqual(retried["spec"]["commit"], self.commit)
++        self.assertEqual(retried["spec"]["preview_sha256"], self.spec["preview_sha256"])
++        self.assertEqual(retried["spec"]["retry_of"], original["id"])
++        self.assertEqual(ops.get(original["id"])["status"], "failed")
++        self.assertEqual(ops.events(retried["id"])[0]["stage"], "retry_queued")
++
++        repeated = client.post("/api/v1/operations/" + original["id"] + "/retry", headers=HEADERS)
++        self.assertEqual(repeated.status_code, 200, repeated.text)
++        self.assertEqual(repeated.json()["id"], retried["id"])
++        self.assertEqual(len([item for item in ops.list()
++                              if item["spec"].get("retry_of") == original["id"]]), 1)
++
++    def test_repository_import_retry_rejects_active_completed_and_other_operation(self):
++        ops = Operations(self.store)
++        client = TestClient(create_app(self.settings))
++        self.addCleanup(client.close)
++        active = ops.create("repository_import_scan", self.spec)
++        response = client.post("/api/v1/operations/" + active["id"] + "/retry", headers=HEADERS)
++        self.assertEqual(response.status_code, 409, response.text)
++        ops.cancel(active["id"])
++
++        completed = ops.create("repository_import_scan", {**self.spec, "slug": "completed"})
++        self.assertEqual(ops.claim()["id"], completed["id"])
++        ops.finish(completed["id"], {"status": "completed"})
++        response = client.post("/api/v1/operations/" + completed["id"] + "/retry", headers=HEADERS)
++        self.assertEqual(response.status_code, 409, response.text)
++
++        other = ops.create("source_sync", {"name": "openharmony/fixture", "url": "https://gitcode.com/openharmony/fixture.git"})
++        self.assertEqual(ops.claim()["id"], other["id"])
++        ops.finish(other["id"], error="failed", state="failed")
++        response = client.post("/api/v1/operations/" + other["id"] + "/retry", headers=HEADERS)
++        self.assertEqual(response.status_code, 409, response.text)
++
++        missing = client.post("/api/v1/operations/" + "f" * 32 + "/retry", headers=HEADERS)
++        self.assertEqual(missing.status_code, 404, missing.text)
++
++    def test_repository_import_retry_accepts_interrupted_and_timed_out_attempts_only(self):
++        ops = Operations(self.store)
++        client = TestClient(create_app(self.settings))
++        self.addCleanup(client.close)
++        for index, state in enumerate(("interrupted", "timed_out")):
++            task = ops.create("repository_import_scan", {**self.spec, "slug": "retryable-" + str(index)})
++            self.assertEqual(ops.claim()["id"], task["id"])
++            ops.finish(task["id"], error="worker ended", state=state)
++            response = client.post("/api/v1/operations/" + task["id"] + "/retry", headers=HEADERS)
++            self.assertEqual(response.status_code, 201, response.text)
++            self.assertEqual(response.json()["spec"]["retry_of"], task["id"])
++            ops.cancel(response.json()["id"])
++
++        cancelled = ops.create("repository_import_scan", {**self.spec, "slug": "cancelled"})
++        ops.cancel(cancelled["id"])
++        response = client.post("/api/v1/operations/" + cancelled["id"] + "/retry", headers=HEADERS)
++        self.assertEqual(response.status_code, 409, response.text)
+ 
+     def test_import_api_and_legacy_source_sync_route_both_remain_available(self):
+         client = TestClient(create_app(self.settings))
+diff --git a/web/src/features/audits/OperationWorkspace.tsx b/web/src/features/audits/OperationWorkspace.tsx
+index 415caeaa..25330b99 100644
+--- a/web/src/features/audits/OperationWorkspace.tsx
++++ b/web/src/features/audits/OperationWorkspace.tsx
+@@ -1,5 +1,5 @@
+ import React, { useCallback, useEffect, useRef, useState } from "react";
+-import { Alert, Button, Card, Collapse, Descriptions, Empty, List, Space, Table, Tabs, Tag, Typography, message } from "antd";
++import { Alert, Button, Card, Collapse, Descriptions, Empty, List, Progress, Space, Table, Tabs, Tag, Typography, message } from "antd";
+ import { api, terminal } from "../../api";
+ import { go, Hash, Header, State } from "../../components";
+ import { refreshSelectedOperation } from "../../pages/operationSelection";
+@@ -9,6 +9,13 @@ import AgentBlindReview from "./AgentBlindReview";
+ const { Text } = Typography;
+ export type OperationView = "all" | "date" | "branches" | "matrix" | "validation" | "investigate" | "agent" | "agent_research" | "sync" | "queue";
+ const kinds: Record<string, string> = { source_sync: "源码同步", repository_import_scan: "在线仓库导入并静态扫描", revision_range: "固定区间", branch_comparison: "跨版本比较", version_matrix: "版本矩阵", validation: "隔离验证", investigation: "只读调查", agent_investigation: "模型辅助调查", candidate_review_batch: "历史候选队列（已停用）" };
++const importProgressLabels: Record<string, string> = {
++  preparing: "准备导入", download_start: "开始下载", enumerating_objects: "枚举 Git 对象",
++  counting_objects: "统计 Git 对象", compressing_objects: "压缩 Git 对象",
++  receiving_objects: "接收 Git 对象", resolving_objects: "解析 Git 对象",
++  verifying: "校验固定版本", registering: "登记仓库", cache_check: "检查本地缓存",
++  cache_hit: "复用本地缓存", scan_queued: "静态扫描已排队", failed: "导入失败",
++};
+ const headings: Record<OperationView, [string, string]> = {
+   all: ["高级源码与验证操作", "保留既有操作入口；任务持久化，候选变化与安全影响分别记录。"],
+   date: ["时间增量扫描", "按明确时区选择提交区间，固定两个端点并比较候选观察。"],
+@@ -149,8 +156,32 @@ export default function OperationWorkspace({ view = "all", operationId, context
+     {selected && <Card className="section-gap" title={<Space>操作详情 <Text copyable>{selected.id}</Text></Space>} extra={<Button onClick={() => { selectedId.current = null; setSelected(null); }}>收起</Button>}>
+       <Space wrap><State value={selected.status} /><Text>{kinds[selected.kind] || selected.kind}</Text><Button size="small" onClick={() => go("/tasks/operations/" + selected.id)}>任务中心打开</Button>
+         {selected.kind === "repository_import_scan" && selected.result?.scan_job?.id && <Button size="small" type="primary" onClick={() => go("/tasks/" + selected.result.scan_job.id)}>查看自动排队的静态扫描</Button>}
++        {selected.kind === "repository_import_scan" && ["failed", "interrupted", "timed_out"].includes(selected.status) && <Button size="small" type="primary" onClick={async () => {
++          try {
++            const retried = await api("/operations/" + selected.id + "/retry", {});
++            selectedId.current = retried.id;
++            await show(retried.id);
++            await refresh();
++            message.success("已为同一固定 Commit 创建重新排队任务");
++          } catch (e) { setError(String(e)); }
++        }}>重新排队</Button>}
+         {selected.result_sha256 && <><Text>Result SHA-256</Text><Hash value={selected.result_sha256} /></>}</Space>
+       {selected.error && <Alert className="section-gap" type="error" message={selected.error} />}
++      {selected.kind === "repository_import_scan" && <Card size="small" className="section-gap" title="固定版本下载进度">
++        {selected.download_progress ? <>
++          <Space wrap><Tag color={selected.download_progress.state === "failed" ? "red" : selected.download_progress.state === "completed" ? "green" : "blue"}>
++            {importProgressLabels[selected.download_progress.phase] || selected.download_progress.phase || "处理中"}
++          </Tag><Text>{selected.download_progress.message}</Text>
++            {selected.download_progress.completed_objects != null && selected.download_progress.total_objects != null &&
++              <Text type="secondary">对象 {selected.download_progress.completed_objects.toLocaleString()} / {selected.download_progress.total_objects.toLocaleString()}</Text>}
++            {selected.download_progress.received_bytes != null && <Text type="secondary">已接收 {(selected.download_progress.received_bytes / 1048576).toFixed(1)} MiB</Text>}
++            {selected.download_progress.bytes_per_second != null && <Text type="secondary">{(selected.download_progress.bytes_per_second / 1048576).toFixed(1)} MiB/s</Text>}
++          </Space>
++          {selected.download_progress.percent != null && <Progress className="section-gap" percent={selected.download_progress.percent}
++            status={selected.download_progress.state === "failed" ? "exception" : selected.download_progress.state === "completed" ? "success" : "active"} />}
++        </> : <Text type="secondary">等待 Worker 开始。下载完成后会校验 Commit，再创建静态扫描任务。</Text>}
++        {selected.spec?.retry_of && <Text type="secondary">此任务是对 {selected.spec.retry_of.slice(0, 12)} 的重新排队。</Text>}
++      </Card>}
+       {selected.kind === "agent_investigation" && !selected.result_sha256 && ["failed", "interrupted", "timed_out", "cancelled"].includes(selected.status) && <Alert className="section-gap" type="warning" showIcon message="本次调查没有可复核结果；候选仍为 unknown" description="任务结束不代表候选是误报或安全。若 Worker 在 Provider 已处理请求后、结果落盘前退出，上游调用和费用仍可能发生。重试前请核对执行事件及 Provider 账单，再重新预览并单独批准新任务。" />}
+       {selected.spec?.scan_ids && <Space wrap className="section-gap">端点扫描：{selected.spec.scan_ids.map((id: string) => <Button key={id} size="small" onClick={() => go("/tasks/" + id)}>{id.slice(0, 12)}</Button>)}</Space>}
+       {Array.isArray(selected.intelligent_review_progress) && <Card size="small" className="section-gap" title="固定版本静态与智能审计进度">
+diff --git a/web/src/pages/Repositories.tsx b/web/src/pages/Repositories.tsx
+index 9f7bc1d6..b86f7f81 100644
+--- a/web/src/pages/Repositories.tsx
++++ b/web/src/pages/Repositories.tsx
+@@ -200,8 +200,8 @@ export default function Repositories({
+         {onlineError && <Alert className="section-gap" type="error" showIcon message="在线仓库操作未完成" description={onlineError} />}
+         {onlineCatalog?.stale && <Alert className="section-gap" type="warning" showIcon message="当前目录缓存已过期" description={onlineCatalog.refresh_error || "刷新在线目录失败；请连接 GitCode 并刷新后再预览版本。"} />}
+         {onlineOperation && <Alert className="section-gap" type="success" showIcon
+-          message="静态扫描任务已持久化排队"
+-          description={<span>下载操作：<a href={`#/tasks/operations/${onlineOperation.id}`}>查看任务进度</a>。下载成功后会自动创建固定 Commit 的静态扫描；候选结果仍需复核。</span>}
++          message="固定版本导入任务已创建"
++          description={<span>下载操作：<a href={`#/tasks/operations/${onlineOperation.id}`}>查看下载进度</a>。只有下载和 Commit 校验成功后，系统才会自动创建固定版本的静态扫描；候选结果仍需复核。</span>}
+         />}
+         <Table className="section-gap" size="small" rowKey="slug" loading={onlineLoading}
+           dataSource={onlineCatalog?.items || []} pagination={{ current: onlineCatalog?.page || 1, pageSize: onlineCatalog?.per_page || 30, total: onlineCatalog?.total || 0, showSizeChanger: false, onChange: (page) => void loadOnlineCatalog({ page }) }}

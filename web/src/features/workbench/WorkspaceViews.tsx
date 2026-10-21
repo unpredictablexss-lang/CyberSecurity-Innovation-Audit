@@ -1,3 +1,4 @@
+import IntelligentAuditPolicySettings from "./IntelligentAuditPolicySettings";
 import React, { useEffect, useState } from "react";
 import { Alert, Button, Card, Col, Descriptions, Empty, Input, Pagination, Row, Select, Space, Statistic, Table, Tabs, Tag, Tooltip, Typography } from "antd";
 import { api, artifact, terminal } from "../../api";
@@ -344,6 +345,7 @@ export function SettingsView({ repos, detectors, health, refresh, tab }: { repos
         <Repositories repos={repos} roots={health?.target_roots || []} refresh={refresh} embedded />
         <OperationWorkspace view="sync" /></> },
       { key: "capabilities", label: "语言与规则", children: <Capabilities detectors={detectors} embedded /> },
+      { key: "policy", label: "智能审计策略与资源预算", children: <IntelligentAuditPolicySettings /> },
       { key: "agent", label: "Agent / LLM", children: <AgentProviderSettings /> },
       { key: "runtime", label: "Worker 状态", children: <Card title="当前服务状态">
         <Descriptions column={1} items={[

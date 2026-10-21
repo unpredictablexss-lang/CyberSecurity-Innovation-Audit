@@ -1,0 +1,171 @@
+diff --git a/src/workbench/operations_api.py b/src/workbench/operations_api.py
+index 9143d111..ca7f0e6d 100644
+--- a/src/workbench/operations_api.py
++++ b/src/workbench/operations_api.py
+@@ -418,11 +418,13 @@ def install_routes(app: FastAPI, settings, store):
+         job = store.job(body.job_id)
+         report = service.read_report(settings, job)
+         candidates = service.findings(report)
++        candidate_ids = sorted({item["id"] for item in candidates})
+         spec = {"job_id": job["id"], "report_sha256": job["report_sha256"],
+-                "candidate_count_at_enqueue": len(candidates), "timeout_seconds": 60,
++                "candidate_ids": candidate_ids,
++                "candidate_count_at_enqueue": len(candidate_ids), "timeout_seconds": 60,
+                 "memory_mb": 512}
+         operation = ops.create("candidate_review_batch", spec)
+-        return {**operation, "candidate_count": len(candidates),
++        return {**operation, "candidate_count": len(candidate_ids),
+                 "review_mode": "candidate_only", "model_available": False,
+                 "note": "Candidates remain queued until a configured, source-bound review provider is available; no conclusion was inferred."}
+ 
+diff --git a/src/workbench/operations_store.py b/src/workbench/operations_store.py
+index d3cf5b0c..9b92baeb 100644
+--- a/src/workbench/operations_store.py
++++ b/src/workbench/operations_store.py
+@@ -75,6 +75,19 @@ class Operations:
+         with self.store.connect() as db:
+             db.execute("BEGIN IMMEDIATE")
+             if kind == "candidate_review_batch":
++                # New batches carry the complete immutable identity list. Count-only specs
++                # remain readable for old persisted batches, but are never written by the
++                # scanner or API after this contract change.
++                candidate_ids = spec.get("candidate_ids")
++                if candidate_ids is not None:
++                    if (not isinstance(candidate_ids, list)
++                            or not candidate_ids
++                            or any(not isinstance(item, str) or not item.strip()
++                                   for item in candidate_ids)
++                            or len(candidate_ids) != len(set(candidate_ids))):
++                        raise ValueError("candidate review batch requires unique candidate IDs")
++                    if spec.get("candidate_count_at_enqueue") != len(candidate_ids):
++                        raise ValueError("candidate review count does not match candidate IDs")
+                 # One immutable batch points at every finding in one fixed report. Keep it
+                 # queued under load instead of rejecting/truncating the candidate set.
+                 prior = db.execute("SELECT id FROM operations WHERE kind=? AND spec=? AND status IN ('queued','running','completed','completed_with_limitations') ORDER BY created_at DESC LIMIT 1",
+@@ -135,16 +148,31 @@ class Operations:
+         with self.store.connect() as db:
+             rows = list(db.execute("SELECT id,status,spec,created_at FROM operations WHERE kind='candidate_review_batch' ORDER BY created_at"))
+         counts = {"queued_batches": 0, "running_batches": 0, "finished_batches": 0,
+-                  "queued_candidates": 0, "running_candidates": 0}
++                  "queued_candidates": 0, "running_candidates": 0,
++                  "queued_candidate_ids": [], "running_candidate_ids": [],
++                  "legacy_batches_without_candidate_ids": 0}
+         for row in rows:
+             spec = json.loads(row["spec"])
+-            candidates = int(spec.get("candidate_count_at_enqueue", 0))
++            candidate_ids = spec.get("candidate_ids")
++            if candidate_ids is None:
++                candidates = int(spec.get("candidate_count_at_enqueue", 0))
++                counts["legacy_batches_without_candidate_ids"] += 1
++            else:
++                if (not isinstance(candidate_ids, list)
++                        or any(not isinstance(item, str) or not item for item in candidate_ids)
++                        or len(candidate_ids) != len(set(candidate_ids))):
++                    raise ValueError("candidate review batch has invalid candidate IDs")
++                candidates = len(candidate_ids)
+             if row["status"] == "queued":
+                 counts["queued_batches"] += 1
+                 counts["queued_candidates"] += candidates
++                if candidate_ids is not None:
++                    counts["queued_candidate_ids"].extend(candidate_ids)
+             elif row["status"] == "running":
+                 counts["running_batches"] += 1
+                 counts["running_candidates"] += candidates
++                if candidate_ids is not None:
++                    counts["running_candidate_ids"].extend(candidate_ids)
+             else:
+                 counts["finished_batches"] += 1
+         from .agent import public_status
+diff --git a/src/workbench/worker.py b/src/workbench/worker.py
+index 3b1acd52..4b09f34d 100644
+--- a/src/workbench/worker.py
++++ b/src/workbench/worker.py
+@@ -145,14 +145,16 @@ class Worker:
+                     from . import service
+                     report = service.read_report(self.settings, final)
+                     candidates = service.findings(report)
+-                    if candidates:
++                    candidate_ids = sorted({item["id"] for item in candidates})
++                    if candidate_ids:
+                         task = Operations(self.store).create("candidate_review_batch", {
+                             "job_id": key, "report_sha256": final["report_sha256"],
+-                            "candidate_count_at_enqueue": len(candidates),
++                            "candidate_ids": candidate_ids,
++                            "candidate_count_at_enqueue": len(candidate_ids),
+                             "timeout_seconds": 60, "memory_mb": 512,
+                         })
+                         self.store.event(key, "agent_review_queued",
+-                                         f"All {len(candidates)} candidates queued in operation {task['id']}; no candidate truncation")
++                                         f"All {len(candidate_ids)} candidate IDs queued in operation {task['id']}; no candidate truncation")
+                     else:
+                         self.store.event(key, "agent_review_not_required",
+                                          "Zero static candidates; no second-pass source exploration was run. Coverage/unknown remains governed by the scan report.")
+diff --git a/tests/test_workbench.py b/tests/test_workbench.py
+index f849b928..9d30c658 100644
+--- a/tests/test_workbench.py
++++ b/tests/test_workbench.py
+@@ -372,10 +372,14 @@ class WorkbenchTests(unittest.TestCase):
+         self.assertEqual(body["status"], "queued")
+         self.assertFalse(body["model_available"])
+         self.assertEqual(body["spec"]["report_sha256"], job["report_sha256"])
++        self.assertEqual(body["spec"]["candidate_ids"], sorted(item["id"] for item in expected))
++        self.assertEqual(body["spec"]["candidate_count_at_enqueue"], len(expected))
+         queue_status = self.client.get("/api/v1/operations/agent-review-queue/status")
+         self.assertEqual(queue_status.status_code, 200, queue_status.text)
+         self.assertEqual(queue_status.json()["queued_batches"], 1)
+         self.assertEqual(queue_status.json()["queued_candidates"], len(expected))
++        self.assertEqual(queue_status.json()["queued_candidate_ids"],
++                         sorted(item["id"] for item in expected))
+         again = self.client.post("/api/v1/operations/agent-review-queue",
+                                  json={"job_id": job["id"]}, headers=HEADERS)
+         self.assertEqual(again.status_code, 201, again.text)
+diff --git a/tests/test_workbench_operations.py b/tests/test_workbench_operations.py
+index 1f9d84b6..8684deeb 100644
+--- a/tests/test_workbench_operations.py
++++ b/tests/test_workbench_operations.py
+@@ -71,8 +71,10 @@ class OperationsStoreTests(unittest.TestCase):
+         self.assertEqual(self.ops.claim(validation=False)["id"], a["id"])
+ 
+     def test_candidate_review_batches_are_idempotent_unbounded_and_stay_queued_without_provider(self):
++        candidate_ids = ["candidate-" + str(index) for index in range(125)]
+         spec = {"job_id": "a" * 32, "report_sha256": "b" * 64,
+-                "candidate_count_at_enqueue": 125, "timeout_seconds": 60, "memory_mb": 512}
++                "candidate_ids": candidate_ids, "candidate_count_at_enqueue": 125,
++                "timeout_seconds": 60, "memory_mb": 512}
+         first = self.ops.create("candidate_review_batch", spec)
+         duplicate = self.ops.create("candidate_review_batch", spec)
+         self.assertEqual(first["id"], duplicate["id"])
+@@ -81,10 +83,33 @@ class OperationsStoreTests(unittest.TestCase):
+         summary = self.ops.candidate_review_queue()
+         self.assertEqual(summary["queued_batches"], 1)
+         self.assertEqual(summary["queued_candidates"], 125)
++        self.assertEqual(summary["queued_candidate_ids"], candidate_ids)
++        self.assertEqual(summary["legacy_batches_without_candidate_ids"], 0)
+         self.assertFalse(summary["model_provider_configured"])
+         self.assertIsNone(self.ops.claim())
+         self.assertEqual(self.ops.get(first["id"])["status"], "queued")
+ 
++    def test_legacy_count_only_batch_remains_visible_as_unbound_backlog(self):
++        batch = self.ops.create("candidate_review_batch", {
++            "job_id": "c" * 32, "report_sha256": "d" * 64,
++            "candidate_count_at_enqueue": 3, "timeout_seconds": 60, "memory_mb": 512,
++        })
++        self.assertEqual(batch["status"], "queued")
++        summary = self.ops.candidate_review_queue()
++        self.assertEqual(summary["queued_candidates"], 3)
++        self.assertEqual(summary["queued_candidate_ids"], [])
++        self.assertEqual(summary["legacy_batches_without_candidate_ids"], 1)
++
++    def test_candidate_review_batch_rejects_silent_id_truncation_or_count_mismatch(self):
++        base = {"job_id": "a" * 32, "report_sha256": "b" * 64,
++                "candidate_ids": ["candidate-a", "candidate-b"],
++                "candidate_count_at_enqueue": 2, "timeout_seconds": 60, "memory_mb": 512}
++        with self.assertRaisesRegex(ValueError, "count does not match candidate IDs"):
++            self.ops.create("candidate_review_batch", {**base, "candidate_count_at_enqueue": 1})
++        with self.assertRaisesRegex(ValueError, "unique candidate IDs"):
++            self.ops.create("candidate_review_batch", {**base, "candidate_ids": ["candidate-a", "candidate-a"]})
++        self.assertEqual(self.ops.candidate_review_queue()["queued_batches"], 0)
++
+     def test_candidate_batches_do_not_consume_normal_operation_capacity(self):
+         batch = self.ops.create("candidate_review_batch", {"job_id": "a" * 32, "report_sha256": "b" * 64})
+         normal = self.ops.create("investigation", {"job_id": "c" * 32})

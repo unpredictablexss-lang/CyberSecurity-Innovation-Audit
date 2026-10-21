@@ -1,0 +1,306 @@
+{
+  "baseline": {
+    "detector_version": "0.12.12",
+    "model": "oh-ipc-2026.10-v32",
+    "observations": 30,
+    "roots_reported": 28,
+    "rules": {
+      "ipc.relay.descriptor-boundary": 7,
+      "ipc.capability.export": 11,
+      "ipc.auth.missing": 12
+    },
+    "totals": {
+      "selected_source_files": 6407,
+      "selected_source_bytes": 50553618,
+      "complete": 4302,
+      "partial": 1733,
+      "not_run": 372,
+      "diagnostics": 30,
+      "scope_loc": 1233245
+    },
+    "candidate_anchor_clusters": 28
+  },
+  "current": {
+    "detector_version": "0.12.13",
+    "model": "oh-ipc-2026.10-v33",
+    "observations": 30,
+    "completed_targets": 8,
+    "rule_counts": {
+      "ipc.auth.missing": 12,
+      "ipc.capability.export": 11,
+      "ipc.relay.descriptor-boundary": 7
+    },
+    "candidate_anchor_clusters": 28,
+    "added": 0,
+    "removed": 0,
+    "retained": 30,
+    "parse_totals": {
+      "complete": 4341,
+      "not_run": 372,
+      "partial": 1694
+    }
+  },
+  "targets": [
+    {
+      "repository": "openharmony/aafwk_standard",
+      "commit": "834a566b1372268c7bbb0c40362322f812ca6efc",
+      "tree": "c3744c8c230573a4bcdb76bf49493a1ea61c72d1",
+      "source_snapshot_same": true,
+      "historical_v0_12_12": {
+        "observations": 15,
+        "rules": {
+          "ipc.relay.descriptor-boundary": 1,
+          "ipc.capability.export": 7,
+          "ipc.auth.missing": 7
+        },
+        "parse": {
+          "complete": 1222,
+          "not_run": 18,
+          "partial": 531
+        }
+      },
+      "current_v0_12_13": {
+        "status": "completed_with_limitations",
+        "observations": 15,
+        "rules": {
+          "ipc.relay.descriptor-boundary": 1,
+          "ipc.capability.export": 7,
+          "ipc.auth.missing": 7
+        },
+        "parse": {
+          "complete": 1246,
+          "not_run": 18,
+          "partial": 507
+        }
+      },
+      "retained": 15,
+      "added": [],
+      "removed": []
+    },
+    {
+      "repository": "openharmony/applications_contacts_data",
+      "commit": "341cc3bf41b48e9a5f278dd088f40a2041d2f1c9",
+      "tree": "2054824c04bb403eeea128a9262edfb3001efa4f",
+      "source_snapshot_same": true,
+      "historical_v0_12_12": {
+        "observations": 4,
+        "rules": {
+          "ipc.auth.missing": 1,
+          "ipc.relay.descriptor-boundary": 3
+        },
+        "parse": {
+          "complete": 199,
+          "not_run": 142,
+          "partial": 19
+        }
+      },
+      "current_v0_12_13": {
+        "status": "completed_with_limitations",
+        "observations": 4,
+        "rules": {
+          "ipc.auth.missing": 1,
+          "ipc.relay.descriptor-boundary": 3
+        },
+        "parse": {
+          "complete": 199,
+          "not_run": 142,
+          "partial": 19
+        }
+      },
+      "retained": 4,
+      "added": [],
+      "removed": []
+    },
+    {
+      "repository": "openharmony/communication_netmanager_ext",
+      "commit": "8c35917b7e2f152813b13a20530a8452cf73d938",
+      "tree": "e26372f6cd65be928b9c1cf4a96d3c7dd5ece804",
+      "source_snapshot_same": true,
+      "historical_v0_12_12": {
+        "observations": 0,
+        "rules": {},
+        "parse": {
+          "complete": 434,
+          "not_run": 22,
+          "partial": 198
+        }
+      },
+      "current_v0_12_13": {
+        "status": "completed_with_limitations",
+        "observations": 0,
+        "rules": {},
+        "parse": {
+          "complete": 441,
+          "not_run": 22,
+          "partial": 191
+        }
+      },
+      "retained": 0,
+      "added": [],
+      "removed": []
+    },
+    {
+      "repository": "openharmony/distributeddatamgr_relational_store",
+      "commit": "42f13ea84e2f90ed511a2bd4aa5be14c5996eba8",
+      "tree": "f4698163f10e769c9014daa6e65856b12def8fdf",
+      "source_snapshot_same": true,
+      "historical_v0_12_12": {
+        "observations": 0,
+        "rules": {},
+        "parse": {
+          "complete": 789,
+          "not_run": 185,
+          "partial": 376
+        }
+      },
+      "current_v0_12_13": {
+        "status": "completed_with_limitations",
+        "observations": 0,
+        "rules": {},
+        "parse": {
+          "complete": 790,
+          "not_run": 185,
+          "partial": 375
+        }
+      },
+      "retained": 0,
+      "added": [],
+      "removed": []
+    },
+    {
+      "repository": "openharmony/graphic_standard",
+      "commit": "a73af6bd3bac599b9359cba10ca7b5f82a02d5d9",
+      "tree": "d5446eefcd0dc9478a0da65c76fafc9f62f973ad",
+      "source_snapshot_same": true,
+      "historical_v0_12_12": {
+        "observations": 8,
+        "rules": {
+          "ipc.auth.missing": 2,
+          "ipc.capability.export": 4,
+          "ipc.relay.descriptor-boundary": 2
+        },
+        "parse": {
+          "complete": 965,
+          "not_run": 4,
+          "partial": 223
+        }
+      },
+      "current_v0_12_13": {
+        "status": "completed_with_limitations",
+        "observations": 8,
+        "rules": {
+          "ipc.auth.missing": 2,
+          "ipc.capability.export": 4,
+          "ipc.relay.descriptor-boundary": 2
+        },
+        "parse": {
+          "complete": 969,
+          "not_run": 4,
+          "partial": 219
+        }
+      },
+      "retained": 8,
+      "added": [],
+      "removed": []
+    },
+    {
+      "repository": "openharmony/miscservices_pasteboard",
+      "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+      "tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+      "source_snapshot_same": true,
+      "historical_v0_12_12": {
+        "observations": 2,
+        "rules": {
+          "ipc.auth.missing": 2
+        },
+        "parse": {
+          "complete": 57,
+          "not_run": 1,
+          "partial": 10
+        }
+      },
+      "current_v0_12_13": {
+        "status": "completed_with_limitations",
+        "observations": 2,
+        "rules": {
+          "ipc.auth.missing": 2
+        },
+        "parse": {
+          "complete": 59,
+          "not_run": 1,
+          "partial": 8
+        }
+      },
+      "retained": 2,
+      "added": [],
+      "removed": []
+    },
+    {
+      "repository": "openharmony/multimedia_histreamer",
+      "commit": "847aafa3dc32bcf92eb8a2d2277b8d34bff98362",
+      "tree": "6b0d47808cbb711a343c8817f262ec7cde87bf0b",
+      "source_snapshot_same": true,
+      "historical_v0_12_12": {
+        "observations": 0,
+        "rules": {},
+        "parse": {
+          "complete": 345,
+          "partial": 231
+        }
+      },
+      "current_v0_12_13": {
+        "status": "completed_with_limitations",
+        "observations": 0,
+        "rules": {},
+        "parse": {
+          "complete": 346,
+          "partial": 230
+        }
+      },
+      "retained": 0,
+      "added": [],
+      "removed": []
+    },
+    {
+      "repository": "openharmony/security_deviceauth",
+      "commit": "2cf21e46f43c63857c40a79b004eda14f79b04c2",
+      "tree": "cfbe02de9d5f4720dc4aa19f5a8d83afa6cabaf8",
+      "source_snapshot_same": true,
+      "historical_v0_12_12": {
+        "observations": 1,
+        "rules": {
+          "ipc.relay.descriptor-boundary": 1
+        },
+        "parse": {
+          "complete": 291,
+          "partial": 145
+        }
+      },
+      "current_v0_12_13": {
+        "status": "completed_with_limitations",
+        "observations": 1,
+        "rules": {
+          "ipc.relay.descriptor-boundary": 1
+        },
+        "parse": {
+          "complete": 291,
+          "partial": 145
+        }
+      },
+      "retained": 1,
+      "added": [],
+      "removed": []
+    }
+  ],
+  "comparison_policy": {
+    "identity_key": [
+      "file",
+      "line",
+      "rule_id",
+      "symbol",
+      "source_sha256"
+    ],
+    "root_group_source": "historical B-line candidate_triage.csv root_cluster mapping; retained rows inherit the same review cluster, no new root inference",
+    "not_a_holdout": true
+  }
+}

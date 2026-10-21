@@ -112,6 +112,8 @@ def create_app(settings=None):
     settings.initialize()
     store = Store(settings.data_dir)
     app = FastAPI(title="OHScanner Local Audit Workbench", version="0.1.0")
+    from .progressive_triage.api import install_routes as install_triage_policy_routes
+    app.state.triage_policy = install_triage_policy_routes(app, settings.data_dir)
     app.state.store = store
     app.state.settings = settings
     app.add_middleware(

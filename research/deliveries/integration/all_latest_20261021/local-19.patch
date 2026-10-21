@@ -1,0 +1,996 @@
+diff --git a/docs/research/ipc_ledger_2026-10-17.md b/docs/research/ipc_ledger_2026-10-17.md
+new file mode 100644
+index 00000000..be988916
+--- /dev/null
++++ b/docs/research/ipc_ledger_2026-10-17.md
+@@ -0,0 +1,990 @@
++# IPC 候选复核台账（2026-10-17）
++
++> 本文件是 B 线「候选复核与证据台账」会话的本轮交付件。**只读源码 + 只写本文件**：
++> 未改 `src/`、`tests/`、`PROGRAM_STATUS.md` 或任何共享面；未 push/PR/merge。
++> 本轮不改任何检测器规则，**不把任何 candidate 写成 confirmed**，**不新增告警数当成果**。
++
++## 0. 口径
++
++| 项 | 值 |
++|---|---|
++| 复核对象 | `candidates_m8.json` 10 组件 **64** 条 + `gitcode_5.json` 5 棵树 **18** 条 = **82** 条 |
++| 检测器 | `detector_version 0.8.0`，`MODEL_VERSION = "oh-ipc-2026.10-v6"`（`models.py`） |
++| 读源方式 | 一律 `git -C <perf-corpus/gitcode-corpus 树> show <commit>:<path>`；**不读工作树** |
++| 项目级状态 | `validated_vulnerability = 0`，`confirmed = 0`，`poc_state` 无一为 `stable_reproduced` |
++
++三种处置的定义（互斥，不互相折算）：
++
++- **撤销**：按原文可判该候选不成立。分两种成因，**分列不混**：
++  (a) 路径上有支配的守卫，规则词表没读到（词表/模型缺口）；
++  (b) 规则要求的形状在源码里不成立（命名误命中、对象无该契约）。
++- **保留 candidate**：原文**不**支持撤销——路径上确实缺该维度的守卫，但证据门未过。
++- **需要动态验证**：保留的候选，其唯一剩余欠账是运行时问题（可达性 / 交出去的对象能做什么）。
++
++**逐条二分标注（本文件强制列）**：每条必须标「**守卫存在但授权策略待复核**」或「**根本没有守卫**」。
++两者不许混。描述符守卫在位 **不等于** 授权守卫在位。
++
++### 0.1 分布
++
++| 组件 | 树 | commit | 复核 | 撤销 | 保留 candidate |
++|---|---|---:|---:|---:|---:|
++| communication_ipc | perf-corpus | `bbb92dbb2f52` | 12 | 12 | 0 |
++| multimedia_player_framework | perf-corpus | `9f9a285ff489` | 24 | 24 | 0 |
++| multimedia_camera_framework | perf-corpus | `085a5d0e2dc1` | 9 | 9 | 0 |
++| inputmethod_imf | perf-corpus | `7777cba9eb19` | 4 | 4 | 0 |
++| resourceschedule_background_task_mgr | perf-corpus | `cff2ff475e38` | 2 | 2 | 0 |
++| telephony_call_manager | perf-corpus | `6638d1b37f27` | 2 | 0 | 2 |
++| window_window_manager | perf-corpus | `8b0d8fe1b973` | 9 | 3 | 6 |
++| update_updateservice | perf-corpus | `e4942a33cc5e` | 2 | 2 | 0 |
++| distributedhardware_device_manager | gitcode-corpus | `d909f8105d9c` | 12 | 12 | 0 |
++| usb_usb_manager | gitcode-corpus | `79b43ad6c8d1` | 6 | 6 | 0 |
++| **合计** | | | **82** | **74** | **8** |
++
++`notification_common_event_service`（137 文件）本轮**未产生候选** —— 这是一句**覆盖陈述**，不是「已审完」的结论，见 §5。
++
++### 0.2 本 envelope 的运行状态：**15 个组件全部 `blocked`，无一 `completed`**
++
++这一节是**后补的**（读 `detector.py` 原文时才发现），它约束本文件所有「N 条候选」该怎么读。
++
++| 事实 | 出处 |
++|---|---|
++| 10 个语料组件 + 5 个 gitcode 树的 `status` **全部是 `blocked`** | `candidates_m8.json` / `gitcode_5.json` 的 `components`/`trees` 记录 |
++| `status = "blocked" if any(u.parse_status != "complete" for u in applicable) else "completed"` | `detector.py:114` |
++| ⇒ **每个组件都至少有一个适用文件没有完整解析** | 由上两行直接推出 |
++| 本轮两个权威 runner 都实例化**非** `CompleteAst` 的那个类，它**partial 与 complete 解析都走** | `w_b_corpus_provenance.py:84 detector = IpcInterfaceDetector()`；`detector.py:136-137` |
++| 因此**一个 partial 文件就让整个组件的 run 变成 `blocked`** | `detector.py:137-138` 的 docstring |
++| 非 `completed` 的 run，`scope_files`/`scope_loc` **一律 0** | `runner.py:179-181` |
++| 但**证据义务不随之丢失**：侧车记录义务的条件是 `report.status in ("completed", "blocked")` | `runner.py:301` |
++| 该行为被测试钉住，且测试自己写明这是 CCR 两半里**已闭合的那一半** | `tests/test_component_audit.py:269-301`（"the second half is closed"）、`:307-330` |
++| 实测：`resourceschedule_background_task_mgr` 188 单元 → `status=blocked`，2 条发现**各带 4 条义务**（`entry_reachability`/`callee_and_policy`/`security_impact`/`consequence`，全 `unknown`） | 本轮 `b_oblig.py` 实际运行 |
++| `detector.py:136-146` 的 docstring 仍写「neither scope counters nor evidence obligations … only for a completed run」——**与同一 checkout 的 `runner.py:301` 不符** | `detector.py:136-146` × `runner.py:301` |
++| 该不符的来源（`git log -S`）：那句话由 `f077e85`（"keep the obligations a blocked run drops"，当时驱动侧自己补）写下，`("completed","blocked")` 由 `022c022`（M2-A 集成）引入，**两处之后都没再改** ⇒ docstring 是**文本滞后**，不是两个 checkout 的差异 | `-b` `git log -S` |
++
++由此得到三条**引用规则**（本文件按此执行）：
++
++1. **零候选 ≠ 已审。** 五处 0 条全部是**覆盖陈述**：
++   `notification_common_event_service`(137)、`security_access_token`(545)、
++   `account_os_account`(450)、`sensors_sensor`(152)、`useriam_user_auth_framework`(413)。
++   （前两处是语料组件，后三处是 gitcode 树。）
++2. **不能从这两个 artifact 取性能/覆盖数。** `blocked` 的 run 的 `scope_files`/`scope_loc` 一律 0；
++   本文件出现的文件数（wwm 1103、camera 1105 等）来自 runner **装载的 unit 数**
++   （`w_b_corpus_provenance.py:104 len(units)`），**不是** runner 的 scope 计数。
++3. **本文件每条候选的「剩余欠账」是读原文重建的，不是从 artifact 里读的。**
++   `w_b_corpus_provenance.py:109-115` 只序列化 `component/rule/file/line/symbol/message` 六个字段；
++   检测器对象上**有** `evidence_type` / `candidate_cwe` / `consequence_*` / `evidence_obligations`
++   （`detector.py:98-113`），但**没落进这份 artifact**。
++   这是**脚本自己的取舍**，不是 `blocked` 造成的：义务在上表第 2、3 行已经随 run 产出，
++   只要换一个会序列化它们的 runner 就能取回（本轮 `b_oblig.py` 即为最小示例）。
++   这也解释了为什么「需要动态验证」一栏的每一项都必须回到源码行才能写出来。
++
++**这三条不改变任何一条候选的处置**——处置的依据一直是原文行号。它改变的是**「0 条」和「覆盖」的读法**。
++
++> **本节自纠（同轮内）**：本表最初的版本写的是「非 `completed` 的 run 既不记 scope 计数**也不记证据义务**」，
++> 依据只有 `detector.py:136-146` 的 docstring。随后读同一 checkout 的 `runner.py:301` 与测试
++> `tests/test_component_audit.py:269-301` 发现该 docstring **已滞后**（core 合入时只改了 `runner.py`），
++> 再用 `b_oblig.py` 在真实语料组件上实测：`blocked` 的 run 里候选**照样带满义务**。
++> 结论按上表更正。**"被剥掉证明义务"是错的**——`blocked` 只把 `scope_files`/`scope_loc` 归零；
++> 义务的缺失是**我自己那个 runner 脚本没序列化**，不是运行状态造成的。这条更正同样不改变任何处置。
++
++---
++
++## 1. 逐条台账
++
++### 1.1 communication_ipc（12 条，全部 撤销）
++
++| # | 锚点 | 规则 | 守卫二分 | 依据（原文行号） |
++|---|---|---|---|---|
++| 1 | dbinder_service_stub.cpp:168 | `ipc.relay.descriptor-boundary` | **根本没有守卫** | `OnRemoteRequest :162-183` 无描述符校验；`:168 ProcessProto(...)`。类声明 `dbinder_service_stub.h:36 class DBinderServiceStub : public IPCObjectStub`，**未覆盖 `GetDescriptor`** → 该对象上没有「另一个接口」可被冒充，规则前提（跨接口）不成立 |
++| 2 | dbinder_service_stub.cpp:172 | 同上 | **根本没有守卫** | 同上；`:172 ProcessDeathRecipient(data)` → `:185-198`，`:190 AddDbinderDeathRecipient` / `:194 RemoveDbinderDeathRecipient`，两者函数体只做 null 检查 |
++| 3 | dbinder_service_stub.cpp:190 | 同上 | **根本没有守卫** | 同 #2 |
++| 4 | dbinder_service_stub.cpp:194 | 同上 | **根本没有守卫** | 同 #2。**另记一条线索**（不入规则）：该路径可在无任何调用者检查下变更 DBinder 全局死亡通知注册表 |
++| 5 | dbinder_callback_stub.cpp:118 | 同上 | **根本没有守卫** | `ProcessProto :91-159`，`:118 ProcessData(...)` 同文件一跳；类声明 `dbinder_callback_stub.h:24`，**未覆盖 `GetDescriptor`** |
++| 6 | dbinder_callback_stub.cpp:139 | `ipc.auth.missing` | **根本没有守卫** | `:139 dbinderInvoker->SendRequest(handle_, DBINDER_ADD_COMMAUTH, authData, authReply, authOption)`。命中源于 `SendRequest ∈ sensitive_calls`（`models.py:150`），而此处是**发往对端的出站 RPC**，不是代表调用者执行的特权操作 |
++| 7 | dbinder_callback_stub.cpp:139 | `ipc.relay.descriptor-boundary` | **根本没有守卫** | 同 #6 位置；身份在 `:94 GetCallingUid()` / `:95 GetCallingPid()` 采集后装进 `authData` |
++| 8 | dbinder_callback_stub.cpp:167 | 同上 | **根本没有守卫** | `:167` 为 `OnRemoteRequest` 内的一跳；无描述符契约（同 #5） |
++| 9 | ipc_object_stub.cpp:165 | `ipc.auth.missing` | **守卫存在但授权策略待复核** | `:165 result = Dump(fd, args);` 在 `OnRemoteDump`（`:158`）内；唯一调用点 `:216 return OnRemoteDump(...)`（`DBinderDumpTransaction`），其 `:212 if (!IPCSkeleton::IsLocalCalling() \|\| (uid != 0 && uid != SHELL_UID && uid != HIDUMPER_SERVICE_UID)) { … return ERR_NONE; }` **支配**该路径；`DBinderDumpTransaction` 唯一调用点 `:449`（`SendRequest` 的 `DUMP_TRANSACTION` 臂） |
++| 10 | napi_remote_object.cpp:917 | `ipc.relay.descriptor-boundary` | **根本没有守卫** | `NAPIRemoteObject::OnRemoteRequest :888-925`，`:917 int ret = OnJsRemoteRequest(param);`；该对象是 JS 桥，不存在接口描述符契约 → 规则形状不适用 |
++| 11 | ohos.rpc.rpc.impl.cpp:210 | 同上 | **根本没有守卫** | `:198-249 callOnRemoteMessageRequest`，`:210 jsObjRef->OnRemoteMessageRequestWithCallingInfo(..., GetCallingInfo())`；同 #10，无描述符契约 |
++| 12 | ohos.rpc.rpc.impl.cpp:231 | 同上 | **根本没有守卫** | `:219-249 ANIRemoteObject::OnRemoteRequest`，`:231 callOnRemoteMessageRequest(...)` |
++
++全树核查：#1–#12 涉及的 5 个文件中，**只有** `README_zh.md:351` 出现与描述符比较形似的文本。因此「描述符校验缺失」在这几条上**是原文事实**，撤销依据是**形状/命名**（#1–#5、#8、#10–#12）或**守卫存在**（#9），不是「没找到所以没有」。
++
++### 1.2 multimedia_player_framework（24 条，全部 撤销）
++
++24 条**同一形状**：入口 `OnRemoteRequest` 里先 `auto remoteDescriptor = data.ReadInterfaceToken();`，紧接着
++`CHECK_AND_RETURN_RET_LOG(XStub::GetDescriptor() == remoteDescriptor, MSERR_INVALID_OPERATION, "Invalid descriptor");`，
++再进 switch。`CHECK_AND_RETURN_RET_LOG` 定义在 `services/utils/include/media_log.h:121`，形参含 `...`。
++
++| 锚点 | 守卫行 | 守卫二分 | 依据 |
++|---|---|---|---|
++| helper_listener_stub.cpp:55 / `:69` / `:75` | `:43-44` | **守卫存在但授权策略待复核** | 描述符守卫在位（`GetDescriptor()`），检测器未识别 |
++| lpp_audio_streamer_listener_stub.cpp:48 / `:59` | `:41-42` | 同上 | 同上 |
++| lpp_video_streamer_listener_stub.cpp:48 / `:59` | `:41-42` | 同上 | 同上 |
++| media_source_loader_stub.cpp:61 / `:75` / `:82` / `:86` | `:49-50` | 同上 | 同上 |
++| pcm_output_callback_stub.cpp:46 / `:56` | `:35-36` | 同上 | 该钉住版本内容为 **CRLF** 行尾（文本实验时必须用 `\r\n`） |
++| player_listener_stub.cpp:50 / `:61` / `:67` / `:124` | `:43-44` | 同上 | 同上 |
++| player_service_stub.cpp:376 | `:359-360` | 同上 | 同上 |
++| recorder_service_stub.cpp:215 / `:218` | `:202-203` | 同上 | 同上 |
++| screen_capture_monitor_service_stub.cpp:92 | `:85-86` | 同上 | 同上 |
++| transcoder_listener_stub.cpp:47 / `:53` | `:40-41` | 同上 | 同上 |
++| transcoder_service_stub.cpp:128 | `:119-120` | 同上 | 同上 |
++
++→ **24 条全部撤销**，机制 **M-VARIADIC**（§2.2）。
++
++### 1.3 multimedia_camera_framework（9 条，全部 撤销）
++
++| # | 锚点 | 规则 | 守卫二分 | 依据 |
++|---|---|---|---|---|
++| 17 | hstream_capture_photo_callback_stub.cpp:32 | relay | **守卫存在但授权策略待复核** | `:29 CHECK_RETURN_RET(data.ReadInterfaceToken() != GetDescriptor(), errCode);`，其后 `:30` 才是 `switch`。机制 **M-DOW** |
++| 18 | 同文件 `:41` | relay | 同上 | 同上 |
++| 19 | 同文件 `:65` | relay | 同上 | 同上（`HandleOnPhotoAvailable`） |
++| 20 | 同文件 `:103` | relay | 同上 | 同上（`HandleOnPhotoAvailableWithAuxiliary`） |
++| 21 | hstream_capture_thumbnail_callback_stub.cpp:30 | relay | 同上 | `:26` 同形守卫 |
++| 22 | 同文件 `:53` | relay | 同上 | 同上 |
++| 23 | hcamera_window_manager_callback_stub.cpp:30 | relay | 同上 | `:27` 同形守卫 |
++| 24 | hcamera_service.cpp:1098 | `ipc.auth.guard-coverage` | **守卫存在但授权策略待复核** | `:1064 GetCallingTokenID()`、`:1065 GetCallingPid()`；`:1069 permissionName = OHOS_PERMISSION_CAMERA`；`:1070 int32_t ret = CheckPermission(permissionName, callerToken);`；`:1071 CHECK_RETURN_RET_ELOG(ret != CAMERA_OK, ret, …)`；`:1074 CHECK_RETURN_RET_ELOG(!IsInForeGround(callerToken), CAMERA_ALLOC_ERROR, …)`；`:1077 isPrivilegeApp = (CheckPermission(OHOS_PERMISSION_CAMERA_SHARED, callerToken) == CAMERA_OK)`。机制 **M-VARIADIC + M-CONST** |
++| 25 | 同文件 `:1098` | `ipc.auth.missing` | 同上 | 同上；候选路径 `((1081,'isPrivilegeApp => False'),(1097,'deviceForWrapper == nullptr => True'))` |
++
++`CHECK_RETURN_RET` 定义：`common/utils/camera_log.h:96-101`
++= `do { if (cond) { return ret; } } while (0)`；
++`CHECK_RETURN_RET_ELOG` 定义：`camera_log.h:163-169`，形参 `['cond','ret','fmt','...']`。
++
++**组件级因果（§2.13）**：只把 `camera_log.h:96-101` 这个**宏定义体**换成等价的 `if`，
++#17–#23 这 7 条**全部消失**（9→2），#24/#25 **逐条不动**。
++⇒ 这 7 条的撤销依据是「守卫写在 `do/while(0)` 宏里、检测器读不到」，
++**不是**「这里没有描述符检查」；二分口径归入**守卫存在但授权策略待复核**。
++
++### 1.4 inputmethod_imf（4 条，全部 撤销）
++
++| # | 锚点 | 规则 | 守卫二分 | 依据 |
++|---|---|---|---|---|
++| 13 | input_method_system_ability.cpp:168 | relay | **根本没有守卫** | `ResetDelayUnloadTask :164-199`，`:168 IsImeInUse()`（定义 `:200`）。全仓 **零** `ReadInterfaceToken` |
++| 14 | 同文件 `:181` | relay | **根本没有守卫** | `:181 GetTickCount()`（定义 `:158`） |
++| 15 | 同文件 `:194` | relay | **根本没有守卫** | `:194 lastPostTime = GetTickCount();` |
++| 16 | 同文件 `:238` | relay | **根本没有守卫** | `OnRemoteRequest :213-241`，`:228 auto ret = InputMethodSystemAbilityStub::OnRemoteRequest(code, data, reply, option);`，`:238 ResetDelayUnloadTask(code);` |
++
++**撤销理由不是「守卫缺失」，而是形状**：`:228` 的 `InputMethodSystemAbilityStub` 是 **IDL 生成**的桩，
++**不在本树内**（`services/include/input_method_system_ability.h:24` include `input_method_system_ability_stub.h`，
++`:40 class InputMethodSystemAbility : public SystemAbility, public InputMethodSystemAbilityStub`）。
++`ResetDelayUnloadTask` / `IsImeInUse` / `GetTickCount` 是**同一 TU 内的本地助手**，不是另一个接口的入口，
++规则「一个接口的调用者可能触达为另一个接口保留的行为」的**跨接口前提不成立**。
++→ 撤销为候选；**不留**为「本组件无描述符校验」的结论（该桩在树外）。
++
++### 1.5 resourceschedule_background_task_mgr（2 条，全部 撤销）
++
++| # | 锚点 | 规则 | 守卫二分 | 依据 |
++|---|---|---|---|---|
++| 50 | bg_continuous_task_mgr.cpp:907 | `ipc.auth.object-owner` | **守卫存在但授权策略待复核** | `RequestBackgroundRunningForInner`；支配守卫在 `:899` + `:901` + `:912-926`（调用者 UID 侧检查） |
++| 51 | 同文件 `:909` | 同上 | 同上 | 同上 |
++
++规则的缺陷形状是「后台任务的目标 UID 未与调用 UID 绑定」；原文在 `:899/:901/:912-926` 处把两侧绑定，
++属于**正确写法**（安全对照），撤销。与 `PROGRAM_STATUS.md` §55 一致。
++
++### 1.6 telephony_call_manager（2 条，**保留 candidate**）
++
++| # | 锚点 | 规则 | 守卫二分 | 依据 |
++|---|---|---|---|---|
++| 52 | call_earthquake_alarm_locator.cpp:222 | `ipc.auth.missing` | **根本没有守卫**（授权维度） | `MyLocationEngine::MyLocationCallBack::OnLocationReport`；描述符检查仅存在于 `:174`，此路径上无调用者授权 |
++| 53 | 同文件 `:352` | `ipc.auth.missing` | **根本没有守卫**（授权维度） | `MyLocationEngine::ConnectAbility`；回调被交给 location SA |
++
++撤销条件不满足：原文确实没有调用者授权码。保留为候选，剩余欠账见 §5。
++`EMERGENCY_DEVICE_ID` / `BUNDLE` / `ABILITY` 在源码中是**空串**，判「谁在调」需要运行时证据。
++
++### 1.7 window_window_manager（9 条：撤销 3 / 保留 6）
++
++同一 commit `8b0d8fe1b973`（= `origin/master`，2026-10-08），与既有
++`docs/research/ipc_cap01_guard_chain_2026-10-16.md`、`docs/research/ipc_wwm_deep_review_2026-10-15.md`、
++`docs/research/ipc_wwm_recover_reachability_2026-10-15.md` 的绑定一致；本轮 9 条是那 14 条的子集。
++
++| # | 锚点 | 守卫二分 | 依据（原文行号） | 处置 |
++|---|---|---|---|---|
++| 56 | screen_session_manager_stub.cpp:1778 | **根本没有守卫** | 三帧全无：桩 `:1775-1779`（`:1776 ReadUint64` → `:1777 GetRenderSession(screenId)` → `:1778 reply.WriteRemoteObject(renderSession)`，桩内唯一检查是 `:50` 描述符）；`screen_session_manager.cpp:3200-3208 GetRenderSession` 仅 null 检查；`screen_session.cpp:1007-1010` 纯 getter `return renderSession_;` | **保留 candidate** |
++| 57 | session_stub.cpp:592 | **根本没有守卫**（所有权维度） | `HandleConnect :545-666`；`:589 Connect(...)`，`:592 reply.WriteRemoteObject(renderSession)`；无权限/所有权检查 | **保留 candidate** |
++| 58 | scene_session_manager_stub.cpp:371 | **守卫存在但授权策略待复核** | 守卫：`scene_session_manager.cpp:5278 if (!CheckSystemWindowPermission(property) \|\| !CheckModalSubWindowPermission(property))`、`:5287 CheckSubWindowCallingProcess(property, parentSession)`；而 `CheckSystemWindowPermission :5838` 在 `:5845-5848` 对**非系统窗型直接 `return true`** | **保留 candidate** |
++| 59 | 同文件 `:373` | 同上 | 同上（导出 `renderSession`） | **保留 candidate** |
++| 60 | 同文件 `:421` | **守卫存在但授权策略待复核** | `scene_session_manager.cpp:6010-6026 CheckSessionPropertyOnRecovery`：`:6017 CheckSystemWindowPermission`（同 `:5845-5848` 直接 true）＋ `:6021` 仅非特定变体才查 `IsNeedRecover`；`IsNeedRecover :6000-6008` 只查 `alivePersistentIds_` **成员资格**，不查属主 | **保留 candidate** |
++| 61 | 同文件 `:462` | 同上 | 同上 | **保留 candidate** |
++| 62 | session_manager_service_stub.cpp:37 | **根本没有守卫** | `OnRemoteRequest :25-50`，`:29` 描述符检查（全文件唯一）；桩内与 `session_manager_service.cpp:73-81` 实现体内均无授权码。导出的是 **SA 自己的入口对象** | **撤销**（记为**证据边界**，不是 FP） |
++| 63 | 同文件 `:41` | 同上 | 同上（`:83-90` 的 Lite 变体） | **撤销**（同 #62） |
++| 64 | window_manager_stub.cpp:389 | **守卫存在但授权策略待复核** | `:370-394`：`:381 sptr<RSIWindowAnimationFinishedCallback> finishedCallback = nullptr;` → `:382 MinimizeWindowsByLauncher(windowIds, isAnimated, finishedCallback)` → `:383 if (finishedCallback == nullptr) … :388 else :389 reply.WriteRemoteObject(finishedCallback->AsObject())`。守卫在 `wmserver/src/window_manager_service.cpp:1608 if (!Permission::IsSystemCalling() && !Permission::IsStartByHdcd()) { … return; }`，**经空值传播支配** `:389` | **撤销** |
++
++**本组 9 条的边界（本轮新增说明）**：同一份桩文件里还有 `:1208` / `:1226` / `:2944` 三个 `WriteRemoteObject`，
++它们在**整组件口径**下**不是**候选（一跳守卫把导出值标成 `guarded`），因此不在这 9 条里；
++它们与 §2.9 第一类是同一件事。**单文件口径**会把它们报出来（7 条），这是口径差异，不是版本差异（§2.11）。
++
++---
++
++## 2. 本轮新增的判断
++
++### 2.0 方法
++
++对每族候选，用**真实 `IpcInterfaceDetector`** 在**钉住版本原文**上做**最小文本变体**实验，
++再回到 `analysis.py` / `cpp_macros.py` 找到决定该行为的**具体行**。
++判据是「改动一处 → 候选消失」，不是「读代码觉得应该是这样」。
++
++工具的三种**口径**（本轮把这条弄清楚花了最久，写在这里免得下一轮再踩）：
++
++| 口径 | 工具 | 能回答什么 | 不能回答什么 |
++|---|---|---|---|
++| 单文件 | `b_recheck.py` | 同一文件内的守卫（宏、`do…while(0)`、描述符取值函数）是否被读到 | **一跳（跨文件实现体）**；`one_hop_dispatch :685` 找不到实现体 |
++| 指定多文件 | `b_multi.py` | 把 N 个文件当一个 `ScanContext` 时一跳是否生效 | 整组件才能出现的**辅助函数解释** |
++| 整组件 | `b_comp.py` / 权威 runner | 与 envelope 同口径；一跳守卫与策略词表的真实效果 | 慢（wwm 1103 文件，一轮 ≈ 3–13 分钟） |
++
++**先复现 envelope（§2.11），再做变体**——本轮的顺序错误（先做变体）导致我一度把口径差异
++当成版本差异（§2.8）。
++
++### 2.1 M-DOW：`do { … } while (0)` 守卫被判成可零次迭代
++
++- 决定行：`analysis.py:1567-1572` —— `do_statement` 被当作循环建模，并**保留一条零次迭代路径**。
++- 触发形态：`common/utils/camera_log.h:96-101`
++  `#define CHECK_RETURN_RET(cond,ret) do { if (cond) { return ret; } } while (0)`。
++- 实验（`b_causal_do_guard.py`，camera `hstream_capture_photo_callback_stub.cpp`）：
++
++  | 变体 | 候选数 |
++  |---|---:|
++  | 原文（`CHECK_RETURN_RET`） | 4（L32/L41/L65/L103） |
++  | 宏展开成 `do { if (…) { return errCode; } } while (0);` | 4 |
++  | 改成 `if (…) { return; }`（带花括号） | **0** |
++  | 改成 `if (…) return;`（无花括号） | **0** |
++
++- 结论：守卫**在原文里**；消失的原因是 `do…while(0)` 的零次迭代路径，不是守卫不存在。
++- 覆盖：#17–#23（camera 7 条）。
++
++### 2.2 M-VARIADIC：带 `...` 的宏被拒绝展开
++
++- 决定行：`cpp_macros.py:235` —— `if "#" in body or (params is not None and "..." in params): refused.append((token,"variadic_stringify_or_token_paste"))`。
++- 触发形态：`camera_log.h:163-169 CHECK_RETURN_RET_ELOG(cond,ret,fmt,...)`；
++  `services/utils/include/media_log.h:121 CHECK_AND_RETURN_RET_LOG(cond, ret, fmt, ...)`。
++- 实验（`b_macro_probe.py`，camera）：
++
++  ```
++  CHECK_RETURN_RET      params=['cond','ret']            applied: True   fatal: ()
++  CHECK_RETURN_RET_ELOG params=['cond','ret','fmt','...'] refused: variadic_stringify_or_token_paste  (x9)
++  ```
++- 结论：整族「带 `fmt,...` 的 CHECK 宏」对检测器不可见。
++- 覆盖：#24/#25（camera 2 条）、#26–#49（player 24 条）。
++
++### 2.3 M-CONST：权限成功常量只认四种写法
++
++- 决定行：`analysis.py:1390` —— 只接受 `("0","PERMISSION_GRANTED","AccessTokenKit::PERMISSION_GRANTED","true")`。
++- 触发形态：`hcamera_service.cpp:1069-1071`
++  `permissionName = OHOS_PERMISSION_CAMERA` / `ret = CheckPermission(permissionName, callerToken)` /
++  `CHECK_RETURN_RET_ELOG(ret != CAMERA_OK, ret, …)` —— `CAMERA_OK`（= 0）**不在**接受列表。
++- 覆盖：#24/#25。
++
++### 2.4 M-NAME：描述符取值函数只认 `GetDescriptor()`
++
++- 决定行：`analysis.py:1255` —— `if name == "GetDescriptor": return self.descriptor_expectation(...)`。
++- 触发形态：usb `interfaces/innerkits/native/src/usbd_callback_stub.cpp:27`
++  `std::u16string descriptor = GetInterfaceDescriptor();`（框架 `IRemoteObject` 的**规范取值函数**），
++  `:29 if (descriptor != remoteDescriptor) { … return UEC_INTERFACE_PERMISSION_DENIED; }`；
++  `usbd_bulk_callback.cpp:27-30` / `:46-49` 同形。
++- 结论：守卫是**完整且支配**的 `if` 语句，只因取值函数名不在词表内而被忽略。
++- 覆盖：#77–#82（usb 6 条）。
++
++### 2.5 M-LITERAL：描述符期望写成局部字面量/绑定
++
++- 同 `analysis.py:1255`，认的是 `GetDescriptor()` 这一**表达式形态**。
++- 触发形态：ddm `3rd/services/service/src/ipc/ipc_service_stub_3rd.cpp:37`
++  `const std::u16string descriptorStr = u"ohos.distributedhardware.devicemanager";`，
++  `:50 std::u16string remoteDesc = data.ReadInterfaceToken();`，
++  `:51 if (descriptorStr != remoteDesc) { … return ERR_DM_FAILED; }`。
++- **该守卫是正确的**（原文可复核）：
++  - 客户端写的是同一串：`3rd/utils/include/ipc/ipc_utils_3rd.h:44 if (!(data).WriteInterfaceToken(u"ohos.distributedhardware.devicemanager"))`；
++  - 接口宏也在：`3rd/utils/include/ipc/ipc_remote_broker_3rd.h:39 DECLARE_INTERFACE_DESCRIPTOR(u"ohos.distributedhardware.devicemanager")`。
++  → `descriptorStr` **就是** `GetDescriptor()` 的值。
++- 覆盖：ddm #66–#73（8 条连续 relay）、#74、#75。
++
++### 2.6 M-CAPFORM（DATA-01）：目的容量必须写成 `args[1].key` / `sizeof(dest)`
++
++- 决定行：`analysis.py:1058-1066`
++  `cap = args[1].key if index == 3 else self.capacities.get(args[0].key)`；
++  `upper = any(key == length and (cap is not None and bound in (cap,"sizeof("+args[0].key+")")) for key,bound in state.upper)`；
++  配合 `analysis.py:1622-1624` —— `self.capacities` **只**从 `array_declarator` 建立（`calloc(len,…)` 的容量从不建模）。
++- 触发形态：ddm `3rd/interfaces/src/ipc/ipc_client_stub_3rd.cpp`
++  `:108 uint32_t keyLen = data.ReadUint32();`
++  `:109 if (keyLen == 0 \|\| keyLen > MAX_SESSION_KEY_LENGTH) { … continue; }`
++  `:113 const uint8_t *tempSk = data.ReadBuffer(keyLen);`
++  `:118 deviceInfo.sessionKey.key = (uint8_t*)calloc(keyLen, sizeof(uint8_t));`
++  `:123 if (memcpy_s(deviceInfo.sessionKey.key, keyLen, tempSk, keyLen) != DM_OK)`。
++  目的容量 `keyLen` 与长度 `keyLen` **同值**，上界常量是 `MAX_SESSION_KEY_LENGTH` ——
++  与模型要求的「上界常量 == 容量表达式」不符，且 `calloc` 容量未建模。
++- 实验（检测器自带 fixture `tests/fixtures/ipc/parcel_fixed.cpp`，逐变体）：
++
++  | 变体 | 结果 |
++  |---|---|
++  | 原文 `if(n<0 \|\| n>sizeof(dst)) … memcpy(dst,…,n)` | 无候选（该形状被接受） |
++  | 上界改写成命名常量 `MAXLEN` | **出现候选** |
++  | 上界命名常量 + `calloc` 容量 | **出现候选** |
++  | 去掉非负比较（`if(n>sizeof(dst))`） | 仍无候选（非负比较**不是**决定因素） |
++- 该实验同时纠正了我最早的假设：缺的不是「非负比较」，而是**容量表达式的写法**。
++- 覆盖：#65（ddm 1 条）。
++
++### 2.7 wwm 留下的 4 条：`dispatch_guard` 的**故意拒绝**（不是缺陷）
++
++> **本节讲的是「门为什么没被认下」，不是处置。**
++> 表里出现 **#64（`window_manager_stub.cpp:389`）**，但 #64 的处置是**撤销**——
++> 它被撤是因为**空值传播**（`:383 if (finishedCallback == nullptr)` 支配 `:389`，§1.7），
++> **不是因为门被认下**。它出现在此表只因为 `window_manager_service.cpp:1608` 那道门
++> 恰好是 M-DISPATCH-CONJ 的实例。**留下的 4 条是 #58–#61。**
++
++**先说清口径**：这一节的结论**只在组件级扫描下成立**。本节最早的单文件实验
++（`b_recheck`，只喂桩文件）对「改实现体的守卫」**一律无效**——那不是「实现体的守卫没用」，
++而是**单文件扫描根本走不到一跳**（`one_hop_dispatch :685` 要在一个 ScanContext 里找到实现体）。
++这是本轮自己纠错的一处，原因与后果见 §2.11。组件级的结果在 **§2.7.1**。
++
++机制（`analysis.py`，行号按 `-b` checkout = `635b3e0`）：`dispatch_guard :810-844` 的 docstring
++（`:783-808`）**明写**这是保守设计：「an unread or partial guard leaves the call a candidate
++rather than being read as one」。**拒绝发生在两处**（下表第 1、2 行）；
++另有 1 条（#60/#61）**根本不落在拒绝逻辑里**——它那个函数里没有门可读（第 3 行）：
++
++| 机制 | 决定行 | 形态 | 覆盖 |
++|---|---|---|---|
++| **M-DISPATCH-LOCAL-PRED** | `:829 yes = self.refine(...)` / `:833 if not yes or any(s.auth or s.caller_class for s in yes): continue` | 守卫写成 `if (!本地谓词(...)) return;`。谓词是**本组件里定义的函数**，`refine` 变不出角色事实 → `yes` 里没有可用的角色路径（或 `yes` 为空）→ 门被拒 | #58/#59（`scene_session_manager.cpp:5278 !CheckSystemWindowPermission(property) \|\| !CheckModalSubWindowPermission(property)`） |
++| **M-DISPATCH-CONJ** | `:839 if not no or not all(s.auth or s.caller_class for s in no): continue` | `&&` 链里含一个词表外谓词（`IsStartByHdcd` ∉ `caller_role_guards`，`models.py:175-188`）→ 继续分支存在「无角色」路径 → 门被拒 | #64（`window_manager_service.cpp:1608 !Permission::IsSystemCalling() && !Permission::IsStartByHdcd()`） |
++| **无门可读（不是拒绝）** | `:819-820 statements = list(implementation.body.named_children)` / `for position, item in enumerate(statements)` / `:821 if item.type != "if_statement": continue` | 实现体**自己的语句里根本没有权限 `if`**——门在它调用的辅助函数里（`CheckSessionPropertyOnRecovery:6014`/`:6017`，见 §2.7.1 的更正）。循环扫完一句 `if_statement` 都没命中，**谈不上"读到再拒绝"** | #60/#61（`scene_session_manager.cpp:6028 RecoverAndConnectSpecificSession` / `:6174 RecoverAndReconnectSceneSession`） |
++
++**必须与 §2.1–2.5 分开记**：那五条是**词表/建模缺陷**（守卫本可被识别）；
++前两行是**设计上的拒绝记录**；第三行既不是缺陷也不是拒绝——**是那个函数里确实没有门**。
++三者的共同后果相同（候选留下），**性质各不相同**：漏读 / 明示不读 / 没得读。
++§2.12 的 #6（拒）与 #7（没得读）分别实测了后两行。
++
++### 2.7.1 组件级差分：7 个导出处理器，只有 3 个被抑制
++
++同一次组件级扫描（1103 文件）里，`scene_session_manager_stub.cpp` 有 7 个 `WriteRemoteObject` 候选，
++**被抑制的 3 个与留下的 4 个，差别是「实现体自己的语句里有没有一个词表内的角色谓词」**：
++
++| 处理器 | 产生导出值的调用 | 实现体的门 | 结果 |
++|---|---|---|---|
++| `:1208` / `:1226` | `GetUIContentRemoteObj` / `GetRootUIContentRemoteObj`（无限定） | `scene_session_manager.cpp:12971` / `:12986` `!SessionPermission::IsSACalling()` | **抑制** |
++| `:2944` | `CreateUIEffectController`（无限定） | `:4782 !SessionPermission::IsSystemCalling()` | **抑制** |
++| `:371` / `:373` | `CreateAndConnectSpecificSession`（无限定） | 实现体自己的门 `:5278 !CheckSystemWindowPermission(property) \|\| !CheckModalSubWindowPermission(property)` | 留下 |
++| `:421` / `:462` | `RecoverAndConnectSpecificSession` / `RecoverAndReconnectSceneSession` | **实现体自己没有权限门**；门在下一层的 `CheckSessionPropertyOnRecovery:6014`/`:6017` | 留下 |
++
++差分本身是证据，三种情形都在这一张表里：
++**门写在实现体自己的语句里、且谓词在词表内 → 抑制**（`:1208`/`:1226`/`:2944`）；
++**门是实现体自己语句里的辅助函数调用（谓词不在词表内）→ 留下**（`:371`/`:373`）；
++**实现体自己的语句里没有权限门（门在下一层）→ 留下**（`:421`/`:462`）。
++§2.12 的 #5/#6/#7 把这三种情形各做了一次**单向改动**的实测。
++
++**§2.7.1 的一处更正（本轮自我纠错）。** 上一版本把 `:421`/`:462` 的门写成「`:6017 CheckSystemWindowPermission`」，
++读原文后**这一栏是错的**：`scene_session_manager.cpp:6010` 起是
++
++```
++6010 WSError SceneSessionManager::CheckSessionPropertyOnRecovery(const sptr<WindowSessionProperty>& property,
++6011     bool isSpecificSession)
++6012 {
++6014     if (property == nullptr) {          → :6015 return WS_ERROR_NULLPTR;
++6017     if (!CheckSystemWindowPermission(property)) {   → :6018 return WS_ERROR_NOT_SYSTEM_APP;
++6022     if (!isSpecificSession && property->GetPersistentId() > 0 && !IsNeedRecover(...)) { → :6023 return;
++6026     return WSError::WS_OK;
++```
++
++即 `:6017` 在**辅助函数** `CheckSessionPropertyOnRecovery` 里，**不在**两个恢复实现体的函数体内
++（`RecoverAndConnectSpecificSession` 从 `:6028` 起，`RecoverAndReconnectSceneSession` 从 `:6174` 起）。
++实现体自己第一条被建模的语句是 `:6032 auto propCheckRet = CheckSessionPropertyOnRecovery(property, true);`
++加 `:6033 if (propCheckRet != WSError::WS_OK)` —— 那个 `if` 判的是**一次调用的返回值**，
++`dispatch_guard` 不把它记成门。所以这两条留下的原因是**门不在实现体自己的语句里**，
++而不是「门是辅助函数调用」。§2.12 的变体 `impl-recovery-guard-inline-single-role` 与
++`impl-recovery-connect-inline-role` 的对照，把这一点做成了差分证据。
++
++`:5278` 那个门的原文（本轮已复核）：`:5838 bool SceneSessionManager::CheckSystemWindowPermission(const sptr<WindowSessionProperty>& property)`
++的函数体是 `:5841-5843` UIExtension 窗型 → `return false`；**`:5845-5848` 非系统窗型 → `return true`**；
++`:5851 SessionPermission::VerifyCallingPermission("ohos.permission.VIRTUAL_KEYBOARD_WINDOW")`（只对输入法浮窗）；
++`:5859 SessionPermission::IsStartedByInputMethod()`。即它是一个**窗型相关**的检查，
++对非系统窗型**直接放行**，且判定对象是 `property` 而不是调用者。
++所以 `dispatch_guard` 拒绝把它记成角色门是**保守但正确**的——**这一格的「守卫存在但授权策略待复核」二分不变**（见 §1.7 #58/#59）。
++同函数 `:5287 CheckSubWindowCallingProcess(property, parentSession)`（`:5288-5292` 同进程校验）是**所有权**维度上确实存在的守卫。
++
++### 2.8 早先版本的更正（本轮自我纠错）
++
++上一版本节写了两条**我当时没有证据**的结论，现按实测更正：
++
++1. 「改写实现体的守卫**零效果**」——**是单文件口径的假象**：那个口径走不到 `one_hop_dispatch :685`。
++   组件级重跑（§2.12）已把这条铸成实测：把实现体自己的门换成 `!SessionPermission::IsSystemCalling()`
++   → `:371`/`:373` **被抑制**（9→7）；换成 `!SessionPermission::IsSystemCalling() && !IsStartByHdcd()`
++   → **不抑制**（仍 9）。**预测与实测同向**，以 §2.12 的表为准。
++2. 「M-OUTPARAM-EXPORT：出参导出的值永远不满足 `call_result`」——**错**。
++   `bind_result :752-756` **会**绑引用参数，`:1208`/`:1226`/`:2944` 三条走的就是这条通道（§2.9）。
++   正确的表述是：出参导出**能**被识别，前提是**产生它的调用**被 `one_hop_dispatch` 接管、
++   且实现体的门被 `dispatch_guard` 记下。`#64` 的 `finishedCallback->AsObject()`
++   留下的原因**不是形状**，是那条 `&&` 里的词表外谓词（M-DISPATCH-CONJ）。
++
++### 2.8.1 wwm #64：导出值不是受守卫调用的返回值（形状不匹配）——**本节结论已被 §2.8 第 2 条撤回，保留仅为记录推理过程**
++
++> **读到这里请先看 §2.8 第 2 条**：本节假设的「出参导出永远不满足 `call_result`」**是错的**
++> （`bind_result :752-756` 会绑引用参数，§2.9 的 3 条走的就是这条通道）。
++> `#64` 真正的成因是 `&&` 里的词表外谓词（**M-DISPATCH-CONJ**，§2.7 表第二行）。
++> 本节**不作为 #64 的依据**。
++
++`analysis.py:1053 from_guarded_dispatch = exported.kind == "call_result" and exported.subject == "guarded"`。
++`:382` 的受守卫调用经**出参** `&finishCallback` 返回，`:389` 写的是 `finishedCallback->AsObject()`
++——即对出参的成员调用，**永远**不满足 `call_result + subject=="guarded"`。
++即使 §2.7 的角色词表补齐，这一格也仍不匹配。**两条独立的不匹配，同一条候选。**
++
++### 2.9 候选集从 14 条缩到 9 条：**本轮定位到机制，并能在同一 runner 上复现 9**
++
++上一轮这里是「观察，未证」。本轮把它做成了因果结论，路径是先把 **envelope 本身**复现出来（见 §2.11），
++再逐条读原文。**缺的 5 条最终归到同一个成因**：一跳实现在**自己的函数体**里写了词表内的角色门 →
++`dispatch_guard` 认下 → 调用结果标成 `guarded` → 候选不再产生。
++（本文件早先版本把这 5 条分成「3 条已定位 + 2 条版本差」；**那个二分是错的**，
++第二类在本轮由 `limitations` 里的逐行认门记录**推翻**，见下文。）
++
++**第一类（3 条）：一跳守卫把导出值标成 `guarded`，因此 CAP-01 被抑制 —— 已证。**
++
++| 桩上的导出 | 产生该值的调用 | 实现体与它的门（原文行号） |
++|---|---|---|
++| `scene_session_manager_stub.cpp:1208 reply.WriteRemoteObject(uiContentRemoteObj)` | `:1207 GetUIContentRemoteObj(persistentId, uiContentRemoteObj)`（**无限定调用**） | `scene_session_manager.cpp:12969 GetUIContentRemoteObj(int32_t persistentId, sptr<IRemoteObject>& uiContentRemoteObj)`，**`:12971 if (!SessionPermission::IsSACalling()) { … return WS_ERROR_INVALID_PERMISSION; }`** |
++| 同文件 `:1226` | `:1221 GetRootUIContentRemoteObj(displayId, uiContentRemoteObj)` | `:12984` 同签名，**`:12986 if (!SessionPermission::IsSACalling())`** |
++| 同文件 `:2944 reply.WriteRemoteObject(controller->AsObject())` | `:2928 CreateUIEffectController(controllerClient, controller, controllerId)` | `:4779-4780` 签名 `(const sptr<IUIEffectControllerClient>&, sptr<IUIEffectController>& controller, int32_t&)`，**`:4782 if (!SessionPermission::IsSystemCalling())`** |
++
++链路（每一步都有行号）：
++
++1. `:681-682` —— `one_hop_dispatch` 只接管**无限定**调用；上面三个产生值的调用都无限定。
++2. `:685 self.hop_cache[key] = self.index.one_hop_definition(fn.owner, name)` → 拿到实现体 → `:716 gate = self.dispatch_guard(...)`。
++3. `dispatch_guard :833 if not yes or any(s.auth or s.caller_class for s in yes): continue` 与 `:839 if not no or not all(s.auth or s.caller_class for s in no): continue`
++   —— **接受 `auth 或 caller_class`**，所以 `!IsSACalling()` / `!IsSystemCalling()` 这种**角色门**在这里够用。
++4. `:719-721 self.bind_result(...)` → `Value("call_result", <实现体>, "guarded")`；`bind_result :752-756` **只绑引用参数**，而上面三个出参（`uiContentRemoteObj`、`uiContentRemoteObj`、`controller`）**都是引用参数**。
++5. 回到桩：`action() :1049 if name in self.policy.capability_calls and not state.auth:`
++   → `:1057 from_guarded_dispatch = exported.kind == "call_result" and exported.subject == "guarded"` 成立
++   → `:1058 if args and args[0].key not in ("nullptr","NULL","0") and not from_guarded_dispatch:` **不成立** → 不报。
++
++   这一步在代码里有一段注释（`analysis.py:1050-1055`）把理由写得很清楚，**引原文**：
++
++   > An object the reply carries is only an unguarded export if the code that produced it was
++   > unguarded. When the value written came back from a one-hop dispatch whose implementer rejects
++   > unauthorized callers, the capability was never handed to a caller this boundary fails to check;
++   > treating the write as the export would put the finding one frame too late.
++
++   —— 即：**导出是不是「未授权导出」，取决于产出它的那段代码有没有门**；这条设计决定了
++   `:1208`/`:1226`/`:2944` 不会被报。§2.7.1 留下的 4 条，正是**这段注释的前提不成立**的情形
++   （实现体里没有能被 `dispatch_guard` 读到的门）。
++
++**第二类（2 条）：`screen_session_manager_stub.cpp:738` 与 `session_stage_stub.cpp:1252`
++—— 原先记为「版本差，未定位」，本轮**已定位，与第一类同一机制**。**
++
++这两条在上轮记为 AUTH-02，上轮给出的守卫是
++`screen_session_manager.cpp:10918 !IsSystemCalling && !IsShellCall`、
++`wm/src/window_session_impl.cpp:5064 !IsSystemCalling`。
++本轮在当前 envelope 的 `limitations` 里**按行号找到了这两条被认下的门**（v6，`candidates_m8.json`）：
++
++```
++Cross-TU one-hop guard credited: ScreenSessionManagerStub::OnRemoteRequestInner at
++window_scene/screen_session_manager/src/zidl/screen_session_manager_stub.cpp:738 dispatches to
++ScreenSessionManager::GetDisplaySnapshot at window_scene/screen_session_manager/src/screen_session_manager.cpp:10914,
++whose caller-role gate at window_scene/screen_session_manager/src/screen_session_manager.cpp:10918
++admits <shell-caller>, <system-caller>.
++
++Cross-TU one-hop guard credited: SessionStageStub::HandleGetUIContentRemoteObj at
++window_scene/session/container/src/zidl/session_stage_stub.cpp:1251 dispatches to
++WindowSessionImpl::GetUIContentRemoteObj at wm/src/window_session_impl.cpp:5062,
++whose caller-role gate at wm/src/window_session_impl.cpp:5064 admits <system-caller>.
++```
++
++**行号逐一吻合**：`:738` ↔ `:10918`，`:1251`（导出在 `:1252`，与 `:1207`/`:1208` 同一约定）↔ `:5064`。
++⇒ 这两条**不是丢候选，是被认下的门正当抑制**；抑制机制与第一类**同一条通道**
++（`one_hop_dispatch` → `dispatch_guard` → `guarded`），只是候选的族不同（AUTH-02 而非 CAP-01）。
++
++**这一条推翻了我上一轮（以及本文件早先版本）的「版本差」假设。**
++上一轮记录的输入确实是 `ohscanner.interface.ipc@0.5.0` + `oh-ipc-2026.10-v3`
++（`ipc_wwm_deep_review_2026-10-15.md:3`），本轮是 `0.8.0` + `oh-ipc-2026.10-v6` —— 版本确实不同，
++**但差异不需要用版本差解释**：当前版本对这两个锚点都有**逐行可查的认门记录**。
++⇒ 14→9 的 5 条**全部由同一机制解释**（一跳角色门被认下），**两类合并为一类**。
++「0.5.0 是否也能复现」因此**不再是回答这个问题的必要条件**（§5 该项随之降级）。
++
++### 2.10 任务描述与实测的三处出入（含用户点名的两处「重复计数」判断）
++
++1. **ddm「`ipc_server_stub.cpp:309` 一个函数 8 条连续 relay」** —— **位置不对，且不是重复计数。**
++   `services/service/src/ipc/standard/ipc_server_stub.cpp:309` 只贡献 **1** 条候选
++   （`:307-314` 的 `CLIENT_CODE_3RD` 分支里 `:309 if (IsIpcServiceStub3rdReady())` → `:310 ipcServiceStub3rd_->OnRemoteRequest(...)`）。
++   8 条连续 relay 在**另一个文件、另一个函数**：
++   `3rd/services/service/src/ipc/ipc_service_stub_3rd.cpp:58/60/62/64/66/68/70/72`
++   （`IpcServiceStub3rd::OnRemoteRequest` 的 8 个 switch 臂，指向 8 个**不同**处理器：`InitDeviceManager`/`ImportPinCode3rd`/`GeneratePinCode`/`AuthPincode`/`AuthDevice3rd`/`QueryTrustRelation`/`DeleteTrustRelation`/`AuthCredential`）。
++   → **8 条是 8 个不同的（入口→处理器）对，不是同一位置的重复计数**；它们**共用同一个成因**（`:51` 的描述符守卫写成局部字面量 → M-LITERAL）。
++   两者在链上前后相邻（`ipc_server_stub.cpp:310` 调进 `ipc_service_stub_3rd.cpp`），容易读成一件事。
++2. **usb「`usbd_callback_stub.cpp` 两条」** —— **是 4 条，不是两条。**
++   `interfaces/innerkits/native/src/usbd_callback_stub.cpp` 贡献 `:33` / `:43`（两个 switch 臂，各自带一份 `:27-32` / `:37-42` 的守卫）
++   与 `:77` / `:104`（两个处理器函数体 `TransferWriteCallback` / `TransferReadCallback`）。
++   另 2 条在**另一个文件**：`interfaces/innerkits/native/src/usbd_bulk_callback.cpp:42` / `:62`。
++   → 6 条共 6 个不同锚点，**无重复计数**。
++3. **`perf-corpus` 的树「没有 `.git`、须另取 clone」** —— 与实测不符。
++   实测 10 棵树**全部有 `.git`**，`git rev-parse HEAD` 正常返回（如 wwm = `8b0d8fe1b973d865904c942c286b3d2a3b9b08e7`），
++   本轮全部原文均以 `git -C <树> show <commit>:<path>` 取得。
++
++### 2.11 先把 envelope 复现出来：本轮 82 条的来源**是可复现的**（但口径必须写清）
++
++上一轮没有做这一步，本轮补上（这是 §2.7/§2.9 结论成立的前提）。
++用**产生该 envelope 的权威 runner** 对着**同一份 checkout** 重跑，再逐条比对：
++
++| 对象 | runner | checkout | 重跑结果 | 与 artifact 的逐条差 |
++|---|---|---|---|---|
++| 5 棵 gitcode 树 | `w_gitcode_scan.py` | `-b` = `635b3e0` | **18** 条 | **零位移**（候选与 limitations 全部无差异） |
++| 10 个语料组件 | `w_b_corpus_provenance.py` | `-b` = `635b3e0` | **64** 条 | **零位移** |
++| 其中 wwm 组件 | 同上（单组件） | `-b` | **9** 条 | **零位移**（逐条含 file/line/symbol/rule） |
++
++对照件：`/home/audit/openharmony-audit/artifacts-2026-10-16/{candidates_m8.json, gitcode_5.json}`。
++
++**由此确定的三件事**（本轮新增，且**推翻了我自己中途的一个假设**）：
++
++1. **候选集不是玄学**：同一 checkout + 同一 runner + 同一棵树 = 同一份候选，逐条可复核。
++2. **口径必须写清，`detector_version` 不足以标识**：`wt-candidate-review`（`32f641e`）与
++   `-b`（`635b3e0`，其子提交，含六族重构）**都是 `version = "0.8.0"`**
++   （`detector.py:67` / `:62`），但 `interface/` 下 7 个文件的 hash 有 4 个不同
++   （`analysis.py`、`detector.py`、`entry_index.py`、`models.py`）。**版本号不能区分布局/行为。**
++3. **扫描范围会改变候选集，而单文件范围是错的**：`one_hop_dispatch`（`analysis.py:662-730`）
++   要在一个 `ScanContext` 的**索引**里找到实现体才会读一跳守卫（`:685`）。
++   我用单文件跑 `scene_session_manager_stub.cpp` 得 **7** 条，同一文件在**整组件**（1103 文件）下是 **4** 条；
++   差的 3 条正是 §2.9 第一类。**⇒ 本轮凡引用候选集，一律注明 checkout + 范围。**
++   （我中途把「7 ≠ 4」误当成「envelope 的 `0.8.0` 不是这份代码」，这是**错的**：两者都 0.8.0，
++   差异全部来自范围，组件级重跑与 artifact 零位移。）
++
++### 2.12 组件级变体实验（`dispatch_guard` 与 CAP-01 的因果）
++
++**口径**：`b_comp.py`，范围 = **wwm 整组件 1103 文件**（`one_hop_dispatch` 只在这个口径下接管，见 §2.11），
++checkout = `-b` `635b3e0`。每个变体**只改一处**，改的都是**源码**（检测器一字未动）；
++`raw` 变体即 §2.11 里零位移的那 9 条。原始输出：`/home/audit/wtmp/b_runs/comp_wwm1.log`（第 1–7 行变体）、
++`comp_wwm2.log`（第 8–10 行变体）。
++
++| # | 变体 | 唯一改动（写入位置） | findings | 锚点变化 |
++|---|---|---:|---|
++| 1 | `raw` | 无 | **9** | — |
++| 2 | `stub-trusted-uid-guard` | 桩的创建处理器 `scene_session_manager_stub.cpp:327 HandleCreateAndConnectSpecificSession` 开头插入 `if (IPCSkeleton::GetCallingUid() != 0) { return ERR_INVALID_DATA; }` | **7** | `:371`/`:373` **消失**；`:421`/`:462` 位移为 `:424`/`:465` 仍在 |
++| 3 | `stub-checkpermission-guard` | 同位置插入 `if (!CheckPermission("ohos.permission.MANAGE_MISSIONS", IPCSkeleton::GetCallingTokenID())) { return ERR_INVALID_DATA; }` | **7** | 同上 |
++| 4 | `stub-role-guard` | 同位置插入 `if (!SessionPermission::IsSystemCalling()) { return ERR_INVALID_DATA; }` | **9** | `:371`/`:373` **不消失**（位移为 `:374`/`:376`） |
++| 5 | `impl-create-guard-inline-single-role` | 把创建**实现体自己的门** `scene_session_manager.cpp:5278` 的条件换成 `!SessionPermission::IsSystemCalling()` | **7** | `:371`/`:373` **消失** |
++| 6 | `impl-create-guard-role-plus-unknown-conjunct` | 同处换成 `!SessionPermission::IsSystemCalling() && !IsStartByHdcd()` | **9** | 都不消失 |
++| 7 | `impl-recovery-guard-inline-single-role` | 把**辅助函数** `CheckSessionPropertyOnRecovery` 内的 `:6017` 条件换成 `!SessionPermission::IsSystemCalling()` | **9** | 都不消失 |
++| 8 | `stub-trusted-uid-guard`（第二组重跑） | 同 #2 | **7** | 同 #2（**跨组一致**） |
++| 9 | `impl-recovery-connect-inline-role` | 在 `RecoverAndConnectSpecificSession` 的 `:6032` **之前新插入** `if (!SessionPermission::IsSystemCalling()) { return WSError::WS_ERROR_INVALID_PERMISSION; }` | **8** | `:421` **消失**，`:462` 仍在 |
++| 10 | `impl-recovery-reconnect-inline-role` | 在 `RecoverAndReconnectSceneSession` 的 `:6178` 之前新插入同样的门 | **8** | `:462` **消失**，`:421` 仍在 |
++
++**四个结论，全部由本表直接读出：**
++
++**（A）入口通路只认 `auth`，一跳通路 `auth 或 caller_class` 都认——同一张表里两个方向都有对照。**
++同一处入口（桩的处理器开头）三种形状的门，只有两种清掉候选：
++
++| 门 | 命中哪张策略表 | 落成什么事实 | 结果 |
++|---|---|---|---|
++| `IPCSkeleton::GetCallingUid() != 0` | `trusted_uids` | `auth` | **抑制**（#2） |
++| `CheckPermission("ohos.permission.MANAGE_MISSIONS", …)` | `boolean_permissions` | `auth` | **抑制**（#3） |
++| `!SessionPermission::IsSystemCalling()` | `caller_role_guards` | `caller_class` | **不抑制**（#4） |
++
++入口处 CAP-01 的第一道判据是 `analysis.py:1049 if name in self.policy.capability_calls and not state.auth:`
++—— 它看的是 **`state.auth`**，所以**角色事实（`caller_class`）不够用**；
++第二道 `:1058 if args and args[0].key not in ("nullptr","NULL","0") and not from_guarded_dispatch:` 是 §2.9 那条通道。
++而一跳处 `dispatch_guard :833`/`:839` 写的是 `any/all(s.auth or s.caller_class for s in …)`，
++**接受 `caller_class`**。⇒ **同一个角色谓词，写在入口不管用，写进实现体就管用**（#4 vs #5）。
++这是 M-ROLE-ASYM 的完整形态：**不是「角色门不算门」，而是两条通路的事实词表不同**。
++
++**（B）#5 与 #7 是 M-DISPATCH-LOCAL-PRED 的成对证据。**
++**同一个谓词、同一个语义守卫**：写在实现体**自己的语句**里 → 抑制（#5，9→7）；
++写进它调用的**辅助函数**里 → 不抑制（#7，仍 9）。
++⇒ `dispatch_guard :820-826` 只扫 `implementation.body.named_children`，即**实现体自己的语句表**，
++辅助函数体内的门**根本不在它的视野里**。
++#9/#10 把这条推到**分支级**：同一个文件、同一个谓词，插入到**连接**分支前 → 只有 `:421` 消失；
++插入到**重连**分支前 → 只有 `:462` 消失。**另一分支完全不受影响**——所以这不是"整函数被标成有门"。
++
++**（C）#6 是 M-DISPATCH-CONJ，且它演示的正是 §2.7 说的「故意拒绝」。**
++`!IsSystemCalling() && !IsStartByHdcd()` 里的 `IsStartByHdcd` **不在任何词表里**，
++于是"继续分支的每条路径都带角色"不成立 → `:839 if not no or not all(s.auth or s.caller_class for s in no): continue` 命中 → 门被拒（仍 9）。
++`dispatch_guard` 的注释（`analysis.py:835-840`）把这条写成了设计选择：
++单条不带角色的路径就是"门放进来的、它本该拦住的调用者"，**宁可拒绝也不猜**。
++
++**（D）阴性对照：另外 5 条候选在 10 个变体里一条都没动。**
++`:1778`、`session_stub.cpp:592`、`session_manager_service_stub.cpp:37`/`:41`、`window_manager_stub.cpp:389`
++在全部 10 个变体里**行号与数量都不变**。
++⇒ 这些改动的**作用域是局部的**，没有把别的候选连带清掉；本表的差异可以归因到被改的那一处。
++
++**本表不主张的事**：这些变体改的是**源码**，不是检测器规则；
++它们证明的是「**检测器对这些形状如何反应**」，**不是**「这些门因此就是充分的授权守卫」。
++#2/#3 插入的 `GetCallingUid() != 0` / `CheckPermission(...)` 是**为了实验而写的最小形状**，
++不代表这几个处理器实际应当这样授权。
++
++### 2.13 M-DOW 的组件级验证：只改一个宏定义，7 条 AUTH-01 全消失
++
++§2.1 的 M-DOW（`do { … } while (0)` 守卫被读成**可零次迭代**）此前只有单文件口径的旁证。
++本轮在**整组件**口径下补了一次**单点因果**实验（这是 §2.1 在组件级成立的前提）。
++
++- 组件：`multimedia_camera_framework`，commit `085a5d0e2dc1c90a4b676bad55675a1cf12a6380`，整组件 **1105** 文件。
++- 唯一改动：`common/utils/camera_log.h:96-101` 里 `CHECK_RETURN_RET` 的**定义体**，
++  由 `do { if (cond) { return ret; } } while (0)` 改成等价的 `if (cond) { return ret; }`。
++  **宏名、参数、调用点、其它行一字未动**；改写串由 `b_mk_camera_spec.py` 从 pinned commit 切出原文再替换
++  （照抄而手打，续行反斜杠前的空白会不一致，替换就不生效）。
++
++| 变体 | findings | 其中 AUTH-01 `ipc.relay.descriptor-boundary` | 其中 `hcamera_service.cpp:1098` |
++|---|---|---|---|
++| `raw` | **9** | 7 | 2（`ipc.auth.guard-coverage` + `ipc.auth.missing`） |
++| `macro-check-return-ret-inline-if` | **2** | **0** | 2（**逐条不变**） |
++
++7 条 AUTH-01 的 relay 锚点，与**它们各自文件里那个描述符守卫**（原文行号，pinned commit）：
++
++| 文件 | relay 锚点 | 同文件 `OnRemoteRequest` 开头的描述符守卫 |
++|---|---|---|
++| `services/camera_service/binder/server/src/hstream_capture_photo_callback_stub.cpp` | `:32 errCode = HandleOnPhotoAvailable(data);`、`:41 errCode = HandleOnPhotoAvailableWithAuxiliary(data);` | `:29 CHECK_RETURN_RET(data.ReadInterfaceToken() != GetDescriptor(), errCode);` |
++| 同文件（处理器函数体内） | `:65 return OnPhotoAvailable(surfaceBuffer, timestamp, isRaw);`、`:103 return OnPhotoAvailable(mainBuffer, oxygenBuffer, pigmentationBuffer, timestamp, isRaw);` | 同上 |
++| `.../hstream_capture_thumbnail_callback_stub.cpp` | `:30 errCode = HandleOnThumbnailAvailable(data);` | `:26` 同写法 |
++| `.../window_manager_service_callback_stub_impl/hcamera_window_manager_callback_stub.cpp` | `:30 errCode = CameraWindowManagerAgentStub::HandleUpdateCameraWindowStatus(data);` | `:27` 同写法 |
++
++**结论一（形态）**：这 7 条**不是「没有边界检查」**，而是边界检查**写在 `do/while(0)` 宏里**。
++`data.ReadInterfaceToken() != GetDescriptor()` 这个检查在三份桩里**各写了一次、写法完全相同**，
++所以一个宏定义改动同时清掉三份文件——这是「同一成因」在本语料里最干净的形态。
++**它们属于「守卫存在但审计器读不到」，不属于「根本没有守卫」**（§0 的二分口径按此归档）。
++
++**结论二（不外溢）**：两条 `hcamera_service.cpp:1098` 逐条不动（数量、行号、规则都不变），
++说明该改动的效果**局限于形状依赖这个宏的那一族**，没有波及 AUTH-02/AUTH-03。
++一个只动宏定义体的实验能定向改变单一族，反过来也说明 AUTH-01 的判据里确实用了宏展开结果。
++
++**本轮新出现的一条 limitation**（`b_runs/comp_camera.log`，`raw` 与变体里**逐字相同**）：
++
++```
++One-hop callee is not unique (3 definitions) for HStreamCapturePhotoCallbackStub::OnPhotoAvailable;
++the callee body was not read. The call site therefore stays a candidate.
++```
++
++即 `:65`/`:103` 那两条的**一跳目标 `OnPhotoAvailable` 在同组件里有 3 个定义**，
++`one_hop_definition` 不选，于是**实现体没被读**。它是一条**携带的** limitation，不是这两条被报/被销的决定因素：
++该 note 在两个变体里**逐字不变**，而它点名的两条候选在变体里消失了。
++⇒ 决定因素是宏（入口描述符守卫是否被记下），一跳读没读到并未改变最终判定。
++**§5 记一条 unknown**：多定义一跳目标被直接放弃，这一 limitation 的**覆盖面**
++（多少候选因此停在候选态）本轮只测了 camera 一个组件，未做全语料统计。
++**——这一条下一节就改掉了：它不是一例，是 74 条（见 §2.14）。**
++
++**与既有测量的对齐（同仓库外的产物，`artifacts-2026-10-16/s0-idl-entry-source.md`）**：
++那条线在 camera 上量过同一族因子，结论是「**单修宏或单修常量收益都是 0**」
++（该文件 §6.1 合成矩阵与 §7 ①；`PROGRAM_STATUS.md` §58.4.1/58.5 复述）。
++两份结果**不冲突，而是落在不同的族上**：
++
++- **一致处**：他们的"宏修不动"是在 camera 的**授权**候选上量的，指的是
++  `CheckSystemApp` + `CheckPermission` + `ret != CAMERA_OK` 那组（该文件 §6.1 第 7/8 行、
++  §5 的六类之一）。本节的**结论二**正是同一件事在**组件级、本版 v6** 上的独立复现：
++  只改宏定义体，`hcamera_service.cpp:1098` 那两条**逐条不动**。
++- **本轮增量**：那批实验把「宏」当成一个**不可分的因子**（该文件 §7 原话：宏体里的守卫
++  "对分析完全不存在"）。本节这个单点实验证明，**在本版里宏体是被读的**——
++  若宏体对分析不可见，只改它的定义体不可能改变任何一条候选；实测 7 条消失。
++  于是入口族上剩下的形状因子是 `do/while(0)` 本身（即 §2.1 的 M-DOW）。
++- **仍未分离的**：我的改写**同时**做了两件事——把守卫移出宏体**并且**去掉 `do/while` 包装，
++  所以这份实验**不能**单独判定"宏体可见性"与"`do/while` 形状"各自的贡献。
++  该文件 §6.1 的表里有能分离这两者的行（`if` 记账 / `CHECK_RETURN_RET_ELOG` 不记账），
++  但那是**合成单元**口径、且是 0.7.x 的语料。**§5 记一条 unknown。**
++
++### 2.14 本 envelope 的限制画像（v6）：**2636 条**限制备注，且它们能分开「没有门」与「没读出实现体」
++
++§2.13 说明了限制备注不是装饰。这里把**产生这 82 条候选的那一次运行**的限制备注完整清点一遍。
++来源：`candidates_m8.json` 的 `limitations` 字段（v6 模型）。
++（`/home/audit/wtmp/b_runs/hop_wwm.json` 的 wwm 限制清单是 **v4** 模型 `oh-ipc-2026.10-v4` 的旧运行，
++**与本次 envelope 不同版，本文件不引用它的数字**。）
++
++| 组件 | 限制备注条数 |
++|---|---:|
++| window_window_manager | 966 |
++| multimedia_player_framework | 434 |
++| multimedia_camera_framework | 419 |
++| security_access_token | 263 |
++| communication_ipc | 173 |
++| inputmethod_imf | 102 |
++| telephony_call_manager | 95 |
++| update_updateservice | 94 |
++| resourceschedule_background_task_mgr | 54 |
++| notification_common_event_service | 36 |
++| **合计（10 个语料组件）** | **2636** |
++
++**按类别**（全 10 个组件合计；每条后面是**生成它的代码位置**）：
++
++| 类别 | 条数 | 含义 |
++|---|---:|---|
++| `Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: <file>` | **1169** | 私有扫描分支重写了该文件（建模 fmt 宏 / 未解析的成员指针分派），**但保留公共解析状态**（`analysis.py:445`） |
++| `Partial source: only error-free functions can be inspected in <file>` | **644** | 该文件有解析错误，**只有无错函数被检查**（`analysis.py:448-449`）→ **这就是 15 个组件全 `blocked` 的直接原因**（§0.2） |
++| `Unresolved multi-outcome helper return: <helper>` | **527** | 辅助函数返回值不能唯一决定，于是它的调用点不让任何门**支配**（`analysis.py:1360`）。wwm 一个组件占 438 |
++| `Cross-TU one-hop guard credited: <桩>:<行> dispatches to <实现体>:<行>, whose caller-role gate at <行> admits <角色>` | **90** | 一跳**读到了**实现体并记下了门；**90 条全在 wwm**。§2.9 第一类那 3 条就出自这条通道 |
++| `One-hop callee is not unique (N definitions) for <fn>; the callee body was not read. The call site therefore stays a candidate.` | **74** | 一跳目标不唯一 → **实现体根本没被读**（`entry_index.py:902`/`:910`，`analysis.py:1697-1699` 把它拉进候选清单） |
++| `Call depth/recursion budget reached at <fn>` | 14 | 调用深度/递归预算用尽 |
++| `Loops are conservatively explored zero/one iterations; no induction or termination proof.` | 7 | 循环只按 0/1 次探索 |
++| `Macro catalogue truncated at 400 source(s): …` | 5 | 宏目录**上限 400 个源文件**；未被编目的文件里的宏**不展开**，其中的门**看不到**（`analysis.py:504`） |
++| `Macro expansion: N invocation(s) expanded in M file(s), K of them carrying control flow; …` | 10（每组件 1 条） | 见下文第 2 点 |
++
++**三条为什么重要：**
++
++1. **它把「守卫不存在」和「守卫没读到」分开了** —— 这正是本文件强制的二分口径。
++   `analysis.py:1690-1696` 的注释把这一点写得很直白：
++
++   > A refused hop is the whole reason a one-hop call site keeps its candidate, and the reason is
++   > recorded on the index rather than in this walk. Only the hop refusals are pulled through, so the
++   > reader can tell "the implementer does not guard" from "the implementer was never established".
++
++   即 **74 条「一跳目标不唯一」= 实现体从未被确立**，**不是**「实现体没有门」。
++   两者在候选清单上长得一样（同 file/line/rule），**只有限制备注能区分**。
++   ⇒ 本文件凡是撤销，都按这一区分写成「守卫存在但检测器未读到」而不是「没有守卫」。
++
++2. **宏层面的覆盖缺口是有量级的**：`Macro expansion` 备注里的括号是**按原因计数的被拒调用数**：
++   | 组件 | 展开并携带控制流的调用 | `variadic_stringify_or_token_paste` | `ambiguous_definition_variants` |
++   |---|---:|---:|---:|
++   | window_window_manager | 238 | **42071** | — |
++   | multimedia_camera_framework | **2146** | **36840** | — |
++   | inputmethod_imf | 242 | 5719 | — |
++   | security_access_token | 376 | 114 | **5700** |
++   | communication_ipc | 406 | 324 | 3951 |
++
++   （其余组件见 artifact 原文。）即**仅 wwm 一个组件就有 42071 次变参宏调用被拒绝展开**——
++   这是 §2.2 M-VARIADIC 在本语料上的**规模**；再加上宏目录**截断在 400 个源文件**，
++   M-VARIADIC 的覆盖面**不是「几个特例」，而是四万多次**。
++
++3. **修正 §2.13 的措辞**：那里写「本轮只看到多定义一跳目标**一例**（camera）」——**错了**。
++   本 envelope 里 `One-hop callee is not unique` 共 **74 条**，分布 **5 个组件**：
++   wwm **60**、security_access_token **10**、update_updateservice **2**、camera **1**、telephony **1**。
++   这是一个**系统性盲区**，不是个案。它同时解释了 §4 里 8 条保留候选的**重要一部分**：
++   凡「一跳目标不唯一」的调用点，**无论实现体有没有门，都停在候选态**。
++
++4. **留下来的候选本身没有逐条记录理由。** §4 保留的 8 条里，wwm 那 6 条中有 **5 条**各自带着一条
++   `Unresolved multi-outcome helper return: <该桩的处理器>`
++   （`session_stub.cpp:592`、`scene_session_manager_stub.cpp:371`/`373`/`421`/`462` 的宿主）；
++   **第 6 条 `screen_session_manager_stub.cpp:1778` 在 966 条备注里一条都不沾**
++   （按 `1778` 检索 = 0 条，而该桩另有 44 条一跳门被认下的记录）。
++   ⇒ **「为什么这条留在候选态」在 artifact 里没有逐条答案**；
++   §2.7.1 与 §2.12 给出的答案，是**我读源码重建的**，不是 artifact 自带的。
++   这与 §0.2 规则 3 是同一件事的另一面：**artifact 记的是「检测器读过什么」，不记「它为什么这样判」**。
++
++---
++
++## 3. 已知安全对照误报（单列，**不计入任何处置**，也不进入 findings）
++
++以下形态**出现在本轮复核的原文里**，但**不是**发现。列出它们是为了防止下一轮把它们读成漏洞，
++也为了防止把它们读成「已授权」。
++
++| 形态 | 位置 | 为什么不是发现 |
++|---|---|---|
++| 按**描述符**放行 | 全部 `OnRemoteRequest` 的 `ReadInterfaceToken() != GetDescriptor()` | 描述符相等只证明发送方知道接口名，**不是**权限判断（`ipc_cap01_guard_chain_2026-10-16.md` §5.2 已定） |
++| dump 的 **UID 白名单** | `ipc_object_stub.cpp:212 uid != 0 && uid != SHELL_UID && uid != HIDUMPER_SERVICE_UID`（＋ `!IsLocalCalling()`） | 这是常规准入闸门，支配 `:165` 的 `Dump(fd,args)`（唯一调用点 `:216`，其唯一调用点 `:449`）。⇒ #9 撤销依据 |
++| **目标 UID 与调用 UID 相绑** | `bg_continuous_task_mgr.cpp:899/901/912-926` | 这正是 `ipc.auth.object-owner` 要求的**正确写法**。⇒ #50/#51 撤销依据 |
++| **调用者身份 + 逐码权限** | `update_service_stub.cpp:370-389 IsCallerValid`（`:378 IsSystemAppByFullTokenID` / `:383 callerUid == ROOT_UID \|\| callerUid == EDM_UID`）与 `:391-404 IsPermissionGranted`（`:398 VerifyAccessToken(callerToken, permission)`，`:395-396` 按 code 选 `UPDATE_SYSTEM` / `FACTORY_RESET`） | 二者在派发点之前：`OnRemoteRequest :406` → `:409` 描述符 → `:415` 码表 → `:421 !IsCallerValid()` → `:425 !IsPermissionGranted(code)` → `:432 (this->*(iter->second))(…)`。**支配链成立** ⇒ #54/#55 撤销依据 |
++| SA 导出**自己的入口对象** | `session_manager_service_stub.cpp:37/41` | 导出的是客户端库自己的深层入口，SSM 对象逐方法自检 ⇒ 记为**证据边界**，既不判漏洞也不判安全 ⇒ #62/#63 撤销依据 |
++
++**「直接按请求 UID 授权」这一类**：本轮 82 条里**没有任何一条**是因为该形态被报出，
++因此**没有**把它当发现——也**没有**把它当安全对照（它本身是缺陷写法）。
++上一轮遗留的两处「名字层面的疑点」**本轮已读实现体结清**（原列在 §5 unknown 第 13 条）：
++
++| 疑点 | 实现体（原文行号） | 结论 |
++|---|---|---|
++| ddm `ipc_service_stub_3rd.cpp:95` `GetCallerProcessName(processName)` | `3rd/utils/src/permission_manager_3rd.cpp:55-90`：`:57 AccessTokenID tokenCaller = IPCSkeleton::GetCallingTokenID();` → `:63 TOKEN_HAP` 分支 `:69 processName = tokenInfo.bundleName` → **`:71 if (!TokenIdKit::IsSystemAppByFullTokenID(fullTokenId)) { … return ERR_DM_FAILED; }`**；`:75 TOKEN_NATIVE` 分支取 `tokenInfo.processName`；`:82 else … return ERR_DM_FAILED` | 名字来自**调用者自己的 token**，且 HAP 调用者必须是系统应用。**不是**「按请求 UID 授权」 |
++| ddm `ipc_service_stub_3rd.cpp:104` `GetCallerUserId(processInfo3rd.userId)` | `3rd/utils/src/multiple_user_connector_3rd.cpp:37-45`：**`:39 int32_t uid = OHOS::IPCSkeleton::GetCallingUid();`** → `:40 OsAccountManager::GetOsAccountLocalIdFromUid(uid, userId)` | userId 由**内核给的调用 UID** 换算。**不是**「按请求 UID 授权」 |
++
++同文件 `:100` / `:101` 也直接是 `IPCSkeleton::GetCallingTokenID()` / `GetCallingUid()`——
++即 `processInfo3rd` 的四个身份字段**没有一项取自包裹**。
++
++**但记一条词表观察（观察，不是缺陷判定）**：上面真正起授权作用的 `IsSystemAppByFullTokenID`
++**不在** `IpcPolicy.caller_role_guards` / `boolean_permissions` / `result_permissions` 任何一张表里
++（`models.py:175-188`、`:156-158`）。它在本轮**没有**改变 ddm 的候选集（命中的规则是
++`ipc.relay.descriptor-boundary`，与身份无关），但同一谓词若出现在**别的**组件里，
++会让一条 AUTH-02/AUTH-03 路径少记一个事实——**本轮未在其它组件验证这一影响**（见 §5）。
++
++---
++
++## 4. 收尾计数
++
++| 项 | 数 |
++|---|---:|
++| 复核条数 | **82** |
++| 撤销条数 | **74** |
++| 保留 candidate 条数 | **8** |
++| 需要动态验证条数 | **8** |
++| confirmed / reportable | **0 / 0** |
++
++「保留 candidate」与「需要动态验证」本轮**同集合**（同为这 8 条）：这 8 条的**唯一**剩余欠账都是运行时问题，
++不存在「保留但欠静态阅读」的情况。逐一列出：
++
++| 保留的候选 | 剩余欠账（必须运行时回答） |
++|---|---|
++| telephony `call_earthquake_alarm_locator.cpp:222` | 该回调路径的实际触发者；（`EMERGENCY_DEVICE_ID`/`BUNDLE`/`ABILITY` 为空串） |
++| telephony `call_earthquake_alarm_locator.cpp:352` | 同上（location SA 侧调用者的身份） |
++| wwm `screen_session_manager_stub.cpp:1778` | 非系统调用者能否发该事务（SA 4607 的取得条件）；`renderSession_` 交出去后的能力边界 |
++| wwm `session_stub.cpp:592` | 能否对**他人**的 `ISession` 发 `Connect`；渲染令牌 / `Ace::UIContent` 的能力语义 |
++| wwm `scene_session_manager_stub.cpp:371` | 同上（对象归属：调用者能否影响被导出对象的身份） |
++| wwm `scene_session_manager_stub.cpp:373` | 同上 |
++| wwm `scene_session_manager_stub.cpp:421` | 能否自备 `property`（含 `persistentId`）自造事务；`isPersistentRecover_` 分支的实际走向 |
++| wwm `scene_session_manager_stub.cpp:462` | 同上 |
++
++---
++
++## 5. 仍然 unknown 的清单
++
++**A. 结构/证据层**
++
++1. **5 处 0 候选全部是覆盖陈述**（不是「已审安全」）：
++   `notification_common_event_service`(137)、`security_access_token`(545)、
++   `account_os_account`(450)、`sensors_sensor`(152)、`useriam_user_auth_framework`(413)。
++   而且**全部 15 个组件的 run 状态都是 `blocked`**（§0.2）——
++   连那 82 条候选所在组件的 run 也是 `blocked`，所以这两个 artifact 里的任何数字
++   **都不能当成「跑完了」的覆盖数**。
++2. 本轮 82 条**全部**为静态结论；`poc_state`、`patch_revalidation` 未动，`validated_vulnerability = 0`。
++3. ~~`dispatch_guard` 接受 `auth 或 caller_class` 与 14→9 相容 —— 待核假设~~
++   → **本轮已定位**，且**5 条全部是同一机制**（§2.9）：一跳实现在自己的函数体里写了词表内的角色门，
++   `dispatch_guard` 认下 → 调用结果被标 `guarded` → 候选不再产生。
++   3 条（`:1208`/`:1226`/`:2944`，CAP-01）走 `bind_result` 的引用出参通道；
++   另 2 条（`screen_session_manager_stub.cpp:738`、`session_stage_stub.cpp:1252`，上轮记为 AUTH-02）
++   在 `candidates_m8.json` 的 `limitations` 里**有逐行认门记录**（`:738`→`:10918`、`:1251`→`:5064`）。
++   ⇒ **原先的「版本差」假设被推翻**，14→9 不再是未决项。
++   **仍未做的**：0.5.0 那一版本身没有重跑（见 5.2），所以「0.5.0 当时为什么报了 5 条」未直接观察，
++   只证明了**当前版本对这 5 个锚点都有正当抑制**。
++4. 本轮已证的守卫识别缺口只覆盖 4 类宏形态（M-DOW / M-VARIADIC / M-CONST）与 2 类表达式形态
++   （M-NAME / M-LITERAL）。**player / camera 之外是否还有未识别的守卫形态，未穷举**：
++   我只在 `partial` 解析文件上验证了「**直接读到的**守卫计入撤销依据」，
++   未验证「partial 文件里所有守卫都已找到」。
++5. m8 中 `multimedia_player_framework` 24 条全部归因 M-VARIADIC/M-DOW；该组件**是否有第二条独立成因**未查。
++5.1 **候选集的标识不足**：`detector_version 0.8.0` 在 `wt-candidate-review`（`32f641e`）与
++   `-b`（`635b3e0`）上**同值**（`detector.py:67` / `:62`），
++   ⇒ **版本号无法标识「是哪份检测器代码」**，而两边的 `analysis.py` 同一函数相差 4 行
++   （`dispatch_guard`：`-b` `:782` / `wt-candidate-review` `:778`；`one_hop_dispatch`：`:662` / `:658`；
++   `bind_result`：`:740` / `:736`；`action`：`:1004` / `:1000`）。
++   **本文件所有 `analysis.py` 的行号都是 `-b` `635b3e0` 的**；要在 `wt-candidate-review` 上核对需各 **−4**。
++   另外，这两个 artifact **记录了** 每组件 `repository`/`commit`/`source_files`/`status`，
++   但**不记录**：检测器代码的 hash、被分析的**文件范围**、以及是哪个文件让 run 变成 `blocked`
++   （`w_b_corpus_provenance.py:105-107`）。
++   ⇒ 一份候选清单**不能自证**它出自哪份检测器代码、哪个范围。本轮靠「用 `-b` + 整组件重跑，零位移」反推，
++   但 artifact 本身**没有**这些字段——这是**证据绑定的缺口**（artifact 格式不归本线）。
++5.2 **0.5.0 那批候选能否复现，未做**（降级，不再是结论的必要条件）：
++   §2.9 的 14→9 已由当前版本的认门记录解释（§2.9 第二类），所以**不再需要**跑 0.5.0 才能下结论。
++   但 `ohscanner.interface.ipc@0.5.0` + `oh-ipc-2026.10-v3` 那一版本身**从未在本轮重跑**，
++   因此「0.5.0 当时为什么把这 5 个锚点报成候选」**仍是未观察的**——
++   可能只是没有那条一跳通道，也可能是别的差异；本轮按「不猜」处理。
++5.3 组件级变体实验只做了**两个组件**：wwm（§2.12，CAP-01 / `dispatch_guard` 一族）
++   与 camera（§2.13，AUTH-01 / M-DOW 一族）。其余 **8 个组件没有**做组件级变体，
++   因此「某条撤销是因为实现了守卫」这一层，在别的组件上仍只由**单文件**证据支持
++   （单文件不到一跳——这是我本轮的教训，见 §2.11 第 3 点）。**撤销本身的依据是原文行号，不受此影响**，
++   但「哪一条守卫被检测器读到」在别的组件上**未验证**。
++5.4 **多定义的一跳目标会被直接放弃**（`entry_index.py:902`/`:910`）：
++   本 envelope 里这类备注共 **74 条**，分布 5 个组件（wwm 60 / security_access_token 10 /
++   update_updateservice 2 / camera 1 / telephony 1），原文写明「the callee body was not read。
++   The call site therefore stays a candidate」。⇒ **同组件内的重载/多定义会让一跳守卫识别整个失效**，
++   且**无论实现体有没有门，这些调用点都停在候选态**。
++   **仍未统计**的是：这 74 条里有多少**确实**指向了候选（限制备注是按调用点记的，
++   与候选清单不是一一对应）。原先把这一现象当成「camera 的一例」，**已在 §2.14 更正**。
++5.5 **「宏体可见性」与「`do/while(0)` 形状」在入口族上未分离**（§2.13 末的划界）：
++   本轮的 camera 单点改写**同时**做了两件事——把守卫移出宏体、并去掉 `do/while` 包装——
++   所以只能断定「这两个因子中至少一个是决定性的」，**不能**断定是哪一个。
++   要分离需再补两次单变量改写（只去 `do/while` 保留宏体、或只把宏体搬到 `if` 而保留同名宏）。
++   既有的 `artifacts-2026-10-16/s0-idl-entry-source.md` §6.1 有能分离的行，
++   但那是 **0.7.x 合成单元**口径，不能直接搬来当本版结论。**分离实验本轮未做。**
++
++**B. 可达性 / 准入层**
++
++6. 全部 8 条保留候选的 `entry_controlled` **均未论证**：SA profile 只描述「叫什么、加载哪个库」，
++   其 `<permission>` 字段的**消费方在框架侧**（wwm `sa_profile/4606.json`、`4607.json`、`scene_board/4607.json` 三者均无该字段）。
++   这与 AUTH-01 的边界一字不差：**profile 无权限字段 ≠ 该 SA 无权限控制**。
++7. `sa_profile/4607.json` 与 `sa_profile/scene_board/4607.json` 声明同一 SA 号但 `libpath` 不同；
++   **scene_board 构建下实际安装哪一份，本仓库内查不到**（全树无 `.gn`/`.gni`/`.cfg`/`.json` 提到 `sa_profile`）。
++8. `WINDOW_MANAGER_SERVICE_ID` 的**数值与归属**全树无定义，只被使用（影响 #59–#64 的可达性）。
++
++**C. 影响层（本仓库之外）**
++
++9. 渲染会话令牌（`RSUIDirector` / `IRenderSession`）：树内只有测试 mock，真实实现在 foundation/graphics。
++   「拿到这个令牌能做什么」是 #56/#57/#59/#60/#61 影响判定的**全部**依据，而在仓库外。
++10. `Ace::UIContent`、`RSIWindowAnimationFinishedCallback` 同在仓外。
++
++**D. 线索（形状不属本轮六族，未判）**
++
++11. `DBinderServiceStub::OnRemoteRequest` 的 `DBINDER_OBITUARY_TRANSACTION` 分支可达
++    `AddDbinderDeathRecipient` / `RemoveDbinderDeathRecipient`（`:190`/`:194`），函数体只做 null 检查 ——
++    **DBinder 全局注册表的变异在无任何调用者检查下可达**。这不是 AUTH-01 的形状（不跨接口），
++    需要接收端威胁模型，本轮**只记线索，不判**。
++12. `SendRequest ∈ sensitive_calls`（`models.py:150`）是一个**很宽**的建模选择，
++    会影响**每个组件里每一次 RPC 调用**（#6 即其一）。是否收窄属契约变更，本轮**不改**。
++13. ~~ddm `PermissionManager3rd::GetCallerProcessName`（`:95`）与 `MultipleUserConnector3rd::GetCallerUserId`（`:104`）的实现体未读~~
++    → **本轮已结清**（实现体见 §3 末表）：身份来自 `IPCSkeleton`，不是包裹；
++    **未结清的是**：`IsSystemAppByFullTokenID` ∉ 任何一张策略词表这一**词表缺口**在别的组件上的影响（见第 14 条）。
++14. `IsSystemAppByFullTokenID` / `IsStartByHdcd` / `CheckSystemWindowPermission` 三处谓词都在词表之外。
++    本轮只证明了它们**在本组件内**的后果（分别见 §2.7、§2.9），**全语料上的后果未普查**。
++
++---
++
++## 6. 复现命令
++
++```bash
++# 权威候选清单（本轮 82 条的锚点来源）
++.venv/bin/python /home/audit/wtmp/b_ledger_index.py      # 生成 /home/audit/wtmp/b_ledger_index.txt
++
++# 逐组件候选的宿主函数（含行号）
++.venv/bin/python /home/audit/wtmp/b_func.py /home/audit/wtmp/b_runs/candidates_m8.json \
++    window_window_manager 8b0d8fe1b973        # 同理换组件名
++
++# 0) 先把 envelope 复现出来（§2.11）：权威 runner 是本轮唯一等效口径
++B=/home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b
++$B/.venv/bin/python -I /home/audit/wtmp/w_gitcode_scan.py $B \
++    /home/audit/wtmp/b_runs/repro_gitcode.json
++$B/.venv/bin/python -I /home/audit/wtmp/w_b_corpus_provenance.py $B \
++    /home/audit/wtmp/b_runs/repro_corpus.json
++$B/.venv/bin/python -I /home/audit/wtmp/w_diff_candidates.py \
++    /home/audit/openharmony-audit/artifacts-2026-10-16/gitcode_5.json \
++    /home/audit/wtmp/b_runs/repro_gitcode.json
++
++# 1) 单文件变体（§2.1–2.6 那批；**到不了一跳**，只适用于同文件守卫）
++.venv/bin/python /home/audit/wtmp/b_recheck.py /home/audit/wtmp/b_variants.json <case-name>
++
++# 2) 组件级变体（§2.12 / §2.13；`one_hop_dispatch` 只在整组件口径下接管）
++#    wwm：CAP-01 / dispatch_guard 一族（7 个变体）
++$B/.venv/bin/python -I /home/audit/wtmp/b_comp.py \
++    /home/audit/wtmp/b_comp_wwm.json wwm_comp
++#    wwm：恢复路径的逐分支对照（4 个变体，§2.12 下半表）
++$B/.venv/bin/python -I /home/audit/wtmp/b_comp.py \
++    /home/audit/wtmp/b_comp_wwm2.json wwm_recovery
++#    camera：AUTH-01 / M-DOW（先由 pinned commit 生成 spec，再跑）
++$B/.venv/bin/python -I /home/audit/wtmp/b_mk_camera_spec.py /home/audit/wtmp/b_comp_camera.json
++$B/.venv/bin/python -I /home/audit/wtmp/b_comp.py \
++    /home/audit/wtmp/b_comp_camera.json camera_macro
++#    输出一律落盘再读：`… > /home/audit/wtmp/b_runs/comp_<名>.log 2>&1`
++#    （直接 tail 管道会因块缓冲吞掉前几个变体；加 PYTHONUNBUFFERED=1）
++
++# 3) 多文件变体（把指定若干文件当一个 ScanContext）
++.venv/bin/python /home/audit/wtmp/b_multi.py \
++    /home/audit/wtmp/b_variants_wwm.json wwm_dispatch_guard
++
++# 4) 宏 / do-while 探针
++.venv/bin/python /home/audit/wtmp/b_causal_do_guard.py
++.venv/bin/python /home/audit/wtmp/b_macro_probe.py
++
++# 3.5) blocked run 的义务是否随 run 产出（§0.2 的那条实测）
++$B/.venv/bin/python -I /home/audit/wtmp/b_oblig.py $B \
++    /home/audit/openharmony-audit/perf-corpus/resourceschedule_background_task_mgr
++#    → status: blocked / findings: 2 / findings with obligations: 2（各 4 条，全 unknown）
++
++# 原文（一律如下取，不读工作树）
++git -C /home/audit/openharmony-audit/perf-corpus/window_window_manager \
++    show 8b0d8fe1b973:window_scene/screen_session_manager/src/zidl/scene_session_manager_stub.cpp | sed -n '1200,1210p'
++# 带行号的取法（本轮的 b_show.py：tree commit path 起 止 [标记行]）
++$B/.venv/bin/python -I /home/audit/wtmp/b_show.py <tree> <commit> <path> <start> <end> [marks]
++
++# 首次运行会缺 tree_sitter_c：必须用 B 线 venv
++/home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b/.venv/bin/python3
++```
++
++**陷阱（本轮踩到三次，全部记下）**：
++
++1. 内联 `bash -lc` 里**不要用 shell 变量**（`wsl.exe … bash -lc "C=…; git -C \$C …"` 会把它展开成空，
++   报 `cannot change to 'rev-parse'`）。写 literal 路径，或把变量放进**脚本文件**（`b_s.sh` 就是为此建的）。
++2. `Write` 产出的文件是 CRLF，跑之前先 `sed -i 's/\r$//'`；`.json` 同样要清。
++3. `ScanContext.__post_init__` 要求 units 按 path 排序（`contracts.py:82`），否则
++   `ValueError: source units must be sorted`。
++
++**一个更隐蔽的口径陷阱（本轮的主要自我纠错）**：两个 checkout 的 `detector_version` **都是 `0.8.0`**，
++它**不区分**是哪份代码；而**扫描范围**（单文件 / 若干文件 / 整组件）**会改变候选集**，
++因为一跳守卫只在整组件口径下才被读到。引用候选集时**必须同时写明 checkout 与范围**（见 §2.11）。
++
++---
++
++## 7. 本轮明确没做的事
++
++- 没有改任何检测器规则、词表或契约（§2.7 的补齐建议**不是本轮动作**）。
++  `git status --porcelain` 在本 worktree 上只剩本文件（`?? docs/research/ipc_ledger_2026-10-17.md`），
++  `src/`、`tests/`、`PROGRAM_STATUS.md` 一字未动；未 push / 未开 PR / 未切别的分支。
++- 没有把任何 candidate 升级成 confirmed；没有新增告警数当成果。
++- 没有删除任何负结果：74 条撤销全部保留在本文件里，带可复核的行号。
++- 没有把「外部没有实现」判成漏洞，也没有判成安全（#62/#63 记证据边界）。
++- 没有宣称 Precision / Recall：独立 holdout 仍不存在。
++- 没有跑动态验证，没有 PoC。
++- **§2.12/§2.13 的变体改的是内存里的源码串，不是仓库文件**（`b_comp.py:63-69` 在内存里 replace 后重建
++  `SourceUnit`，从不写盘）；每个变体只有 `raw` 之外的**一处**改动，日志里 `snippet missed` 计数为 **0**
++  （即每处替换都命中）。
++- **没有重跑 `ohscanner.interface.ipc@0.5.0` + `oh-ipc-2026.10-v3`**（§5.2）：§2.9 的结论不依赖它，
++  但「0.5.0 当时为什么报那 5 条」仍是**未观察**的。
++- **没有把 74 条「一跳目标不唯一」映射到具体候选**（§5.4）：限制备注按调用点记，与候选清单不是一一对应。
++- **没有做「宏体可见性 vs `do/while(0)` 形状」的分离实验**（§5.5）：§2.13 的单点改写同时动了这两个因子。
++- **没有改 `runner.py` / 没有改那段滞后 docstring**（§0.2 自纠）：那是契约面，不归本线；
++  本文件只记录「以 `runner.py:301` + 测试为准」，不动代码。

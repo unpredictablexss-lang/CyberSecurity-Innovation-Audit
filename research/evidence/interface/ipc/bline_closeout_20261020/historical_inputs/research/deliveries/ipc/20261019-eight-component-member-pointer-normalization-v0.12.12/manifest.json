@@ -1,0 +1,192 @@
+{
+  "schema_version": 1,
+  "experiment": "B-line fixed eight-component parser normalization regression",
+  "baseline_package": "../20261019-eight-component-current-v0.12.12",
+  "worktree": "/home/audit/ohscanner/worktrees/parallel-ipc-20261017",
+  "branch": "work/ipc-20261017",
+  "git_head": "2fee193dd2d8a1849ac31e0683baef8c9a59d9c3",
+  "normalization": "byte-preserving this->*member dispatch only; original Git source and diagnostic source SHA stay unchanged",
+  "targets": [
+    {
+      "repository": "openharmony/aafwk_standard",
+      "commit": "834a566b1372268c7bbb0c40362322f812ca6efc",
+      "git_tree": "c3744c8c230573a4bcdb76bf49493a1ea61c72d1",
+      "selected_source_files": 1771,
+      "selected_source_bytes": 14652572,
+      "parse_counts": {
+        "complete": 1246,
+        "not_run": 18,
+        "partial": 507
+      },
+      "diagnostics": 15,
+      "candidate_identity_delta": 0,
+      "added": 0,
+      "removed": 0,
+      "run_status": "completed",
+      "package_status": "completed_with_limitations",
+      "elapsed_seconds": 0
+    },
+    {
+      "repository": "openharmony/applications_contacts_data",
+      "commit": "341cc3bf41b48e9a5f278dd088f40a2041d2f1c9",
+      "git_tree": "2054824c04bb403eeea128a9262edfb3001efa4f",
+      "selected_source_files": 360,
+      "selected_source_bytes": 4724819,
+      "parse_counts": {
+        "complete": 199,
+        "not_run": 142,
+        "partial": 19
+      },
+      "diagnostics": 4,
+      "candidate_identity_delta": 0,
+      "added": 0,
+      "removed": 0,
+      "run_status": "completed",
+      "package_status": "completed_with_limitations",
+      "elapsed_seconds": 0
+    },
+    {
+      "repository": "openharmony/communication_netmanager_ext",
+      "commit": "8c35917b7e2f152813b13a20530a8452cf73d938",
+      "git_tree": "e26372f6cd65be928b9c1cf4a96d3c7dd5ece804",
+      "selected_source_files": 654,
+      "selected_source_bytes": 5803570,
+      "parse_counts": {
+        "complete": 441,
+        "not_run": 22,
+        "partial": 191
+      },
+      "diagnostics": 0,
+      "candidate_identity_delta": 0,
+      "added": 0,
+      "removed": 0,
+      "run_status": "completed",
+      "package_status": "completed_with_limitations",
+      "elapsed_seconds": 16.32
+    },
+    {
+      "repository": "openharmony/distributeddatamgr_relational_store",
+      "commit": "42f13ea84e2f90ed511a2bd4aa5be14c5996eba8",
+      "git_tree": "f4698163f10e769c9014daa6e65856b12def8fdf",
+      "selected_source_files": 1350,
+      "selected_source_bytes": 14068014,
+      "parse_counts": {
+        "complete": 790,
+        "not_run": 185,
+        "partial": 375
+      },
+      "diagnostics": 0,
+      "candidate_identity_delta": 0,
+      "added": 0,
+      "removed": 0,
+      "run_status": "completed",
+      "package_status": "completed_with_limitations",
+      "elapsed_seconds": 33.74
+    },
+    {
+      "repository": "openharmony/graphic_standard",
+      "commit": "a73af6bd3bac599b9359cba10ca7b5f82a02d5d9",
+      "git_tree": "d5446eefcd0dc9478a0da65c76fafc9f62f973ad",
+      "selected_source_files": 1192,
+      "selected_source_bytes": 5341896,
+      "parse_counts": {
+        "complete": 969,
+        "not_run": 4,
+        "partial": 219
+      },
+      "diagnostics": 8,
+      "candidate_identity_delta": 0,
+      "added": 0,
+      "removed": 0,
+      "run_status": "completed",
+      "package_status": "completed_with_limitations",
+      "elapsed_seconds": 17.83
+    },
+    {
+      "repository": "openharmony/miscservices_pasteboard",
+      "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+      "git_tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+      "selected_source_files": 68,
+      "selected_source_bytes": 263975,
+      "parse_counts": {
+        "complete": 59,
+        "not_run": 1,
+        "partial": 8
+      },
+      "diagnostics": 2,
+      "candidate_identity_delta": 0,
+      "added": 0,
+      "removed": 0,
+      "run_status": "completed",
+      "package_status": "completed_with_limitations",
+      "elapsed_seconds": 1.02
+    },
+    {
+      "repository": "openharmony/multimedia_histreamer",
+      "commit": "847aafa3dc32bcf92eb8a2d2277b8d34bff98362",
+      "git_tree": "6b0d47808cbb711a343c8817f262ec7cde87bf0b",
+      "selected_source_files": 576,
+      "selected_source_bytes": 3325090,
+      "parse_counts": {
+        "complete": 346,
+        "partial": 230
+      },
+      "diagnostics": 0,
+      "candidate_identity_delta": 0,
+      "added": 0,
+      "removed": 0,
+      "run_status": "completed",
+      "package_status": "completed_with_limitations",
+      "elapsed_seconds": 11.26
+    },
+    {
+      "repository": "openharmony/security_deviceauth",
+      "commit": "2cf21e46f43c63857c40a79b004eda14f79b04c2",
+      "git_tree": "cfbe02de9d5f4720dc4aa19f5a8d83afa6cabaf8",
+      "selected_source_files": 436,
+      "selected_source_bytes": 2373682,
+      "parse_counts": {
+        "complete": 291,
+        "partial": 145
+      },
+      "diagnostics": 1,
+      "candidate_identity_delta": 0,
+      "added": 0,
+      "removed": 0,
+      "run_status": "completed",
+      "package_status": "completed_with_limitations",
+      "elapsed_seconds": 8.76
+    }
+  ],
+  "totals": {
+    "selected_source_files": 6407,
+    "complete": 4341,
+    "partial": 1694,
+    "not_run": 372,
+    "diagnostics": 30,
+    "candidate_identity_delta": 0
+  },
+  "candidate_parse_status": {
+    "observation_rows": 30,
+    "before": {
+      "partial": 19,
+      "complete": 11
+    },
+    "after": {
+      "complete": 28,
+      "partial": 2
+    },
+    "changed_partial_to_complete": 17,
+    "remaining_partial_observations": 2,
+    "remaining_partial_files": [
+      "dataBusiness/poster/src/poster_call_stub.cpp"
+    ]
+  },
+  "test_results": {
+    "command": "python -m unittest discover -s tests -q",
+    "ran": 727,
+    "passed": 727,
+    "failed": 0,
+    "skipped": 36
+  }
+}

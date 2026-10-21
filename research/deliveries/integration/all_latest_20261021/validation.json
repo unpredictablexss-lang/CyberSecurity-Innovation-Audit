@@ -1,0 +1,71 @@
+{
+  "baseline_main": "4f75a65775b202b8220a208ebdb50fdb5c8dbb4d",
+  "integration_branch": "integration/all-latest-main-20261021",
+  "validation": {
+    "web_build": "passed",
+    "web_node": {
+      "run": 126,
+      "passed": 126
+    },
+    "c_runtime_unittest": {
+      "run": 212,
+      "skipped": 3,
+      "failures": 0
+    },
+    "multimode_and_joint_worker_e2e": {
+      "run": 12,
+      "failures": 0
+    },
+    "imports_sync_and_lifecycle": {
+      "run": 54,
+      "failures": 0
+    },
+    "case_report_compatibility": {
+      "run": 3,
+      "failures": 0
+    },
+    "source_whitespace_check": "passed; immutable imported evidence and raw patch bytes excluded",
+    "compileall": "passed",
+    "full_suite": "Final result is recorded by the integration PR CI; local final rerun was active at publication snapshot."
+  },
+  "evidence": {
+    "imported_files_verified": 518,
+    "initial_local_patches_verified": 24,
+    "extra_concurrent_policy_patch": true
+  },
+  "limits": [
+    "No real Provider calls, product PoC or scale benchmark was run.",
+    "Progressive policy Worker enforcement is not connected.",
+    "Original worktrees, local indexes, credentials and existing running services were preserved."
+  ],
+  "latest_main_integrated": "efa5b162f3e61ccdb982f6a88f9822d3e310b62a",
+  "validation_after_latest_main": {
+    "detectors": {
+      "run": 861,
+      "skipped": 5,
+      "failures": 0
+    },
+    "repository_import_and_reports": {
+      "run": 22,
+      "failures": 0
+    },
+    "web_node": {
+      "run": 126,
+      "failures": 0
+    },
+    "web_build": "passed",
+    "full_suite": {
+      "run": 2089,
+      "passed": 2077,
+      "skipped": 12,
+      "failures": 0,
+      "errors": 0,
+      "elapsed_seconds": 230.257,
+      "command": "python -m unittest discover -s tests -v",
+      "log": "full_suite_after_main51.log",
+      "tested_source_commit": "1b707841ff94d16bd3f5ef0c383f40f0cd3aeed2"
+    }
+  },
+  "active_c_model": "C13 0.8.15 from PR #51; earlier C12 adapter retained as a patch and in Git history",
+  "github_ci_at_final_publication": "queued; not claimed as passed"
+}

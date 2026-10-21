@@ -1,0 +1,38 @@
+{
+  "repository": "openharmony/applications_contacts_data",
+  "commit": "341cc3bf41b48e9a5f278dd088f40a2041d2f1c9",
+  "tree": "2054824c04bb403eeea128a9262edfb3001efa4f",
+  "path": "dataBusiness/poster/src/poster_call_stub.cpp",
+  "git_blob": "7cf9459f8f3b360dd85ba1587afc2a792e8a79fa",
+  "source_bytes": 1815,
+  "source_sha256": "da61331914d7d1f92afea3b58eff862d0b1b2f98ec102258d7807cf8798a7f50",
+  "include_line": 21,
+  "issue": "one ASCII space after the closing include quote causes the shared Tree-sitter parse to remain partial with parse_issues empty",
+  "raw_shared_parse": "partial",
+  "private_ipc_adapter_parse_copy": "complete",
+  "private_copy_rule": "only the exact one-space quoted include-before-LF shape; original bytes and SHA remain unchanged",
+  "private_copy_length_equal": true,
+  "private_copy_lf_offsets_equal": true,
+  "reported_unit_parse_status": "partial",
+  "reported_analysis_status": "partial",
+  "reported_candidate_observations": [
+    {
+      "line": 44,
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "symbol": "PosterCallStub::OnRemoteRequest",
+      "source_sha256": "da61331914d7d1f92afea3b58eff862d0b1b2f98ec102258d7807cf8798a7f50"
+    },
+    {
+      "line": 46,
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "symbol": "PosterCallStub::OnRemoteRequest",
+      "source_sha256": "da61331914d7d1f92afea3b58eff862d0b1b2f98ec102258d7807cf8798a7f50"
+    }
+  ],
+  "adapter_obligations_retained": [
+    "parse_completeness_impact"
+  ],
+  "single_file_adapter_control_findings": 0,
+  "single_file_control_scope": "not a full cross-file detector evaluation; not evidence that the two repository findings are safe",
+  "prior_incorrect_inventory_reference": "contacts_data_ability.cpp was a different file and does not reproduce the known IPC include-whitespace parser gap"
+}

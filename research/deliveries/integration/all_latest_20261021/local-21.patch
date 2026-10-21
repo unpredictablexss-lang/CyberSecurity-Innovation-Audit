@@ -1,0 +1,680 @@
+diff --git a/.gitignore b/.gitignore
+index 74aa4f34..edc55918 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -228,5 +228,6 @@ outputs/reports/*.md
+ outputs/logs/
+ outputs/bin/
+ outputs/reports/static_baselines/
++outputs/reports/perf_scale/
+ .tmp/
+ .cache/
+diff --git a/PROGRAM_STATUS.md b/PROGRAM_STATUS.md
+index 9334c6c1..924abc24 100644
+--- a/PROGRAM_STATUS.md
++++ b/PROGRAM_STATUS.md
+@@ -9,7 +9,7 @@
+ > 更新日期：2026-10-10（政策对齐赛题交付；旧阶段实测记录仍保留原日期）
+ > 当前分支：`feat/ohscanner-core`（独立开发分支；main 不变）  
+ > PR：#4 `feat: historical benchmark, scanner evidence chain, and multi-tool adapters`（2026-10-09 已合并）  
+-> 当前阶段：历史基线已合并；OHScanner Core M0 Mock + M1 固定 Git 对象源码索引已在 PR #5 开发分支实现。真实漏洞算法、真实 c_utils Ubuntu 试跑及真实产品构建上下文仍未完成。
++> 当前阶段：历史基线已合并；OHScanner Core M0 Mock + M1 固定 Git 对象源码索引已在 PR #5 开发分支实现。M2 已在真实 `commonlibrary_c_utils` 固定 commit 上完成首次执行（123 文件 / 93 完整 + 30 部分解析），并已在 11 个真实 OpenHarmony 组件（9,508 源文件 / 261.8 万行）上产出性能与规模实测（见 `docs/testing/ohscanner_performance_scale.md`）。真实漏洞算法、检测器实际发现及真实产品构建上下文仍未完成。
+ > 交付目标：本项目以完成赛题为目标，必须产出 PoC、动态验证证据、CWE/CVE、影响范围、修复建议、性能数据与漏洞报告（见 `AGENTS.md` 的 Competition deliverables 章节）。`candidate` 是**默认起点**而非终点：证据满足门槛即升级为 `confirmed` / `reportable` 并记录证据等级。
+ 
+ ---
+@@ -171,7 +171,9 @@ Precision / Recall           —— 随标注样本积累持续计算并报告
+ CWE/CVE 映射                 —— 每个发现标注 CWE；有公开编号的映射 CVE，新发现走 OH 漏洞披露流程
+ 影响范围                     —— 受影响模块 + 版本/分支 + 漏洞/修复 commit 边界
+ 修复建议                     —— 具名补丁或 diff，附 guard/effect 关系理由
+-性能数据                     —— 真实组件上的扫描耗时与规模
++性能数据                     —— ✅ 已完成首轮实测：11 个真实组件 / 9,508 源文件 / 261.8 万行，
++                                累计 113.6 s，单进程峰值 RSS 上界 265.7 MB
++                                （`docs/testing/ohscanner_performance_scale.md`；语料清单与复跑脚本同目录）
+ 漏洞报告                     —— src/report/vulnerability_report.py 产出
+ ```
+ 
+@@ -396,7 +398,8 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此
+ - `tests/test_ohscanner_m2.py` 使用 CI 临时 Git 仓库覆盖真实 commit 读取、调用候选、partial 未覆盖、语言不适用、未批准插件拒绝、CLI 显式允许、工作区漂移不影响固定版本结果。
+ - **平台功能明确限制**：目前没有把队友 A 的独立 `codex/teammate-a-cpp-detectors` 分支代码合入本核心分支，也没有集成 B 的 IPC/JS/ArkTS 真实语义算法；这不属于“全部 M2 算法完成”。原始 AST 不是完整 CFG/类型/所有权/权限检查证明。Runner 同进程，没有硬超时与独立沙箱。
+ - GitHub Actions 首轮 `ohscan-run` 回归 Run [37936944801](https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/actions/runs/37936944801)：**201/201 OK**；后续文档提交的最新 head 结果应再次复核。
+-- **待本地真实组件试跑**：在 Ubuntu 22.04 Git 2.34.x 对固定 `openharmony/commonlibrary_c_utils` 提交 `b807d3dadb7dbb7639fe85b3a5f72da18d318da2` 执行示例插件运行，独立保留候选及范围统计。说明见 `docs/testing/ohscanner_m2_first_party_integration.md`。
++- **本地真实组件试跑（已完成，2026-10-10）**：在 Ubuntu 22.04 / Git 2.34.1 上，对固定 `openharmony/commonlibrary_c_utils` 提交 `b807d3dadb7dbb7639fe85b3a5f72da18d318da2` 执行示例插件运行成功：命中索引 123 个源文件，解析覆盖 `{complete: 93, partial: 30}`，状态 `completed_with_limitations`，未验证诊断 0，墙钟 1.81 s、峰值 RSS 48.1 MB。该结果与本文档既有 93/30 预期一致，M2 平台验收项已由实测补齐。说明见 `docs/testing/ohscanner_m2_first_party_integration.md`。
++- **组件级性能与规模实测（新增，2026-10-10）**：对 11 个固定到完整 commit 的真实 OpenHarmony 组件（`perf-corpus`，`--depth=1` SSH 克隆）执行 `ohscan-run`，全部成功。合计扫描 **9,508** 个源文件 / 107.1 MB / 语料 C/C++ **2,618,176** 行，累计墙钟 **113.6 s**，单次进程峰值 RSS 上界 **265.7 MB**，平均吞吐 **84 files/s**。`window_window_manager` 整树超出 `M1 bounded scope`，按顶层目录分 7 片测量。测量脚本 `scripts/perf_scale_scan.py`，语料清单 `benchmarks/perf_scale_corpus_2026-10-10.json`，报告 `docs/testing/ohscanner_performance_scale.md`。**该数据只反映平台成本（Git 读取 + AST 解析 + 调度），不是漏洞检出能力评测。**
+ - **Git 协作**：当前 Draft PR #5 暂不合并。建议核心底座经审查验收后做一次受控合并或拆分审查，队友算法各自 PR，**不建议将 M0–M4 所有提交堆成单个巨型 PR**；是否 Ready/Merge 以项目负责人授权为准。
+ 
+ 
+diff --git a/benchmarks/perf_scale_corpus_2026-10-10.json b/benchmarks/perf_scale_corpus_2026-10-10.json
+new file mode 100644
+index 00000000..bd6ca85c
+--- /dev/null
++++ b/benchmarks/perf_scale_corpus_2026-10-10.json
+@@ -0,0 +1,126 @@
++{
++  "schema_version": 1,
++  "corpus": "OpenHarmony component corpus for the OHScanner scale/performance benchmark. Components are depth-1 clones over SSH pinned to a full commit SHA; blobs are complete locally so every scan runs offline.",
++  "generated": "2026-10-10",
++  "entries": [
++    {
++      "label": "communication_ipc",
++      "repo_dir": "/home/audit/openharmony-audit/perf-corpus/communication_ipc",
++      "repository": "openharmony/communication_ipc",
++      "ref": "depth=1 clone @ pinned commit",
++      "commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
++      "commit_date": "2026-09-14T14:09:31+08:00"
++    },
++    {
++      "label": "inputmethod_imf",
++      "repo_dir": "/home/audit/openharmony-audit/perf-corpus/inputmethod_imf",
++      "repository": "openharmony/inputmethod_imf",
++      "ref": "depth=1 clone @ pinned commit",
++      "commit": "7777cba9eb19085af8e7b90088531028d2937460",
++      "commit_date": "2026-09-29T17:17:22+08:00"
++    },
++    {
++      "label": "multimedia_camera_framework",
++      "repo_dir": "/home/audit/openharmony-audit/perf-corpus/multimedia_camera_framework",
++      "repository": "openharmony/multimedia_camera_framework",
++      "ref": "depth=1 clone @ pinned commit",
++      "commit": "085a5d0e2dc1c90a4b676bad55675a1cf12a6380",
++      "commit_date": "2026-09-28T19:34:26+08:00"
++    },
++    {
++      "label": "multimedia_player_framework",
++      "repo_dir": "/home/audit/openharmony-audit/perf-corpus/multimedia_player_framework",
++      "repository": "openharmony/multimedia_player_framework",
++      "ref": "depth=1 clone @ pinned commit",
++      "commit": "9f9a285ff489afa66861a85dcc4213336a463b36",
++      "commit_date": "2026-09-30T14:40:39+08:00"
++    },
++    {
++      "label": "notification_common_event_service",
++      "repo_dir": "/home/audit/openharmony-audit/perf-corpus/notification_common_event_service",
++      "repository": "openharmony/notification_common_event_service",
++      "ref": "depth=1 clone @ pinned commit",
++      "commit": "aaaaf6d10aa8e1f6bd28673f10d5791d7e9c9e3f",
++      "commit_date": "2026-09-30T17:08:50+08:00"
++    },
++    {
++      "label": "resourceschedule_background_task_mgr",
++      "repo_dir": "/home/audit/openharmony-audit/perf-corpus/resourceschedule_background_task_mgr",
++      "repository": "openharmony/resourceschedule_background_task_mgr",
++      "ref": "depth=1 clone @ pinned commit",
++      "commit": "cff2ff475e3885ee814651f6a13d7f8a5782efdd",
++      "commit_date": "2026-09-30T10:35:35+08:00"
++    },
++    {
++      "label": "security_access_token",
++      "repo_dir": "/home/audit/openharmony-audit/perf-corpus/security_access_token",
++      "repository": "openharmony/security_access_token",
++      "ref": "depth=1 clone @ pinned commit",
++      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
++      "commit_date": "2026-10-07T11:16:35+08:00"
++    },
++    {
++      "label": "telephony_call_manager",
++      "repo_dir": "/home/audit/openharmony-audit/perf-corpus/telephony_call_manager",
++      "repository": "openharmony/telephony_call_manager",
++      "ref": "depth=1 clone @ pinned commit",
++      "commit": "6638d1b37f278d7ed380d907674820e7467cedf8",
++      "commit_date": "2026-09-29T20:48:55+08:00"
++    },
++    {
++      "label": "update_updateservice",
++      "repo_dir": "/home/audit/openharmony-audit/perf-corpus/update_updateservice",
++      "repository": "openharmony/update_updateservice",
++      "ref": "depth=1 clone @ pinned commit",
++      "commit": "e4942a33cc5ed29040e5c720bea3b2a8e4a79221",
++      "commit_date": "2023-09-07T02:31:00+00:00"
++    },
++    {
++      "label": "window_window_manager",
++      "repo_dir": "/home/audit/openharmony-audit/perf-corpus/window_window_manager",
++      "repository": "openharmony/window_window_manager",
++      "ref": "depth=1 clone @ pinned commit",
++      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
++      "commit_date": "2026-10-08T11:45:03+08:00",
++      "include": [
++        [
++          "window_scene"
++        ],
++        [
++          "test"
++        ],
++        [
++          "interfaces"
++        ],
++        [
++          "wm"
++        ],
++        [
++          "utils"
++        ],
++        [
++          "wmserver"
++        ],
++        [
++          "dmserver",
++          "previewer",
++          "dm",
++          "extension",
++          "dm_lite",
++          "tools",
++          "snapshot",
++          "setresolution",
++          "edidparse"
++        ]
++      ]
++    },
++    {
++      "label": "c_utils_pinned_m2",
++      "repo_dir": "/home/audit/openharmony-targets/commonlibrary_c_utils",
++      "repository": "openharmony/commonlibrary_c_utils",
++      "ref": "explicit pinned commit",
++      "commit": "b807d3dadb7dbb7639fe85b3a5f72da18d318da2",
++      "commit_date": "2026-10-06T20:00:54+08:00"
++    }
++  ]
++}
+diff --git a/docs/strategy/competition_deliverables_plan.md b/docs/strategy/competition_deliverables_plan.md
+index b279a7b1..64e4e729 100644
+--- a/docs/strategy/competition_deliverables_plan.md
++++ b/docs/strategy/competition_deliverables_plan.md
+@@ -21,7 +21,7 @@
+ | 4 | 影响范围（模块 + 版本分支） | 分支影响准确性 | 部分（仅固定 commit 对） | `src/report/`、跨版本 manifest 扫描 | 跨 tag/manifest 扫描同一根因，输出受影响版本区间与漏洞/修复 commit 边界 |
+ | 5 | 修复建议/补丁 | 修复建议质量 | 空白 | `src/report/`、patch pattern 库 | 从 12+ 组历史修复对提炼 patch pattern，对新发现输出 diff 建议与理由 |
+ | 6 | 漏洞分析报告 | 完整性 | 只有 benchmark 汇总（非漏洞报告） | **新增** `src/report/vulnerability_report.py` | 渲染 confirmed 发现为赛题格式报告 |
+-| 7 | 性能数据 | 工具性能 | 空白（大库未测） | `src/benchmark/` | 性能基准脚本 + 真实 OpenHarmony 组件跑（文件/LOC/墙钟/峰值 RSS） |
++| 7 | 性能数据 | 工具性能 | ✅ **已完成首轮实测（2026-10-10）** | `scripts/perf_scale_scan.py` + `benchmarks/perf_scale_corpus_2026-10-10.json` | 11 个真实组件 / 9,508 源文件 / 261.8 万行，累计 113.6 s，峰值 RSS 上界 265.7 MB，84 files/s。报告 `docs/testing/ohscanner_performance_scale.md`。后续可补：并行/增量、整树（千万行）规模 |
+ 
+ ## 2. PoC 与动态验证（交付件 #3，最高优先级缺口）
+ 
+diff --git a/docs/testing/ohscanner_m2_first_party_integration.md b/docs/testing/ohscanner_m2_first_party_integration.md
+index 2b00d3c8..316ad476 100644
+--- a/docs/testing/ohscanner_m2_first_party_integration.md
++++ b/docs/testing/ohscanner_m2_first_party_integration.md
+@@ -87,7 +87,7 @@ B 的 JS/ArkTS 和 IPC 检测器应使用**同一 Detector 协议**，通过 `So
+ - [x] 固定 Git source → 注册器 → `ToolRunResult` → 覆盖/证据 sidecar → JSON/Markdown；
+ - [x] 输入 commit/blob 二次核验、旧 CLI 兼容和无外部扫描器依赖；
+ - [x] CI 的 Git fixture、部分解析、候选义务、插件信任边界测试；
+-- [ ] 用户在 Ubuntu Git 2.34.x 对真实固定 `c_utils` 执行 `ohscan-run` 示例，核对覆盖；
++- [x] 用户在 Ubuntu Git 2.34.x 对真实固定 `c_utils` 执行 `ohscan-run` 示例，核对覆盖；——2026-10-10 实测：123 文件，解析 `{complete: 93, partial: 30}`，`completed_with_limitations`，1.81 s / 48.1 MB（`docs/testing/ohscanner_performance_scale.md`）
+ - [ ] 队友 A 实际 Detector 完成单独代码与案例审查，通过 PR/局部挑选接入；
+ - [ ] 队友 B 实际 Detector 和真实攻击面实验完成审查，通过对应插件接口接入；
+ - [ ] 真正的检测算法独立修复前/后、安全对照、保留集及消融评测。
+diff --git a/docs/testing/ohscanner_performance_scale.md b/docs/testing/ohscanner_performance_scale.md
+new file mode 100644
+index 00000000..123c3744
+--- /dev/null
++++ b/docs/testing/ohscanner_performance_scale.md
+@@ -0,0 +1,63 @@
++# OHScanner 组件级性能与规模实测
++
++> 由 `scripts/perf_scale_scan.py` 生成。语料清单见 `benchmarks/perf_scale_corpus_2026-10-10.json`（固定完整 commit SHA，可复现）。
++> 测量的是**平台成本**：固定 Git 对象读取 + 逐文件 tree-sitter AST 解析 + 检测器调度，
++> 使用当前唯一允许登记的非安全示例插件 `ohscanner.example.cpp.copy-calls`。
++> **这不是漏洞检出能力评测**；`completed` 状态不代表组件安全。
++
++## 汇总
++
++- 组件数：**11**（共 11 条清单，失败 0）
++- 扫描源文件：**9,508**
++- 扫描源码字节：**107,087,947**
++- 语料 C/C++ 总行数（全部源文件，非扫描子集）：**2,618,176**
++- 累计墙钟：**113.64 s**（单进程串行执行）
++- 单次进程峰值 RSS 上界：**265.7 MB**
++- 平均吞吐：**84 files/s**、**0.94 MB/s**
++- 分片测量的组件：**1**（整树超出 `M1 bounded scope`，按顶层目录分片）
++
++## 逐组件明细
++
++| 组件 | 固定提交 | 分片 | 扫描文件 | 扫描字节 | 树内 C/C++ 行 | 墙钟 (s) | 峰值 RSS (MB) | files/s | parse 完整/部分 | 检测器 |
++|---|---|---:|---:|---:|---:|---:|---:|---:|---|---|
++| communication_ipc | `bbb92dbb2f52` | 1 | 697 | 8,047,192 | 145,562 | 6.48 | 103.0 | 108 | 442/218 | partial |
++| inputmethod_imf | `7777cba9eb19` | 1 | 698 | 6,150,477 | 154,966 | 6.34 | 101.3 | 110 | 522/152 | partial |
++| multimedia_camera_framework | `085a5d0e2dc1` | 1 | 1,696 | 17,258,181 | 409,298 | 16.03 | 237.6 | 106 | 1290/321 | partial |
++| multimedia_player_framework | `9f9a285ff489` | 1 | 1,773 | 17,305,015 | 439,198 | 17.78 | 245.3 | 100 | 1087/686 | partial |
++| notification_common_event_service | `aaaaf6d10aa8` | 1 | 293 | 3,305,017 | 85,467 | 2.83 | 61.8 | 104 | 215/69 | partial |
++| resourceschedule_background_task_mgr | `cff2ff475e38` | 1 | 284 | 2,214,672 | 52,326 | 2.34 | 51.2 | 121 | 229/44 | partial |
++| security_access_token | `17d88bfb36be` | 1 | 1,249 | 8,798,780 | 235,117 | 10.41 | 132.3 | 120 | 1046/198 | partial |
++| telephony_call_manager | `6638d1b37f27` | 1 | 513 | 5,677,034 | 141,361 | 5.18 | 90.8 | 99 | 379/132 | partial |
++| update_updateservice | `e4942a33cc5e` | 1 | 238 | 888,385 | 22,891 | 3.30 | 34.8 | 72 | 205/32 | partial |
++| window_window_manager | `8b0d8fe1b973` | 7 | 1,944 | 35,876,163 | 884,210 | 41.13 | 265.7 | 47 | 1107/810 | partial |
++| c_utils_pinned_m2 | `b807d3dadb7d` | 1 | 123 | 1,567,031 | 47,780 | 1.81 | 48.1 | 68 | 93/30 | partial |
++
++## 语料构建与复现
++
++语料是固定到完整 commit SHA 的 OpenHarmony 组件 `--depth=1` 克隆（SSH；该 commit 的全部 blob 本地齐备，因此扫描全程离线、不触发任何抓取）：
++
++```bash
++git clone --depth=1 git@github.com:openharmony/<component>.git
++git -C <component> rev-parse HEAD   # 必须等于清单中的 commit
++```
++
++11 条组件与其完整 SHA 记录在 `benchmarks/perf_scale_corpus_2026-10-10.json`。一键复跑：
++
++```bash
++python scripts/perf_scale_scan.py \
++  --manifest benchmarks/perf_scale_corpus_2026-10-10.json \
++  --json-out outputs/reports/perf_scale_scan.json \
++  --md-out docs/testing/ohscanner_performance_scale.md
++```
++
++测量方式：每个组件在独立子进程中执行 `python -m src.cli ohscan-run`，由一个**最小的**父进程记录墙钟与 `ru_maxrss`。用最小父进程是必要的——Linux 上 fork 出的子进程在 exec 前共享父进程的常驻页，若从本脚本（它在统计行数时会缓冲整份源码）直接测量，得到的会是父进程的内存而不是扫描器的内存。数值已用 GNU `time -v` 抽样交叉核对。
++
++## 限制
++
++- 语料是**组件级**（单次约 0.2k–2k 源文件），不是 OpenHarmony 千万行整树；整树规模需另行测量。
++- 执行是**同进程串行**的；尚无并行、增量缓存或硬超时/资源隔离。
++- `-partial` 解析文件计入未分析（`unexamined`），因为当前无宏展开与完整 include 上下文。
++- 峰值 RSS 为单个 CLI 进程的 `ru_maxrss`；未测多进程并发下的总内存。
++- 分片组件的墙钟是各分片之和，含每片一次 Python 启动与 JSON 写出的固定开销，因此其 files/s 会低于同等规模的单次扫描，不能与单次运行的组件直接比吞吐。
++- `window_window_manager` 整树的源文件总量超过 `M1 bounded scope` 上限而无法单次扫描；这是当前实现的真实边界，分片是绕过方式而非其消失。
++- 上述耗时包含 Python 解释器启动与 JSON 报告写出，属于端到端口径。
+diff --git a/scripts/README.md b/scripts/README.md
+index 82a60a44..dd87aeb9 100644
+--- a/scripts/README.md
++++ b/scripts/README.md
+@@ -42,3 +42,30 @@ python -m src.cli normalize-tool-output --provider joern \
+ ```
+ 
+ 详见 `PROGRAM_STATUS.md` 第 6b.11 节。
++
++## perf_scale_scan.py
++
++组件级性能与规模基准。对固定到完整 commit SHA 的 OpenHarmony 组件语料执行真实
++`python -m src.cli ohscan-run`，逐组件测量墙钟、进程峰值 RSS、扫描文件/字节、解析
++覆盖与检测器覆盖，汇总为 JSON + Markdown。
++
++语料清单 `benchmarks/perf_scale_corpus_2026-10-10.json`（11 条组件 + 完整 SHA）；
++报告见 `docs/testing/ohscanner_performance_scale.md`。
++
++```sh
++python scripts/perf_scale_scan.py \
++  --manifest benchmarks/perf_scale_corpus_2026-10-10.json \
++  --json-out outputs/reports/perf_scale_scan.json \
++  --md-out docs/testing/ohscanner_performance_scale.md
++```
++
++- 语料用 `git clone --depth=1 git@github.com:openharmony/<component>.git` 获取并核对
++  `rev-parse HEAD` 等于清单 SHA；该 commit 的全部 blob 本地齐备，因此扫描全程离线。
++- 测量由一个**最小父进程**完成，避免 fork 出的子进程在 exec 前继承父进程常驻页导致
++  `ru_maxrss` 虚高；数值已用 GNU `time -v` 交叉核对。
++- `--include` 分片：整树超过 `M1 bounded scope` 的组件（如 `window_window_manager`）
++  按顶层目录分片测量，分片数会记录在报告里。
++- 原始逐次运行产物写入 `outputs/reports/perf_scale/`（Git 忽略）。
++
++**边界**：该基准只反映平台成本（Git 对象读取 + 逐文件 AST 解析 + 检测器调度），
++使用当前唯一允许登记的非安全示例插件，**不是漏洞检出能力评测**。
+diff --git a/scripts/perf_scale_scan.py b/scripts/perf_scale_scan.py
+new file mode 100644
+index 00000000..2c7255eb
+--- /dev/null
++++ b/scripts/perf_scale_scan.py
+@@ -0,0 +1,367 @@
++#!/usr/bin/env python3
++"""Scale/performance benchmark for the OHScanner pinned-Git execution path.
++
++Runs the real `src.cli ohscan-run` entry point over a corpus of pinned
++OpenHarmony component commits and measures, per component:
++
++  * wall-clock seconds for the whole CLI process;
++  * peak resident set size (RSS) of that process;
++  * the tool's own reported scanned-file count and source bytes;
++  * the pinned tree's C/C++ source-file count and line count;
++  * parse coverage (complete/partial) and detector coverage (examined/unexamined).
++
++Scope and honesty limits
++------------------------
++This benchmark measures *platform cost* — pinned Git object read + per-file
++tree-sitter AST parse + detector dispatch — under the only detector that is
++allowlisted today, the explicitly non-security example plugin
++`ohscanner.example.cpp.copy-calls`. It is **not** a vulnerability-detection
++quality measurement, and a `completed`/`completed_with_limitations` status is
++not a statement that the component is safe.
++
++The corpus is fixed by a manifest of full commit SHAs so the numbers are
++reproducible. Reading is offline: the tool never fetches or checks out.
++
++Usage
++-----
++    python scripts/perf_scale_scan.py \
++        --manifest benchmarks/perf_scale_corpus_2026-10-10.json \
++        --json-out outputs/reports/perf_scale_scan.json \
++        --md-out docs/testing/ohscanner_performance_scale.md
++"""
++
++from __future__ import annotations
++
++import argparse
++import json
++import os
++import pathlib
++import subprocess
++import sys
++import time
++
++SRC_EXTS = (".cpp", ".cc", ".cxx", ".c", ".h", ".hpp", ".inl")
++DETECTOR_ID = "ohscanner.example.cpp.copy-calls"
++
++
++# Never let a measurement reach the network. GIT_NO_LAZY_FETCH needs Git >= 2.36;
++# on older Git the shallow, non-promisor corpus clones have no remote to fetch
++# from anyway, so both layers together keep the benchmark strictly offline.
++GIT_ENV = {
++    **os.environ,
++    "GIT_NO_LAZY_FETCH": "1",
++    "GIT_TERMINAL_PROMPT": "0",
++    "GIT_ASKPASS": "/bin/true",
++}
++
++
++def git(repo_dir: str, *args: str) -> bytes:
++    proc = subprocess.run(["git", "-C", repo_dir, *args],
++                          capture_output=True, check=False, env=GIT_ENV)
++    if proc.returncode != 0:
++        raise RuntimeError(
++            f"git {' '.join(args)} failed in {repo_dir}: "
++            f"{proc.stderr.decode('utf-8', 'replace').strip()}"
++        )
++    return proc.stdout
++
++
++def git_sources(repo_dir: str, commit: str) -> list[str]:
++    """Repo-relative paths of every C/C++ source file in the pinned tree."""
++    raw = git(repo_dir, "ls-tree", "-r", "-z", "--name-only", commit)
++    return [n for n in raw.decode("utf-8", "replace").split("\0")
++            if n.endswith(SRC_EXTS)]
++
++
++def git_loc(repo_dir: str, commit: str, paths: list[str]) -> int:
++    """Total line count of the given blobs, streamed through `git cat-file`."""
++    if not paths:
++        return 0
++    payload = "".join(f"{commit}:{p}\n" for p in paths).encode()
++    proc = subprocess.run(["git", "-C", repo_dir, "cat-file", "--batch"],
++                          input=payload, capture_output=True, check=False, env=GIT_ENV)
++    data = proc.stdout
++    lines = i = 0
++    while i < len(data):
++        cut = data.find(b"\n", i)
++        if cut < 0:
++            break
++        parts = data[i:cut].decode("utf-8", "replace").split()
++        if len(parts) != 3 or parts[1] != "blob":
++            break  # missing/promisor object: stop rather than guess
++        size = int(parts[2])
++        body = data[cut + 1:cut + 1 + size]
++        lines += body.count(b"\n")
++        i = cut + 1 + size + 1
++    return lines
++
++
++def run_measured(cmd: list[str], cwd: str, log_path: pathlib.Path):
++    """Run cmd, returning (exit_code, wall_seconds, peak_rss_kb).
++
++    The measurement is taken by a deliberately tiny helper process, not by this
++    script. On Linux a forked child starts life sharing the parent's resident
++    pages, so ``ru_maxrss`` of a short-lived child is floored by *the parent's*
++    RSS at fork time. Measuring from this process (which buffers whole-file
++    blobs while counting lines) would therefore report the parent's footprint
++    instead of the scanner's. A minimal parent keeps that floor negligible.
++    """
++    helper = (
++        "import json,resource,subprocess,sys,time;"
++        "cmd=json.loads(sys.argv[1]);log=sys.argv[2];"
++        "t0=time.perf_counter();"
++        "fh=open(log,'wb');"
++        "p=subprocess.Popen(cmd,stdout=fh,stderr=subprocess.STDOUT);"
++        "code=p.wait();"
++        "elapsed=time.perf_counter()-t0;"
++        "ru=resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss;"
++        "sys.stdout.write(json.dumps({'exit':code,'wall':elapsed,'peak_kb':ru}))"
++    )
++    proc = subprocess.run(
++        [sys.executable, "-c", helper, json.dumps(cmd), str(log_path)],
++        cwd=cwd, capture_output=True, text=True, env=GIT_ENV, check=False,
++    )
++    if proc.returncode != 0:
++        raise RuntimeError(f"measurement helper failed: {proc.stderr.strip()}")
++    measured = json.loads(proc.stdout)
++    return measured["exit"], measured["wall"], measured["peak_kb"]
++
++
++def benchmark_one(project_root: str, python: str, entry: dict,
++                  report_dir: pathlib.Path) -> dict:
++    """Run one manifest entry and return an aggregated measurement row.
++
++    An entry may carry ``include`` — a list of repository-relative path
++    prefixes. The scanner refuses a tree whose total source size exceeds its
++    bounded scope, so a repository that is too large is measured as several
++    shards (`--include`) and the shard results are summed. Shard counts are
++    recorded so a sharded row is never mistaken for a single whole-tree run.
++    """
++    label = entry["label"]
++    repo_dir, commit = entry["repo_dir"], entry["commit"]
++
++    sources = git_sources(repo_dir, commit)
++    loc = git_loc(repo_dir, commit, sources)
++
++    shard_specs = entry.get("include") or [[]]
++    shards = []
++    for idx, prefixes in enumerate(shard_specs):
++        sub_label = label if not prefixes else f"{label}__shard{idx:02d}"
++        json_out = report_dir / f"{sub_label}.json"
++        log_out = report_dir / f"{sub_label}.log"
++        cmd = [
++            python, "-m", "src.cli", "ohscan-run",
++            "--repo-dir", repo_dir,
++            "--repository", entry["repository"],
++            "--commit", commit,
++            "--detector", DETECTOR_ID,
++            "--allow-example-detectors",
++            "--json-out", str(json_out),
++        ]
++        for prefix in prefixes:
++            cmd += ["--include", prefix]
++        code, elapsed, peak_kb = run_measured(cmd, project_root, log_out)
++        shards.append({"include": prefixes, "exit": code, "wall": elapsed,
++                       "peak_kb": peak_kb, "json": json_out, "log": log_out})
++
++    failed = [s for s in shards if s["exit"] != 0]
++    row = {
++        "label": label,
++        "repository": entry["repository"],
++        "commit": commit,
++        "commit_date": entry.get("commit_date"),
++        "exit_code": failed[0]["exit"] if failed else 0,
++        "failed_shards": len(failed),
++        "shards": len(shard_specs),
++        "wall_seconds": round(sum(s["wall"] for s in shards), 4),
++        "peak_rss_kb": max(s["peak_kb"] for s in shards),
++        "tree_source_files": len(sources),
++        "tree_source_loc": loc,
++        "report_path": str(shards[0]["json"]),
++    }
++
++    if failed:
++        row["error"] = failed[0]["log"].read_text(
++            encoding="utf-8", errors="replace")[-800:]
++        return row
++
++    totals = {"scanned_files": 0, "scanned_bytes": 0, "parse_complete": 0,
++              "parse_partial": 0, "analyzed_files": 0, "unexamined_files": 0,
++              "diagnostic_count": 0}
++    statuses = []
++    for shard in shards:
++        report = json.loads(shard["json"].read_text(encoding="utf-8"))
++        scope = report.get("scope", {})
++        parsing = report.get("source_parsing", {}).get("parsing_status", {})
++        cov = report.get("detector_coverage", {}).get(
++            "detectors", {}).get(DETECTOR_ID, {})
++        analyzed = len(cov.get("analyzed_files", []))
++        totals["scanned_files"] += scope.get("selected_source_files", 0)
++        totals["scanned_bytes"] += scope.get("selected_source_bytes", 0)
++        totals["parse_complete"] += parsing.get("complete", 0)
++        totals["parse_partial"] += parsing.get("partial", 0)
++        totals["analyzed_files"] += analyzed
++        totals["unexamined_files"] += max(
++            cov.get("applicable_files", 0) - analyzed, 0)
++        totals["diagnostic_count"] += report.get("diagnostic_count", 0) or 0
++        statuses.append(report.get("status"))
++
++    row.update(totals)
++    row["status"] = statuses[0] if len(set(statuses)) == 1 else "mixed"
++    row["detector_status"] = "partial"
++    row["validated_vulnerability"] = 0
++    row["files_per_second"] = (round(totals["scanned_files"] / row["wall_seconds"], 1)
++                               if row["wall_seconds"] else None)
++    row["mb_per_second"] = (round(totals["scanned_bytes"] / 1e6 / row["wall_seconds"], 2)
++                            if row["wall_seconds"] else None)
++    return row
++
++
++def render_markdown(rows: list[dict], manifest_path: str) -> str:
++    ok = [r for r in rows if r.get("exit_code") == 0]
++    total_s = sum(r["wall_seconds"] for r in ok)
++    total_files = sum(r.get("scanned_files", 0) for r in ok)
++    total_bytes = sum(r.get("scanned_bytes", 0) for r in ok)
++    total_loc = sum(r["tree_source_loc"] for r in ok)
++    peak = max((r["peak_rss_kb"] for r in ok), default=0)
++
++    out = [
++        "# OHScanner 组件级性能与规模实测",
++        "",
++        "> 由 `scripts/perf_scale_scan.py` 生成。语料清单见 "
++        f"`{manifest_path}`（固定完整 commit SHA，可复现）。",
++        "> 测量的是**平台成本**：固定 Git 对象读取 + 逐文件 tree-sitter AST 解析 + "
++        "检测器调度，",
++        "> 使用当前唯一允许登记的非安全示例插件 "
++        f"`{DETECTOR_ID}`。",
++        "> **这不是漏洞检出能力评测**；`completed` 状态不代表组件安全。",
++        "",
++        "## 汇总",
++        "",
++        f"- 组件数：**{len(ok)}**（共 {len(rows)} 条清单，失败 "
++        f"{len(rows) - len(ok)}）",
++        f"- 扫描源文件：**{total_files:,}**",
++        f"- 扫描源码字节：**{total_bytes:,}**",
++        f"- 语料 C/C++ 总行数（全部源文件，非扫描子集）：**{total_loc:,}**",
++        f"- 累计墙钟：**{total_s:.2f} s**（单进程串行执行）",
++        f"- 单次进程峰值 RSS 上界：**{peak / 1024:.1f} MB**",
++        f"- 平均吞吐：**{total_files / total_s:.0f} files/s**、"
++        f"**{total_bytes / 1e6 / total_s:.2f} MB/s**",
++        f"- 分片测量的组件：**{sum(1 for r in ok if r.get('shards', 1) > 1)}**"
++        "（整树超出 `M1 bounded scope`，按顶层目录分片）",
++        "",
++        "## 逐组件明细",
++        "",
++        "| 组件 | 固定提交 | 分片 | 扫描文件 | 扫描字节 | 树内 C/C++ 行 | 墙钟 (s) "
++        "| 峰值 RSS (MB) | files/s | parse 完整/部分 | 检测器 |",
++        "|---|---|---:|---:|---:|---:|---:|---:|---:|---|---|",
++    ]
++    for r in rows:
++        if r.get("exit_code") != 0:
++            out.append(
++                f"| {r['label']} | `{r['commit'][:12]}` | {r.get('shards', 1)} | — | — | "
++                f"{r['tree_source_loc']:,} | — | — | — | **FAILED** "
++                f"(exit {r['exit_code']}) | — |"
++            )
++            continue
++        out.append(
++            f"| {r['label']} | `{r['commit'][:12]}` | {r.get('shards', 1)} | "
++            f"{r['scanned_files']:,} | "
++            f"{r['scanned_bytes']:,} | {r['tree_source_loc']:,} | "
++            f"{r['wall_seconds']:.2f} | {r['peak_rss_kb'] / 1024:.1f} | "
++            f"{r['files_per_second']:.0f} | "
++            f"{r['parse_complete']}/{r['parse_partial']} | "
++            f"{r['detector_status']} |"
++        )
++
++    out += [
++        "",
++        "## 语料构建与复现",
++        "",
++        "语料是固定到完整 commit SHA 的 OpenHarmony 组件 `--depth=1` 克隆（SSH；该 commit 的"
++        "全部 blob 本地齐备，因此扫描全程离线、不触发任何抓取）：",
++        "",
++        "```bash",
++        "git clone --depth=1 git@github.com:openharmony/<component>.git",
++        "git -C <component> rev-parse HEAD   # 必须等于清单中的 commit",
++        "```",
++        "",
++        f"11 条组件与其完整 SHA 记录在 `{manifest_path}`。一键复跑：",
++        "",
++        "```bash",
++        "python scripts/perf_scale_scan.py \\",
++        f"  --manifest {manifest_path} \\",
++        "  --json-out outputs/reports/perf_scale_scan.json \\",
++        "  --md-out docs/testing/ohscanner_performance_scale.md",
++        "```",
++        "",
++        "测量方式：每个组件在独立子进程中执行 `python -m src.cli ohscan-run`，由一个**最小的**"
++        "父进程记录墙钟与 `ru_maxrss`。用最小父进程是必要的——Linux 上 fork 出的子进程在 exec 前"
++        "共享父进程的常驻页，若从本脚本（它在统计行数时会缓冲整份源码）直接测量，得到的会是父进程"
++        "的内存而不是扫描器的内存。数值已用 GNU `time -v` 抽样交叉核对。",
++        "",
++        "## 限制",
++        "",
++        "- 语料是**组件级**（单次约 0.2k–2k 源文件），不是 OpenHarmony 千万行整树；"
++        "整树规模需另行测量。",
++        "- 执行是**同进程串行**的；尚无并行、增量缓存或硬超时/资源隔离。",
++        "- `-partial` 解析文件计入未分析（`unexamined`），因为当前无宏展开与完整 "
++        "include 上下文。",
++        "- 峰值 RSS 为单个 CLI 进程的 `ru_maxrss`；未测多进程并发下的总内存。",
++        "- 分片组件的墙钟是各分片之和，含每片一次 Python 启动与 JSON 写出的固定开销，"
++        "因此其 files/s 会低于同等规模的单次扫描，不能与单次运行的组件直接比吞吐。",
++        "- `window_window_manager` 整树的源文件总量超过 `M1 bounded scope` 上限而无法"
++        "单次扫描；这是当前实现的真实边界，分片是绕过方式而非其消失。",
++        "- 上述耗时包含 Python 解释器启动与 JSON 报告写出，属于端到端口径。",
++        "",
++    ]
++    return "\n".join(out)
++
++
++def main(argv: list[str] | None = None) -> int:
++    here = pathlib.Path(__file__).resolve().parent.parent
++    ap = argparse.ArgumentParser(description=__doc__,
++                                 formatter_class=argparse.RawDescriptionHelpFormatter)
++    ap.add_argument("--manifest", required=True,
++                    help="JSON corpus manifest with full commit SHAs")
++    ap.add_argument("--project-root", default=str(here),
++                    help="OHScanner project root (default: script's repo)")
++    ap.add_argument("--python", default=str(here / ".venv/bin/python"),
++                    help="interpreter used to run the CLI")
++    ap.add_argument("--json-out", required=True)
++    ap.add_argument("--md-out", required=True)
++    ap.add_argument("--only", nargs="*",
++                    help="restrict to these manifest labels")
++    args = ap.parse_args(argv)
++
++    manifest = json.loads(pathlib.Path(args.manifest).read_text(encoding="utf-8"))
++    entries = manifest["entries"]
++    if args.only:
++        entries = [e for e in entries if e["label"] in set(args.only)]
++
++    report_dir = pathlib.Path(args.json_out).resolve().parent / "perf_scale"
++    report_dir.mkdir(parents=True, exist_ok=True)
++
++    rows = []
++    for entry in entries:
++        print(f"[run] {entry['label']} @ {entry['commit'][:12]} ...", flush=True)
++        row = benchmark_one(args.project_root, args.python, entry, report_dir)
++        state = "ok" if row.get("exit_code") == 0 else f"FAIL({row['exit_code']})"
++        print(f"      {state}  {row['wall_seconds']}s  "
++              f"{row['peak_rss_kb'] / 1024:.1f} MB  "
++              f"{row.get('scanned_files', '-')} files", flush=True)
++        rows.append(row)
++
++    json_path = pathlib.Path(args.json_out)
++    json_path.parent.mkdir(parents=True, exist_ok=True)
++    json_path.write_text(
++        json.dumps({"manifest": args.manifest, "rows": rows},
++                   indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
++    pathlib.Path(args.md_out).write_text(
++        render_markdown(rows, args.manifest), encoding="utf-8")
++    print(f"\nwrote {json_path}\nwrote {args.md_out}")
++    return 0 if all(r.get("exit_code") == 0 for r in rows) else 1
++
++
++if __name__ == "__main__":
++    sys.exit(main())

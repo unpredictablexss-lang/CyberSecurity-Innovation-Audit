@@ -1,0 +1,814 @@
+[
+  {
+    "ref": "refs/inventory/repo0/codex/ark-runtime-research-admission-20261020",
+    "ahead": 1,
+    "head": "03619f07d6ed42dbe2acbaf9753e90583dde4b84",
+    "last": "2026-10-20 16:13:18 +0800 fix: allow explicit Ark Runtime research scans",
+    "stat": "5 files changed, 11 insertions(+), 38 deletions(-)"
+  },
+  {
+    "ref": "refs/inventory/repo0/feat/d-commercial-readiness-20261019",
+    "ahead": 5,
+    "head": "03f13b0ea04b2b5cfa15a9961d8776507eddc5aa",
+    "last": "2026-10-19 08:36:16 +0800 docs(d): record sensitive-flow browser acceptance",
+    "stat": "12 files changed, 587 insertions(+), 13 deletions(-)"
+  },
+  {
+    "ref": "refs/inventory/repo0/feat/progressive-triage-agent-policy-20261021",
+    "ahead": 37,
+    "head": "b9b1f4ad3aa4615817ea6a9781e2c6e7ff969655",
+    "last": "2026-10-21 20:34:46 +0800 test: cover all operation modes through workers",
+    "stat": "63 files changed, 6612 insertions(+), 739 deletions(-)"
+  },
+  {
+    "ref": "refs/inventory/repo0/feat/progressive-triage-policy-20261021-live",
+    "ahead": 33,
+    "head": "9e31f46a363d671f59c3031dca1f067ec8d9abf2",
+    "last": "2026-10-21 19:51:47 +0800 Polish audit copy and case report delivery",
+    "stat": "63 files changed, 6425 insertions(+), 732 deletions(-)"
+  },
+  {
+    "ref": "refs/inventory/repo0/feat/progressive-triage-runtime-20261021",
+    "ahead": 39,
+    "head": "154438bf7d3ac45b55210fc988fb2bd2fc258cac",
+    "last": "2026-10-21 21:12:45 +0800 fix: require product-bound validation for confirmation",
+    "stat": "63 files changed, 7163 insertions(+), 791 deletions(-)"
+  },
+  {
+    "ref": "refs/inventory/repo0/integration/main-release-20261020",
+    "ahead": 6,
+    "head": "6708f8647c4a226e4a7e2ac5931fff15bf115b8d",
+    "last": "2026-10-20 16:17:40 +0800 fix(c): clear stale pending admission metadata",
+    "stat": "12 files changed, 808 insertions(+), 35 deletions(-)"
+  },
+  {
+    "ref": "refs/inventory/repo0/work/issue-39-impl-20261021",
+    "ahead": 21,
+    "head": "4f0697164149f9258412692ff526bf2816727688",
+    "last": "2026-10-21 17:25:25 +0800 fix: accept dotted OpenHarmony repository names",
+    "stat": "28 files changed, 2199 insertions(+), 52 deletions(-)"
+  },
+  {
+    "ref": "refs/inventory/repo0/work/issue-40-impl-20261021",
+    "ahead": 20,
+    "head": "7126e8a146aac709322742bd319e2e33f249810e",
+    "last": "2026-10-21 17:57:54 +0800 feat: complete authorized smart audit queue and retry",
+    "stat": "24 files changed, 1838 insertions(+), 474 deletions(-)"
+  },
+  {
+    "ref": "refs/inventory/repo0/work/issue-42-impl-20261021",
+    "ahead": 22,
+    "head": "0cb2bdf144e3d3c54c2abed3aca1a8b35618480f",
+    "last": "2026-10-21 17:45:47 +0800 Add source-bound experiment evidence summary",
+    "stat": "19 files changed, 2029 insertions(+), 49 deletions(-)"
+  },
+  {
+    "ref": "refs/inventory/repo0/work/issues-39-42-completion-20261021",
+    "ahead": 39,
+    "head": "154438bf7d3ac45b55210fc988fb2bd2fc258cac",
+    "last": "2026-10-21 21:12:45 +0800 fix: require product-bound validation for confirmation",
+    "stat": "63 files changed, 7163 insertions(+), 791 deletions(-)"
+  },
+  {
+    "ref": "refs/inventory/repo0/work/issues-39-42-local-20261020",
+    "ahead": 1,
+    "head": "e80aa8656b4477b28c4b24742b60855e35c0b3bc",
+    "last": "2026-10-20 23:36:01 +0800 feat(workbench): deliver issues 39-42 local workflows",
+    "stat": "14 files changed, 838 insertions(+), 64 deletions(-)"
+  },
+  {
+    "ref": "refs/inventory/repo0/work/pr38-44-e2e-followup-20261020",
+    "ahead": 69,
+    "head": "b469f623b34ca5fd752ab72de66e53927b9dcd9c",
+    "last": "2026-10-21 16:21:01 +0800 docs: record feature branch publication",
+    "stat": "85 files changed, 16241 insertions(+), 851 deletions(-)"
+  },
+  {
+    "ref": "refs/inventory/repo1/docs/competition-evidence-20261021",
+    "ahead": 2,
+    "head": "d4196315366983e7c76135a4ad6f39335eb86978",
+    "last": "2026-10-21 00:14:58 +0800 docs: package judge-facing OHScanner experiments",
+    "stat": "191 files changed, 37846 insertions(+)"
+  },
+  {
+    "ref": "refs/inventory/repo1/docs/judge-evidence-bd-agent-20261019",
+    "ahead": 1,
+    "head": "5f878ee05e8d11e4f9df87c524147d906dad4d72",
+    "last": "2026-10-19 21:15:56 +0800 docs: add judge-facing B D and agent evidence",
+    "stat": "3 files changed, 98 insertions(+)"
+  },
+  {
+    "ref": "refs/inventory/repo1/feat/candidate-review",
+    "ahead": 42,
+    "head": "32f641ee011891e8b7d5d663778d03d07fbbeb5f",
+    "last": "2026-10-16 23:36:18 +0800 feat(interface): M4-M8 baseline before the six-family parallel sessions",
+    "stat": "197 files changed, 26224 insertions(+), 39 deletions(-)"
+  },
+  {
+    "ref": "refs/inventory/repo1/feat/interface-ipc-detector",
+    "ahead": 45,
+    "head": "7579a16344fa3164bfbea3e26db783854a1793b6",
+    "last": "2026-10-19 11:09:09 +0800 feat(ipc): extend disclosure candidate rules and replay evidence",
+    "stat": "335 files changed, 51642 insertions(+), 39 deletions(-)"
+  },
+  {
+    "ref": "refs/inventory/repo1/feat/interface-m1-descriptor-identity",
+    "ahead": 2,
+    "head": "84641515f0914d826a3f67ecd4dca7702ecf6c51",
+    "last": "2026-10-11 23:17:35 +0800 docs(research): record the M1 before/after and every removal's basis",
+    "stat": "24 files changed, 1500 insertions(+), 11 deletions(-)"
+  },
+  {
+    "ref": "refs/inventory/repo1/feat/interface-m2-relay-guard",
+    "ahead": 4,
+    "head": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+    "last": "2026-10-12 00:59:58 +0800 docs(research): record the M2 before/after and the removal's basis",
+    "stat": "35 files changed, 2513 insertions(+), 18 deletions(-)"
+  },
+  {
+    "ref": "refs/inventory/repo1/feat/tool-matrix",
+    "ahead": 42,
+    "head": "32f641ee011891e8b7d5d663778d03d07fbbeb5f",
+    "last": "2026-10-16 23:36:18 +0800 feat(interface): M4-M8 baseline before the six-family parallel sessions",
+    "stat": "197 files changed, 26224 insertions(+), 39 deletions(-)"
+  },
+  {
+    "ref": "refs/inventory/repo1/wip/a-dedup",
+    "ahead": 98,
+    "head": "e9563f918dbd155b30c2a54810e592e12ab18590",
+    "last": "2026-10-13 13:32:31 +0800 chore(poc): drop the duplicated shared_ptr race PoC, owned by the interface line",
+    "stat": "180 files changed, 21587 insertions(+), 37 deletions(-)"
+  },
+  {
+    "ref": "refs/inventory/repo1/work/b-high-recall-implementation-20261018",
+    "ahead": 43,
+    "head": "635b3e0449c552f0ccc25118850d245962845568",
+    "last": "2026-10-16 23:53:28 +0800 refactor(interface): one module per family, composed into the reviewed policy",
+    "stat": "206 files changed, 26992 insertions(+), 39 deletions(-)"
+  },
+  {
+    "ref": "refs/inventory/repo2/codex/cutils-component-pilot",
+    "ahead": 75,
+    "head": "78b7819a5936dc7bb854bcf33eb1ea22cd042a1d",
+    "last": "2026-10-09 14:47:21 +0800 补齐 c_utils 候选上下文与 Joern 覆盖核验",
+    "stat": "142 files changed, 13741 insertions(+), 972 deletions(-)"
+  },
+  {
+    "ref": "refs/inventory/repo2/feat/historical-vuln-benchmark",
+    "ahead": 71,
+    "head": "dd908f2137ebb6a60fb8e876b04958677738f252",
+    "last": "2026-10-08 20:40:14 +0800 feat: execute graph scanner experiments with coverage evidence",
+    "stat": "128 files changed, 11872 insertions(+), 972 deletions(-)"
+  },
+  {
+    "ref": "refs/inventory/repo2/feat/workbench-status-misans-hardening",
+    "ahead": 1,
+    "head": "2146c229e00e63c4464da85f46fde303019fbeaa",
+    "last": "2026-10-15 00:25:44 +0800 feat(workbench): align status and MiSans font stack",
+    "stat": "7 files changed, 54 insertions(+), 23 deletions(-)"
+  },
+  {
+    "ref": "refs/inventory/repo2/integration/cd-admission-20261017",
+    "ahead": 1,
+    "head": "1f8c7d31478f64cfd8586a46931b628844f96f64",
+    "last": "2026-10-17 22:23:33 +0800 Integrate C/D research with explicit blocked admission and evidence review",
+    "stat": "191 files changed, 23293 insertions(+), 8 deletions(-)"
+  },
+  {
+    "ref": "refs/inventory/repo2/integration/ipc-panel-20261017",
+    "ahead": 30,
+    "head": "61e6818dfc148805d0905577a7aae516d8a852e4",
+    "last": "2026-10-17 21:43:17 +0800 feat(ipc): integrate B detectors into workbench catalog",
+    "stat": "274 files changed, 44546 insertions(+), 69 deletions(-)"
+  },
+  {
+    "ref": "refs/inventory/repo2/review/ipc-current-20261017",
+    "ahead": 29,
+    "head": "d68ee35cf0dbafdbe98292f231a0b1f6db8fad7e",
+    "last": "2026-10-17 21:14:24 +0800 docs(ipc): record latest B review and next acceptance gates",
+    "stat": "258 files changed, 44076 insertions(+), 58 deletions(-)"
+  },
+  {
+    "ref": "refs/inventory/repo2/work/agent-llm-20261017",
+    "ahead": 1,
+    "head": "1f8c7d31478f64cfd8586a46931b628844f96f64",
+    "last": "2026-10-17 22:23:33 +0800 Integrate C/D research with explicit blocked admission and evidence review",
+    "stat": "191 files changed, 23293 insertions(+), 8 deletions(-)"
+  },
+  {
+    "ref": "refs/inventory/repo2/work/c4-ark-runtime-20261018",
+    "ahead": 4,
+    "head": "ea492ce51f19ed611479ac3ed28826f71fe94444",
+    "last": "2026-10-18 18:30:03 +0800 docs(c): clarify handoff branch and environment",
+    "stat": "119 files changed, 15165 insertions(+), 42 deletions(-)"
+  },
+  {
+    "ref": "refs/inventory/repo2/work/cpp-20261017",
+    "ahead": 1,
+    "head": "91e6291242c6917fdef7cf732f80b3860c836ebe",
+    "last": "2026-10-17 09:12:26 +0800 fix(cpp): revoke shared_ptr lock credit after guard ownership changes",
+    "stat": "17 files changed, 871 insertions(+), 13 deletions(-)"
+  },
+  {
+    "ref": "refs/inventory/repo2/work/ipc-20261017",
+    "ahead": 71,
+    "head": "a77dbdb235a08fb8bae2be3c3f6cdce7de33b3e7",
+    "last": "2026-10-20 16:10:27 +0800 docs: record B-line closeout and push evidence",
+    "stat": "692 files changed, 510772 insertions(+), 121 deletions(-)"
+  },
+  {
+    "ref": "refs/inventory/repo2/work/platform-20261017",
+    "ahead": 2,
+    "head": "121db7b17da5defdcc6e4b92d6b6c94de6fa6bdc",
+    "last": "2026-10-17 14:44:48 +0800 docs(platform): record planning acceptance and API integration request",
+    "stat": "9 files changed, 857 insertions(+)"
+  },
+  {
+    "ref": "refs/inventory/repo2/work/ui-20261017",
+    "ahead": 10,
+    "head": "615f3d2087a8aae0bfdbfa779ad0b13525b76db8",
+    "last": "2026-10-17 21:12:12 +0800 fix(ui): load the same MiSans VF webfont as the HTML reference",
+    "stat": "16 files changed, 512 insertions(+), 89 deletions(-)"
+  },
+  {
+    "ref": "refs/inventory/repo3/feat/product-intelligent-audit-v1-20261020",
+    "ahead": 10,
+    "head": "2dd5fd7f0e2d063ace3044a39670d30da0ca98ad",
+    "last": "2026-10-20 18:48:24 +0800 fix(types): declare new risk presentation helpers for TypeScript",
+    "stat": "10 files changed, 480 insertions(+), 24 deletions(-)"
+  },
+  {
+    "ref": "refs/inventory/repo4/work/issues-39-42-completion-20261021",
+    "ahead": 39,
+    "head": "154438bf7d3ac45b55210fc988fb2bd2fc258cac",
+    "last": "2026-10-21 21:12:45 +0800 fix: require product-bound validation for confirmation",
+    "stat": "63 files changed, 7163 insertions(+), 791 deletions(-)"
+  },
+  {
+    "ref": "refs/inventory/repo5/feat/interface-ipc-detector",
+    "ahead": 41,
+    "head": "818d3eb8d9760505a67eee7c2cca600ff783e152",
+    "last": "2026-10-16 18:58:03 +0800 docs(status): correct B's stale \"not pushed\" claims and record PR #11's CI state",
+    "stat": "178 files changed, 23559 insertions(+), 39 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/a-line-20261018",
+    "ahead": 36,
+    "head": "cbe9312a84b3ed49d7c462943f00deafe14ddcca",
+    "last": "2026-10-18 17:35:26 +0800 feat(cpp): add sample30 pinned replay runner",
+    "stat": "251 files changed, 281056 insertions(+), 80 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/a-line-final-closeout-20261020",
+    "ahead": 7,
+    "head": "b49b9e33b3ffce4f1e7ed6109fc17d8005cdbe78",
+    "last": "2026-10-20 21:47:32 +0800 test: record C-line alias and profile replays",
+    "stat": "122 files changed, 103624 insertions(+), 428 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/a-line-openharmony-full-test-20261016",
+    "ahead": 127,
+    "head": "8a38b4b3f5f9aa23df34e721722d5f7d055f09d2",
+    "last": "2026-10-18 02:03:06 +0800 test: document OpenHarmony check wrap-up",
+    "stat": "274 files changed, 33523 insertions(+), 394 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/a-line-scanner-regression-20261018",
+    "ahead": 7,
+    "head": "9b99f106883ef58304d9e6702fea562bb7f8f331",
+    "last": "2026-10-19 00:07:23 +0800 research: record C-line Ark Runtime replay review",
+    "stat": "268 files changed, 86854 insertions(+), 66 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/a-line-static-cve-20261019",
+    "ahead": 4,
+    "head": "129bc20ebdb0112893c0bbf24c8faa529609adb8",
+    "last": "2026-10-19 15:19:56 +0800 chore(cpp): normalize static replay evidence line endings",
+    "stat": "103 files changed, 5218 insertions(+), 12 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/a-line-static-evidence-followup-20261020",
+    "ahead": 270,
+    "head": "f193636e7b1384f0ca2e360b4ec3b0b0348d9340",
+    "last": "2026-10-20 12:25:32 +0800 docs(cpp): close libpng source-context audit",
+    "stat": "865 files changed, 129028 insertions(+), 161 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/a-null-static-pr-20261019",
+    "ahead": 1,
+    "head": "8ec5f56a12e90bba56953b39eb17faa20e154da9",
+    "last": "2026-10-19 13:39:01 +0800 Improve A-NULL static candidate handling",
+    "stat": "47 files changed, 8412 insertions(+), 144 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/a-path-source-sink-20261018",
+    "ahead": 3,
+    "head": "bc27c2ca520223acec6ae6e44e1535e5e4e73404",
+    "last": "2026-10-18 23:51:23 +0800 docs(cpp): audit D1 T1 T2 evidence gates",
+    "stat": "21 files changed, 1903 insertions(+)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/ac-path-deletefile-integration-20261019",
+    "ahead": 8,
+    "head": "71a7bfffd5aaf2195c7f74bc57a4b8b4f9ded1b5",
+    "last": "2026-10-20 18:56:39 +0800 research(ac): bind path traversal integration patches",
+    "stat": "27 files changed, 2716 insertions(+)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/ac-path-traversal-evidence-20261020",
+    "ahead": 4,
+    "head": "5e893e9192848f08698e3661f9176badffc77b5b",
+    "last": "2026-10-20 19:04:22 +0800 research(ac): preserve path traversal detector controls and evidence",
+    "stat": "159 files changed, 57400 insertions(+)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/ark-runtime-research-admission-20261020",
+    "ahead": 1,
+    "head": "03619f07d6ed42dbe2acbaf9753e90583dde4b84",
+    "last": "2026-10-20 16:13:18 +0800 fix: allow explicit Ark Runtime research scans",
+    "stat": "5 files changed, 11 insertions(+), 38 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/b-ipc-closeout-20261020",
+    "ahead": 6,
+    "head": "96cfc453c15263ec3ec83ce87aa75d08d221b445",
+    "last": "2026-10-21 01:16:00 +0800 docs(ipc): add DATA-06 component PoC closeout",
+    "stat": "220 files changed, 279361 insertions(+), 77 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/b-ipc-integration-20261020",
+    "ahead": 1,
+    "head": "40e3d79f38629b273214f1efee0f22b7443849f1",
+    "last": "2026-10-20 14:49:00 +0800 feat(ipc): add parcel array allocation width candidate",
+    "stat": "35 files changed, 2820 insertions(+), 54 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/c-line-ark-runtime-20261018",
+    "ahead": 15,
+    "head": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+    "last": "2026-10-19 13:03:21 +0800 feat(c): integrate Ark Runtime scan evidence",
+    "stat": "336 files changed, 31750 insertions(+), 42 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/c-line-ark-runtime-replay-20261019",
+    "ahead": 5,
+    "head": "a7962043cda3cbb99f79ada7418508709fc951ca",
+    "last": "2026-10-19 00:16:45 +0800 docs: sync C-line Ark Runtime replay status",
+    "stat": "202 files changed, 84489 insertions(+)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/c-line-ark-runtime-replay-local-20261019",
+    "ahead": 4,
+    "head": "d0edbe5bd30259454bd63c6c0efc6e476fcc08d9",
+    "last": "2026-10-19 00:11:50 +0800 research: record C-line Ark Runtime replay review",
+    "stat": "202 files changed, 84482 insertions(+)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/c-line-known-vuln-optimization-20261019",
+    "ahead": 9,
+    "head": "842948084660207fd64399cfd598ed93e5593dcc",
+    "last": "2026-10-19 19:45:45 +0800 docs(c): bind C12 source and product closure evidence",
+    "stat": "564 files changed, 650999 insertions(+), 61 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/c-line-parallel-plan-20261020",
+    "ahead": 153,
+    "head": "8fa51f6ce08796d4a6ecfb19ea8520672ea8253a",
+    "last": "2026-10-21 12:23:37 +0800 docs(c-line): index replay outputs and terminal states",
+    "stat": "710 files changed, 662012 insertions(+), 428 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/c-line-scanner-optimization-20261019",
+    "ahead": 13,
+    "head": "448bd1b14906e883199168653360df30863c095a",
+    "last": "2026-10-20 18:51:33 +0800 research(c9): bind scanner optimization integration evidence",
+    "stat": "206 files changed, 32397 insertions(+), 822 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/c-line-static-20261019",
+    "ahead": 5,
+    "head": "d07dc397ca1ff3bddc0be52cfa98c6e4c783fd03",
+    "last": "2026-10-19 22:08:39 +0800 fix: restore corrupted receiver guard analysis",
+    "stat": "99 files changed, 8245 insertions(+), 42 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/c-line-typedarrayset-mainline-20261021",
+    "ahead": 2,
+    "head": "f6a65c2c1758d80487d69efa12d22de6344986dc",
+    "last": "2026-10-21 12:24:20 +0800 docs(c-line): index replay outputs and terminal states",
+    "stat": "24 files changed, 1604 insertions(+)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/c-runtime-dev-closeout-20261020",
+    "ahead": 10,
+    "head": "f77925bfba85184b18463a4678168dcbe72849f5",
+    "last": "2026-10-20 23:59:49 +0800 Correct Set source line anchor",
+    "stat": "109 files changed, 4128 insertions(+), 1079 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/c-runtime-test-closeout-20261020",
+    "ahead": 12,
+    "head": "76e5b08ee5a115ae3b385764765eaa364cf26791",
+    "last": "2026-10-21 00:01:31 +0800 Remove extra EOF blank line from source audit",
+    "stat": "107 files changed, 4174 insertions(+), 1079 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/c11-alias-cross-helper-20261020",
+    "ahead": 4,
+    "head": "3d9274ba2c3d37f1fec8f633036049a3a208922f",
+    "last": "2026-10-20 18:52:16 +0800 feat(c11): preserve alias and cross-helper semantics controls",
+    "stat": "271 files changed, 26221 insertions(+), 56 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/c11-known-case-corpus-20261020",
+    "ahead": 4,
+    "head": "c778bbb5bd7218fef4028f74ffa613abd7f3c63d",
+    "last": "2026-10-20 18:52:53 +0800 feat(c11): preserve known-case corpus and disposition controls",
+    "stat": "236 files changed, 22608 insertions(+), 57 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/c11-performance-admission-20261020",
+    "ahead": 4,
+    "head": "600001f5428e4a3a1942d9a970ecae3a055bf9d0",
+    "last": "2026-10-20 18:53:46 +0800 research(c11): preserve performance admission results and harness",
+    "stat": "341 files changed, 633335 insertions(+), 56 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/c12-ark-deep-semantics-20261020",
+    "ahead": 7,
+    "head": "7bf57a898e0a64c83a3aa34c04e42ac98a5b6561",
+    "last": "2026-10-20 18:54:28 +0800 feat(c12): preserve Ark deep semantics and controls",
+    "stat": "503 files changed, 641496 insertions(+), 57 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/c12-product-admission-20261020",
+    "ahead": 7,
+    "head": "042abc03cc6cff23519e6ee8f346bf511e34b63c",
+    "last": "2026-10-20 18:55:14 +0800 research(c12): preserve holdout and product admission gate artifacts",
+    "stat": "519 files changed, 647909 insertions(+), 57 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/c12-source-adapters-20261020",
+    "ahead": 7,
+    "head": "30e4549baae1fa731fb524981b203bb57688edee",
+    "last": "2026-10-20 18:55:53 +0800 feat(c12): preserve artifact source adapters and focused corpus",
+    "stat": "493 files changed, 645674 insertions(+), 61 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/c13-ark-real-replay-20261019",
+    "ahead": 10,
+    "head": "40fd4d53d10fe52b5d8b925126e14271d3f6cb26",
+    "last": "2026-10-19 22:01:25 +0800 research(c13): bind real Ark replay slice",
+    "stat": "587 files changed, 652288 insertions(+), 61 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/c13-cross-file-facts-20261019",
+    "ahead": 11,
+    "head": "e26c605b3c5449f7e0a2285d88b274c35624fb47",
+    "last": "2026-10-19 22:21:58 +0800 fix(c13): close cross-file production controls",
+    "stat": "572 files changed, 651858 insertions(+), 61 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/c13-holdout-product-gate-20261019",
+    "ahead": 10,
+    "head": "c6842cd548cc107522b8a39dc468d1535d41b982",
+    "last": "2026-10-19 21:57:44 +0800 feat(c13): close holdout product gate slice",
+    "stat": "684 files changed, 659434 insertions(+), 61 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/c13-parallel-integration-20261019",
+    "ahead": 15,
+    "head": "24038152b90746d07ec8a3b64711f33bf0ecf9cb",
+    "last": "2026-10-19 22:39:30 +0800 fix(c13): make holdout contract bytes deterministic",
+    "stat": "716 files changed, 661587 insertions(+), 61 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/c13-test-artifacts-20261019",
+    "ahead": 16,
+    "head": "ecfd7c0a08f5bc4682e5ddb71d21248f0902dd5f",
+    "last": "2026-10-19 22:30:21 +0800 base",
+    "stat": "1775 files changed, 1151791 insertions(+), 490270 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/c13-test-runtime-state-20261019",
+    "ahead": 17,
+    "head": "e1837bd0f660e12010630d5f6ff76fd3a4e070a7",
+    "last": "2026-10-19 22:36:03 +0800 fixed",
+    "stat": "1775 files changed, 1151790 insertions(+), 490264 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/c3-dependency-review-20261018",
+    "ahead": 1,
+    "head": "5cceb70e3b00b5e4938bfcee378863a8232931a9",
+    "last": "2026-10-18 19:59:18 +0800 feat: add opt-in Ark Runtime C-line research detector",
+    "stat": "49 files changed, 3718 insertions(+), 42 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/c4-selective-integration-20261018",
+    "ahead": 7,
+    "head": "b011ea0cf732e5c07cb9d9fe0ab9ec451e87c5df",
+    "last": "2026-10-18 21:24:54 +0800 docs(c): record pending selective branch push",
+    "stat": "130 files changed, 16237 insertions(+), 42 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/c9-exception-guard-acceptance-20261020",
+    "ahead": 13,
+    "head": "bc6b383ddf5b01044735f673192bac9bee5398ef",
+    "last": "2026-10-20 19:03:28 +0800 feat(c9): preserve exception guard implementation and acceptance evidence",
+    "stat": "2573 files changed, 314313 insertions(+), 822 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/c9-known-case-gaps-20261020",
+    "ahead": 16,
+    "head": "47486a368b7d2d4f76a2bd3e3ea6ebcd5ebbe6f9",
+    "last": "2026-10-20 18:51:08 +0800 research(c9): preserve known-case gap implementation and controls",
+    "stat": "354 files changed, 33513 insertions(+), 42 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/c9-partial-owner-acceptance-20261020",
+    "ahead": 13,
+    "head": "5f03fb8350778ca0b1c6ab05f080f39905ce5957",
+    "last": "2026-10-20 19:03:56 +0800 research(c9): preserve partial-owner reconciliation evidence",
+    "stat": "203 files changed, 32820 insertions(+), 822 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/c9-type-origin-acceptance-20261020",
+    "ahead": 13,
+    "head": "8715828b7f930fcb93947e4d94d48271a2a0bd8b",
+    "last": "2026-10-20 19:05:02 +0800 feat(c9): preserve type-origin semantics and acceptance evidence",
+    "stat": "268 files changed, 32103 insertions(+), 822 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/closeout-materials-20261021",
+    "ahead": 1,
+    "head": "886aa75bef4a1ea7557b3983a4116dfc78a386c8",
+    "last": "2026-10-21 19:57:58 +0800 docs: bundle OHScanner experiment closeout materials",
+    "stat": "276 files changed, 28157 insertions(+)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/contacts-path-traversal-detector-20261020",
+    "ahead": 4,
+    "head": "f611122169726a52588d7de7ef8d7a22a4bce326",
+    "last": "2026-10-20 05:08:19 +0800 Scope separator guards to preceding file sinks",
+    "stat": "54 files changed, 9092 insertions(+), 144 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/contacts-path-traversal-pr-20261020",
+    "ahead": 5,
+    "head": "2db47f7fc0860f036c53dc12bccd63d62bcc23d8",
+    "last": "2026-10-20 05:08:19 +0800 feat(owner): admit opt-in Contacts path traversal candidate",
+    "stat": "56 files changed, 9207 insertions(+), 145 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/d-mainline-panel-e2e-20261021",
+    "ahead": 13,
+    "head": "3ecd0bb05ad384ac440538340b715b73ac5e74e3",
+    "last": "2026-10-21 11:12:27 +0800 docs(d105): timestamp mainline divergence snapshot",
+    "stat": "8 files changed, 138 insertions(+), 29 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/d-owner-20261020-01a1571f",
+    "ahead": 162,
+    "head": "d39685ba504d9bd31978107fce7e19f803cf1353",
+    "last": "2026-10-20 19:57:28 +0800 docs: close out D-line sustained rounds",
+    "stat": "847 files changed, 1478342 insertions(+), 910 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/full-runtime-performance-audit-20261014",
+    "ahead": 72,
+    "head": "bb81f8ed21ca87f8461e40695d83a0cc06eb1955",
+    "last": "2026-10-20 19:08:57 +0800 docs: bind pre-reinstall local push manifest",
+    "stat": "1859 files changed, 554345 insertions(+), 768 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/known-cve-evidence-20261020",
+    "ahead": 1,
+    "head": "c5befbe796bed25334886c1b126d26a148578d3d",
+    "last": "2026-10-20 18:56:22 +0800 research(cve): preserve disclosed-CVE regression evidence",
+    "stat": "18 files changed, 1250 insertions(+), 14 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/owner-platform-r1-r2-r3-fixpack-20261016",
+    "ahead": 33,
+    "head": "786991578727398c78c62e19c6117a3d9c9444c8",
+    "last": "2026-10-16 22:04:28 +0800 docs(review): make fixpack patches independently applicable",
+    "stat": "1202 files changed, 241588 insertions(+), 759 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/owner-platform-r2-independent-20261016",
+    "ahead": 28,
+    "head": "35bffbb5fa621b6286452a1a3fb7efa30aed3323",
+    "last": "2026-10-16 22:00:49 +0800 fix(workbench): guard stale operation detail responses",
+    "stat": "1177 files changed, 239285 insertions(+), 756 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/static-benchmark-enhancement-20261013",
+    "ahead": 79,
+    "head": "737d047d8e74d56a483cb459cb58affb56a84ccd",
+    "last": "2026-10-13 10:15:02 +0800 merge: integrate main performance baseline into static benchmark enhancements",
+    "stat": "9 files changed, 33 insertions(+), 65 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/teammate-a-fragment-consolidation-20261010",
+    "ahead": 15,
+    "head": "4755a75aecc84a96d5d48632b2891d2bc83340b8",
+    "last": "2026-10-11 12:07:05 +0800 docs(status): record DelayedSingleton competition loop",
+    "stat": "160 files changed, 20600 insertions(+), 11 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/teammate-a-shared-ptr-competition-loop-20261011",
+    "ahead": 16,
+    "head": "aa79d57a3612c0bc5a04dac7af03c2a086dcddd8",
+    "last": "2026-10-12 00:16:34 +0800 chore(poc): drop the shared_ptr race PoC now that one line owns it",
+    "stat": "156 files changed, 19654 insertions(+), 11 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/teammate-a-shared-ptr-race-migration",
+    "ahead": 6,
+    "head": "6afb7d0a589056bf68f0373c723678b7f5fd2275",
+    "last": "2026-10-10 18:06:27 +0800 docs: record successful M-gate CI run",
+    "stat": "71 files changed, 7725 insertions(+), 5 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/teammate-a-shared-ptr-race-review-fixes-20261011",
+    "ahead": 9,
+    "head": "65ba9170eb835815d82a6ac3165479fecdba3b59",
+    "last": "2026-10-11 09:40:40 +0800 docs(teammate-a): document shared_ptr synchronization evidence limits",
+    "stat": "77 files changed, 8581 insertions(+), 5 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/teammate-a-static-module-20261013",
+    "ahead": 125,
+    "head": "e27f744acb60d3c1bd45f6d3d9a4d07f9b2528cf",
+    "last": "2026-10-13 22:13:07 +0800 docs: consolidate teammate A static scan documentation",
+    "stat": "263 files changed, 29702 insertions(+), 394 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/teammate-c-ark-runtime-type-safety",
+    "ahead": 5,
+    "head": "76f20af9e372189627f5117ed9a30815d1f49747",
+    "last": "2026-10-17 23:45:55 +0800 research(ark-runtime): record C3 generalization and pinned source validation",
+    "stat": "80 files changed, 14537 insertions(+)"
+  },
+  {
+    "ref": "refs/remotes/origin/docs/competition-evidence-20261021",
+    "ahead": 2,
+    "head": "d4196315366983e7c76135a4ad6f39335eb86978",
+    "last": "2026-10-21 00:14:58 +0800 docs: package judge-facing OHScanner experiments",
+    "stat": "191 files changed, 37846 insertions(+)"
+  },
+  {
+    "ref": "refs/remotes/origin/docs/judge-evidence-bd-agent-20261019",
+    "ahead": 1,
+    "head": "5f878ee05e8d11e4f9df87c524147d906dad4d72",
+    "last": "2026-10-19 21:15:56 +0800 docs: add judge-facing B D and agent evidence",
+    "stat": "3 files changed, 98 insertions(+)"
+  },
+  {
+    "ref": "refs/remotes/origin/docs/openharmony-2026-two-week-architecture",
+    "ahead": 3,
+    "head": "88bb86a2d56271764241a442bfe18f0da6eb5021",
+    "last": "2026-10-02 08:18:34 +0800 docs: clarify local Windows and WSL2 workflow before renting a server",
+    "stat": "10 files changed, 969 insertions(+), 1712 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/draft/oh-interface-detectors-round1",
+    "ahead": 1,
+    "head": "4271926bdaea3ba9cc0657f494df19414462b200",
+    "last": "2026-10-10 00:13:15 +0800 队友B第一轮提交",
+    "stat": "60 files changed, 3968 insertions(+)"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/d-commercial-readiness-20261019",
+    "ahead": 5,
+    "head": "03f13b0ea04b2b5cfa15a9961d8776507eddc5aa",
+    "last": "2026-10-19 08:36:16 +0800 docs(d): record sensitive-flow browser acceptance",
+    "stat": "12 files changed, 587 insertions(+), 13 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/historical-vuln-benchmark",
+    "ahead": 78,
+    "head": "35eee72742980a396a5a7e5508b4fd52d837388a",
+    "last": "2026-10-09 12:51:36 +0800 test: reject out-of-root saved benchmark report references",
+    "stat": "128 files changed, 11946 insertions(+), 972 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/interface-ipc-detector",
+    "ahead": 45,
+    "head": "7579a16344fa3164bfbea3e26db783854a1793b6",
+    "last": "2026-10-19 11:09:09 +0800 feat(ipc): extend disclosure candidate rules and replay evidence",
+    "stat": "335 files changed, 51642 insertions(+), 39 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/interface-m1-descriptor-identity",
+    "ahead": 2,
+    "head": "84641515f0914d826a3f67ecd4dca7702ecf6c51",
+    "last": "2026-10-11 23:17:35 +0800 docs(research): record the M1 before/after and every removal's basis",
+    "stat": "24 files changed, 1500 insertions(+), 11 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/interface-m2-relay-guard",
+    "ahead": 4,
+    "head": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+    "last": "2026-10-12 00:59:58 +0800 docs(research): record the M2 before/after and the removal's basis",
+    "stat": "35 files changed, 2513 insertions(+), 18 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/multimode-authorized-auto-triage-20261020",
+    "ahead": 19,
+    "head": "f02a7f1a10b4045fdcdf3984addff3ad24a26d6c",
+    "last": "2026-10-20 23:22:21 +0800 docs(status): record multi-mode Agent consent integration and clear CI/E2E limits",
+    "stat": "9 files changed, 528 insertions(+), 17 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/product-intelligent-audit-v1-20261020",
+    "ahead": 27,
+    "head": "264800523762a1d3055db87080c127f723b4b146",
+    "last": "2026-10-20 22:12:01 +0800 Merge latest main updates into reviewed PR #38, preserving separate changes",
+    "stat": "14 files changed, 730 insertions(+), 28 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/progressive-triage-agent-policy-20261021",
+    "ahead": 37,
+    "head": "b9b1f4ad3aa4615817ea6a9781e2c6e7ff969655",
+    "last": "2026-10-21 20:34:46 +0800 test: cover all operation modes through workers",
+    "stat": "63 files changed, 6612 insertions(+), 739 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/progressive-triage-policy-20261021-live",
+    "ahead": 33,
+    "head": "9e31f46a363d671f59c3031dca1f067ec8d9abf2",
+    "last": "2026-10-21 19:51:47 +0800 Polish audit copy and case report delivery",
+    "stat": "63 files changed, 6425 insertions(+), 732 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/feat/progressive-triage-runtime-20261021",
+    "ahead": 39,
+    "head": "154438bf7d3ac45b55210fc988fb2bd2fc258cac",
+    "last": "2026-10-21 21:12:45 +0800 fix: require product-bound validation for confirmation",
+    "stat": "63 files changed, 7163 insertions(+), 791 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/integration/main-release-20261020",
+    "ahead": 6,
+    "head": "6708f8647c4a226e4a7e2ac5931fff15bf115b8d",
+    "last": "2026-10-20 16:17:40 +0800 fix(c): clear stale pending admission metadata",
+    "stat": "12 files changed, 808 insertions(+), 35 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/work/c4-ark-runtime-20261018",
+    "ahead": 4,
+    "head": "ea492ce51f19ed611479ac3ed28826f71fe94444",
+    "last": "2026-10-18 18:30:03 +0800 docs(c): clarify handoff branch and environment",
+    "stat": "119 files changed, 15165 insertions(+), 42 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/work/ipc-20261017",
+    "ahead": 71,
+    "head": "a77dbdb235a08fb8bae2be3c3f6cdce7de33b3e7",
+    "last": "2026-10-20 16:10:27 +0800 docs: record B-line closeout and push evidence",
+    "stat": "692 files changed, 510772 insertions(+), 121 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/work/issue-39-impl-20261021",
+    "ahead": 21,
+    "head": "4f0697164149f9258412692ff526bf2816727688",
+    "last": "2026-10-21 17:25:25 +0800 fix: accept dotted OpenHarmony repository names",
+    "stat": "28 files changed, 2199 insertions(+), 52 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/work/issue-40-impl-20261021",
+    "ahead": 20,
+    "head": "7126e8a146aac709322742bd319e2e33f249810e",
+    "last": "2026-10-21 17:57:54 +0800 feat: complete authorized smart audit queue and retry",
+    "stat": "24 files changed, 1838 insertions(+), 474 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/work/issue-42-impl-20261021",
+    "ahead": 22,
+    "head": "0cb2bdf144e3d3c54c2abed3aca1a8b35618480f",
+    "last": "2026-10-21 17:45:47 +0800 Add source-bound experiment evidence summary",
+    "stat": "19 files changed, 2029 insertions(+), 49 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/work/issues-39-42-completion-20261021",
+    "ahead": 39,
+    "head": "154438bf7d3ac45b55210fc988fb2bd2fc258cac",
+    "last": "2026-10-21 21:12:45 +0800 fix: require product-bound validation for confirmation",
+    "stat": "63 files changed, 7163 insertions(+), 791 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/work/issues-39-42-local-20261020",
+    "ahead": 1,
+    "head": "e80aa8656b4477b28c4b24742b60855e35c0b3bc",
+    "last": "2026-10-20 23:36:01 +0800 feat(workbench): deliver issues 39-42 local workflows",
+    "stat": "14 files changed, 838 insertions(+), 64 deletions(-)"
+  },
+  {
+    "ref": "refs/remotes/origin/work/pr38-44-e2e-followup-20261020",
+    "ahead": 69,
+    "head": "b469f623b34ca5fd752ab72de66e53927b9dcd9c",
+    "last": "2026-10-21 16:21:01 +0800 docs: record feature branch publication",
+    "stat": "85 files changed, 16241 insertions(+), 851 deletions(-)"
+  }
+]

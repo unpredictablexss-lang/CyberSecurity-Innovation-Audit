@@ -1,0 +1,421 @@
+diff --git a/src/workbench/operations_api.py b/src/workbench/operations_api.py
+index cfa52e09..ffe7b0c8 100644
+--- a/src/workbench/operations_api.py
++++ b/src/workbench/operations_api.py
+@@ -89,8 +89,15 @@ class InvestigationRequest(Strict):
+     max_output_bytes: int = Field(default=65536, ge=1024, le=262144)
+ 
+ 
++class CandidateReviewQueueRequest(Strict):
++    job_id: str
++
++
+ class AssessmentRequest(Strict):
+-    outcome: Literal["candidate", "dynamic_reproduced_component_issue", "confirmed", "reportable"]
++    outcome: Literal["candidate", "dynamic_reproduced_component_issue", "confirmed", "reportable",
++                     "supports_vulnerability_hypothesis", "supports_false_positive_hypothesis",
++                     "unknown", "proposed_confirmation"]
++    reviewer_kind: Literal["human", "agent"] = "human"
+     reviewer: str = Field(min_length=1, max_length=100)
+     notes: str = Field(min_length=1, max_length=8000)
+     evidence_ids: list[str] = Field(default_factory=list, max_length=50)
+@@ -98,6 +105,39 @@ class AssessmentRequest(Strict):
+     remaining_unknowns: list[str] = Field(default_factory=list, max_length=50)
+ 
+ 
++class AgentEvidenceCitation(Strict):
++    file: str = Field(min_length=1, max_length=500)
++    blob: str = Field(pattern=r"^(?:[0-9a-f]{40}|[0-9a-f]{64})$")
++    source_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
++    line_start: int = Field(ge=1)
++    line_end: int = Field(ge=1)
++    observation: str = Field(min_length=1, max_length=2000)
++
++
++class AgentProposalRequest(Strict):
++    candidate_id: str = Field(min_length=1, max_length=200)
++    agent_id: str = Field(min_length=1, max_length=100)
++    suggestion: Literal["supports_vulnerability_hypothesis", "supports_false_positive_hypothesis",
++                        "unknown", "proposed_confirmation"]
++    summary: str = Field(min_length=1, max_length=4000)
++    source_commit: str = Field(pattern=r"^(?:[0-9a-f]{40}|[0-9a-f]{64})$")
++    source_blob: str = Field(pattern=r"^(?:[0-9a-f]{40}|[0-9a-f]{64})$")
++    source_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
++    line_start: int = Field(ge=1)
++    line_end: int = Field(ge=1)
++    supporting_evidence: list[AgentEvidenceCitation] = Field(default_factory=list, max_length=30)
++    refuting_evidence: list[AgentEvidenceCitation] = Field(default_factory=list, max_length=30)
++    unresolved_obligations: list[str] = Field(default_factory=list, max_length=50)
++    provider: str = Field(min_length=1, max_length=100)
++    model_version: str = Field(min_length=1, max_length=100)
++    prompt_version: str = Field(min_length=1, max_length=100)
++    tool_version: str = Field(min_length=1, max_length=100)
++    run_id: str = Field(min_length=1, max_length=100)
++    input_tokens: int | None = Field(default=None, ge=0)
++    output_tokens: int | None = Field(default=None, ge=0)
++    duration_ms: int | None = Field(default=None, ge=0)
++
++
+ def _case_links(store, case_id):
+     with store.connect() as db:
+         return [dict(x) for x in db.execute("SELECT * FROM case_links WHERE case_id=? ORDER BY job_id,candidate_id", (case_id,))]
+@@ -205,6 +245,24 @@ def install_routes(app: FastAPI, settings, store):
+         return ops.create("investigation", {**body.model_dump(), "timeout_seconds": 60,
+                                              "memory_mb": 512})
+ 
++    @router.get("/operations/agent-review-queue/status")
++    def agent_review_queue_status():
++        return ops.candidate_review_queue()
++
++    @router.post("/operations/agent-review-queue", status_code=201)
++    def agent_review_queue(body: CandidateReviewQueueRequest):
++        """Queue every candidate in one immutable report; never Top-K truncate."""
++        job = store.job(body.job_id)
++        report = service.read_report(settings, job)
++        candidates = service.findings(report)
++        spec = {"job_id": job["id"], "report_sha256": job["report_sha256"],
++                "candidate_count_at_enqueue": len(candidates), "timeout_seconds": 60,
++                "memory_mb": 512}
++        operation = ops.create("candidate_review_batch", spec)
++        return {**operation, "candidate_count": len(candidates),
++                "review_mode": "candidate_only", "model_available": False,
++                "note": "Candidates remain queued until a configured, source-bound review provider is available; no conclusion was inferred."}
++
+     @router.get("/operations")
+     def list_operations():
+         return ops.list()
+@@ -276,12 +334,57 @@ def install_routes(app: FastAPI, settings, store):
+                  "", "确认漏洞数：0（本报告不会根据候选自动确认）。"]
+         return Response("\n".join(rows) + "\n", media_type="text/markdown")
+ 
++    @router.post("/cases/{case_id}/agent-assessments", status_code=201)
++    def agent_assessment(case_id: str, body: AgentProposalRequest):
++        links = [link for link in _case_links(store, case_id) if link["candidate_id"] == body.candidate_id]
++        if not links:
++            raise KeyError("candidate is not linked to this case")
++        link = links[0]
++        job = store.job(link["job_id"])
++        report = service.read_report(settings, job)
++        candidate = service.finding(report, body.candidate_id)
++        if report["commit"] != body.source_commit:
++            raise ValueError("agent citation commit does not match the candidate's fixed source")
++        source = service.source(settings, store, job, candidate["file"])
++        if source["blob"] != body.source_blob or source["sha256"] != body.source_sha256:
++            raise ValueError("agent citation blob/hash does not match the fixed source")
++        lines = source["text"].splitlines()
++        if body.line_end < body.line_start or body.line_end > len(lines):
++            raise ValueError("agent citation line range is outside the fixed source")
++        for citation in (*body.supporting_evidence, *body.refuting_evidence):
++            cited_source = service.source(settings, store, job, citation.file)
++            cited_lines = cited_source["text"].splitlines()
++            if (cited_source["blob"] != citation.blob or cited_source["sha256"] != citation.source_sha256
++                    or citation.line_end < citation.line_start or citation.line_end > len(cited_lines)):
++                raise ValueError("agent evidence citation does not match the fixed source blob/hash/line range")
++        record = {
++            "record_kind": "agent_proposal", "reviewer_kind": "agent", "reviewer": body.agent_id,
++            "outcome": body.suggestion, "notes": body.summary,
++            "source_binding": {"job_id": job["id"], "report_sha256": job["report_sha256"],
++                "repository": report["repository"], "commit": report["commit"],
++                "candidate_id": candidate["id"], "file": candidate["file"],
++                "blob": source["blob"], "source_sha256": source["sha256"],
++                "line_start": body.line_start, "line_end": body.line_end},
++            "supporting_evidence": [c.model_dump() for c in body.supporting_evidence],
++            "refuting_evidence": [c.model_dump() for c in body.refuting_evidence],
++            "unresolved_obligations": body.unresolved_obligations,
++            "model_runtime": {"provider": body.provider, "model_version": body.model_version,
++                "prompt_version": body.prompt_version, "tool_version": body.tool_version,
++                "run_id": body.run_id, "input_tokens": body.input_tokens,
++                "output_tokens": body.output_tokens, "duration_ms": body.duration_ms,
++                "attestation": "provider/runtime metadata is caller-supplied and not authenticated"},
++            "confirmation_effect": "none; human approval and existing validation gate remain required",
++        }
++        return ops.assessment(case_id, record)
++
+     @router.post("/cases/{case_id}/assessments", status_code=201)
+     def assessment(case_id: str, body: AssessmentRequest):
+         links = _case_links(store, case_id)
+         if not links:
+             raise KeyError("case not found or empty")
+         record = body.model_dump()
++        if body.reviewer_kind == "agent":
++            raise ValueError("Agent proposals must use the source-bound /agent-assessments endpoint")
+         valid_refs = {e["id"] for link in links for e in store.source_evidence(link["job_id"], link["candidate_id"])}
+         if not set(body.evidence_ids).issubset(valid_refs):
+             raise ValueError("assessment references evidence outside this case")
+diff --git a/src/workbench/operations_store.py b/src/workbench/operations_store.py
+index 39a6785f..fd15cd8a 100644
+--- a/src/workbench/operations_store.py
++++ b/src/workbench/operations_store.py
+@@ -44,12 +44,19 @@ class Operations:
+         return self.store.root / "operations" / key
+ 
+     def create(self, kind, spec):
+-        if kind not in {"source_sync", "revision_range", "version_matrix", "branch_comparison", "validation", "investigation"}:
++        if kind not in {"source_sync", "revision_range", "version_matrix", "branch_comparison", "validation", "investigation", "candidate_review_batch"}:
+             raise ValueError("unknown operation kind")
+         key = uuid.uuid4().hex
+         with self.store.connect() as db:
+             db.execute("BEGIN IMMEDIATE")
+-            if db.execute("SELECT count(*) FROM operations WHERE status IN ('queued','running')").fetchone()[0] >= 100:
++            if kind == "candidate_review_batch":
++                # One immutable batch points at every finding in one fixed report. Keep it
++                # queued under load instead of rejecting/truncating the candidate set.
++                prior = db.execute("SELECT id FROM operations WHERE kind=? AND spec=? AND status IN ('queued','running','completed','completed_with_limitations') ORDER BY created_at DESC LIMIT 1",
++                                   (kind, json.dumps(spec, sort_keys=True))).fetchone()
++                if prior:
++                    return self.row(db.execute("SELECT * FROM operations WHERE id=?", (prior[0],)).fetchone())
++            elif db.execute("SELECT count(*) FROM operations WHERE status IN ('queued','running') AND kind!='candidate_review_batch'").fetchone()[0] >= 100:
+                 raise ValueError("operation queue full")
+             db.execute("INSERT INTO operations(id,kind,spec,status,created_at) VALUES(?,?,?,?,?)",
+                        (key, kind, json.dumps(spec, sort_keys=True), "queued", now()))
+@@ -99,6 +106,26 @@ class Operations:
+         with self.store.connect() as db:
+             return [self.row(r) for r in db.execute("SELECT * FROM operations ORDER BY created_at DESC LIMIT 200")]
+ 
++    def candidate_review_queue(self):
++        with self.store.connect() as db:
++            rows = list(db.execute("SELECT id,status,spec,created_at FROM operations WHERE kind='candidate_review_batch' ORDER BY created_at"))
++        counts = {"queued_batches": 0, "running_batches": 0, "finished_batches": 0,
++                  "queued_candidates": 0, "running_candidates": 0}
++        for row in rows:
++            spec = json.loads(row["spec"])
++            candidates = int(spec.get("candidate_count_at_enqueue", 0))
++            if row["status"] == "queued":
++                counts["queued_batches"] += 1
++                counts["queued_candidates"] += candidates
++            elif row["status"] == "running":
++                counts["running_batches"] += 1
++                counts["running_candidates"] += candidates
++            else:
++                counts["finished_batches"] += 1
++        return {"schema_version": 1, **counts, "model_provider_configured": False,
++                "limitations": ["Queue summary counts only static findings from completed reports.",
++                                "Zero-candidate and partial/unanalyzed source coverage remain in scan reports and are not second-pass Agent reviews."]}
++
+     def event(self, key, stage, message):
+         with self.store.connect() as db:
+             db.execute("INSERT INTO operation_events(operation_id,created_at,stage,message) VALUES(?,?,?,?)",
+@@ -113,7 +140,7 @@ class Operations:
+         with self.store.connect() as db:
+             db.execute("BEGIN IMMEDIATE")
+             sign = "=" if validation else "!="
+-            row = db.execute("SELECT id FROM operations WHERE status='queued' AND kind " + sign + " 'validation' ORDER BY created_at LIMIT 1").fetchone()
++            row = db.execute("SELECT id FROM operations WHERE status='queued' AND kind " + sign + " 'validation' AND kind!='candidate_review_batch' ORDER BY created_at LIMIT 1").fetchone()
+             if not row:
+                 return None
+             db.execute("UPDATE operations SET status='running',started_at=? WHERE id=?", (now(), row[0]))
+@@ -123,6 +150,8 @@ class Operations:
+         with self.store.connect() as db:
+             db.execute("BEGIN IMMEDIATE")
+             row = self.row(db.execute("SELECT * FROM operations WHERE id=?", (key,)).fetchone())
++            if row["kind"] == "candidate_review_batch" and row["status"] not in END:
++                raise ValueError("candidate review batches cannot be cancelled; all candidates must remain queued until review or explicit resolution")
+             if row["status"] not in END:
+                 db.execute("UPDATE operations SET cancel_requested=1 WHERE id=?", (key,))
+                 if row["status"] == "queued":
+diff --git a/src/workbench/worker.py b/src/workbench/worker.py
+index 5f9d15e7..9c941e9a 100644
+--- a/src/workbench/worker.py
++++ b/src/workbench/worker.py
+@@ -134,6 +134,29 @@ class Worker:
+             self.store.event(
+                 key, final["status"], final["error"] or "Verified result published"
+             )
++            if final["status"] in {"completed", "completed_with_limitations"} and final["report_sha256"]:
++                # Queue the full candidate set from this immutable report. Review batches
++                # remain queued until a source-handling-approved model provider is configured.
++                try:
++                    from .operations_store import Operations
++                    from . import service
++                    report = service.read_report(self.settings, final)
++                    candidates = service.findings(report)
++                    if candidates:
++                        task = Operations(self.store).create("candidate_review_batch", {
++                            "job_id": key, "report_sha256": final["report_sha256"],
++                            "candidate_count_at_enqueue": len(candidates),
++                            "timeout_seconds": 60, "memory_mb": 512,
++                        })
++                        self.store.event(key, "agent_review_queued",
++                                         f"All {len(candidates)} candidates queued in operation {task['id']}; no candidate truncation")
++                    else:
++                        self.store.event(key, "agent_review_not_required",
++                                         "Zero static candidates; no second-pass source exploration was run. Coverage/unknown remains governed by the scan report.")
++                except Exception as exc:
++                    self.store.event(key, "agent_review_queue_enqueue_failed",
++                                     "Candidate queue insertion failed; scan remains valid and re-enqueue is available: "
++                                     + type(exc).__name__ + ": " + str(exc)[:1000])
+ 
+     def run(self, once=False):
+         with (self.settings.data_dir / "worker.lock").open("a") as lock:
+diff --git a/tests/test_workbench.py b/tests/test_workbench.py
+index 238b873e..d845e896 100644
+--- a/tests/test_workbench.py
++++ b/tests/test_workbench.py
+@@ -361,6 +361,90 @@ class WorkbenchTests(unittest.TestCase):
+         )
+         self.assertEqual(r.status_code, 422)
+ 
++    def test_agent_review_queue_binds_entire_report_and_deduplicates(self):
++        job = self.completed()
++        expected = service.findings(service.read_report(self.settings, job))
++        # Scanner publication automatically places the full candidate set in the queue.
++        queued_items = [x for x in self.app.state.operations.list()
++                        if x["kind"] == "candidate_review_batch" and x["spec"].get("job_id") == job["id"]]
++        self.assertEqual(len(queued_items), 1)
++        queued = self.client.post("/api/v1/operations/agent-review-queue",
++                                  json={"job_id": job["id"]}, headers=HEADERS)
++        self.assertEqual(queued.status_code, 201, queued.text)
++        body = queued.json()
++        self.assertEqual(body["candidate_count"], len(expected))
++        self.assertEqual(body["status"], "queued")
++        self.assertFalse(body["model_available"])
++        self.assertEqual(body["spec"]["report_sha256"], job["report_sha256"])
++        queue_status = self.client.get("/api/v1/operations/agent-review-queue/status")
++        self.assertEqual(queue_status.status_code, 200, queue_status.text)
++        self.assertEqual(queue_status.json()["queued_batches"], 1)
++        self.assertEqual(queue_status.json()["queued_candidates"], len(expected))
++        again = self.client.post("/api/v1/operations/agent-review-queue",
++                                 json={"job_id": job["id"]}, headers=HEADERS)
++        self.assertEqual(again.status_code, 201, again.text)
++        self.assertEqual(again.json()["id"], body["id"])
++        self.assertEqual(self.app.state.operations.get(body["id"])["status"], "queued")
++
++    def test_agent_proposal_is_append_only_and_requires_exact_fixed_source_citation(self):
++        job = self.completed()
++        candidate = service.findings(service.read_report(self.settings, job))[0]
++        case = self.client.post("/api/v1/cases", headers=HEADERS, json={
++            "title": "agent citation binding",
++            "links": [{"job_id": job["id"], "candidate_id": candidate["id"], "rationale": "test"}],
++        }).json()
++        source = service.source(self.settings, self.store, job, candidate["file"])
++        payload = {
++            "candidate_id": candidate["id"], "agent_id": "agent:test",
++            "suggestion": "proposed_confirmation", "summary": "hypothesis only",
++            "source_commit": job["spec"]["commit"], "source_blob": source["blob"],
++            "source_sha256": source["sha256"], "line_start": candidate["line"],
++            "line_end": candidate["line"], "supporting_evidence": [{
++                "file": candidate["file"], "blob": source["blob"], "source_sha256": source["sha256"],
++                "line_start": candidate["line"], "line_end": candidate["line"],
++                "observation": "candidate location",
++            }], "refuting_evidence": [], "unresolved_obligations": ["product reachability"],
++            "provider": "test-fixture", "model_version": "none", "prompt_version": "test-v1",
++            "tool_version": "readonly-v1", "run_id": "run-test", "input_tokens": 1,
++            "output_tokens": 1, "duration_ms": 1,
++        }
++        response = self.client.post(f"/api/v1/cases/{case['id']}/agent-assessments",
++                                    headers=HEADERS, json=payload)
++        self.assertEqual(response.status_code, 201, response.text)
++        record = response.json()[-1]
++        self.assertEqual(record["record_kind"], "agent_proposal")
++        self.assertEqual(record["source_binding"]["blob"], source["blob"])
++        self.assertEqual(record["confirmation_effect"], "none; human approval and existing validation gate remain required")
++        self.assertIn("caller-supplied", record["model_runtime"]["attestation"])
++        self.assertEqual(service.read_report(self.settings, job)["validated_vulnerability"], 0)
++        payload["supporting_evidence"][0]["source_sha256"] = "0" * 64
++        bad_evidence = self.client.post(f"/api/v1/cases/{case['id']}/agent-assessments",
++                                        headers=HEADERS, json=payload)
++        self.assertEqual(bad_evidence.status_code, 409)
++        payload["supporting_evidence"][0]["source_sha256"] = source["sha256"]
++        payload["source_blob"] = "0" * len(source["blob"])
++        rejected = self.client.post(f"/api/v1/cases/{case['id']}/agent-assessments",
++                                    headers=HEADERS, json=payload)
++        self.assertEqual(rejected.status_code, 409)
++
++    def test_agent_assessment_cannot_confirm_or_report(self):
++        job = self.completed()
++        candidate = service.findings(service.read_report(self.settings, job))[0]
++        case = self.client.post("/api/v1/cases", headers=HEADERS, json={
++            "title": "agent proposal gate",
++            "links": [{"job_id": job["id"], "candidate_id": candidate["id"], "rationale": "test"}],
++        })
++        self.assertEqual(case.status_code, 201, case.text)
++        for outcome in ("confirmed", "reportable", "dynamic_reproduced_component_issue"):
++            response = self.client.post(f"/api/v1/cases/{case.json()['id']}/assessments", headers=HEADERS, json={
++                "outcome": outcome, "reviewer_kind": "agent", "reviewer": "agent:test",
++                "notes": "suggestion only", "evidence_ids": [], "validation_operation_ids": [],
++                "remaining_unknowns": [],
++            })
++            self.assertEqual(response.status_code, 409, response.text)
++        report = service.read_report(self.settings, job)
++        self.assertEqual(report["validated_vulnerability"], 0)
++
+     def test_case_links_require_existing_run_candidates(self):
+         job = self.completed()
+         identity = service.findings(service.read_report(self.settings, job))[0]["id"]
+diff --git a/tests/test_workbench_operations.py b/tests/test_workbench_operations.py
+index 4a7ffa43..1f9d84b6 100644
+--- a/tests/test_workbench_operations.py
++++ b/tests/test_workbench_operations.py
+@@ -70,6 +70,33 @@ class OperationsStoreTests(unittest.TestCase):
+         self.assertEqual(self.ops.claim(validation=True)["id"], b["id"])
+         self.assertEqual(self.ops.claim(validation=False)["id"], a["id"])
+ 
++    def test_candidate_review_batches_are_idempotent_unbounded_and_stay_queued_without_provider(self):
++        spec = {"job_id": "a" * 32, "report_sha256": "b" * 64,
++                "candidate_count_at_enqueue": 125, "timeout_seconds": 60, "memory_mb": 512}
++        first = self.ops.create("candidate_review_batch", spec)
++        duplicate = self.ops.create("candidate_review_batch", spec)
++        self.assertEqual(first["id"], duplicate["id"])
++        self.assertEqual(first["status"], "queued")
++        self.assertEqual(first["spec"]["candidate_count_at_enqueue"], 125)
++        summary = self.ops.candidate_review_queue()
++        self.assertEqual(summary["queued_batches"], 1)
++        self.assertEqual(summary["queued_candidates"], 125)
++        self.assertFalse(summary["model_provider_configured"])
++        self.assertIsNone(self.ops.claim())
++        self.assertEqual(self.ops.get(first["id"])["status"], "queued")
++
++    def test_candidate_batches_do_not_consume_normal_operation_capacity(self):
++        batch = self.ops.create("candidate_review_batch", {"job_id": "a" * 32, "report_sha256": "b" * 64})
++        normal = self.ops.create("investigation", {"job_id": "c" * 32})
++        self.assertEqual(self.ops.claim()["id"], normal["id"])
++        self.assertEqual(self.ops.get(batch["id"])["status"], "queued")
++
++    def test_candidate_review_queue_cannot_be_cancelled_and_lose_candidates(self):
++        batch = self.ops.create("candidate_review_batch", {"job_id": "a" * 32, "report_sha256": "b" * 64})
++        with self.assertRaisesRegex(ValueError, "cannot be cancelled"):
++            self.ops.cancel(batch["id"])
++        self.assertEqual(self.ops.get(batch["id"])["status"], "queued")
++
+     def test_result_integrity_detects_tampering(self):
+         task = self.ops.create("investigation", {})
+         self.ops.claim()
+diff --git a/web/src/features/audits/OperationWorkspace.tsx b/web/src/features/audits/OperationWorkspace.tsx
+index c4fd5395..74fdf9d7 100644
+--- a/web/src/features/audits/OperationWorkspace.tsx
++++ b/web/src/features/audits/OperationWorkspace.tsx
+@@ -6,7 +6,7 @@ import { refreshSelectedOperation } from "../../pages/operationSelection";
+ import { ComparisonForm, InvestigationForm, SyncForm, ValidationForm, SourceContext } from "./OperationForms";
+ const { Text } = Typography;
+ export type OperationView = "all" | "date" | "branches" | "matrix" | "validation" | "investigate" | "sync" | "queue";
+-const kinds: Record<string, string> = { source_sync: "源码同步", revision_range: "固定区间", branch_comparison: "跨版本比较", version_matrix: "版本矩阵", validation: "隔离验证", investigation: "只读调查" };
++const kinds: Record<string, string> = { source_sync: "源码同步", revision_range: "固定区间", branch_comparison: "跨版本比较", version_matrix: "版本矩阵", validation: "隔离验证", investigation: "只读调查", candidate_review_batch: "候选复核队列" };
+ const headings: Record<OperationView, [string, string]> = {
+   all: ["高级源码与验证操作", "保留既有操作入口；任务持久化，候选变化与安全影响分别记录。"],
+   date: ["时间增量扫描", "按明确时区选择提交区间，固定两个端点并比较候选观察。"],
+@@ -20,12 +20,13 @@ const headings: Record<OperationView, [string, string]> = {
+ export default function OperationWorkspace({ view = "all", operationId, context = {} }: { view?: OperationView; operationId?: string; context?: SourceContext }) {
+   const [repos, setRepos] = useState<any[]>([]), [detectors, setDetectors] = useState<any[]>([]), [cases, setCases] = useState<any[]>([]);
+   const [rows, setRows] = useState<any[]>([]), [selected, setSelected] = useState<any>(null);
++  const [reviewQueue, setReviewQueue] = useState<any>({ queued_batches: 0, running_batches: 0, queued_candidates: 0, running_candidates: 0 });
+   const [error, setError] = useState(""), [busy, setBusy] = useState(false);
+   const selectedId = useRef<string | null>(operationId || null), live = useRef(true);
+   const refresh = useCallback(async () => {
+-    const [r, d, c, o] = await Promise.all([api("/repositories"), api("/detectors"), api("/cases"), api("/operations")]);
++    const [r, d, c, o, q] = await Promise.all([api("/repositories"), api("/detectors"), api("/cases"), api("/operations"), api("/operations/agent-review-queue/status")]);
+     if (!live.current) return;
+-    setRepos(r); setDetectors(d); setCases(c); setRows(o);
++    setRepos(r); setDetectors(d); setCases(c); setRows(o); setReviewQueue(q);
+     const id = selectedId.current;
+     if (id) await refreshSelectedOperation(id, (key) => api("/operations/" + key), () => live.current ? selectedId.current : null, setSelected);
+   }, []);
+@@ -62,6 +63,9 @@ export default function OperationWorkspace({ view = "all", operationId, context
+     {view === "all" ? <Tabs items={forms} /> : view === "branches" ? <Tabs items={[forms[3], forms[4]]} /> : forms.find((f) => f.key === view)?.children}
+     {view === "matrix" && <Alert className="section-gap" type="info" showIcon message="影响与修复仍需独立证据" description="当前矩阵只记录候选观察。补丁生成、补丁应用和修复后产品验证尚未接入；不会用候选消失自动判定已修复。" />}
+     <Card className="section-gap" title="操作任务" extra={<Button onClick={() => void refresh().catch((e) => setError(String(e)))}>刷新操作</Button>}>
++      <Alert className="section-gap" type={reviewBacklog.length ? "warning" : "info"} showIcon
++        message={`Agent 候选复核队列：${reviewQueue.queued_batches || 0} 个批次、${reviewQueue.queued_candidates || 0} 个候选排队；${reviewQueue.running_candidates || 0} 个候选处理中`}
++        description="当前模型 provider 尚未配置，候选固定绑定原报告并保持 queued；不会被 Top-K 截断，也不会被当作已复核或安全。零候选和 partial 覆盖仍以扫描覆盖状态为准。" />
+       <Table<any> rowKey="id" dataSource={filtered} pagination={{ pageSize: 8 }} scroll={{ x: 640 }} columns={[
+         { title: "任务", render: (_, row) => <><Text strong>{kinds[row.kind] || row.kind}</Text><div className="muted">{row.id.slice(0, 12)}</div></> },
+         { title: "状态", dataIndex: "status", render: (v) => <State value={v} /> },

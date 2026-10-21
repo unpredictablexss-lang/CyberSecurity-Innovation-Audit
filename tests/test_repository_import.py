@@ -77,10 +77,63 @@ class RepositoryImportTests(unittest.TestCase):
                         str(self.source), str(stage)], check=True, capture_output=True)
         return git(stage, "rev-parse", commit + "^{tree}")
 
-    def run_import(self):
-        with patch.object(repository_import.service, "make_spec", return_value={
-                "commit": self.commit, "git_tree": self.tree, "timeout_seconds": 30}):
-            return repository_import.import_and_queue_scan(self.settings, self.store, self.spec)
+    def run_import(self, progress=None):
+        return repository_import.import_and_queue_scan(self.settings, self.store, self.spec,
+                                                      progress=progress)
+
+    def test_git_progress_output_is_normalized_for_the_operation_api(self):
+        parsed = repository_import._parse_git_progress(
+            "Receiving objects: 42% (123/456), 1.25 MiB | 512.00 KiB/s")
+        self.assertEqual(parsed, {
+            "phase": "receiving_objects", "percent": 42,
+            "completed_objects": 123, "total_objects": 456,
+            "received_bytes": 1310720, "bytes_per_second": 524288,
+        })
+        self.assertIsNone(repository_import._parse_git_progress("fatal: repository unavailable"))
+
+    def test_clone_progress_pipe_is_drained_and_forwarded(self):
+        stage = self.cache / "openharmony" / "fixture" / ("." + self.commit + ".progress-test")
+        stage.parent.mkdir(parents=True, exist_ok=True)
+        subprocess.run(["git", "clone", "--no-checkout", str(self.source), str(stage)],
+                       check=True, capture_output=True)
+        original_popen = subprocess.Popen
+        progress = []
+
+        class ProgressProcess:
+            def __init__(self):
+                read_fd, write_fd = os.pipe()
+                self.stderr = os.fdopen(read_fd, "rb", buffering=0)
+                self.returncode = None
+                self.pid = 12345
+
+                def write_progress():
+                    os.write(write_fd, b"Receiving objects: 42% (123/456), 1.25 MiB | 512.00 KiB/s\r")
+                    os.close(write_fd)
+                    self.returncode = 0
+
+                self.thread = threading.Thread(target=write_progress)
+                self.thread.start()
+
+            def poll(self):
+                return self.returncode
+
+            def communicate(self):
+                self.thread.join(timeout=2)
+                self.stderr.close()
+                return b"", b""
+
+        def popen(command, **kwargs):
+            return ProgressProcess() if "clone" in command else original_popen(command, **kwargs)
+
+        with patch.object(repository_import, "approved_clone_url",
+                          return_value="https://gitcode.com/openharmony/fixture.git"), patch.object(
+                repository_import.subprocess, "Popen", side_effect=popen):
+            tree = repository_import._fetch_to_stage(stage, "fixture", self.branch, self.commit,
+                                                      5, progress=progress.append)
+        self.assertEqual(tree, self.tree)
+        self.assertEqual(progress[0]["phase"], "receiving_objects")
+        self.assertEqual(progress[0]["percent"], 42)
+        self.assertEqual(progress[0]["received_bytes"], 1310720)
 
     def test_success_downloads_fixed_commit_and_queues_static_job_without_checkout(self):
         with patch.object(repository_import, "_fetch_to_stage", side_effect=self.fake_fetch) as fetch:
@@ -115,12 +168,10 @@ class RepositoryImportTests(unittest.TestCase):
         results, failures = [], []
         def invoke():
             try:
-                results.append(repository_import.import_and_queue_scan(self.settings, self.store, self.spec))
+                results.append(self.run_import())
             except Exception as exc:
                 failures.append(exc)
-        with patch.object(repository_import, "_fetch_to_stage", side_effect=delayed_fetch), \
-                patch.object(repository_import.service, "make_spec", return_value={
-                    "commit": self.commit, "git_tree": self.tree, "timeout_seconds": 30}):
+        with patch.object(repository_import, "_fetch_to_stage", side_effect=delayed_fetch):
             threads = [threading.Thread(target=invoke) for _ in range(2)]
             for thread in threads: thread.start()
             for thread in threads: thread.join(10)
@@ -312,12 +363,92 @@ class RepositoryImportTests(unittest.TestCase):
     def test_durable_operation_worker_dispatches_repository_import_scan(self):
         ops = Operations(self.store)
         task = ops.create("repository_import_scan", self.spec)
+        def successful_import(settings, store, spec, progress=None):
+            progress({"state": "running", "phase": "receiving_objects", "percent": 42,
+                      "completed_objects": 123, "total_objects": 456,
+                      "message": "Git 正在接收固定版本对象"})
+            return {"status": "completed", "cache": "hit"}
         with patch.object(repository_import, "import_and_queue_scan",
-                          return_value={"status": "completed", "cache": "hit"}) as run_import:
+                          side_effect=successful_import) as run_import:
             result = execute_operation(self.settings, self.store, ops, task)
-        run_import.assert_called_once_with(self.settings, self.store, self.spec)
+        self.assertEqual(run_import.call_args.args, (self.settings, self.store, self.spec))
+        self.assertTrue(callable(run_import.call_args.kwargs["progress"]))
         self.assertEqual(result, {"status": "completed", "cache": "hit"})
-        self.assertEqual(ops.events(task["id"])[-1]["stage"], "repository_import")
+        self.assertIn("repository_import", [event["stage"] for event in ops.events(task["id"])])
+        client = TestClient(create_app(self.settings))
+        self.addCleanup(client.close)
+        detail = client.get("/api/v1/operations/" + task["id"])
+        self.assertEqual(detail.status_code, 200, detail.text)
+        self.assertEqual(detail.json()["download_progress"]["phase"], "receiving_objects")
+        self.assertEqual(detail.json()["download_progress"]["percent"], 42)
+
+    def test_failed_repository_import_can_be_explicitly_retried_once_per_attempt(self):
+        ops = Operations(self.store)
+        original = ops.create("repository_import_scan", self.spec)
+        claimed = ops.claim()
+        self.assertEqual(claimed["id"], original["id"])
+        ops.finish(original["id"], error="GitCode temporarily unavailable", state="failed")
+        client = TestClient(create_app(self.settings))
+        self.addCleanup(client.close)
+
+        response = client.post("/api/v1/operations/" + original["id"] + "/retry", headers=HEADERS)
+        self.assertEqual(response.status_code, 201, response.text)
+        retried = response.json()
+        self.assertEqual(retried["kind"], "repository_import_scan")
+        self.assertEqual(retried["status"], "queued")
+        self.assertEqual(retried["spec"]["commit"], self.commit)
+        self.assertEqual(retried["spec"]["preview_sha256"], self.spec["preview_sha256"])
+        self.assertEqual(retried["spec"]["retry_of"], original["id"])
+        self.assertEqual(ops.get(original["id"])["status"], "failed")
+        self.assertEqual(ops.events(retried["id"])[0]["stage"], "retry_queued")
+
+        repeated = client.post("/api/v1/operations/" + original["id"] + "/retry", headers=HEADERS)
+        self.assertEqual(repeated.status_code, 200, repeated.text)
+        self.assertEqual(repeated.json()["id"], retried["id"])
+        self.assertEqual(len([item for item in ops.list()
+                              if item["spec"].get("retry_of") == original["id"]]), 1)
+
+    def test_repository_import_retry_rejects_active_completed_and_other_operation(self):
+        ops = Operations(self.store)
+        client = TestClient(create_app(self.settings))
+        self.addCleanup(client.close)
+        active = ops.create("repository_import_scan", self.spec)
+        response = client.post("/api/v1/operations/" + active["id"] + "/retry", headers=HEADERS)
+        self.assertEqual(response.status_code, 409, response.text)
+        ops.cancel(active["id"])
+
+        completed = ops.create("repository_import_scan", {**self.spec, "slug": "completed"})
+        self.assertEqual(ops.claim()["id"], completed["id"])
+        ops.finish(completed["id"], {"status": "completed"})
+        response = client.post("/api/v1/operations/" + completed["id"] + "/retry", headers=HEADERS)
+        self.assertEqual(response.status_code, 409, response.text)
+
+        other = ops.create("source_sync", {"name": "openharmony/fixture", "url": "https://gitcode.com/openharmony/fixture.git"})
+        self.assertEqual(ops.claim()["id"], other["id"])
+        ops.finish(other["id"], error="failed", state="failed")
+        response = client.post("/api/v1/operations/" + other["id"] + "/retry", headers=HEADERS)
+        self.assertEqual(response.status_code, 409, response.text)
+
+        missing = client.post("/api/v1/operations/" + "f" * 32 + "/retry", headers=HEADERS)
+        self.assertEqual(missing.status_code, 404, missing.text)
+
+    def test_repository_import_retry_accepts_interrupted_and_timed_out_attempts_only(self):
+        ops = Operations(self.store)
+        client = TestClient(create_app(self.settings))
+        self.addCleanup(client.close)
+        for index, state in enumerate(("interrupted", "timed_out")):
+            task = ops.create("repository_import_scan", {**self.spec, "slug": "retryable-" + str(index)})
+            self.assertEqual(ops.claim()["id"], task["id"])
+            ops.finish(task["id"], error="worker ended", state=state)
+            response = client.post("/api/v1/operations/" + task["id"] + "/retry", headers=HEADERS)
+            self.assertEqual(response.status_code, 201, response.text)
+            self.assertEqual(response.json()["spec"]["retry_of"], task["id"])
+            ops.cancel(response.json()["id"])
+
+        cancelled = ops.create("repository_import_scan", {**self.spec, "slug": "cancelled"})
+        ops.cancel(cancelled["id"])
+        response = client.post("/api/v1/operations/" + cancelled["id"] + "/retry", headers=HEADERS)
+        self.assertEqual(response.status_code, 409, response.text)
 
     def test_import_api_and_legacy_source_sync_route_both_remain_available(self):
         client = TestClient(create_app(self.settings))

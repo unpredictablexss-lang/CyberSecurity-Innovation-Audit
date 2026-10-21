@@ -1,0 +1,813 @@
+{
+  "old_version": "0.12.12",
+  "old_model": "oh-ipc-2026.10-v32",
+  "current_version": "0.12.13",
+  "current_model": "oh-ipc-2026.10-v33",
+  "cve_count": 14,
+  "pair_replay_count": 28,
+  "results": [
+    {
+      "cve": "CVE-2024-12082",
+      "repository": "openharmony/ability_ability_runtime",
+      "source_manifest": "20261019-disclosure-regression-v0.12.12/manifest.json",
+      "sides": {
+        "vulnerable": {
+          "old_status": "completed_with_limitations",
+          "current_status": "completed_with_limitations",
+          "old_observations": 7,
+          "current_observations": 7,
+          "retained": 7,
+          "added": [],
+          "removed": [],
+          "old_parse": {
+            "complete": 2,
+            "partial": 4
+          },
+          "current_parse": {
+            "complete": 2,
+            "partial": 4
+          },
+          "expected_tree": "a0c2ba0a3768e1e0c6e824f0f73e620ef6354414",
+          "actual_tree": "a0c2ba0a3768e1e0c6e824f0f73e620ef6354414",
+          "anchor_retained": 7,
+          "anchor_added": 0,
+          "anchor_removed": 0,
+          "locator_anomalies": []
+        },
+        "fixed": {
+          "old_status": "completed_with_limitations",
+          "current_status": "completed_with_limitations",
+          "old_observations": 4,
+          "current_observations": 4,
+          "retained": 4,
+          "added": [],
+          "removed": [],
+          "old_parse": {
+            "complete": 2,
+            "partial": 4
+          },
+          "current_parse": {
+            "complete": 2,
+            "partial": 4
+          },
+          "expected_tree": "f01505ec58c44adb2d29ae15bf8956e71fd75dd3",
+          "actual_tree": "f01505ec58c44adb2d29ae15bf8956e71fd75dd3",
+          "anchor_retained": 4,
+          "anchor_added": 0,
+          "anchor_removed": 0,
+          "locator_anomalies": []
+        }
+      }
+    },
+    {
+      "cve": "CVE-2024-38382",
+      "repository": "openharmony/ability_ability_runtime",
+      "source_manifest": "20261019-disclosure-regression-v0.12.12/manifest.json",
+      "sides": {
+        "vulnerable": {
+          "old_status": "completed_with_limitations",
+          "current_status": "completed_with_limitations",
+          "old_observations": 7,
+          "current_observations": 7,
+          "retained": 7,
+          "added": [],
+          "removed": [],
+          "old_parse": {
+            "complete": 2,
+            "partial": 5
+          },
+          "current_parse": {
+            "complete": 2,
+            "partial": 5
+          },
+          "expected_tree": "340654d856a4520bf8140f73f85c96084e5ff16c",
+          "actual_tree": "340654d856a4520bf8140f73f85c96084e5ff16c",
+          "anchor_retained": 7,
+          "anchor_added": 0,
+          "anchor_removed": 0,
+          "locator_anomalies": []
+        },
+        "fixed": {
+          "old_status": "completed_with_limitations",
+          "current_status": "completed_with_limitations",
+          "old_observations": 5,
+          "current_observations": 5,
+          "retained": 5,
+          "added": [],
+          "removed": [],
+          "old_parse": {
+            "complete": 2,
+            "partial": 5
+          },
+          "current_parse": {
+            "complete": 2,
+            "partial": 5
+          },
+          "expected_tree": "0497a1b5bd4c915128e8a12e54fea06109a00fb7",
+          "actual_tree": "0497a1b5bd4c915128e8a12e54fea06109a00fb7",
+          "anchor_retained": 5,
+          "anchor_added": 0,
+          "anchor_removed": 0,
+          "locator_anomalies": []
+        }
+      }
+    },
+    {
+      "cve": "CVE-2024-39775",
+      "repository": "openharmony/communication_netmanager_base",
+      "source_manifest": "20261019-disclosure-regression-v0.12.12/manifest.json",
+      "sides": {
+        "vulnerable": {
+          "old_status": "completed",
+          "current_status": "completed",
+          "old_observations": 2,
+          "current_observations": 2,
+          "retained": 2,
+          "added": [],
+          "removed": [],
+          "old_parse": {
+            "complete": 1,
+            "partial": 0
+          },
+          "current_parse": {
+            "complete": 1
+          },
+          "expected_tree": "76d5d5318db4086389360957bc635fc8a31ee259",
+          "actual_tree": "76d5d5318db4086389360957bc635fc8a31ee259",
+          "anchor_retained": 2,
+          "anchor_added": 0,
+          "anchor_removed": 0,
+          "locator_anomalies": []
+        },
+        "fixed": {
+          "old_status": "completed",
+          "current_status": "completed",
+          "old_observations": 0,
+          "current_observations": 0,
+          "retained": 0,
+          "added": [],
+          "removed": [],
+          "old_parse": {
+            "complete": 1,
+            "partial": 0
+          },
+          "current_parse": {
+            "complete": 1
+          },
+          "expected_tree": "3a2b88d5529fe3526e853dfc43aecd86b4d62857",
+          "actual_tree": "3a2b88d5529fe3526e853dfc43aecd86b4d62857",
+          "anchor_retained": 0,
+          "anchor_added": 0,
+          "anchor_removed": 0,
+          "locator_anomalies": []
+        }
+      }
+    },
+    {
+      "cve": "CVE-2023-25176",
+      "repository": "openharmony/distributeddatamgr_pasteboard",
+      "source_manifest": "20261019-disclosure-regression-v0.12.12/manifest.json",
+      "sides": {
+        "vulnerable": {
+          "old_status": "completed_with_limitations",
+          "current_status": "completed_with_limitations",
+          "old_observations": 1,
+          "current_observations": 1,
+          "retained": 1,
+          "added": [],
+          "removed": [],
+          "old_parse": {
+            "complete": 0,
+            "partial": 1
+          },
+          "current_parse": {
+            "partial": 1
+          },
+          "expected_tree": "bf5bdeccc6d51972f102107c151b9fc4120d72d3",
+          "actual_tree": "bf5bdeccc6d51972f102107c151b9fc4120d72d3",
+          "anchor_retained": 1,
+          "anchor_added": 0,
+          "anchor_removed": 0,
+          "locator_anomalies": []
+        },
+        "fixed": {
+          "old_status": "completed_with_limitations",
+          "current_status": "completed_with_limitations",
+          "old_observations": 0,
+          "current_observations": 0,
+          "retained": 0,
+          "added": [],
+          "removed": [],
+          "old_parse": {
+            "complete": 0,
+            "partial": 1
+          },
+          "current_parse": {
+            "partial": 1
+          },
+          "expected_tree": "9c14df1ffcf0b6f89e42eec24767ed7d5dc38f31",
+          "actual_tree": "9c14df1ffcf0b6f89e42eec24767ed7d5dc38f31",
+          "anchor_retained": 0,
+          "anchor_added": 0,
+          "anchor_removed": 0,
+          "locator_anomalies": []
+        }
+      }
+    },
+    {
+      "cve": "CVE-2022-42463",
+      "repository": "openharmony/communication_dsoftbus",
+      "source_manifest": "20261019-disclosure-regression-v0.12.12/manifest.json",
+      "sides": {
+        "vulnerable": {
+          "old_status": "completed_with_limitations",
+          "current_status": "completed_with_limitations",
+          "old_observations": 1,
+          "current_observations": 1,
+          "retained": 1,
+          "added": [],
+          "removed": [],
+          "old_parse": {
+            "complete": 383,
+            "partial": 449
+          },
+          "current_parse": {
+            "complete": 383,
+            "partial": 449
+          },
+          "expected_tree": "1e2be1b46ad929d99ae034c82dc3db9857bc9ac2",
+          "actual_tree": "1e2be1b46ad929d99ae034c82dc3db9857bc9ac2",
+          "anchor_retained": 1,
+          "anchor_added": 0,
+          "anchor_removed": 0,
+          "locator_anomalies": []
+        },
+        "fixed": {
+          "old_status": "completed_with_limitations",
+          "current_status": "completed_with_limitations",
+          "old_observations": 1,
+          "current_observations": 1,
+          "retained": 0,
+          "added": [
+            {
+              "file": "core/transmission/trans_channel/auth/src/trans_auth_manager.c",
+              "line": "frozenlist",
+              "rule_id": "ipc.network.auth-session-whitelist",
+              "symbol": "OnRecvAuthChannelRequest",
+              "source_sha256": "df12623d91c29c9794d7e718ba9cf20d7e3ecc78884cb691d8304263d06c939b"
+            }
+          ],
+          "removed": [
+            {
+              "file": "core/transmission/trans_channel/auth/src/trans_auth_manager.c",
+              "line": 275,
+              "rule_id": "ipc.network.auth-session-whitelist",
+              "symbol": "OnRecvAuthChannelRequest",
+              "source_sha256": "df12623d91c29c9794d7e718ba9cf20d7e3ecc78884cb691d8304263d06c939b"
+            }
+          ],
+          "old_parse": {
+            "complete": 383,
+            "partial": 449
+          },
+          "current_parse": {
+            "complete": 383,
+            "partial": 449
+          },
+          "expected_tree": "d14c045f6454c219e489d2e59a7e7b2ad0a54d23",
+          "actual_tree": "d14c045f6454c219e489d2e59a7e7b2ad0a54d23",
+          "anchor_retained": 0,
+          "anchor_added": 0,
+          "anchor_removed": 0,
+          "locator_anomalies": [
+            {
+              "file": "core/transmission/trans_channel/auth/src/trans_auth_manager.c",
+              "rule_id": "ipc.network.auth-session-whitelist",
+              "symbol": "OnRecvAuthChannelRequest",
+              "source_sha256": "df12623d91c29c9794d7e718ba9cf20d7e3ecc78884cb691d8304263d06c939b",
+              "historical_line": 275,
+              "current_line": "frozenlist",
+              "expected_current_line_from_bound_source": 275,
+              "source_byte_start": 10154,
+              "explanation": "Original full-component fixed report retains its serialized locator anomaly. Exact-commit CLI replay of the finding source file emitted integer line 275 with the same source SHA and byte_start=10154. Full-component retry hit Python 3.13 Tree-sitter cleanup access violation during immutable-source re-read; original artifact is preserved and full-scope regeneration remains outstanding.",
+              "focused_replay": {
+                "artifact": "disclosed_cve_0.12.13/cve-2022-42463/fixed_locator_replay.json",
+                "status": "completed_with_limitations",
+                "scope": "core/transmission/trans_channel/auth/src/trans_auth_manager.c (1 exact pinned source file)",
+                "line": 275,
+                "source_sha256": "df12623d91c29c9794d7e718ba9cf20d7e3ecc78884cb691d8304263d06c939b"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "cve": "CVE-2025-27247",
+      "repository": "openharmony/distributeddatamgr_pasteboard",
+      "source_manifest": "20261019-disclosure-regression-v0.12.12/manifest.json",
+      "sides": {
+        "vulnerable": {
+          "old_status": "completed_with_limitations",
+          "current_status": "completed_with_limitations",
+          "old_observations": 4,
+          "current_observations": 4,
+          "retained": 4,
+          "added": [],
+          "removed": [],
+          "old_parse": {
+            "complete": 1,
+            "partial": 3
+          },
+          "current_parse": {
+            "complete": 1,
+            "partial": 3
+          },
+          "expected_tree": "7d5623dfc108b7deb07c323deb4aa43508dbe776",
+          "actual_tree": "7d5623dfc108b7deb07c323deb4aa43508dbe776",
+          "anchor_retained": 4,
+          "anchor_added": 0,
+          "anchor_removed": 0,
+          "locator_anomalies": []
+        },
+        "fixed": {
+          "old_status": "completed_with_limitations",
+          "current_status": "completed_with_limitations",
+          "old_observations": 3,
+          "current_observations": 3,
+          "retained": 3,
+          "added": [],
+          "removed": [],
+          "old_parse": {
+            "complete": 1,
+            "partial": 3
+          },
+          "current_parse": {
+            "complete": 1,
+            "partial": 3
+          },
+          "expected_tree": "1fc6df6efc5a5f9c9b072a570c6486f62c0478cd",
+          "actual_tree": "1fc6df6efc5a5f9c9b072a570c6486f62c0478cd",
+          "anchor_retained": 3,
+          "anchor_added": 0,
+          "anchor_removed": 0,
+          "locator_anomalies": []
+        }
+      }
+    },
+    {
+      "cve": "CVE-2025-25212",
+      "repository": "openharmony/distributeddatamgr_pasteboard",
+      "source_manifest": "20261019-disclosure-regression-v0.12.12/manifest.json",
+      "sides": {
+        "vulnerable": {
+          "old_status": "completed_with_limitations",
+          "current_status": "completed_with_limitations",
+          "old_observations": 3,
+          "current_observations": 3,
+          "retained": 3,
+          "added": [],
+          "removed": [],
+          "old_parse": {
+            "complete": 1,
+            "partial": 3
+          },
+          "current_parse": {
+            "complete": 1,
+            "partial": 3
+          },
+          "expected_tree": "049d9e811ecb5c3533ab64fc66be3548e92c954f",
+          "actual_tree": "049d9e811ecb5c3533ab64fc66be3548e92c954f",
+          "anchor_retained": 3,
+          "anchor_added": 0,
+          "anchor_removed": 0,
+          "locator_anomalies": []
+        },
+        "fixed": {
+          "old_status": "completed_with_limitations",
+          "current_status": "completed_with_limitations",
+          "old_observations": 2,
+          "current_observations": 2,
+          "retained": 2,
+          "added": [],
+          "removed": [],
+          "old_parse": {
+            "complete": 1,
+            "partial": 3
+          },
+          "current_parse": {
+            "complete": 1,
+            "partial": 3
+          },
+          "expected_tree": "8db5ac5a62c018c80818c85482e4914a836a4765",
+          "actual_tree": "8db5ac5a62c018c80818c85482e4914a836a4765",
+          "anchor_retained": 2,
+          "anchor_added": 0,
+          "anchor_removed": 0,
+          "locator_anomalies": []
+        }
+      }
+    },
+    {
+      "cve": "CVE-2025-27563",
+      "repository": "openharmony/security_access_token",
+      "source_manifest": "20261019-disclosure-regression-v0.12.12/manifest.json",
+      "sides": {
+        "vulnerable": {
+          "old_status": "completed_with_limitations",
+          "current_status": "completed_with_limitations",
+          "old_observations": 3,
+          "current_observations": 3,
+          "retained": 3,
+          "added": [],
+          "removed": [],
+          "old_parse": {
+            "complete": 1,
+            "partial": 1
+          },
+          "current_parse": {
+            "complete": 1,
+            "partial": 1
+          },
+          "expected_tree": "10a6185050ce6c8615bc941f8f31f38837ddc43e",
+          "actual_tree": "10a6185050ce6c8615bc941f8f31f38837ddc43e",
+          "anchor_retained": 3,
+          "anchor_added": 0,
+          "anchor_removed": 0,
+          "locator_anomalies": []
+        },
+        "fixed": {
+          "old_status": "completed_with_limitations",
+          "current_status": "completed_with_limitations",
+          "old_observations": 0,
+          "current_observations": 0,
+          "retained": 0,
+          "added": [],
+          "removed": [],
+          "old_parse": {
+            "complete": 1,
+            "partial": 1
+          },
+          "current_parse": {
+            "complete": 1,
+            "partial": 1
+          },
+          "expected_tree": "a737217e2472ad655ee1e6e2272ad75bfa14121f",
+          "actual_tree": "a737217e2472ad655ee1e6e2272ad75bfa14121f",
+          "anchor_retained": 0,
+          "anchor_added": 0,
+          "anchor_removed": 0,
+          "locator_anomalies": []
+        }
+      }
+    },
+    {
+      "cve": "CVE-2023-0035",
+      "repository": "openharmony/communication_dsoftbus",
+      "source_manifest": "20261019-historical-retest-v0.12.12/manifest.json",
+      "sides": {
+        "vulnerable": {
+          "old_status": "completed",
+          "current_status": "completed",
+          "old_observations": 1,
+          "current_observations": 1,
+          "retained": 1,
+          "added": [],
+          "removed": [],
+          "old_parse": {
+            "complete": 1,
+            "partial": 0
+          },
+          "current_parse": {
+            "complete": 1
+          },
+          "expected_tree": "68875fb53d257f13236dd6ba4b12ab0517d79dde",
+          "actual_tree": "68875fb53d257f13236dd6ba4b12ab0517d79dde",
+          "anchor_retained": 1,
+          "anchor_added": 0,
+          "anchor_removed": 0,
+          "locator_anomalies": []
+        },
+        "fixed": {
+          "old_status": "completed",
+          "current_status": "completed",
+          "old_observations": 0,
+          "current_observations": 0,
+          "retained": 0,
+          "added": [],
+          "removed": [],
+          "old_parse": {
+            "complete": 1,
+            "partial": 0
+          },
+          "current_parse": {
+            "complete": 1
+          },
+          "expected_tree": "4a501ce0e96b8f0706bcb188c99952c34e696535",
+          "actual_tree": "4a501ce0e96b8f0706bcb188c99952c34e696535",
+          "anchor_retained": 0,
+          "anchor_added": 0,
+          "anchor_removed": 0,
+          "locator_anomalies": []
+        }
+      }
+    },
+    {
+      "cve": "CVE-2023-0036",
+      "repository": "openharmony/inputmethod_imf",
+      "source_manifest": "20261019-historical-retest-v0.12.12/manifest.json",
+      "sides": {
+        "vulnerable": {
+          "old_status": "completed",
+          "current_status": "completed",
+          "old_observations": 1,
+          "current_observations": 1,
+          "retained": 1,
+          "added": [],
+          "removed": [],
+          "old_parse": {
+            "complete": 1,
+            "partial": 0
+          },
+          "current_parse": {
+            "complete": 1
+          },
+          "expected_tree": "5037e995cb4f3f29d54307b6e0fbf352cc9d6252",
+          "actual_tree": "5037e995cb4f3f29d54307b6e0fbf352cc9d6252",
+          "anchor_retained": 1,
+          "anchor_added": 0,
+          "anchor_removed": 0,
+          "locator_anomalies": []
+        },
+        "fixed": {
+          "old_status": "completed",
+          "current_status": "completed",
+          "old_observations": 0,
+          "current_observations": 0,
+          "retained": 0,
+          "added": [],
+          "removed": [],
+          "old_parse": {
+            "complete": 1,
+            "partial": 0
+          },
+          "current_parse": {
+            "complete": 1
+          },
+          "expected_tree": "42346fee0438d97a8deab64693c3ceb6d0235c2b",
+          "actual_tree": "42346fee0438d97a8deab64693c3ceb6d0235c2b",
+          "anchor_retained": 0,
+          "anchor_added": 0,
+          "anchor_removed": 0,
+          "locator_anomalies": []
+        }
+      }
+    },
+    {
+      "cve": "CVE-2024-39612",
+      "repository": "openharmony/resourceschedule_background_task_mgr",
+      "source_manifest": "20261019-historical-retest-v0.12.12/manifest.json",
+      "sides": {
+        "vulnerable": {
+          "old_status": "completed_with_limitations",
+          "current_status": "completed_with_limitations",
+          "old_observations": 2,
+          "current_observations": 2,
+          "retained": 2,
+          "added": [],
+          "removed": [],
+          "old_parse": {
+            "complete": 0,
+            "partial": 1
+          },
+          "current_parse": {
+            "partial": 1
+          },
+          "expected_tree": "1dba2f8c644f83cd56cb142c16eecfe700f53e96",
+          "actual_tree": "1dba2f8c644f83cd56cb142c16eecfe700f53e96",
+          "anchor_retained": 2,
+          "anchor_added": 0,
+          "anchor_removed": 0,
+          "locator_anomalies": []
+        },
+        "fixed": {
+          "old_status": "completed_with_limitations",
+          "current_status": "completed_with_limitations",
+          "old_observations": 0,
+          "current_observations": 0,
+          "retained": 0,
+          "added": [],
+          "removed": [],
+          "old_parse": {
+            "complete": 0,
+            "partial": 1
+          },
+          "current_parse": {
+            "partial": 1
+          },
+          "expected_tree": "aae4cf509b10315c90c593f3d24e335f6cc0bf0e",
+          "actual_tree": "aae4cf509b10315c90c593f3d24e335f6cc0bf0e",
+          "anchor_retained": 0,
+          "anchor_added": 0,
+          "anchor_removed": 0,
+          "locator_anomalies": []
+        }
+      }
+    },
+    {
+      "cve": "CVE-2025-26691",
+      "repository": "openharmony/telephony_call_manager",
+      "source_manifest": "20261019-historical-retest-v0.12.12/manifest.json",
+      "sides": {
+        "vulnerable": {
+          "old_status": "completed_with_limitations",
+          "current_status": "completed_with_limitations",
+          "old_observations": 9,
+          "current_observations": 9,
+          "retained": 9,
+          "added": [],
+          "removed": [],
+          "old_parse": {
+            "complete": 1,
+            "partial": 1
+          },
+          "current_parse": {
+            "complete": 1,
+            "partial": 1
+          },
+          "expected_tree": "5e3d643965a72fbf30f50e6da37936f71c9ab292",
+          "actual_tree": "5e3d643965a72fbf30f50e6da37936f71c9ab292",
+          "anchor_retained": 9,
+          "anchor_added": 0,
+          "anchor_removed": 0,
+          "locator_anomalies": []
+        },
+        "fixed": {
+          "old_status": "completed_with_limitations",
+          "current_status": "completed_with_limitations",
+          "old_observations": 0,
+          "current_observations": 0,
+          "retained": 0,
+          "added": [],
+          "removed": [],
+          "old_parse": {
+            "complete": 1,
+            "partial": 1
+          },
+          "current_parse": {
+            "complete": 1,
+            "partial": 1
+          },
+          "expected_tree": "238af1dc99fa7ad11f4734f9746a2fecd23729c8",
+          "actual_tree": "238af1dc99fa7ad11f4734f9746a2fecd23729c8",
+          "anchor_retained": 0,
+          "anchor_added": 0,
+          "anchor_removed": 0,
+          "locator_anomalies": []
+        }
+      }
+    },
+    {
+      "cve": "CVE-2024-21816",
+      "repository": "openharmony/resourceschedule_background_task_mgr",
+      "source_manifest": "20261019-cve-2024-21816-current-v0.12.12/manifest.json",
+      "sides": {
+        "vulnerable": {
+          "old_status": "completed_with_limitations",
+          "current_status": "completed_with_limitations",
+          "old_observations": 2,
+          "current_observations": 2,
+          "retained": 2,
+          "added": [],
+          "removed": [],
+          "old_parse": {
+            "complete": 5,
+            "partial": 1
+          },
+          "current_parse": {
+            "complete": 5,
+            "partial": 1
+          },
+          "expected_tree": "1dba2f8c644f83cd56cb142c16eecfe700f53e96",
+          "actual_tree": "1dba2f8c644f83cd56cb142c16eecfe700f53e96",
+          "anchor_retained": 2,
+          "anchor_added": 0,
+          "anchor_removed": 0,
+          "locator_anomalies": []
+        },
+        "fixed": {
+          "old_status": "completed_with_limitations",
+          "current_status": "completed_with_limitations",
+          "old_observations": 0,
+          "current_observations": 0,
+          "retained": 0,
+          "added": [],
+          "removed": [],
+          "old_parse": {
+            "complete": 5,
+            "partial": 1
+          },
+          "current_parse": {
+            "complete": 5,
+            "partial": 1
+          },
+          "expected_tree": "aae4cf509b10315c90c593f3d24e335f6cc0bf0e",
+          "actual_tree": "aae4cf509b10315c90c593f3d24e335f6cc0bf0e",
+          "anchor_retained": 0,
+          "anchor_added": 0,
+          "anchor_removed": 0,
+          "locator_anomalies": []
+        }
+      }
+    },
+    {
+      "cve": "CVE-2025-26693",
+      "repository": "openharmony/security_access_token",
+      "source_manifest": "20261019-cve-2025-26693-full-component-v0.12.12/manifest.json",
+      "sides": {
+        "vulnerable": {
+          "old_status": "completed_with_limitations",
+          "current_status": "completed_with_limitations",
+          "old_observations": 10,
+          "current_observations": 10,
+          "retained": 10,
+          "added": [],
+          "removed": [],
+          "old_parse": {
+            "complete": 672,
+            "partial": 112
+          },
+          "current_parse": {
+            "complete": 672,
+            "partial": 112
+          },
+          "expected_tree": "587259e8d5fca314e4ecc5fc461a9dbabef61a8e",
+          "actual_tree": "587259e8d5fca314e4ecc5fc461a9dbabef61a8e",
+          "anchor_retained": 10,
+          "anchor_added": 0,
+          "anchor_removed": 0,
+          "locator_anomalies": []
+        },
+        "fixed": {
+          "old_status": "completed_with_limitations",
+          "current_status": "completed_with_limitations",
+          "old_observations": 7,
+          "current_observations": 7,
+          "retained": 7,
+          "added": [],
+          "removed": [],
+          "old_parse": {
+            "complete": 672,
+            "partial": 112
+          },
+          "current_parse": {
+            "complete": 672,
+            "partial": 112
+          },
+          "expected_tree": "370f0dee1292da0d600814f228e30e95e8154068",
+          "actual_tree": "370f0dee1292da0d600814f228e30e95e8154068",
+          "anchor_retained": 7,
+          "anchor_added": 0,
+          "anchor_removed": 0,
+          "locator_anomalies": []
+        }
+      }
+    }
+  ],
+  "comparison_policy": {
+    "candidate_anchor_key": [
+      "repository",
+      "file",
+      "rule_id",
+      "symbol",
+      "source_sha256"
+    ],
+    "exact_observation_key": [
+      "repository",
+      "file",
+      "line",
+      "rule_id",
+      "symbol",
+      "source_sha256"
+    ],
+    "candidate_observation_counts": "count each version endpoint report observation separately",
+    "root_anchor_count": "distinct candidate anchors only; not confirmed root causes"
+  },
+  "aggregate": {
+    "cves": 14,
+    "version_endpoint_replays": 28,
+    "historical_observations": 75,
+    "current_observations": 75,
+    "stable_candidate_anchor_observations": 75,
+    "exact_locator_observations_retained": 74,
+    "locator_metadata_anomalies": 1,
+    "candidate_anchor_additions": 0,
+    "candidate_anchor_removals": 0,
+    "current_candidate_anchor_clusters": 40,
+    "validated_vulnerabilities": 0,
+    "replay_statuses": {
+      "completed": 6,
+      "completed_with_limitations": 22
+    }
+  }
+}

@@ -1,0 +1,937 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-21",
+  "algorithm": "SHA-256",
+  "files": [
+    {
+      "path": "AgentLLM/deepseek-r0-r1-r2-live-results-20261018.md",
+      "bytes": 3436,
+      "sha256": "d62096fc1bc3bf25b3f443c096b203697fe51b797746e4013a69498c5801c890"
+    },
+    {
+      "path": "AgentLLM/selected-taskflow-offline-smoke-20261019.json",
+      "bytes": 12659,
+      "sha256": "092a3f2626375d1aaad0c662925b15b79dddf3e6246765b467a5e5ab0f93c9c6"
+    },
+    {
+      "path": "AgentLLM/大模型层Agent工作流与实验设计_评委版.md",
+      "bytes": 9416,
+      "sha256": "8b56dcbe2e721643f2b01bc0df67f0931e0bd8af9456f7ad34ecb1e86e768306"
+    },
+    {
+      "path": "A线/A_MEMORY_SAFETY_DELIVERY_20261017.md",
+      "bytes": 8003,
+      "sha256": "36984ea20b378ba4d9ec12056ef28114aa9b448061caeaac30f47a29ef6bf46d"
+    },
+    {
+      "path": "A线/A_MEMORY_SAFETY_SOURCE_HASHES_20261017.json",
+      "bytes": 3474,
+      "sha256": "4d70b0b0717d78d27eb17dca205614fb0304cc18e02549aa8db8f81703f345f1"
+    },
+    {
+      "path": "B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2022-42463-fixed.json",
+      "bytes": 13749,
+      "sha256": "70e4e942f8699702b605af9394be7f3133a9c99440bee4cadd8684b74f3fc954"
+    },
+    {
+      "path": "B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2022-42463-fixed.md",
+      "bytes": 6215,
+      "sha256": "e56c4ec49d842356035cf47a7a990ff554323cf6ad89ac92891f45c1aa30357c"
+    },
+    {
+      "path": "B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2022-42463-vulnerable.json",
+      "bytes": 13645,
+      "sha256": "54d9e06285a5bf1eb7f7b7be056f8f56c24d987a949c7d86d5269f3b838669a7"
+    },
+    {
+      "path": "B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2022-42463-vulnerable.md",
+      "bytes": 6214,
+      "sha256": "5464475f72aef111f5801c9783d93847c2f3854892934d0e0f47b541a4083954"
+    },
+    {
+      "path": "B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2023-25176-fixed.json",
+      "bytes": 7382,
+      "sha256": "de90d2906c15f9bde95dcb1031a8ceda8830b7845105633be2bc86b295612a6b"
+    },
+    {
+      "path": "B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2023-25176-fixed.md",
+      "bytes": 5031,
+      "sha256": "0c11311c2b2020afb4b30126b9c0aa46c364abc8858151eb5a7fa4af0b467cf1"
+    },
+    {
+      "path": "B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2023-25176-vulnerable.json",
+      "bytes": 10795,
+      "sha256": "42ecf684dcaea00d422d6528816c69af8882471cc4686785f80409c92fc36169"
+    },
+    {
+      "path": "B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2023-25176-vulnerable.md",
+      "bytes": 5247,
+      "sha256": "c607c17fb23422b7667ed28b25f5101b17912a7edee8f8846189a6d525b0c108"
+    },
+    {
+      "path": "B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2024-12082-fixed.json",
+      "bytes": 32045,
+      "sha256": "a38bf7486184ee3ba221d8e09bcc2d65ff259637fdd3549972af5073d528a321"
+    },
+    {
+      "path": "B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2024-12082-fixed.md",
+      "bytes": 9269,
+      "sha256": "90eda27233791260b0c48fbbc03ec42286c6830da71e40b026e7aea8023d7a37"
+    },
+    {
+      "path": "B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2024-12082-vulnerable.json",
+      "bytes": 44651,
+      "sha256": "dcb269fe0c3b9d8c7157ee603f5d8d670854cf9c25cfe93a21863291f5a19eab"
+    },
+    {
+      "path": "B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2024-12082-vulnerable.md",
+      "bytes": 9806,
+      "sha256": "5dcc96e31303fc8154c1d89a871aaf290586e018806688ff3768a357fc5083eb"
+    },
+    {
+      "path": "B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2024-38382-fixed.json",
+      "bytes": 37637,
+      "sha256": "2eab86d04d3ea1430a3e350701fb2dbf354394f8b515eaafde8189f670367ee0"
+    },
+    {
+      "path": "B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2024-38382-fixed.md",
+      "bytes": 9815,
+      "sha256": "c0ec1b37a46c77798bcff47afc160943edd24e9e5261976ae51f2c58d9cdacec"
+    },
+    {
+      "path": "B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2024-38382-vulnerable.json",
+      "bytes": 45864,
+      "sha256": "eaaaff9ac31572dc53985d807fc2fe5162b66eb25a6d5547fad963eb970b1fd0"
+    },
+    {
+      "path": "B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2024-38382-vulnerable.md",
+      "bytes": 9976,
+      "sha256": "308228c7e39622e6ba0485f6aa8c0ac39857da16b7a3da341c9ec7fac1f9e6e7"
+    },
+    {
+      "path": "B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2024-39775-fixed.json",
+      "bytes": 7653,
+      "sha256": "37ae8f3b058ed3000fe56845c6bbebefb195bfa42f0e0261c0db6f42be4ccf32"
+    },
+    {
+      "path": "B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2024-39775-fixed.md",
+      "bytes": 5271,
+      "sha256": "2e6c07fd2b2b7885a96718abbb20d93230313fdbe2eeaa1cf4100234facf37e7"
+    },
+    {
+      "path": "B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2024-39775-vulnerable.json",
+      "bytes": 14647,
+      "sha256": "e18e3cc9e8c2e6519902aeffcc25023158a6b27129cee714b462010e88770d30"
+    },
+    {
+      "path": "B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2024-39775-vulnerable.md",
+      "bytes": 5870,
+      "sha256": "23f3b62972a98f81375f3c551a25494f82d01638e8fc68f8b98325539b449976"
+    },
+    {
+      "path": "B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2025-25212-fixed.json",
+      "bytes": 20084,
+      "sha256": "8c5d763edcfbec75fe37b7390d6ca487fbf08366a781bf062ddf687df136945b"
+    },
+    {
+      "path": "B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2025-25212-fixed.md",
+      "bytes": 6502,
+      "sha256": "9ef4d7ea1719411851a2d21e8a423d739766f12eb7fa51d27a58992ba3a5470c"
+    },
+    {
+      "path": "B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2025-25212-vulnerable.json",
+      "bytes": 24242,
+      "sha256": "a2de9b4d9eff11f6a77e15db1263d8c4cdea18d5e12ea0d74cba2ef7ab533d58"
+    },
+    {
+      "path": "B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2025-25212-vulnerable.md",
+      "bytes": 6815,
+      "sha256": "373979df6ca88fce9c10e40575214aa9c44d77cdd87c0ca05d3ebfb03da5694d"
+    },
+    {
+      "path": "B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2025-27247-fixed.json",
+      "bytes": 24558,
+      "sha256": "d44c6fc42f58dfd2066e127789b91ce71544b60cddc180bc5ee8dc10594f2176"
+    },
+    {
+      "path": "B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2025-27247-fixed.md",
+      "bytes": 7151,
+      "sha256": "fc87da1cb1e6f49957b1981403d0f23fcb4dfcea96b46eb24c1b4b63e884e625"
+    },
+    {
+      "path": "B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2025-27247-vulnerable.json",
+      "bytes": 28659,
+      "sha256": "d3309dab0c0f0ff3fd766d55e1d75ac9c64d90a497e4fb74779d26c632283f87"
+    },
+    {
+      "path": "B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2025-27247-vulnerable.md",
+      "bytes": 7450,
+      "sha256": "15ccd8521f2bd8dd492a738ff56ffca0dfd04f765cfce202ef02100ff69eba1e"
+    },
+    {
+      "path": "B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2025-27563-fixed.json",
+      "bytes": 11810,
+      "sha256": "22b68dd7bebab74bec178214fe6b292d20f62d1a2e2eb52ce2968f6224852849"
+    },
+    {
+      "path": "B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2025-27563-fixed.md",
+      "bytes": 8610,
+      "sha256": "4b54e628fe87767ee209609a82739cd78a77abb7198dd2ef3d87fae7e6def542"
+    },
+    {
+      "path": "B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2025-27563-vulnerable.json",
+      "bytes": 23695,
+      "sha256": "8ffb9b6f1c7e354232e5c910aad22afdf607f69c0399b2f6913abf9f1a51e288"
+    },
+    {
+      "path": "B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/CVE-2025-27563-vulnerable.md",
+      "bytes": 9460,
+      "sha256": "99fa714401d1c0e9f980a08598f910e077b05ecfc36500951441e0b4ed5e43ae"
+    },
+    {
+      "path": "B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/README.md",
+      "bytes": 6132,
+      "sha256": "69c2ef1f7ac37c251eca3a854753ee0763b7bc3b12150e72d42f472c06ca4c00"
+    },
+    {
+      "path": "B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/SHA256SUMS",
+      "bytes": 3148,
+      "sha256": "38b6b9f5ce8659d7e22d5579f0845f53956e4cc95250ebd4d2c7bcbaed499e3d"
+    },
+    {
+      "path": "B线/当前分支_v0.12.12/20261019-disclosure-regression-v0.12.12/manifest.json",
+      "bytes": 11359,
+      "sha256": "ed4ac7f87b98ab635b0621bfef80d531bd807cf88addf2bf6dadc136d777a790"
+    },
+    {
+      "path": "C线/c1_20261017/C1_RESEARCH_PLAN.md",
+      "bytes": 13908,
+      "sha256": "2acf18a8232317a196e5a3c6add8f0059caa207042b08e0f60544d540875e15e"
+    },
+    {
+      "path": "C线/c1_20261017/case_matrix.json",
+      "bytes": 7032,
+      "sha256": "83bed3df9bc84a0733d72d082aaf9bb0b88fcdd724347dce3e90112498ccf086"
+    },
+    {
+      "path": "C线/c1_20261017/parser_probe_result.json",
+      "bytes": 3289,
+      "sha256": "77675dc29c8d743f5d6a8c25f5dbd5271dd14f4257ef48ef3beb41a695eaae30"
+    },
+    {
+      "path": "C线/c1_20261017/probe_parser.py",
+      "bytes": 3628,
+      "sha256": "d2d69eb901c47d9167d7d9cb945cac9d287e34b32e9d23a48b9d06e2ea5f80a0"
+    },
+    {
+      "path": "C线/c1_20261017/source_evidence.json",
+      "bytes": 3837,
+      "sha256": "57b1efbf52d643ed75028d34ff00f69231fc73547c7c08fc5580d48533f81e9a"
+    },
+    {
+      "path": "C线/c2_20261017/C2_REPORT.md",
+      "bytes": 7272,
+      "sha256": "9106911f183b56bde03e62d9dee17822a9d06b0830874054fa2f7e64f294f05a"
+    },
+    {
+      "path": "C线/c2_20261017/PARTIAL_ADMISSION_RFC.md",
+      "bytes": 4238,
+      "sha256": "9f138a19df7cf3ea4555ca686940fe1cf939145e2845031d282d071064ca7f9f"
+    },
+    {
+      "path": "C线/c2_20261017/__pycache__/replay.cpython-310.pyc",
+      "bytes": 9125,
+      "sha256": "a0d9c9326a56237917eb177416652db8a01042f2e599665bd48f6c2c7e526b1c"
+    },
+    {
+      "path": "C线/c2_20261017/artifact_hashes.json",
+      "bytes": 376,
+      "sha256": "985b2e3645b26d0745d03c010f6376cd0f2641c4995a51683c5a3bef5f039b14"
+    },
+    {
+      "path": "C线/c2_20261017/historical_results.json",
+      "bytes": 15886,
+      "sha256": "5c1e4fd8e3b9485e2e445e3cf9d4b529c9a187cebc50c5dfb9bb82b9a5061a00"
+    },
+    {
+      "path": "C线/c2_20261017/replay.py",
+      "bytes": 10667,
+      "sha256": "61833181322c684299969162778e15917bf800e2cff958e7a9a9eb1792da5b6a"
+    },
+    {
+      "path": "C线/c2_20261017/run_manifest.json",
+      "bytes": 2167,
+      "sha256": "46ef7d2f21b36329d36a878607a8a731ef840460e7e9f2f2caf12e2dfc2357e4"
+    },
+    {
+      "path": "C线/c2_20261017/source_evidence.json",
+      "bytes": 1999,
+      "sha256": "7e023201e092a8f62c4ad174a7d122c847331a86f29004cc76af925cad726293"
+    },
+    {
+      "path": "C线/c2_20261017/test_results.json",
+      "bytes": 22270,
+      "sha256": "6c4553d6a4135d861346974c35ab3a57ad5c71026a29733473ac574b9c74b924"
+    },
+    {
+      "path": "C线/c2_20261017/verification_summary.json",
+      "bytes": 809,
+      "sha256": "8480c156758f4ab4c07f73133103f69c4b12f71e7e32d1ba57919a4e83fd5921"
+    },
+    {
+      "path": "C线/c3_20261017/C3_ARTIFACT_HASHES.json",
+      "bytes": 3698,
+      "sha256": "cfec4407b88aa3b658d47ed83deaf8a273569ee5b6274bcebe447ef40e0c90e0"
+    },
+    {
+      "path": "C线/c3_20261017/C3_BASELINE.json",
+      "bytes": 30298,
+      "sha256": "8e84c8b316889c42beacb489665c2f06567ee73bc10d721892a1bf698b7a6191"
+    },
+    {
+      "path": "C线/c3_20261017/C3_CENSUS.json",
+      "bytes": 80929,
+      "sha256": "d02394af17f9948483d902372e7086d671aaa41e778016b03ef5eac060ab57e2"
+    },
+    {
+      "path": "C线/c3_20261017/C3_GENERALIZATION.md",
+      "bytes": 3847,
+      "sha256": "0d1fd87dee2fdb78a3138de63e67a6ca4c5f2acef133c4a63fa638887e7e0da1"
+    },
+    {
+      "path": "C线/c3_20261017/C3_HANDOFF.md",
+      "bytes": 4736,
+      "sha256": "b0e0b601ee58d4ecab2e167fa8a601a2ffbbfc4b8baa516117c92b5aebee6e52"
+    },
+    {
+      "path": "C线/c3_20261017/C3_HISTORY.json",
+      "bytes": 25719,
+      "sha256": "bcac4457f6026088f93f256b0a7a5d3077c5aa9d6933e9c4de295e2ef2d23443"
+    },
+    {
+      "path": "C线/c3_20261017/C3_HOLDOUT_LABELS.template.json",
+      "bytes": 3691,
+      "sha256": "2ec0aaefa1a242f3b303043062001481309b0357576e163c32831906733f1667"
+    },
+    {
+      "path": "C线/c3_20261017/C3_HOLDOUT_MANIFEST.json",
+      "bytes": 11155,
+      "sha256": "0e0c354e565b3a001946e0d1e48dfe103d1ae688abbe6f1f37309bebc32a364a"
+    },
+    {
+      "path": "C线/c3_20261017/C3_IMPLEMENTATION.md",
+      "bytes": 4173,
+      "sha256": "1cc621d0b030b9ce21b29ef08725620d06c7afedd45e12986dfd12b75453c205"
+    },
+    {
+      "path": "C线/c3_20261017/C3_LEGACY_CASES.json",
+      "bytes": 22248,
+      "sha256": "eb07aa18cd7212aa98fbcb7222528575e60451cb9c451d8ae89d6765c08f3bfc"
+    },
+    {
+      "path": "C线/c3_20261017/C3_LIMITATIONS.md",
+      "bytes": 2775,
+      "sha256": "69b55352764bd636f6a7a35283f07283e93be2017f6d08684c58e8074f4d8262"
+    },
+    {
+      "path": "C线/c3_20261017/C3_MECHANISMS.json",
+      "bytes": 34607,
+      "sha256": "1b0094bbc6fb6114b6cb24f25a8874bd1620b4da8664b02b6039de2b740e2d06"
+    },
+    {
+      "path": "C线/c3_20261017/C3_PARTIAL_RFC_UPDATE.md",
+      "bytes": 3115,
+      "sha256": "4ee5e9d7b1e431f8d7d199242407dbaf9ac754828df108b1776242923c96fd6c"
+    },
+    {
+      "path": "C线/c3_20261017/C3_REAL_SOURCE_SCAN.md",
+      "bytes": 4247,
+      "sha256": "ecd94611df0b9202b7495635c3ecbf844d9fa9874ef7588b39cebaa0193b4d89"
+    },
+    {
+      "path": "C线/c3_20261017/C3_REVIEW_COUNTEREXAMPLES.json",
+      "bytes": 8521,
+      "sha256": "3bd4a74ff6dca9f6936065e4afef2fc6c79fb039536e6e1671a1d53f51e63d8e"
+    },
+    {
+      "path": "C线/c3_20261017/C3_RUN_MANIFEST.json",
+      "bytes": 7248,
+      "sha256": "482f74f3b7abfd7f2d0a7c8c5ab3145ac047a37536e99cfcbf516fd89e25d4ad"
+    },
+    {
+      "path": "C线/c3_20261017/C3_SOURCE_EVIDENCE.json",
+      "bytes": 10965,
+      "sha256": "88a2d0de24dbbd400d3920cfb59e6aa2fca67ec28c5e9c79cb14784a2c0a6aca"
+    },
+    {
+      "path": "C线/c3_20261017/C3_VALIDATION.json",
+      "bytes": 17264,
+      "sha256": "dc3b66252f76f204c523922daf8c97e2e41a1f834e445bd02335e77d75ca5fcf"
+    },
+    {
+      "path": "C线/c3_20261017/holdout/H01.cpp",
+      "bytes": 433,
+      "sha256": "c633c9b96d4766a48ba6c4a515a733c2a52575ee23512a53663fa131a19cae3b"
+    },
+    {
+      "path": "C线/c3_20261017/holdout/H02.cpp",
+      "bytes": 473,
+      "sha256": "5b982a72a36972ce0c72f911b3002f7f25228e5838943e03942b78c3b1d1b7f0"
+    },
+    {
+      "path": "C线/c3_20261017/holdout/H03.cpp",
+      "bytes": 478,
+      "sha256": "5d57b6e71a068359c29044c4fb8bac7ab7c0811e3180b75120c4294fc922d93a"
+    },
+    {
+      "path": "C线/c3_20261017/holdout/H04.cpp",
+      "bytes": 502,
+      "sha256": "fe3b7a99f8a8d4dc5412b97c4e9beba9dab9b8c1ec99c43596022011d8b41c2a"
+    },
+    {
+      "path": "C线/c3_20261017/holdout/H05.cpp",
+      "bytes": 481,
+      "sha256": "eb18cbef78d1484264f391a84b84d5c3fb9f4038329e3d39c5a4c99f8dea4a2c"
+    },
+    {
+      "path": "C线/c3_20261017/holdout/H06.cpp",
+      "bytes": 487,
+      "sha256": "8b3895ed6e0789d06c828327709d06bb4111f318373a8fc8effd693b845ca183"
+    },
+    {
+      "path": "C线/c3_20261017/holdout/H07.cpp",
+      "bytes": 559,
+      "sha256": "6d8fc766317b4c5a30cafc5b1d067a9bc312309d526df6f66106318ff1ed7e51"
+    },
+    {
+      "path": "C线/c3_20261017/holdout/H08.cpp",
+      "bytes": 492,
+      "sha256": "cab61c04e02d2e69e7d585598ab999ff9468cf33fff6c813e4eb0d24ef7b8a1c"
+    },
+    {
+      "path": "C线/c3_20261017/holdout/H09.cpp",
+      "bytes": 400,
+      "sha256": "f7d9fbaf995236650288035b95f5e5060c0c29a4729839f10a1b3430fdc07748"
+    },
+    {
+      "path": "C线/c3_20261017/holdout/H10.cpp",
+      "bytes": 404,
+      "sha256": "f4c635c2eb7c96e63dad114aac7d8f478b1427796e59fcdd5da9ad55686683d3"
+    },
+    {
+      "path": "C线/c3_20261017/holdout/H11.cpp",
+      "bytes": 207,
+      "sha256": "56b2ef044c9d2c276b13f53552d60f3e41baa0635c5fb3aa50d1d171305c4377"
+    },
+    {
+      "path": "C线/c3_20261017/holdout/H12.cpp",
+      "bytes": 418,
+      "sha256": "5393d4b87c0427adbe28c46fa761b365c0962d02ac2123f630731451f984b41c"
+    },
+    {
+      "path": "C线/c3_20261017/holdout/H13.cpp",
+      "bytes": 491,
+      "sha256": "23b6330bd79afb92dce28e843ffd0d9574d467ca8aa795d56877ea4d6cfe97ed"
+    },
+    {
+      "path": "C线/c3_20261017/holdout/H14.cpp",
+      "bytes": 479,
+      "sha256": "3fef6b85dd33b87eb3bcbb56752056624535c4849033ebc657e947521cbe683e"
+    },
+    {
+      "path": "C线/c3_20261017/holdout/H15.cpp",
+      "bytes": 507,
+      "sha256": "64ed2ca6de402d620c10d5a66a330df873d12a7ddf7c204845b0d45b321e5298"
+    },
+    {
+      "path": "C线/c3_20261017/holdout/H16.cpp",
+      "bytes": 543,
+      "sha256": "cf0b0de5da4141112cf68d48b3bd8b4b6d4e06f5faaaddc812b3d6028b782ddd"
+    },
+    {
+      "path": "C线/c3_20261017/prepare_holdout.py",
+      "bytes": 5905,
+      "sha256": "1eb971673546738704c96837e26af7b6bc30b934c89b487c8dc9923fa8a3769b"
+    },
+    {
+      "path": "C线/c3_20261017/replay.py",
+      "bytes": 15162,
+      "sha256": "385ec23be372f47d098f9a375cbfcfe90ed2e72585b14d1e3e1a4089c8f0737a"
+    },
+    {
+      "path": "C线/c4_20261018/C4_EXCEPTION_GUARD.md",
+      "bytes": 6404,
+      "sha256": "20548f866569af82db08fd153d1193870fa7d4b968321a42e920b93888d6b97a"
+    },
+    {
+      "path": "C线/c4_20261018/C4_HANDOFF.md",
+      "bytes": 6859,
+      "sha256": "70bb94cfd818f1d121684a1543f30e84cefab61821ffe8cf09377a12f40c8741"
+    },
+    {
+      "path": "C线/c4_20261018/C4_HISTORICAL_FIX.md",
+      "bytes": 1885,
+      "sha256": "7367ddf27668d69e78bce3a2dce45c646daa50499235e896e82329f2904fc514"
+    },
+    {
+      "path": "C线/c4_20261018/C4_HOLDOUT_REVIEW.md",
+      "bytes": 467,
+      "sha256": "9a44e653150ad422cd1328d7739091a985edb02d3f6e26bcd3f4f830e4d571eb"
+    },
+    {
+      "path": "C线/c4_20261018/C4_PARTIAL_RFC.md",
+      "bytes": 1377,
+      "sha256": "052cac3ce741833f38dfde9b22e4cb66fb5a212a73e5f7c8827530d4ed95987d"
+    },
+    {
+      "path": "C线/c4_20261018/C4_PERFORMANCE.json",
+      "bytes": 2707,
+      "sha256": "54a5b7fa1abe5af35a4f40dda22993b5f502de14ab7714696e75a024b07aa1c9"
+    },
+    {
+      "path": "C线/c4_20261018/C4_PERFORMANCE.md",
+      "bytes": 1045,
+      "sha256": "a3edc0872c07ee2cd0d020eed5ec97218e8e45cacce90f67b84b46843903b68b"
+    },
+    {
+      "path": "C线/c4_20261018/C4_REAL_SOURCE_SCAN.md",
+      "bytes": 2867,
+      "sha256": "1f66128834ee52e3f0409a4da0ba3e72d339784e0179f3a454e5fe8c4ac45ecb"
+    },
+    {
+      "path": "C线/c4_20261018/C4_SOURCE_BINDINGS.json",
+      "bytes": 2973,
+      "sha256": "0da14b27aa2dbf192a2010642847213a6fc5d7683e0e5a9bcf2d52706b9ef8e0"
+    },
+    {
+      "path": "C线/c4_20261018/C4_UNKNOWN_CASES.md",
+      "bytes": 4435,
+      "sha256": "de0f8ff8493d89b081d1a598726b2802bdee021453abcd19d2f3281838f90959"
+    },
+    {
+      "path": "C线/c4_20261018/C4_VALIDATION.json",
+      "bytes": 14349,
+      "sha256": "6d3a96a9f2837f2776d171dbea11bd483a176704f548a47f774b68c7b8a4e7d7"
+    },
+    {
+      "path": "C线/c4_20261018/TEAMMATE_HANDOFF.md",
+      "bytes": 4478,
+      "sha256": "8e2b3ab4ecf32865d47ca1852582ff12805c8ea36b15bdd9c13a61d0c5f3bfcd"
+    },
+    {
+      "path": "C线/c4_20261018/independent_review_packet/README_FOR_REVIEWER.md",
+      "bytes": 1627,
+      "sha256": "a3a63e49f55d44bc98e3f91fed3bbdb4fe32cf71cdc1a690c3871c43be50e224"
+    },
+    {
+      "path": "C线/c4_20261018/independent_review_packet/SHA256SUMS",
+      "bytes": 1456,
+      "sha256": "53e5528760181db99011b94866dc583671f95e6d0c1d22b7d20e85282196c41c"
+    },
+    {
+      "path": "C线/c4_20261018/independent_review_packet/cases/H01.cpp",
+      "bytes": 433,
+      "sha256": "c633c9b96d4766a48ba6c4a515a733c2a52575ee23512a53663fa131a19cae3b"
+    },
+    {
+      "path": "C线/c4_20261018/independent_review_packet/cases/H02.cpp",
+      "bytes": 473,
+      "sha256": "5b982a72a36972ce0c72f911b3002f7f25228e5838943e03942b78c3b1d1b7f0"
+    },
+    {
+      "path": "C线/c4_20261018/independent_review_packet/cases/H03.cpp",
+      "bytes": 478,
+      "sha256": "5d57b6e71a068359c29044c4fb8bac7ab7c0811e3180b75120c4294fc922d93a"
+    },
+    {
+      "path": "C线/c4_20261018/independent_review_packet/cases/H04.cpp",
+      "bytes": 502,
+      "sha256": "fe3b7a99f8a8d4dc5412b97c4e9beba9dab9b8c1ec99c43596022011d8b41c2a"
+    },
+    {
+      "path": "C线/c4_20261018/independent_review_packet/cases/H05.cpp",
+      "bytes": 481,
+      "sha256": "eb18cbef78d1484264f391a84b84d5c3fb9f4038329e3d39c5a4c99f8dea4a2c"
+    },
+    {
+      "path": "C线/c4_20261018/independent_review_packet/cases/H06.cpp",
+      "bytes": 487,
+      "sha256": "8b3895ed6e0789d06c828327709d06bb4111f318373a8fc8effd693b845ca183"
+    },
+    {
+      "path": "C线/c4_20261018/independent_review_packet/cases/H07.cpp",
+      "bytes": 559,
+      "sha256": "6d8fc766317b4c5a30cafc5b1d067a9bc312309d526df6f66106318ff1ed7e51"
+    },
+    {
+      "path": "C线/c4_20261018/independent_review_packet/cases/H08.cpp",
+      "bytes": 492,
+      "sha256": "cab61c04e02d2e69e7d585598ab999ff9468cf33fff6c813e4eb0d24ef7b8a1c"
+    },
+    {
+      "path": "C线/c4_20261018/independent_review_packet/cases/H09.cpp",
+      "bytes": 400,
+      "sha256": "f7d9fbaf995236650288035b95f5e5060c0c29a4729839f10a1b3430fdc07748"
+    },
+    {
+      "path": "C线/c4_20261018/independent_review_packet/cases/H10.cpp",
+      "bytes": 404,
+      "sha256": "f4c635c2eb7c96e63dad114aac7d8f478b1427796e59fcdd5da9ad55686683d3"
+    },
+    {
+      "path": "C线/c4_20261018/independent_review_packet/cases/H11.cpp",
+      "bytes": 207,
+      "sha256": "56b2ef044c9d2c276b13f53552d60f3e41baa0635c5fb3aa50d1d171305c4377"
+    },
+    {
+      "path": "C线/c4_20261018/independent_review_packet/cases/H12.cpp",
+      "bytes": 418,
+      "sha256": "5393d4b87c0427adbe28c46fa761b365c0962d02ac2123f630731451f984b41c"
+    },
+    {
+      "path": "C线/c4_20261018/independent_review_packet/cases/H13.cpp",
+      "bytes": 491,
+      "sha256": "23b6330bd79afb92dce28e843ffd0d9574d467ca8aa795d56877ea4d6cfe97ed"
+    },
+    {
+      "path": "C线/c4_20261018/independent_review_packet/cases/H14.cpp",
+      "bytes": 479,
+      "sha256": "3fef6b85dd33b87eb3bcbb56752056624535c4849033ebc657e947521cbe683e"
+    },
+    {
+      "path": "C线/c4_20261018/independent_review_packet/cases/H15.cpp",
+      "bytes": 507,
+      "sha256": "64ed2ca6de402d620c10d5a66a330df873d12a7ddf7c204845b0d45b321e5298"
+    },
+    {
+      "path": "C线/c4_20261018/independent_review_packet/cases/H16.cpp",
+      "bytes": 543,
+      "sha256": "cf0b0de5da4141112cf68d48b3bd8b4b6d4e06f5faaaddc812b3d6028b782ddd"
+    },
+    {
+      "path": "C线/c4_20261018/independent_review_packet/labels.template.json",
+      "bytes": 3691,
+      "sha256": "2ec0aaefa1a242f3b303043062001481309b0357576e163c32831906733f1667"
+    },
+    {
+      "path": "C线/c4_20261018/independent_review_packet.zip",
+      "bytes": 9809,
+      "sha256": "5f433a2dddded9d63083c384336b86048d1ffe3374d1b11304afd674c1774410"
+    },
+    {
+      "path": "D线/D30_LIBPNG_CVE_2026_46675_REPLAY.json",
+      "bytes": 20345,
+      "sha256": "fb4b0295249db72f3fd57aa5c3643f19a7407c136ea2310874aa9720dc964697"
+    },
+    {
+      "path": "D线/D30_LIBPNG_CVE_2026_46675_REPORT.md",
+      "bytes": 4564,
+      "sha256": "b9729e5e80d0440aadf606ab29912e8e8811929e06240edecdf3dde40dbcddfa"
+    },
+    {
+      "path": "D线/D31_LIBTIFF_CVE_2025_9900_REPLAY.json",
+      "bytes": 17639,
+      "sha256": "22e82b0a3f089803539bfb0ffe26a33aa46bd277b89754d2fbd16a9e4935477f"
+    },
+    {
+      "path": "D线/D31_LIBTIFF_CVE_2025_9900_REPORT.md",
+      "bytes": 3876,
+      "sha256": "dafa50f9526e072d32d4f50409a2f30ad3c279ad28826a6b2aeb88a7e452609a"
+    },
+    {
+      "path": "D线/D_KNOWN_CVE_POC_REMEDIATION_INDEX.md",
+      "bytes": 5828,
+      "sha256": "337b02f41ceb018a54d644444f818763a12fb5087b535962b3a6b76a6d6fa569"
+    },
+    {
+      "path": "D线/D_REVIEW.md",
+      "bytes": 7254,
+      "sha256": "cda8ccb72d8504af65f0fc6aeb95bba51c8cd681d660cd1ab37208c193ee27e9"
+    },
+    {
+      "path": "D线/README.md",
+      "bytes": 3344,
+      "sha256": "e8182b9857acef54238c42a48d1832f8c97cb4302d7fd432fe0f3ca5f4466b75"
+    },
+    {
+      "path": "D线/appdomain.json",
+      "bytes": 151670,
+      "sha256": "ab7024503793a0805adfe4c079d9033a0a6c3db0c4f10a9b4b9a55e40740e038"
+    },
+    {
+      "path": "D线/pasteboard.json",
+      "bytes": 50982,
+      "sha256": "b4279e00373c889f0c5142e2582412fc04c489dd4271167aa7b0223936edf9f4"
+    },
+    {
+      "path": "D线/storage.json",
+      "bytes": 834635,
+      "sha256": "f36cd40ad8a79839311cd399798e0b8d6b15bc94c4d4bd1d2483aa81977671a2"
+    },
+    {
+      "path": "README.md",
+      "bytes": 2818,
+      "sha256": "949d3909e0eb327fa606e650f7ad4e257c6bfbc594078cbd5b75a7887976320b"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/ABCD线实测分析与改进建议_20261018.md",
+      "bytes": 79517,
+      "sha256": "c43233e623880302670116ea0d36c3abc1f3b2ae9440f8aa8c25f2359577dcd4"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/SHA256SUMS",
+      "bytes": 3774,
+      "sha256": "59c60a69c205e1e199bd833f599d394b48dc91588b018293d27978567d6215a0"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2022-42463-fixed.json",
+      "bytes": 12025,
+      "sha256": "e47c2efdb3afefcbb33da7267d8e681c62df4aad2981d38e589deef11d137a4d"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2022-42463-fixed.md",
+      "bytes": 5868,
+      "sha256": "633834672d62dc08affbcbf36ffe2d22436f0ff47164f721f3d060577214b908"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2022-42463-vuln.json",
+      "bytes": 12026,
+      "sha256": "0ff4992eb2b8dbfb67a7ad0c335dd5290421b4a113ebaede181c3f6594d2daff"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2022-42463-vuln.md",
+      "bytes": 5868,
+      "sha256": "85b3917ebcc1e0f7bbdf515dad92a070c5251daaefb866539ebc5f5252779ecc"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2023-0035-fixed.json",
+      "bytes": 7868,
+      "sha256": "1143fb0b51e66b0d4584de1e0213554b2657685ab9cf234a4f9653544ed0dfb7"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2023-0035-fixed.md",
+      "bytes": 5656,
+      "sha256": "b1002c9aa999e7d4d7756c7b44b5f58fc6b57378ecfeeb70154f0a9f1a1ae2fe"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2023-0035-vuln.json",
+      "bytes": 11696,
+      "sha256": "35465abbe3e296e7972686bceb4a085b78176ffe18c5e74a4adf0f4a8923e7f6"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2023-0035-vuln.md",
+      "bytes": 5885,
+      "sha256": "0217a376c8fc4f2b02a4a93ce1da10b4425f40613df617b0a2b953d75ea80e4e"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2023-0036-fixed.json",
+      "bytes": 6933,
+      "sha256": "e1930c84fb87efe73b3142b0190636a093fecd99aa56a1ff5828065326690056"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2023-0036-fixed.md",
+      "bytes": 5043,
+      "sha256": "b8c1e728da683f97941618011a028d43d48268a16cc7abedd35baeeeb6aef67a"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2023-0036-vuln.json",
+      "bytes": 10393,
+      "sha256": "fd70cf00aaccce3b69e5c3a321c0becca27487357f043399f3c1595758873026"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2023-0036-vuln.md",
+      "bytes": 5230,
+      "sha256": "0e4a2fb9d2872e95560d79c2370ce035cb35a79e7212d4409ea5a0c317e2b4e7"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2023-25176-fixed.json",
+      "bytes": 7380,
+      "sha256": "5a43da4ab34088c2605a9229640f4a0699bd34b9029440a90e46b621e992ef46"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2023-25176-fixed.md",
+      "bytes": 5031,
+      "sha256": "d5316d788c88538cf99d68bfc6a9e140b93485fd4674856a3398bd92ac02505d"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2023-25176-vuln.json",
+      "bytes": 10792,
+      "sha256": "c3809b727b7dc8356feffa017f1c1b95379d2bc6f05fc55d330ab34ded6379e2"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2023-25176-vuln.md",
+      "bytes": 5247,
+      "sha256": "37fe8102784c438d45518efe77310ecbc35133c7bb47e75ef757a1a0991f83c8"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2024-39775-fixed.json",
+      "bytes": 36143,
+      "sha256": "8194e6ee06c9450aa9d560c47c13040bc75adda2875eefb91cba9e887cc1dac9"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2024-39775-fixed.md",
+      "bytes": 7778,
+      "sha256": "7fe301a1a524b3f3b2ebdd6ec63677a3e01d46b1b40af78f1d753dba62cbeb02"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2024-39775-vuln.json",
+      "bytes": 43102,
+      "sha256": "cc37f0052dc81ab87915ff228b6274d9eb1b503025180d7627c9999f770e6bbd"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2024-39775-vuln.md",
+      "bytes": 8450,
+      "sha256": "ea6eb588cffd47ff16ee17721e8d20ceb4bde9aed6663ac3e0462c09a182f19a"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2025-25212-fixed.json",
+      "bytes": 17913,
+      "sha256": "fa0d43fed035cb65c0bc04e67043edea7baac19a7f8d80b3cdf6ffe5b9af0b5c"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2025-25212-fixed.md",
+      "bytes": 6229,
+      "sha256": "b8ca564447a760e9c3008d8f7f8bc898f9a966f24beb40a0eb10e5a78ea271e4"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2025-25212-vuln.json",
+      "bytes": 21607,
+      "sha256": "879293fe4ecb78feb0682b7697f519eb57cc511b66fd4411e15dfba09727daa7"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2025-25212-vuln.md",
+      "bytes": 6542,
+      "sha256": "0ba10c7f6a8e3df3651380fdfd8d22a8ca3a3509fec46ba1f70b139769dbc090"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2025-26691-fixed.json",
+      "bytes": 6824,
+      "sha256": "56afc616756e497879ad0d53149f5aa593bffb35910c6cdf3f2b72a7326dc788"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2025-26691-fixed.md",
+      "bytes": 4786,
+      "sha256": "f5a0ce9a1e617d2f76e0b2f3eacd3bd26b230e8418900b573b9ab16258d4cd58"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2025-26691-vuln.json",
+      "bytes": 31492,
+      "sha256": "6eef406d6e4fd6271aad20c16716c6c958581a184e6eaeb2e1a472753006d55d"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2025-26691-vuln.md",
+      "bytes": 6574,
+      "sha256": "6fe87d586d79a8e67f7a9f19d460bfaac97eeb07eacd0afb80b981e6d4d9c708"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2025-26693-fixed.json",
+      "bytes": 14954,
+      "sha256": "7a6a29fe07dddf6417d668a3050f2f63009f0546149dd1411a98b18b4f6ebd52"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2025-26693-fixed.md",
+      "bytes": 8158,
+      "sha256": "4d247365a6f6ca916736b2093aaf9d0cb0424c6219811e5227120ee22ec7a4c4"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2025-26693-vuln.json",
+      "bytes": 26746,
+      "sha256": "d4450f1dedf8911ed6b131ebddbd0c0e99f39c5cad5aed1eaf5b41575e6f9360"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2025-26693-vuln.md",
+      "bytes": 9127,
+      "sha256": "2d5e040b657ca919b9afb1691a8e7707c848a0d8bcfd769a067fb0ba45033ce0"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2025-27247-fixed.json",
+      "bytes": 21924,
+      "sha256": "91350e7adc56549911634f59d5f9bfa7fed836f58518165cd25729fb806fa7e2"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2025-27247-fixed.md",
+      "bytes": 6878,
+      "sha256": "86d2fd39d591bd0d0d5588b97899b8f9539eea9363455fa2b424b560129d49d4"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2025-27247-vuln.json",
+      "bytes": 25543,
+      "sha256": "abce1245592f4016b813f9b8fe62889e30aa7a45c8a60f8ee81558f5dcc3a521"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2025-27247-vuln.md",
+      "bytes": 7177,
+      "sha256": "1af60da4ec9510c2fad1378c9c459d7b16c1236ee63aca3c1cf4b3f069e41e03"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2025-27563-fixed.json",
+      "bytes": 22064,
+      "sha256": "fad55e51670e5f3d29dc0356f177a3f1d0f96dd8b199437f93305408b2e111ce"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2025-27563-fixed.md",
+      "bytes": 7631,
+      "sha256": "53de016ec99360e1983ddf336db7dc1cfb3b89994dfc64b26618431a17696b5d"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2025-27563-vuln.json",
+      "bytes": 33773,
+      "sha256": "ec798e41e51afb48543bd15a58566b3b65c19aea95606ba1a8bbe579814fe860"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/cve-2025-27563-vuln.md",
+      "bytes": 8552,
+      "sha256": "b11ca20ff1e31b03f9a281eee862ddbc1ba71390970c32bf9f6b5d9530c2c9d0"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/manifest.json",
+      "bytes": 15056,
+      "sha256": "2670181e72c240b9555f757b1c49b386bada4c8ddb7c69681e257bdf5ee3c3d8"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/B线v0.12.1/复测矩阵.md",
+      "bytes": 8398,
+      "sha256": "963d713b8c7cb62b806859f0108f6b793eb5210b95adae6d4029937ce08b1401"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/README.md",
+      "bytes": 1244,
+      "sha256": "ffef6df2e2d98dd711abb98adc649c97a2666d8e8d3ac807fe2821adc8b2c18d"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/detector-stats.json",
+      "bytes": 126224,
+      "sha256": "9c8be3571285e7e894f496e693576a0762482ff801906c3de6d5a414d85137d5"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/候选诊断数量拆解_20261018.md",
+      "bytes": 7926,
+      "sha256": "8c1daef5eaf210f00164a1a6cc573b8fe34e7b2d890e66d555be1059eb351238"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/执行总结.md",
+      "bytes": 88569,
+      "sha256": "84aafc5af86ae7c7c30851be9c34f62edcdff405908e690d34a5f9982af1a385"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/未扫描仓库覆盖说明.json",
+      "bytes": 14240,
+      "sha256": "ef6f8b9b84a20da0552ad0cbf217a8ce9db570e93e09c79db8875020dab0bf44"
+    },
+    {
+      "path": "外接盘_OpenHarmony100/未扫描仓库覆盖说明.md",
+      "bytes": 6950,
+      "sha256": "18a747d91c66394ba3c611a5a4b5559e5321b9ad5d1093328ce779ab2e9c1f70"
+    },
+    {
+      "path": "实验材料总览与复现入口.md",
+      "bytes": 6607,
+      "sha256": "cc212dad18cd324671fae9760b3b77f773cc781445a5b7623086c1afd6d338ba"
+    },
+    {
+      "path": "来源与版本清单.json",
+      "bytes": 5331,
+      "sha256": "b6176accf7eda4435e5d407cbdd3942c5079d3a5bb2266f6d750e8c82a0bb151"
+    }
+  ]
+}
