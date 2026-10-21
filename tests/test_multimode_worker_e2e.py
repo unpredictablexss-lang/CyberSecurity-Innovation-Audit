@@ -156,7 +156,14 @@ if os.environ.get("OHSCANNER_TEST_PROVIDER_TRACE"):
             self.tool_call_sent = False
 
         def create_with_timeout(self, request, timeout):
-            if os.environ.get("OHSCANNER_TEST_PROVIDER_FAIL") == "quota":
+            fail_mode = os.environ.get("OHSCANNER_TEST_PROVIDER_FAIL", "")
+            fail_commit = (fail_mode.split(":", 1)[1]
+                           if fail_mode.startswith("quota:") else "")
+            if fail_mode == "quota" or (
+                    fail_commit and any(
+                        context.get("commit") == fail_commit
+                        or context.get("source_commit") == fail_commit
+                        for context in self._contexts(request))):
                 raise agent.ProviderQuotaError("offline provider quota fixture")
             return self.create(request)
 
@@ -525,6 +532,179 @@ if os.environ.get("OHSCANNER_TEST_PROVIDER_TRACE"):
         result = self._finish_agent_children(operation, previews, expect_r2=True)
         self.assertEqual(len(result["result"]["versions"]), 2)
         self.assertEqual(len(result["result"]["comparisons"]), 1)
+
+
+    def _finish_static_multi_endpoint_operation(self, operation):
+        ops = Operations(self.store)
+        scan_ids = operation["spec"]["scan_ids"]
+        self.assertGreaterEqual(len(scan_ids), 2)
+        for scan_id in scan_ids:
+            self.assertEqual(self.store.job(scan_id)["spec"]["audit_mode"], "static_only")
+            self.assertIsNone(self.store.triage_authorization(scan_id))
+        for _ in scan_ids:
+            Worker(self.settings).run(once=True)
+        for scan_id in scan_ids:
+            job = self.store.job(scan_id)
+            self.assertIn(job["status"], {"completed", "completed_with_limitations"}, job)
+            self.assertTrue(job.get("report_sha256"), job)
+            report = read_report(self.settings, job)
+            self.assertTrue(findings(report))
+            self.assertEqual(report["validated_vulnerability"], 0)
+            self.assertIsNone(self.store.triage_authorization(scan_id))
+            self.assertFalse(ops.triage_batches_for_job(scan_id, job["report_sha256"]))
+        OperationWorker(self.settings).run(once=True)
+        finished = ops.get(operation["id"])
+        self.assertIn(finished["status"], {"completed", "completed_with_limitations"}, finished)
+        result = ops.result(operation["id"])
+        self.assertEqual(result["validated_vulnerability"], 0)
+        view = self.client.get("/api/v1/operations/" + operation["id"], headers=HEADERS)
+        self.assertEqual(view.status_code, 200, view.text)
+        progress = view.json()["intelligent_review_progress"]
+        self.assertEqual([item["scan_id"] for item in progress], scan_ids)
+        self.assertTrue(all(item["agent_status"] == "static_only" for item in progress), progress)
+        self.assertTrue(all(not item["agent_authorized"] for item in progress), progress)
+
+    def test_static_multi_endpoint_operations_finish_without_model_authorization(self):
+        common = {
+            "repository_id": self.repo["id"], "include_paths": ["."],
+            "detector_ids": DETECTORS, "timeout_seconds": 90, "memory_mb": 1024,
+            "audit_mode": "static_only", "auto_triage": False,
+        }
+        recent = self.client.post("/api/v1/operations/recent-comparisons", headers=HEADERS,
+            json={**common, "branch": "refs/heads/main", "lookback_days": 2,
+                  "reference_time": "2025-01-05T00:00:00+00:00", "timezone": "UTC"})
+        self.assertEqual(recent.status_code, 201, recent.text)
+        self.assertEqual(recent.json()["kind"], "recent_window_comparison")
+        self.assertEqual(len(recent.json()["spec"]["scan_ids"]), 4)
+        self._finish_static_multi_endpoint_operation(recent.json())
+
+        branches = self.client.post("/api/v1/operations/branch-comparisons", headers=HEADERS,
+            json={**common, "baseline_ref": self.commits[1], "endpoint_ref": self.commits[2]})
+        self.assertEqual(branches.status_code, 201, branches.text)
+        self.assertEqual(branches.json()["kind"], "branch_comparison")
+        self._finish_static_multi_endpoint_operation(branches.json())
+
+        case_id = self._create_matrix_case()
+        matrix = self.client.post("/api/v1/operations/version-matrices", headers=HEADERS,
+            json={**common, "case_id": case_id, "commits": self.commits[:2]})
+        self.assertEqual(matrix.status_code, 201, matrix.text)
+        self.assertEqual(matrix.json()["kind"], "version_matrix")
+        self._finish_static_multi_endpoint_operation(matrix.json())
+
+    def test_revoking_one_endpoint_keeps_its_static_report_and_stops_its_agent_queue(self):
+        payload = {
+            "repository_id": self.repo["id"],
+            "baseline_ref": self.commits[1], "endpoint_ref": self.commits[2],
+            "include_paths": ["."], "detector_ids": DETECTORS,
+            "timeout_seconds": 90, "memory_mb": 1024,
+            "audit_mode": "standard_review", "auto_triage": True,
+            "max_triage_candidates": 1, "max_r2_candidates": 0,
+        }
+        operation, previews = self._preview_and_submit(
+            "branches", "/api/v1/operations/branch-comparisons", payload,
+            [self.commits[1], self.commits[2]])
+        revoked_id, active_id = operation["spec"]["scan_ids"]
+        authorization = self.store.triage_authorization(revoked_id)
+        self.assertTrue(authorization and not authorization["revoked"])
+        revoked = self.client.post(
+            "/api/v1/scans/" + revoked_id + "/triage/revoke", headers=HEADERS,
+            json={"consent_sha256": authorization["consent_sha256"]})
+        self.assertEqual(revoked.status_code, 200, revoked.text)
+        self.assertTrue(revoked.json()["authorization"]["revoked"])
+
+        self._finish_operation_scans(operation)
+        ops = Operations(self.store)
+        self.assertTrue(read_report(self.settings, self.store.job(revoked_id)))
+        self.assertTrue(read_report(self.settings, self.store.job(active_id)))
+        self.assertFalse(ops.triage_batches_for_job(
+            revoked_id, self.store.job(revoked_id)["report_sha256"]))
+        active_batches = ops.triage_batches_for_job(
+            active_id, self.store.job(active_id)["report_sha256"])
+        self.assertEqual(len(active_batches), 1, active_batches)
+        active_tasks = ops.smart_triage_operations(active_batches[0]["id"])
+        self.assertEqual(len(active_tasks), 1, active_tasks)
+
+        worker_env, trace_path = self._fake_provider_environment()
+        with patch.dict(os.environ, worker_env, clear=False):
+            OperationWorker(self.settings).run(once=True)
+            OperationWorker(self.settings).run(once=True)
+        task = ops.get(active_tasks[0]["id"])
+        self.assertIn(task["status"], {"completed", "completed_with_limitations"}, task)
+        result = ops.result(task["id"])
+        self.assertEqual(result["vulnerability_state"], "candidate")
+        self.assertEqual(result["validated_vulnerability"], 0)
+        trace = [json.loads(line) for line in trace_path.read_text().splitlines()]
+        self.assertTrue(trace)
+        self.assertEqual({item["commit"] for item in trace}, {previews[1]["commit"]})
+
+        view = self.client.get("/api/v1/operations/" + operation["id"], headers=HEADERS)
+        self.assertEqual(view.status_code, 200, view.text)
+        progress = view.json()["intelligent_review_progress"]
+        self.assertEqual([item["scan_id"] for item in progress], [revoked_id, active_id])
+        self.assertEqual(progress[0]["agent_status"], "revoked", progress[0])
+        self.assertEqual(progress[1]["agent_status"], "completed", progress[1])
+        self.assertFalse(progress[0]["agent_authorized"])
+        self.assertTrue(progress[1]["agent_authorized"])
+        self.assertEqual(view.json()["result"]["validated_vulnerability"], 0)
+
+    def test_provider_quota_failure_is_isolated_to_one_authorized_endpoint(self):
+        payload = {
+            "repository_id": self.repo["id"],
+            "baseline_ref": self.commits[1], "endpoint_ref": self.commits[2],
+            "include_paths": ["."], "detector_ids": DETECTORS,
+            "timeout_seconds": 90, "memory_mb": 1024,
+            "audit_mode": "standard_review", "auto_triage": True,
+            "max_triage_candidates": 1, "max_r2_candidates": 0,
+        }
+        operation, previews = self._preview_and_submit(
+            "branches", "/api/v1/operations/branch-comparisons", payload,
+            [self.commits[1], self.commits[2]])
+        self._finish_operation_scans(operation)
+        ops = Operations(self.store)
+        endpoint_tasks = []
+        for scan_id in operation["spec"]["scan_ids"]:
+            job = self.store.job(scan_id)
+            self.assertTrue(job.get("report_sha256"), job)
+            self.assertEqual(read_report(self.settings, job)["validated_vulnerability"], 0)
+            batches = ops.triage_batches_for_job(scan_id, job["report_sha256"])
+            self.assertEqual(len(batches), 1, batches)
+            tasks = ops.smart_triage_operations(batches[0]["id"])
+            self.assertEqual(len(tasks), 1, tasks)
+            endpoint_tasks.append(tasks[0])
+
+        worker_env, trace_path = self._fake_provider_environment()
+        worker_env["OHSCANNER_TEST_PROVIDER_FAIL"] = "quota:" + previews[0]["commit"]
+        with patch.dict(os.environ, worker_env, clear=False):
+            OperationWorker(self.settings).run(once=True)  # Parent comparison.
+            for _task in endpoint_tasks:
+                OperationWorker(self.settings).run(once=True)
+
+        statuses = {}
+        for task in endpoint_tasks:
+            finished = ops.get(task["id"])
+            statuses[finished["spec"]["source_commit"]] = finished["status"]
+            if finished["status"] in {"completed", "completed_with_limitations"}:
+                self.assertEqual(ops.result(task["id"])["validated_vulnerability"], 0)
+            else:
+                self.assertIsNone(finished["result_sha256"], finished)
+        self.assertEqual(statuses[previews[0]["commit"]], "failed", statuses)
+        self.assertIn(statuses[previews[1]["commit"]],
+                      {"completed", "completed_with_limitations"}, statuses)
+        trace = [json.loads(line) for line in trace_path.read_text().splitlines()]
+        self.assertTrue(trace)
+        self.assertEqual({item["commit"] for item in trace}, {previews[1]["commit"]})
+
+        view = self.client.get("/api/v1/operations/" + operation["id"], headers=HEADERS)
+        self.assertEqual(view.status_code, 200, view.text)
+        progress = view.json()["intelligent_review_progress"]
+        self.assertEqual([item["scan_id"] for item in progress], operation["spec"]["scan_ids"])
+        self.assertEqual(progress[0]["agent_status"], "failed", progress[0])
+        self.assertEqual(progress[1]["agent_status"], "completed", progress[1])
+        for item in progress:
+            self.assertTrue(item["report_available"], item)
+            self.assertTrue(item["agent_authorized"], item)
+            self.assertFalse(item["model_result_is_product_vulnerability_confirmation"])
+        self.assertEqual(view.json()["result"]["validated_vulnerability"], 0)
 
 
 if __name__ == "__main__":
