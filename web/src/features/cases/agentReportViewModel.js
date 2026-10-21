@@ -45,7 +45,7 @@ function normalizeVulnerabilityReport(value) {
     attackPath: stringList(value.attack_path),
     remediation: text(value.remediation),
     citations: citationList(value.citations),
-    boundary: "AI 辅助候选分析 · candidate / unknown · 待人工复核",
+    boundary: "智能调查辅助分析 · 候选 / 未知 · 待人工复核",
   };
   const hasContent = Boolean(report.title || report.summary || report.rootCause || report.impact
     || report.preconditions.length || report.attackPath.length || report.remediation || report.citations.length);
@@ -71,7 +71,7 @@ const ARTIFACT_STAGE_LABELS = {
 
 function artifactItemStatus(stageStatus, itemStatus, kind) {
   if (stageStatus !== "completed") {
-    return ARTIFACT_STAGE_LABELS[stageStatus] || "未知 / 未记录";
+    return ARTIFACT_STAGE_LABELS[stageStatus] || "未知或未记录";
   }
   if (itemStatus === "insufficient_evidence") return "证据不足";
   if (kind === "report" && itemStatus === "draft_unverified") return "已生成（未验证）";
@@ -90,7 +90,7 @@ function normalizeArtifactGeneration(value, reportValue, pocValue) {
     : null;
   return {
     status,
-    statusLabel: ARTIFACT_STAGE_LABELS[status] || "未知 / 未记录",
+    statusLabel: ARTIFACT_STAGE_LABELS[status] || "未知或未记录",
     reportStatusLabel: artifactItemStatus(status,
       isRecord(reportValue) ? text(reportValue.status) : "", "report"),
     pocStatusLabel: artifactItemStatus(status,
@@ -114,7 +114,7 @@ function normalizePocDraft(value) {
     expectedObservation: text(value.expected_observation),
     negativeControl: text(value.negative_control),
     citations: citationList(value.citations),
-    boundary: "AI 草案 · 未执行 · 未验证 · candidate / unknown",
+    boundary: "智能调查草案 · 未执行 · 未验证 · 候选 / 未知",
   };
   const hasContent = Boolean(draft.status || draft.title || draft.language || draft.code.trim()
     || draft.prerequisites.length || draft.runSteps.length || draft.expectedObservation

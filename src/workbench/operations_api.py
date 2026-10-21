@@ -76,6 +76,122 @@ def _case_html_list(values, *, empty="未记录"):
     return "<ul>" + "".join("<li>" + _case_html_text(item) + "</li>" for item in values) + "</ul>"
 
 
+def _case_is_chinese_narrative(value):
+    """Treat prose as Chinese only when Chinese text is not overwhelmed by English."""
+    han_count = len(re.findall(r"[\u3400-\u9fff]", value))
+    english_word_count = len(re.findall(r"\b[A-Za-z]{3,}\b", value))
+    return han_count > 0 and not (english_word_count >= 3 and han_count < english_word_count * 2)
+
+
+def _case_html_narrative(value):
+    """Keep historical English text accessible while making the Chinese report readable."""
+    value = str(value if value is not None else "").strip()
+    if not value:
+        return "未记录"
+    if _case_is_chinese_narrative(value):
+        return _case_html_text(value)
+    return ("<span>该说明主要为英文，已折叠原文；展开可查看完整内容。</span>"
+            "<details><summary>查看原文（历史记录）</summary><p>" +
+            _case_html_text(value) + "</p></details>")
+
+
+def _case_html_narrative_list(values, *, empty="未记录"):
+    if not isinstance(values, (list, tuple)) or not values:
+        return "<p>" + _case_html_text(empty) + "</p>"
+    return "<ul>" + "".join("<li>" + _case_html_narrative(item) + "</li>" for item in values) + "</ul>"
+
+
+def _case_md_narrative(value):
+    """Render Chinese report prose and keep unlocalized legacy prose in a safe disclosure."""
+    value = str(value if value is not None else "").strip()
+    if not value:
+        return "未记录"
+    if _case_is_chinese_narrative(value):
+        return _markdown_inline_untrusted(value)
+    return ("该说明主要为英文，已折叠原文；展开可查看完整内容。 "
+            "<details><summary>查看原文（历史记录）</summary><pre>" +
+            html_lib.escape(value, quote=True) + "</pre></details>")
+
+
+_CASE_STAGE_LABELS = {
+    "completed": "已完成", "running": "进行中", "not_authorized": "未授权",
+    "not_applicable_single_shot": "单轮研判模式不适用", "not_run_primary_answer_unavailable": "主研判结果不可用，未生成",
+    "incomplete": "未完成", "rejected": "未通过校验", "failed": "失败", "interrupted": "已中断",
+    "queued": "排队中", "cancelled": "已取消", "canceled": "已取消",
+    "completed_with_limitations": "已完成（存在限制）", "not_started": "尚未开始",
+}
+_CASE_ARTIFACT_LABELS = {
+    "draft_unverified": "已生成，尚未验证", "draft_unexecuted": "草案未执行",
+    "insufficient_evidence": "证据不足", "unknown": "未知",
+}
+_CASE_PLAN_STEP_LABELS = {
+    "review_entry": "核对入口与调用链", "define_oracle": "明确测试判定标准",
+    "prepare_isolated_harness": "准备隔离测试环境", "compare_controls": "对比候选与安全对照",
+    "human_interpretation": "人工解释测试结果",
+}
+_CASE_TRIAGE_LABELS = {
+    "candidate": "候选", "unknown": "未知", "confirmed": "已确认",
+    "likely_true_positive": "倾向真实候选", "likely_false_positive": "倾向误报",
+    "needs_more_evidence": "需要更多证据", "false_positive": "误报",
+    "analysis_failed": "分析失败", "single_shot": "单轮模型研判",
+    "tool_agent": "工具增强调查", "evidence_found": "找到相关证据",
+    "contrary_evidence": "发现相反证据", "unresolved": "尚未解决",
+    "unknown_due_to_unavailable_source": "来源不可用，无法判断",
+    "accepted": "已通过结构校验", "rejected": "未通过校验",
+    "server_generated_from_structured_triage": "由结构化分诊生成",
+    "legacy_model_generated_unverified": "历史模型摘要，未经核验",
+    "not_checked": "未核对", "all_accurate": "全部准确",
+    "some_incorrect": "部分有误", "mostly_incorrect": "大多有误",
+    "useful": "有用", "partially_useful": "部分有用", "not_useful": "无用",
+    "unsafe": "有误导风险", "estimated_range": "区间估算",
+    "estimated_amount": "金额估算", "not_available": "不可用",
+    "unassessed": "未评估", "source_bound_unverified": "已绑定源码，语义未核验",
+    "not_started": "尚未开始", "stable_reproduced": "稳定复现",
+    "not_run": "未运行", "plan_only": "仅生成计划",
+    "draft": "草案", "passed": "通过", "failed": "失败",
+    "true": "是", "false": "否",
+    "partially_completed": "部分完成", "unverified_by_machine": "机器未核验",
+    "unverified_model_advice": "模型建议未核验", "not_attested": "未记录证明",
+    "queued": "排队中", "running": "进行中", "completed_with_limitations": "已完成（存在限制）",
+    "cancelled": "已取消", "canceled": "已取消", "available": "可用", "unavailable": "不可用",
+    "not_passed": "未通过", "not_verified": "未验证", "blocked": "受阻",
+    "triggered": "已触发", "not_triggered": "未触发",
+    "product_level": "产品级验证", "product_level_verified": "产品可达性已验证",
+    "component_harness": "组件级隔离验证", "component_harness_only": "仅完成组件级隔离验证",
+    "unverified_model_suggestions": "模型建议未经核验", "unverified_model_suggestion": "模型建议未经核验",
+    "model_unverified": "模型意见待核验", "not_applicable_single_shot": "单轮研判模式不适用",
+    "not_run_primary_answer_unavailable": "主研判结果不可用，未生成",
+    "baseline": "基线版本", "patched": "修复后版本", "vulnerable": "漏洞触发样例",
+    "control": "安全对照样例", "negative_control": "负向对照样例",
+    "pass": "通过", "fail": "失败", "success": "成功", "error": "错误",
+    "not_applicable": "不适用", "not_reproduced": "未复现", "reproduced": "已复现",
+    "trigger": "触发", "no_trigger": "未触发", "poc_trigger": "PoC 触发样例",
+    "no_token": "未提供令牌的样例", "test": "测试", "positive_control": "正向对照样例",
+    "negative": "负向对照样例", "security_control": "安全对照样例",
+}
+
+
+def _case_enum_label(value):
+    if value is None:
+        return "未知"
+    label = _CASE_TRIAGE_LABELS.get(str(value))
+    if label:
+        return label
+    text = str(value)
+    if re.search("[㐀-鿿]", text) or text.lstrip("-").replace(".", "", 1).isdigit():
+        return text
+    return "其他状态（待核对）"
+
+
+def _case_enum_value(value):
+    if isinstance(value, (list, tuple)):
+        return "、".join(_case_enum_label(item) for item in value) if value else "未记录"
+    if isinstance(value, bool):
+        return "是" if value else "否"
+    return _case_enum_label(value)
+
+
+
 def _case_html_citations(citations):
     if not isinstance(citations, list) or not citations:
         return "<p>未提供引用。</p>"
@@ -111,7 +227,7 @@ def _case_report_html_document(data):
         "<style>body{font:16px/1.65 system-ui,sans-serif;max-width:1100px;margin:2rem auto;padding:0 1.25rem;color:#172b4d}h1,h2,h3{line-height:1.3}section,article{margin:1.25rem 0;padding:1rem;border:1px solid #dce3ee;border-radius:10px}pre{overflow:auto;padding:1rem;background:#f4f6fa;border-radius:8px;white-space:pre-wrap;overflow-wrap:anywhere}blockquote{margin:.5rem 0;padding:.5rem 1rem;border-left:3px solid #9cb5da;background:#f7f9fc}.boundary{padding:.8rem;background:#fff4e5;border-left:4px solid #e79c22}.muted{color:#65758b}.fact{margin:.45rem 0}</style></head><body><main>",
         "<h1>OHScanner 调查案例报告</h1>",
         "<p>案例：<code>" + case_id + "</code></p>",
-        "<p class=\"boundary\">候选和 Agent 结论不等于漏洞确认。PoC 草案未执行、未验证；组件 Harness 观察不单独证明产品可达性。</p>",
+        "<p class=\"boundary\">候选和智能调查结论不等于漏洞确认。验证用例（PoC）草案未执行、未验证；组件级隔离测试观察不单独证明产品可达性。</p>",
     ]
     operation_scope = data.get("operation_summaries") or {}
     included = operation_scope.get("included", len(operations))
@@ -126,87 +242,96 @@ def _case_report_html_document(data):
         row = row if isinstance(row, dict) else {}
         candidate = row.get("candidate") if isinstance(row.get("candidate"), dict) else {}
         rows.append("<article><h3>" + h(candidate.get("detector_id")) + " / " + h(candidate.get("rule_id")) + "</h3>")
-        rows.append("<p><strong>状态：</strong>candidate；影响范围 unknown</p>")
+        rows.append("<p><strong>状态：</strong>候选；影响范围未知</p>")
         rows.append("<p class=\"fact\"><strong>来源：</strong>" + h(row.get("repository")) + " @ " + h(row.get("commit")) + "</p>")
         rows.append("<p class=\"fact\"><strong>位置：</strong>" + h(candidate.get("file")) + ":" + h(candidate.get("line")) + "</p>")
         rows.append("<p class=\"fact\"><strong>报告 SHA-256：</strong><code>" + h(row.get("report_sha256")) + "</code></p>")
         if row.get("rationale"):
-            rows.append("<p><strong>案例关联理由：</strong>" + h(row.get("rationale")) + "</p>")
+            rows.append("<p><strong>案例关联理由：</strong>" + _case_html_narrative(row.get("rationale")) + "</p>")
         rows.append("<h4>人工登记源码证据</h4>")
         evidence_rows = row.get("source_evidence") if isinstance(row.get("source_evidence"), list) else []
         if evidence_rows:
             rows.append("<ul>" + "".join(
                 "<li>" + h(item.get("file") or candidate.get("file")) + ":" + h(item.get("start_line")) +
-                " · " + h(item.get("note") or item.get("observation") or "未记录说明") + "</li>"
+                " · " + _case_html_narrative(item.get("note") or item.get("observation") or "未记录说明") + "</li>"
                 for item in evidence_rows if isinstance(item, dict)) + "</ul>")
         else:
             rows.append("<p>尚未登记人工源码证据。</p>")
         review_rows = row.get("reviews") if isinstance(row.get("reviews"), list) else []
         rows.append("<h4>候选复核记录</h4>")
-        rows.append(_case_html_list([
-            str(item.get("status") or "未记录") + " · " + str(item.get("reviewer") or "未知复核人") +
-            " · " + str(item.get("notes") or "未记录说明")
+        rendered_reviews = [
+            "<li>" + h(_case_enum_label(item.get("status") or "unknown")) + " · " +
+            h(item.get("reviewer") or "未知复核人") + " · " +
+            _case_html_narrative(item.get("notes") or "未记录说明") + "</li>"
             for item in review_rows if isinstance(item, dict)
-        ], empty="尚无候选级人工复核记录。"))
+        ]
+        rows.append("<ul>" + "".join(rendered_reviews) + "</ul>" if rendered_reviews
+                    else "<p>尚无候选级人工复核记录。</p>")
         rows.append("</article>")
-    rows.append("</section><section><h2>AI 报告、修复建议与 PoC 草案</h2>")
+    rows.append("</section><section><h2>智能调查报告、修复建议与验证用例草案</h2>")
     agent_ops = [item for item in operations if isinstance(item, dict)
                  and item.get("kind") == "agent_investigation" and isinstance(item.get("agent_triage"), dict)]
     if not agent_ops:
-        rows.append("<p>当前案例没有绑定的 Agent 调查结果；PoC 计划未执行，状态 unknown。</p>")
+        rows.append("<p>当前案例没有绑定的智能调查结果；验证用例（PoC）计划未执行，状态未知。</p>")
     for operation in agent_ops:
         triage = operation["agent_triage"]
-        rows.append("<article><h3>Agent 调查 · " + h(operation.get("id")) + "</h3>")
+        rows.append("<article><h3>智能调查 · " + h(operation.get("id")) + "</h3>")
         generation = triage.get("artifact_generation") if isinstance(triage.get("artifact_generation"), dict) else {}
         if generation:
-            rows.append("<p><strong>报告/PoC 草案生成阶段：</strong>" + h(generation.get("status")) +
-                        "；模型调用数 " + h(generation.get("calls_used", "unknown")) +
+            rows.append("<p><strong>报告与验证用例草案生成阶段：</strong>" +
+                        h(_CASE_STAGE_LABELS.get(generation.get("status"), "状态待核对")) +
+                        "；模型调用数 " + h(generation.get("calls_used", "未记录")) +
                         "。此阶段状态不代表扫描完成或漏洞确认。</p>")
         report = triage.get("vulnerability_report") if isinstance(triage.get("vulnerability_report"), dict) else None
         if report:
-            rows.append("<h4>漏洞报告草案 · " + h(report.get("status", "unknown")) + "</h4>")
+            rows.append("<h4>漏洞报告草案 · " +
+                        h(_CASE_ARTIFACT_LABELS.get(report.get("status"), "状态待核对")) + "</h4>")
             for label, key in (("标题", "title"), ("摘要", "summary"), ("根因", "root_cause"),
                                ("潜在影响", "impact"), ("修复建议", "remediation")):
                 if report.get(key):
-                    rows.append("<p><strong>" + label + "：</strong>" + h(report.get(key)) + "</p>")
+                    rows.append("<p><strong>" + label + "：</strong>" +
+                                _case_html_narrative(report.get(key)) + "</p>")
             for label, key in (("前置条件", "preconditions"), ("攻击路径草案", "attack_path")):
-                rows.append("<h5>" + label + "</h5>" + _case_html_list(report.get(key)))
-            rows.append("<h5>报告引用（仅展示 Agent 提供的引用）</h5>" + _case_html_citations(report.get("citations")))
-            rows.append("<p class=\"boundary\">报告内容是 candidate / unknown 的 AI 草案，引用存在不等于语义主张已被证实。</p>")
+                rows.append("<h5>" + label + "</h5>" + _case_html_narrative_list(report.get(key)))
+            rows.append("<h5>报告引用（仅展示智能调查模型提供的引用）</h5>" + _case_html_citations(report.get("citations")))
+            rows.append("<p class=\"boundary\">报告内容是智能调查生成的候选 / 未知草案，引用存在不等于语义主张已被证实。</p>")
         else:
             rows.append("<p>未记录结构化漏洞报告草案。</p>")
         guidance = triage.get("repair_guidance") if isinstance(triage.get("repair_guidance"), dict) else {}
         rows.append("<h4>其他修复/验证建议（未经验证）</h4>" +
-                    _case_html_list(guidance.get("items"), empty="没有记录其他建议。"))
+                    _case_html_narrative_list(guidance.get("items"), empty="没有记录其他建议。"))
         poc = triage.get("poc_draft") if isinstance(triage.get("poc_draft"), dict) else None
         if poc:
             poc_status = poc.get("status") or "unknown"
-            rows.append("<h4>PoC 验证计划 · AI 草案 · 未执行 · 未验证 · candidate / unknown</h4>")
-            rows.append("<p><strong>草案状态：</strong>" + h(poc_status) + "；这不是执行结果，也不是漏洞确认。</p>")
+            rows.append("<h4>验证用例（PoC）计划 · 智能调查草案 · 未执行 · 未验证 · 候选 / 未知</h4>")
+            rows.append("<p><strong>草案状态：</strong>" +
+                        h(_CASE_ARTIFACT_LABELS.get(poc_status, "状态待核对")) +
+                        "；这不是执行结果，也不是漏洞确认。</p>")
             for label, key in (("标题", "title"), ("语言", "language"),
                                ("预期观察", "expected_observation"), ("负向对照", "negative_control")):
                 if poc.get(key):
-                    rows.append("<p><strong>" + label + "：</strong>" + h(poc.get(key)) + "</p>")
+                    rows.append("<p><strong>" + label + "：</strong>" +
+                                (h(poc.get(key)) if key == "language" else _case_html_narrative(poc.get(key))) + "</p>")
             for label, key in (("前置条件", "prerequisites"), ("人工执行步骤", "run_steps")):
-                rows.append("<h5>" + label + "</h5>" + _case_html_list(poc.get(key)))
+                rows.append("<h5>" + label + "</h5>" + _case_html_narrative_list(poc.get(key)))
             if poc.get("code"):
                 rows.append("<h5>未执行的代码草案</h5><pre><code>" + h(poc.get("code")) + "</code></pre>")
             else:
-                rows.append("<p>没有可执行 PoC 代码；当前记录为证据不足或草案未提供。</p>")
-            rows.append("<h5>PoC 草案引用（仅展示 Agent 提供的引用）</h5>" + _case_html_citations(poc.get("citations")))
+                rows.append("<p>没有可执行验证用例代码；当前记录为证据不足或草案未提供。</p>")
+            rows.append("<h5>验证用例（PoC）草案引用（仅展示智能调查模型提供的引用）</h5>" + _case_html_citations(poc.get("citations")))
         else:
-            rows.append("<p class=\"boundary\">未生成 PoC 草案；PoC 计划未执行，状态 unknown。</p>")
+            rows.append("<p class=\"boundary\">未生成验证用例草案；验证计划未执行，当前状态未知。</p>")
         rows.append("</article>")
-    rows.append("</section><section><h2>固定 Harness / 隔离验证记录</h2>")
+    rows.append("</section><section><h2>固定隔离测试环境 / 验证记录</h2>")
     validation_ops = [item for item in operations if isinstance(item, dict) and item.get("kind") == "validation"]
     if not validation_ops:
-        rows.append("<p>没有验证操作记录；PoC / 产品影响保持 unknown。</p>")
+        rows.append("<p>没有验证操作记录；验证用例（PoC）计划与产品影响状态均未知。</p>")
     for operation in validation_ops:
         evidence = operation.get("validation_evidence") if isinstance(operation.get("validation_evidence"), dict) else {}
-        rows.append("<article><h3>" + h(evidence.get("harness_id", "固定 Harness 未记录")) + "</h3>")
-        rows.append("<p>操作状态：" + h(operation.get("status")) + "；验证门：" +
-                    h(operation.get("validation_gate")) + "；产品可达性：" +
-                    h(operation.get("reachability_status", "unknown")) + "；计入确认数：" +
+        rows.append("<article><h3>" + h(evidence.get("harness_id", "隔离测试环境未记录")) + "</h3>")
+        rows.append("<p>操作状态：" + h(_case_enum_label(operation.get("status"))) + "；验证门控：" +
+                    h(_case_enum_label(operation.get("validation_gate"))) + "；产品可达性：" +
+                    h(_case_enum_label(operation.get("reachability_status", "unknown"))) + "；计入确认数：" +
                     h(operation.get("validated_vulnerability", 0)) + "</p>")
         for revision_name, revision in (evidence.get("revisions") or {}).items():
             if not isinstance(revision, dict):
@@ -215,18 +340,22 @@ def _case_report_html_document(data):
             replay = revision.get("replay") if isinstance(revision.get("replay"), dict) else {}
             rows.append("<p>版本 " + h(revision_name) + " @ " + h(revision.get("commit")) +
                         "；构建退出码 " + h(build.get("returncode")) + "；重放 " +
-                        h(replay.get("label")) + "；所有案例匹配 " + h(replay.get("all_cases_match")) + "</p>")
-        rows.append("<p class=\"boundary\">组件 Harness 观察不单独证明产品入口可达或漏洞已确认。</p></article>")
+                        h(_case_enum_label(replay.get("label"))) + "；所有案例均符合预期 " +
+                        h(_case_enum_label(replay.get("all_cases_match"))) + "</p>")
+        rows.append("<p class=\"boundary\">组件级隔离测试观察不单独证明产品入口可达或漏洞已确认。</p></article>")
     rows.append("</section><section><h2>人工案例复核</h2>")
     human_assessments = [item for item in assessments if isinstance(item, dict) and item.get("reviewer_kind") == "human"]
-    rows.append(_case_html_list([
-        str(item.get("reviewer") or "未知复核人") + " · " + str(item.get("outcome") or "未记录") +
-        " · 证据 " + ", ".join(item.get("evidence_ids") or []) +
-        " · 未决项 " + "; ".join(item.get("remaining_unknowns") or [])
+    rendered_assessments = [
+        "<li>" + h(item.get("reviewer") or "未知复核人") + " · " +
+        h(_case_enum_label(item.get("outcome") or "unknown")) + " · 证据 " +
+        h("、".join(item.get("evidence_ids") or [])) + " · 未决项 " +
+        _case_html_narrative("；".join(item.get("remaining_unknowns") or [])) + "</li>"
         for item in human_assessments
-    ], empty="尚无人工案例复核记录。"))
+    ]
+    rows.append("<ul>" + "".join(rendered_assessments) + "</ul>" if rendered_assessments
+                else "<p>尚无人工案例复核记录。</p>")
     rows.append("<p><strong>经门控确认的漏洞数：</strong>" + h(data.get("validated_vulnerability", 0)) +
-                "。候选数、Agent 草案和组件 Harness 结果不会自动升级漏洞状态。</p></section>")
+                "。候选数、智能调查草案和组件级测试结果不会自动升级漏洞状态。</p></section>")
     rows.append("</main></body></html>")
     return "\n".join(rows)
 
@@ -1136,9 +1265,9 @@ def _combined_audit_report_markdown(document):
         "- 静态原始报告 SHA-256：`" + md(scan["report_sha256"]) + "`",
         "- 仓库版本：" + md(scan["repository"]) + " @ `" + md(scan["commit"]) + "`",
         "- Tree：`" + md(scan["tree"]) + "`",
-        "- 静态扫描：" + md(scan["status"]) + "；智能研判：" + md(triage["state"]),
+        "- 静态扫描：" + md(_case_enum_label(scan["status"])) + "；智能研判：" + md(_case_enum_label(triage["state"])),
         "- 漏洞确认数：" + str(document["validated_vulnerability"]),
-        "- 模型费用：" + ("平台不设累计 USD 上限；实际计费与配额由 Provider 账户决定" if cost_budget else "未授权自动模型研判"),
+        "- 模型费用：" + ("平台不设累计费用上限；实际计费与配额由模型服务商账户决定" if cost_budget else "未授权自动模型研判"),
         "",
         "## 风险分层",
         "",
@@ -1180,15 +1309,15 @@ def _combined_audit_report_markdown(document):
             "- 候选：`" + md(item.get("candidate_id")) + "`",
             "- 位置：" + md(item.get("file")) + ":" + md(item.get("line")),
             "- 源码 SHA-256：`" + md(item.get("source_sha256")) + "`",
-            "- 研判状态：" + md(item.get("triage", {}).get("state")),
-            "- 状态边界：candidate；该分层不代表 confirmed。",
-            "- 原因：" + md("；".join(item.get("reasons", []))),
+            "- 研判状态：" + md(_case_enum_label(item.get("triage", {}).get("state"))),
+            "- 状态边界：当前仍为候选；该分层不代表漏洞已确认。",
+            "- 原因：" + _case_md_narrative("；".join(item.get("reasons", []))),
             "",
         ])
     rows.extend(["## 覆盖与限制", ""])
-    rows.append("静态文件解析：" + md(json.dumps(document["coverage"].get("source_parsing", {}), ensure_ascii=False, sort_keys=True)))
+    rows.append("静态文件解析统计：" + md(json.dumps(document["coverage"].get("source_parsing", {}), ensure_ascii=False, sort_keys=True)))
     for limitation in document.get("limitations", []):
-        rows.append("- " + md(limitation))
+        rows.append("- " + _case_md_narrative(limitation))
     rows.extend([
         "",
         "> 模型研判是候选调查建议。模型自报置信度和引文存在性均不构成漏洞确认；只有现有人工评估与通过的运行时可达性门才能增加已确认漏洞数。",
@@ -1438,7 +1567,7 @@ def _experiment_evidence_summary(settings, store, ops):
                 for scope in ("component_harness", "product_level", "unknown")
             },
             "runs": validation_runs,
-            "limitation": "验证操作只按显式 Harness 类型与持久化输入清单分类，不自动关联到候选实验；组件 Harness 结果不代表产品级可达性。",
+            "limitation": "验证操作只按显式 Harness 类型与持久化输入清单分类，不自动关联到候选实验；组件级隔离测试结果不代表产品级可达性。",
         },
         "holdout": {
             "state": "unknown",
@@ -3994,7 +4123,7 @@ def install_routes(app: FastAPI, settings, store):
                     linked["remediation_draft"]["ai_basis"] = {
                         "state": "source_bound_unverified" if advice_verified_for_display else "unknown",
                         "citations": citation_state.get("citations", []),
-                        "note": ("这些是 Agent 在同一固定提交中引用的源码上下文；引用与修复草案没有机器验证的因果映射，需人工判断。"
+                        "note": ("这些是智能调查在同一固定提交中引用的源码上下文；引用与修复草案没有机器验证的因果映射，需人工判断。"
                                  if advice_verified_for_display else citation_state.get("reason")),
                     }
                 model_suggestions = [{
@@ -4049,8 +4178,8 @@ def install_routes(app: FastAPI, settings, store):
                                                 for row in records)
             poc_status = {"state": "not_run" if plans_ready else "unknown",
                           "label": "计划已生成 · 未执行" if plans_ready else "材料不足 · 未生成可审查计划",
-                          "detail": ("已生成绑定固定源码的安全验证计划；本操作不会创建任务或执行 PoC。"
-                                     if plans_ready else "固定源码或候选位置材料缺失，保持 unknown；没有虚构验证步骤。")}
+                          "detail": ("已生成绑定固定源码的安全验证计划；本操作不会创建任务或执行验证用例。"
+                                     if plans_ready else "固定源码或候选位置材料缺失，保持未知；没有虚构验证步骤。")}
         elif any(item.get("status") == "running" for item in validation_operations):
             poc_status = {"state": "running", "label": "验证执行中",
                           "detail": "请等待受控验证操作完成；运行中不代表漏洞已确认。"}
@@ -4059,7 +4188,7 @@ def install_routes(app: FastAPI, settings, store):
                           "detail": "排队状态不代表 PoC 已执行或漏洞已复现。"}
         else:
             poc_status = {"state": "completed", "label": "验证操作已结束，需查看门控结果",
-                          "detail": "组件 Harness 结果不能单独证明产品可达性；确认状态仍以人工结论和验证门控为准。"}
+                          "detail": "组件级隔离测试结果不能单独证明产品可达性；确认状态仍以人工结论和验证门控为准。"}
         for record in records:
             record.get("source_anchor", {}).pop("_source_lines", None)
         return {"schema_version": 2, "case_id": case_id, "candidates": records,
@@ -4075,10 +4204,10 @@ def install_routes(app: FastAPI, settings, store):
                 "validation_basis": review_status["validated_by"],
                 "validated_vulnerability": review_status["validated_vulnerability"],
                 "poc_status": poc_status,
-                "limitations": ["Static candidates and component harness observations do not establish product reachability or reportability.", "Product reachability is unknown unless a registered product-level validator binds the current candidate and source.",
-                                "A confirmed case count requires an append-only human assessment plus a matching passed runtime gate and verified product reachability.",
-                                "AI next steps are unverified investigation suggestions, not a reviewed remediation patch or an executed PoC plan."] +
-                    (["One or more saved reports lacked fields needed for risk-tier enrichment; unknown means unavailable, not safe."]
+                "limitations": ["静态候选和组件级隔离测试观察不能证明产品入口可达或达到漏洞报告标准。", "除非产品级验证器绑定当前候选和源码，否则产品入口可达性保持未知。",
+                                "计入已确认案例需要追加记录的人工结论、匹配的运行时验证门通过结果，以及已核验的产品入口可达性。",
+                                "智能调查后续建议是未经核验的调查建议，不是已复核的修复补丁或已执行的 验证用例（PoC）计划。"] +
+                    (["部分已保存报告缺少风险分层所需字段；未知表示信息不可用，不表示安全。"]
                      if risk_snapshot_unavailable else [])}
 
 
@@ -4093,11 +4222,11 @@ def install_routes(app: FastAPI, settings, store):
     def _case_report_markdown(data, case_id):
         md = _markdown_inline_untrusted
         case_state = ("人工确认（运行时门控通过）" if data["validated_vulnerability"]
-                      else "candidate（尚未确认）")
+                      else "候选（尚未确认）")
         rows = ["# OHScanner 调查案例报告", "", "案例 ID：" + md(case_id),
                 "", "- 当前结论：" + md(case_state),
                 "- 确认漏洞数：" + md(data["validated_vulnerability"]),
-                "- PoC / 受控验证：" + md(data["poc_status"]["label"]),
+                "- 验证用例 / 受控验证：" + md(data["poc_status"]["label"]),
                 "", "## 候选与证据"]
         operation_summary = data.get("operation_summaries") or {}
         if operation_summary.get("truncated"):
@@ -4105,21 +4234,21 @@ def install_routes(app: FastAPI, settings, store):
         for row in data["candidates"]:
             c = row["candidate"]
             risk = row.get("risk") or {}
-            rows += ["", "### " + md(c.get("detector_id", "unknown detector")) + " / " + md(c.get("rule_id", "unknown rule")),
+            rows += ["", "### " + md(c.get("detector_id", "未知检测器")) + " / " + md(c.get("rule_id", "未知规则")),
                      "", "- 来源：" + md(row["repository"]) + " @ " + md(row["commit"]),
-                     "- 固定来源文件：" + md(c.get("file", "unknown")) + ":" + md(c.get("line", "unknown")),
-                     "- 静态规则消息：" + md(c.get("message", "未提供")),
-                     "- 静态严重性 / 置信度：" + md(risk.get("severity", "unknown")) + " / " + md(risk.get("confidence", "unknown")),
+                     "- 固定来源文件：" + md(c.get("file", "未记录")) + ":" + md(c.get("line", "未记录")),
+                     "- 静态规则消息：" + _case_md_narrative(c.get("message", "未提供")),
+                     "- 静态严重性 / 置信度：" + md(_case_enum_label(risk.get("severity", "unknown"))) + " / " + md(_case_enum_label(risk.get("confidence", "unknown"))),
                      "- 风险分层：" + md(risk.get("risk_tier_label", "来源绑定未知")),
-                     "- 分层依据：" + md("；".join(risk.get("reasons", [])) or "暂无可用依据"),
+                     "- 分层依据：" + _case_md_narrative("；".join(risk.get("reasons", [])) or "暂无可用依据"),
                      "- 报告 SHA-256：" + md(row["report_sha256"]),
-                     "- 观测状态：candidate（单条观测保持候选；案例人工结论单独记录）",
-                     "- 来源证据 SHA-256：" + md(c.get("source_sha256", "unknown")),
-                     "- 建立案例的理由：" + md(row.get("rationale", "未填写"))]
+                     "- 观测状态：候选（单条观测保持候选；案例人工结论单独记录）",
+                     "- 来源证据 SHA-256：" + md(c.get("source_sha256", "未记录")),
+                     "- 建立案例的理由：" + _case_md_narrative(row.get("rationale", "未填写"))]
             for evidence in row.get("source_evidence", []):
-                rows += ["- 人工登记源码证据：" + md(evidence.get("file") or c.get("file")) + ":" + md(evidence.get("start_line")) + "；" + md(evidence.get("note") or evidence.get("observation") or "未记录说明")]
+                rows += ["- 人工登记源码证据：" + md(evidence.get("file") or c.get("file")) + ":" + md(evidence.get("start_line")) + "；" + _case_md_narrative(evidence.get("note") or evidence.get("observation") or "未记录说明")]
             for review in row.get("reviews", []):
-                rows += ["- 候选复核：" + md(review.get("status")) + "；" + md(review.get("reviewer")) + "；" + md(review.get("notes") or "未记录说明")]
+                rows += ["- 候选复核：" + md(_case_enum_label(review.get("status"))) + "；" + md(review.get("reviewer")) + "；" + _case_md_narrative(review.get("notes") or "未记录说明")]
             anchor = row.get("source_anchor") or {}
             if anchor.get("verified"):
                 rows += ["- 固定源码锚点：" + md(anchor.get("anchor_id")) + "；" +
@@ -4127,16 +4256,16 @@ def install_routes(app: FastAPI, settings, store):
                          md(anchor.get("file")) + ":" + md(anchor.get("line")) +
                          "；源码 SHA-256 " + md(anchor.get("source_sha256"))]
             else:
-                rows += ["- 固定源码锚点：unknown（" + md(anchor.get("reason", "来源材料不可用")) + "）"]
+                rows += ["- 固定源码锚点：未知（" + _case_md_narrative(anchor.get("reason", "来源材料不可用")) + "）"]
             remediation_draft = row.get("remediation_draft") or {}
             if remediation_draft.get("draft"):
-                rows += ["- 修复建议草案（未验证，非补丁/非确认结论）：" + md(remediation_draft["draft"]),
+                rows += ["- 修复建议草案（未验证，非补丁/非确认结论）：" + _case_md_narrative(remediation_draft["draft"]),
                          "- 草案依据：" + md(remediation_draft.get("provenance")) +
-                         "；固定源码锚点 " + md((remediation_draft.get("source_anchor") or {}).get("anchor_id", "unknown"))]
+                         "；固定源码锚点 " + md((remediation_draft.get("source_anchor") or {}).get("anchor_id", "未知"))]
                 for check in remediation_draft.get("review_checks", []):
                     rows += ["  - 人工复核：" + md(check)]
             else:
-                rows += ["- 修复建议：unknown（" + md(remediation_draft.get("reason", "尚无可审查的 CWE 修复草案")) + "）"]
+                rows += ["- 修复建议：未知（" + _case_md_narrative(remediation_draft.get("reason", "尚无可审查的 CWE 修复草案")) + "）"]
             evidence = c.get("evidence") if isinstance(c.get("evidence"), dict) else {}
             obligations = evidence.get("obligations") if isinstance(evidence.get("obligations"), list) else []
             if obligations:
@@ -4144,157 +4273,157 @@ def install_routes(app: FastAPI, settings, store):
                 for obligation in obligations[:40]:
                     if isinstance(obligation, dict):
                         description = obligation.get("description") or obligation.get("kind") or "未命名义务"
-                        state = obligation.get("status", "unknown")
-                        rows += ["  - " + md(description) + "（" + md(state) + "）"]
+                        state = _case_enum_label(obligation.get("status", "unknown"))
+                        rows += ["  - " + _case_md_narrative(description) + "（" + md(state) + "）"]
                     else:
-                        rows += ["  - " + md(obligation)]
+                        rows += ["  - " + _case_md_narrative(obligation)]
             ai_basis = remediation_draft.get("ai_basis") or {"state": "unknown", "citations": [],
-                "note": "没有绑定到本候选的已核验 Agent 引用。"}
-            rows += ["- AI 源码依据状态：" + md(ai_basis.get("state", "unknown")) + "；" +
-                     md(ai_basis.get("note", "语义支持未知"))]
+                "note": "没有绑定到本候选的已核验智能调查引用。"}
+            rows += ["- 智能调查源码依据状态：" + md(_case_enum_label(ai_basis.get("state", "unknown"))) + "；" +
+                     _case_md_narrative(ai_basis.get("note", "语义支持未知"))]
             for citation in ai_basis.get("citations", []):
                 rows += ["  - 固定源码引文：" + md(citation.get("evidence_id")) + "；" +
-                         md(citation.get("file", "unknown")) + ":" +
+                         md(citation.get("file", "未记录文件")) + ":" +
                          md(citation.get("line_start", "?")) + "-" + md(citation.get("line_end", "?")) +
                          "；“" + md(citation.get("quote", "")) + "”"]
             rows += ["- 已人工复核的修复补丁：未提供；以上草案需人工检查并经补丁测试。"]
             plan = row.get("poc_plan") or {}
-            rows += ["", "#### 安全验证计划 · " + md(plan.get("label", "unknown"))]
+            rows += ["", "#### " + _case_md_narrative(plan.get("label", "状态未知"))]
             if plan.get("state") == "plan_only":
-                rows += ["- 执行状态：未请求、未排队、未执行；预期结果：unknown，需人工先定义测试 oracle。",
-                         "- 计划依据：固定源码锚点 " + md((plan.get("source_anchor") or {}).get("anchor_id", "unknown"))]
+                rows += ["- 执行状态：未请求、未排队、未执行；预期结果：未知，需人工先定义测试判定标准。",
+                         "- 计划依据：固定源码锚点 " + md((plan.get("source_anchor") or {}).get("anchor_id", "未知"))]
                 for step in plan.get("steps", []):
                     step_anchor = step.get("source_anchor") or {}
-                    rows += ["- " + md(step.get("id")) + "（" + md(step.get("status")) + "）：" +
-                             md(step.get("action")) + "；源码 " + md(step_anchor.get("file", "unknown")) +
-                             ":" + md(step_anchor.get("line", "unknown")) + " @ " +
-                             md(step_anchor.get("commit", "unknown")) + " SHA-256 " +
-                             md(step_anchor.get("source_sha256", "unknown"))]
+                    rows += ["- " + md(_CASE_PLAN_STEP_LABELS.get(step.get("id"), "验证步骤")) + "（" + md(_case_enum_label(step.get("status"))) + "）：" +
+                             _case_md_narrative(step.get("action")) + "；源码 " + md(step_anchor.get("file", "未记录")) +
+                             ":" + md(step_anchor.get("line", "未记录")) + " @ " +
+                             md(step_anchor.get("commit", "未记录")) + " SHA-256 " +
+                             md(step_anchor.get("source_sha256", "未记录"))]
             else:
-                rows += ["- 验证计划状态：unknown；" + md(plan.get("reason", "固定源码证据不可用；没有生成伪造步骤。"))]
+                rows += ["- 验证计划状态：未知；" + _case_md_narrative(plan.get("reason", "固定源码证据不可用；没有生成伪造步骤。"))]
         agent_ops = [item for item in data["operations"] if item.get("kind") == "agent_investigation"
                      and item.get("agent_triage")]
         if agent_ops:
-            rows += ["", "## Agent 分诊建议（非漏洞确认）", "", "> 引用校验只确认引句逐字出现在绑定证据中；不验证引句是否支持模型陈述，语义推理仍需人工复核。"]
+            rows += ["", "## 智能调查研判建议（不代表漏洞确认）", "", "> 引用校验只确认引句逐字出现在绑定证据中；不验证引句是否支持模型陈述，语义推理仍需人工复核。"]
             for operation in agent_ops:
                 triage = operation["agent_triage"]
                 binding = triage["binding"] or {}
                 usage = triage["model_usage"] or {}
                 rows += ["", "- 操作：" + md(operation["id"]) + "；结果 SHA-256：" + md(operation["result_sha256"]),
-                         "- 模式：" + md(triage["mode"] or "unknown") + "；模型倾向：" + md(triage["assessment"]) + "；漏洞状态：" + md(triage["vulnerability_state"]),
-                         "- 模型：" + md(triage["model"] or "unknown") + "；提示词/工具策略：" + md(triage["prompt_version"]) + " / " + md(triage["tool_policy_version"]),
-                         "- 来源绑定：" + md(binding.get("repository") or "unknown") + " @ " + md(binding.get("commit") or "unknown") +
-                         "；" + md(binding.get("file") or "unknown") + "；candidate " + md(binding.get("candidate_id") or "unknown"),
-                         "- 摘要（" + md(triage.get("summary_provenance", "legacy_model_generated_unverified")) + "）：“" + md(triage["summary"]) + "”",
-                         "- Token：输入 " + md(usage.get("input_tokens") if usage.get("input_tokens") is not None else "unknown") +
-                         " / 输出 " + md(usage.get("output_tokens") if usage.get("output_tokens") is not None else "unknown") +
-                         "；缓存命中输入（输入内） " + md(usage.get("cached_input_tokens") if usage.get("cached_input_tokens") is not None else "unknown") +
-                         "；推理 Token（输出内） " + md(usage.get("reasoning_tokens") if usage.get("reasoning_tokens") is not None else "unknown") +
-                         "；Provider 实际费用 " + md(usage.get("cost", "unknown"))]
+                         "- 模式：" + md(_case_enum_label(triage["mode"] or "unknown")) + "；模型倾向：" + md(_case_enum_label(triage["assessment"])) + "；漏洞状态：" + md(_case_enum_label(triage["vulnerability_state"])),
+                         "- 模型：" + md(triage["model"] or "未记录") + "；提示词 / 工具策略版本：" + md(triage["prompt_version"] or "未记录") + " / " + md(triage["tool_policy_version"] or "未记录"),
+                         "- 来源绑定：" + md(binding.get("repository") or "未记录") + " @ " + md(binding.get("commit") or "未记录") +
+                         "；" + md(binding.get("file") or "未记录") + "；候选 ID " + md(binding.get("candidate_id") or "未记录"),
+                         "- 摘要（" + md(_case_enum_label(triage.get("summary_provenance", "legacy_model_generated_unverified"))) + "）：“" + _case_md_narrative(triage["summary"]) + "”",
+                         "- 模型用量（令牌）：输入 " + md(usage.get("input_tokens") if usage.get("input_tokens") is not None else "未记录") +
+                         " / 输出 " + md(usage.get("output_tokens") if usage.get("output_tokens") is not None else "未记录") +
+                         "；缓存命中输入（输入内） " + md(usage.get("cached_input_tokens") if usage.get("cached_input_tokens") is not None else "未记录") +
+                         "；推理令牌（已计入输出） " + md(usage.get("reasoning_tokens") if usage.get("reasoning_tokens") is not None else "未记录") +
+                         "；模型服务商实际费用 " + md("未知" if usage.get("cost") == "unknown" else usage.get("cost", "未记录"))]
                 estimate = usage.get("cost_estimate") if isinstance(usage.get("cost_estimate"), dict) else None
                 if estimate and estimate.get("status") == "estimated_range":
-                    rows += ["- 估算费用区间（非实账）：" + md(estimate.get("currency", "unknown")) + " " +
-                             md(estimate.get("minimum_usd", "unknown")) + "–" +
-                             md(estimate.get("maximum_usd", "unknown")) +
-                             "；费率快照 " + md(estimate.get("rate_card_id", "unknown")) +
-                             "；来源 " + md(estimate.get("rate_source_url", "unknown"))]
+                    rows += ["- 估算费用区间（非实账）：" + md(estimate.get("currency", "未记录")) + " " +
+                             md(estimate.get("minimum_usd", "未记录")) + "–" +
+                             md(estimate.get("maximum_usd", "未记录")) +
+                             "；费率快照 " + md(estimate.get("rate_card_id", "未记录")) +
+                             "；来源 " + md(estimate.get("rate_source_url", "未记录"))]
                 elif estimate and estimate.get("status") == "estimated_amount":
-                    amount_text = "USD " + md(estimate.get("amount_usd", "unknown"))
+                    amount_text =  "美元 " + md(estimate.get("amount_usd", "未记录"))
                     if estimate.get("amount_cny") is not None:
-                        amount_text += " / CNY " + md(estimate["amount_cny"])
+                        amount_text += " / 人民币 " + md(estimate["amount_cny"])
                     rows += ["- 估算费用（非实账）：" + amount_text +
-                             "；费率快照 " + md(estimate.get("rate_card_id", "unknown")) +
-                             "；来源 " + md(estimate.get("rate_source_url", "unknown"))]
+                             "；费率快照 " + md(estimate.get("rate_card_id", "未记录")) +
+                             "；来源 " + md(estimate.get("rate_source_url", "未记录"))]
                 if triage.get("model_summary_unverified"):
-                    rows += ["- 模型原始摘要（未核验文本）：“" + md(triage["model_summary_unverified"]) + "”"]
+                    rows += ["- 历史模型摘要（未经核验）：“" + _case_md_narrative(triage["model_summary_unverified"]) + "”"]
                 if triage["initial_evidence"]:
                     rows += ["- 初始证据：" + md(triage["initial_evidence"].get("evidence_id")) +
-                             "；context SHA-256 " + md(triage["initial_evidence"].get("context_sha256"))]
+                             "；上下文 SHA-256 " + md(triage["initial_evidence"].get("context_sha256"))]
                 for review in triage.get("human_reviews", []):
-                    rows += ["- 人工评价（仅评价 Agent 分诊，不是漏洞结论）：" +
-                             md(review.get("reviewer")) + "；有用性 " + md(review.get("usefulness")) +
-                             "；引文准确性 " + md(review.get("citation_accuracy")) +
-                             "；复核耗时秒 " + md(review.get("elapsed_seconds") if review.get("elapsed_seconds") is not None else "unknown")]
+                    rows += ["- 人工评价（仅评价智能调查意见，不是漏洞结论）：" +
+                             md(review.get("reviewer")) + "；有用性 " + md(_case_enum_label(review.get("usefulness"))) +
+                             "；引文准确性 " + md(_case_enum_label(review.get("citation_accuracy"))) +
+                             "；复核耗时秒 " + md(review.get("elapsed_seconds") if review.get("elapsed_seconds") is not None else "未记录")]
                     if review.get("claims_to_correct"):
-                        rows += ["  - 需更正陈述：" + md(review["claims_to_correct"])]
+                        rows += ["  - 需更正陈述：" + _case_md_narrative(review["claims_to_correct"])]
                     if review.get("missed_evidence"):
-                        rows += ["  - 遗漏证据：" + md(review["missed_evidence"])]
+                        rows += ["  - 遗漏证据：" + _case_md_narrative(review["missed_evidence"])]
                     if review.get("notes"):
-                        rows += ["  - 复核备注：" + md(review["notes"])]
+                        rows += ["  - 复核备注：" + _case_md_narrative(review["notes"])]
                 for claim in triage["supported_claims"]:
                     citations = claim.get("citations", [])
                     if citations:
-                        citation_text = "；".join(md(item["evidence_id"]) + "：“" + md(item["quote"]) + "”"
+                        citation_text = "；".join(md(item["evidence_id"]) + "（源码原文）：“" + md(item["quote"]) + "”"
                                                   for item in citations)
                     else:
                         citation_text = md("；".join(claim.get("evidence_ids", [])))
                     mapping = claim.get("obligation_indices")
-                    mapping_text = ("; source obligations " + ", ".join("#" + str(index) for index in mapping)
-                                    if isinstance(mapping, list) and mapping else "; legacy result lacks obligation mapping")
-                    rows += ["- Supported claim: " + md(claim["claim"]) + " (" + md(mapping_text) +
-                             "; cited evidence: " + citation_text + ")"]
+                    mapping_text = ("关联源码核查项 " + "、".join("#" + str(index) for index in mapping)
+                                    if isinstance(mapping, list) and mapping else "历史结果未记录义务关联")
+                    rows += ["- 模型列出的源码主张：" + _case_md_narrative(claim["claim"]) + "（" + md(mapping_text) +
+                             "；引用证据：" + citation_text + "）"]
                 initial_context = (triage.get("initial_evidence") or {}).get("context") or {}
                 obligations = initial_context.get("evidence_obligations", [])
                 if triage.get("obligation_reviews"):
                     rows += ["- 证据义务逐项分诊（引文存在性已核验；语义是否支持仍需人工判断）："]
                     for item in triage["obligation_reviews"]:
                         index = item.get("obligation_index", -1)
-                        obligation = obligations[index] if isinstance(index, int) and 0 <= index < len(obligations) else "unknown obligation"
+                        obligation = obligations[index] if isinstance(index, int) and 0 <= index < len(obligations) else "未记录的核查项"
                         if isinstance(obligation, dict):
                             obligation = obligation.get("description") or obligation.get("kind") or str(obligation)
                         citations = item.get("citations", [])
                         citation_text = "；".join(
-                            md(citation.get("evidence_id", "unknown")) + "：“" + md(citation.get("quote", "")) + "”"
+                            md(citation.get("evidence_id", "未记录证据")) + "（源码原文）：“" + md(citation.get("quote", "")) + "”"
                             for citation in citations) or "无引文；保持未决"
-                        rows += ["  - #" + md(index) + " " + md(item.get("disposition", "unresolved")) +
-                                 " · " + md(obligation) + "（" + citation_text + "）"]
+                        rows += ["  - #" + md(index) + " " + md(_case_enum_label(item.get("disposition", "unresolved"))) +
+                                 " · " + _case_md_narrative(obligation) + "（" + citation_text + "）"]
                 if triage["unsupported_claims"]:
-                    rows += ["- 无证据支持的陈述：" + md("；".join(triage["unsupported_claims"]))]
+                    rows += ["- 尚无证据支持的模型陈述：" + _case_md_narrative("；".join(triage["unsupported_claims"]))]
                 if triage["unknowns"]:
-                    rows += ["- 未知项：" + md("；".join(triage["unknowns"]))]
+                    rows += ["- 仍待核实：" + _case_md_narrative("；".join(triage["unknowns"]))]
                 if triage["next_steps"]:
-                    rows += ["- 建议复核步骤：" + md("；".join(triage["next_steps"]))]
+                    rows += ["- 建议后续核查：" + _case_md_narrative("；".join(triage["next_steps"]))]
                 if triage["limitations"]:
-                    rows += ["- 调查限制：" + md("；".join(triage["limitations"]))]
+                    rows += ["- 调查范围说明：" + _case_md_narrative("；".join(triage["limitations"]))]
                 if triage.get("model_suggestions"):
-                    rows += ["- AI 建议（未验证；仅作为待复核方向，不构成修复或漏洞事实）："]
+                    rows += ["- 智能调查建议（未经验证，仅供人工复核，不代表修复结论或漏洞事实）："]
                     for suggestion in triage["model_suggestions"]:
                         anchor = suggestion.get("source_anchor") or {}
-                        rows += ["  - " + md(suggestion.get("text")) + "；上下文锚点 " +
-                                 md(anchor.get("file", "unknown")) + ":" + md(anchor.get("line", "unknown")) +
-                                 " @ " + md(anchor.get("commit", "unknown")) +
-                                 "；语义支持仍为 unknown"]
+                        rows += ["  - " + _case_md_narrative(suggestion.get("text")) + "；上下文锚点 " +
+                                 md(anchor.get("file", "未知")) + ":" + md(anchor.get("line", "未知")) +
+                                 " @ " + md(anchor.get("commit", "未记录")) +
+                                 "；语义支持仍待人工判断"]
                 elif triage.get("citation_review", {}).get("state") == "unknown":
-                    rows += ["- AI 建议：unknown（" + md(triage["citation_review"].get("reason")) + "）；未展示未绑定建议"]
+                    rows += ["- 智能调查建议：未知（" + _case_md_narrative(triage["citation_review"].get("reason")) + "）；未展示未绑定建议"]
                 if triage["source_submission"]:
                     consent = triage["source_submission"]
-                    rows += ["- 源码外发目的地：" + md(consent.get("destination_host") or "unknown") +
-                             "；授权预览 SHA-256 " + md(consent.get("consent_sha256") or "unknown") +
-                             "；预览版本 " + md(consent.get("consent_preview_version") or "unknown")]
-        rows += ["", "## AI 漏洞报告草案与 PoC 计划", "",
-                 "> 以下模型产物均为 candidate / unknown 的待复核草案；PoC 草案没有执行或验证。固定 Harness 结果另列，不与草案混同。"]
+                    rows += ["- 源码外发目的地：" + md(consent.get("destination_host") or "未记录") +
+                             "；授权预览 SHA-256 " + md(consent.get("consent_sha256") or "未记录") +
+                             "；预览版本 " + md(consent.get("consent_preview_version") or "未记录")]
+        rows += ["", "## 智能调查漏洞报告草案与验证用例（PoC）计划", "",
+                 "> 以下内容均为待复核的候选或未知草案；验证用例（PoC）草案尚未执行或验证。固定隔离测试结果另列，不与草案混同。"]
         if not agent_ops:
-            rows += ["- 本案例没有绑定的 Agent 调查结果；未生成 PoC 草案，PoC 计划未执行，状态 unknown。"]
+            rows += ["- 本案例没有绑定的智能调查结果；未生成验证用例草案，验证用例（PoC）计划未执行，状态未知。"]
         for operation in agent_ops:
             triage = operation["agent_triage"]
             generation = triage.get("artifact_generation")
             if isinstance(generation, dict):
-                rows += ["", "### 报告/PoC 草案生成阶段",
-                         "- 阶段状态：" + md(generation.get("status", "unknown")) +
-                         "；模型调用数：" + md(generation.get("calls_used", "unknown")) +
-                         "。该状态不代表扫描完成、PoC 执行或漏洞确认。"]
+                rows += ["", "### 报告与验证用例草案生成阶段",
+                         "- 阶段状态：" + md(_CASE_STAGE_LABELS.get(generation.get("status"), "状态待核对")) +
+                         "；模型调用数：" + md(generation.get("calls_used", "未记录")) +
+                         "。该状态不代表扫描完成、验证用例执行或漏洞确认。"]
             report = triage.get("vulnerability_report")
             if isinstance(report, dict):
-                rows += ["", "### " + md(report.get("title") or "漏洞报告草案") +
-                         "（" + md(report.get("status") or "状态未知") + "；candidate / unknown）"]
+                rows += ["", "### " + _case_md_narrative(report.get("title") or "漏洞报告草案") +
+                         "（" + md(_CASE_ARTIFACT_LABELS.get(report.get("status"), "状态待核对")) + "；候选 / 未知）"]
                 for label, key in (("摘要", "summary"), ("根因", "root_cause"),
                                    ("潜在影响", "impact"), ("修复建议", "remediation")):
                     if report.get(key):
-                        rows += ["- " + label + "：" + md(report.get(key))]
+                        rows += ["- " + label + "：" + _case_md_narrative(report.get(key))]
                 for label, key in (("前置条件", "preconditions"), ("攻击路径草案", "attack_path")):
                     rows += ["- " + label + "："]
                     values = report.get(key) if isinstance(report.get(key), list) else []
-                    rows.extend(["  - " + md(value) for value in values] or ["  - 未记录"])
+                    rows.extend(["  - " + _case_md_narrative(value) for value in values] or ["  - 未记录"])
                 rows += ["- 报告引用（只展示模型结果中已有的引用）："]
                 citations = report.get("citations") if isinstance(report.get("citations"), list) else []
                 if citations:
@@ -4319,21 +4448,22 @@ def install_routes(app: FastAPI, settings, store):
             if isinstance(poc, dict):
                 poc_status = poc.get("status") or "unknown"
                 if poc_status == "draft_unexecuted":
-                    status_text = "AI 草案，未执行"
+                    status_text = "智能调查草案，未执行"
                 elif poc_status == "insufficient_evidence":
                     status_text = "证据不足，未生成可执行草案"
                 else:
                     status_text = "状态未知"
-                rows += ["", "### PoC 验证计划（" + md(status_text) + "）",
-                         "> AI 草案 · 未执行 · 未验证 · candidate / unknown", "> 未执行、未验证；candidate / unknown。这里展示的是验证计划，不是漏洞确认。"]
+                rows += ["", "### 验证用例（PoC）计划（" + md(status_text) + "）",
+                         "> 智能调查草案 · 未执行 · 未验证 · 候选 / 未知", "> 未执行、未验证；当前仍为候选 / 未知。这里展示的是验证计划，不是漏洞确认。"]
                 for label, key in (("标题", "title"), ("语言", "language"),
                                    ("预期观察", "expected_observation"), ("负向对照", "negative_control")):
                     if poc.get(key):
-                        rows += ["- " + label + "：" + md(poc.get(key))]
+                        rows += ["- " + label + "：" +
+                                 (md(poc.get(key)) if key == "language" else _case_md_narrative(poc.get(key)))]
                 for label, key in (("前置条件", "prerequisites"), ("建议步骤", "run_steps")):
                     rows += ["- " + label + "："]
                     values = poc.get(key) if isinstance(poc.get(key), list) else []
-                    rows.extend(["  - " + md(value) for value in values] or ["  - 未记录"])
+                    rows.extend(["  - " + _case_md_narrative(value) for value in values] or ["  - 未记录"])
                 code = poc.get("code")
                 if isinstance(code, str) and code.strip():
                     language = str(poc.get("language") or "text")
@@ -4341,10 +4471,10 @@ def install_routes(app: FastAPI, settings, store):
                         language = "text"
                     longest_fence = max((len(match.group(0)) for match in re.finditer(r"`+", code)), default=2)
                     fence = "`" * max(3, longest_fence + 1)
-                    rows += ["", "未执行代码草案：", fence + language, code, fence]
+                    rows += ["", "未执行代码草案（代码原文）：", fence + language, code, fence]
                 else:
-                    rows += ["- 没有可执行 PoC 代码；当前草案为空或证据不足。"]
-                rows += ["- PoC 引用（只展示模型结果中已有的引用）："]
+                    rows += ["- 没有可执行验证用例代码；当前草案为空或证据不足。"]
+                rows += ["- 验证用例引用（只展示模型结果中已有的引用）："]
                 citations = poc.get("citations") if isinstance(poc.get("citations"), list) else []
                 if citations:
                     for citation in citations:
@@ -4362,85 +4492,85 @@ def install_routes(app: FastAPI, settings, store):
                 else:
                     rows.append("  - 未提供引用。")
             else:
-                rows += ["", "### PoC 验证计划（未执行）",
-                         "- 未生成 PoC 草案；计划未执行，状态 unknown。"]
+                rows += ["", "### 验证用例（PoC）计划（未执行）",
+                         "- 未生成验证用例草案；验证计划未执行，当前状态未知。"]
 
-        rows += ["", "## AI 修复与验证建议（未经验证）"]
+        rows += ["", "## 智能调查修复与验证建议（未经验证）"]
         suggestions = [(operation["id"], item)
                        for operation in agent_ops
                        for item in (operation["agent_triage"].get("repair_guidance", {}).get("items") or [])]
         if suggestions:
             for operation_id, suggestion in suggestions:
-                rows += ["- Agent 建议（操作 " + md(operation_id) + "，待人工复核）：“" + md(suggestion) + "”"]
+                rows += ["- 智能调查建议（操作 " + md(operation_id) + "，待人工复核）：“" + _case_md_narrative(suggestion) + "”"]
         else:
-            rows += ["- 当前没有绑定到本案例的 Agent 修复建议。"]
+            rows += ["- 当前没有绑定到本案例的智能调查修复建议。"]
         rows += ["- 系统未生成或应用补丁；建议文本不构成修复证明，必须单独审查补丁并在固定版本上重新扫描和验证。"]
         validation_ops = [item for item in data["operations"] if item.get("kind") == "validation"]
-        rows += ["", "## PoC / 隔离验证记录"]
+        rows += ["", "## 概念验证 / 隔离验证记录"]
         if validation_ops:
             for operation in validation_ops:
-                rows += ["- 操作 " + md(operation["id"]) + "；状态 " + md(operation.get("status")) +
-                         "；验证门 " + md(operation.get("validation_gate") or "未通过/未知") +
-                         "；产品可达性 " + md(operation.get("reachability_status") or "unknown") +
+                rows += ["- 操作 " + md(operation["id"]) + "；状态 " + md(_case_enum_label(operation.get("status"))) +
+                         "；验证门控 " + md(_case_enum_label(operation.get("validation_gate") or "unknown")) +
+                         "；产品可达性 " + md(_case_enum_label(operation.get("reachability_status") or "unknown")) +
                          "；计入确认数 " + md(operation.get("validated_vulnerability", 0)) +
                          "；结果 SHA-256 " + md(operation.get("result_sha256"))]
                 if operation.get("gate_reason"):
-                    rows += ["  - 门控说明：" + md(operation["gate_reason"])]
+                    rows += ["  - 门控说明：" + _case_md_narrative(operation["gate_reason"])]
                 evidence = operation.get("validation_evidence") or {}
                 if evidence:
-                    rows += ["  - 固定 Harness：" + md(evidence.get("harness_id") or "结果未记录") +
+                    rows += ["  - 固定隔离测试环境：" + md(evidence.get("harness_id") or "结果未记录") +
                              "；目标仓库 " + md(evidence.get("target_repository") or "结果未记录") +
                              " @ " + md(evidence.get("target_commit") or "结果未记录") +
                              "；支持库提交 " + md(evidence.get("cutils_commit") or "结果未记录")]
                     for revision_name, revision in evidence.get("revisions", {}).items():
                         build = revision.get("build") or {}
                         replay = revision.get("replay") or {}
-                        rows += ["  - 修订 " + md(revision_name) + " @ " + md(revision.get("commit") or "unknown") +
-                                 "；编译退出码 " + md(build.get("returncode", "unknown")) +
-                                 "；重放 " + md(replay.get("label", "unknown")) +
-                                 "；全部测试案例匹配 " + md(replay.get("all_cases_match", "unknown"))]
+                        rows += ["  - 修订 " + md(revision_name) + " @ " + md(revision.get("commit") or "未记录") +
+                                 "；编译退出码 " + md(build.get("returncode", "未知")) +
+                                 "；重放结果 " + md(_case_enum_label(replay.get("label", "unknown"))) +
+                                 "；所有测试案例均符合预期 " + md(_case_enum_label(replay.get("all_cases_match", "unknown")))]
                         for case in revision.get("replay_cases", []):
-                            rows += ["    - 案例 " + md(case.get("case_id", "unknown")) +
-                                     "（" + md(case.get("role", "unknown")) + "）：预期 " +
-                                     md(case.get("expected", "unknown")) + "；观察 " +
-                                     md(case.get("observed", "unknown")) + "；匹配 " +
-                                     md(case.get("matches_expectation", "unknown"))]
+                            rows += ["    - 案例 " + md(case.get("case_id", "未记录")) +
+                                     "（" + md(_case_enum_value(case.get("role"))) + "）：预期 " +
+                                     md(_case_enum_value(case.get("expected"))) + "；观察 " +
+                                     md(_case_enum_value(case.get("observed"))) + "；符合预期 " +
+                                     md(_case_enum_value(case.get("matches_expectation")))]
                     for label, digest in (("输入清单", evidence.get("input_manifest_sha256")),
                                           ("运行命令", evidence.get("validation_command_sha256")),
                                           ("Docker 日志", evidence.get("docker_log_sha256"))):
                         if digest:
                             rows += ["  - " + label + " SHA-256：" + md(digest)]
                     for limitation in evidence.get("limitations", []):
-                        rows += ["  - Harness 限制：" + md(limitation)]
-            rows += ["> 固定 Harness 的组件级结果不自动证明产品受影响；只有验证门通过、产品可达性已验证且存在匹配人工评估时才计为确认。"]
+                        rows += ["  - 隔离测试限制：" + _case_md_narrative(limitation)]
+            rows += ["> 固定隔离测试的组件级结果不自动证明产品受影响；只有验证门通过、产品可达性已验证且存在匹配人工评估时才计为确认。"]
         else:
-            rows += ["- 尚无已完成的隔离验证操作；PoC / 产品影响状态保持 unknown。"]
-        rows += ["", "## Agent 实验与人工评价",
+            rows += ["- 尚无已完成的隔离验证操作；验证用例（PoC）计划与产品影响状态均未知。"]
+        rows += ["", "## 智能调查实验与人工评价",
                  "",
-                 "> 本节按案例中已包含的 Agent 操作展示人工分诊反馈；它不等于独立盲评、模型准确率或漏洞真值。"]
+                 "> 本节按案例中已包含的智能调查操作展示人工研判反馈；它不等于独立盲评、模型准确率或漏洞真值。"]
         if agent_ops:
             for operation in agent_ops:
                 triage = operation["agent_triage"]
                 rows += ["- 实验 " + md(triage.get("experiment_id") or "未标记") +
-                         "；模式 " + md(triage.get("mode") or "unknown") +
+                         "；模式 " + md(_case_enum_label(triage.get("mode") or "unknown")) +
                          "；人工评价数 " + md(len(triage.get("human_reviews", []))) +
-                         "；分诊倾向 " + md(triage.get("assessment", "unknown")) +
+                         "；研判倾向 " + md(_case_enum_label(triage.get("assessment", "unknown"))) +
                          "（不是漏洞真值或准确率）"]
                 for review in triage.get("human_reviews", []):
-                    rows += ["  - " + md(review.get("reviewer")) + "：有用性 " + md(review.get("usefulness")) +
-                             "；引文准确性 " + md(review.get("citation_accuracy")) +
-                             "；处理后意见 " + md(review.get("post_review_disposition") or "未记录")]
+                    rows += ["  - " + md(review.get("reviewer")) + "：有用性 " + md(_case_enum_label(review.get("usefulness")))+
+                             "；引文准确性 " + md(_case_enum_label(review.get("citation_accuracy")))+
+                             "；复核后的意见 " + md(_case_enum_label(review.get("post_review_disposition") or "unknown"))]
         else:
-            rows += ["- 尚无 Agent 调查结果；不能给出模型效能结论。"]
+            rows += ["- 尚无智能调查结果；不能给出模型效能结论。"]
 
-        rows += ["", "## PoC / 受控验证", "",
+        rows += ["", "## 验证用例 / 受控验证", "",
                  "- 状态：" + md(data["poc_status"]["label"]),
                  "- 说明：" + md(data["poc_status"]["detail"])]
         validation_rows = [item for item in data["operations"] if item.get("kind") == "validation"]
         for operation in validation_rows:
-            rows += ["- 验证操作：" + md(operation["id"]) + "；状态 " + md(operation["status"])
-                     + "；门控 " + md(operation.get("validation_gate", "unknown"))
-                     + "；产品可达性 " + md(operation.get("reachability_status", "unknown"))]
+            rows += ["- 验证操作：" + md(operation["id"]) + "；状态 " + md(_case_enum_label(operation.get("status")))
+                     + "；门控 " + md(_case_enum_label(operation.get("validation_gate", "unknown")))
+                     + "；产品可达性 " + md(_case_enum_label(operation.get("reachability_status", "unknown")))]
         human_assessments = [item for item in data["assessments"] if item.get("reviewer_kind") == "human"]
         if human_assessments:
             rows += ["", "## 人工案例复核"]
@@ -4449,12 +4579,12 @@ def install_routes(app: FastAPI, settings, store):
                          "；结论：" + md(assessment.get("outcome")) +
                          "；证据 ID：" + md("、".join(assessment.get("evidence_ids", [])))]
                 if assessment.get("notes"):
-                    rows += ["  - 记录：" + md(assessment["notes"])]
+                    rows += ["  - 记录：" + _case_md_narrative(assessment["notes"])]
                 if assessment.get("remaining_unknowns"):
-                    rows += ["  - 未决项：" + md("；".join(assessment["remaining_unknowns"]))]
-        rows += ["", "## 限制", "", *["- " + md(x) for x in data["limitations"]],
+                    rows += ["  - 未决项：" + _case_md_narrative("；".join(assessment["remaining_unknowns"]))]
+        rows += ["", "## 限制", "", *["- " + _case_md_narrative(x) for x in data["limitations"]],
                  "", "经门控确认的漏洞数：" + md(data["validated_vulnerability"]) +
-                 "（候选数不计入；模型建议不能单独确认）。"]
+                 "（候选数不计入；智能调查建议不能单独确认）。"]
         return "\n".join(rows) + "\n"
 
 
@@ -4747,7 +4877,7 @@ def _case_markdown_to_html(markdown):
     return """<!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>OHScanner case report</title>
+<title>OHScanner 调查案例报告</title>
 <style>
 body{margin:0;background:#f4f6fa;color:#243247;font:16px/1.75 system-ui,-apple-system,sans-serif}
 main{max-width:1000px;margin:32px auto;padding:36px 44px;background:#fff;border:1px solid #dfe6ef;border-radius:14px;box-shadow:0 8px 30px #20385812}
@@ -4860,15 +4990,15 @@ def _candidate_poc_plan(candidate, source_anchor):
                     "requested": False, "queued": False, "executed": False},
                 "steps": [], "reason": source_anchor.get("reason"), "source_anchor": None}
     steps = [
-        ("review_entry", "从固定源码和调用方核对可达入口、调用身份、前置状态及敏感操作；未由源码证明的条件保持 unknown。"),
+        ("review_entry", "从固定源码和调用方核对可达入口、调用身份、前置状态及敏感操作；未由源码证明的条件保持未知。"),
         ("define_oracle", "由人工先写明可观察结果和失败条件；预期值只能来自接口契约、受审查的对照版本或明确的测试规范。"),
-        ("prepare_isolated_harness", "如需复现，在临时本地目录构造最小隔离 Harness；禁用网络和生产服务，不执行破坏性操作。"),
-        ("compare_controls", "对候选输入与安全/修复控制运行同一测试，保存源码 SHA、命令、日志和结果；组件 Harness 结果与产品可达性分别记录。"),
-        ("human_interpretation", "由复核者解释结果、影响边界和未决项；测试未运行、控制不完整或产品入口未知时保持 candidate/unknown。"),
+        ("prepare_isolated_harness", "如需复现，在临时本地目录构造最小隔离测试环境；禁用网络和生产服务，不执行破坏性操作。"),
+        ("compare_controls", "对候选输入与安全/修复控制运行同一测试，保存源码 SHA、命令、日志和结果；组件级隔离测试结果与产品可达性分别记录。"),
+        ("human_interpretation", "由复核者解释结果、影响边界和未决项；测试未运行、控制不完整或产品入口未知时保持候选或未知状态。"),
     ]
     return {
         "state": "plan_only",
-        "label": "安全验证 / PoC 计划 · 未执行",
+        "label": "安全验证计划 · 未执行",
         "execution": {"requested": False, "queued": False, "executed": False},
         "authorization": "运行需要用户明确提出执行请求，并通过现有固定版本、隔离环境和验证门控；本报告不会自动创建或启动验证操作。",
         "expected_result": "unknown_until_reviewer_defines_contract_and_oracle",
@@ -4896,7 +5026,7 @@ def _agent_citation_state(settings, store, result, job, candidate, source_anchor
     assessment = result.get("agent_assessment")
     integrity = result.get("citation_integrity")
     if not isinstance(assessment, dict) or not isinstance(integrity, dict):
-        return {"state": "unknown", "reason": "Agent 结果缺少可核验的引用材料。"}
+        return {"state": "unknown", "reason": "智能调查结果缺少可核验的引用材料。"}
     citations = []
     for field in ("supported_claims", "obligation_reviews"):
         rows = assessment.get(field, [])

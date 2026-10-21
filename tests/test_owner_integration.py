@@ -233,7 +233,7 @@ if os.environ.get("OHSCANNER_TEST_PROVIDER_TRACE"):
                     {"obligation_index": index, "disposition": "unresolved", "citations": []}
                     for index in range(len(obligations))
                 ],
-                "unsupported_claims": [], "unknowns": ["Product reachability"],
+                "unsupported_claims": [], "unknowns": ["产品入口是否可达尚未确认"],
                 "next_steps": ["Review the fixed source and runtime path."],
             }
             return {
@@ -393,17 +393,17 @@ if os.environ.get("OHSCANNER_TEST_TOOL_TRACE"):
             elif schema_name == "ohscanner_candidate_artifacts":
                 value = {
                     "vulnerability_report": {
-                        "title": "Fixed-source candidate report",
-                        "summary": "Evidence is incomplete; product reachability remains unknown.",
-                        "root_cause": "The source path requires human review.",
-                        "impact": "Product impact is unknown.", "preconditions": [],
-                        "attack_path": [], "remediation": "Review the applicable product policy.",
+                        "title": "固定源码候选报告",
+                        "summary": "证据尚不完整，产品入口是否可达仍未知。",
+                        "root_cause": "源码路径需要人工复核。",
+                        "impact": "目前无法确定产品影响范围。", "preconditions": [],
+                        "attack_path": [], "remediation": "复核适用的产品策略。",
                         "citations": [],
                     },
                     "poc_draft": {
-                        "title": "Evidence-gated local test draft", "language": "",
+                        "title": "经证据门控的本地测试草案", "language": "",
                         "code": "", "prerequisites": [], "run_steps": [],
-                        "expected_observation": "Evidence is insufficient for a test draft.",
+                        "expected_observation": "当前证据不足以形成测试草案。",
                         "negative_control": "", "citations": [],
                     },
                 }
@@ -415,13 +415,13 @@ if os.environ.get("OHSCANNER_TEST_TOOL_TRACE"):
                         if isinstance(item, dict)],
                 }
             else:
-                value = {"summary": "Synthetic source review; human/runtime evidence is still required.",
+                value = {"summary": "模拟源码调查；仍需人工或运行时证据。",
                     "assessment": "needs_more_evidence", "supported_claims": [],
                     "obligation_reviews": [
                         {"obligation_index": index, "disposition": "unresolved", "citations": []}
                         for index in range(len(obligations))],
-                    "unsupported_claims": [], "unknowns": ["Product reachability"],
-                    "next_steps": ["Review the fixed source and validate the runtime path."]}
+                    "unsupported_claims": [], "unknowns": ["产品入口是否可达尚未确认"],
+                    "next_steps": ["复核固定源码并验证运行时调用路径。"]}
                 phase = "structured_review"
                 trace_extra = {}
             with open(trace_path, "a", encoding="utf-8") as trace:

@@ -1947,21 +1947,21 @@ class CandidateArtifactGenerationTests(unittest.TestCase):
                         poc_cite["file"] = "src/not-in-inventory.cpp"
                     return self.response({
                         "vulnerability_report": {
-                            "title": "Permission-check candidate", "summary": "A source-only candidate needs review.",
-                            "root_cause": "The local path may not enforce the intended caller policy.",
-                            "impact": "Product reachability and impact are unknown.",
-                            "preconditions": ["A product caller reaches this path."],
-                            "attack_path": ["Caller", "Candidate method"],
-                            "remediation": "Review the applicable authorization policy.",
+                            "title": "权限检查候选问题", "summary": "仅凭当前源码仍需人工复核该候选问题。",
+                            "root_cause": "当前路径可能未执行预期的调用方权限检查。",
+                            "impact": "产品入口可达性和实际影响未知。",
+                            "preconditions": ["产品调用方能够到达该路径。"],
+                            "attack_path": ["调用方进入候选方法"],
+                            "remediation": "复核适用的授权策略并确认入口检查。",
                             "citations": [cite] if assessment == "likely_true_positive" else []},
                         "poc_draft": {
-                            "title": "Local guard regression draft", "language": "C++",
+                            "title": "本地权限检查回归测试草案", "language": "C++",
                             "code": (poc_code if poc_code is not None else
                                 "TEST(GuardRegression, ChecksPermission) {\\n  EXPECT_TRUE(check_permission());\\n}\\n"),
-                            "prerequisites": ["Use an isolated local unit-test target."],
-                            "run_steps": ["Review and adapt the test in the existing local test target."],
-                            "expected_observation": "The reviewed permission check is observed.",
-                            "negative_control": "A permitted local control case passes.",
+                            "prerequisites": ["使用隔离的本地单元测试目标。"],
+                            "run_steps": ["先人工审查，再按现有本地测试目标调整该草案。"],
+                            "expected_observation": "观察经复核的权限检查是否按预期拒绝请求。",
+                            "negative_control": "允许的本地控制用例应保持通过。",
                             "citations": [poc_cite] if assessment == "likely_true_positive" else []}})
                 if "tools" in payload and not self.tool_call_sent:
                     self.tool_call_sent = True
@@ -2057,7 +2057,7 @@ class CandidateArtifactGenerationTests(unittest.TestCase):
         result, _, _ = self._run("unknown")
         self.assertEqual(result["artifact_generation"]["status"], "completed")
         self.assertEqual(result["agent_assessment"]["vulnerability_report"]["status"], "draft_unverified")
-        self.assertIn("unknown", result["agent_assessment"]["vulnerability_report"]["impact"])
+        self.assertIn("未知", result["agent_assessment"]["vulnerability_report"]["impact"])
         self.assertEqual(result["agent_assessment"]["poc_draft"]["status"], "insufficient_evidence")
         self.assertEqual(result["agent_assessment"]["poc_draft"]["code"], "")
         self.assertEqual(result["vulnerability_state"], "candidate")
@@ -3648,15 +3648,15 @@ class AgentRouteTests(unittest.TestCase):
                 self.assertFalse(triage["repair_guidance"]["patch_generated"])
                 report_md = client.get("/api/v1/cases/" + case_id + "/report.md")
                 self.assertEqual(report_md.status_code, 200, report_md.text)
-                self.assertIn("Agent 分诊建议（非漏洞确认）", report_md.text)
-                self.assertIn("AI 修复与验证建议（未经验证）", report_md.text)
-                self.assertIn("PoC / 隔离验证记录", report_md.text)
-                self.assertIn("Agent 实验与人工评价", report_md.text)
+                self.assertIn("智能调查研判建议（不代表漏洞确认）", report_md.text)
+                self.assertIn("智能调查修复与验证建议（未经验证）", report_md.text)
+                self.assertIn("概念验证 / 隔离验证记录", report_md.text)
+                self.assertIn("智能调查实验与人工评价", report_md.text)
                 self.assertIn("系统未生成或应用补丁", report_md.text)
                 self.assertIn("不验证引句是否支持模型陈述", report_md.text)
-                self.assertIn("Token：输入 321 / 输出 55", report_md.text)
-                self.assertIn(r"估算费用（非实账）：USD 0\.00043644 / CNY 0\.00301000", report_md.text)
-                self.assertIn("模型原始摘要（未核验文本）", report_md.text)
+                self.assertIn("令牌：输入 321 / 输出 55", report_md.text)
+                self.assertIn(r"估算费用（非实账）：美元 0\.00043644 / 人民币 0\.00301000", report_md.text)
+                self.assertIn("历史模型摘要（未经核验）", report_md.text)
                 self.assertIn("授权预览 SHA-256", report_md.text)
                 self.assertIn(consent_sha256, report_md.text)
                 self.assertIn("Supported claim:", report_md.text)

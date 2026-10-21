@@ -7,6 +7,7 @@ import { buildAgentOperationArtifactView } from "../cases/agentReportViewModel.j
 import { buildEvidenceGraphView } from "../cases/evidenceGraphViewModel.js";
 import { structuredAnswerRejection } from "./agentValidationMessage.js";
 import { agentToolIssues } from "./agentToolIssues.js";
+import ChineseNarrative from "../cases/ChineseNarrative";
 import { agentConfidenceLabel, agentScopeLabel, agentVerdictLabel, agentVerdictReasonLabel, productStatusLabel } from "../workbench/riskLabels.js";
 const { Text } = Typography;
 const labels: Record<string, string> = { likely_true_positive: "倾向真实候选", likely_false_positive: "倾向误报", needs_more_evidence: "需要更多证据", unknown: "未知" };
@@ -26,6 +27,28 @@ const verdictLabels: Record<string, string> = {
 const dispositionLabels: Record<string, string> = {
   investigate: "继续调查", likely_noise: "人工标记误报/噪声", unknown: "人工判为未知",
 };
+const analysisStatusLabels: Record<string, string> = {
+  complete: "解析完成", completed: "解析完成", partial: "部分解析", failed: "解析失败",
+  unsupported: "暂不支持", skipped: "已跳过", unknown: "未知",
+};
+const toolErrorLabels: Record<string, string> = { source_read_failed: "源码读取失败", symbol_not_found: "未找到符号", range_rejected: "源码范围不符合读取条件", timeout: "读取超时", unsupported_language: "暂不支持此源码格式" };
+const toolStatusLabels: Record<string, string> = {
+  completed: "已完成", accepted: "已接受", rejected: "已拒绝", failed: "失败",
+  timed_out: "已超时", skipped: "已跳过", unknown: "未知",
+};
+const toolNameLabels: Record<string, string> = {
+  inspect_guard: "检查保护条件", find_callers: "查找调用方", inspect_sink: "检查敏感操作",
+  search_source: "搜索源码", read_source: "读取源码", find_symbol: "查找符号",
+};
+const usefulnessLabels: Record<string, string> = {
+  useful: "有用", partially_useful: "部分有用", not_useful: "无用", unsafe: "有误导风险",
+};
+const obligationKindLabels: Record<string, string> = {
+  reachability: "入口与调用链", impact: "潜在安全影响", authorization: "权限边界",
+  trigger: "触发条件", dataflow: "数据流", ownership: "对象归属",
+  concurrency: "并发条件", bounds: "长度与边界", "evidence-obligation": "待核实事项",
+};
+const currencyLabels: Record<string, string> = { USD: "美元", CNY: "人民币" };
 function AgentArtifactDetails({ result, onCitation }: {
   result: any;
   onCitation: (citation: any, index: number) => React.ReactNode;
@@ -39,11 +62,11 @@ function AgentArtifactDetails({ result, onCitation }: {
         : <Text>{item.displayText || [item.evidenceId, item.location, item.quote].filter(Boolean).join(" · ")}</Text>}
     </List.Item>} />;
   return <>
-    {artifacts.artifactGeneration && <Card className="section-gap" size="small" title="报告 / PoC 生成阶段">
+    {artifacts.artifactGeneration && <Card className="section-gap" size="small" title="报告与验证用例草案生成阶段">
       <Space wrap>
         <Tag color="blue">阶段：{artifacts.artifactGeneration.statusLabel}</Tag>
         <Tag>报告：{artifacts.artifactGeneration.reportStatusLabel}</Tag>
-        <Tag>PoC：{artifacts.artifactGeneration.pocStatusLabel}</Tag>
+        <Tag>验证用例：{artifacts.artifactGeneration.pocStatusLabel}</Tag>
       </Space>
       <Text className="section-gap" type="secondary" style={{ display: "block" }}>
         本阶段模型调用：{artifacts.artifactGeneration.callsUsed === null
@@ -53,51 +76,51 @@ function AgentArtifactDetails({ result, onCitation }: {
             : " / 最多 " + artifacts.artifactGeneration.maximumModelCalls + " 次")}
       </Text>
       <Alert className="section-gap" type="info" showIcon
-        message="生成阶段不代表扫描完成、PoC 已执行或漏洞已确认。" />
+        message="生成阶段不代表扫描完成、验证用例已执行或漏洞已确认。" />
     </Card>}
-    {artifacts.vulnerabilityReport && <Card className="section-gap" size="small" title="AI 候选漏洞报告">
+    {artifacts.vulnerabilityReport && <Card className="section-gap" size="small" title="智能调查候选漏洞报告">
       <Alert type="warning" showIcon message={artifacts.vulnerabilityReport.boundary}
-        description="报告内容来自绑定到本次 Agent 操作的结构化结果，仅供人工复核，不是 confirmed 漏洞结论。" />
-      {artifacts.vulnerabilityReport.title && <Text strong className="section-gap" style={{ display: "block" }}>{artifacts.vulnerabilityReport.title}</Text>}
+        description="报告内容来自绑定到本次智能调查操作的结构化结果，仅供人工复核，不代表漏洞已经确认。" />
+      {artifacts.vulnerabilityReport.title && <Text strong className="section-gap" style={{ display: "block" }}><ChineseNarrative value={artifacts.vulnerabilityReport.title} /></Text>}
       {(artifacts.vulnerabilityReport.summary || artifacts.vulnerabilityReport.rootCause || artifacts.vulnerabilityReport.impact)
         && <Descriptions className="section-gap" bordered size="small" column={1}>
-          {artifacts.vulnerabilityReport.summary && <Descriptions.Item label="摘要">{artifacts.vulnerabilityReport.summary}</Descriptions.Item>}
-          {artifacts.vulnerabilityReport.rootCause && <Descriptions.Item label="可能原因">{artifacts.vulnerabilityReport.rootCause}</Descriptions.Item>}
-          {artifacts.vulnerabilityReport.impact && <Descriptions.Item label="潜在影响">{artifacts.vulnerabilityReport.impact}</Descriptions.Item>}
+          {artifacts.vulnerabilityReport.summary && <Descriptions.Item label="摘要"><ChineseNarrative value={artifacts.vulnerabilityReport.summary} /></Descriptions.Item>}
+          {artifacts.vulnerabilityReport.rootCause && <Descriptions.Item label="可能原因"><ChineseNarrative value={artifacts.vulnerabilityReport.rootCause} /></Descriptions.Item>}
+          {artifacts.vulnerabilityReport.impact && <Descriptions.Item label="潜在影响"><ChineseNarrative value={artifacts.vulnerabilityReport.impact} /></Descriptions.Item>}
         </Descriptions>}
       {artifacts.vulnerabilityReport.preconditions.length > 0 && <div className="section-gap"><Text strong>前置条件</Text>
-        <List size="small" dataSource={artifacts.vulnerabilityReport.preconditions} renderItem={(item: string) => <List.Item>{item}</List.Item>} />
+        <List size="small" dataSource={artifacts.vulnerabilityReport.preconditions} renderItem={(item: string) => <List.Item><ChineseNarrative value={item} /></List.Item>} />
       </div>}
       {artifacts.vulnerabilityReport.attackPath.length > 0 && <div className="section-gap"><Text strong>推测攻击路径</Text>
-        <List size="small" dataSource={artifacts.vulnerabilityReport.attackPath} renderItem={(item: string, index: number) => <List.Item>{index + 1}. {item}</List.Item>} />
+        <List size="small" dataSource={artifacts.vulnerabilityReport.attackPath} renderItem={(item: string, index: number) => <List.Item>{index + 1}. <ChineseNarrative value={item} /></List.Item>} />
       </div>}
       {artifacts.vulnerabilityReport.remediation && <Alert className="section-gap" type="info" showIcon
-        message="修复建议（AI 草案，待人工评估）" description={artifacts.vulnerabilityReport.remediation} />}
+        message="修复建议（智能调查草案，待人工复核）" description={<ChineseNarrative value={artifacts.vulnerabilityReport.remediation} />} />}
       {artifacts.vulnerabilityReport.citations.length > 0 && <div className="section-gap"><Text strong>报告引用</Text>{renderCitations(artifacts.vulnerabilityReport.citations)}</div>}
     </Card>}
-    {artifacts.pocDraft && <Card className="section-gap" size="small" title="AI PoC 草案" extra={<Tag color="orange">{artifacts.pocDraft.statusLabel}</Tag>}>
+    {artifacts.pocDraft && <Card className="section-gap" size="small" title="智能调查生成的验证用例草案" extra={<Tag color="orange">{artifacts.pocDraft.statusLabel}</Tag>}>
       <Alert type="warning" showIcon message={artifacts.pocDraft.boundary}
         description={artifacts.pocDraft.status === "insufficient_evidence"
-          ? "该 Agent 结果标记证据不足。以下仅展示已绑定结果中的草案字段；不会执行或验证，也不能证明漏洞成立。"
-          : "以下仅展示已绑定 Agent 结果中的 PoC 草案；不会执行或验证，也不能证明漏洞成立。"} />
-      {artifacts.pocDraft.title && <Text strong className="section-gap" style={{ display: "block" }}>{artifacts.pocDraft.title}</Text>}
+          ? "该智能调查结果标记为证据不足。以下仅展示已绑定结果中的草案字段；不会执行或验证，也不能证明漏洞成立。"
+          : "以下仅展示已绑定的智能调查验证用例草案；不会执行或验证，也不能证明漏洞成立。"} />
+      {artifacts.pocDraft.title && <Text strong className="section-gap" style={{ display: "block" }}><ChineseNarrative value={artifacts.pocDraft.title} /></Text>}
       {artifacts.pocDraft.language && <div className="section-gap">语言：<Text code>{artifacts.pocDraft.language}</Text></div>}
       {artifacts.pocDraft.prerequisites.length > 0 && <div className="section-gap"><Text strong>前置条件</Text>
-        <List size="small" dataSource={artifacts.pocDraft.prerequisites} renderItem={(item: string) => <List.Item>{item}</List.Item>} />
+        <List size="small" dataSource={artifacts.pocDraft.prerequisites} renderItem={(item: string) => <List.Item><ChineseNarrative value={item} /></List.Item>} />
       </div>}
       {artifacts.pocDraft.code.trim() && <Card className="section-gap" size="small" title="草案代码（仅文本展示，不执行）">
         <pre className="raw">{artifacts.pocDraft.code}</pre>
       </Card>}
       {artifacts.pocDraft.runSteps.length > 0 && <div className="section-gap"><Text strong>草案步骤（仅供人工审查）</Text>
-        <List size="small" dataSource={artifacts.pocDraft.runSteps} renderItem={(item: string, index: number) => <List.Item>{index + 1}. {item}</List.Item>} />
+        <List size="small" dataSource={artifacts.pocDraft.runSteps} renderItem={(item: string, index: number) => <List.Item>{index + 1}. <ChineseNarrative value={item} /></List.Item>} />
       </div>}
       {artifacts.pocDraft.expectedObservation && <Descriptions className="section-gap" bordered size="small" column={1}>
-        <Descriptions.Item label="预期观察（未经验证）">{artifacts.pocDraft.expectedObservation}</Descriptions.Item>
+        <Descriptions.Item label="预期观察（未经验证）"><ChineseNarrative value={artifacts.pocDraft.expectedObservation} /></Descriptions.Item>
       </Descriptions>}
       {artifacts.pocDraft.negativeControl && <Descriptions className="section-gap" bordered size="small" column={1}>
-        <Descriptions.Item label="负向对照">{artifacts.pocDraft.negativeControl}</Descriptions.Item>
+        <Descriptions.Item label="负向对照"><ChineseNarrative value={artifacts.pocDraft.negativeControl} /></Descriptions.Item>
       </Descriptions>}
-      {artifacts.pocDraft.citations.length > 0 && <div className="section-gap"><Text strong>PoC 草案引用</Text>{renderCitations(artifacts.pocDraft.citations)}</div>}
+      {artifacts.pocDraft.citations.length > 0 && <div className="section-gap"><Text strong>验证用例草案引用</Text>{renderCitations(artifacts.pocDraft.citations)}</div>}
     </Card>}
   </>;
 }
@@ -119,9 +142,9 @@ export default function AgentAssessment({ result, reviews = [], onSubmit }: { re
       await onSubmit({ ...value, claim_adjudications });
       setClaimAdjudications({});
       form.resetFields(["claims_to_correct", "missed_evidence", "notes", "elapsed_seconds"]);
-      message.success("人工评价已追加到 Agent 操作审计记录");
+      message.success("人工评价已追加到智能调查操作记录");
     } catch (error) {
-      message.error(String(error));
+      message.error("保存人工评价失败，请稍后重试或检查服务状态。");
     } finally {
       setSaving(false);
     }
@@ -145,14 +168,15 @@ export default function AgentAssessment({ result, reviews = [], onSubmit }: { re
     if (!Array.isArray(value)) return <Text type="secondary">结果未记录</Text>;
     if (!value.length) return <Text type="secondary">{emptyLabel}</Text>;
     return <List size="small" dataSource={value} renderItem={(item: any) =>
-      <List.Item><Text>{typeof item === "string" ? item : JSON.stringify(item)}</Text></List.Item>} />;
+      <List.Item><Text><ChineseNarrative value={typeof item === "string" ? item : JSON.stringify(item)} /></Text></List.Item>} />;
   };
   const claimObligationLabel = (indices: any) => Array.isArray(indices) && indices.length > 0
-    ? indices.map((index: any) => {
+    ? <>{indices.map((index: any, position: number) => {
       const obligation = Number.isInteger(index) && index >= 0 ? obligations[index] : undefined;
-      const description = typeof obligation === "string" ? obligation : obligation?.description || obligation?.kind;
-      return "#" + index + (description ? " -> " + description : "");
-    }).join("; ") : null;
+      const description = typeof obligation === "string" ? obligation : obligation?.description;
+      const kind = typeof obligation === "object" ? obligation?.kind : "";
+      return <React.Fragment key={String(index)}>{position > 0 ? "；" : ""}#{index}{kind ? " · " + (obligationKindLabels[kind] || "待核实事项") : ""}{description ? <>：<ChineseNarrative value={description} /></> : ""}</React.Fragment>;
+    })}</> : null;
   const citationLink = (citation: any, index: number) => {
     const location = evidenceSourceLocation(result, citation.evidence_id, citation.quote, citation);
     const label = citation.evidence_id + " · " + evidenceLocation(result, citation.evidence_id, citation.quote, citation) + "：“" + citation.quote + "”";
@@ -167,7 +191,7 @@ export default function AgentAssessment({ result, reviews = [], onSubmit }: { re
     { key: "tools", label: `只读工具记录（${(result.tool_calls || []).length}）`, children: <pre className="raw">{JSON.stringify(result.tool_calls || [], null, 2)}</pre> },
     { key: "trace", label: `模型调用记录（${(result.model_calls || []).length}）`, children: <pre className="raw">{JSON.stringify({ model_usage: result.model_usage, model_calls: result.model_calls }, null, 2)}</pre> },
     { key: "model-text", label: "未核验的模型自由文本", children: <Descriptions bordered size="small" column={1}>
-      <Descriptions.Item label="模型原始摘要">{modelAnswerRetained ? (assessment.model_summary_unverified || assessment.summary || "旧结果未记录摘要") : "\u672a\u4fdd\u7559\uff1a\u670d\u52a1\u7aef\u6821\u9a8c\u548c\u4e00\u6b21\u53d7\u9650\u4fee\u590d\u5747\u672a\u901a\u8fc7\u3002"}</Descriptions.Item>
+      <Descriptions.Item label="模型摘要">{modelAnswerRetained ? <ChineseNarrative value={assessment.model_summary_unverified || assessment.summary || "旧结果未记录摘要"} /> : "\u672a\u4fdd\u7559\uff1a\u670d\u52a1\u7aef\u6821\u9a8c\u548c\u4e00\u6b21\u53d7\u9650\u4fee\u590d\u5747\u672a\u901a\u8fc7\u3002"}</Descriptions.Item>
       <Descriptions.Item label="模型列出的未支持陈述">{renderReportedList(assessment.unsupported_claims, "模型未列出未支持陈述。")}</Descriptions.Item>
       <Descriptions.Item label="模型列出的未知项">{renderReportedList(assessment.unknowns, "模型未列出未知项。")}</Descriptions.Item>
       <Descriptions.Item label="模型建议的下一步">{renderReportedList(assessment.next_steps, "模型未列出后续步骤。")}</Descriptions.Item>
@@ -178,12 +202,12 @@ export default function AgentAssessment({ result, reviews = [], onSubmit }: { re
       message={agentVerdictLabel(verdict.status) || verdictLabels[verdict.status] || "模型尚未形成有效分诊结果"}
       description={`复核范围：${agentScopeLabel(verdict.scope)}；模型置信度：${agentConfidenceLabel(verdict.confidence)}；产品状态：${productStatusLabel(verdict.product_status)}。${agentVerdictReasonLabel(verdict.reason)} 产品漏洞状态仍为 ${productStatusLabel(result.vulnerability_state || "candidate")}，已验证漏洞数 ${result.validated_vulnerability ?? 0}；产品可达性和影响仍需后续证据。`} />
     {rejectionDescription && <Alert type="error" showIcon message="模型结构化答复未通过服务端校验" description={rejectionDescription} />}
-    {(toolIssues.length > 0 || (result.model_tool_calls_skipped || 0) > 0) && <Alert type="warning" showIcon message={`只读工具有 ${toolIssues.length + (result.model_tool_calls_skipped || 0)} 项未完成，相关证据可能不完整`} description={<List size="small" dataSource={toolIssues} renderItem={(item: any) => <List.Item><Text><Text strong>{item.tool}</Text> · {item.status} · {item.errorCode}：{item.message}</Text></List.Item>} footer={(result.model_tool_calls_skipped || 0) > 0 ? `另有 ${result.model_tool_calls_skipped} 个模型请求因工具调用预算耗尽而未执行；对应证据保持未决。` : null} />} />}
+    {(toolIssues.length > 0 || (result.model_tool_calls_skipped || 0) > 0) && <Alert type="warning" showIcon message={`只读工具有 ${toolIssues.length + (result.model_tool_calls_skipped || 0)} 项未完成，相关证据可能不完整`} description={<List size="small" dataSource={toolIssues} renderItem={(item: any) => <List.Item><Text><Text strong>{toolNameLabels[item.tool] || "其他只读工具"}</Text> · {toolStatusLabels[item.status] || "待核对"} · 错误类型：{toolErrorLabels[item.errorCode] || "其他错误"}：<ChineseNarrative value={item.message} /></Text></List.Item>} footer={(result.model_tool_calls_skipped || 0) > 0 ? `另有 ${result.model_tool_calls_skipped} 个模型请求因工具调用预算耗尽而未执行；对应证据保持未决。` : null} />} />}
     <Alert type="warning" showIcon message="源码引句存在 ≠ 陈述已证实" description={sourceCitationPolicy ? `支持性主张和已判定义务只能引用固定提交中的源码摘录；扫描器义务描述、提交历史只作检索上下文，不能当作源码证明。服务端核对了 ${result.citation_integrity?.citation_count ?? "未知"} 条引句的来源类型和逐字存在性，但仍未验证引句是否在语义上支持模型推理。摘要由服务端从结构化分诊字段生成；模型原始摘要、未支持陈述、未知项和下一步建议仍是未核验文本。` : "这是较早版本的结果，未记录“只能引用源码证据”的策略版本；请人工确认每条引句确实来自固定提交源码，并逐项判断它是否支持模型陈述。摘要和其他模型自由文本均不能当作已验证结论。"} />
     <AgentArtifactDetails result={result} onCitation={citationLink} />
     {evidenceGraph && <Card size="small" title="跨文件证据链" extra={<Tag color={evidenceGraph.unresolved.length ? "orange" : evidenceGraph.complete ? "green" : "default"}>{evidenceGraph.statusLabel}</Tag>}>
       <Alert type="info" showIcon message="固定版本追踪结果"
-        description={<>{evidenceGraph.binding.repository || "仓库未记录"} · 提交 <Text code>{evidenceGraph.binding.commit || "未知"}</Text> · {evidenceGraph.evidence.length} 份来源记录、{evidenceGraph.citations.length} 条引用关系。该图用于核对 AI 从候选到其他源码位置的调查路径；引用位置已绑定固定源码，但系统没有自动判断引句是否在语义上证明主张。</>} />
+        description={<>{evidenceGraph.binding.repository || "仓库未记录"} · 提交 <Text code>{evidenceGraph.binding.commit || "未知"}</Text> · {evidenceGraph.evidence.length} 份来源记录、{evidenceGraph.citations.length} 条引用关系。该图用于核对智能调查从候选到其他源码位置的调查路径；引用位置已绑定固定源码，但系统没有自动判断引句是否在语义上证明主张。</>} />
       {evidenceGraph.stages.length > 0 && <List className="section-gap" size="small" header={<Text strong>调查阶段</Text>}
         dataSource={evidenceGraph.stages} renderItem={(stage: any) => <List.Item>
           <Space wrap><Text>{stage.label}</Text><Tag color={["completed", "accepted"].includes(stage.status) ? "green" : stage.status === "running" ? "blue" : "orange"}>{stage.statusLabel}</Tag></Space>
@@ -200,28 +224,28 @@ export default function AgentAssessment({ result, reviews = [], onSubmit }: { re
           </Space>
         </List.Item>} />}
       {evidenceGraph.unresolved.length > 0 && <Alert className="section-gap" type="warning" showIcon message={"有 " + evidenceGraph.unresolved.length + " 条引用未绑定到固定源码"}
-        description={<List size="small" dataSource={evidenceGraph.unresolved} renderItem={(item: any) => <List.Item>{item.stageLabel} · {item.file || "文件未记录"} · {item.reason}</List.Item>} />} />}
+        description={<List size="small" dataSource={evidenceGraph.unresolved} renderItem={(item: any) => <List.Item>{item.stageLabel} · {item.file || "文件未记录"} · <ChineseNarrative value={item.reason} /></List.Item>} />} />}
       <Text type="secondary">漏洞状态：{productStatusLabel(evidenceGraph.productState)}；已确认漏洞：{evidenceGraph.validatedVulnerability}。{evidenceGraph.boundary}</Text>
     </Card>}
     {binding.job_id && binding.candidate_id && <Button type="primary" onClick={() => go(`/tasks/${encodeURIComponent(binding.job_id)}?tab=findings&candidate_id=${encodeURIComponent(binding.candidate_id)}`)}>打开该候选人工复核</Button>}
-    <Card size="small" title="Agent 可读研判报告">
+    <Card size="small" title="智能调查研判报告">
       <Alert type="info" showIcon
         message={result.summary_provenance === "server_generated_from_structured_triage"
           ? "依据结构化分诊字段生成的摘要"
           : "模型摘要（未核验）"}
         description={result.summary_provenance === "server_generated_from_structured_triage"
-          ? assessment.summary || "结构化结果未提供摘要。"
+          ? <ChineseNarrative value={assessment.summary || "结构化结果未提供摘要。"} />
           : modelAnswerRetained
-            ? assessment.model_summary_unverified || assessment.summary || "结果未记录摘要。"
+            ? <ChineseNarrative value={assessment.model_summary_unverified || assessment.summary || "结果未记录摘要。"} />
             : "模型原始答复未保留；请以结构化结果和固定源码证据为准。"} />
       <Descriptions bordered size="small" column={{ xs: 1, md: 2 }} className="section-gap">
-        <Descriptions.Item label="模型分诊倾向">{labels[assessment.assessment] || assessment.assessment || "结果未记录"}</Descriptions.Item>
+        <Descriptions.Item label="模型分诊倾向">{labels[assessment.assessment] || (assessment.assessment ? <ChineseNarrative value={assessment.assessment} /> : "结果未记录")}</Descriptions.Item>
         <Descriptions.Item label="复核范围">{agentScopeLabel(verdict.scope)}</Descriptions.Item>
         <Descriptions.Item label="模型置信度">{agentConfidenceLabel(verdict.confidence)}</Descriptions.Item>
         <Descriptions.Item label="产品漏洞状态">{productStatusLabel(result.vulnerability_state || "candidate")}</Descriptions.Item>
         <Descriptions.Item label="固定源码位置">{context.file || binding.file || "结果未记录"}{(context.line || binding.line) ? ":" + (context.line || binding.line) : ""}</Descriptions.Item>
-        <Descriptions.Item label="静态解析状态">{context.analysis_status || "结果未记录"}</Descriptions.Item>
-        <Descriptions.Item label="Detector / 规则">{[context.detector_id, context.rule_id].filter(Boolean).join(" / ") || "结果未记录"}</Descriptions.Item>
+        <Descriptions.Item label="静态解析状态">{analysisStatusLabels[context.analysis_status] || "待核对"}</Descriptions.Item>
+        <Descriptions.Item label="检测器 / 规则">{[context.detector_id, context.rule_id].filter(Boolean).join(" / ") || "结果未记录"}</Descriptions.Item>
         <Descriptions.Item label="固定提交 SHA-256">{context.commit || binding.commit || "结果未记录"}</Descriptions.Item>
       </Descriptions>
       {typeof context.source_excerpt === "string" && <Card size="small" title={`固定提交源码摘录（${context.source_excerpt_start_line ?? "?"}–${context.source_excerpt_end_line ?? "?"} 行）`}>
@@ -231,7 +255,7 @@ export default function AgentAssessment({ result, reviews = [], onSubmit }: { re
       {claims.length > 0 && <Card className="section-gap" size="small" title={`模型列出的源码主张（${claims.length}）`}>
         <List size="small" dataSource={claims} renderItem={(item: any) => <List.Item>
           <Space direction="vertical" style={{ width: "100%" }}>
-            <Text strong>{item.claim || "主张文本未记录"}</Text>
+            <Text strong><ChineseNarrative value={item.claim || "主张文本未记录"} /></Text>
             {claimObligationLabel(item.obligation_indices) && <Text type="secondary">关联核查义务：{claimObligationLabel(item.obligation_indices)}</Text>}
             {(item.citations || []).length
               ? item.citations.map(citationLink)
@@ -247,8 +271,8 @@ export default function AgentAssessment({ result, reviews = [], onSubmit }: { re
             const description = typeof obligation === "string" ? obligation : obligation?.description || obligation?.kind || "义务描述未记录";
             const label = obligationLabels[review?.disposition] || (review ? "未知分诊标签" : "模型未提供逐项结果");
             return <List.Item><Space direction="vertical">
-              <Text strong>#{index} · {obligation?.kind || "证据义务"} · {label}</Text>
-              <Text>{description}</Text>
+              <Text strong>#{index} · {obligationKindLabels[obligation?.kind] || "待核实事项"} · {label}</Text>
+              <Text><ChineseNarrative value={description} /></Text>
               {(review?.citations || []).map(citationLink)}
             </Space></List.Item>;
           }} /> : <Text type="secondary">静态结果未记录证据义务；这不代表安全或义务已满足。</Text>}
@@ -260,26 +284,26 @@ export default function AgentAssessment({ result, reviews = [], onSubmit }: { re
       <div className="section-gap"><Text strong>结果限制</Text>{renderReportedList(result.limitations, "结果未记录额外限制。")}</div>
     </Card>
     <Descriptions bordered size="small" column={{ xs: 1, md: 2 }}>
-      <Descriptions.Item label="分诊倾向">{labels[assessment.assessment] || assessment.assessment || "尚无结果"}</Descriptions.Item>
+      <Descriptions.Item label="分诊倾向">{labels[assessment.assessment] || (assessment.assessment ? <ChineseNarrative value={assessment.assessment} /> : "尚无结果")}</Descriptions.Item>
       <Descriptions.Item label="模式">{result.mode === "single_shot" ? "单轮模型研判" : "工具增强只读调查"}</Descriptions.Item>
       <Descriptions.Item label="模型">{result.provider?.model || "—"}</Descriptions.Item>
       <Descriptions.Item label="外发目的地">{result.source_submission?.destination_host || "—"}</Descriptions.Item>
       <Descriptions.Item label="候选">{binding.candidate_id || "—"}</Descriptions.Item>
       <Descriptions.Item label="扫描代码版本">{binding.commit || "—"}</Descriptions.Item>
       <Descriptions.Item label="源码位置" span={2}>{binding.file || "—"}</Descriptions.Item>
-      <Descriptions.Item label="Token 用量">{result.model_usage ? (result.model_usage.total_tokens ?? "未知") + " tokens；" + (result.model_usage.local_cumulative_token_budget === "none" ? "平台累计上限：无" : "历史任务输入/输出预算 " + (result.model_usage.input_budget_tokens ?? "未知") + "/" + (result.model_usage.output_budget_tokens ?? "未知")) + "；" + (result.model_usage.per_request_output_limit_policy === "none_locally_provider_model_default_applies" ? "平台单次输出上限：无（模型或服务商限制仍适用）" : result.model_usage.per_request_output_limit_tokens == null ? "单次输出上限：未知" : "单次输出上限 " + result.model_usage.per_request_output_limit_tokens + " tokens") : "—"}</Descriptions.Item>
-      <Descriptions.Item label="缓存命中输入（输入内）">{result.model_usage?.cached_input_tokens ?? "未知"} tokens</Descriptions.Item>
-      <Descriptions.Item label="推理 Token（输出内）">{result.model_usage?.reasoning_tokens ?? "未知"} tokens</Descriptions.Item>
+      <Descriptions.Item label="模型用量（令牌）">{result.model_usage ? (result.model_usage.total_tokens ?? "未知") + " 个令牌；" + (result.model_usage.local_cumulative_token_budget === "none" ? "平台累计上限：无" : "历史任务输入/输出预算 " + (result.model_usage.input_budget_tokens ?? "未知") + "/" + (result.model_usage.output_budget_tokens ?? "未知")) + "；" + (result.model_usage.per_request_output_limit_policy === "none_locally_provider_model_default_applies" ? "平台单次输出上限：无（模型或服务商限制仍适用）" : result.model_usage.per_request_output_limit_tokens == null ? "单次输出上限：未知" : "单次输出上限 " + result.model_usage.per_request_output_limit_tokens + " 个令牌") : "—"}</Descriptions.Item>
+      <Descriptions.Item label="缓存命中输入（输入内）">{result.model_usage?.cached_input_tokens ?? "未知"} 个令牌</Descriptions.Item>
+      <Descriptions.Item label="推理令牌（输出内）">{result.model_usage?.reasoning_tokens ?? "未知"} 个令牌</Descriptions.Item>
       <Descriptions.Item label="结构化修复次数">{result.validation_repair_attempts ?? "旧结果未记录"}</Descriptions.Item>
-      <Descriptions.Item label="Provider 实际费用">{result.model_usage?.cost || "未知"}</Descriptions.Item>
+      <Descriptions.Item label="模型服务商实际费用">{result.model_usage?.cost === "unknown" ? "未知" : result.model_usage?.cost || "未知"}</Descriptions.Item>
       <Descriptions.Item label="估算费用">{result.model_usage?.cost_estimate?.status === "estimated_range"
-        ? <Space wrap><Text>{result.model_usage.cost_estimate.currency} {result.model_usage.cost_estimate.minimum_usd}–{result.model_usage.cost_estimate.maximum_usd}；费率快照 {result.model_usage.cost_estimate.rate_card_id}；非实账</Text><a href={result.model_usage.cost_estimate.rate_source_url} target="_blank" rel="noreferrer">费率来源</a></Space>
+        ? <Space wrap><Text>{currencyLabels[result.model_usage.cost_estimate.currency] || result.model_usage.cost_estimate.currency} {result.model_usage.cost_estimate.minimum_usd}–{result.model_usage.cost_estimate.maximum_usd}；费率快照 {result.model_usage.cost_estimate.rate_card_id}；非实账</Text><a href={result.model_usage.cost_estimate.rate_source_url} target="_blank" rel="noreferrer">费率来源</a></Space>
         : result.model_usage?.cost_estimate?.status === "estimated_amount"
-          ? <Space wrap><Text>USD {result.model_usage.cost_estimate.amount_usd}{result.model_usage.cost_estimate.amount_cny ? " / CNY " + result.model_usage.cost_estimate.amount_cny : ""}；USD/CNY 为独立官方价目参考；费率快照 {result.model_usage.cost_estimate.rate_card_id}；非实账</Text><a href={result.model_usage.cost_estimate.rate_source_url} target="_blank" rel="noreferrer">费率来源</a></Space>
+          ? <Space wrap><Text>美元 {result.model_usage.cost_estimate.amount_usd}{result.model_usage.cost_estimate.amount_cny ? " / 人民币 " + result.model_usage.cost_estimate.amount_cny : ""}；美元与人民币为独立官方价目参考；费率快照 {result.model_usage.cost_estimate.rate_card_id}；非实账</Text><a href={result.model_usage.cost_estimate.rate_source_url} target="_blank" rel="noreferrer">费率来源</a></Space>
         : "未知"}</Descriptions.Item>
     </Descriptions>
     {claims.length > 0 && <Card size="small" title="人工逐条复核模型主张">{claims.map((item: any, index: number) => <div className="obligation" key={index}>
-      <Text strong>{item.claim || "主张文本未记录"}</Text>
+      <Text strong><ChineseNarrative value={item.claim || "主张文本未记录"} /></Text>
       {claimObligationLabel(item.obligation_indices) ? <div><Text type="secondary">关联核查义务：{claimObligationLabel(item.obligation_indices)}</Text></div>
         : <div><Text type="warning">结果未记录结构化义务关联；需人工核对。</Text></div>}
       {(item.citations || []).map(citationLink)}
@@ -294,15 +318,15 @@ export default function AgentAssessment({ result, reviews = [], onSubmit }: { re
         ]} />
       {(item.evidence_ids || []).length > 0 && <div><Text type="secondary">旧结果引用：{item.evidence_ids.join(", ")}</Text></div>}
     </div>)}</Card>}
-    <Card size="small" title="人工评价 Agent 分诊（不改变候选或漏洞状态）">
+    <Card size="small" title="人工评价智能调查意见（不改变候选或漏洞状态）">
       <Alert type="info" showIcon message="逐条判断每组引文能否支持对应模型主张。该语义复核只评价模型证据推理，不代表漏洞定性；有主张时必须逐条选择，不能确认就选“无法判断”。" />
       {reviews.length > 0 && <List className="section-gap" size="small" header={`追加复核记录（${reviews.length}）`} dataSource={reviews} renderItem={(review: any) =>
-        <List.Item><Space direction="vertical"><Text>{review.reviewer} · {review.usefulness} · 引文：{review.citation_accuracy} · {review.elapsed_seconds ?? "未知"} 秒</Text>
+        <List.Item><Space direction="vertical"><Text>{review.reviewer} · {usefulnessLabels[review.usefulness] || "未记录"} · 引文准确性：{({ all_accurate: "全部准确", some_incorrect: "存在错误", mostly_incorrect: "大多错误", not_checked: "未核对" } as Record<string, string>)[review.citation_accuracy] || "未记录"} · {review.elapsed_seconds ?? "未知"} 秒</Text>
           {!!review.post_review_disposition && <Text type="secondary">人工处置：{dispositionLabels[review.post_review_disposition] || review.post_review_disposition}</Text>}
           {!!review.claim_adjudications?.length && <Text type="secondary">逐条主张复核：{review.claim_adjudications.map((item: any) => claimSupportLabels[item.disposition] || "未知").join("；")}</Text>}
-          {!!review.claims_to_correct && <Text type="secondary">需更正：{review.claims_to_correct}</Text>}
-          {!!review.missed_evidence && <Text type="secondary">遗漏证据：{review.missed_evidence}</Text>}
-          {!!review.notes && <Text type="secondary">{review.notes}</Text>}
+          {!!review.claims_to_correct && <Text type="secondary">需更正：<ChineseNarrative value={review.claims_to_correct} /></Text>}
+          {!!review.missed_evidence && <Text type="secondary">遗漏证据：<ChineseNarrative value={review.missed_evidence} /></Text>}
+          {!!review.notes && <Text type="secondary"><ChineseNarrative value={review.notes} /></Text>}
         </Space></List.Item>} />}
       <Form className="section-gap" form={form} layout="vertical" onFinish={(value) => void saveReview(value)}
         initialValues={{ usefulness: "partially_useful", citation_accuracy: "not_checked", post_review_disposition: "investigate" }}>
