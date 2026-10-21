@@ -22,8 +22,11 @@ from src.workbench.store import Store
 from src.workbench import operations
 
 
-def bind_test_consent(task, store, report, candidate, source):
+def bind_test_consent(task, store, report, candidate, source, *, artifact_stage=False):
     spec = task["spec"]
+    # Legacy workflow tests intentionally exercise the pre-artifact direct path.
+    # Public API previews never expose this internal test-only disable flag.
+    spec["artifact_generation_stage_enabled"] = artifact_stage
     provider = agent.ProviderConfig.from_env()
     job = store.job(spec["job_id"])
     with patch.object(agent.service, "source", return_value=source):
@@ -31,6 +34,107 @@ def bind_test_consent(task, store, report, candidate, source):
     spec["source_consent_sha256"] = preview["consent_sha256"]
     spec["consent_preview_version"] = agent.CONSENT_PREVIEW_VERSION
     spec["redaction_policy_version"] = agent.REDACTION_POLICY_VERSION
+
+
+class EvidenceGraphTests(unittest.TestCase):
+    def result_fixture(self, *, incomplete=False, bad_reference=False):
+        source_id = "ev-source-fixed"
+        metadata_id = "ev-metadata-context"
+        citation_id = metadata_id if bad_reference else source_id
+        citation = {"evidence_id": citation_id, "file": "src/guard.cpp",
+                    "line_start": 20, "line_end": 20}
+        status = "incomplete" if incomplete else "completed"
+        return {
+            "binding": {"job_id": "job-fixed", "repository": "org/repo", "commit": "c" * 40,
+                        "tree": "d" * 40, "snapshot_sha256": "e" * 64,
+                        "report_sha256": "f" * 64, "candidate_id": "candidate-fixed",
+                        "file": "src/guard.cpp", "source_sha256": "a" * 64,
+                        "git_blob": "1" * 40},
+            "initial_evidence": {"evidence_id": "ev-initial-fixed", "file": "src/guard.cpp",
+                                 "source_sha256": "a" * 64, "source_excerpt_start_line": 1,
+                                 "source_excerpt_end_line": 4, "context_sha256": "2" * 64},
+            "tool_calls": [
+                {"step": 1, "tool": "read_fixed_source_range", "evidence_id": source_id,
+                 "evidence_kind": "source_code", "status": "completed",
+                 "result_sha256": "3" * 64,
+                 "result": {"commit": "c" * 40, "file": "src/guard.cpp",
+                            "source_sha256": "b" * 64, "git_blob": "4" * 40,
+                            "start_line": 20, "end_line": 20}},
+                {"step": 2, "tool": "read_evidence_obligations", "evidence_id": metadata_id,
+                 "evidence_kind": "scanner_metadata", "status": "completed",
+                 "result_sha256": "5" * 64, "result": {"analysis_status": "unknown"}},
+            ],
+            "agent_assessment": {
+                "assessment": "needs_more_evidence",
+                "supported_claims": [{"claim": "unverified model claim", "citations": [citation]}],
+                "obligation_reviews": [],
+                "vulnerability_report": {"status": "draft_unverified", "citations": [citation]},
+                "poc_draft": {"status": "insufficient_evidence", "citations": []},
+            },
+            "skeptic_review": {"status": status, "reviews": ([] if incomplete else [{
+                "obligation_index": 0, "result": "counterevidence_candidate", "citations": [citation]}])},
+            "artifact_generation": {"status": status, "calls_used": 1 if not incomplete else 0},
+            "citation_integrity": {"semantic_support": "unverified_by_machine"},
+            "workflow": {"stages": [
+                {"id": "collect_fixed_source_evidence", "status": "completed", "tool_calls": 2},
+                {"id": "primary_source_triage", "status": "accepted" if not incomplete else "incomplete"},
+                {"id": "independent_skeptic", "status": status},
+                {"id": "candidate_report_and_poc_draft", "status": status},
+                {"id": "validate_report", "status": "accepted" if not incomplete else "incomplete"},
+            ]},
+        }
+
+    def test_graph_binds_source_nodes_and_labels_counterevidence_as_unverified(self):
+        result = self.result_fixture()
+        lines = {"ev-initial-fixed": {"src/guard.cpp": {1: "void guard() {", 2: "  check();",
+                                                                  3: "  return;", 4: "}"}},
+                 "ev-source-fixed": {"src/guard.cpp": {20: "  // fixed source evidence"}}}
+        graph = agent._build_evidence_graph(result, lines)
+        nodes = {node["id"]: node for node in graph["nodes"]}
+        source_node = nodes["evidence:ev-source-fixed"]
+        self.assertEqual(source_node["status"], "available")
+        self.assertEqual(source_node["source_binding"]["commit"], "c" * 40)
+        self.assertEqual(source_node["source_binding"]["files"][0]["source_sha256"], "b" * 64)
+        self.assertTrue(source_node["summary_sha256"])
+        self.assertTrue(all(node.get("source_binding") is not None
+                            and node.get("summary_sha256") for node in graph["nodes"]))
+        self.assertTrue(any(edge["type"] == "depends_on"
+                            and edge["source"] == "stage:independent_skeptic"
+                            and edge["target"] == "stage:primary_source_triage"
+                            for edge in graph["edges"]))
+        candidate_edges = [edge for edge in graph["edges"]
+                           if edge["type"] == "counterevidence_candidate_reference"]
+        self.assertEqual(len(candidate_edges), 1)
+        self.assertEqual(candidate_edges[0]["target"], "evidence:ev-source-fixed")
+        self.assertEqual(candidate_edges[0]["semantic_support"], "unverified_by_machine")
+        self.assertTrue(any(edge["type"] == "validated_citation_reference"
+                            and edge["source"] == "stage:primary_source_triage"
+                            and edge["target"] == "evidence:ev-source-fixed"
+                            for edge in graph["edges"]))
+        self.assertTrue(any(edge["type"] == "draft_citation_reference"
+                            and edge["source"] == "stage:candidate_report_and_poc_draft"
+                            and edge["target"] == "evidence:ev-source-fixed"
+                            for edge in graph["edges"]))
+        self.assertEqual(graph["product_state"], "candidate")
+        self.assertEqual(graph["validated_vulnerability"], 0)
+
+    def test_unbound_metadata_citation_and_incomplete_stages_remain_unknown(self):
+        result = self.result_fixture(incomplete=True, bad_reference=True)
+        lines = {"ev-initial-fixed": {"src/guard.cpp": {1: "void guard() {"}},
+                 "ev-source-fixed": {"src/guard.cpp": {20: "  // fixed source evidence"}},
+                 "ev-metadata-context": {}}
+        graph = agent._build_evidence_graph(result, lines)
+        nodes = {node["id"]: node for node in graph["nodes"]}
+        self.assertEqual(nodes["evidence:ev-metadata-context"]["status"], "context_only")
+        self.assertFalse(any(edge["type"] in {"validated_citation_reference",
+                                               "counterevidence_candidate_reference"}
+                             and edge["target"] == "evidence:ev-metadata-context"
+                             for edge in graph["edges"]))
+        self.assertTrue(graph["unresolved_references"])
+        self.assertEqual(nodes["stage:independent_skeptic"]["status"], "incomplete")
+        self.assertEqual(nodes["stage:independent_skeptic"]["epistemic_status"], "unknown")
+        self.assertEqual(nodes["stage:candidate_report_and_poc_draft"]["status"], "incomplete")
+        self.assertEqual(graph["validated_vulnerability"], 0)
 
 
 class AgentTaskflowVerdictTests(unittest.TestCase):
@@ -82,8 +186,33 @@ class AgentTaskflowVerdictTests(unittest.TestCase):
 
     def test_taskflow_has_explicit_versioned_stages(self):
         self.assertEqual(agent.WORKFLOW_ID, "ohscanner-security-triage-taskflow")
-        self.assertEqual(agent.WORKFLOW_VERSION, "0.1.0")
-        self.assertIn("actively search for contrary evidence", agent._INSTRUCTIONS)
+        self.assertEqual(agent.WORKFLOW_VERSION, "0.5.0")
+        self.assertIn("separate server-invoked Skeptic", agent._INSTRUCTIONS)
+        self.assertIn("counterevidence_candidate", agent._SKEPTIC_INSTRUCTIONS)
+
+    def test_task_r2_preview_discloses_independent_skeptic_and_no_cumulative_local_caps(self):
+        plan = {"plan_sha256": "a" * 64,
+                "source": {"repository": "openharmony/demo", "commit": "b" * 40,
+                           "git_tree": "c" * 40}}
+        config = agent.ProviderConfig("https://api.xiaomimimo.com/v1", "mimo-v2.6-pro", "secret")
+        preview = agent.audit_task_consent_preview(
+            plan, "d" * 64, ["."], 2, "e" * 32, config,
+            max_r2_candidates=2, max_cost_usd="1.00")
+        manifest = preview["manifest"]
+        r2 = manifest["per_candidate_budgets"]["r2"]
+        self.assertEqual(r2["max_skeptic_calls"], 1)
+        self.assertEqual(r2["max_validation_repairs"], 2)
+        self.assertTrue(r2["skeptic_uses_separate_stage_limit"])
+        self.assertIsNone(manifest["budgets"]["max_total_model_calls"])
+        self.assertIsNone(manifest["budgets"]["max_total_tool_calls"])
+        self.assertEqual(manifest["budgets"]["local_cumulative_token_budget"], "none")
+        self.assertEqual(manifest["budgets"]["local_cumulative_usd_budget"], "none")
+        self.assertEqual(manifest["budgets"]["provider_request_timeout_seconds"], 45)
+        self.assertNotIn("max_steps_per_candidate", manifest["conditional_r2"])
+        self.assertIn(agent.SKEPTIC_CONSENT_DISCLOSURE, manifest["source_disclosure"])
+        self.assertEqual(manifest["conditional_r2"]["stage_disclosure"],
+                         agent.SKEPTIC_CONSENT_DISCLOSURE + " "
+                         + agent.ARTIFACT_GENERATION_DISCLOSURE)
 
 class SensitiveDataRedactionTests(unittest.TestCase):
     def test_quoted_credentials_with_spaces_are_fully_removed_and_json_stays_valid(self):
@@ -531,34 +660,41 @@ class ProviderConfigTests(unittest.TestCase):
         self.assertFalse(estimate["actual_charge_verified"])
         self.assertEqual(estimate["rate_source_url"], agent.MIMO_RATE_SOURCE_URL)
 
-    def test_mimo_task_budget_preview_aggregates_usd_and_cny_without_r2(self):
+    def test_task_preview_has_no_platform_cumulative_cost_gate_even_for_legacy_small_usd_value(self):
         config = agent.ProviderConfig("https://api.xiaomimimo.com/v1", "mimo-v2.6-pro", "secret")
         preview = agent.audit_task_consent_preview(
             {"plan_sha256": "a" * 64,
              "source": {"repository": "openharmony/demo", "commit": "b" * 40, "git_tree": "c" * 40}},
             "d" * 64, ["."], 2, "e" * 32, config,
-            max_cost_usd="0.03")
-        self.assertEqual(preview["estimated_cost"]["maximum_usd"], "0.02505600")
-        self.assertEqual(preview["estimated_cost"]["maximum_cny"], "0.17280000")
+            max_cost_usd="0.00000001")
+        self.assertEqual(preview["estimated_cost"]["status"], "unbounded_local_usage")
         self.assertEqual(preview["manifest"]["estimated_cost"], preview["estimated_cost"])
-        self.assertEqual(preview["cost_budget"]["maximum_usd"], "0.03")
-        self.assertTrue(preview["platform_cost_budget_enforced"])
+        self.assertNotIn("maximum_usd", preview["cost_budget"])
+        self.assertFalse(preview["cost_budget"]["platform_enforced"])
+        self.assertFalse(preview["platform_cost_budget_enforced"])
+        self.assertEqual(preview["manifest"]["budgets"]["r1_max_candidates"], 2)
+        self.assertIsNone(preview["manifest"]["budgets"]["r1_max_output_tokens_per_request"])
+        self.assertEqual(preview["manifest"]["usage_policy"]["per_request_output_limit"],
+                         "none_locally_provider_model_default_applies")
+        self.assertIsNone(preview["manifest"]["budgets"]["max_total_model_calls"])
+        self.assertNotIn("aggregate_max_input_tokens", preview["manifest"]["budgets"])
+        self.assertNotIn("aggregate_max_output_tokens", preview["manifest"]["budgets"])
         self.assertEqual(preview["manifest"]["cost_budget"], preview["cost_budget"])
 
-    def test_task_consent_rejects_budget_below_worst_case_or_unknown_rate(self):
+    def test_task_consent_does_not_require_or_enforce_a_rate_card_or_usd_cap(self):
         plan = {"plan_sha256": "a" * 64,
                 "source": {"repository": "openharmony/demo", "commit": "b" * 40,
                            "git_tree": "c" * 40}}
         config = agent.ProviderConfig("https://api.xiaomimimo.com/v1", "mimo-v2.6-pro", "secret")
-        with self.assertRaisesRegex(ValueError, "高于费用预算"):
-            agent.audit_task_consent_preview(
-                plan, "d" * 64, ["."], 2, "e" * 32, config,
-                max_cost_usd="0.02")
+        allowed = agent.audit_task_consent_preview(
+            plan, "d" * 64, ["."], 2, "e" * 32, config,
+            max_cost_usd="0.00000001")
+        self.assertTrue(allowed["eligible"])
         unknown = agent.ProviderConfig("https://api.openai.com/v1", "unpriced-model", "secret")
-        with self.assertRaisesRegex(ValueError, "没有已复核费率卡"):
-            agent.audit_task_consent_preview(
-                plan, "d" * 64, ["."], 2, "e" * 32, unknown,
-                max_cost_usd="1.00")
+        allowed_unknown_rate = agent.audit_task_consent_preview(
+            plan, "d" * 64, ["."], 2, "e" * 32, unknown,
+            max_cost_usd=None)
+        self.assertTrue(allowed_unknown_rate["eligible"])
 
     def test_aggregate_budget_cost_estimate_requires_matching_known_rate_cards(self):
         from src.workbench.agent import DEEPSEEK_V4_PRO_RATE_CARD
@@ -750,6 +886,177 @@ class ProviderConfigTests(unittest.TestCase):
 
 
 class AgentExecutionTests(unittest.TestCase):
+    def test_agent_tool_loop_executes_callsite_lookup_as_bounded_source_evidence(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            repo = root / "repo"
+            source_path = repo / "src" / "caller.c"
+            definition_path = repo / "src" / "api.c"
+            source_path.parent.mkdir(parents=True)
+            subprocess.run(["git", "init", "-q", str(repo)], check=True)
+            subprocess.run(["git", "-C", str(repo), "config", "user.name", "OHScanner test"], check=True)
+            subprocess.run(["git", "-C", str(repo), "config", "user.email", "test@example.invalid"], check=True)
+            source_text = ("int needle(int value);\n"
+                           "void different_call(void);\n"
+                           "int guard(int input) {\n"
+                           "  int value = needle(input);\n"
+                           "  different_call();\n"
+                           "  return value;\n"
+                           "}\n")
+            definition_text = "int needle(int value) { return value; }\n"
+            source_path.write_text(source_text, encoding="utf-8")
+            definition_path.write_text(definition_text, encoding="utf-8")
+            subprocess.run(["git", "-C", str(repo), "add", "src"], check=True)
+            subprocess.run(["git", "-C", str(repo), "commit", "-qm", "fixed callsite fixture"], check=True)
+            commit = subprocess.check_output(
+                ["git", "-C", str(repo), "rev-parse", "HEAD"], text=True).strip()
+            blob = subprocess.check_output(
+                ["git", "-C", str(repo), "rev-parse", f"{commit}:src/caller.c"],
+                text=True).strip()
+            definition_blob = subprocess.check_output(
+                ["git", "-C", str(repo), "rev-parse", f"{commit}:src/api.c"],
+                text=True).strip()
+            digest = hashlib.sha256(source_text.encode("utf-8")).hexdigest()
+            inventory = [
+                {"file": "src/api.c", "blob": definition_blob,
+                 "sha256": hashlib.sha256(definition_text.encode("utf-8")).hexdigest()},
+                {"file": "src/caller.c", "blob": blob, "sha256": digest},
+            ]
+            candidate = {"id": "candidate-callsite-loop", "file": "src/caller.c", "line": 3,
+                "source_sha256": digest, "symbol": "guard", "detector_id": "test.rule",
+                "detector_version": "0.1", "rule_id": "R1",
+                "evidence": {"analysis_status": "complete", "obligations": [
+                    {"kind": "callee_and_policy", "description": "Review fixed source call mapping.",
+                     "status": "unknown"}]}}
+            report = {"repository": "controlled/callsite-loop", "commit": commit,
+                "tree": "d" * 40, "snapshot_sha256": "e" * 64,
+                "_workbench": {"source_inventory": inventory}}
+            source = {"sha256": digest, "blob": blob, "text": source_text}
+
+            class Store:
+                def job(self, key):
+                    return {"id": key, "repository_id": "repo-loop", "status": "completed",
+                        "report_sha256": "b" * 64, "spec": {"include_paths": ["src"]}}
+                def repository(self, key):
+                    return {"id": key, "path": str(repo)}
+
+            class Ops:
+                def __init__(self):
+                    self.events = []
+                def get(self, key): return {"cancel_requested": False}
+                def event(self, *args): self.events.append(args)
+
+            class FakeClient(unittest.TestCase):
+                def __init__(self):
+                    super().__init__()
+                    self.payloads = []
+                    self.request_sizes = []
+                    self.synthetic_history_bytes = 0
+                def create(self, payload):
+                    self.payloads.append(payload)
+                    request_size = len(json.dumps(payload, ensure_ascii=False).encode("utf-8"))
+                    self.request_sizes.append(request_size)
+                    self.assertLessEqual(request_size, 64 * 1024)
+                    self.assertNotIn("SYNTHETIC_OLD_PROVIDER_TEXT",
+                                     json.dumps(payload.get("input", []), ensure_ascii=False))
+                    if payload.get("text", {}).get("format", {}).get("name") == "ohscanner_skeptic_review":
+                        context = json.loads(payload["input"][0]["content"][0]["text"])
+                        evidence_files = {item["file"] for item in context["source_evidence"]}
+                        self.assertIn("src/caller.c", evidence_files)
+                        self.assertIn("src/api.c", evidence_files)
+                        skeptic = {"reviews": [{"obligation_index": item["obligation_index"],
+                            "result": "unknown", "citations": []}
+                            for item in context["obligations_are_untrusted_routing_metadata"]]}
+                        return {"status": "completed", "output": [{"type": "message", "content": [
+                            {"type": "output_text", "text": json.dumps(skeptic)}]}],
+                            "usage": {"input_tokens": 100, "output_tokens": 900, "total_tokens": 1000}}
+                    if "tools" in payload:
+                        call_index = sum(1 for item in self.payloads
+                                         if item.get("tools"))
+                        tool = next(item for item in payload["tools"]
+                                    if item.get("name") == "find_callsite_candidates")
+                        self.assert_callsite_schema(tool)
+                        identifier = ("needle" if call_index <= 2 else
+                                      "different_call" if call_index == 3 else
+                                      "absent" + str(call_index))
+                        synthetic_chatter = "SYNTHETIC_OLD_PROVIDER_TEXT " * 2000
+                        self.synthetic_history_bytes += len(synthetic_chatter.encode("utf-8"))
+                        return {"status": "completed", "output": [
+                            {"type": "message", "content": [{"type": "output_text",
+                                "text": synthetic_chatter}]},
+                            {"type": "function_call", "name": "find_callsite_candidates",
+                             "arguments": json.dumps({"identifier": identifier}),
+                             "call_id": "callsite-loop-" + str(call_index)}],
+                            "usage": {"input_tokens": 100, "output_tokens": 900, "total_tokens": 1000}}
+                    if len(self.payloads) == 7:
+                        catalog = json.loads(payload["input"][1]["content"][0]["text"])
+                        self.assertEqual(catalog["kind"], "server_bound_evidence_catalog")
+                        self.assertGreaterEqual(len(catalog["entries"]), 3)
+                        self.assertTrue(any(row["evidence_id"].startswith("ev-source-")
+                                            for row in catalog["entries"]))
+                        self.assertTrue(all(row.get("result_sha256")
+                                            for row in catalog["entries"]))
+                    final = {"summary": "Syntax occurrence found; semantic identity remains unknown.",
+                        "assessment": "unknown", "supported_claims": [],
+                        "obligation_reviews": [{"obligation_index": 0,
+                            "disposition": "unresolved", "citations": []}],
+                        "unsupported_claims": [], "unknowns": ["Callee identity and reachability"],
+                        "next_steps": ["Review caller identity and runtime reachability"]}
+                    return {"status": "completed", "output": [{"type": "message", "content": [
+                        {"type": "output_text", "text": json.dumps(final)}]}],
+                        "usage": {"input_tokens": 100, "output_tokens": 900, "total_tokens": 1000}}
+
+                @staticmethod
+                def assert_callsite_schema(tool):
+                    assert tool["parameters"]["required"] == ["identifier"]
+
+            task = {"id": "task-callsite-loop", "spec": {"job_id": "job-callsite-loop",
+                "candidate_id": candidate["id"], "mode": "tool_agent", "max_steps": 1,
+                "max_output_tokens": 1000, "max_total_input_tokens": 24000,
+                "max_total_output_tokens": 4000, "timeout_seconds": 90, "continuous_investigation": True,
+                "source_submission_approved": True, "provider_fingerprint": "unused",
+                "prompt_version": agent.PROMPT_VERSION, "tool_policy_version": agent.TOOL_POLICY_VERSION,
+                "include_paths": ["src"]}}
+            with patch.dict(os.environ, {"OHSCANNER_LLM_BASE_URL": "https://api.deepseek.com",
+                                         "OHSCANNER_LLM_MODEL": "deepseek-v4-pro",
+                                         "OHSCANNER_LLM_API_KEY": "test-secret"}, clear=False):
+                task["spec"]["provider_fingerprint"] = agent.ProviderConfig.from_env().fingerprint
+                store, fake, ops = Store(), FakeClient(), Ops()
+                bind_test_consent(task, store, report, candidate, source)
+                with patch.object(agent, "MAX_PROVIDER_REQUEST_BYTES", 64 * 1024), \
+                     patch.object(agent, "MAX_CONTINUOUS_RECENT_TRANSCRIPT_BYTES", 4 * 1024), \
+                     patch.object(agent.service, "read_report", return_value=report), \
+                     patch.object(agent.service, "finding", return_value=candidate), \
+                     patch.object(agent.service, "source", return_value=source):
+                    result = agent.execute_agent(None, store, ops, task, client=fake)
+
+        self.assertEqual(len(fake.payloads), 8)
+        self.assertGreater(fake.synthetic_history_bytes, 64 * 1024)
+        self.assertTrue(any(event[1] == "agent_no_progress_guard" for event in ops.events))
+        self.assertEqual(result["skeptic_review"]["status"], "completed")
+        self.assertEqual([item["tool"] for item in result["tool_calls"]],
+                         ["find_callsite_candidates"] * 5)
+        graph = result["evidence_graph"]
+        self.assertEqual(graph["binding"]["commit"], commit)
+        self.assertEqual(graph["product_state"], "candidate")
+        self.assertTrue(any(node["id"] == "evidence:" + result["initial_evidence"]["evidence_id"]
+                            for node in graph["nodes"]))
+        self.assertTrue(any(edge["type"] == "depends_on"
+                            and edge["source"] == "stage:validate_report"
+                            for edge in graph["edges"]))
+        self.assertEqual(result["tool_calls"][0]["evidence_kind"], "source_code")
+        self.assertEqual(result["tool_calls"][0]["status"], "completed")
+        first_callsite = result["tool_calls"][0]["result"]["callsites"][0]
+        self.assertEqual(first_callsite["relationship"]["status"], "cross_file_syntax_candidate")
+        self.assertEqual(first_callsite["relationship"]["semantic_binding"], "unknown")
+        self.assertEqual(first_callsite["relationship"]["reachable"], "unknown")
+        self.assertEqual(first_callsite["relationship"]["cross_file_definition_candidate"]["file"],
+                         "src/api.c")
+        self.assertGreater(result["model_usage"]["output_tokens"], task["spec"]["max_total_output_tokens"])
+        self.assertEqual(result["agent_assessment"]["assessment"], "unknown")
+        self.assertEqual(result["vulnerability_state"], "candidate")
+        self.assertEqual(result["validated_vulnerability"], 0)
+
     def test_invalid_symbol_query_has_stable_safe_rejection_guidance(self):
         raw_query = "secret-ish unsupported symbol query"
         with self.assertRaises(agent._AgentToolQueryRejected) as caught:
@@ -785,6 +1092,17 @@ class AgentExecutionTests(unittest.TestCase):
             def __init__(self): self.payloads = []
             def create(self, payload):
                 self.payloads.append(payload)
+                if (payload.get("text", {}).get("format", {}).get("name")
+                        == "ohscanner_skeptic_review"):
+                    context = json.loads(payload["input"][0]["content"][0]["text"])
+                    skeptic = {"reviews": [{"obligation_index": item["obligation_index"],
+                        "result": "unknown", "citations": []}
+                        for item in context["obligations_are_untrusted_routing_metadata"]]}
+                    return {"status": "completed", "output": [{"type": "message", "content": [
+                        {"type": "output_text", "text": json.dumps(skeptic)}]}],
+                        "usage": {"input_tokens": 30, "output_tokens": 20, "total_tokens": 50,
+                                  "input_tokens_details": {"cached_tokens": 7},
+                                  "output_tokens_details": {"reasoning_tokens": 10}}}
                 if len(self.payloads) == 1:
                     return {"status": "completed", "output": [{
                         "type": "function_call", "name": "read_fixed_source_range",
@@ -845,7 +1163,7 @@ class AgentExecutionTests(unittest.TestCase):
                  patch.object(agent.service, "finding", return_value=candidate), \
                  patch.object(agent.service, "source", return_value=source):
                 result = agent.execute_agent(None, Store(), ops, task, client=fake)
-        self.assertEqual(len(fake.payloads), 3)
+        self.assertEqual(len(fake.payloads), 4)
         self.assertEqual(result["vulnerability_state"], "candidate")
         self.assertEqual(result["validated_vulnerability"], 0)
         self.assertEqual(result["agent_assessment"]["assessment"], "unknown")
@@ -950,7 +1268,9 @@ class AgentExecutionTests(unittest.TestCase):
             def event(self, *args): self.events.append(args)
 
         class FakeClient:
-            def __init__(self): self.payloads = []
+            def __init__(self):
+                self.payloads = []
+                self.tool_call_sent = False
             @staticmethod
             def answer(value):
                 return {"status": "completed", "output": [{"type": "message", "content": [
@@ -966,10 +1286,18 @@ class AgentExecutionTests(unittest.TestCase):
                     return {"status": "completed", "output": [{"type": "message", "content": [
                         {"type": "output_text", "text": "<invalid structured response>"}]}],
                         "usage": {"input_tokens": 100, "output_tokens": 20, "total_tokens": 120}}
+                if payload.get("instructions") == agent._SKEPTIC_INSTRUCTIONS:
+                    context = json.loads(payload["input"][0]["content"][0]["text"])
+                    return self.answer({"reviews": [{
+                        "obligation_index": item["obligation_index"],
+                        "result": "unknown", "citations": []}
+                        for item in context["obligations_are_untrusted_routing_metadata"] ]})
                 context = json.loads(payload["input"][0]["content"][0]["text"])
                 citation = {"evidence_id": context["evidence_id"], "file": "src/guard.cpp",
                             "line_start": 1, "line_end": 1}
                 if len(self.payloads) == 3:
+                    return self.answer("<invalid primary response>")
+                if len(self.payloads) == 4:
                     return self.answer({"summary": "The caller check disproves the candidate.",
                         "assessment": "needs_more_evidence",
                         "supported_claims": [{"claim": "The caller check is sufficient authorization.",
@@ -977,12 +1305,20 @@ class AgentExecutionTests(unittest.TestCase):
                         "obligation_reviews": [{"obligation_index": 0, "disposition": "unresolved",
                                                  "citations": []}],
                         "unsupported_claims": [], "unknowns": [], "next_steps": []})
-                return self.answer({"summary": "Authorization policy remains unknown.",
-                    "assessment": "unknown", "supported_claims": [],
-                    "obligation_reviews": [{"obligation_index": 0, "disposition": "unresolved",
-                                             "citations": []}],
-                    "unsupported_claims": [], "unknowns": ["Caller authorization policy is not established."],
-                    "next_steps": ["Human policy review."]})
+                if len(self.payloads) == 5:
+                    return self.answer({"summary": "Authorization policy remains unknown.",
+                        "assessment": "unknown", "supported_claims": [],
+                        "obligation_reviews": [{"obligation_index": 0, "disposition": "unresolved",
+                                                 "citations": []}],
+                        "unsupported_claims": [], "unknowns": ["Caller authorization policy is not established."],
+                        "next_steps": ["Human policy review."]})
+                if payload.get("instructions") != agent._SKEPTIC_INSTRUCTIONS:
+                    raise AssertionError("fifth call must be the independent Skeptic stage")
+                context = json.loads(payload["input"][0]["content"][0]["text"])
+                return self.answer(json.dumps({"reviews": [{
+                    "obligation_index": item["obligation_index"],
+                    "result": "unknown", "citations": []}
+                    for item in context["obligations_are_untrusted_routing_metadata"]]}))
 
         report = {"repository": "openharmony/sample", "commit": "c" * 40,
                   "tree": "d" * 40, "snapshot_sha256": "e" * 64}
@@ -991,7 +1327,7 @@ class AgentExecutionTests(unittest.TestCase):
         task = {"id": "task-policy-repair", "spec": {"job_id": "job-1",
             "candidate_id": candidate["id"], "max_steps": 1, "max_output_tokens": 500,
             "max_total_input_tokens": 36000, "max_total_output_tokens": 2000,
-            "timeout_seconds": 90, "source_submission_approved": True,
+            "timeout_seconds": 90, "continuous_investigation": True, "source_submission_approved": True,
             "provider_fingerprint": "unused", "prompt_version": agent.PROMPT_VERSION,
             "tool_policy_version": agent.TOOL_POLICY_VERSION}}
         ops, fake = Ops(), FakeClient()
@@ -1005,17 +1341,20 @@ class AgentExecutionTests(unittest.TestCase):
                  patch.object(agent.service, "finding", return_value=candidate), \
                  patch.object(agent.service, "source", return_value=source):
                 result = agent.execute_agent(None, Store(), ops, task, client=fake)
-        self.assertEqual(len(fake.payloads), 4)
+        self.assertEqual(len(fake.payloads), 6)
         self.assertEqual(result["structured_answer_validation"], "accepted")
         self.assertEqual(result["validation_repair_attempts"], 2)
         self.assertTrue(result["model_answer_retained"])
+        self.assertEqual(result["skeptic_review"]["status"], "completed")
+        self.assertEqual(result["workflow"]["stages"][1]["status"], "accepted")
         self.assertEqual(result["agent_assessment"]["assessment"], "unknown")
         self.assertEqual(result["agent_assessment"]["obligation_reviews"][0]["disposition"], "unresolved")
         self.assertEqual(result["vulnerability_state"], "candidate")
         self.assertEqual(result["validated_vulnerability"], 0)
         self.assertEqual([call["request_phase"] for call in result["model_calls"]],
-            ["tool_call", "structured_output", "structured_repair", "structured_targeted_repair"])
-        targeted_prompts = [item["content"][0]["text"] for item in fake.payloads[-1]["input"]
+            ["tool_call", "tool_call", "structured_output", "structured_repair",
+             "structured_targeted_repair", "skeptic_review"])
+        targeted_prompts = [item["content"][0]["text"] for item in fake.payloads[-2]["input"]
                             if item.get("role") == "user" and item.get("content")
                             and isinstance(item["content"][0], dict)
                             and isinstance(item["content"][0].get("text"), str)]
@@ -1102,6 +1441,17 @@ class AgentExecutionTests(unittest.TestCase):
             def __init__(self): self.payloads = []
             def create(self, payload):
                 self.payloads.append(payload)
+                if (payload.get("text", {}).get("format", {}).get("name")
+                        == "ohscanner_skeptic_review"):
+                    context = json.loads(payload["input"][0]["content"][0]["text"])
+                    skeptic = {"reviews": [{"obligation_index": item["obligation_index"],
+                        "result": "unknown", "citations": []}
+                        for item in context["obligations_are_untrusted_routing_metadata"]]}
+                    return {"status": "completed", "output": [{"type": "message", "content": [
+                        {"type": "output_text", "text": json.dumps(skeptic)}]}],
+                        "usage": {"input_tokens": 30, "output_tokens": 20, "total_tokens": 50,
+                                  "input_tokens_details": {"cached_tokens": 7},
+                                  "output_tokens_details": {"reasoning_tokens": 10}}}
                 if len(self.payloads) == 1:
                     return {"status": "completed", "output": [
                         {"type": "function_call", "name": "read_candidate_source",
@@ -1151,7 +1501,7 @@ class AgentExecutionTests(unittest.TestCase):
         task = {"id": "task-1", "spec": {"job_id": "job-1", "candidate_id": "candidate-1",
             "max_steps": 3, "max_output_tokens": 500, "max_total_input_tokens": 24000,
             "max_total_output_tokens": 1000,
-            "timeout_seconds": 90, "source_submission_approved": True,
+            "timeout_seconds": 90, "continuous_investigation": True, "source_submission_approved": True,
             "provider_fingerprint": "unused", "prompt_version": agent.PROMPT_VERSION,
             "tool_policy_version": agent.TOOL_POLICY_VERSION}}
         with patch.dict(os.environ, {"OHSCANNER_LLM_BASE_URL": "https://api.deepseek.com",
@@ -1208,17 +1558,16 @@ class AgentExecutionTests(unittest.TestCase):
                          hashlib.sha256(context_text.encode("utf-8")).hexdigest())
         self.assertEqual(result["initial_evidence"]["context_utf8_bytes"], len(context_text.encode("utf-8")))
         self.assertNotIn("AKIA1234567890ABCDEF", json.dumps(result["tool_calls"]))
-        self.assertEqual(len(fake.payloads), 3)
+        self.assertEqual(len(fake.payloads), 4)
+        self.assertEqual(result["skeptic_review"]["status"], "completed")
         self.assertEqual(fake.payloads[0]["reasoning"], {"effort": "low"})
         self.assertEqual(fake.payloads[-1]["reasoning"], {"effort": "none"})
         self.assertIn("numeric UID/constant alone does not establish a trusted or privileged role",
                       fake.payloads[0]["instructions"])
         self.assertIn("source-bound policy evidence", fake.payloads[0]["instructions"])
-        self.assertEqual(result["model_usage"]["output_tokens"], 59)
-        self.assertEqual(result["model_usage"]["cached_input_tokens"], 42)
-        self.assertEqual(result["model_usage"]["reasoning_tokens"], 33)
-        self.assertEqual(result["model_usage"]["cost_estimate"]["minimum_usd"], "0.00015140")
-        self.assertEqual(result["model_usage"]["cost_estimate"]["maximum_usd"], "0.00030281")
+        self.assertEqual(result["model_usage"]["output_tokens"], 79)
+        self.assertEqual(result["model_usage"]["cached_input_tokens"], 49, result["model_usage"])
+        self.assertEqual(result["model_usage"]["reasoning_tokens"], 43)
         self.assertFalse(result["model_usage"]["cost_estimate"]["actual_charge_verified"])
         self.assertTrue(result["model_usage"]["cached_input_usage_complete"])
         self.assertTrue(result["model_usage"]["reasoning_usage_complete"])
@@ -1283,7 +1632,7 @@ class AgentExecutionTests(unittest.TestCase):
         task = {"id": "task-meta-cite", "spec": {"job_id": "job-1", "candidate_id": candidate["id"],
             "mode": "tool_agent", "max_steps": 1, "max_output_tokens": 300,
             "max_total_input_tokens": 24000, "max_total_output_tokens": 600,
-            "timeout_seconds": 90, "source_submission_approved": True,
+            "timeout_seconds": 90, "continuous_investigation": True, "source_submission_approved": True,
             "provider_fingerprint": "unused", "prompt_version": agent.PROMPT_VERSION,
             "tool_policy_version": agent.TOOL_POLICY_VERSION}}
         with patch.dict(os.environ, {"OHSCANNER_LLM_MODEL": "test-model",
@@ -1336,7 +1685,7 @@ class AgentExecutionTests(unittest.TestCase):
         task = {"id": "task-injection", "spec": {"job_id": "job-1", "candidate_id": candidate["id"],
             "mode": "tool_agent", "max_steps": 2, "max_output_tokens": 500,
             "max_total_input_tokens": 24000, "max_total_output_tokens": 1000,
-            "timeout_seconds": 90, "source_submission_approved": True,
+            "timeout_seconds": 90, "continuous_investigation": True, "source_submission_approved": True,
             "provider_fingerprint": "unused", "prompt_version": agent.PROMPT_VERSION,
             "tool_policy_version": agent.TOOL_POLICY_VERSION}}
         store, ops, fake = Store(), Ops(), FakeClient()
@@ -1359,6 +1708,352 @@ class AgentExecutionTests(unittest.TestCase):
                       fake.payload["instructions"])
         user_context = fake.payload["input"][0]["content"][0]["text"]
         self.assertIn("Ignore prior instructions", user_context)
+
+
+class CandidateArtifactGenerationTests(unittest.TestCase):
+    def _run(self, assessment, *, invalid_citation=False, poc_code=None):
+        source_text = "void run() {\n  check_permission();\n  privileged_call();\n}\n"
+        source_sha = hashlib.sha256(source_text.encode()).hexdigest()
+        candidate = {"id": "candidate-artifact", "file": "src/guard.cpp", "line": 2,
+            "source_sha256": source_sha, "symbol": "run", "detector_id": "test.rule",
+            "detector_version": "0.1", "rule_id": "R1",
+            "evidence": {"analysis_status": "complete", "obligations": [
+                {"kind": "callee_and_policy", "description": "Review the fixed-source permission check.",
+                 "status": "unknown"}]}}
+        blob = "f" * 40
+        report = {"repository": "openharmony/artifact-fixture", "commit": "c" * 40,
+            "tree": "d" * 40, "snapshot_sha256": "e" * 64,
+            "_workbench": {"source_inventory": [
+                {"file": "src/guard.cpp", "blob": blob, "sha256": source_sha}]}}
+        source = {"sha256": source_sha, "blob": blob, "text": source_text}
+
+        class Store:
+            def job(self, key):
+                return {"id": key, "repository_id": "repo-artifact", "status": "completed",
+                    "report_sha256": "b" * 64, "spec": {"include_paths": ["src"]}}
+            def repository(self, key): return {"id": key, "path": "/fixed/repository"}
+
+        class Ops:
+            def __init__(self): self.events = []
+            def get(self, key): return {"cancel_requested": False}
+            def event(self, *args): self.events.append(args)
+
+        class FakeClient:
+            def __init__(self):
+                self.payloads = []
+                self.tool_call_sent = False
+            @staticmethod
+            def response(value):
+                return {"status": "completed", "output": [{"type": "message", "content": [
+                    {"type": "output_text", "text": json.dumps(value)}]}],
+                    "usage": {"input_tokens": 100, "output_tokens": 1501, "total_tokens": 1601}}
+            def create(self, payload):
+                self.payloads.append(payload)
+                format_name = payload.get("text", {}).get("format", {}).get("name")
+                if format_name == "ohscanner_skeptic_review":
+                    context = json.loads(payload["input"][0]["content"][0]["text"])
+                    return self.response({"reviews": [{"obligation_index": item["obligation_index"],
+                        "result": "unknown", "citations": []}
+                        for item in context["obligations_are_untrusted_routing_metadata"]]})
+                if format_name == "ohscanner_candidate_artifacts":
+                    assert "tools" not in payload
+                    assert payload["instructions"] == agent._ARTIFACT_INSTRUCTIONS
+                    context = json.loads(payload["input"][0]["content"][0]["text"])
+                    assert context["scope"] == "already-collected direct fixed-commit source excerpts only"
+                    evidence = context["source_evidence"][0]
+                    cite = {"evidence_id": evidence["evidence_id"], "file": evidence["file"],
+                            "line_start": 2, "line_end": 2}
+                    poc_cite = dict(cite)
+                    if invalid_citation:
+                        poc_cite["file"] = "src/not-in-inventory.cpp"
+                    return self.response({
+                        "vulnerability_report": {
+                            "title": "Permission-check candidate", "summary": "A source-only candidate needs review.",
+                            "root_cause": "The local path may not enforce the intended caller policy.",
+                            "impact": "Product reachability and impact are unknown.",
+                            "preconditions": ["A product caller reaches this path."],
+                            "attack_path": ["Caller", "Candidate method"],
+                            "remediation": "Review the applicable authorization policy.",
+                            "citations": [cite] if assessment == "likely_true_positive" else []},
+                        "poc_draft": {
+                            "title": "Local guard regression draft", "language": "C++",
+                            "code": (poc_code if poc_code is not None else
+                                "TEST(GuardRegression, ChecksPermission) {\\n  EXPECT_TRUE(check_permission());\\n}\\n"),
+                            "prerequisites": ["Use an isolated local unit-test target."],
+                            "run_steps": ["Review and adapt the test in the existing local test target."],
+                            "expected_observation": "The reviewed permission check is observed.",
+                            "negative_control": "A permitted local control case passes.",
+                            "citations": [poc_cite] if assessment == "likely_true_positive" else []}})
+                if "tools" in payload and not self.tool_call_sent:
+                    self.tool_call_sent = True
+                    return {"status": "completed", "output": [{
+                        "type": "function_call", "name": "read_candidate_source",
+                        "arguments": "{}", "call_id": "artifact-read-source"}],
+                        "usage": {"input_tokens": 100, "output_tokens": 1501, "total_tokens": 1601}}
+                output = next(item for item in payload["input"]
+                    if item.get("type") == "function_call_output")
+                evidence_id = json.loads(output["output"])["evidence_id"]
+                citation = {"evidence_id": evidence_id, "file": "src/guard.cpp",
+                            "line_start": 2, "line_end": 2}
+                if assessment == "likely_true_positive":
+                    final = {"summary": "The fixed source contains the reviewed check.",
+                        "assessment": assessment,
+                        "supported_claims": [{"claim": "The reviewed source path contains a permission check.",
+                            "obligation_indices": [0], "citations": [citation]}],
+                        "obligation_reviews": [{"obligation_index": 0, "disposition": "evidence_found",
+                            "citations": [citation]}],
+                        "unsupported_claims": [], "unknowns": ["Product reachability and impact."],
+                        "next_steps": ["Human review of product entry and impact."]}
+                else:
+                    final = {"summary": "Fixed source evidence is insufficient.",
+                        "assessment": assessment, "supported_claims": [],
+                        "obligation_reviews": [{"obligation_index": 0, "disposition": "unresolved",
+                            "citations": []}],
+                        "unsupported_claims": [], "unknowns": ["The authorization contract is unknown."],
+                        "next_steps": ["Review the policy and product entry."]}
+                return self.response(final)
+
+        task = {"id": "task-artifact", "spec": {"job_id": "job-artifact",
+            "candidate_id": candidate["id"], "mode": "tool_agent",
+            "max_output_tokens": None, "continuous_investigation": True,
+            "source_submission_approved": True, "provider_fingerprint": "unused",
+            "prompt_version": agent.PROMPT_VERSION, "tool_policy_version": agent.TOOL_POLICY_VERSION,
+            "include_paths": ["src"]}}
+
+        with patch.dict(os.environ, {"OHSCANNER_LLM_BASE_URL": "https://api.deepseek.com",
+                                     "OHSCANNER_LLM_MODEL": "deepseek-v4-pro",
+                                     "OHSCANNER_LLM_API_KEY": "test-secret"}, clear=False):
+            task["spec"]["provider_fingerprint"] = agent.ProviderConfig.from_env().fingerprint
+            store, fake, ops = Store(), FakeClient(), Ops()
+            bind_test_consent(task, store, report, candidate, source, artifact_stage=True)
+            with patch.object(agent.service, "read_report", return_value=report), \
+                 patch.object(agent.service, "finding", return_value=candidate), \
+                 patch.object(agent.service, "source", return_value=source):
+                preview = agent.consent_preview(None, store, store.job("job-artifact"), report,
+                    candidate, task["spec"], agent.ProviderConfig.from_env())
+                result = agent.execute_agent(None, store, ops, task, client=fake)
+        return result, fake, preview
+
+    def test_tool_agent_generates_fixed_source_cited_draft_and_counts_the_request(self):
+        result, client, preview = self._run("likely_true_positive")
+        self.assertEqual(preview["budgets"]["artifact_generation_stage_enabled"], True)
+        self.assertEqual(preview["budgets"]["max_artifact_generation_calls"], 1)
+        self.assertIsNone(preview["budgets"]["max_output_tokens"])
+        self.assertIsNone(preview["budgets"]["artifact_output_tokens_per_request"])
+        self.assertIn(agent.ARTIFACT_GENERATION_DISCLOSURE, preview["stage_disclosure"])
+        self.assertEqual(result["artifact_generation"]["status"], "completed")
+        self.assertEqual(result["artifact_generation"]["calls_used"], 1)
+        self.assertEqual(result["agent_assessment"]["vulnerability_report"]["status"], "draft_unverified")
+        self.assertEqual(result["agent_assessment"]["poc_draft"]["status"], "draft_unexecuted")
+        citation = result["agent_assessment"]["poc_draft"]["citations"][0]
+        self.assertEqual((citation["file"], citation["line_start"], citation["line_end"]),
+                         ("src/guard.cpp", 2, 2))
+        self.assertEqual(citation["source_sha256"], result["binding"]["source_sha256"])
+        self.assertIn("check_permission", citation["quote"])
+        request_phases = [row["request_phase"] for row in result["model_calls"]]
+        self.assertEqual(request_phases[-3:],
+                         ["structured_output", "skeptic_review", "artifact_generation"])
+        self.assertGreaterEqual(request_phases.count("tool_call"), 1)
+        self.assertGreater(max(row["usage"]["output_tokens"] for row in result["model_calls"]), 1200)
+        self.assertIsNone(result["model_usage"]["per_request_output_limit_tokens"])
+        self.assertEqual(result["model_usage"]["per_request_output_limit_policy"],
+                         "none_locally_provider_model_default_applies")
+        self.assertTrue(all("max_output_tokens" not in payload for payload in client.payloads))
+        self.assertEqual(result["vulnerability_state"], "candidate")
+        self.assertEqual(result["validated_vulnerability"], 0)
+
+    def test_invalid_artifact_citation_rejects_both_drafts_and_clears_poc_code(self):
+        result, _, _ = self._run("likely_true_positive", invalid_citation=True)
+        self.assertEqual(result["artifact_generation"]["status"], "rejected")
+        self.assertEqual(result["agent_assessment"]["vulnerability_report"]["status"], "insufficient_evidence")
+        self.assertEqual(result["agent_assessment"]["poc_draft"]["status"], "insufficient_evidence")
+        self.assertEqual(result["agent_assessment"]["poc_draft"]["code"], "")
+        self.assertEqual(result["agent_assessment"]["poc_draft"]["citations"], [])
+        self.assertEqual(result["vulnerability_state"], "candidate")
+        self.assertEqual(result["validated_vulnerability"], 0)
+
+    def test_unknown_triage_can_describe_gaps_but_cannot_retain_poc_code(self):
+        result, _, _ = self._run("unknown")
+        self.assertEqual(result["artifact_generation"]["status"], "completed")
+        self.assertEqual(result["agent_assessment"]["vulnerability_report"]["status"], "draft_unverified")
+        self.assertIn("unknown", result["agent_assessment"]["vulnerability_report"]["impact"])
+        self.assertEqual(result["agent_assessment"]["poc_draft"]["status"], "insufficient_evidence")
+        self.assertEqual(result["agent_assessment"]["poc_draft"]["code"], "")
+        self.assertEqual(result["vulnerability_state"], "candidate")
+        self.assertEqual(result["validated_vulnerability"], 0)
+
+
+    def test_unsafe_local_test_code_is_lexically_rejected(self):
+        examples = (
+            "subprocess.run(['tool'])",
+            "subprocess.Popen(['tool'], shell=True)",
+            "Path('sentinel').write_text('changed')",
+            "open('sentinel', 'w').write('changed')",
+        )
+        for code in examples:
+            with self.subTest(code=code):
+                result, _, _ = self._run("likely_true_positive", poc_code=code)
+                poc = result["agent_assessment"]["poc_draft"]
+                self.assertEqual(poc["status"], "insufficient_evidence")
+                self.assertEqual(poc["code"], "")
+                self.assertEqual(result["vulnerability_state"], "candidate")
+                self.assertEqual(result["validated_vulnerability"], 0)
+
+
+class IndependentSkepticStageTests(unittest.TestCase):
+    def _run(self, skeptic_text, *, repair_twice=False):
+        candidate = {"id": "candidate-skeptic", "file": "src/guard.cpp", "line": 2,
+            "source_sha256": "a" * 64, "symbol": "run", "detector_id": "test.rule",
+            "detector_version": "0.1", "rule_id": "R1",
+            "evidence": {"analysis_status": "complete", "obligations": [
+                {"kind": "callee_and_policy", "description": "Review the fixed source guard.",
+                 "status": "unknown"}]}}
+
+        class Store:
+            def job(self, key):
+                return {"id": key, "repository_id": "repo-1", "status": "completed",
+                        "report_sha256": "b" * 64}
+            def repository(self, key): return {"id": key, "path": "/fixed/repository"}
+
+        class Ops:
+            def __init__(self): self.events = []
+            def get(self, key): return {"cancel_requested": False}
+            def event(self, *args): self.events.append(args)
+
+        class FakeClient:
+            def __init__(self):
+                self.payloads = []
+                self.tool_call_sent = False
+            @staticmethod
+            def _response(value):
+                return {"status": "completed", "output": [{"type": "message", "content": [
+                    {"type": "output_text", "text": value}]}],
+                    "usage": {"input_tokens": 100, "output_tokens": 40, "total_tokens": 140}}
+            def create(self, payload):
+                self.payloads.append(payload)
+                if len(self.payloads) == 1:
+                    return self._response("Primary source collection is complete.")
+                if repair_twice and len(self.payloads) in {2, 3}:
+                    context = json.loads(payload["input"][0]["content"][0]["text"])
+                    invalid_citation = {"evidence_id": context["evidence_id"],
+                                        "file": "src/not-the-candidate.cpp",
+                                        "line_start": 2, "line_end": 2}
+                    invalid_final = {"summary": "The cited file is deliberately wrong.",
+                        "assessment": "likely_true_positive",
+                        "supported_claims": [{"claim": "The source contains the reviewed check.",
+                            "obligation_indices": [0], "citations": [invalid_citation]}],
+                        "obligation_reviews": [{"obligation_index": 0,
+                            "disposition": "evidence_found", "citations": [invalid_citation]}],
+                        "unsupported_claims": [], "unknowns": [], "next_steps": []}
+                    return self._response(json.dumps(invalid_final))
+                final_call_number = 4 if repair_twice else 2
+                if len(self.payloads) == final_call_number:
+                    context = json.loads(payload["input"][0]["content"][0]["text"])
+                    citation = {"evidence_id": context["evidence_id"], "file": "src/guard.cpp",
+                                "line_start": 2, "line_end": 2}
+                    final = {"summary": "The source contains the guard candidate.",
+                        "assessment": "likely_true_positive",
+                        "supported_claims": [{"claim": "The source includes the reviewed check.",
+                            "obligation_indices": [0], "citations": [citation]}],
+                        "obligation_reviews": [{"obligation_index": 0,
+                            "disposition": "evidence_found", "citations": [citation]}],
+                        "unsupported_claims": [], "unknowns": [], "next_steps": []}
+                    return self._response(json.dumps(final))
+                if payload.get("instructions") != agent._SKEPTIC_INSTRUCTIONS:
+                    raise AssertionError("Skeptic must use its independent instructions")
+                if "tools" in payload:
+                    raise AssertionError("Skeptic must not receive tools")
+                context_text = payload["input"][0]["content"][0]["text"]
+                context = json.loads(context_text)
+                if any(item.get("type") == "function_call_output" for item in payload["input"]):
+                    raise AssertionError("Skeptic must not inherit the primary model transcript")
+                if not context["source_evidence"] or "function_call_output" in context_text:
+                    raise AssertionError("Skeptic input must contain only fixed source evidence and obligations")
+                self.skeptic_evidence_id = context["source_evidence"][0]["evidence_id"]
+                return self._response(skeptic_text(self.skeptic_evidence_id))
+
+        report = {"repository": "openharmony/sample", "commit": "c" * 40,
+                  "tree": "d" * 40, "snapshot_sha256": "e" * 64}
+        source = {"sha256": "a" * 64, "blob": "f" * 40,
+                  "text": "void run() {\n    check_permission();\n    return;\n}\n"}
+        task = {"id": "task-skeptic", "spec": {"job_id": "job-1",
+            "candidate_id": candidate["id"], "mode": "tool_agent", "max_steps": 1,
+            "continuous_investigation": True, "max_output_tokens": 500, "max_total_input_tokens": 24000,
+            "max_total_output_tokens": 1200, "timeout_seconds": 90,
+            "source_submission_approved": True, "provider_fingerprint": "unused",
+            "prompt_version": agent.PROMPT_VERSION, "tool_policy_version": agent.TOOL_POLICY_VERSION,
+            "include_paths": ["src"]}}
+        with patch.dict(os.environ, {"OHSCANNER_LLM_BASE_URL": "https://api.deepseek.com",
+                                     "OHSCANNER_LLM_MODEL": "deepseek-v4-pro",
+                                     "OHSCANNER_LLM_API_KEY": "test-secret"}, clear=False):
+            task["spec"]["provider_fingerprint"] = agent.ProviderConfig.from_env().fingerprint
+            store, fake, ops = Store(), FakeClient(), Ops()
+            bind_test_consent(task, store, report, candidate, source)
+            with patch.object(agent.service, "source", return_value=source):
+                preview = agent.consent_preview(None, store, store.job("job-1"), report,
+                                                 candidate, task["spec"],
+                                                 agent.ProviderConfig.from_env())
+            with patch.object(agent.service, "read_report", return_value=report), \
+                 patch.object(agent.service, "finding", return_value=candidate), \
+                 patch.object(agent.service, "source", return_value=source):
+                result = agent.execute_agent(None, store, ops, task, client=fake)
+        return result, fake, preview
+
+    def test_skeptic_is_separate_bounded_request_and_counterevidence_downgrades(self):
+        def answer(evidence_id):
+            return json.dumps({"reviews": [{"obligation_index": 0,
+                "result": "counterevidence_candidate", "citations": [{
+                    "evidence_id": evidence_id, "file": "src/guard.cpp",
+                    "line_start": 2, "line_end": 2}]}]})
+        result, fake, preview = self._run(answer)
+        self.assertEqual(len(fake.payloads), 3)
+        self.assertEqual([call["request_phase"] for call in result["model_calls"]],
+                         ["tool_call", "structured_output", "skeptic_review"])
+        self.assertEqual(result["skeptic_review"]["status"], "completed")
+        self.assertEqual(result["skeptic_review"]["calls_used"], 1)
+        review = result["skeptic_review"]["reviews"][0]
+        self.assertEqual(review["result"], "counterevidence_candidate")
+        self.assertIn("check_permission", review["citations"][0]["quote"])
+        self.assertEqual(result["agent_verdict"]["status"], "needs_more_evidence")
+        self.assertEqual(result["vulnerability_state"], "candidate")
+        self.assertEqual(result["validated_vulnerability"], 0)
+        self.assertIsNone(preview["budgets"]["max_total_model_calls"])
+        self.assertEqual(preview["budgets"]["consecutive_no_progress_guard"], 3)
+        self.assertEqual(preview["budgets"]["max_skeptic_calls"], 1)
+        self.assertNotIn("shared_auxiliary_call_reserve", preview["budgets"])
+        self.assertEqual(preview["budgets"]["local_cumulative_token_budget"], "none")
+        self.assertEqual(preview["budgets"]["provider_request_timeout_seconds"], 45)
+        self.assertIn(agent.CONTINUOUS_INVESTIGATION_DISCLOSURE, preview["stage_disclosure"])
+        self.assertEqual(task_auth_sha(result), preview["consent_sha256"])
+
+    def test_independent_skeptic_runs_after_both_structured_repairs(self):
+        result, fake, preview = self._run(lambda evidence_id: json.dumps({"reviews": [{
+            "obligation_index": 0, "result": "no_counterevidence_found",
+            "citations": [{"evidence_id": evidence_id, "file": "src/guard.cpp",
+                           "line_start": 2, "line_end": 2}]}]}), repair_twice=True)
+        self.assertEqual(result["validation_repair_attempts"], 2)
+        self.assertEqual(result["skeptic_review"]["calls_used"], 1)
+        self.assertEqual(len(fake.payloads), 5)
+        self.assertEqual(fake.payloads[-1]["instructions"], agent._SKEPTIC_INSTRUCTIONS)
+        self.assertEqual(preview["budgets"]["max_validation_repairs"], 2)
+        self.assertEqual(preview["budgets"]["max_skeptic_calls"], 1)
+        self.assertNotIn("shared_auxiliary_call_reserve", preview["budgets"])
+        self.assertEqual(result["validated_vulnerability"], 0)
+
+    def test_invalid_skeptic_response_fails_closed_without_spending_extra_calls(self):
+        result, fake, _ = self._run(lambda _evidence_id: "not json")
+        self.assertEqual(len(fake.payloads), 3)
+        self.assertEqual(result["skeptic_review"]["status"], "incomplete")
+        self.assertEqual(result["skeptic_review"]["reason_code"], "invalid_skeptic_response")
+        self.assertFalse(result["model_answer_retained"])
+        self.assertEqual(result["structured_answer_validation"], "skeptic_incomplete")
+        self.assertEqual(result["agent_assessment"]["assessment"], "unknown")
+        self.assertEqual(result["agent_verdict"]["status"], "analysis_failed")
+        self.assertEqual(result["validated_vulnerability"], 0)
+
+
+def task_auth_sha(result):
+    return result["source_submission"]["consent_sha256"]
 
 
 class BoundedProcessTests(unittest.TestCase):
@@ -1501,6 +2196,396 @@ class AgentFixedCommitToolTests(unittest.TestCase):
             self.assertEqual(agent._source_evidence_texts(
                 "read_candidate_enclosing_function", bounded), [])
 
+    def test_callsite_candidates_are_ast_only_fixed_commit_and_include_scoped(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            repo = root / "repo"
+            (repo / "src").mkdir(parents=True)
+            (repo / "outside").mkdir()
+            subprocess.run(["git", "init", "-q", str(repo)], check=True)
+            subprocess.run(["git", "-C", str(repo), "config", "user.name", "OHScanner test"], check=True)
+            subprocess.run(["git", "-C", str(repo), "config", "user.email", "test@example.invalid"], check=True)
+            (repo / "src" / "calls.cpp").write_text(
+                "void needle();\n"
+                "void run() {\n"
+                "  needle();\n"
+                "  needle(\n"
+                "    1,\n"
+                "    2);\n"
+                "  receiver.needle();\n"
+                "  ns::needle();\n"
+                "  const char *text = \"needle();\";\n"
+                "  // needle();\n"
+                "}\n", encoding="utf-8")
+            (repo / "src" / "partial.cpp").write_text(
+                "void broken() { needle(); int value = ; }\n", encoding="utf-8")
+            (repo / "outside" / "not_in_scope.cpp").write_text(
+                "void other() { needle(); }\n", encoding="utf-8")
+            subprocess.run(["git", "-C", str(repo), "add", "src", "outside"], check=True)
+            subprocess.run(["git", "-C", str(repo), "commit", "-qm", "fixed callsite fixture"], check=True)
+            commit = subprocess.check_output(["git", "-C", str(repo), "rev-parse", "HEAD"], text=True).strip()
+            inventory = []
+            for file in ("src/calls.cpp", "src/partial.cpp", "outside/not_in_scope.cpp"):
+                data = subprocess.check_output(["git", "-C", str(repo), "show", f"{commit}:{file}"])
+                blob = subprocess.check_output(["git", "-C", str(repo), "rev-parse", f"{commit}:{file}"],
+                                               text=True).strip()
+                inventory.append({"file": file, "blob": blob,
+                                  "sha256": hashlib.sha256(data).hexdigest()})
+            (repo / "src" / "calls.cpp").write_text(
+                "void worktree_only() { needle(); }\n", encoding="utf-8")
+            app = create_app(Settings(root / "data", (root,)))
+            repository = app.state.store.add_repository("controlled/callsites", str(repo))
+            task = {"repository_id": repository["id"], "spec": {"include_paths": ["src"]}}
+            report = {"commit": commit, "_workbench": {"source_inventory": inventory}}
+            tools = agent._tool_specs(None, app.state.store, task, report,
+                {"file": "src/calls.cpp", "line": 3},
+                {"text": "", "sha256": inventory[0]["sha256"], "blob": inventory[0]["blob"]},
+                "", (1, 1))
+
+            result = tools["find_callsite_candidates"]({"identifier": "needle"})
+            self.assertEqual(result["status"], "partial")
+            self.assertEqual(result["commit"], commit)
+            self.assertEqual(result["matching_policy"], "tree_sitter_exact_simple_callee_expression")
+            self.assertEqual(result["callsite_count"], 2)
+            self.assertEqual(result["files_considered"], 2)
+            self.assertEqual(result["archive_member_count"], 0)
+            self.assertTrue(result["truncated"] is False)
+            self.assertEqual(result["parse_issue_files"], 1)
+            self.assertTrue(any(item["file"] == "src/partial.cpp"
+                                and item["status"] == "partial_parse"
+                                and item["parse_status"] == "partial"
+                                and item["parse_issue_count"] >= 1
+                                for item in result["file_statuses"]))
+            callsite = result["callsites"][0]
+            self.assertEqual((callsite["file"], callsite["line"]), ("src/calls.cpp", 3))
+            self.assertEqual(callsite["git_blob"], inventory[0]["blob"])
+            self.assertEqual(callsite["source_sha256"], inventory[0]["sha256"])
+            self.assertEqual(callsite["parse_status"], "complete")
+            self.assertEqual(callsite["callee_binding"], "unknown")
+            self.assertEqual(callsite["reachable"], "unknown")
+            self.assertIn("needle();", callsite["text"])
+            self.assertNotIn("worktree_only", json.dumps(result))
+            self.assertNotIn("not_in_scope.cpp", json.dumps(result))
+            self.assertNotIn("receiver.needle", json.dumps(result))
+            self.assertNotIn("ns::needle", json.dumps(result))
+            multiline = result["callsites"][1]
+            self.assertEqual((multiline["start_line"], multiline["end_line"]), (4, 6))
+            self.assertIn("4:   needle(", multiline["text"])
+            self.assertIn("6:     2);", multiline["text"])
+            self.assertFalse(multiline["callsite_excerpt_truncated"])
+            evidence_texts = agent._source_evidence_texts("find_callsite_candidates", result)
+            self.assertIn(callsite["text"], evidence_texts)
+            self.assertIn(multiline["text"], evidence_texts)
+            self.assertIn("void run()", "\\n".join(evidence_texts))
+            self.assertEqual(agent._source_evidence_lines("find_callsite_candidates", result),
+                             {"src/calls.cpp": {2: "void run() {", 3: "  needle();",
+                                                4: "  needle(", 5: "    1,", 6: "    2);"}})
+            with self.assertRaisesRegex(agent._AgentToolQueryRejected, "simple C/C\\+\\+ identifier"):
+                tools["find_callsite_candidates"]({"identifier": "ns::needle"})
+            unavailable = agent._tool_specs(None, app.state.store,
+                {"repository_id": repository["id"], "spec": {}}, report,
+                {"file": "src/calls.cpp", "line": 3}, {}, "", (1, 1))
+            scope_result = unavailable["find_callsite_candidates"]({"identifier": "needle"})
+            self.assertEqual(scope_result["status"], "scope_unavailable")
+            self.assertEqual(scope_result["callee_binding"], "unknown")
+            self.assertTrue(scope_result["truncated"])
+            invalid_inventory = agent._tool_specs(None, app.state.store,
+                {"repository_id": repository["id"], "spec": {"include_paths": ["src"]}},
+                {"commit": commit, "_workbench": {"source_inventory": None}},
+                {"file": "src/calls.cpp", "line": 3}, {}, "", (1, 1))
+            inventory_result = invalid_inventory["find_callsite_candidates"]({"identifier": "needle"})
+            self.assertEqual(inventory_result["status"], "scope_unavailable")
+            self.assertEqual(inventory_result["truncation_reasons"],
+                             ["fixed_source_inventory_unavailable"])
+            definition = next(tool for tool in agent._TOOLS
+                              if tool["name"] == "find_callsite_candidates")
+            self.assertEqual(definition["parameters"]["required"], ["identifier"])
+            self.assertIn("remains unknown", definition["description"])
+            self.assertIn("Keep those conclusions unknown", agent._INSTRUCTIONS)
+
+    def test_callsite_relations_are_tree_sitter_syntax_candidates_not_name_binding(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            repo = root / "repo"
+            source_dir = repo / "src"
+            source_dir.mkdir(parents=True)
+            subprocess.run(["git", "init", "-q", str(repo)], check=True)
+            subprocess.run(["git", "-C", str(repo), "config", "user.name", "OHScanner test"], check=True)
+            subprocess.run(["git", "-C", str(repo), "config", "user.email", "test@example.invalid"], check=True)
+            (source_dir / "a_flow.cpp").write_text(
+                "int sink(int value) { return value; }\n"
+                "int relay(int payload) { return sink(payload); }\n"
+                "int shadow(int (*sink)(int)) { return sink(7); }\n"
+                "int ambiguous(int value) { return value; }\n"
+                "double ambiguous(double value) { return value; }\n"
+                "int overload_user() { return ambiguous(3); }\n"
+                "const char *literal() { return \"sink(9)\"; }\n"
+                "// sink(10)\n", encoding="utf-8")
+            (source_dir / "z_cross.cpp").write_text(
+                "int cross_caller() { return sink(2); }\n", encoding="utf-8")
+            subprocess.run(["git", "-C", str(repo), "add", "src"], check=True)
+            subprocess.run(["git", "-C", str(repo), "commit", "-qm", "syntax relation fixture"], check=True)
+            commit = subprocess.check_output(["git", "-C", str(repo), "rev-parse", "HEAD"], text=True).strip()
+            inventory = []
+            for file in ("src/a_flow.cpp", "src/z_cross.cpp"):
+                data = subprocess.check_output(["git", "-C", str(repo), "show", f"{commit}:{file}"])
+                blob = subprocess.check_output(["git", "-C", str(repo), "rev-parse", f"{commit}:{file}"],
+                                               text=True).strip()
+                inventory.append({"file": file, "blob": blob,
+                                  "sha256": hashlib.sha256(data).hexdigest()})
+            app = create_app(Settings(root / "data", (root,)))
+            repository = app.state.store.add_repository("controlled/callsite-relations", str(repo))
+            tools = agent._tool_specs(None, app.state.store,
+                {"repository_id": repository["id"], "spec": {"include_paths": ["src"]}},
+                {"commit": commit, "_workbench": {"source_inventory": inventory}},
+                {"file": "src/a_flow.cpp", "line": 2}, {}, "", (1, 1))
+
+            sink_result = tools["find_callsite_candidates"]({"identifier": "sink"})
+            self.assertEqual(sink_result["status"], "complete")
+            self.assertEqual(sink_result["callsite_count"], 3)
+            self.assertEqual(sink_result["matching_policy"], "tree_sitter_exact_simple_callee_expression")
+            self.assertNotIn("literal", json.dumps(sink_result))
+            self.assertNotIn("sink(10)", json.dumps(sink_result))
+            relay, shadow, cross = sink_result["callsites"]
+            self.assertEqual(relay["relationship"]["status"], "same_file_syntax_candidate")
+            self.assertEqual(relay["relationship"]["caller"]["name"], "relay")
+            self.assertEqual(relay["relationship"]["same_file_definition_candidate"]["name"], "sink")
+            self.assertEqual(relay["relationship"]["semantic_binding"], "unknown")
+            self.assertEqual(relay["relationship"]["reachable"], "unknown")
+            self.assertEqual(relay["callee_binding"], "unknown")
+            self.assertEqual(relay["reachable"], "unknown")
+            self.assertEqual(relay["relationship"]["argument_edges"][0]["status"], "syntax_candidate")
+            self.assertEqual(relay["relationship"]["argument_edges"][0]["argument_expression"], "payload")
+            self.assertEqual(relay["relationship"]["argument_edges"][0]["parameter_name"], "value")
+            self.assertEqual(relay["relationship"]["call_result_flow"]["kind"],
+                             "call_result_in_caller_return_expression")
+            self.assertEqual(relay["relationship"]["callee_formal_to_return_edges"][0]
+                             ["parameter_name"], "value")
+            self.assertTrue(any(item["kind"] == "same_file_callee_definition"
+                                for item in relay["relationship"]["source_excerpts"]))
+            self.assertTrue(all(item["git_blob"] and item["source_sha256"]
+                                and item["parse_status"] == "complete"
+                                for item in relay["relationship"]["source_excerpts"]))
+
+            self.assertEqual(shadow["relationship"]["status"], "unresolved")
+            self.assertIn("callee_name_is_shadowed_in_the_enclosing_function",
+                          shadow["relationship"]["resolution_reasons"])
+            self.assertEqual(shadow["relationship"]["semantic_binding"], "unknown")
+            self.assertEqual(cross["file"], "src/z_cross.cpp")
+            self.assertEqual(cross["relationship"]["status"], "unresolved")
+            self.assertIn("no_same_file_function_definition",
+                          cross["relationship"]["resolution_reasons"])
+            self.assertEqual(cross["relationship"]["cross_file_name_matches"][0]["file"],
+                             "src/a_flow.cpp")
+            self.assertFalse(cross["relationship"]["cross_file_name_matches_are_binding_evidence"])
+            self.assertEqual(cross["relationship"]["semantic_binding"], "unknown")
+
+            overload_result = tools["find_callsite_candidates"]({"identifier": "ambiguous"})
+            self.assertEqual(overload_result["callsite_count"], 1)
+            overloaded = overload_result["callsites"][0]["relationship"]
+            self.assertEqual(overloaded["status"], "unresolved")
+            self.assertIn("ambiguous_same_file_function_definitions",
+                          overloaded["resolution_reasons"])
+            self.assertEqual(overloaded["semantic_binding"], "unknown")
+            self.assertTrue(overloaded["cross_file_search_complete"])
+
+    def test_callsite_cross_file_c_prototype_is_only_a_syntax_candidate(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            repo = root / "repo"
+            source_dir = repo / "src"
+            source_dir.mkdir(parents=True)
+            subprocess.run(["git", "init", "-q", str(repo)], check=True)
+            subprocess.run(["git", "-C", str(repo), "config", "user.name", "OHScanner test"], check=True)
+            subprocess.run(["git", "-C", str(repo), "config", "user.email", "test@example.invalid"], check=True)
+            (source_dir / "api.c").write_text(
+                "int *inspect(int *value) { return value; }\n", encoding="utf-8")
+            (source_dir / "caller.c").write_text(
+                "int *inspect(int *value);\n"
+                "int *caller(int *data) { return inspect(data); }\n", encoding="utf-8")
+            subprocess.run(["git", "-C", str(repo), "add", "src"], check=True)
+            subprocess.run(["git", "-C", str(repo), "commit", "-qm", "bounded C call relation"], check=True)
+            commit = subprocess.check_output(["git", "-C", str(repo), "rev-parse", "HEAD"], text=True).strip()
+            inventory = []
+            for file in ("src/api.c", "src/caller.c"):
+                data = subprocess.check_output(["git", "-C", str(repo), "show", f"{commit}:{file}"])
+                blob = subprocess.check_output(["git", "-C", str(repo), "rev-parse", f"{commit}:{file}"],
+                                               text=True).strip()
+                inventory.append({"file": file, "blob": blob,
+                                  "sha256": hashlib.sha256(data).hexdigest()})
+            app = create_app(Settings(root / "data", (root,)))
+            repository = app.state.store.add_repository("controlled/callsite-cross-c", str(repo))
+            tools = agent._tool_specs(None, app.state.store,
+                {"repository_id": repository["id"], "spec": {"include_paths": ["src"]}},
+                {"commit": commit, "_workbench": {"source_inventory": inventory}},
+                {"file": "src/caller.c", "line": 2}, {}, "", (1, 1))
+
+            result = tools["find_callsite_candidates"]({"identifier": "inspect"})
+            self.assertEqual(result["status"], "complete")
+            self.assertEqual(result["callsite_count"], 1)
+            relationship = result["callsites"][0]["relationship"]
+            self.assertEqual(relationship["status"], "cross_file_syntax_candidate")
+            self.assertEqual(relationship["basis"],
+                             "unique_scoped_external_c_definition_and_single_caller_file_prototype")
+            self.assertEqual(relationship["cross_file_definition_candidate"]["file"], "src/api.c")
+            self.assertEqual(relationship["semantic_binding"], "unknown")
+            self.assertEqual(relationship["reachable"], "unknown")
+            self.assertEqual(relationship["cross_file_name_matches_are_binding_evidence"], False)
+            self.assertEqual(relationship["argument_edges"][0]["status"], "syntax_candidate")
+            self.assertEqual(relationship["argument_edges"][0]["parameter_name"], "value")
+            self.assertEqual(relationship["callee_formal_to_return_edges"][0]["parameter_name"], "value")
+            definition_evidence = next(
+                item for item in relationship["source_excerpts"]
+                if item["kind"] == "cross_file_callee_definition")
+            self.assertEqual(definition_evidence["file"], "src/api.c")
+            self.assertEqual(definition_evidence["git_blob"], inventory[0]["blob"])
+            self.assertEqual(definition_evidence["source_sha256"], inventory[0]["sha256"])
+            self.assertIn(definition_evidence["text"],
+                          agent._source_evidence_texts("find_callsite_candidates", result))
+
+            (source_dir / "api.c").write_text(
+                "static int *inspect(int *value) { return value; }\\n", encoding="utf-8")
+            subprocess.run(["git", "-C", str(repo), "add", "src/api.c"], check=True)
+            subprocess.run(["git", "-C", str(repo), "commit", "-qm", "make definition file-local"], check=True)
+            static_commit = subprocess.check_output(
+                ["git", "-C", str(repo), "rev-parse", "HEAD"], text=True).strip()
+            static_inventory = []
+            for file in ("src/api.c", "src/caller.c"):
+                data = subprocess.check_output(
+                    ["git", "-C", str(repo), "show", f"{static_commit}:{file}"])
+                blob = subprocess.check_output(
+                    ["git", "-C", str(repo), "rev-parse", f"{static_commit}:{file}"],
+                    text=True).strip()
+                static_inventory.append({"file": file, "blob": blob,
+                                         "sha256": hashlib.sha256(data).hexdigest()})
+            static_tools = agent._tool_specs(None, app.state.store,
+                {"repository_id": repository["id"], "spec": {"include_paths": ["src"]}},
+                {"commit": static_commit, "_workbench": {"source_inventory": static_inventory}},
+                {"file": "src/caller.c", "line": 2}, {}, "", (1, 1))
+            static_result = static_tools["find_callsite_candidates"]({"identifier": "inspect"})
+            self.assertEqual(static_result["callsites"][0]["relationship"]["status"], "unresolved")
+            self.assertEqual(static_result["callsites"][0]["relationship"]["semantic_binding"], "unknown")
+
+    def test_callsite_cross_file_cpp_namespace_candidate_rejects_overloads(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            repo = root / "repo"
+            source_dir = repo / "src"
+            source_dir.mkdir(parents=True)
+            subprocess.run(["git", "init", "-q", str(repo)], check=True)
+            subprocess.run(["git", "-C", str(repo), "config", "user.name", "OHScanner test"], check=True)
+            subprocess.run(["git", "-C", str(repo), "config", "user.email", "test@example.invalid"], check=True)
+            (source_dir / "api.cpp").write_text(
+                "namespace OHOS {\n"
+                "int *inspect(int *value) { return value; }\n"
+                "}\n"
+                "namespace unrelated {\n"
+                "int *inspect(int *value) { return value; }\n"
+                "}\n", encoding="utf-8")
+            (source_dir / "caller.cpp").write_text(
+                "namespace OHOS {\n"
+                "int *inspect(int *value);\n"
+                "int *caller(int *data) { return inspect(data); }\n"
+                "}\n", encoding="utf-8")
+            subprocess.run(["git", "-C", str(repo), "add", "src"], check=True)
+            subprocess.run(["git", "-C", str(repo), "commit", "-qm", "bounded C++ namespace relation"], check=True)
+            commit = subprocess.check_output(["git", "-C", str(repo), "rev-parse", "HEAD"], text=True).strip()
+            inventory = []
+            for file in ("src/api.cpp", "src/caller.cpp"):
+                data = subprocess.check_output(["git", "-C", str(repo), "show", f"{commit}:{file}"])
+                blob = subprocess.check_output(["git", "-C", str(repo), "rev-parse", f"{commit}:{file}"],
+                                               text=True).strip()
+                inventory.append({"file": file, "blob": blob,
+                                  "sha256": hashlib.sha256(data).hexdigest()})
+            app = create_app(Settings(root / "data", (root,)))
+            repository = app.state.store.add_repository("controlled/callsite-cross-cpp", str(repo))
+            tools = agent._tool_specs(None, app.state.store,
+                {"repository_id": repository["id"], "spec": {"include_paths": ["src"]}},
+                {"commit": commit, "_workbench": {"source_inventory": inventory}},
+                {"file": "src/caller.cpp", "line": 3}, {}, "", (1, 1))
+
+            result = tools["find_callsite_candidates"]({"identifier": "inspect"})
+            self.assertEqual(result["status"], "complete", repr(result))
+            relationship = result["callsites"][0]["relationship"]
+            self.assertEqual(relationship["status"], "cross_file_cpp_syntax_candidate", repr(relationship))
+            self.assertEqual(relationship["cross_file_definition_candidate"]["file"], "src/api.cpp")
+            self.assertEqual(relationship["cross_file_definition_candidate"]["scope"],
+                             "namespace_definition")
+            self.assertEqual(relationship["semantic_binding"], "unknown")
+            self.assertEqual(relationship["reachable"], "unknown")
+            self.assertEqual(relationship["argument_edges"][0]["parameter_name"], "value")
+            self.assertEqual(relationship["cross_file_name_match_count"], 2)
+            self.assertEqual(relationship["cross_file_name_matches_are_binding_evidence"], False)
+
+            (source_dir / "api.cpp").write_text(
+                "namespace OHOS {\n"
+                "int *inspect(int *value) { return value; }\n"
+                "int inspect(int value) { return value; }\n"
+                "}\n", encoding="utf-8")
+            subprocess.run(["git", "-C", str(repo), "add", "src/api.cpp"], check=True)
+            subprocess.run(["git", "-C", str(repo), "commit", "-qm", "add same namespace overload"], check=True)
+            overloaded_commit = subprocess.check_output(
+                ["git", "-C", str(repo), "rev-parse", "HEAD"], text=True).strip()
+            overloaded_inventory = []
+            for file in ("src/api.cpp", "src/caller.cpp"):
+                data = subprocess.check_output(
+                    ["git", "-C", str(repo), "show", f"{overloaded_commit}:{file}"])
+                blob = subprocess.check_output(
+                    ["git", "-C", str(repo), "rev-parse", f"{overloaded_commit}:{file}"],
+                    text=True).strip()
+                overloaded_inventory.append({"file": file, "blob": blob,
+                                             "sha256": hashlib.sha256(data).hexdigest()})
+            overloaded_tools = agent._tool_specs(None, app.state.store,
+                {"repository_id": repository["id"], "spec": {"include_paths": ["src"]}},
+                {"commit": overloaded_commit, "_workbench": {"source_inventory": overloaded_inventory}},
+                {"file": "src/caller.cpp", "line": 3}, {}, "", (1, 1))
+            overloaded_result = overloaded_tools["find_callsite_candidates"]({"identifier": "inspect"})
+            self.assertEqual(overloaded_result["callsites"][0]["relationship"]["status"], "unresolved")
+            self.assertEqual(overloaded_result["callsites"][0]["relationship"]["semantic_binding"], "unknown")
+
+    def test_callsite_lookup_reports_file_and_result_budget_truncation(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            repo = root / "repo"
+            source_dir = repo / "src"
+            source_dir.mkdir(parents=True)
+            subprocess.run(["git", "init", "-q", str(repo)], check=True)
+            subprocess.run(["git", "-C", str(repo), "config", "user.name", "OHScanner test"], check=True)
+            subprocess.run(["git", "-C", str(repo), "config", "user.email", "test@example.invalid"], check=True)
+            for index in range(agent.MAX_CALLSITE_FILES + 2):
+                (source_dir / f"call_{index:02}.cpp").write_text(
+                    "void needle() {}\nvoid run() { needle(); }\n", encoding="utf-8")
+            subprocess.run(["git", "-C", str(repo), "add", "src"], check=True)
+            subprocess.run(["git", "-C", str(repo), "commit", "-qm", "bounded callsite fixture"], check=True)
+            commit = subprocess.check_output(["git", "-C", str(repo), "rev-parse", "HEAD"], text=True).strip()
+            inventory = []
+            for path in sorted((source_dir).glob("*.cpp")):
+                file = path.relative_to(repo).as_posix()
+                data = subprocess.check_output(["git", "-C", str(repo), "show", f"{commit}:{file}"])
+                blob = subprocess.check_output(["git", "-C", str(repo), "rev-parse", f"{commit}:{file}"],
+                                               text=True).strip()
+                inventory.append({"file": file, "blob": blob,
+                                  "sha256": hashlib.sha256(data).hexdigest()})
+            app = create_app(Settings(root / "data", (root,)))
+            repository = app.state.store.add_repository("controlled/callsite-budget", str(repo))
+            tools = agent._tool_specs(None, app.state.store,
+                {"repository_id": repository["id"], "spec": {"include_paths": ["src"]}},
+                {"commit": commit, "_workbench": {"source_inventory": inventory}},
+                {"file": "src/call_00.cpp", "line": 2}, {}, "", (1, 1))
+            result = tools["find_callsite_candidates"]({"identifier": "needle"})
+            self.assertEqual(result["status"], "partial")
+            self.assertTrue(result["truncated"])
+            self.assertIn("file_limit", result["truncation_reasons"])
+            self.assertIn("result_limit", result["truncation_reasons"])
+            self.assertEqual(result["files_considered"], agent.MAX_CALLSITE_FILES)
+            self.assertGreater(result["callsite_count"], 0)
+            self.assertLessEqual(result["callsite_count"], agent.MAX_CALLSITE_RESULTS)
+            self.assertIn("result_byte_limit", result["truncation_reasons"])
+            self.assertLessEqual(len(json.dumps(result, ensure_ascii=False).encode("utf-8")),
+                                 agent.MAX_TOOL_RESULT_BYTES)
+            self.assertTrue(all(item["callee_binding"] == "unknown"
+                                and item["reachable"] == "unknown" for item in result["callsites"]))
+
 
     def test_consent_preview_binds_symbol_search_to_the_selected_inventory(self):
         inventory = [{"file": "src/caller.cpp"}, {"file": "src/helper.cpp"}]
@@ -1522,10 +2607,14 @@ class AgentFixedCommitToolTests(unittest.TestCase):
                          agent._hash(["src/caller.cpp", "src/helper.cpp"]))
         self.assertIn("up to 40 numbered lines per read", scope)
         self.assertIn("complete Tree-sitter syntax function", scope)
-        self.assertEqual(preview["tool_policy_version"], "readonly-fixed-commit-0.6.4")
+        self.assertIn("find_callsite_candidates", preview["allowed_tools"])
+        self.assertIn("up to 12 syntax-only C/C++ callsite excerpts", " ".join(preview["disclosure"]))
+        self.assertIn("at most 12 C/C++ files and 8 MiB", scope)
+        self.assertIn("up to five numbered lines of AST-span context", scope)
+        self.assertEqual(preview["tool_policy_version"], "readonly-fixed-commit-0.6.6")
         self.assertEqual(preview["consent_preview_version"], agent.CONSENT_PREVIEW_VERSION)
         self.assertTrue(any("reasoning items" in item for item in preview["disclosure"]))
-        self.assertTrue(any("one targeted correction" in item for item in preview["disclosure"]))
+        self.assertTrue(any("up to two bounded repairs" in item for item in preview["disclosure"]))
         self.assertEqual(preview["redaction_policy_version"], agent.REDACTION_POLICY_VERSION)
 
     def test_deepseek_budget_cost_estimate_is_visible_and_bound_before_source_approval(self):
@@ -1819,11 +2908,17 @@ class AgentRouteTests(unittest.TestCase):
                 self.assertEqual(len(client.get("/api/v1/agent/evaluation-summary").json()["r0_baseline_reviews"]), 1)
                 self.assertEqual(preview["initial_context"]["source_excerpt"], "int check() {}")
                 self.assertEqual(preview["binding"]["commit"], "c" * 40)
+                self.assertEqual(preview["budgets"]["local_cumulative_token_budget"], "none")
+                self.assertNotIn("max_total_input_tokens", preview["budgets"])
+                self.assertNotIn("timeout_seconds", preview["budgets"])
+                self.assertNotIn("tool-agent", preview["stage_disclosure"])
+                self.assertIn("本地不设累计 Token", preview["stage_disclosure"])
                 self.assertNotIn("test-secret", json.dumps(preview))
                 stale = client.post("/api/v1/operations/agent-investigations", headers={
                     "x-ohscanner-client": "workbench-v1"},
                     json={**preview_payload, "source_submission_approved": True,
-                          "consent_sha256": preview["consent_sha256"], "consent_nonce": preview["consent_nonce"], "timeout_seconds": 180})
+                          "consent_sha256": preview["consent_sha256"], "consent_nonce": preview["consent_nonce"],
+                          "max_output_tokens": preview["budgets"]["max_output_tokens"] - 1})
                 self.assertEqual(stale.status_code, 409)
                 self.assertEqual(client.get("/api/v1/operations").json(), [])
                 wrong_experiment = client.post("/api/v1/operations/agent-investigations", headers={
@@ -1869,6 +2964,11 @@ class AgentRouteTests(unittest.TestCase):
                 self.assertTrue(plan["source_submission_approved"])
                 self.assertEqual(plan["source_consent_sha256"], preview["consent_sha256"])
                 self.assertEqual(plan["consent_preview_version"], agent.CONSENT_PREVIEW_VERSION)
+                self.assertTrue(plan["continuous_investigation"])
+                self.assertNotIn("max_steps", plan)
+                self.assertNotIn("max_total_input_tokens", plan)
+                self.assertNotIn("max_total_output_tokens", plan)
+                self.assertNotIn("timeout_seconds", plan)
                 self.assertEqual(plan["redaction_policy_version"], agent.REDACTION_POLICY_VERSION)
                 self.assertNotIn("test-secret", json.dumps(plan))
                 self.assertNotIn("api_key", plan)
@@ -1926,7 +3026,10 @@ class AgentRouteTests(unittest.TestCase):
                 self.assertEqual(preview_response.status_code, 200, preview_response.text)
                 preview = preview_response.json()
                 self.assertEqual(preview["candidate_count"], 2)
-                self.assertEqual(preview["aggregate_budget"]["max_model_calls"], 2)
+                self.assertIsNone(preview["aggregate_budget"]["max_total_model_calls"])
+                self.assertEqual(preview["aggregate_budget"]["single_shot_candidate_request_count"], 2)
+                self.assertEqual(preview["aggregate_budget"]["local_cumulative_token_budget"], "none")
+                self.assertFalse(preview["aggregate_budget"]["tool_agent_continuous"])
                 self.assertEqual([x["candidate_id"] for x in preview["candidates"]],
                                  ["candidate-1", "candidate-2"])
                 self.assertNotIn("test-secret", json.dumps(preview))
@@ -1935,8 +3038,12 @@ class AgentRouteTests(unittest.TestCase):
                     headers=headers, json={**payload, "mode": "tool_agent"})
                 self.assertEqual(tool_preview_response.status_code, 200, tool_preview_response.text)
                 tool_preview = tool_preview_response.json()
-                self.assertEqual(tool_preview["aggregate_budget"]["max_validation_repair_calls"], 4)
-                self.assertEqual(tool_preview["aggregate_budget"]["max_model_calls"], 14)
+                self.assertEqual(tool_preview["aggregate_budget"]["max_validation_repair_attempts_per_candidate"], 2)
+                self.assertIsNone(tool_preview["aggregate_budget"]["max_total_model_calls"])
+                self.assertEqual(tool_preview["aggregate_budget"]["max_skeptic_requests_per_candidate"], 1)
+                self.assertEqual(tool_preview["aggregate_budget"]["local_cumulative_cost_budget"], "none")
+                self.assertTrue(any("Skeptic" in item
+                                    for item in tool_preview["disclosure"]))
                 stale = client.post("/api/v1/operations/agent-investigations/batch",
                     headers=headers, json={**payload, "source_submission_approved": True,
                                            "consent_sha256": preview["consent_sha256"], "consent_nonce": preview["consent_nonce"], "mode": "tool_agent"})
@@ -2024,11 +3131,12 @@ class AgentRouteTests(unittest.TestCase):
                 self.assertEqual(preview_response.status_code, 200, preview_response.text)
                 preview = preview_response.json()
                 self.assertEqual([arm["mode"] for arm in preview["arms"]], ["single_shot", "tool_agent"])
-                self.assertEqual(preview["aggregate_budget"]["max_total_input_tokens"], 48000)
-                self.assertEqual(preview["aggregate_budget"]["max_model_calls"], pair_payload.get("max_steps", 4) + 3)
-                self.assertEqual(preview["aggregate_budget"]["max_validation_repair_calls"], 2)
+                self.assertIsNone(preview["aggregate_budget"]["tool_agent_max_total_model_calls"])
+                self.assertEqual(preview["aggregate_budget"]["tool_agent_local_cumulative_token_budget"], "none")
+                self.assertEqual(preview["aggregate_budget"]["tool_agent_max_validation_repair_attempts"], 2)
+                self.assertEqual(preview["aggregate_budget"]["tool_agent_max_skeptic_requests"], 1)
                 stale = client.post("/api/v1/operations/agent-investigations/paired",
-                    headers=headers, json={**pair_payload, "max_steps": 5,
+                    headers=headers, json={**pair_payload, "max_output_tokens": 1201,
                         "source_submission_approved": True, "consent_sha256": preview["consent_sha256"], "consent_nonce": preview["consent_nonce"]})
                 self.assertEqual(stale.status_code, 409)
                 self.assertEqual(client.get("/api/v1/operations").json(), [])
@@ -2042,6 +3150,13 @@ class AgentRouteTests(unittest.TestCase):
                 self.assertEqual({item["spec"]["mode"] for item in items}, {"single_shot", "tool_agent"})
                 self.assertEqual({item["spec"]["pair_id"] for item in items}, {queued.json()["pair_id"]})
                 self.assertEqual({item["spec"]["candidate_id"] for item in items}, {"candidate-pair"})
+                for item in items:
+                    self.assertTrue(item["spec"]["continuous_investigation"])
+                    self.assertEqual(item["spec"]["provider_request_timeout_seconds"], 45)
+                    self.assertNotIn("max_steps", item["spec"])
+                    self.assertNotIn("max_total_input_tokens", item["spec"])
+                    self.assertNotIn("max_total_output_tokens", item["spec"])
+                    self.assertNotIn("timeout_seconds", item["spec"])
                 self.assertEqual(len(client.get("/api/v1/operations").json()), 2)
                 ops = Operations(app.state.store)
                 running = ops.claim()
@@ -2147,7 +3262,7 @@ class AgentRouteTests(unittest.TestCase):
                 result = operations.execute(settings, store, ops, task)
                 self.assertEqual(len(FakeClient.timeout_values), 1)
                 self.assertGreater(FakeClient.timeout_values[0], 0)
-                self.assertLessEqual(FakeClient.timeout_values[0], task["spec"]["timeout_seconds"])
+                self.assertLessEqual(FakeClient.timeout_values[0], agent.MAX_PROVIDER_REQUEST_SECONDS)
                 result["model_usage"]["cost_estimate"] = {
                     "status": "estimated_amount", "currency": "USD", "amount_usd": "0.00043644",
                     "amount_cny": "0.00301000", "alternative_currency": "CNY",
@@ -2245,9 +3360,15 @@ class AgentRouteTests(unittest.TestCase):
                 self.assertEqual(triage["binding"]["commit"], "c" * 40)
                 self.assertEqual(len(triage["human_reviews"]), 2)
                 self.assertEqual(triage["human_reviews"][0]["usefulness"], "partially_useful")
+                self.assertEqual(triage["repair_guidance"]["status"], "unverified_model_suggestions")
+                self.assertFalse(triage["repair_guidance"]["patch_generated"])
                 report_md = client.get("/api/v1/cases/" + case_id + "/report.md")
                 self.assertEqual(report_md.status_code, 200, report_md.text)
                 self.assertIn("Agent 分诊建议（非漏洞确认）", report_md.text)
+                self.assertIn("AI 修复与验证建议（未经验证）", report_md.text)
+                self.assertIn("PoC / 隔离验证记录", report_md.text)
+                self.assertIn("Agent 实验与人工评价", report_md.text)
+                self.assertIn("系统未生成或应用补丁", report_md.text)
                 self.assertIn("不验证引句是否支持模型陈述", report_md.text)
                 self.assertIn("Token：输入 321 / 输出 55", report_md.text)
                 self.assertIn(r"估算费用（非实账）：USD 0\.00043644 / CNY 0\.00301000", report_md.text)
@@ -3090,6 +4211,48 @@ class AgentWorkerEnvironmentTests(unittest.TestCase):
         self.assertEqual(agent_child["OHSCANNER_LLM_PROXY_URL"], "http://proxy.example")
         self.assertNotIn("OHSCANNER_LLM_UNRECOGNIZED_SECRET", agent_child)
 
+    def test_scan_supervisor_retains_allowlisted_provider_identity_for_consent_queueing(self):
+        from src.workbench import worker
+        provider = {
+            "OHSCANNER_LLM_BASE_URL": "https://provider.example/v1",
+            "OHSCANNER_LLM_MODEL": "model-x",
+            "OHSCANNER_LLM_API_KEY": "secret-value",
+            "OHSCANNER_LLM_PROXY_URL": "",
+        }
+        with patch.dict(os.environ, provider, clear=True), \
+                patch.object(sys, "argv", ["worker"]), \
+                patch.object(worker.Settings, "from_env", return_value=object()), \
+                patch.object(worker, "Worker") as worker_class:
+            worker.main()
+            self.assertEqual(os.environ["OHSCANNER_LLM_API_KEY"], "secret-value")
+            worker_class.assert_called_once_with(worker.Settings.from_env.return_value)
+            worker_class.return_value.run.assert_called_once_with(False)
+            detector_child = worker.worker_child_environment(os.environ)
+            self.assertFalse(any(key.startswith("OHSCANNER_LLM_") for key in detector_child))
+
+    def test_launcher_forwards_provider_only_to_scan_supervisor_and_agent_worker(self):
+        from src.workbench import __main__ as launcher
+        provider = {
+            "OHSCANNER_LLM_BASE_URL": "https://provider.example/v1",
+            "OHSCANNER_LLM_MODEL": "model-x",
+            "OHSCANNER_LLM_API_KEY": "secret-value",
+            "OHSCANNER_LLM_PROXY_URL": "",
+            "OHSCANNER_LLM_UNRECOGNIZED_SECRET": "must-not-forward",
+        }
+        with patch.dict(os.environ, provider, clear=True), \
+                patch.object(sys, "argv", ["workbench", "serve", "--port", "18787"]), \
+                patch.object(launcher.subprocess, "Popen") as popen:
+            popen.return_value.poll.return_value = 1
+            with self.assertRaisesRegex(RuntimeError, "API or Worker stopped"):
+                launcher.main()
+        calls = popen.call_args_list
+        self.assertEqual(len(calls), 4)
+        scan_supervisor = calls[0].kwargs["env"]
+        validation_worker = calls[2].kwargs["env"]
+        self.assertEqual(scan_supervisor["OHSCANNER_LLM_API_KEY"], "secret-value")
+        self.assertNotIn("OHSCANNER_LLM_UNRECOGNIZED_SECRET", scan_supervisor)
+        self.assertFalse(any(key.startswith("OHSCANNER_LLM_") for key in validation_worker))
+
 
 class AgentBlindReviewTests(unittest.TestCase):
     def test_blind_review_hides_arm_until_all_reviews_are_recorded(self):
@@ -3115,8 +4278,8 @@ class AgentBlindReviewTests(unittest.TestCase):
                     "experiment_id": "study-blind", "mode": mode,
                     "provider_fingerprint": "provider-sha256", "provider_model": "hidden-model",
                     "prompt_version": "prompt-v1", "tool_policy_version": "tools-v1",
-                    "max_steps": 4, "max_output_tokens": 1200, "max_total_input_tokens": 24000,
-                    "max_total_output_tokens": 4000, "timeout_seconds": 240})
+                    "continuous_investigation": True, "provider_request_timeout_seconds": 45,
+                    "max_provider_retries": 1, "max_output_tokens": 1200})
                 self.assertEqual(ops.claim()["id"], task["id"])
                 operation_ids.append(task["id"])
                 initial = {"evidence_id": "ev-initial-" + mode, "context_sha256": "e" * 64,
@@ -3147,7 +4310,7 @@ class AgentBlindReviewTests(unittest.TestCase):
             with TestClient(app) as client:
                 headers = {"x-ohscanner-client": "workbench-v1"}
                 second = ops.get(operation_ids[1])
-                mismatched_spec = {**second["spec"], "max_steps": second["spec"]["max_steps"] + 1}
+                mismatched_spec = {**second["spec"], "max_output_tokens": second["spec"]["max_output_tokens"] + 1}
                 with ops.store.connect() as db:
                     db.execute("UPDATE operations SET spec=? WHERE id=?",
                                (json.dumps(mismatched_spec, sort_keys=True), operation_ids[1]))
@@ -3493,15 +4656,18 @@ class AgentToolBudgetFallbackTests(unittest.TestCase):
                      patch.object(agent.service, "source", return_value=source):
                     result = agent.execute_agent(None, FakeStore(), ops, task, client=client)
             self.assertEqual(result["status"], "completed_with_limitations")
-            self.assertEqual(len(result["tool_calls"]), 3)
-            self.assertEqual(result["model_tool_calls_skipped"], 2)
+            self.assertEqual(len(result["tool_calls"]), 1)
+            self.assertEqual(result["model_tool_calls_skipped"], 0)
             self.assertEqual(len([item for item in client.payloads[1]["input"]
                                   if item.get("type") == "function_call_output"]), 5)
             self.assertEqual(result["agent_assessment"]["assessment"], "unknown")
             self.assertEqual(result["vulnerability_state"], "candidate")
             self.assertEqual(result["validated_vulnerability"], 0)
-            self.assertTrue(any(event[1] == "agent_tool_budget_exhausted" for event in ops.events))
-            self.assertIn("excess calls were not executed", " ".join(result["limitations"]))
+            self.assertTrue(any(event[1] == "agent_no_progress_guard" for event in ops.events))
+            outputs = [json.loads(item["output"]) for item in client.payloads[1]["input"]
+                       if item.get("type") == "function_call_output"]
+            self.assertEqual(sum(item.get("error_code") == "duplicate_tool_query"
+                                 for item in outputs), 4)
         finally:
             import shutil
             shutil.rmtree(root)

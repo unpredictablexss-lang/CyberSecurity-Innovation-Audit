@@ -407,6 +407,15 @@ li {
 .scope-note .ant-btn-link { padding-left: 0; }
 .scope-note p { margin-bottom: 2px; line-height: 1.8; }
 .audit-options { margin: 16px 0; }
+.audit-mode-field { margin: 18px 0 22px; }
+.audit-mode-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; width: 100%; }
+.audit-mode-options .audit-mode-option { align-items: flex-start; display: flex; min-width: 0; width: 100%; margin-inline-end: 0; padding: 14px 16px; border: 1px solid #dce4f0; border-radius: 10px; background: #fff; transition: border-color .16s ease, background .16s ease, box-shadow .16s ease; }
+.audit-mode-options .audit-mode-option:hover { border-color: #9cb4f6; }
+.audit-mode-options .audit-mode-option-checked { border-color: #315fea; background: #f3f6ff; box-shadow: 0 0 0 2px rgb(49 95 234 / 8%); }
+.audit-mode-options .ant-radio { margin-top: 2px; }
+.audit-mode-copy { display: flex; min-width: 0; flex-direction: column; gap: 4px; white-space: normal; }
+.audit-mode-copy strong { color: #243450; font-size: 14px; font-weight: 600; line-height: 1.4; }
+.audit-mode-copy small { color: #718096; font-size: 12px; line-height: 1.55; }
 .audit-checklist { padding-left: 20px; line-height: 2.3; margin-bottom: 20px; color: #566274; }
 .form-shortcuts { display: flex; gap: 12px; align-items: center; margin: 8px 0 20px; flex-wrap: wrap; }
 .wide-select { width: min(640px, 100%); min-width: 280px; }
@@ -432,3 +441,5 @@ li {
   .workbench-v41 .stat-card .ant-statistic-content { font-size: 25px; }
   .capability-summary > div { flex-wrap: wrap; }
 }
+
+@media (max-width: 575px) { .audit-mode-options { grid-template-columns: minmax(0, 1fr); } }

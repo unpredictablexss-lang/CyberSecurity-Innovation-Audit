@@ -17,6 +17,56 @@ from .worker import Worker
 from .worker_env import remove_agent_provider_environment, worker_child_environment
 
 
+def _is_consented_joint_comparison(task, ops=None):
+    spec = task.get("spec") if isinstance(task.get("spec"), dict) else {}
+    return (task.get("kind") == "version_candidate_comparison"
+            and spec.get("source_submission_approved") is True
+            and isinstance(spec.get("consent_sha256"), str)
+            and len(spec["consent_sha256"]) == 64
+            and all(ch in "0123456789abcdef" for ch in spec["consent_sha256"])
+            and isinstance(spec.get("consent_nonce"), str)
+            and len(spec["consent_nonce"]) == 32
+            and all(ch in "0123456789abcdef" for ch in spec["consent_nonce"])
+            and isinstance(spec.get("joint_binding_snapshot"), dict)
+            and ops is not None
+            and ops.joint_comparison_ticket_allows_worker(
+                task.get("id"), spec["consent_nonce"], spec["consent_sha256"]))
+
+
+def _is_continuous_tool_agent(task):
+    spec = task.get("spec") if isinstance(task.get("spec"), dict) else {}
+    return (task.get("kind") == "agent_investigation"
+            and spec.get("continuous_investigation") is True)
+
+
+def _hard_deadline_seconds(task):
+    """Authorized Agent tasks rely on cancellation and per-request timeouts."""
+    spec = task.get("spec") if isinstance(task.get("spec"), dict) else {}
+    if _is_continuous_tool_agent(task):
+        return None
+    return spec.get("timeout_seconds", 600)
+
+
+def _provider_quota_failure(exc):
+    from .agent import ProviderQuotaError
+    if isinstance(exc, ProviderQuotaError):
+        return {"status": "failed", "_operation_error": {
+            "code": exc.error_code, "message": str(exc)}}
+    return None
+
+
+def _commit_provider_quota_failure(ops, task, result):
+    failure = result.get("_operation_error") if isinstance(result, dict) else None
+    if (_is_continuous_tool_agent(task)
+            and isinstance(failure, dict)
+            and failure.get("code") == "provider_quota_exhausted"
+            and isinstance(failure.get("message"), str)):
+        ops.finish(task["id"], error=failure["code"] + ": " + failure["message"],
+                   state="failed")
+        return True
+    return False
+
+
 class OperationWorker:
     def __init__(self, settings, validation=False):
         self.settings = settings
@@ -36,7 +86,9 @@ class OperationWorker:
                     cwd=Path(__file__).resolve().parents[2], stdout=log, stderr=subprocess.STDOUT,
                     stdin=subprocess.DEVNULL, start_new_session=True,
                     env={**worker_child_environment(os.environ,
-                            allow_agent_provider=(not self.validation and task.get("kind") == "agent_investigation")),
+                            allow_agent_provider=(not self.validation and (
+                                task.get("kind") == "agent_investigation"
+                                or _is_consented_joint_comparison(task, self.ops)))),
                          "OHSCANNER_DATA": str(self.settings.data_dir),
                          "OHSCANNER_TARGET_ROOTS": os.pathsep.join(map(str, self.settings.target_roots))})
                 while proc.poll() is None:
@@ -45,7 +97,8 @@ class OperationWorker:
                         Worker.terminate(proc)
                         self.ops.finish(task["id"], state="cancelled")
                         return
-                    if time.monotonic() - start > task["spec"].get("timeout_seconds", 600):
+                    hard_deadline = _hard_deadline_seconds(task)
+                    if hard_deadline is not None and time.monotonic() - start > hard_deadline:
                         Worker.terminate(proc)
                         for key in task["spec"].get("scan_ids", []):
                             self.store.cancel(key)
@@ -59,7 +112,10 @@ class OperationWorker:
             data = (folder / "child-result.json").read_bytes()
             if len(data) > 16 * 1024 * 1024:
                 raise ValueError("operation result quota exceeded")
-            self.ops.finish(task["id"], json.loads(data))
+            result = json.loads(data)
+            if _commit_provider_quota_failure(self.ops, task, result):
+                return
+            self.ops.finish(task["id"], result)
         except Exception as exc:
             self.ops.finish(task["id"], error=type(exc).__name__ + ": " + str(exc)[:1500], state="failed")
         finally:
@@ -127,15 +183,24 @@ def main():
         store = Store(settings.data_dir)
         ops = Operations(store)
         task = ops.get(args.child)
-        if task.get("kind") != "agent_investigation":
+        if (task.get("kind") != "agent_investigation"
+                and not _is_consented_joint_comparison(task, ops)):
             remove_agent_provider_environment(os.environ)
         memory = task["spec"].get("memory_mb", 2048) * 1024 * 1024
         resource.setrlimit(resource.RLIMIT_AS, (memory, memory))
         resource.setrlimit(resource.RLIMIT_FSIZE, (64 * 1024 * 1024,) * 2)
         from .operations import execute
         child_started = time.monotonic()
-        result = execute(settings, store, ops, task)
-        if task.get("kind") == "agent_investigation" and isinstance(result, dict):
+        try:
+            result = execute(settings, store, ops, task)
+        except Exception as exc:
+            if _is_continuous_tool_agent(task):
+                result = _provider_quota_failure(exc)
+                if result is None:
+                    raise
+            else:
+                raise
+        if task.get("kind") == "agent_investigation" and not result.get("_operation_error"):
             peak_rss_kib = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
             result["execution_telemetry"] = {
                 "wall_seconds": round(time.monotonic() - child_started, 3),

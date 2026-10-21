@@ -19,3 +19,4 @@ export function taskAuthorizationPayload(values: any): {
   max_cost_usd: string | null;
 };
 export function auditErrorMessage(error: unknown): string;
+export function selectedAuditModeValues(values: any): any;

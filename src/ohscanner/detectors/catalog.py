@@ -11,6 +11,7 @@ from .cpp.m2_adapter import M2LifetimeDetector, M2SharedPtrRaceDetector
 from .ark_runtime.detector import ArkRuntimeTypeSafetyDetector
 from .ark_runtime.model import c_line_static_model
 from .cpp.null_dereference_detector import NullDereferenceDetector
+from .cpp.path_traversal_detector import CppPathTraversalDetector
 from .cpp.resource_lifetime_detector import CppResourceLifetimeDetector
 from .cpp.unsafe_memory_call_detector import CppUnsafeMemoryCallDetector
 from .cpp.path_traversal_detector import CppPathTraversalDetector
@@ -34,7 +35,7 @@ _APPROVED = {
         "factory": lambda: ArkRuntimeTypeSafetyDetector(model=c_line_static_model()),
         "kind": "research_candidate",
         "default_enabled": False,
-        "admission_reason": "explicit_selection_required: exact C1 repository/commit/target/creator blob profile only; partial or unsupported source remains unknown",
+        "admission_reason": "research_only_explicit_selection; explicit_selection_required: exact C1 repository/commit/target/creator blob profile only; partial or unsupported source remains unknown",
         "summary": "C: source-bound Ark Runtime TypedArray static candidates; product impact is unverified",
     },
     "ohscanner.data.sensitive_exposure": {
@@ -77,6 +78,13 @@ _APPROVED = {
         "default_enabled": False,
         "admission_reason": "explicit_selection_required: unknown-return nullability produces broad weak candidates; review a bounded scope first",
         "summary": "A: narrow same-function C/C++ null-source/deref candidate; default unassessed",
+    },
+    "ohscanner.cpp.path_traversal": {
+        "factory": CppPathTraversalDetector,
+        "kind": "research_candidate",
+        "default_enabled": False,
+        "admission_reason": "explicit_selection_required: bounded lexical C/C++ source-to-file-sink candidate; interprocedural path semantics and impact remain unknown",
+        "summary": "A: bounded C/C++ source-to-file-sink path candidate; containment, reachability and impact remain unverified",
     },
     "ohscanner.cpp.resource_lifetime": {
         "factory": CppResourceLifetimeDetector,

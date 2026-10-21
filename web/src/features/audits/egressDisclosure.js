@@ -9,7 +9,7 @@ export function redactionNotice(preview = {}) {
     ? "已检测并遮蔽的凭据类别：" + categories.join("、") + "。"
     : "未检测到已知凭据格式；这不代表源码中没有秘密。";
   return detection + "规则版本：" + version +
-    "。脱敏是有限模式匹配，不是完整 DLP。请检查完整初始上下文和 R2 可能追加发送的数据范围，确认没有不应外发的内容后再授权。";
+    "。脱敏是有限模式匹配，不是完整 DLP。请检查完整初始上下文和 跨文件追查可能追加发送的数据范围，确认没有不应外发的内容后再授权。";
 }
 
 export function disclosureReviewed(openKeys, requiredKeys) {
