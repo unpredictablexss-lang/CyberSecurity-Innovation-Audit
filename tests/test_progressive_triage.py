@@ -597,7 +597,7 @@ class PolicyApiTests(unittest.TestCase):
                 self.assertEqual(current.json()["integration"]["worker_enforcement"],
                                  "l2_l3_fixed_source_consent_and_parent_budget_gate")
                 self.assertEqual(current.json()["integration"]["quick_screen_executor"],
-                                 "independent_explicit_consent_operation")
+                             "task_level_explicit_consent_batch_and_individual_explicit_consent")
                 self.assertEqual(current.json()["integration"]["task_budget_ledger"],
                                  "shared_across_fixed_endpoints_for_l2_and_l3")
                 self.assertEqual(current.json()["integration"]["grouping_and_ranking"],

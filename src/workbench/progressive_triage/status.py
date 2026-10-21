@@ -49,6 +49,34 @@ def build_progressive_status(settings, ops, audit_id: str, *, store=None) -> dic
     latest_by_group: dict[str, dict[str, dict[str, Any]]] = {}
     for child in children:
         child_spec = child.get("spec") if isinstance(child.get("spec"), dict) else {}
+        if child.get("kind") == "progressive_quick_screen_batch":
+            child_result = None
+            if child.get("result_sha256"):
+                try:
+                    child_result = ops.result(child["id"])
+                except (KeyError, OSError, ValueError):
+                    child_result = None
+            results_by_group = {
+                row.get("group_id"): row for row in child_result.get("groups", [])
+                if isinstance(row, dict) and isinstance(row.get("group_id"), str)
+            } if isinstance(child_result, dict) else {}
+            for entry in child_spec.get("items", []):
+                item_spec = entry.get("spec") if isinstance(entry, dict) else None
+                group = item_spec.get("group") if isinstance(item_spec, dict) else None
+                group_id = group.get("group_id") if isinstance(group, dict) else None
+                if not isinstance(group_id, str):
+                    continue
+                result_row = results_by_group.get(group_id)
+                batch_active = child.get("status") in {"queued", "running"}
+                synthetic = {"id": child["id"], "created_at": child.get("created_at", ""),
+                             "status": ("running" if batch_active and child.get("status") == "running"
+                                        else "queued" if batch_active
+                                        else "completed" if result_row and result_row.get("state") == "completed"
+                                        else "completed_with_limitations" if result_row
+                                        else "not_started_candidate"),
+                             "result": result_row.get("result") if result_row else None}
+                latest_by_group.setdefault(group_id, {})["quick_screen"] = synthetic
+            continue
         group = child_spec.get("group") if isinstance(child_spec.get("group"), dict) else {}
         group_id = (group.get("group_id") if child.get("kind") == "progressive_quick_screen"
                     else child_spec.get("progressive_group_id"))
@@ -152,6 +180,8 @@ def _operation_state(operation: dict[str, Any] | None) -> str:
     if operation is None:
         return "not_scheduled"
     state = operation.get("status")
+    if state == "not_started_candidate":
+        return state
     if state in {"queued", "running"}:
         return state
     if state == "completed":

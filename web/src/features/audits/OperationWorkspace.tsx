@@ -9,6 +9,7 @@ import AgentAssessment from "./AgentAssessment";
 import AgentBlindReview from "./AgentBlindReview";
 import SourceSyncDetails from "./SourceSyncDetails";
 import ProgressiveDeepInvestigationAction from "./ProgressiveDeepInvestigationAction";
+import ProgressiveQuickScreenBatchAction from "./ProgressiveQuickScreenBatchAction";
 import VersionCandidateComparison from "./VersionCandidateComparison";
 import { buildIntelligentReviewView } from "./operationProgressModel.js";
 const { Text } = Typography;
@@ -98,7 +99,7 @@ function RecentWindowSummary({ result, openScan }: { result: any; openScan: (id:
   </Card>;
 }
 export type OperationView = "all" | "date" | "branches" | "matrix" | "validation" | "investigate" | "agent" | "agent_research" | "sync" | "queue";
-const kinds: Record<string, string> = { source_sync: "源码同步 / 自动扫描", source_sync_batch: "多仓库批量同步", revision_range: "固定区间", branch_comparison: "跨版本比较", recent_window_comparison: "N 日 / 1 日对照", version_matrix: "版本矩阵", validation: "隔离验证", investigation: "只读调查", agent_investigation: "模型辅助调查", progressive_quick_screen: "渐进式 L2 快速研判", candidate_review_batch: "历史候选队列（已停用）" };
+const kinds: Record<string, string> = { source_sync: "源码同步 / 自动扫描", source_sync_batch: "多仓库批量同步", revision_range: "固定区间", branch_comparison: "跨版本比较", recent_window_comparison: "N 日 / 1 日对照", version_matrix: "版本矩阵", validation: "隔离验证", investigation: "只读调查", agent_investigation: "模型辅助调查", progressive_quick_screen: "渐进式 L2 快速研判", progressive_quick_screen_batch: "任务级 L2 批量快筛", candidate_review_batch: "历史候选队列（已停用）" };
 const headings: Record<OperationView, [string, string]> = {
   all: ["高级源码与验证操作", "保留既有操作入口；任务持久化，候选变化与安全影响分别记录。"],
   date: ["时间增量扫描", "按明确时区固定时间端点；支持单一区间和 N 日 / 1 日双窗口候选对照。"],
@@ -333,6 +334,11 @@ export default function OperationWorkspace({ view = "all", operationId, context 
           const groups = Array.isArray(activeStatus?.groups) ? activeStatus.groups : Array.isArray(plan.groups) ? plan.groups : [];
           const budget = activeStatus?.budget || {};
           return <>
+            <div className="section-gap"><ProgressiveQuickScreenBatchAction
+              auditOperationId={selected.id}
+              enabled={selected.spec?.audit_mode !== "static_only" && groups.some((row: any) =>
+                row.ranking?.selected && ["not_scheduled", "not_started_candidate"].includes(row.quick_screen_state || "not_scheduled"))}
+            /></div>
             <Alert type="info" showIcon
               message={`固定策略 ${plan.policy_profile || "unknown"} · ${plan.grouping?.group_count ?? plan.groups?.length ?? 0} 个候选组 · 阶段：${activeStatus?.phase || "deterministic_ranked"}`}
               description="未选、尚未授权或信息不足的组仍是候选；模型意见不改变漏洞确认状态。仅美元预算为估算，任务调度上限见下方账本。" />
@@ -398,6 +404,31 @@ export default function OperationWorkspace({ view = "all", operationId, context 
             <Alert className="section-gap" type="info" showIcon message="L3 深度 Agent 需要单独授权" description="只有 L2 完成并建议 investigate 才能继续。提交后复用现有固定版本只读 Agent；它仍是候选调查意见，不会自动确认漏洞或标记误报。" />
             {result.quick_assessment === "investigate" && selected.spec?.job_id && selected.spec?.candidate_id &&
               <ProgressiveDeepInvestigationAction jobId={selected.spec.job_id} candidateId={selected.spec.candidate_id} quickScreenOperationId={selected.id} />}
+          </>;
+        })()}
+      </Card>}
+      {selected.kind === "progressive_quick_screen_batch" && selected.result && <Card size="small" className="section-gap" title="任务级 L2 批量快筛">
+        {(() => {
+          const result = selected.result;
+          const groups = Array.isArray(result.groups) ? result.groups : [];
+          return <>
+            <Alert className="section-gap" type="info" showIcon
+              message={`处理 ${result.processed_group_count ?? groups.length} / ${result.selected_group_count ?? "未知"} 组；已完成 ${result.completed_group_count ?? 0} 组`}
+              description={`停止原因：${result.stop_reason || "未知"}。未开始、失败或结果未知的组仍为候选；本任务不会自动排除或确认漏洞。`} />
+            <Descriptions size="small" column={{ xs: 1, md: 2 }}>
+              <Descriptions.Item label="授权 SHA-256"><Hash value={result.consent_sha256} /></Descriptions.Item>
+              <Descriptions.Item label="确认漏洞数">{result.validated_vulnerability ?? 0}</Descriptions.Item>
+              <Descriptions.Item label="模型请求 / 在途">{result.budget?.usage ? `${result.budget.usage.model_calls_allocated} / ${result.budget.usage.model_calls_in_flight}` : "未知"}</Descriptions.Item>
+              <Descriptions.Item label="美元上限性质">{result.budget?.cost?.enforcement || "advisory_only"}</Descriptions.Item>
+            </Descriptions>
+            <Table<any> className="section-gap" size="small" rowKey="group_id" dataSource={groups} pagination={{ pageSize: 10 }} scroll={{ x: 800 }} columns={[
+              { title: "候选组", dataIndex: "group_id" },
+              { title: "代表候选", dataIndex: "candidate_id" },
+              { title: "快筛状态", dataIndex: "state", render: (value) => <Tag color={value === "completed" ? "green" : value === "quick_unknown" ? "orange" : undefined}>{value || "unknown"}</Tag> },
+              { title: "模型建议", dataIndex: "quick_assessment", render: (value) => value || "unknown" },
+              { title: "停止/未知原因", dataIndex: "reason_code", render: (value) => value || "无" },
+            ]} />
+            {Array.isArray(result.not_started) && result.not_started.length > 0 && <Alert type="warning" showIcon message={`${result.not_started.length} 组尚未开始，继续保留为候选`} description={result.not_started.map((row: any) => row.group_id).join("、")} />}
           </>;
         })()}
       </Card>}

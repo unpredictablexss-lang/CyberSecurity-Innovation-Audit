@@ -38,6 +38,22 @@ def _is_consented_quick_screen(task):
     auth = spec.get("authorization") if isinstance(spec.get("authorization"), dict) else {}
     digest = spec.get("consent_sha256")
     nonce = spec.get("consent_nonce")
+    if task.get("kind") == "progressive_quick_screen_batch":
+        try:
+            from .progressive_triage.quick_screen_batch import batch_manifest_sha
+            manifest = spec.get("consent_manifest")
+            return (spec.get("source_submission_approved") is True
+                    and isinstance(digest, str) and len(digest) == 64
+                    and all(ch in "0123456789abcdef" for ch in digest)
+                    and isinstance(nonce, str) and len(nonce) == 32
+                    and all(ch in "0123456789abcdef" for ch in nonce)
+                    and isinstance(manifest, dict)
+                    and manifest.get("consent_nonce") == nonce
+                    and manifest.get("audit_operation_id") == spec.get("audit_operation_id")
+                    and batch_manifest_sha(spec) == digest
+                    and isinstance(spec.get("items"), list) and 1 <= len(spec["items"]) <= 1000)
+        except (TypeError, ValueError):
+            return False
     return (task.get("kind") == "progressive_quick_screen"
             and spec.get("source_submission_approved") is True
             and isinstance(digest, str) and len(digest) == 64
@@ -63,6 +79,11 @@ def _hard_deadline_seconds(task):
         return bounded_agent_spec(spec)["timeout_seconds"] + 10
     if task.get("kind") == "progressive_quick_screen":
         return 100
+    if task.get("kind") == "progressive_quick_screen_batch":
+        spec = task.get("spec") if isinstance(task.get("spec"), dict) else {}
+        limits = spec.get("progressive_policy", {}).get("policy", {}).get("limits", {})
+        seconds = limits.get("max_ai_wall_seconds", 300)
+        return (seconds if isinstance(seconds, int) and not isinstance(seconds, bool) else 300) + 10
     return spec.get("timeout_seconds", 600)
 
 

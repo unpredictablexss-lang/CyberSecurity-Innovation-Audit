@@ -47,6 +47,7 @@ import AuditPlanView from "../features/audits/AuditPlanView";
 import SourceEvidence from "../SourceEvidence";
 import CandidateActions from "../features/workbench/CandidateActions";
 import ProgressiveQuickScreenAction from "../features/audits/ProgressiveQuickScreenAction";
+import ProgressiveQuickScreenBatchAction from "../features/audits/ProgressiveQuickScreenBatchAction";
 import { requestGate } from "../features/audits/model";
 import { disclosureReviewed, disclosureSelectionMatches } from "../features/audits/egressDisclosure.js";
 import { candidateConfidenceColor, candidateConfidenceLabel, candidateSeverityColor, candidateSeverityLabel, analysisStatusLabel, coverageSummaryLabel, groupingBasisLabel, groupingSymbolLabel, obligationDescriptionLabel, obligationKindLabel, obligationStatusLabel, reportLimitationLabel, riskReasonsLabel, scanStageLabel, taskReportStatusLabel, taskTriageStatusLabel, triageStateLabel } from "../features/workbench/riskLabels.js";
@@ -509,6 +510,11 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
         <Alert className="section-gap" type="info" showIcon
           message={progressiveTriage.state === "planned_by_parent_operation" ? "候选排序由父审计统一计算" : progressiveTriage.state === "awaiting_static_report" ? "等待固定版本静态报告" : progressiveTriage.state === "ranked_static_only" ? "静态审计：仅本地归并和排序，不会调用模型" : "L0/L1 本地计划；所有原始候选继续保留"}
           description={progressiveTriage.state === "planned_by_parent_operation" ? "这是多端点审计中的一个固定端点；跨版本分组和共享预算请查看父审计计划。" : "分组和优先级只决定人工复核顺序与后续授权入口，不会把候选判为误报、安全或已确认漏洞。"} />
+        {progressiveTriage.state !== "planned_by_parent_operation" && job.spec?.audit_mode !== "static_only" &&
+          <div className="section-gap"><ProgressiveQuickScreenBatchAction auditOperationId={id}
+            enabled={Boolean(progressiveTriage.ranking?.selected_group_count)
+              && (progressiveStatus?.groups || progressiveTriage.groups || []).some((row: any) => row.ranking?.selected
+                && ["not_scheduled", "not_started_candidate"].includes(row.quick_screen_state || "not_scheduled"))} /></div>}
         {progressiveTriage.grouping && <Descriptions size="small" column={{ xs: 1, md: 3 }}>
           <Descriptions.Item label="原始候选">{progressiveTriage.original_observation_count ?? "未知"}</Descriptions.Item>
           <Descriptions.Item label="根因/重复组">{progressiveTriage.grouping.group_count ?? "未知"}</Descriptions.Item>

@@ -291,7 +291,7 @@ class Operations:
                     and row["consent_sha256"] == consent_sha256)
 
     def create(self, kind, spec):
-        if kind not in {"source_sync", "source_sync_batch", "repository_import_scan", "revision_range", "version_matrix", "branch_comparison", "recent_window_comparison", "validation", "investigation", "candidate_review_batch", "agent_investigation", "version_candidate_comparison", "progressive_quick_screen"}:
+        if kind not in {"source_sync", "source_sync_batch", "repository_import_scan", "revision_range", "version_matrix", "branch_comparison", "recent_window_comparison", "validation", "investigation", "candidate_review_batch", "agent_investigation", "version_candidate_comparison", "progressive_quick_screen", "progressive_quick_screen_batch"}:
             raise ValueError("unknown operation kind")
         if kind == "progressive_quick_screen":
             from .progressive_triage.contracts import SHA256_RE, content_sha256
@@ -328,6 +328,105 @@ class Operations:
             if (expiry.tzinfo is None or expiry <= datetime.now(timezone.utc)
                     or spec["consent_manifest"].get("consent_expires_at") != spec["consent_expires_at"]):
                 raise ValueError("progressive quick screen consent has expired or changed")
+        if kind == "progressive_quick_screen_batch":
+            from .progressive_triage.contracts import SHA256_RE, content_sha256
+            from .progressive_triage.policy import validate_policy, policy_envelope
+            required = ("audit_operation_id", "consent_nonce", "consent_sha256", "consent_expires_at")
+            manifest = spec.get("consent_manifest") if isinstance(spec, dict) else None
+            items = spec.get("items") if isinstance(spec, dict) else None
+            if (not isinstance(spec, dict) or spec.get("source_submission_approved") is not True
+                    or any(not isinstance(spec.get(name), str) or not spec[name] for name in required)
+                    or not SHA256_RE.fullmatch(spec["consent_sha256"])
+                    or len(spec["consent_nonce"]) != 32
+                    or any(ch not in "0123456789abcdef" for ch in spec["consent_nonce"])
+                    or not isinstance(spec.get("progressive_policy"), dict)
+                    or not isinstance(manifest, dict) or not isinstance(items, list)
+                    or not 1 <= len(items) <= 1_000
+                    or manifest.get("audit_operation_id") != spec.get("audit_operation_id")
+                    or manifest.get("consent_nonce") != spec.get("consent_nonce")
+                    or manifest.get("consent_expires_at") != spec.get("consent_expires_at")
+                    or content_sha256(manifest) != spec.get("consent_sha256")):
+                raise ValueError("task-level progressive quick-screen consent is incomplete or invalid")
+            try:
+                policy = validate_policy(spec["progressive_policy"].get("policy"))
+            except ValueError as error:
+                raise ValueError("task-level progressive policy is invalid") from error
+            if (policy_envelope(policy)["policy_sha256"] != spec["progressive_policy"].get("policy_sha256")
+                    or manifest.get("policy_sha256") != spec["progressive_policy"].get("policy_sha256")
+                    or manifest.get("policy_revision") != spec["progressive_policy"].get("revision")):
+                raise ValueError("task-level progressive policy binding changed")
+            expected_items = []
+            group_ids = set()
+            for item in items:
+                child = item.get("spec") if isinstance(item, dict) else None
+                child_manifest = child.get("consent_manifest") if isinstance(child, dict) else None
+                group = child.get("group") if isinstance(child, dict) else None
+                evidence = child.get("evidence") if isinstance(child, dict) else None
+                auth = child.get("authorization") if isinstance(child, dict) else None
+                if (not isinstance(child, dict) or not isinstance(group, dict)
+                        or not isinstance(evidence, list) or not isinstance(child_manifest, dict)
+                        or not isinstance(auth, dict) or not isinstance(item.get("group_id"), str)
+                        or item["group_id"] != group.get("group_id")
+                        or item["group_id"] in group_ids
+                        or child.get("source_submission_approved") is not True
+                        or child.get("audit_operation_id") != spec.get("audit_operation_id")
+                        or child.get("progressive_policy") != spec.get("progressive_policy")
+                        or child.get("consent_nonce") != spec.get("consent_nonce")
+                        or child.get("consent_expires_at") != spec.get("consent_expires_at")
+                        or not SHA256_RE.fullmatch(child.get("consent_sha256", ""))
+                        or content_sha256(child_manifest) != child.get("consent_sha256")
+                        or child_manifest.get("audit_operation_id") != spec.get("audit_operation_id")
+                        or child_manifest.get("group") != group
+                        or child_manifest.get("evidence") != evidence
+                        or child_manifest.get("policy_sha256") != spec["progressive_policy"].get("policy_sha256")
+                        or auth.get("consent_sha256") != child.get("consent_sha256")):
+                    raise ValueError("a batch member is not covered by the explicit task-level consent")
+                group_ids.add(item["group_id"])
+                expected_items.append({
+                    "group_id": item["group_id"], "job_id": child.get("job_id"),
+                    "candidate_id": child.get("candidate_id"),
+                    "consent_sha256": child.get("consent_sha256"),
+                    "report_sha256": auth.get("report_sha256"), "commit": auth.get("commit"),
+                })
+            if manifest.get("items") != expected_items:
+                raise ValueError("task-level quick-screen item list does not match its consent manifest")
+            audit_id = spec["audit_operation_id"]
+            if audit_id == items[0]["spec"].get("job_id"):
+                job = self.store.job(audit_id)
+                job_spec = job.get("spec") if isinstance(job.get("spec"), dict) else {}
+                if (job.get("status") not in {"completed", "completed_with_limitations"}
+                        or len(items) != 1
+                        or job_spec.get("progressive_triage_policy") != spec["progressive_policy"]
+                        or job_spec.get("audit_mode") == "static_only"):
+                    raise ValueError("task-level L2 batch is not bound to its frozen snapshot")
+            else:
+                parent_row = None
+                with self.store.connect() as db:
+                    parent_row = db.execute("SELECT kind,spec,status,cancel_requested FROM operations WHERE id=?",
+                                            (audit_id,)).fetchone()
+                if parent_row:
+                    parent_spec = json.loads(parent_row["spec"])
+                    if (parent_row["kind"] not in {"revision_range", "version_matrix", "branch_comparison", "recent_window_comparison"}
+                            or parent_row["status"] not in {"completed", "completed_with_limitations"}
+                            or parent_spec.get("progressive_triage_policy") != spec["progressive_policy"]
+                            or parent_spec.get("audit_mode") == "static_only"
+                            or parent_row["cancel_requested"]
+                            or parent_row["status"] in {"cancelled", "failed", "timed_out", "interrupted"}
+                            or any(item["spec"].get("job_id") not in parent_spec.get("scan_ids", []) for item in items)):
+                        raise ValueError("task-level L2 batch is not bound to its frozen parent audit")
+                else:
+                    job = self.store.job(audit_id)
+                    job_spec = job.get("spec") if isinstance(job.get("spec"), dict) else {}
+                    if (job.get("status") not in {"completed", "completed_with_limitations"}
+                            or len(items) != 1 or items[0]["spec"].get("job_id") != audit_id
+                            or job_spec.get("progressive_triage_policy") != spec["progressive_policy"]
+                            or job_spec.get("audit_mode") == "static_only"):
+                        raise ValueError("task-level L2 batch is not bound to its frozen snapshot")
+            expiry = datetime.fromisoformat(spec["consent_expires_at"].replace("Z", "+00:00"))
+            if (expiry.tzinfo is None or expiry <= datetime.now(timezone.utc)
+                    or manifest.get("provider_fingerprint") != spec.get("provider_fingerprint")
+                    or manifest.get("model") != spec.get("provider_model")):
+                raise ValueError("task-level progressive quick-screen consent expired or Provider binding changed")
         if kind == "version_candidate_comparison":
             required = ("from_commit", "from_candidate_id", "to_commit", "to_candidate_id",
                         "consent_nonce", "consent_sha256", "consent_expires_at",
@@ -411,6 +510,11 @@ class Operations:
                             or parent_row["cancel_requested"]
                             or parent_row["status"] in {"cancelled", "failed", "timed_out", "interrupted"}):
                         raise ValueError("progressive quick screen is not bound to its frozen intelligent audit")
+                for row in db.execute("SELECT * FROM operations WHERE kind=?", (kind,)):
+                    existing_spec = json.loads(row["spec"])
+                    if existing_spec.get("consent_sha256") == spec["consent_sha256"]:
+                        return self.row(row)
+            elif kind == "progressive_quick_screen_batch":
                 for row in db.execute("SELECT * FROM operations WHERE kind=?", (kind,)):
                     existing_spec = json.loads(row["spec"])
                     if existing_spec.get("consent_sha256") == spec["consent_sha256"]:
@@ -606,14 +710,25 @@ class Operations:
             batch_query = "SELECT id FROM smart_triage_batches WHERE audit_id=?"
             batch_args = [audit_id]
             operation_rows = db.execute(
-                "SELECT id,status,spec FROM operations WHERE kind='agent_investigation'"
+                "SELECT id,kind,status,spec FROM operations WHERE kind IN ('agent_investigation','progressive_quick_screen_batch')"
             ).fetchall()
             matching_operations = []
             for row in operation_rows:
                 spec = json.loads(row["spec"])
-                if spec.get("job_id") != audit_id:
+                if row["kind"] == "progressive_quick_screen_batch":
+                    matches_job = any(
+                        isinstance(item, dict)
+                        and isinstance(item.get("spec"), dict)
+                        and item["spec"].get("job_id") == audit_id
+                        and (report_sha256 is None or item["spec"].get("authorization", {}).get("report_sha256") == report_sha256)
+                        for item in spec.get("items", [])
+                    )
+                else:
+                    matches_job = spec.get("job_id") == audit_id
+                if not matches_job:
                     continue
-                if report_sha256 is not None and spec.get("report_sha256") != report_sha256:
+                if (row["kind"] == "agent_investigation" and report_sha256 is not None
+                        and spec.get("report_sha256") != report_sha256):
                     continue
                 if row["status"] in {"queued", "running"}:
                     matching_operations.append(row)
@@ -669,7 +784,7 @@ class Operations:
         for operation_id in cancelled_ids:
             self.event(operation_id, "cancelled", "Queued Agent triage cancelled for this audit")
         for operation_id in stopped_running_ids:
-            self.event(operation_id, "cancel_requested", "Agent triage stop requested for this audit")
+            self.event(operation_id, "cancel_requested", "Model triage stop requested for this audit")
         return {
             "audit_id": audit_id,
             "report_sha256": report_sha256,
@@ -1007,13 +1122,14 @@ class Operations:
             raise ValueError("invalid progressive audit ID")
         with self.store.connect() as db:
             rows = list(db.execute(
-                "SELECT * FROM operations WHERE kind IN ('progressive_quick_screen','agent_investigation') ORDER BY created_at",
+                "SELECT * FROM operations WHERE kind IN ('progressive_quick_screen','progressive_quick_screen_batch','agent_investigation') ORDER BY created_at",
             ))
         matches = []
         for raw in rows:
             item = self.row(raw)
             spec = item.get("spec") if isinstance(item.get("spec"), dict) else {}
-            bound_audit = (spec.get("audit_operation_id") if item["kind"] == "progressive_quick_screen"
+            bound_audit = (spec.get("audit_operation_id") if item["kind"] in {
+                "progressive_quick_screen", "progressive_quick_screen_batch"}
                            else spec.get("progressive_audit_operation_id"))
             if bound_audit == audit_id:
                 matches.append(item)
@@ -1243,10 +1359,10 @@ class Operations:
             targets = [row]
             if row["kind"] in {"revision_range", "version_matrix", "branch_comparison", "recent_window_comparison"}:
                 for item in db.execute(
-                        "SELECT * FROM operations WHERE kind IN ('progressive_quick_screen','agent_investigation')"):
+                        "SELECT * FROM operations WHERE kind IN ('progressive_quick_screen','progressive_quick_screen_batch','agent_investigation')"):
                     child_spec = json.loads(item["spec"])
                     child_audit = (child_spec.get("audit_operation_id")
-                                   if item["kind"] == "progressive_quick_screen"
+                                   if item["kind"] in {"progressive_quick_screen", "progressive_quick_screen_batch"}
                                    else child_spec.get("progressive_audit_operation_id"))
                     if child_audit == key:
                         targets.append(self.row(item))
