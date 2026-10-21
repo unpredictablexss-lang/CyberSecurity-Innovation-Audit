@@ -6,7 +6,7 @@
 
 设置页一次配置标准预设或自定义策略；单轮输出、单次审计输入/累计输出、模型请求数、候选范围、工具步数、并发和时长进入服务端 policy revision/hash。Agent 普通单项/批量/配对预览从同一快照派生限额，批量候选上限也使用同一快照；L2 单请求受策略约束，L3 共享父审计账本；授权预览绑定冻结策略，变更只影响新任务。实际隔离浏览器页 `127.0.0.1:18879/#/settings/policy` 可见全部策略值；API 默认标准策略单轮 1200、输入 400000、累计输出 100000、请求 120、时长 1800。隔离实例 Provider 未配置，无模型调用或扫描。
 
-验证结果：`test_progressive_triage` 51/51；Agent/策略/候选范围定向组 41/41；深度批次 5/5；Web Node 137/137，TS 与生产构建通过。另一个后端组合 46/82 通过，其余 36 项的共同阻断是 WSL `git` 命令缺失，测试夹具无法初始化；全仓 Python 结果不能标为通过。当前 Phase 5 仍缺三类浏览器 Worker E2E、独立冻结 holdout/消融、全仓 Python 回归、真实 Provider 应用级 L2/L3；mock 和协议冒烟不等于产品准确率或漏洞确认。`validated_vulnerability=0`。
+验证结果：`test_progressive_triage` 51/51；Agent/策略/候选范围定向组 41/41；深度批次 5/5；Web Node 137/137，TS 与生产构建通过。另一个后端组合 46/82 通过，其余 36 项的共同阻断是 WSL `git` 命令缺失，测试夹具无法初始化；全仓 Python 结果不能标为通过。当前 Phase 5 仍缺三类浏览器 Worker E2E、独立冻结 holdout/消融、全仓 Python 回归、真实 Provider 应用级 L2/L3；mock 和协议冒烟不等于产品准确率或漏洞确认。`validated_vulnerability=0`。分支已推送，Draft PR #65（https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/pull/65）为 open/draft，未合并且未标 Ready。
 
 
 ## 2026-10-22 Phase 5 验证续记（当前状态）
