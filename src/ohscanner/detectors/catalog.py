@@ -11,6 +11,7 @@ from .cpp.m2_adapter import M2LifetimeDetector, M2SharedPtrRaceDetector
 from .ark_runtime.detector import ArkRuntimeTypeSafetyDetector
 from .ark_runtime.model import c_line_static_model
 from .cpp.null_dereference_detector import NullDereferenceDetector
+from .cpp.path_traversal_detector import CppPathTraversalDetector
 from .cpp.resource_lifetime_detector import CppResourceLifetimeDetector
 from .cpp.unsafe_memory_call_detector import CppUnsafeMemoryCallDetector
 from .interface.m2_adapter import M2IpcInterfaceDetector
@@ -76,6 +77,13 @@ _APPROVED = {
         "default_enabled": False,
         "admission_reason": "explicit_selection_required: unknown-return nullability produces broad weak candidates; review a bounded scope first",
         "summary": "A: narrow same-function C/C++ null-source/deref candidate; default unassessed",
+    },
+    "ohscanner.cpp.path_traversal": {
+        "factory": CppPathTraversalDetector,
+        "kind": "research_candidate",
+        "default_enabled": False,
+        "admission_reason": "explicit_selection_required: bounded lexical source-to-file-sink candidates; path semantics, fixed source and product impact remain unverified",
+        "summary": "A: bounded C/C++ path traversal candidates; syntax matches do not prove taint, containment or impact",
     },
     "ohscanner.cpp.resource_lifetime": {
         "factory": CppResourceLifetimeDetector,

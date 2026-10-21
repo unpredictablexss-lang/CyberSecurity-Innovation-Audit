@@ -59,7 +59,35 @@ class KnownCaseCorpusTests(unittest.TestCase):
              ("public_cve", "local_dangerous_shape", "manual_candidate", "exclusion")},
         )
         self.assertEqual("ddd8556768d679fcc09f1fcb37d10730f49b2c6c", MANIFEST["baseline_commit"])
+
+    def test_manifest_source_audit_git_objects_when_history_is_available(self):
         audit = MANIFEST["source_audit"]
+        commit_check = subprocess.run(
+            ["git", "cat-file", "-e", audit["commit"]], cwd=ROOT,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
+        )
+        if commit_check.returncode != 0:
+            self.skipTest(
+                "requires Git history containing source-audit commit " + audit["commit"]
+            )
+        actual_tree = subprocess.run(
+            ["git", "rev-parse", f"{audit['commit']}^{{tree}}"], cwd=ROOT,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, text=True,
+        ).stdout.strip()
+        self.assertEqual(audit["tree"], actual_tree)
+        missing = [
+            object_id for object_id in (audit["tree"], audit["blob"])
+            if subprocess.run(
+                ["git", "cat-file", "-e", object_id], cwd=ROOT,
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
+            ).returncode != 0
+        ]
+        if missing:
+            self.skipTest(
+                "requires the source-audit tree/blob objects omitted from this shallow checkout: "
+                + ", ".join(missing)
+            )
+
         blob = subprocess.run(
             ["git", "cat-file", "blob", audit["blob"]], cwd=ROOT,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True,
@@ -238,16 +266,54 @@ class KnownCaseCorpusTests(unittest.TestCase):
         )
         for symbol, parent_path, fixed_path, scan_path, parent_blob, fixed_blob in pairs:
             with self.subTest(symbol=symbol):
-                self.assertEqual(parent_blob, self.pinned_blob_id(pinned, parent_path))
-                self.assertEqual(fixed_blob, self.pinned_blob_id(pinned, fixed_path))
-                parent = self.pinned_blob(pinned, parent_path)
-                fixed = self.pinned_blob(pinned, fixed_path)
-                parent_run = self.run_text(parent, scan_path, pinned, tree, parent_path, parent_blob)
-                fixed_run = self.run_text(fixed, scan_path, pinned, tree, fixed_path, fixed_blob)
+                parent = (ROOT / parent_path).read_bytes()
+                fixed = (ROOT / fixed_path).read_bytes()
+                self.assertEqual(parent_blob, self.git_blob_id(parent))
+                self.assertEqual(fixed_blob, self.git_blob_id(fixed))
+                parent_run = self.run_text(
+                    parent.decode("utf-8"), scan_path, pinned, tree, parent_path, parent_blob
+                )
+                fixed_run = self.run_text(
+                    fixed.decode("utf-8"), scan_path, pinned, tree, fixed_path, fixed_blob
+                )
                 self.assertIn(symbol, {f.symbol for f in parent_run.findings})
                 self.assertNotIn(symbol, {f.symbol for f in fixed_run.findings})
                 self.assertEqual("completed", parent_run.status)
                 self.assertEqual("completed", fixed_run.status)
+
+    def test_pinned_repository_control_pair_objects_when_history_is_available(self):
+        pinned = "db77164fdc2af0da02e4d3efc056d84694fd68e8"
+        pinned_blobs = (
+            ("tests/fixtures/data_sensitive/d39_cve_2026_58313_lru_vulnerable.h",
+             "7ce4262e3f1d2c0173d929318a4795ff1573c721"),
+            ("tests/fixtures/data_sensitive/d39_cve_2026_58313_lru_fixed.h",
+             "68114f10d83c8f0bdc46679c7efa35ed286bef8a"),
+            ("tests/fixtures/data_sensitive/cve_2026_33636/libpng-1.6.55-palette_neon_intrinsics.c",
+             "3068e9b6e62be16bee2a8f1ff8271a02f32be97f"),
+            ("tests/fixtures/data_sensitive/cve_2026_33636/libpng-1.6.56-palette_neon_intrinsics.c",
+             "0967ea1aebd718907fda1e767957deeddbe676b3"),
+        )
+        commit_check = subprocess.run(
+            ["git", "cat-file", "-e", pinned], cwd=ROOT,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
+        )
+        if commit_check.returncode != 0:
+            self.skipTest(
+                "requires Git history containing pinned control commit " + pinned
+            )
+        tree = subprocess.run(
+            ["git", "rev-parse", f"{pinned}^{{tree}}"], cwd=ROOT,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, text=True,
+        ).stdout.strip()
+        if subprocess.run(
+            ["git", "cat-file", "-e", tree], cwd=ROOT,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
+        ).returncode != 0:
+            self.skipTest(
+                "requires pinned control tree omitted from this shallow checkout: " + tree
+            )
+        for path, expected_blob in pinned_blobs:
+            self.assertEqual(expected_blob, self.pinned_blob_id(pinned, path))
 
     @staticmethod
     def pinned_blob(commit, path):
@@ -264,6 +330,10 @@ class KnownCaseCorpusTests(unittest.TestCase):
             stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, text=True,
         )
         return process.stdout.strip()
+
+    @staticmethod
+    def git_blob_id(data):
+        return hashlib.sha1(b"blob " + str(len(data)).encode() + b"\0" + data).hexdigest()
 
     def run_text(self, text, scan_path, commit, tree, fixture_path, fixture_blob):
         unit = SourceUnit(

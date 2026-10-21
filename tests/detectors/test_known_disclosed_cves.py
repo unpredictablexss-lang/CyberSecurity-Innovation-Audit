@@ -1,7 +1,6 @@
 from __future__ import annotations
 import hashlib
 import json
-import subprocess
 import unittest
 from pathlib import Path
 from src.ohscanner.contracts import ScanContext, ScanRequest, SourceUnit
@@ -9,21 +8,11 @@ from src.ohscanner.detectors.catalog import build_registry, catalog_metadata, de
 from src.ohscanner.detectors.known_cves import KnownDisclosedCveDetector, _pasteboard_guard_observation
 from src.ohscanner.fixture import snapshot_digest
 
-PINNED_HEAD = "db77164fdc2af0da02e4d3efc056d84694fd68e8"
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
-def read_pinned_git_blob(relative_path):
-    object_id = f"{PINNED_HEAD}:{relative_path}"
-    process = subprocess.run(
-        ["git", "cat-file", "blob", object_id],
-        cwd=REPO_ROOT, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
-    )
-    if process.returncode != 0:
-        raise RuntimeError(
-            f"cannot read pinned Git blob {object_id}: "
-            + process.stderr.decode("utf-8", errors="replace").strip()
-        )
-    return process.stdout
+def read_pinned_blob_fixture(relative_path):
+    """Read checked-in bytes; each replay verifies their expected Git blob ID."""
+    return (REPO_ROOT / relative_path).read_bytes()
 
 def git_blob_sha1(data):
     return hashlib.sha1(b"blob " + str(len(data)).encode() + b"\0" + data).hexdigest()
@@ -50,9 +39,9 @@ class KnownDisclosedCveTests(unittest.TestCase):
         return KnownDisclosedCveDetector().detect(ScanContext(request=request, units=units), units)
 
     def test_appdomainverify_cve_2026_58313_real_lru_fix_pair(self):
-        vulnerable = read_pinned_git_blob(
+        vulnerable = read_pinned_blob_fixture(
             "tests/fixtures/data_sensitive/d39_cve_2026_58313_lru_vulnerable.h")
-        fixed = read_pinned_git_blob(
+        fixed = read_pinned_blob_fixture(
             "tests/fixtures/data_sensitive/d39_cve_2026_58313_lru_fixed.h")
         path = "frameworks/common/include/utils/lru_cache_util.h"
 
@@ -403,9 +392,9 @@ class KnownDisclosedCveTests(unittest.TestCase):
         self.assertEqual((), self.run_source(safe, "decoder.c").findings)
 
     def test_libpng_neon_palette_cve_2026_33636_exact_upstream_pair(self):
-        vulnerable = read_pinned_git_blob(
+        vulnerable = read_pinned_blob_fixture(
             "tests/fixtures/data_sensitive/cve_2026_33636/libpng-1.6.55-palette_neon_intrinsics.c")
-        fixed = read_pinned_git_blob(
+        fixed = read_pinned_blob_fixture(
             "tests/fixtures/data_sensitive/cve_2026_33636/libpng-1.6.56-palette_neon_intrinsics.c")
 
         self.assertEqual("3068e9b6e62be16bee2a8f1ff8271a02f32be97f", git_blob_sha1(vulnerable))
