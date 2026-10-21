@@ -85,6 +85,12 @@ class ModelRequestPolicyTests(unittest.TestCase):
                 override = client.post("/api/v1/operations/agent-investigations/preview",
                     json={**body, "max_output_tokens": 1200})
                 self.assertEqual(override.status_code, 409)
+                store.update(build_policy(request_output_tokens=32768), 1)
+                high_preview = client.post("/api/v1/operations/agent-investigations/preview",
+                    json={**body, "mode": "single_shot"})
+                self.assertEqual(high_preview.status_code, 200, high_preview.text)
+                self.assertEqual(seen[-1]["max_output_tokens"], 32768)
+                self.assertGreaterEqual(seen[-1]["max_total_output_tokens"], 32768)
 
     def test_l2_respects_new_output_policy_without_changing_legacy_default(self):
         from tests import test_progressive_triage as triage_tests

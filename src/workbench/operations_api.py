@@ -697,7 +697,7 @@ class AgentInvestigationRequest(Strict):
     max_steps: int = Field(default=4, ge=1, le=6)
     max_output_tokens: int | None = Field(default=DEFAULT_AGENT_OUTPUT_TOKENS, ge=128, le=65536)
     max_total_input_tokens: int = Field(default=128000, ge=1000, le=512000)
-    max_total_output_tokens: int = Field(default=8000, ge=512, le=12000)
+    max_total_output_tokens: int = Field(default=8000, ge=512, le=65536)
     timeout_seconds: int = Field(default=240, ge=90, le=480)
     source_submission_approved: bool = False
     consent_sha256: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
@@ -746,7 +746,7 @@ class AgentBatchInvestigationRequest(Strict):
     max_steps: int = Field(default=4, ge=1, le=6)
     max_output_tokens: int | None = Field(default=DEFAULT_AGENT_OUTPUT_TOKENS, ge=128, le=65536)
     max_total_input_tokens: int = Field(default=128000, ge=1000, le=512000)
-    max_total_output_tokens: int = Field(default=8000, ge=512, le=12000)
+    max_total_output_tokens: int = Field(default=8000, ge=512, le=65536)
     timeout_seconds: int = Field(default=240, ge=90, le=480)
     source_submission_approved: bool = False
     consent_sha256: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
@@ -2180,6 +2180,10 @@ def install_routes(app: FastAPI, settings, store):
                 and body.max_output_tokens != provider.request_output_tokens):
             raise HTTPException(status_code=409, detail="单次输出额度已统一由系统设置的智能审计策略配置；请重新预览授权")
         body.max_output_tokens = provider.request_output_tokens
+        # A direct single-shot call retains its legacy cumulative accounting,
+        # but its per-task default must never silently reduce the global cap.
+        if provider.request_output_tokens is not None:
+            body.max_total_output_tokens = max(body.max_total_output_tokens, provider.request_output_tokens)
 
     def _agent_consent_preview(body, provider, *, continuous=None, progressive_bounded=False):
         from .agent import consent_preview
