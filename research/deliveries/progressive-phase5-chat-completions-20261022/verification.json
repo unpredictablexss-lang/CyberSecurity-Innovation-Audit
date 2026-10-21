@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-22",
+  "base_commit": "cfc5aec8fc5bbf7dbad0a5a64b0f5dbb6dc13fba",
+  "branch": "feat/progressive-phase5-main-e2e-20261022",
+  "working_tree_changes": [
+    "src/workbench/agent.py",
+    "tests/test_provider_protocols.py",
+    "docs/项目现状与下一步.md"
+  ],
+  "verification_type": "real_provider_protocol_smoke",
+  "scope": "one Chat Completions request with three synthetic C snippets; not application Agent or browser end-to-end",
+  "authorization": "user authorized sending minimum test snippets to the configured Xiaomi Mimo service",
+  "configuration_handling": "read-only load of the existing 8765 local MiMo configuration; Chat Completions selected in memory only; no settings file changed",
+  "endpoint_host": "api.xiaomimimo.com",
+  "model": "mimo-v2.6-pro",
+  "protocol": "openai-chat-completions",
+  "status": "completed",
+  "duration_ms": 6095,
+  "transport_attempts": 1,
+  "usage": {
+    "input_tokens": 236,
+    "output_tokens": 176,
+    "total_tokens": 412
+  },
+  "wire_request_sha256": "57b9f089d163f5ab81a967e9a0171ad8ebd843cff6be684765cadb7965609c7b",
+  "model_labels": {
+    "A": "candidate",
+    "B": "fixed_control",
+    "C": "safe_control"
+  },
+  "interpretation": "adapter interoperability evidence only; model output is not independent ground truth and does not confirm a product vulnerability or establish accuracy",
+  "validated_vulnerability": 0
+}

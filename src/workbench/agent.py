@@ -372,6 +372,11 @@ def _chat_completions_payload(payload):
             request["tool_choice"] = {"type": "function", "function": {"name": choice["name"]}}
         elif choice is not None:
             raise ValueError("OpenAI-compatible chat tool choice is invalid")
+        parallel_tool_calls = payload.get("parallel_tool_calls")
+        if parallel_tool_calls is not None:
+            if not isinstance(parallel_tool_calls, bool):
+                raise ValueError("OpenAI-compatible chat parallel tool setting is invalid")
+            request["parallel_tool_calls"] = parallel_tool_calls
 
     text_spec = payload.get("text")
     format_spec = text_spec.get("format") if isinstance(text_spec, dict) else None
@@ -441,8 +446,10 @@ def _responses_shape_from_chat_completion(response):
     for call in tool_calls:
         function = call.get("function") if isinstance(call, dict) else None
         call_id = call.get("id") if isinstance(call, dict) else None
+        call_type = call.get("type") if isinstance(call, dict) else None
         if (not isinstance(function, dict) or not isinstance(call_id, str) or not call_id
-                or call_id in seen_ids or not isinstance(function.get("name"), str)
+                or call_id in seen_ids or call_type not in {None, "function"}
+                or not isinstance(function.get("name"), str)
                 or not isinstance(function.get("arguments"), str)):
             raise ValueError("OpenAI-compatible chat response contains an invalid function call")
         seen_ids.add(call_id)

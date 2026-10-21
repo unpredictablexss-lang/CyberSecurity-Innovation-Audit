@@ -84,6 +84,7 @@ class ChatCompletionsAdapterTests(unittest.TestCase):
         self.assertEqual(first_body["messages"][0]["role"], "system")
         self.assertEqual(first_body["tools"][0]["function"]["name"], "read_fixed_source_range")
         self.assertNotIn("strict", first_body["tools"][0]["function"])
+        self.assertIs(first_body["parallel_tool_calls"], False)
         self.assertEqual(first["_ohscanner_wire_request_sha256"], hashlib.sha256(request.data).hexdigest())
         second_body = json.loads(opener.requests[1][0].data)
         self.assertEqual(second_body["messages"][-2]["tool_calls"][0]["id"], "call-1")
@@ -127,6 +128,24 @@ class ChatCompletionsAdapterTests(unittest.TestCase):
         client.opener = _Opener([{"choices": [{"message": {"role": "assistant", "content": None},
                                                   "finish_reason": "stop"}]}])
         with self.assertRaisesRegex(ValueError, "did not include assistant content"):
+            client.create({"model": "test-model", "input": "probe"})
+
+    def test_invalid_parallel_setting_and_non_function_tool_response_fail_closed(self):
+        config = ProviderConfig("https://api.example.invalid", "test-model", "test-key",
+                                provider="openai-chat-completions")
+        client = ResponsesClient(config)
+        opener = _Opener([])
+        client.opener = opener
+        with self.assertRaisesRegex(ValueError, "parallel tool setting"):
+            client.create({"model": "test-model", "input": "probe", "tools": [],
+                           "parallel_tool_calls": "false"})
+        self.assertEqual(opener.requests, [])
+
+        client.opener = _Opener([{"choices": [{"message": {"role": "assistant", "content": None,
+            "tool_calls": [{"id": "call-1", "type": "custom", "function": {
+                "name": "read_fixed_source_range", "arguments": "{}"}}]},
+            "finish_reason": "tool_calls"}]}])
+        with self.assertRaisesRegex(ValueError, "invalid function call"):
             client.create({"model": "test-model", "input": "probe"})
 
 
