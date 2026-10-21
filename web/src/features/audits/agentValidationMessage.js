@@ -9,7 +9,7 @@ const rejectionDescriptions = {
 export function structuredAnswerRejection(status, errorCode) {
   if (status === "provider_incomplete") {
     if (errorCode === "max_output_tokens") {
-      return "Provider 响应达到本次输出 token 上限；服务端已丢弃不完整答复，所有证据义务仍保持未决。核对预算后如需重试，请重新预览并单独授权；本次结果不代表候选误报或安全。";
+      return "Provider 响应达到本次单请求输出 token 上限；服务端已丢弃不完整答复，所有证据义务仍保持未决。若要调整单次上限后重试，请重新预览并单独授权；本次结果不代表候选误报或安全。";
     }
     return "Provider 响应未完整结束；服务端已丢弃不完整答复，所有证据义务仍保持未决。核对任务状态后如需重试，请重新预览并单独授权；本次结果不代表候选误报或安全。";
   }

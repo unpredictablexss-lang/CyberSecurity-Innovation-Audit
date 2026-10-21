@@ -16,7 +16,7 @@ test("blind review options contain complete R1/R2 pairs and expand to both opera
   const result = blindReviewPairs(rows, "study-1");
   assert.equal(result.eligibleOperationCount, 2);
   assert.equal(result.pairs.length, 1);
-  assert.match(result.pairs[0].label, /R1\/R2 完成/);
+  assert.match(result.pairs[0].label, /两种调查均完成/);
   assert.deepEqual(blindReviewOperationIds([result.pairs[0].key], result.pairs), ["r1", "r2"]);
 });
 

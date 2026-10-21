@@ -1,0 +1,136 @@
+{
+  "candidate": {
+    "backing_length": 8192,
+    "backing_store_oob": false,
+    "classification": "candidate",
+    "cross_view_prefix_bytes": 2048,
+    "fixed_guard_control": {
+      "accepted": false,
+      "end_backing_index_exclusive": 6144,
+      "first_backing_index": 2048,
+      "write_count_mod32": 4096
+    },
+    "offset_integer": "18446744073709549568",
+    "offset_number": "1.844674407370955e+19",
+    "old_guard_model": {
+      "accepted": true,
+      "end_backing_index_exclusive": 6144,
+      "first_backing_index": 2048,
+      "write_count_mod32": 4096
+    },
+    "product_impact": "unknown",
+    "runtime_execution": "not_run",
+    "source_length": 4096,
+    "target_view": {
+      "byte_length": 4096,
+      "byte_offset": 4096
+    }
+  },
+  "controls": {
+    "offset_zero_fits": {
+      "accepted": true,
+      "end_backing_index_exclusive": 4,
+      "first_backing_index": 0,
+      "write_count_mod32": 4
+    },
+    "ordinary_one_past_rejected": {
+      "accepted": false,
+      "end_backing_index_exclusive": 5,
+      "first_backing_index": 1,
+      "write_count_mod32": 4
+    },
+    "small_offset_too_large_rejected": {
+      "accepted": false,
+      "end_backing_index_exclusive": 8194,
+      "first_backing_index": 8193,
+      "write_count_mod32": 1
+    }
+  },
+  "coverage": {
+    "complete_translation_units": [
+      "ecmascript/builtins/builtins_typedarray.cpp",
+      "ecmascript/builtins/builtins_arraybuffer.cpp",
+      "ecmascript/base/typed_array_helper.cpp",
+      "ecmascript/js_tagged_value.cpp"
+    ],
+    "creator_dependency": "not_applicable_to_builtin_Set_entry",
+    "partial_translation_units": [
+      "ecmascript/builtins/builtins_typedarray.h",
+      "ecmascript/base/typed_array_helper.h",
+      "ecmascript/base/number_helper.cpp"
+    ],
+    "set_method_lines": [
+      1146,
+      1392
+    ]
+  },
+  "limitations": [
+    "arithmetic model only; does not execute Ark Runtime",
+    "no product/build profile bound",
+    "TypedArray declaration and Number helper translation units parse partial"
+  ],
+  "source": {
+    "commit": "d1a58d59166777e16574ceed64c15f0b2f44a76c",
+    "files": [
+      {
+        "ast": "complete",
+        "ast_issue_count": 0,
+        "blob": "a98d6c5f38a4a8fc8a0f1615d17bad166cbf7696",
+        "bytes": 103983,
+        "path": "ecmascript/builtins/builtins_typedarray.cpp",
+        "sha256": "8bd0fe16b7dc4ba8283fb240183998d47f2f9784bb243dcf3780a1a8c869bea1"
+      },
+      {
+        "ast": "partial",
+        "ast_issue_count": 33,
+        "blob": "317918d0d570227dea9a09495906e3bdbe10bb8f",
+        "bytes": 15997,
+        "path": "ecmascript/builtins/builtins_typedarray.h",
+        "sha256": "628074bf5770b8fa4a5bfae6dd0aced7be07d241bede9b69d1393fd42fd784ef"
+      },
+      {
+        "ast": "complete",
+        "ast_issue_count": 0,
+        "blob": "577475549ff11ccf8ca446a14727db55549b385d",
+        "bytes": 44584,
+        "path": "ecmascript/builtins/builtins_arraybuffer.cpp",
+        "sha256": "002c842843edb973546e3e5205d4bf0bed0da2dabb884f3138d789991eec599a"
+      },
+      {
+        "ast": "complete",
+        "ast_issue_count": 0,
+        "blob": "715584f3724382d589bfc070e9375f44ad0c10e7",
+        "bytes": 68755,
+        "path": "ecmascript/base/typed_array_helper.cpp",
+        "sha256": "472485421cacf57a2eb75228a432eea6568ee7ae3b3682a9f0d5be6b3d0ef9e7"
+      },
+      {
+        "ast": "partial",
+        "ast_issue_count": 4,
+        "blob": "fe6fa766f8fbe5e694f8b64434a7cd99f6ffe36d",
+        "bytes": 9341,
+        "path": "ecmascript/base/typed_array_helper.h",
+        "sha256": "68bff535d1ec17e1060d8ed3d27af9af4a93153f4b4214321a458621da4a1bc4"
+      },
+      {
+        "ast": "complete",
+        "ast_issue_count": 0,
+        "blob": "135f78c665afb23904fec2978444a781758354c7",
+        "bytes": 77089,
+        "path": "ecmascript/js_tagged_value.cpp",
+        "sha256": "82eb03a9c0a48249be58f449c2f9fec1346209de86410c89b846f78cfdedb66b"
+      },
+      {
+        "ast": "partial",
+        "ast_issue_count": 2,
+        "blob": "3caeaa1c0f63791ea7e362ef997f245c5a010ae4",
+        "bytes": 45477,
+        "path": "ecmascript/base/number_helper.cpp",
+        "sha256": "71d6fd6f0af4d3896daedf4b745a950ce12a7ce8773dddd1b3e3c11fd1e71ec8"
+      }
+    ],
+    "repository": "openharmony/arkcompiler_ets_runtime",
+    "tree": "2cd854aa7d9f987de89d31a6a512e735779e75b6"
+  },
+  "status": "candidate_source_replay_passed"
+}

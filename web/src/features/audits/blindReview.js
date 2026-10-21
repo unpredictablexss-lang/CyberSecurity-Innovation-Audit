@@ -43,7 +43,7 @@ export function blindReviewPairs(operations, experimentId) {
     pairs.push({
       key: group.identity,
       operationIds: ARMS.map((arm) => operationsByArm[arm].id),
-      label: `${candidate.length > 20 ? `${candidate.slice(0, 17)}…` : candidate} · ${commit.slice(0, 12)} · R1/R2 完成`,
+      label: `${candidate.length > 20 ? `${candidate.slice(0, 17)}…` : candidate} · ${commit.slice(0, 12)} · 两种调查均完成`,
     });
   }
   pairs.sort((left, right) => left.label.localeCompare(right.label, "zh-CN"));

@@ -1,3 +1,10 @@
+export function candidateSeverityLabel(severity: string | null | undefined): string;
+export function candidateSeverityColor(severity: string | null | undefined): string;
+export function candidateConfidenceLabel(tier: string | null | undefined): string;
+export function candidateConfidenceColor(tier: string | null | undefined): string;
+export function humanReviewStatusLabel(status: string | null | undefined): string;
+export function humanReviewStatusColor(status: string | null | undefined): string;
+export function candidateVerificationLabel(state: string | null | undefined): string;
 export const triageStateLabels: Readonly<Record<string, string>>;
 export function triageStateLabel(state: string | null | undefined): string;
 export function taskReportStatusLabel(summary: Record<string, any> | null | undefined, job: Record<string, any> | null | undefined): string;
@@ -5,6 +12,7 @@ export function taskTriageStatusLabel(summary: Record<string, any> | null | unde
 export function scanStageLabel(stage: string | null | undefined): string;
 export function riskReasonLabel(reason: string | null | undefined): string;
 export function riskReasonsLabel(reasons: string[] | null | undefined): string;
+export function highConfidenceAiSummary(summary: string | null | undefined): { state: "available" | "unknown"; text: string };
 export function agentVerdictLabel(status: string | null | undefined): string;
 export function agentConfidenceLabel(confidence: string | null | undefined): string;
 export function agentScopeLabel(scope: string | null | undefined): string;

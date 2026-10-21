@@ -1,0 +1,83 @@
+{
+  "schema": 1,
+  "experiment": "CVE-2026-58313 isolated component LRU concurrency harness",
+  "compiler": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0",
+  "address_sanitizer": true,
+  "harness_sha256": "62f4bb89117039f1494076bc9fae35282893c68d2b16fb82edf44b81d80c167e",
+  "iterations_per_source": 3,
+  "vulnerable": {
+    "commit": "7121401db97c3fedba57ae188148249567e09e18",
+    "git_blob_sha1": "7ce4262e3f1d2c0173d929318a4795ff1573c721",
+    "source_sha256": "77cf22fe5fc52a1f365f556344360ba4912341c1b6875f8778e40ca80c576ad4",
+    "rounds": [
+      {
+        "round": 1,
+        "exit_code": -6,
+        "asan_errors": [
+          "==291154==ERROR: AddressSanitizer: attempting double-free on 0x507000000e90 in thread T6:",
+          "SUMMARY: AddressSanitizer: double-free ../../../../src/libsanitizer/asan/asan_new_delete.cpp:172 in operator delete(void*, unsigned long)"
+        ],
+        "completed_message": false
+      },
+      {
+        "round": 2,
+        "exit_code": -6,
+        "asan_errors": [
+          "==291163==ERROR: AddressSanitizer: attempting double-free on 0x507000000e90 in thread T3:",
+          "SUMMARY: AddressSanitizer: double-free ../../../../src/libsanitizer/asan/asan_new_delete.cpp:172 in operator delete(void*, unsigned long)"
+        ],
+        "completed_message": false
+      },
+      {
+        "round": 3,
+        "exit_code": -6,
+        "asan_errors": [
+          "==291172==ERROR: AddressSanitizer: attempting double-free on 0x507000000e90 in thread T3:",
+          "SUMMARY: AddressSanitizer: double-free ../../../../src/libsanitizer/asan/asan_new_delete.cpp:172 in operator delete(void*, unsigned long)"
+        ],
+        "completed_message": false
+      }
+    ],
+    "compile_warning_lines": [
+      "/home/audit/ohscanner/worktrees/d-commercial-expansion-20261018/tests/fixtures/data_sensitive/d39_cve_2026_58313_lru_vulnerable.h:47:1: warning: no return statement in function returning non-void [-Wreturn-type]"
+    ]
+  },
+  "fixed": {
+    "commit": "d01a9581e35a22c0a58e1e446556ae3d3c189af3",
+    "git_blob_sha1": "68114f10d83c8f0bdc46679c7efa35ed286bef8a",
+    "source_sha256": "a9bed219a9e789ff71072846d786894cee90042602ddff18f7c2b133e81947ad",
+    "rounds": [
+      {
+        "round": 1,
+        "exit_code": 0,
+        "asan_errors": [],
+        "completed_message": true
+      },
+      {
+        "round": 2,
+        "exit_code": 0,
+        "asan_errors": [],
+        "completed_message": true
+      },
+      {
+        "round": 3,
+        "exit_code": 0,
+        "asan_errors": [],
+        "completed_message": true
+      }
+    ],
+    "compile_warning_lines": [
+      "/home/audit/ohscanner/worktrees/d-commercial-expansion-20261018/tests/fixtures/data_sensitive/d39_cve_2026_58313_lru_fixed.h:48:1: warning: no return statement in function returning non-void [-Wreturn-type]"
+    ]
+  },
+  "component_result": "ASan memory error reproduced on pinned pre-fix source and absent on pinned lock-protected source",
+  "product_status": "unknown",
+  "finding_status": "candidate",
+  "validated_vulnerability": 0,
+  "limitations": [
+    "This is a standalone component harness using synthetic keys, not an OpenHarmony product build or product PoC.",
+    "The observed sanitizer result is a double-free from unsynchronized container operations; it does not establish attacker reachability or product impact.",
+    "The upstream fix is applied as a fixed source snapshot; no OpenHarmony release image or affected device was built.",
+    "The pinned upstream header emits an unrelated warning because SetMaxCap returns bool without a return statement."
+  ]
+}

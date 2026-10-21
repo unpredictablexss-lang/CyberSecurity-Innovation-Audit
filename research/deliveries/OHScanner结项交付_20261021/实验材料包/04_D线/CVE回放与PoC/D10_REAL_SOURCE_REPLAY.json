@@ -1,0 +1,363 @@
+{
+  "schema": 1,
+  "experiment": "D10 manifest-bound exact-file source replay",
+  "source_retrieval": "GitHub raw files pinned by commit; every DSoftBus file checked against manifest size, SHA-256, and Git blob SHA-1",
+  "dsoftbus_repository": "openharmony/communication_dsoftbus",
+  "dsoftbus_commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+  "dsoftbus_upstream_tree_sha": "bd915661eedd139df17f249191e2a691e76f7565",
+  "dsoftbus_manifest_files_verified": 10,
+  "dsoftbus_code_files_scanned": 9,
+  "dsoftbus_files": [
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+      "path": "core/authentication/include/auth_session_key.h",
+      "size": 3026,
+      "git_blob": "e8ff24702ea0da2b3dc4300740e5da42366c0b4b",
+      "sha256": "e7c41081253debc12aae90380b91bc4302b0b06c23f2a301d6b68682b27e8df2",
+      "checks": {
+        "size_matches": true,
+        "sha256_matches": true,
+        "git_blob_matches": true
+      }
+    },
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+      "path": "core/authentication/src/auth_session_key.c",
+      "size": 23151,
+      "git_blob": "0569ee21db9bf2a3ccfd10c020b3c0d45c01cc50",
+      "sha256": "5dc2f567cd127876aaaf35f7373c4b5a802a5802607eb7d05e34f62d5870701f",
+      "checks": {
+        "size_matches": true,
+        "sha256_matches": true,
+        "git_blob_matches": true
+      }
+    },
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+      "path": "interfaces/kits/authentication/auth_session_key_struct.h",
+      "size": 1232,
+      "git_blob": "ca31a384eaf5bc147997ba4a21a41b6cae9a7410",
+      "sha256": "30a86e2bce66b686133456f5af4820054169b0bddd1dfaade2cfb726290176db",
+      "checks": {
+        "size_matches": true,
+        "sha256_matches": true,
+        "git_blob_matches": true
+      }
+    },
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+      "path": "core/authentication/src/auth_hichain.c",
+      "size": 22279,
+      "git_blob": "1aadc4dafe81bc42f9916b9bd7aa3f9f0a616c2d",
+      "sha256": "4132e6577e6d736a7f922b0344fbcb2002d533f079ee332494ffdf007ec47e7b",
+      "checks": {
+        "size_matches": true,
+        "sha256_matches": true,
+        "git_blob_matches": true
+      }
+    },
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+      "path": "core/authentication/src/auth_hichain_adapter.c",
+      "size": 14989,
+      "git_blob": "5b4f711bd9de233843fd6efe48267e0b10831206",
+      "sha256": "0bbbfe21cf79a85343848f59620cedb1b67a42d5f1196d7e36816e9cd562f6de",
+      "checks": {
+        "size_matches": true,
+        "sha256_matches": true,
+        "git_blob_matches": true
+      }
+    },
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+      "path": "adapter/common/include/softbus_adapter_crypto.h",
+      "size": 3780,
+      "git_blob": "0799d2acad2d876d9d02e206be40dd39927c8101",
+      "sha256": "1a999bf0c65d68b6e46a7dfecf23caac96bf599561df1b84e2192e0bed393dea",
+      "checks": {
+        "size_matches": true,
+        "sha256_matches": true,
+        "git_blob_matches": true
+      }
+    },
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+      "path": "dfx/interface/include/auth_log.h",
+      "size": 2593,
+      "git_blob": "c3b3ebba9eaebcb1b64fed20b954daa9955d8d6f",
+      "sha256": "8572980b13d1425c1423618b258c4259ac89ec153e9221d7d610b9860f67145f",
+      "checks": {
+        "size_matches": true,
+        "sha256_matches": true,
+        "git_blob_matches": true
+      }
+    },
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+      "path": "dfx/interface/include/softbus_log.h",
+      "size": 4892,
+      "git_blob": "9c6a0df46b533c97a2419a38323eefc9458aab87",
+      "sha256": "c9627e6e71bc70c4e4cc677b88f56efdb1c29de0d96eac7861df2ecc6a974a7e",
+      "checks": {
+        "size_matches": true,
+        "sha256_matches": true,
+        "git_blob_matches": true
+      }
+    },
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+      "path": "dfx/log/src/auth_log.c",
+      "size": 1041,
+      "git_blob": "f499877ece96baee3173bd43326607ad0fb91268",
+      "sha256": "66efee6c3dc668112c46f1f412290b92e3830472f506f4778523736e4a78c9ca",
+      "checks": {
+        "size_matches": true,
+        "sha256_matches": true,
+        "git_blob_matches": true
+      }
+    },
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+      "path": "LICENSE",
+      "size": 10173,
+      "git_blob": "4947287f7b5ccb5d1e8b7b2d3aa5d89f322c160d",
+      "sha256": "0cec06e0e55fbc3dc5cee4fca9b607f66cb8f4e4dbcf3b3c013594dd156732e9",
+      "checks": {
+        "size_matches": true,
+        "sha256_matches": true,
+        "git_blob_matches": true
+      }
+    }
+  ],
+  "hilog_repository": "openharmony/hiviewdfx_hilog",
+  "hilog_commit": "393d7e9a690edb76ed27e710b472623daf650dc8",
+  "hilog_upstream_tree_sha": "c2d29126676b26aa0ad8c6e2797b3acae1106e54",
+  "hilog_api_headers_verified": [
+    {
+      "repository": "openharmony/hiviewdfx_hilog",
+      "commit": "393d7e9a690edb76ed27e710b472623daf650dc8",
+      "path": "interfaces/native/innerkits/include/hilog/log_c.h",
+      "git_blob": "db7eef60ccfcd2db46f5b68fd951455f4bf4cb69",
+      "checks": {
+        "git_blob_matches": true
+      },
+      "mapping": "HILOG_DEBUG/INFO/WARN/ERROR/FATAL -> HILOG_IMPL, format argument 1; HILOG_COMM_INFO/WARN/ERROR/FATAL -> HILOG_IMPL, format argument 0"
+    },
+    {
+      "repository": "openharmony/hiviewdfx_hilog",
+      "commit": "393d7e9a690edb76ed27e710b472623daf650dc8",
+      "path": "interfaces/native/innerkits/include/hilog/log_cpp.h",
+      "git_blob": "51b126bc92568a6d370cba73fa79fdddfc7c0ef6",
+      "checks": {
+        "git_blob_matches": true
+      },
+      "mapping": "HiLogDebug/Info/Warn/Error/Fatal -> HILOG_IMPL, format argument 1"
+    },
+    {
+      "repository": "openharmony/hiviewdfx_hilog",
+      "commit": "393d7e9a690edb76ed27e710b472623daf650dc8",
+      "path": "interfaces/native/innerkits/include/hilog/log.h",
+      "git_blob": "f905b409bf6ea38b369c5e79910302a9b4fe2f84",
+      "checks": {
+        "git_blob_matches": true
+      },
+      "mapping": "Public umbrella header includes the C and C++ macro headers"
+    }
+  ],
+  "candidate_triage_context": {
+    "repository": "openharmony/communication_dsoftbus",
+    "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+    "path": "core/authentication/src/auth_session_fsm.c",
+    "git_blob": "94c1e8af277df3a214298a92f55ef85ce601df93",
+    "sha256": "7efaa39d841ea752c342e7233161029694c7ec6725f4eb6ce0285fad686cbcc4",
+    "source_review": [
+      "OnSessionKeyReturned validates null/length, logs authSeq and key length, then calls AuthSessionSaveSessionKey with key bytes; the reviewed callee forwards the bytes through NewMessagePara into an internal FSM message, with no key argument to a public logging macro at that call site.",
+      "EncryptData and DecryptData copy sessionKey.value into a local cipherKey.key and pass it to the corresponding crypto routine; the reviewed call sites log status values, not key bytes.",
+      "The local cipherKey.key copies in EncryptData and DecryptData are now modeled as intra-function sensitive-member copies and do not reach a public-log sink in the reviewed functions. Only the AuthSessionSaveSessionKey call remains an unresolved cross-file candidate; this does not establish whole-component absence of exposure."
+    ]
+  },
+  "detector": {
+    "detector_id": "ohscanner.data.sensitive_exposure",
+    "version": "0.7.0",
+    "status": "blocked",
+    "analyzed_files": [
+      "adapter/common/include/softbus_adapter_crypto.h",
+      "core/authentication/include/auth_session_key.h",
+      "core/authentication/src/auth_hichain.c",
+      "core/authentication/src/auth_hichain_adapter.c",
+      "core/authentication/src/auth_session_key.c",
+      "dfx/interface/include/auth_log.h",
+      "dfx/interface/include/softbus_log.h",
+      "dfx/log/src/auth_log.c",
+      "interfaces/kits/authentication/auth_session_key_struct.h"
+    ],
+    "findings": [
+      {
+        "file": "core/authentication/src/auth_hichain.c",
+        "line": 136,
+        "rule_id": "data.sensitive.unresolved-escape",
+        "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=core/authentication/src/auth_hichain.c:126 source OnSessionKeyReturned parameter 1 -> 136 unresolved call AuthSessionSaveSessionKey",
+        "evidence_type": "syntax",
+        "column": null,
+        "candidate_cwe": null,
+        "symbol": "OnSessionKeyReturned",
+        "evidence_obligations": [
+          {
+            "kind": "callee_binding",
+            "description": "Resolve the exact overload, receiver, and implementation for AuthSessionSaveSessionKey.",
+            "status": "unknown"
+          },
+          {
+            "kind": "sink_behavior",
+            "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+            "status": "unknown"
+          },
+          {
+            "kind": "runtime_log_visibility",
+            "description": "No log exposure or reader reachability is established by this call alone.",
+            "status": "unknown"
+          },
+          {
+            "kind": "security_impact",
+            "description": "Establish recoverable sensitive material and concrete impact independently.",
+            "status": "unknown"
+          }
+        ],
+        "consequence_impact": null,
+        "consequence_cwe": null,
+        "source_sha256": "4132e6577e6d736a7f922b0344fbcb2002d533f079ee332494ffdf007ec47e7b",
+        "rule_version": null,
+        "rule_lineage_id": null,
+        "symbol_identity": null,
+        "ast_fingerprint": null,
+        "identity_quality": "unknown"
+      }
+    ],
+    "limitations": [
+      "Candidate only: runtime log readers, production enablement and impact require independent review.",
+      "Detailed private Tree-sitter statements pending owner-approved shared expression facts; no new global frontend.",
+      "Function-local syntax dependencies, not CFG/alias/full-program proof; no secret values recorded.",
+      "Model scope is exact repository/commit; receiver/typedef identity and include binding remain obligations.",
+      "Private/default-private operands withheld under modeled HiLog semantics, not proof of all product privacy configurations.",
+      "adapter/common/include/softbus_adapter_crypto.h: detailed syntax partial",
+      "adapter/common/include/softbus_adapter_crypto.h: local type definition needs identity review",
+      "adapter/common/include/softbus_adapter_crypto.h: preprocessor/build context not expanded",
+      "core/authentication/include/auth_session_key.h: detailed syntax partial",
+      "core/authentication/include/auth_session_key.h: preprocessor/build context not expanded",
+      "core/authentication/src/auth_hichain.c: bounded same-file helper expansion; cross-file and deeper call flows remain unknown",
+      "core/authentication/src/auth_hichain.c: branch merge is may-flow; no path feasibility proof",
+      "core/authentication/src/auth_hichain.c: conditional effects are may-flow; no path feasibility proof",
+      "core/authentication/src/auth_hichain.c: conditional value is may-flow; no path feasibility proof",
+      "core/authentication/src/auth_hichain.c: member/pointer output copy unsupported",
+      "core/authentication/src/auth_hichain.c: nonliteral/unsupported log format: AUTH_LOGE",
+      "core/authentication/src/auth_hichain.c: nonliteral/unsupported log format: AUTH_LOGI",
+      "core/authentication/src/auth_hichain.c: pointer/member assignment requires alias proof",
+      "core/authentication/src/auth_hichain.c: preprocessor/build context not expanded",
+      "core/authentication/src/auth_hichain.c: same-file helper call has unresolved overload/arity: UnregTrustDataChangeListener",
+      "core/authentication/src/auth_hichain.c: short-circuit effects are may-flow; no path feasibility proof",
+      "core/authentication/src/auth_hichain.c: unknown field/alias propagation",
+      "core/authentication/src/auth_hichain.c: unmodeled call may mutate/escape sensitive value: AuthSessionSaveSessionKey",
+      "core/authentication/src/auth_hichain_adapter.c: bounded same-file helper expansion; cross-file and deeper call flows remain unknown",
+      "core/authentication/src/auth_hichain_adapter.c: branch merge is may-flow; no path feasibility proof",
+      "core/authentication/src/auth_hichain_adapter.c: break/continue exits need enclosing-loop proof; loops not analyzed",
+      "core/authentication/src/auth_hichain_adapter.c: loop body analyzed for may-flow only at line 155; iteration count/path feasibility unresolved",
+      "core/authentication/src/auth_hichain_adapter.c: loop body analyzed for may-flow only at line 245; iteration count/path feasibility unresolved",
+      "core/authentication/src/auth_hichain_adapter.c: loop body analyzed for may-flow only at line 297; iteration count/path feasibility unresolved",
+      "core/authentication/src/auth_hichain_adapter.c: preprocessor/build context not expanded",
+      "core/authentication/src/auth_hichain_adapter.c: same-file helper call has unresolved overload/arity: InitHichain",
+      "core/authentication/src/auth_hichain_adapter.c: short-circuit effects are may-flow; no path feasibility proof",
+      "core/authentication/src/auth_hichain_adapter.c: unsupported statement preproc_ifdef at line 72",
+      "core/authentication/src/auth_session_key.c: bounded same-file helper expansion; cross-file and deeper call flows remain unknown",
+      "core/authentication/src/auth_session_key.c: branch merge is may-flow; no path feasibility proof",
+      "core/authentication/src/auth_session_key.c: break/continue exits need enclosing-loop proof; loops not analyzed",
+      "core/authentication/src/auth_session_key.c: detailed syntax partial",
+      "core/authentication/src/auth_session_key.c: local type definition needs identity review",
+      "core/authentication/src/auth_session_key.c: loop body analyzed for may-flow only at line 100; iteration count/path feasibility unresolved",
+      "core/authentication/src/auth_session_key.c: loop body analyzed for may-flow only at line 193; iteration count/path feasibility unresolved",
+      "core/authentication/src/auth_session_key.c: member/pointer output copy unsupported",
+      "core/authentication/src/auth_session_key.c: nonliteral/unsupported log format: AUTH_LOGI",
+      "core/authentication/src/auth_session_key.c: pointer/member assignment requires alias proof",
+      "core/authentication/src/auth_session_key.c: preprocessor/build context not expanded",
+      "core/authentication/src/auth_session_key.c: shadowed sensitive record type withheld",
+      "core/authentication/src/auth_session_key.c: short-circuit effects are may-flow; no path feasibility proof",
+      "core/authentication/src/auth_session_key.c: unknown field/alias propagation",
+      "dfx/interface/include/auth_log.h: detailed syntax partial",
+      "dfx/interface/include/auth_log.h: preprocessor/build context not expanded",
+      "dfx/interface/include/softbus_log.h: detailed syntax partial",
+      "dfx/interface/include/softbus_log.h: preprocessor/build context not expanded",
+      "dfx/log/src/auth_log.c: preprocessor/build context not expanded",
+      "interfaces/kits/authentication/auth_session_key_struct.h: detailed syntax partial",
+      "interfaces/kits/authentication/auth_session_key_struct.h: local type definition needs identity review",
+      "interfaces/kits/authentication/auth_session_key_struct.h: preprocessor/build context not expanded"
+    ],
+    "file_outcomes": [
+      [
+        "adapter/common/include/softbus_adapter_crypto.h",
+        "partial"
+      ],
+      [
+        "core/authentication/include/auth_session_key.h",
+        "partial"
+      ],
+      [
+        "core/authentication/src/auth_hichain.c",
+        "partial"
+      ],
+      [
+        "core/authentication/src/auth_hichain_adapter.c",
+        "partial"
+      ],
+      [
+        "core/authentication/src/auth_session_key.c",
+        "partial"
+      ],
+      [
+        "dfx/interface/include/auth_log.h",
+        "partial"
+      ],
+      [
+        "dfx/interface/include/softbus_log.h",
+        "partial"
+      ],
+      [
+        "dfx/log/src/auth_log.c",
+        "partial"
+      ],
+      [
+        "interfaces/kits/authentication/auth_session_key_struct.h",
+        "partial"
+      ]
+    ]
+  },
+  "source_parsing": {
+    "parsing_status": {
+      "complete": 3,
+      "partial": 6
+    },
+    "languages": {
+      "c": 4,
+      "cpp": 5
+    }
+  },
+  "validated_vulnerability": 0,
+  "candidate_status": "research_candidate",
+  "product_impact": "unknown",
+  "limitations": [
+    "Local Git commit/tree objects and a complete checkout were unavailable; GitHub API commit/tree metadata and raw files were verified, but this is not public Git Runner replay.",
+    "The DSoftBus scope is the frozen selected-file manifest, not whole-component coverage.",
+    "HiLog macro definitions are pinned, but their dependency/build binding to the DSoftBus product revision remains unknown.",
+    "Static findings are candidates; the two local crypto-copy findings were removed after member-flow modeling because no public-log sink is reached in those functions. One unresolved cross-file call candidate remains; production log enablement, reader access, impact, and runtime validation remain unestablished.",
+    "This is not an independent labeled holdout and supports no precision or recall claim.",
+    "Zero candidates would not establish absence of sensitive-data exposure."
+  ]
+}

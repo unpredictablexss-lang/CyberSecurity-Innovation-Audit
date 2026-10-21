@@ -1,6 +1,7 @@
 """Local definition identities and provenance, evaluated on generated paths."""
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from .syntax import compact, name_node, walk
+from .cross_helper import effectful_helper_problem, in_cyclic_region, unwrap_identity_expression
 from .model import NAMESPACE, OWNER
 
 
@@ -39,8 +40,10 @@ class OriginState:
 
 
 class OriginEvaluator:
-    def __init__(self, fn, model, cyclic_ranges=()):
+    def __init__(self, fn, model, cyclic_ranges=(), identity_helpers=(), helper_contracts=()):
         self.fn, self.model = fn, model
+        self.identity_helpers = tuple(identity_helpers)
+        self.helper_contracts = tuple(helper_contracts)
         self.cyclic_ranges = tuple(cyclic_ranges)
 
     @staticmethod
@@ -123,6 +126,9 @@ class OriginEvaluator:
             return ''
         fn, root = self.fn, instruction.node
         for node in walk(root):
+            effect_problem = effectful_helper_problem(fn, node, self.helper_contracts)
+            if effect_problem:
+                return effect_problem
             if node.type in ('new_expression', 'delete_expression', 'update_expression'):
                 return 'unmodeled_cpp_lifetime_or_update_expression'
             if node.type == 'assignment_expression':
@@ -248,6 +254,8 @@ class OriginEvaluator:
         base = name.removeprefix('this->')
         if self._logic_and_chain(node) or self._copy_buffer_runtime_call(node) or self._copy_buffer_runtime_id(node):
             return True
+        if any(helper.matches(fn, node) for helper in self.identity_helpers):
+            return True
         if fn.resolve(base, node):
             return False
         callee = node.child_by_field_name('function')
@@ -304,6 +312,7 @@ class OriginEvaluator:
             return not fn.resolve(self.model.store_name, node)
         if name in (property_name, 'this->' + property_name, OWNER + '::' + property_name):
             return len(args) == property_arity and not fn.resolve(property_name, node)
+        callee = node.child_by_field_name('function')
         if callee and callee.type == 'field_expression':
             field = fn.text(callee.child_by_field_name('field'))
             builder = self.value(callee.child_by_field_name('argument'), state)
@@ -379,6 +388,13 @@ class OriginEvaluator:
         if node is None:
             return UNKNOWN
         fn = self.fn
+        root, hops = unwrap_identity_expression(fn, node, self.identity_helpers)
+        if root is not None and root is not node:
+            value = self.value(root, state)
+            if any(item.startswith('identity_helper:') for item in hops) and value.kind != 'unknown':
+                detail = '+'.join(item for item in (value.detail, 'cross_helper_identity') if item)
+                return replace(value, detail=detail)
+            return value
         if node.type in ('parenthesized_expression', 'pointer_expression'):
             return self.value(node.named_children[-1], state) if node.named_children else UNKNOWN
         if node.type == 'identifier':
@@ -445,6 +461,10 @@ class OriginEvaluator:
                     val = Value('builder', binding.identity, detail=(typ if '::' in typ else NAMESPACE + '::' + typ))
                 else:
                     val = self.value(child.child_by_field_name('value'), state)
+                if (val.kind in ('object', 'type', 'hclass')
+                        and in_cyclic_region(node, self.cyclic_ranges)):
+                    detail = '+'.join(item for item in (val.detail, 'loop_backedge_rebinding') if item)
+                    val = replace(val, may_differ=True, detail=detail)
                 state.values[binding.identity] = val
         elif node.type == 'assignment_expression':
             # A graph expression at one lexical site can produce a different
@@ -455,8 +475,13 @@ class OriginEvaluator:
                 binding = fn.resolve(fn.text(left), left)
                 if binding:
                     operator = node.child_by_field_name('operator')
-                    state.values[binding.identity] = (self.value(node.child_by_field_name('right'), state)
-                                                      if fn.text(operator) == '=' else UNKNOWN)
+                    val = (self.value(node.child_by_field_name('right'), state)
+                           if fn.text(operator) == '=' else UNKNOWN)
+                    if (val.kind in ('object', 'type', 'hclass')
+                            and in_cyclic_region(node, self.cyclic_ranges)):
+                        detail = '+'.join(item for item in (val.detail, 'loop_backedge_rebinding') if item)
+                        val = replace(val, may_differ=True, detail=detail)
+                    state.values[binding.identity] = val
 
     def store_arguments(self, node, state):
         fn, model = self.fn, self.model

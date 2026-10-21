@@ -1,0 +1,100 @@
+ERROR at //build/ohos/app/app_internal.gni:413:11: OHOS component : (weex-loader) not found.
+
+          "weex-loader:weex_loader_ark_hap"
+
+          ^--------------------------------
+
+See //build/ohos/app/app_internal.gni:358:3: whence it was called.
+
+  action_with_pydeps(target_name) {
+
+  ^--------------------------------
+
+See //build/ohos/app/app.gni:684:3: whence it was called.
+
+  compile_js_assets(_js_assets_target) {
+
+  ^-------------------------------------
+
+See //base/global/system_resources/systemres/BUILD.gn:28:1: whence it was called.
+
+ohos_hap("systemres_hap") {
+
+^--------------------------
+
+See //build/ohos/ohos_part.gni:29:16: which caused the file to be included.
+
+    _deps += [ get_label_info(module_label, "label_with_toolchain") ]
+
+               ^--------------------------------------------------
+
+thermal_interface_service
+
+vibrator_service
+
+Debug info gen_utils_abc file path:  //out/rk3568/obj/commonlibrary/ets_utils/js_concurrent_module/utils/utils.abc
+
+memory_tracker_interface_service
+
+rk3568_group in
+
+miscdevice_feature_vibrator_custom = true
+
+input_service
+
+hid_ddk
+
+hid_ddk
+
+E2FSPROGS_DIR is /home/kali/ohscanner-ark-native-20261021/out/rk3568/gen/third_party/e2fsprogs/e2fsprogs
+
+Support dsoftbus.
+
+support hearing aid
+
+callmanager call transfer
+
+has_hisysevent_part = true
+
+event ces_hitrace_usage = true
+
+effect_host
+
+audio_service
+
+audio_service
+
+["--haptobin", "../../developtools/packing_tool/adapter/ohos", "--haptobinOutput", "obj/developtools/packing_tool/jar/haptobin_tool.jar", "--unpackOutput", "obj/developtools/packing_tool/jar/app_unpacking_tool.jar", "--packOutput", "obj/developtools/packing_tool/jar/app_packing_tool.jar", "--outpath", "obj/developtools/packing_tool/jar", "--checkOutput", "obj/developtools/packing_tool/jar/app_check_tool.jar", "--toolchain", "//build/toolchain/ohos:ohos_clang_arm", "--compileTarget", "image"]
+
+cups_action is exec
+
+************libhilog_base use_musl ***************
+
+wlan_service
+
+wlan_service
+
+wlan_service
+
+wpa_service
+
+hostapd_service
+
+chip
+
+chip
+
+location_gnss
+
+nnrt
+
+nnrt
+
+nnrt
+
+drivers_peripheral_huks
+
+drivers_peripheral_huks
+
+Reading plugin sources: ets (//build/toolchain/ohos:ohos_clang_arm)
+

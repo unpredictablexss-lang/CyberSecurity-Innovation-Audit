@@ -1,0 +1,32 @@
+/home/deepsleep/ohscanner-venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+  from starlette.testclient import TestClient as TestClient  # noqa
+{
+  "job_id": "1772cfdd72f745ed8573224997fd4250",
+  "repository": "openharmony/communication_ipc",
+  "commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+  "git_tree": "125ecbfa21f430f2f977f0026ab97b70cd27a726",
+  "engine_sha256": "e7dc94e1fb83c3bb55e6f7e2491ca9a9c8919f6669b14fad1b02ae28cc3d93cf",
+  "status": "completed_with_limitations",
+  "indexed_files": 1,
+  "source_bytes": 43767,
+  "parse": {
+    "parsing_status": {
+      "complete": 1
+    },
+    "languages": {
+      "cpp": 1
+    }
+  },
+  "candidate_count": 0,
+  "validated_vulnerability": 0,
+  "candidate_sources_verified": 0,
+  "cli_parity": true,
+  "report_sha256": "99c7d579aeff3010f84aee05f8dd231ee1b86f8fa4a12d138321f330ebad8c22",
+  "scan_seconds": 10.283628641000178,
+  "verification_seconds": 13.034428937000484,
+  "artifact_directory": "/mnt/d/openHarmonyScanner/tmp/final-closeout-ui-final-data/artifacts/1772cfdd72f745ed8573224997fd4250",
+  "limitations": [
+    "Not an accuracy benchmark or runtime vulnerability validation.",
+    "Uses the explicitly requested include scope, not a production exclusion profile."
+  ]
+}

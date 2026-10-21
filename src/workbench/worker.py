@@ -12,7 +12,7 @@ import time
 from .settings import Settings
 from .store import Store
 from .service import artifact_dir, sha, check_repository
-from .worker_env import remove_agent_provider_environment, worker_child_environment
+from .worker_env import worker_child_environment
 
 
 class Worker:
@@ -196,7 +196,9 @@ def main():
     parser.add_argument("--once", action="store_true", help="drain queue and exit")
     args = parser.parse_args()
     settings = Settings.from_env()
-    remove_agent_provider_environment(os.environ)
+    # This supervisor needs Provider identity to validate consent and enqueue
+    # smart-triage tasks. execute() filters all Provider variables from the
+    # child that analyzes repository source.
     Worker(settings).run(args.once)
 
 

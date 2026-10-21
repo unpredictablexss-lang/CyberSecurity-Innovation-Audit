@@ -1182,3 +1182,318 @@ def has_runtime_exception_source(unit, effect_calls=(("JSFunction::Call", 1, "JS
                                            ("ToBoolean",)):
             return True
     return False
+
+
+def _raw_text(data, node):
+    return data[node.start_byte:node.end_byte].decode("utf-8", "replace")
+
+
+def _raw_namespace(data, node):
+    parent = node.parent
+    while parent is not None:
+        if parent.type == "namespace_definition":
+            name = parent.child_by_field_name("name")
+            return _raw_text(data, name).replace(" ", "") if name is not None else ""
+        parent = parent.parent
+    return ""
+
+
+def _class_records(source_units):
+    records = {}
+    for unit in source_units:
+        if unit.language != "cpp" or unit.parse_status not in ("complete", "partial"):
+            continue
+        data = unit.text.encode("utf-8")
+        try:
+            tree, _ = parse_functions(data)
+        except (ValueError, RuntimeError, UnicodeError):
+            continue
+        for node in walk(tree.root_node):
+            if node.type != "class_specifier":
+                continue
+            name = node.child_by_field_name("name")
+            body = node.child_by_field_name("body")
+            if name is None or body is None:
+                continue
+            namespace = _raw_namespace(data, node)
+            class_name = _raw_text(data, name).replace(" ", "")
+            qualified = (namespace + "::" if namespace else "") + class_name
+            bases = []
+            for child in node.named_children:
+                if child.type != "base_class_clause":
+                    continue
+                parts = [item for item in child.named_children
+                         if item.type not in ("access_specifier", "virtual")]
+                if parts:
+                    base = _raw_text(data, parts[-1]).replace(" ", "")
+                    bases.append(base if "::" in base
+                                 else (namespace + "::" if namespace else "") + base)
+            override = any(
+                child.type == "function_declarator"
+                and child.child_by_field_name("declarator") is not None
+                and _raw_text(data, child.child_by_field_name("declarator")).split("::")[-1].startswith("Branch")
+                and child.child_by_field_name("parameters") is not None
+                and len([item for item in child.child_by_field_name("parameters").named_children
+                         if item.type == "parameter_declaration"]) == 3
+                for child in walk(body)
+            )
+            records[qualified] = {"bases": tuple(bases), "override": override}
+    return records
+
+
+def _label_name(fn, node):
+    if node is None:
+        return None
+    if node.type == "identifier":
+        return fn.text(node)
+    if node.type in ("unary_expression", "pointer_expression"):
+        return _label_name(fn, node.child_by_field_name("argument") or node.named_children[-1])
+    return None
+
+
+def _binding_matches(fn, node, binding):
+    return (node is not None and node.type == "identifier"
+            and fn.resolve(fn.text(node), node) == binding)
+
+
+def _generated_sensitive_uses(fn, binding):
+    for node in walk(fn.body):
+        if node.type != "call_expression":
+            continue
+        name = fn.call_name(node)
+        args = fn.arguments(node)
+        if (name == "FastToBoolean" and len(args) == 1
+                and binding.type_name == "GateRef"
+                and _binding_matches(fn, args[0], binding)):
+            yield node
+
+
+def _compound_top_statement(fn, node):
+    current = node
+    while (current is not None and current.parent is not None
+           and current.parent.type != "compound_statement"):
+        current = current.parent
+    if (current is not None and current.parent is not None
+            and current.parent.type == "compound_statement"):
+        return current
+    return None
+
+
+def _generated_branch_order(fn, source, sink, owners):
+    source_statement = _compound_top_statement(fn, source)
+    sink_statement = _compound_top_statement(fn, sink)
+    if (source_statement is None or sink_statement is None
+            or source_statement.parent != sink_statement.parent):
+        return None, "callback_result_path_not_in_one_basic_compound"
+    compound = source_statement.parent
+    siblings = list(compound.named_children)
+    source_index = siblings.index(source_statement)
+    sink_index = siblings.index(sink_statement)
+    if source_index >= sink_index:
+        return None, "callback_result_use_order_unresolved"
+    branches = []
+    for statement in siblings[source_index + 1:sink_index]:
+        for call in walk(statement):
+            if call.type == "call_expression" and fn.call_name(call) in ("BRANCH", "Branch"):
+                branches.append(call)
+    candidate = ("candidate",
+                 "callback_pending_exception_can_reach_generated_result_conversion")
+    if not branches:
+        return candidate, None
+    if len(branches) != 1:
+        return None, "unmodeled_generated_callback_exception_path"
+    branch = branches[0]
+    if (fn.call_name(branch) == "Branch"
+            and fn.qualified_name.rsplit("::", 1)[0] not in owners):
+        return None, "unmodeled_generated_callback_exception_path"
+    args = fn.arguments(branch)
+    if len(args) != 3:
+        return None, "unmodeled_generated_callback_exception_path"
+    condition, true_label, false_label = args
+    true_name = _label_name(fn, true_label)
+    false_name = _label_name(fn, false_label)
+    if not true_name or not false_name:
+        return None, "unmodeled_generated_callback_exception_path"
+    condition_name = fn.call_name(condition)
+    condition_args = fn.arguments(condition) if condition.type == "call_expression" else ()
+    if condition_name == "HasPendingException" and len(condition_args) == 1:
+        arg = condition_args[0]
+        binding = fn.resolve(fn.text(arg), arg) if arg.type == "identifier" else None
+        if (binding is None or not binding.parameter
+                or binding.name not in ("glue", "thread")):
+            return None, "unmodeled_generated_callback_exception_path"
+    elif (condition_name not in ("TaggedIsException", "TaggedIsTrue")
+          or len(condition_args) != 1):
+        return None, "unmodeled_generated_callback_exception_path"
+
+    binds = {}
+    for item in siblings:
+        for call in walk(item):
+            if call.type != "call_expression" or fn.call_name(call) != "Bind":
+                continue
+            call_args = fn.arguments(call)
+            if len(call_args) == 1:
+                label = _label_name(fn, call_args[0])
+                if label:
+                    binds[label] = item
+    exception_bind = binds.get(true_name)
+    continue_bind = binds.get(false_name)
+    if exception_bind is None or continue_bind is None:
+        return None, "unmodeled_generated_callback_exception_path"
+    exception_index = siblings.index(exception_bind)
+    continue_index = siblings.index(continue_bind)
+    if exception_index >= continue_index:
+        return None, "unmodeled_generated_callback_exception_path"
+    exception_path = siblings[exception_index + 1:continue_index]
+    exits = any(
+        item.type == "return_statement"
+        or any(call.type == "call_expression" and fn.call_name(call) == "Jump"
+               for call in walk(item))
+        for item in exception_path
+    )
+    if not exits or condition_name != "HasPendingException":
+        return candidate, None
+    return ("matched",
+            "pending_exception_check_precedes_generated_result_conversion"), None
+
+
+def _analyze_generated_callback_paths(unit, owners):
+    observations, limitations = [], []
+    applicable = False
+    try:
+        _, functions = parse_functions(unit.text.encode("utf-8"))
+    except (ValueError, RuntimeError, UnicodeError):
+        return False, observations, limitations
+    for fn in functions:
+        for ident, binding, source in _generated_callback_sources(fn):
+            uses = tuple(_generated_sensitive_uses(fn, binding))
+            if not uses:
+                continue
+            applicable = True
+            for sink in uses:
+                outcome, reason = _generated_branch_order(fn, source, sink, owners)
+                if outcome is None:
+                    limitations.append(reason + ":" + fn.qualified_name)
+                    continue
+                kind, detail = outcome
+                if kind == "matched":
+                    continue
+                observations.append(Observation(
+                    kind, sink.start_point[0] + 1, sink.start_point[1] + 1, detail,
+                    token_line=source.start_point[0] + 1,
+                    symbol=fn.qualified_name,
+                    region_start_byte=fn.node.start_byte,
+                    region_end_byte=fn.node.end_byte,
+                    target_identity=fn.text(ident),
+                    token_origin=fn.call_name(source),
+                    path=(source.start_point[0] + 1, sink.start_point[0] + 1),
+                ))
+    return applicable, observations, limitations
+
+
+def _exception_result_condition(fn, condition, result_binding):
+    while condition is not None and condition.type in (
+            "condition_clause", "parenthesized_expression") and condition.named_children:
+        condition = condition.named_children[0]
+    if condition is None or condition.type != "call_expression":
+        return False
+    callee = condition.child_by_field_name("function")
+    if callee is None or callee.type != "field_expression":
+        return False
+    field = callee.child_by_field_name("field")
+    receiver = callee.child_by_field_name("argument")
+    return (
+        field is not None and fn.text(field) == "IsException"
+        and _binding_matches(fn, receiver, result_binding)
+    )
+
+
+def _returns_pending_exception(fn, statement, result_binding):
+    if statement.type == "return_statement":
+        returns = [statement]
+    elif statement.type == "compound_statement":
+        meaningful = [item for item in statement.named_children
+                      if item.type not in ("comment", "empty_statement")]
+        returns = [item for item in meaningful if item.type == "return_statement"]
+        if len(meaningful) != 1 or len(returns) != 1:
+            return False
+    else:
+        return False
+    value = returns[0].child_by_field_name("value")
+    if value is None and returns[0].named_children:
+        value = returns[0].named_children[0]
+    if value is None:
+        return False
+    text = re.sub(r"\s+", "", fn.text(value))
+    if text == "JSTaggedValue::Exception()":
+        return True
+    return value.type == "identifier" and _binding_matches(fn, value, result_binding)
+
+
+def analyze_native_inline_exception_propagation(unit):
+    """Detect Reflect.apply inlining that compares a sentinel instead of pending state."""
+    if unit.parse_status not in ("complete", "partial"):
+        return RuntimeExceptionResult("limited", "not_analyzed",
+                                      limitations=("source_parse_unavailable",))
+    text = unit.text
+    masked = _mask_cpp_noncode(text) if "_mask_cpp_noncode" in globals() else text
+    function_pattern = re.compile(
+        r"\b(?P<name>(?:[A-Za-z_]\w*::)*[A-Za-z_]\w*)\s*\([^;{}]*\)\s*(?:const\s*)?\{")
+    regions = {}
+    cursor = 0
+    while True:
+        match = function_pattern.search(masked, cursor)
+        if match is None:
+            break
+        cursor = match.end()
+        opening = masked.find("{", match.start(), match.end())
+        depth = 0
+        closing = None
+        for index in range(opening, len(masked)):
+            if masked[index] == "{":
+                depth += 1
+            elif masked[index] == "}":
+                depth -= 1
+                if depth == 0:
+                    closing = index
+                    break
+        if closing is None:
+            continue
+        regions[match.group("name")] = (text[opening + 1:closing],
+                                        text.count("\n", 0, opening + 1) + 1,
+                                        len(text[:opening + 1].encode("utf-8")))
+    def method(name):
+        return name == name.rsplit("::", 1)[-1] or name.endswith("NativeInlineLowering::" + name.rsplit("::", 1)[-1])
+    caller_name = next((name for name in regions
+                        if name.rsplit("::", 1)[-1] == "TryInlineReflectApply"), None)
+    helper_name = next((name for name in regions
+                        if name.rsplit("::", 1)[-1] == "ReplaceGateWithPendingException"), None)
+    if caller_name is None:
+        return RuntimeExceptionResult("limited", "not_analyzed",
+                                      limitations=("reflect_apply_inline_site_not_applicable",))
+    if helper_name is None:
+        return RuntimeExceptionResult("limited", "partial",
+                                      limitations=("pending_exception_helper_summary_missing:" + caller_name,))
+    body, body_line, body_byte = regions[helper_name]
+    if re.search(r"\bHasPendingException\s*\(", body):
+        return RuntimeExceptionResult("completed", "complete", (),
+                                      ("fixed_pending_exception_check_control_not_security_verdict",), 1)
+    sentinel = re.search(r"\b(?:ExceptionConstant|Exception)\s*\(\s*\)", body)
+    equality = re.search(r"\b(?:Equal|Int32Equal|Int64Equal)\s*\([^;]*exception[^;]*\)", body, re.I)
+    branch = re.search(r"\bBranch\s*\([^;]*(?:equal|condition)[^;]*\)", body, re.I)
+    if sentinel and equality and branch:
+        offset = equality.start()
+        prefix = body[:offset]
+        line = body_line + prefix.count("\n")
+        column = len(prefix[prefix.rfind("\n", 0, offset) + 1:offset].encode("utf-8")) + 1
+        start_byte = body_byte + len(prefix.encode("utf-8"))
+        observation = Observation(
+            "candidate", line, column,
+            "reflect_apply_result_sentinel_comparison_may_drop_pending_exception",
+            helper_name, "ExceptionConstant", line, line, (line,),
+            ((line, "checks_pending_thread_exception", False),),
+            helper_name, start_byte, start_byte + len(equality.group(0).encode("utf-8")))
+        return RuntimeExceptionResult("limited", "partial", (observation,),
+                                      ("local_sentinel_comparison_does_not_prove_exception_propagation",), 1)
+    return RuntimeExceptionResult("limited", "partial", (),
+                                  ("native_inline_exception_semantics_unmodeled:" + helper_name,), 1)

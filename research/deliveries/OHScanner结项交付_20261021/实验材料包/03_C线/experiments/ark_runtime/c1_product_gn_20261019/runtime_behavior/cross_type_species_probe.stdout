@@ -1,0 +1,7 @@
+start
+source:CrossTypeSource
+result:Int8Array:1,-1,3
+caught:Error: wrong species result:    at assert (/mnt/d/openHarmonyScanner/CyberSecurity-Innovation-Audit/research/experiments/ark_runtime/c1_product_gn_20261019/runtime_behavior/cross_type_species_probe.js:1:1)
+    at func_main_0 (/mnt/d/openHarmonyScanner/CyberSecurity-Innovation-Audit/research/experiments/ark_runtime/c1_product_gn_20261019/runtime_behavior/cross_type_species_probe.js:7:1)
+
+execute pandafile spent time 37.037ms

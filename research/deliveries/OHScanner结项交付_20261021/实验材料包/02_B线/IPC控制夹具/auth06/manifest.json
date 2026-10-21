@@ -1,0 +1,35 @@
+[
+  {
+    "sample_id": "auth06_peer_session_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-06",
+    "expected_rule": "ipc.network.auth-session-whitelist",
+    "file": "peer_session_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "auth06_peer_session_fixed",
+    "data_origin": "synthetic",
+    "family": "AUTH-06",
+    "expected_rule": null,
+    "file": "peer_session_fixed.cpp",
+    "split": "design",
+    "variant": "fixed",
+    "control_rules": [
+      "ipc.network.auth-session-whitelist"
+    ]
+  },
+  {
+    "sample_id": "auth06_unrelated_safe",
+    "data_origin": "synthetic",
+    "family": "AUTH-06",
+    "expected_rule": null,
+    "file": "unrelated_safe.cpp",
+    "split": "design",
+    "variant": "safe",
+    "control_rules": [
+      "ipc.network.auth-session-whitelist"
+    ]
+  }
+]

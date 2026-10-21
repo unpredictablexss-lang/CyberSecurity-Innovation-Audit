@@ -1,0 +1,644 @@
+
+> ohscanner-workbench@0.1.0 test
+> node --test tests/*.test.js
+
+TAP version 13
+# Subtest: initial candidate citations point to the bound source excerpt range
+ok 1 - initial candidate citations point to the bound source excerpt range
+  ---
+  duration_ms: 1.9421
+  ...
+# Subtest: symbol-search citations resolve to exact matching lines and file
+ok 2 - symbol-search citations resolve to exact matching lines and file
+  ---
+  duration_ms: 1.7964
+  ...
+# Subtest: missing exact quote falls back to the bounded source context
+ok 3 - missing exact quote falls back to the bounded source context
+  ---
+  duration_ms: 0.852
+  ...
+# Subtest: unavailable evidence is explicit and does not invent a source location
+ok 4 - unavailable evidence is explicit and does not invent a source location
+  ---
+  duration_ms: 0.3376
+  ...
+# Subtest: source locations identify the exact cited line for deep links
+ok 5 - source locations identify the exact cited line for deep links
+  ---
+  duration_ms: 1.9036
+  ...
+# Subtest: multiline initial-source citations open at the exact first line and show the full range
+ok 6 - multiline initial-source citations open at the exact first line and show the full range
+  ---
+  duration_ms: 0.3923
+  ...
+# Subtest: multiline fixed-source citations strip displayed line numbers and resolve exact bounds
+ok 7 - multiline fixed-source citations strip displayed line numbers and resolve exact bounds
+  ---
+  duration_ms: 0.6774
+  ...
+# Subtest: explicit line-range citations stay bound to one file when symbol search found several files
+ok 8 - explicit line-range citations stay bound to one file when symbol search found several files
+  ---
+  duration_ms: 0.2934
+  ...
+# Subtest: bound Agent vulnerability report fields remain readable and source citations are not embellished
+ok 9 - bound Agent vulnerability report fields remain readable and source citations are not embellished
+  ---
+  duration_ms: 4.1247
+  ...
+# Subtest: PoC draft is always identified as unexecuted, unverified, and candidate-only
+ok 10 - PoC draft is always identified as unexecuted, unverified, and candidate-only
+  ---
+  duration_ms: 0.3159
+  ...
+# Subtest: insufficient evidence remains explicit and malformed states never imply execution
+ok 11 - insufficient evidence remains explicit and malformed states never imply execution
+  ---
+  duration_ms: 0.1932
+  ...
+# Subtest: absent and empty optional Agent reports stay hidden
+ok 12 - absent and empty optional Agent reports stay hidden
+  ---
+  duration_ms: 0.3146
+  ...
+# Subtest: non-string narrative/list values are not coerced into fabricated content
+ok 13 - non-string narrative/list values are not coerced into fabricated content
+  ---
+  duration_ms: 0.3334
+  ...
+# Subtest: completed artifact stage reports draft states and its own model-call count
+ok 14 - completed artifact stage reports draft states and its own model-call count
+  ---
+  duration_ms: 0.3124
+  ...
+# Subtest: completed artifact stage distinguishes an evidence-insufficient report and PoC
+ok 15 - completed artifact stage distinguishes an evidence-insufficient report and PoC
+  ---
+  duration_ms: 0.2697
+  ...
+# Subtest: authorization and not-run stage states take precedence over fallback artifact statuses
+ok 16 - authorization and not-run stage states take precedence over fallback artifact statuses
+  ---
+  duration_ms: 0.3532
+  ...
+# Subtest: failed, interrupted, or rejected generation does not become evidence insufficiency
+ok 17 - failed, interrupted, or rejected generation does not become evidence insufficiency
+  ---
+  duration_ms: 0.577
+  ...
+# Subtest: unknown stage states and invalid call counters stay unknown instead of being coerced
+ok 18 - unknown stage states and invalid call counters stay unknown instead of being coerced
+  ---
+  duration_ms: 0.6335
+  ...
+# Subtest: real Agent operation result path exposes bound report, repair suggestion, and PoC boundary
+ok 19 - real Agent operation result path exposes bound report, repair suggestion, and PoC boundary
+  ---
+  duration_ms: 0.8308
+  ...
+# Subtest: tool range rejection is visible with the real limit and safe retry guidance
+ok 20 - tool range rejection is visible with the real limit and safe retry guidance
+  ---
+  duration_ms: 1.6419
+  ...
+# Subtest: legacy generic rejection can be explained from its recorded oversized line count
+ok 21 - legacy generic rejection can be explained from its recorded oversized line count
+  ---
+  duration_ms: 0.3633
+  ...
+# Subtest: unavailable tool evidence is surfaced while completed calls are omitted
+ok 22 - unavailable tool evidence is surfaced while completed calls are omitted
+  ---
+  duration_ms: 0.2745
+  ...
+# Subtest: missing or malformed trace remains safe
+ok 23 - missing or malformed trace remains safe
+  ---
+  duration_ms: 2.4483
+  ...
+# Subtest: policy gate rejection explains why the answer was discarded
+ok 24 - policy gate rejection explains why the answer was discarded
+  ---
+  duration_ms: 1.6506
+  ...
+# Subtest: unknown rejection codes get a safe fallback without implying a vulnerability verdict
+ok 25 - unknown rejection codes get a safe fallback without implying a vulnerability verdict
+  ---
+  duration_ms: 0.2453
+  ...
+# Subtest: provider output truncation is explicit and retry requires a fresh preview and consent
+ok 26 - provider output truncation is explicit and retry requires a fresh preview and consent
+  ---
+  duration_ms: 0.1703
+  ...
+# Subtest: other incomplete provider responses stay fail-closed and explain retry boundary
+ok 27 - other incomplete provider responses stay fail-closed and explain retry boundary
+  ---
+  duration_ms: 0.4483
+  ...
+# Subtest: accepted and legacy statuses do not show a rejection alert
+ok 28 - accepted and legacy statuses do not show a rejection alert
+  ---
+  duration_ms: 0.4027
+  ...
+# Subtest: automatic rule IDs come from approved service metadata and exclude examples
+ok 29 - automatic rule IDs come from approved service metadata and exclude examples
+  ---
+  duration_ms: 5.3158
+  ...
+# Subtest: snapshot delegates automatic rule selection to the server and drops UI-only controls
+ok 30 - snapshot delegates automatic rule selection to the server and drops UI-only controls
+  ---
+  duration_ms: 1.1015
+  ...
+# Subtest: invalid include scopes and budgets fail before submission
+ok 31 - invalid include scopes and budgets fail before submission
+  ---
+  duration_ms: 1.2461
+  ...
+# Subtest: date preview excludes detector/scope/budget fields required only for execution
+ok 32 - date preview excludes detector/scope/budget fields required only for execution
+  ---
+  duration_ms: 36.4576
+  ...
+# Subtest: matrix drops commits_text and uses complete distinct source IDs
+ok 33 - matrix drops commits_text and uses complete distinct source IDs
+  ---
+  duration_ms: 1.3099
+  ...
+# Subtest: recent window comparison includes fixed time, timezone, and bounded N-day selection
+ok 34 - recent window comparison includes fixed time, timezone, and bounded N-day selection
+  ---
+  duration_ms: 0.4458
+  ...
+# Subtest: branch comparison permits refs and SHA but rejects identical endpoints
+ok 35 - branch comparison permits refs and SHA but rejects identical endpoints
+  ---
+  duration_ms: 0.2753
+  ...
+# Subtest: date, range, branch, and matrix operations freeze the selected audit mode
+ok 36 - date, range, branch, and matrix operations freeze the selected audit mode
+  ---
+  duration_ms: 1.9069
+  ...
+# Subtest: quick date range uses the selected timezone across a UTC day boundary
+ok 37 - quick date range uses the selected timezone across a UTC day boundary
+  ---
+  duration_ms: 2.6131
+  ...
+# Subtest: late ref or preview responses cannot restore invalidated form input
+ok 38 - late ref or preview responses cannot restore invalidated form input
+  ---
+  duration_ms: 1.2719
+  ...
+# Subtest: audit preview errors show field validation and API messages in plain language
+ok 39 - audit preview errors show field validation and API messages in plain language
+  ---
+  duration_ms: 0.6079
+  ...
+# Subtest: task-level authorization binds candidate counts without a platform cumulative cost cap
+ok 40 - task-level authorization binds candidate counts without a platform cumulative cost cap
+  ---
+  duration_ms: 0.3568
+  ...
+# Subtest: plan preview sends source selection only, with no browser-chosen rule list
+ok 41 - plan preview sends source selection only, with no browser-chosen rule list
+  ---
+  duration_ms: 0.3706
+  ...
+# Subtest: explicit-only research rules are not silently requested by normal UI flows
+ok 42 - explicit-only research rules are not silently requested by normal UI flows
+  ---
+  duration_ms: 0.2927
+  ...
+# Subtest: D sensitive exposure rule stays off by default and is sent only after explicit selection
+ok 43 - D sensitive exposure rule stays off by default and is sent only after explicit selection
+  ---
+  duration_ms: 0.6621
+  ...
+# Subtest: C Ark Runtime rule stays off by default and is sent only after explicit selection
+ok 44 - C Ark Runtime rule stays off by default and is sent only after explicit selection
+  ---
+  duration_ms: 0.3998
+  ...
+# Subtest: D disclosed-CVE source rule is sent to preview and scan only after explicit selection
+ok 45 - D disclosed-CVE source rule is sent to preview and scan only after explicit selection
+  ---
+  duration_ms: 0.645
+  ...
+# Subtest: explicit full-rules research selects disabled approved rules and freezes that selection
+ok 46 - explicit full-rules research selects disabled approved rules and freezes that selection
+  ---
+  duration_ms: 0.9541
+  ...
+# Subtest: repository selection prefers only the server-verified default ref
+ok 47 - repository selection prefers only the server-verified default ref
+  ---
+  duration_ms: 0.366
+  ...
+# Subtest: audit workflow label uses the task-level mode when an older nested plan omits it
+ok 48 - audit workflow label uses the task-level mode when an older nested plan omits it
+  ---
+  duration_ms: 0.4349
+  ...
+# Subtest: audit workflow label describes the frozen conditional triage scope
+ok 49 - audit workflow label describes the frozen conditional triage scope
+  ---
+  duration_ms: 0.1944
+  ...
+# Subtest: all comparison modes serialize consented automatic model review only when enabled
+ok 50 - all comparison modes serialize consented automatic model review only when enabled
+  ---
+  duration_ms: 1.3179
+  ...
+# Subtest: selected audit mode directly determines whether Agent authorization is included
+ok 51 - selected audit mode directly determines whether Agent authorization is included
+  ---
+  duration_ms: 0.2834
+  ...
+# Subtest: blind review options contain complete R1/R2 pairs and expand to both operation IDs
+ok 52 - blind review options contain complete R1/R2 pairs and expand to both operation IDs
+  ---
+  duration_ms: 4.9343
+  ...
+# Subtest: incomplete and ambiguous candidate pairs are excluded from selection
+ok 53 - incomplete and ambiguous candidate pairs are excluded from selection
+  ---
+  duration_ms: 0.571
+  ...
+# Subtest: fallback binding pairs legacy rows, while unrelated or unfinished rows are ignored
+ok 54 - fallback binding pairs legacy rows, while unrelated or unfinished rows are ignored
+  ---
+  duration_ms: 1.7167
+  ...
+# Subtest: case UI suppresses AI narrative when citations or fixed source binding are missing
+ok 55 - case UI suppresses AI narrative when citations or fixed source binding are missing
+  ---
+  duration_ms: 4.0283
+  ...
+# Subtest: case UI shows source-bound AI suggestions only as unverified and hides cross-candidate references
+ok 56 - case UI shows source-bound AI suggestions only as unverified and hides cross-candidate references
+  ---
+  duration_ms: 0.6579
+  ...
+# Subtest: case UI requires matching fixed source anchor for remediation drafts and PoC plans
+ok 57 - case UI requires matching fixed source anchor for remediation drafts and PoC plans
+  ---
+  duration_ms: 0.4951
+  ...
+# Subtest: case report presents operation truncation as an explicit omitted count
+ok 58 - case report presents operation truncation as an explicit omitted count
+  ---
+  duration_ms: 2.9373
+  ...
+# Subtest: case report safely defaults legacy summaries without claiming hidden rows
+ok 59 - case report safely defaults legacy summaries without claiming hidden rows
+  ---
+  duration_ms: 0.2654
+  ...
+# Subtest: case report keeps Agent triage and fixed validation separate from human confirmation
+ok 60 - case report keeps Agent triage and fixed validation separate from human confirmation
+  ---
+  duration_ms: 0.3985
+  ...
+# Subtest: no recognized secret formats still warns that source may contain secrets
+ok 61 - no recognized secret formats still warns that source may contain secrets
+  ---
+  duration_ms: 2.3352
+  ...
+# Subtest: detected secret categories are shown with the same incomplete-DLP warning
+ok 62 - detected secret categories are shown with the same incomplete-DLP warning
+  ---
+  duration_ms: 0.4269
+  ...
+# Subtest: authorization review requires every actual-context disclosure to be opened
+ok 63 - authorization review requires every actual-context disclosure to be opened
+  ---
+  duration_ms: 2.2016
+  ...
+# Subtest: preview disclosure must cover exactly the selected candidate or experiment arms
+ok 64 - preview disclosure must cover exactly the selected candidate or experiment arms
+  ---
+  duration_ms: 0.5588
+  ...
+# Subtest: source export consent stays disabled until the eligible preview is expanded
+ok 65 - source export consent stays disabled until the eligible preview is expanded
+  ---
+  duration_ms: 0.7539
+  ...
+# Subtest: model investigation creation requires the reviewed preview, bound candidate, and explicit consent
+ok 66 - model investigation creation requires the reviewed preview, bound candidate, and explicit consent
+  ---
+  duration_ms: 0.6633
+  ...
+# Subtest: evidence graph view summarizes fixed-source trace without claiming semantic proof
+ok 67 - evidence graph view summarizes fixed-source trace without claiming semantic proof
+  ---
+  duration_ms: 2.5835
+  ...
+# Subtest: incomplete stages and unbound references remain visible as incomplete
+ok 68 - incomplete stages and unbound references remain visible as incomplete
+  ---
+  duration_ms: 0.4034
+  ...
+# Subtest: missing holdout remains explicitly unknown
+ok 69 - missing holdout remains explicitly unknown
+  ---
+  duration_ms: 2.595
+  ...
+# Subtest: component harness is never presented as product validation
+ok 70 - component harness is never presented as product validation
+  ---
+  duration_ms: 0.4612
+  ...
+# Subtest: product-level label requires both a verified input manifest and reachability
+ok 71 - product-level label requires both a verified input manifest and reachability
+  ---
+  duration_ms: 0.1863
+  ...
+# Subtest: missing hashes render safely without a copy action
+ok 72 - missing hashes render safely without a copy action
+  ---
+  duration_ms: 1.9428
+  ...
+# Subtest: present hashes show a short label and copy the full value
+ok 73 - present hashes show a short label and copy the full value
+  ---
+  duration_ms: 0.2896
+  ...
+# Subtest: three audit entries are distinct forms, with no intermediate new-audit page
+ok 74 - three audit entries are distinct forms, with no intermediate new-audit page
+  ---
+  duration_ms: 2.3992
+  ...
+# Subtest: legacy links retain their destination and task identity
+ok 75 - legacy links retain their destination and task identity
+  ---
+  duration_ms: 1.6843
+  ...
+# Subtest: source report and operation deep links select the right navigation section
+ok 76 - source report and operation deep links select the right navigation section
+  ---
+  duration_ms: 1.0254
+  ...
+# Subtest: candidate context survives route normalization without becoming an execution request
+ok 77 - candidate context survives route normalization without becoming an execution request
+  ---
+  duration_ms: 0.49
+  ...
+# Subtest: new reports cannot steal the risk source currently under review
+ok 78 - new reports cannot steal the risk source currently under review
+  ---
+  duration_ms: 0.3087
+  ...
+# Subtest: risk filter changes produce shareable, encoded URLs and defaults reset cleanly
+ok 79 - risk filter changes produce shareable, encoded URLs and defaults reset cleanly
+  ---
+  duration_ms: 0.3793
+  ...
+# Subtest: risk queue deep links preserve dashboard filters
+ok 80 - risk queue deep links preserve dashboard filters
+  ---
+  duration_ms: 0.2864
+  ...
+# Subtest: online repository preview is disabled while loading or using a stale catalog
+ok 81 - online repository preview is disabled while loading or using a stale catalog
+  ---
+  duration_ms: 2.5848
+  ...
+# Subtest: import submission is bound to the reviewed default branch, full commit, and preview hash
+ok 82 - import submission is bound to the reviewed default branch, full commit, and preview hash
+  ---
+  duration_ms: 2.9904
+  ...
+# Subtest: phase progress separates statuses and only exposes child links bound to the endpoint commit
+ok 83 - phase progress separates statuses and only exposes child links bound to the endpoint commit
+  ---
+  duration_ms: 3.6158
+  ...
+# Subtest: limited completion remains distinct in labels, counts, tone, and result bindings
+ok 84 - limited completion remains distinct in labels, counts, tone, and result bindings
+  ---
+  duration_ms: 0.4122
+  ...
+# Subtest: missing child summary arrays are distinguished from an explicitly empty operation list
+ok 85 - missing child summary arrays are distinguished from an explicitly empty operation list
+  ---
+  duration_ms: 0.4115
+  ...
+# Subtest: completed child links require valid result and source report hashes
+ok 86 - completed child links require valid result and source report hashes
+  ---
+  duration_ms: 0.2586
+  ...
+# Subtest: endpoint states distinguish full success, all-failed, revoked and not-triaged
+ok 87 - endpoint states distinguish full success, all-failed, revoked and not-triaged
+  ---
+  duration_ms: 0.5042
+  ...
+# Subtest: matrix pair model only enables a uniquely matched one-to-one fixed candidate pair
+ok 88 - matrix pair model only enables a uniquely matched one-to-one fixed candidate pair
+  ---
+  duration_ms: 0.5755
+  ...
+# Subtest: recent-window pair selectors bind only the fixed between-window endpoints
+ok 89 - recent-window pair selectors bind only the fixed between-window endpoints
+  ---
+  duration_ms: 1.2506
+  ...
+# Subtest: preview request contains only pair selectors; no caller-chosen source or Provider data
+ok 90 - preview request contains only pair selectors; no caller-chosen source or Provider data
+  ---
+  duration_ms: 0.6747
+  ...
+# Subtest: create requires the preview consent nonce, expiry, digest and sends explicit approval
+ok 91 - create requires the preview consent nonce, expiry, digest and sends explicit approval
+  ---
+  duration_ms: 0.7018
+  ...
+# Subtest: joint preview renders linked Agent summaries only when supplied and bound fields exist
+ok 92 - joint preview renders linked Agent summaries only when supplied and bound fields exist
+  ---
+  duration_ms: 1.2754
+  ...
+# Subtest: joint consent summary distinguishes missing evidence lists from explicit empty lists
+ok 93 - joint consent summary distinguishes missing evidence lists from explicit empty lists
+  ---
+  duration_ms: 0.538
+  ...
+# Subtest: an old detail response cannot replace a newer selected operation
+ok 94 - an old detail response cannot replace a newer selected operation
+  ---
+  duration_ms: 3.5692
+  ...
+# Subtest: plan binds to exact candidate source and imports obligations only from matching Agent operation
+ok 95 - plan binds to exact candidate source and imports obligations only from matching Agent operation
+  ---
+  duration_ms: 7.1932
+  ...
+# Subtest: mismatched Agent, file evidence, and validation revision are excluded rather than borrowed
+ok 96 - mismatched Agent, file evidence, and validation revision are excluded rather than borrowed
+  ---
+  duration_ms: 0.4839
+  ...
+# Subtest: missing source identity stays unknown and plan contains no executable command or payload
+ok 97 - missing source identity stays unknown and plan contains no executable command or payload
+  ---
+  duration_ms: 0.4252
+  ...
+# Subtest: same-repository and same-commit Harness appears only as non-candidate context
+ok 98 - same-repository and same-commit Harness appears only as non-candidate context
+  ---
+  duration_ms: 0.5256
+  ...
+# Subtest: invalid source hash prevents a complete binding even when other identifiers exist
+ok 99 - invalid source hash prevents a complete binding even when other identifiers exist
+  ---
+  duration_ms: 0.313
+  ...
+# Subtest: raw evidence and operation statuses are rendered as cautious Chinese labels
+ok 100 - raw evidence and operation statuses are rendered as cautious Chinese labels
+  ---
+  duration_ms: 0.4382
+  ...
+# Subtest: N-day/1-day detail summarizes fixed endpoints and candidate observations without attribution
+ok 101 - N-day/1-day detail summarizes fixed endpoints and candidate observations without attribution
+  ---
+  duration_ms: 63.9841
+  ...
+# Subtest: blocked comparison keeps endpoint and candidate changes unknown
+ok 102 - blocked comparison keeps endpoint and candidate changes unknown
+  ---
+  duration_ms: 12.0882
+  ...
+# Subtest: repository management search matches friendly name, source root, path, and unavailable reason
+ok 103 - repository management search matches friendly name, source root, path, and unavailable reason
+  ---
+  duration_ms: 2.1906
+  ...
+# Subtest: stale repository actions stay disabled while catalog data is loading or failed
+ok 104 - stale repository actions stay disabled while catalog data is loading or failed
+  ---
+  duration_ms: 0.3376
+  ...
+# Subtest: Agent verdict labels separate source evidence from product confirmation
+ok 105 - Agent verdict labels separate source evidence from product confirmation
+  ---
+  duration_ms: 1.6812
+  ...
+# Subtest: coverage status enums are localized and incomplete states stay explicit
+ok 106 - coverage status enums are localized and incomplete states stay explicit
+  ---
+  duration_ms: 0.2572
+  ...
+# Subtest: coverage summary uses localized counts and preserves missing values as unknown
+ok 107 - coverage summary uses localized counts and preserves missing values as unknown
+  ---
+  duration_ms: 0.2508
+  ...
+# Subtest: cluster grouping metadata is readable without implying root-cause identity
+ok 108 - cluster grouping metadata is readable without implying root-cause identity
+  ---
+  duration_ms: 0.2771
+  ...
+# Subtest: workflow status codes are shown in Chinese across overview and task detail
+ok 109 - workflow status codes are shown in Chinese across overview and task detail
+  ---
+  duration_ms: 0.1713
+  ...
+# Subtest: evidence obligations use readable Chinese labels without changing unknown into a verdict
+ok 110 - evidence obligations use readable Chinese labels without changing unknown into a verdict
+  ---
+  duration_ms: 0.2001
+  ...
+# Subtest: risk explanations preserve evidence limits in user-facing language
+ok 111 - risk explanations preserve evidence limits in user-facing language
+  ---
+  duration_ms: 0.453
+  ...
+# Subtest: high-confidence detail never invents an AI summary when the stored rationale is empty
+ok 112 - high-confidence detail never invents an AI summary when the stored rationale is empty
+  ---
+  duration_ms: 1.1081
+  ...
+# Subtest: report caveats are readable in Chinese while unknown messages are preserved
+ok 113 - report caveats are readable in Chinese while unknown messages are preserved
+  ---
+  duration_ms: 0.5639
+  ...
+# Subtest: task detail shows loading states instead of false waiting or unknown labels
+ok 114 - task detail shows loading states instead of false waiting or unknown labels
+  ---
+  duration_ms: 0.6985
+  ...
+# Subtest: human review status is visible without implying confirmation or safety
+ok 115 - human review status is visible without implying confirmation or safety
+  ---
+  duration_ms: 0.2871
+  ...
+# Subtest: candidate presentation keeps impact, confidence and confirmation orthogonal
+ok 116 - candidate presentation keeps impact, confidence and confirmation orthogonal
+  ---
+  duration_ms: 0.3657
+  ...
+# Subtest: batch rows show per-repository running and failure events
+ok 117 - batch rows show per-repository running and failure events
+  ---
+  duration_ms: 1.8031
+  ...
+# Subtest: cancelled batch items can be retried with their original scan mode
+ok 118 - cancelled batch items can be retried with their original scan mode
+  ---
+  duration_ms: 0.4199
+  ...
+# Subtest: batch result overrides progress and attaches live pinned scan status
+ok 119 - batch result overrides progress and attaches live pinned scan status
+  ---
+  duration_ms: 0.4301
+  ...
+# Subtest: source sync shows queued state without claiming a scan was requested
+ok 120 - source sync shows queued state without claiming a scan was requested
+  ---
+  duration_ms: 1.4548
+  ...
+# Subtest: source sync reports the Git phase while the handler is running
+ok 121 - source sync reports the Git phase while the handler is running
+  ---
+  duration_ms: 1.2606
+  ...
+# Subtest: source sync uses live scan status instead of the stale enqueue snapshot
+ok 122 - source sync uses live scan status instead of the stale enqueue snapshot
+  ---
+  duration_ms: 0.4766
+  ...
+# Subtest: source sync exposes scan-status read failures rather than presenting a stale queued state
+ok 123 - source sync exposes scan-status read failures rather than presenting a stale queued state
+  ---
+  duration_ms: 0.2092
+  ...
+# Subtest: source sync shows a sanitized failure reason from the operation result
+ok 124 - source sync shows a sanitized failure reason from the operation result
+  ---
+  duration_ms: 0.3348
+  ...
+# Subtest: single-source retry distinguishes transfer failures from scan failures
+ok 125 - single-source retry distinguishes transfer failures from scan failures
+  ---
+  duration_ms: 0.3525
+  ...
+# Subtest: single-source scan enqueue failures are not labeled as Git sync failures
+ok 126 - single-source scan enqueue failures are not labeled as Git sync failures
+  ---
+  duration_ms: 0.1752
+  ...
+1..126
+# tests 126
+# suites 0
+# pass 126
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1054.37
