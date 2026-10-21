@@ -64,6 +64,15 @@ export function sourceSyncRetryAction(operation, scanJob = null) {
   return null;
 }
 
+export function sourceSyncBatchRetryAction(row) {
+  if (!row || typeof row !== "object") return null;
+  if (retryableSyncStatuses.has(row.status)) return "sync";
+  if (row.scanAfterSync && retryableScanStatuses.has(row.scanStatus)) return "scan";
+  if (row.scanAfterSync && !row.scanJobId
+      && row.status === "completed_with_limitations" && row.error) return "scan";
+  return null;
+}
+
 /**
  * Build a per-repository progress view from operation events/result.
  * The batch rows intentionally expose repository names and immutable SHAs,

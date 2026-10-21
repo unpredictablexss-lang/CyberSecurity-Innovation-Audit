@@ -51,6 +51,13 @@ export function sourceSyncRetryAction(
   operation: SourceSyncOperation | null | undefined,
   scanJob?: SourceSyncScanJob,
 ): "sync" | "scan" | null;
+export function sourceSyncBatchRetryAction(row: {
+  status?: string;
+  scanAfterSync?: boolean;
+  scanStatus?: string;
+  scanJobId?: string | null;
+  error?: string;
+} | null | undefined): "sync" | "scan" | null;
 export function sourceSyncBatchRows(
   operation: Record<string, any> | null | undefined,
   scanJobs?: Record<string, any>,

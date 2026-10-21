@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { sourceSyncBatchRows } from "../src/features/audits/sourceSyncProgress.js";
+import { sourceSyncBatchRetryAction, sourceSyncBatchRows } from "../src/features/audits/sourceSyncProgress.js";
 
 test("batch rows show per-repository running and failure events", () => {
   const rows = sourceSyncBatchRows({
@@ -18,6 +18,26 @@ test("batch rows show per-repository running and failure events", () => {
   assert.equal(rows[0].scanStatus, "not_started");
   assert.equal(rows[1].status, "failed");
   assert.equal(rows[1].error, "transfer failed");
+});
+
+test("cancelled batch items can be retried with their original scan mode", () => {
+  const [row] = sourceSyncBatchRows({
+    status: "cancelled",
+    spec: { repositories: [
+      { name: "openharmony/cancelled", scan_after_sync: true },
+    ] },
+    result: { repositories: [
+      { repository: "openharmony/cancelled", status: "cancelled",
+        scan_status: "not_started", error: "cancelled during transfer" },
+    ] },
+  });
+
+  assert.equal(row.status, "cancelled");
+  assert.equal(row.scanAfterSync, true);
+  assert.equal(sourceSyncBatchRetryAction(row), "sync");
+  assert.equal(sourceSyncBatchRetryAction({
+    status: "completed", scanAfterSync: true, scanStatus: "cancelled", scanJobId: "scan-1",
+  }), "scan");
 });
 
 test("batch result overrides progress and attaches live pinned scan status", () => {

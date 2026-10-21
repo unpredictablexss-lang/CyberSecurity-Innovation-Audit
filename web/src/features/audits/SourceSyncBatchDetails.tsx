@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Alert, Button, Card, Descriptions, Space, Table, Tag, Typography, message } from "antd";
 import { api } from "../../api";
 import { go, Hash } from "../../components";
-import { sourceSyncBatchRows } from "./sourceSyncProgress";
+import { sourceSyncBatchRetryAction, sourceSyncBatchRows } from "./sourceSyncProgress";
 
 const { Text } = Typography;
 const scanTerminal = new Set(["completed", "completed_with_limitations", "failed", "timed_out", "interrupted", "cancelled"]);
@@ -115,11 +115,10 @@ export default function SourceSyncBatchDetails({ operation }: Props) {
         { title: "说明", dataIndex: "error", render: (value: string, row: any) =>
           value ? <Text type="danger">{value}</Text> : row.duplicateOf ? <Text type="secondary">与第 {row.duplicateOf} 项相同，已跳过重复同步。</Text> : "—" },
         { title: "操作", fixed: "right", width: 150, render: (_: unknown, row: any) => {
-          const syncRetry = ["failed", "not_started", "timed_out", "interrupted"].includes(row.status);
-          const scanRetry = row.scanAfterSync && ["failed", "cancelled", "timed_out", "interrupted"].includes(row.scanStatus);
-          return syncRetry || scanRetry
+          const retryAction = sourceSyncBatchRetryAction(row);
+          return retryAction
             ? <Button size="small" loading={retrying === row.index} disabled={retrying !== null} onClick={() => void retry(row)}>
-                {syncRetry ? "重试同步" : "重新同步并扫描"}
+                {retryAction === "sync" ? "重试同步" : "重新同步并扫描"}
               </Button>
             : row.scanJobId ? <Button size="small" onClick={() => go("/tasks/" + row.scanJobId)}>查看扫描</Button> : "—";
         } },
