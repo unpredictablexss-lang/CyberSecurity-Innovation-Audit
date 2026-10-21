@@ -15,6 +15,62 @@ from tree_sitter import Language, Parser
 from src.ohscanner.contracts import DetectorFinding, EvidenceObligation, SourceUnit
 
 
+DATA06_RISK_ASSESSMENT = {
+    "identifier": "CVE-2025-26474 (候选映射；非根因证明)",
+    "mapping_basis": (
+        "T74 regression manifest associates this source root with CVE-2025-26474. "
+        "The public disclosure describes an input-validation issue but does not establish "
+        "this allocation-width primitive as its root cause. Treat the CVE link as provenance only."
+    ),
+    "cwe": ["CWE-131", "CWE-787"],
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2025-26474",
+    "source_name": "NVD CVE-2025-26474 (candidate mapping provenance)",
+    "source_severity": "not assigned to this source primitive",
+    "severity": "unknown",
+    "severity_label": "未评估",
+    "severity_mapping": "No CVSS or product severity is inferred from the CVE mapping or semantic harness.",
+    "affected_range": "Pinned vulnerable source: communication_ipc commit 84d681288793785e8f39f71c824f211edaed8f1e",
+    "fixed_versions": ["official source fix commit de3a68cc8b7d6f18017fd261060def0e38dce54a"],
+    "component_condition": (
+        "CJ_ReadRemoteObjectArray reads a positive count from Parcel, allocates int32_t and "
+        "int64_t outputs with malloc(count), then stores count typed elements."
+    ),
+    "source_location": {
+        "file": "interfaces/innerkits/cj/src/message_sequence_impl.cpp",
+        "symbol": "MessageSequenceImpl::CJ_ReadRemoteObjectArray",
+        "lines": "1188-1218",
+        "vulnerable_commit": "84d681288793785e8f39f71c824f211edaed8f1e",
+        "fixed_commit": "de3a68cc8b7d6f18017fd261060def0e38dce54a",
+        "url": "https://gitee.com/openharmony/communication_ipc/blob/84d681288793785e8f39f71c824f211edaed8f1e/interfaces/innerkits/cj/src/message_sequence_impl.cpp#L1188",
+    },
+    "poc": {
+        "kind": "isolated source-semantic ASan harness; OpenHarmony component not compiled",
+        "entrypoint": "MessageSequenceImpl::CJ_ReadRemoteObjectArray allocation/count/typed-store semantics; count=4",
+        "record": "research/deliveries/ipc/data06_runtime_poc_20261021/README.md",
+        "record_sha256": "1b9fd33ba62609e013014a9ac7698608fa7e571f58aaf48f2ad7cfeddcc2a78c",
+        "replay": "research/deliveries/ipc/data06_runtime_poc_20261021/run.sh",
+        "replay_sha256": "7994b7e0ca6d404ba64292014df567eddd51b3fd2bd23d793a9cceacff154209",
+        "raw_output": "research/deliveries/ipc/data06_runtime_poc_20261021/artifacts/vulnerable.stderr.raw.b64",
+        "raw_output_sha256": "b27931bbf0ae57391ae40046f5a8c0899a8f49f357a5caeecd9e35630fd6747b",
+        "raw_output_encoding": "base64; SHA-256 covers decoded ASan stderr bytes",
+    },
+    "remediation": "Allocate sizeof(element_type) * arrayLength; upstream fixed source is the recorded commit.",
+    "upstream_fix": "https://gitee.com/openharmony/communication_ipc/commit/de3a68cc8b7d6f18017fd261060def0e38dce54a",
+    "component_retest": {
+        "fixed_source": "Pinned official source fix de3a68cc8b7d6f18017fd261060def0e38dce54a; detector replay expects zero DATA-06 finding.",
+        "affected_poc": "ASan heap-buffer-overflow in source-semantic harness at count=4.",
+        "fixed_poc": "Clean return in source-semantic harness at count=4.",
+        "safe_order_control": "Zero-count and insufficient-Parcel-byte controls reject without overflow.",
+        "scope": "Source-semantic harness and exact-source detector replay; no OpenHarmony binary, Binder/DBinder reachability, or product impact verified.",
+    },
+    "product_applicability": "unknown",
+    "product_evidence": (
+        "The harness does not compile the OpenHarmony component and does not establish Binder/DBinder "
+        "reachability, shipped build inclusion, or product impact."
+    ),
+}
+
+
 _PATH = "interfaces/innerkits/cj/src/message_sequence_impl.cpp"
 _METHOD = re.compile(r"MessageSequenceImpl\s*::\s*CJ_ReadRemoteObjectArray\s*\(")
 _COUNT_READ = re.compile(
@@ -134,6 +190,7 @@ def find_remote_array_width_candidate(unit: SourceUnit, repository: str):
         candidate_cwe="CWE-131",
         consequence_impact="out_of_bounds_write",
         consequence_cwe="CWE-787",
+        risk_assessment=dict(DATA06_RISK_ASSESSMENT),
         source_sha256=unit.sha256,
         evidence_obligations=(
             EvidenceObligation("ffi_api_reachability", "Verify the Cangjie FFI caller and product build expose this method to attacker-influenced Parcel contents."),

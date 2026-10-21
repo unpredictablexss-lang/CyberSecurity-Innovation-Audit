@@ -1,0 +1,188 @@
+{
+  "schema_version": 1,
+  "official_source_remote": "https://gitee.com/openharmony/communication_ipc.git",
+  "candidate_family": "DATA-06",
+  "detector": "ohscanner.interface.ipc@0.12.13",
+  "model": "oh-ipc-2026.10-v33",
+  "rule": "ipc.parcel.array-allocation-width@0.1.0",
+  "cwe": "CWE-131",
+  "possible_consequence": "out_of_bounds_write / CWE-787",
+  "scanner_mainline": {
+    "commit": "b957894ca0229d7a6b0557b87d35e1c2ac877b07",
+    "tree": "a8e1ca39deb827e253b6fe9f86679a1dc1ede2a5",
+    "parents": [
+      "11a5c1a98f209fb1b6211d0edccbec656c0ca950"
+    ],
+    "commit_date": "2026-10-21",
+    "subject": "docs(d): record mainline panel end-to-end demo",
+    "files": [
+      {
+        "path": "src/ohscanner/detectors/interface/detector.py",
+        "blob_oid": "a4a23140e69bb95a82ad4ff6ebe4c999cd38f035",
+        "source_sha256": "2786338dbc87de3e6b7b77dc2f0e269981a60a2855f9d4f4358ca74011a3ec85",
+        "bytes": 27455
+      },
+      {
+        "path": "src/ohscanner/detectors/interface/ffi_array_bounds.py",
+        "blob_oid": "a2c54427a482e4d64a57e7a8e808ddcb5f0c7474",
+        "source_sha256": "fc44c96ac584c28d4ac0106b9a4e7125a7ab71cd0d8b280a7cc3ff75a062a173",
+        "bytes": 6230
+      },
+      {
+        "path": "src/ohscanner/detectors/interface/families/data06.py",
+        "blob_oid": "eba6e20905f7f211949b5a0ff714870dc27b9911",
+        "source_sha256": "a277339ae772c42a9465fc3b2063f8c80326ef770ea939598769c7ae4214074b",
+        "bytes": 487
+      },
+      {
+        "path": "src/ohscanner/detectors/interface/models.py",
+        "blob_oid": "d45a22a828af483f44b0fddba28f65cada1c348e",
+        "source_sha256": "bf8dcdf22e00b721951d7f2200ac40569afdd875e11c95edf418144e957b908f",
+        "bytes": 20598
+      }
+    ]
+  },
+  "scanner_b_closeout": {
+    "commit": "96cfc453c15263ec3ec83ce87aa75d08d221b445",
+    "tree": "e413abe82124654ffdd93b5bba82db407280ea9f",
+    "parents": [
+      "24f80704d244d2ddf665fd50d9dfffeb448e9a87"
+    ],
+    "commit_date": "2026-10-21",
+    "subject": "docs(ipc): add DATA-06 component PoC closeout",
+    "files": [
+      {
+        "path": "src/ohscanner/detectors/interface/detector.py",
+        "blob_oid": "a4a23140e69bb95a82ad4ff6ebe4c999cd38f035",
+        "source_sha256": "2786338dbc87de3e6b7b77dc2f0e269981a60a2855f9d4f4358ca74011a3ec85",
+        "bytes": 27455
+      },
+      {
+        "path": "src/ohscanner/detectors/interface/ffi_array_bounds.py",
+        "blob_oid": "a2c54427a482e4d64a57e7a8e808ddcb5f0c7474",
+        "source_sha256": "fc44c96ac584c28d4ac0106b9a4e7125a7ab71cd0d8b280a7cc3ff75a062a173",
+        "bytes": 6230
+      },
+      {
+        "path": "src/ohscanner/detectors/interface/families/data06.py",
+        "blob_oid": "eba6e20905f7f211949b5a0ff714870dc27b9911",
+        "source_sha256": "a277339ae772c42a9465fc3b2063f8c80326ef770ea939598769c7ae4214074b",
+        "bytes": 487
+      },
+      {
+        "path": "src/ohscanner/detectors/interface/models.py",
+        "blob_oid": "d45a22a828af483f44b0fddba28f65cada1c348e",
+        "source_sha256": "bf8dcdf22e00b721951d7f2200ac40569afdd875e11c95edf418144e957b908f",
+        "bytes": 20598
+      }
+    ]
+  },
+  "ipc_source_objects": {
+    "candidate_parent_of_fix": {
+      "commit": "84d681288793785e8f39f71c824f211edaed8f1e",
+      "tree": "80fb756221eac67a9f6a9a9506eb763e380d9c55",
+      "parents": [
+        "c634f7e1740b56f5b616bac3f67b6fc1988eec28",
+        "990a8bd634b77c84c10e58489bbeb37698f1c8b1"
+      ],
+      "commit_date": "2025-07-24",
+      "subject": "!2033 \u544a\u8b66\u5904\u7406 Merge pull request !2033 from dongyang/master",
+      "files": [
+        {
+          "path": "interfaces/innerkits/cj/src/message_sequence_impl.cpp",
+          "blob_oid": "c5f62c288a144478828c720d48c1485fae0e035c",
+          "source_sha256": "1f4d039b974a0021000126e61efea7eb0b8eb5f4baf756373c1b12150d0d5eec",
+          "bytes": 42959
+        },
+        {
+          "path": "interfaces/innerkits/cj/src/ipc_ffi.cpp",
+          "blob_oid": "50a44d59e3dfabf062fbbc80a84ff73921287abe",
+          "source_sha256": "45105010425b1aa9d2c56166bbf9c620a36f44dccd542d805b22c85319ae738d",
+          "bytes": 68801
+        },
+        {
+          "path": "interfaces/innerkits/cj/include/ipc_ffi.h",
+          "blob_oid": "6ea3847d508263135e227ecfae170a46ec43ffae",
+          "source_sha256": "4e20bfeb73746daee573448d09c3611260ed68c226dc4e4ea65a082357170a83",
+          "bytes": 11115
+        },
+        {
+          "path": "interfaces/innerkits/cj/BUILD.gn",
+          "blob_oid": "cc31f2c04ea9eaf5b4012e966be2b32b82e4ecd7",
+          "source_sha256": "c094a4df2f54d9b08fad858a3a08cba40679a9b2f3ce2dddc3b6a7c42dfffc93",
+          "bytes": 1890
+        }
+      ]
+    },
+    "candidate_secondary_revision": {
+      "commit": "67cd9d3e8e08971ba614a19f99b5f6b7ec4ea039",
+      "tree": "70e86ff4f755b9b67794a045543636ad2c543477",
+      "parents": [
+        "3f6bb2a20b589448749a2564e8fa54679df8b196"
+      ],
+      "commit_date": "2025-04-14",
+      "subject": "fix functions",
+      "files": [
+        {
+          "path": "interfaces/innerkits/cj/src/message_sequence_impl.cpp",
+          "blob_oid": "3464d1dd6381f986a5f0da462e728ac40293b6dd",
+          "source_sha256": "98bd761fe25a16435830a8978473444a318b71a4cf4809689b4b7ffe106effa9",
+          "bytes": 42841
+        },
+        {
+          "path": "interfaces/innerkits/cj/src/ipc_ffi.cpp",
+          "blob_oid": "5ef98fdbbf4a430a2f41d883c65be134ddff7772",
+          "source_sha256": "eb04943907582ed3b6b50e644217def3a4da62f7f621220917a5bc18b4d3373d",
+          "bytes": 68546
+        },
+        {
+          "path": "interfaces/innerkits/cj/include/ipc_ffi.h",
+          "blob_oid": "6ea3847d508263135e227ecfae170a46ec43ffae",
+          "source_sha256": "4e20bfeb73746daee573448d09c3611260ed68c226dc4e4ea65a082357170a83",
+          "bytes": 11115
+        },
+        {
+          "path": "interfaces/innerkits/cj/BUILD.gn",
+          "blob_oid": "cc31f2c04ea9eaf5b4012e966be2b32b82e4ecd7",
+          "source_sha256": "c094a4df2f54d9b08fad858a3a08cba40679a9b2f3ce2dddc3b6a7c42dfffc93",
+          "bytes": 1890
+        }
+      ]
+    },
+    "official_fix": {
+      "commit": "de3a68cc8b7d6f18017fd261060def0e38dce54a",
+      "tree": "611835efd3112027f067b587146a2c2bbd38b47e",
+      "parents": [
+        "84d681288793785e8f39f71c824f211edaed8f1e"
+      ],
+      "commit_date": "2025-07-28",
+      "subject": "fix security issue of cj",
+      "files": [
+        {
+          "path": "interfaces/innerkits/cj/src/message_sequence_impl.cpp",
+          "blob_oid": "9041e30d1926edd09e20126274b8903f0c55df50",
+          "source_sha256": "30ad2a9fa4f45792b83e75cef6c5106818b290ae523d9e17e48c88853854d777",
+          "bytes": 43320
+        },
+        {
+          "path": "interfaces/innerkits/cj/src/ipc_ffi.cpp",
+          "blob_oid": "02df8d8bcf66a793ccce54991106dedb102e2198",
+          "source_sha256": "e55ce9c5714360ec6dc14149b4a6f24efef164d00b391ae96f424c67cad45cab",
+          "bytes": 68841
+        },
+        {
+          "path": "interfaces/innerkits/cj/include/ipc_ffi.h",
+          "blob_oid": "6ea3847d508263135e227ecfae170a46ec43ffae",
+          "source_sha256": "4e20bfeb73746daee573448d09c3611260ed68c226dc4e4ea65a082357170a83",
+          "bytes": 11115
+        },
+        {
+          "path": "interfaces/innerkits/cj/BUILD.gn",
+          "blob_oid": "cc31f2c04ea9eaf5b4012e966be2b32b82e4ecd7",
+          "source_sha256": "c094a4df2f54d9b08fad858a3a08cba40679a9b2f3ce2dddc3b6a7c42dfffc93",
+          "bytes": 1890
+        }
+      ]
+    }
+  }
+}

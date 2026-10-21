@@ -4,6 +4,7 @@ import copy
 import json
 import io
 import hashlib
+import os
 import tarfile
 from pathlib import Path
 import subprocess
@@ -290,6 +291,150 @@ class WorkbenchTests(unittest.TestCase):
         self.assertTrue(
             all(x["evidence"].get("obligations") for x in service.findings(web))
         )
+
+    def test_data06_source_candidate_and_fixed_retest_reach_finding_detail_api(self):
+        ipc_repo = Path(os.environ.get("T74_IPC_GIT", ROOT / "tmp/t71-communication-ipc"))
+        source_rel = Path("interfaces/innerkits/cj/src/message_sequence_impl.cpp")
+        target_repo = self.root / "targets" / "openharmony" / "communication_ipc"
+        target_repo.mkdir(parents=True)
+        git(target_repo, "init", "-q")
+        git(target_repo, "config", "user.name", "test")
+        git(target_repo, "config", "user.email", "test@example.invalid")
+        source_path = target_repo / source_rel
+
+        def install_source(commit, message):
+            source_path.parent.mkdir(parents=True, exist_ok=True)
+            source_path.write_bytes(subprocess.check_output(
+                ["git", "-C", str(ipc_repo), "show", f"{commit}:{source_rel.as_posix()}"]
+            ))
+            git(target_repo, "add", str(source_rel))
+            git(target_repo, "commit", "-qm", message)
+            return git(target_repo, "rev-parse", "HEAD")
+
+        vulnerable_bytes = subprocess.check_output(
+            ["git", "-C", str(ipc_repo), "show", f"84d681288793785e8f39f71c824f211edaed8f1e:{source_rel.as_posix()}"]
+        )
+        source_path.parent.mkdir(parents=True, exist_ok=True)
+        source_path.write_bytes(vulnerable_bytes)
+        git(target_repo, "add", str(source_rel))
+        git(target_repo, "commit", "-qm", "pin DATA-06 vulnerable source bytes")
+        registration = self.client.post(
+            "/api/v1/repositories",
+            json={"name": "openharmony/communication_ipc", "path": str(target_repo)},
+            headers=HEADERS,
+        )
+        self.assertEqual(registration.status_code, 201, registration.text)
+        self.repo_id = registration.json()["id"]
+
+        vulnerable = git(target_repo, "rev-parse", "HEAD")
+        request = self.queue(revision=vulnerable, detector_ids=["ohscanner.interface.ipc"])
+        Worker(self.settings).run(once=True)
+        job = self.store.job(request["id"])
+        report = service.read_report(self.settings, job)
+        candidate = next(
+            item for item in service.findings(report)
+            if item["rule_id"] == "ipc.parcel.array-allocation-width"
+        )
+        risk = candidate["risk_assessment"]
+        self.assertIn("候选映射；非根因证明", risk["identifier"])
+        self.assertIn("provenance only", risk["mapping_basis"])
+        self.assertEqual("unknown", risk["product_applicability"])
+        self.assertEqual(
+            hashlib.sha256((ROOT / risk["poc"]["record"]).read_bytes()).hexdigest(),
+            risk["poc"]["record_sha256"],
+        )
+        self.assertEqual(
+            hashlib.sha256((ROOT / risk["poc"]["replay"]).read_bytes()).hexdigest(),
+            risk["poc"]["replay_sha256"],
+        )
+        self.assertEqual(vulnerable, report["commit"])
+        detail = self.client.get(
+            f"/api/v1/scans/{job['id']}/findings/{candidate['id']}"
+        )
+        self.assertEqual(detail.status_code, 200, detail.text)
+        self.assertEqual(risk, detail.json()["risk_assessment"])
+        self.assertEqual(hashlib.sha256(source_path.read_bytes()).hexdigest(),
+                         detail.json()["source"]["sha256"])
+        self.assertEqual(str(source_rel).replace("\\", "/"), detail.json()["source"]["file"])
+
+        fixed = install_source(
+            "de3a68cc8b7d6f18017fd261060def0e38dce54a", "pin official DATA-06 fixed source bytes"
+        )
+        fixed_request = self.queue(revision=fixed, detector_ids=["ohscanner.interface.ipc"])
+        Worker(self.settings).run(once=True)
+        fixed_job = self.store.job(fixed_request["id"])
+        fixed_report = service.read_report(self.settings, fixed_job)
+        self.assertEqual(fixed, fixed_report["commit"])
+        self.assertFalse(any(
+            item["rule_id"] == "ipc.parcel.array-allocation-width"
+            for item in service.findings(fixed_report)
+        ))
+
+        evidence_dir = os.environ.get("DATA06_DEMO_OUTPUT_DIR")
+        if evidence_dir:
+            output = Path(evidence_dir)
+            output.mkdir(parents=True, exist_ok=True)
+            vulnerable_report = self.client.get(
+                f"/api/v1/scans/{job['id']}/artifacts/report.json"
+            )
+            vulnerable_markdown = self.client.get(
+                f"/api/v1/scans/{job['id']}/artifacts/report.md"
+            )
+            fixed_report_response = self.client.get(
+                f"/api/v1/scans/{fixed_job['id']}/artifacts/report.json"
+            )
+            fixed_markdown = self.client.get(
+                f"/api/v1/scans/{fixed_job['id']}/artifacts/report.md"
+            )
+            for response in (vulnerable_report, vulnerable_markdown, detail,
+                             fixed_report_response, fixed_markdown):
+                self.assertEqual(200, response.status_code, response.text[:500])
+            artifacts = {
+                "vulnerable_report.json": vulnerable_report.content,
+                "vulnerable_report.md": vulnerable_markdown.content,
+                "finding_detail.json": detail.content,
+                "fixed_report.json": fixed_report_response.content,
+                "fixed_report.md": fixed_markdown.content,
+            }
+            for name, payload in artifacts.items():
+                (output / name).write_bytes(payload)
+            summary = {
+                "schema_version": 1,
+                "kind": "DATA-06 isolated workbench API replay",
+                "source_bytes_from": {
+                    "repository": "openharmony/communication_ipc",
+                    "vulnerable_commit": "84d681288793785e8f39f71c824f211edaed8f1e",
+                    "fixed_commit": "de3a68cc8b7d6f18017fd261060def0e38dce54a",
+                    "vulnerable_file_sha256": hashlib.sha256(vulnerable_bytes).hexdigest(),
+                    "fixed_file_sha256": hashlib.sha256(source_path.read_bytes()).hexdigest(),
+                },
+                "local_workbench": {
+                    "vulnerable_scan_commit": vulnerable,
+                    "fixed_scan_commit": fixed,
+                    "vulnerable_report_sha256": job["report_sha256"],
+                    "fixed_report_sha256": fixed_job["report_sha256"],
+                    "finding_detail_sha256": hashlib.sha256(detail.content).hexdigest(),
+                },
+                "finding": {
+                    "rule_id": candidate["rule_id"],
+                    "file": candidate["file"],
+                    "line": candidate["line"],
+                    "source_sha256": candidate["source_sha256"],
+                    "risk_assessment": risk,
+                    "source_status": detail.json()["source_status"],
+                },
+                "fixed_retest": {"rule_findings": 0, "report_sha256": fixed_job["report_sha256"]},
+                "product_impact": "unknown",
+                "poc_limit": "source-semantic harness; no component binary or Binder/DBinder reachability claim",
+            }
+            (output / "summary.json").write_text(
+                json.dumps(summary, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+            )
+            entries = []
+            for path in sorted(output.iterdir()):
+                if path.is_file() and path.name != "SHA256SUMS":
+                    entries.append(f"{hashlib.sha256(path.read_bytes()).hexdigest()}  {path.name}")
+            (output / "SHA256SUMS").write_text("\n".join(entries) + "\n", encoding="utf-8")
 
     def test_candidate_clusters_keep_each_line_identity(self):
         job = self.completed()
