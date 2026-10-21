@@ -1,0 +1,59 @@
+{
+  "schema": "ohscanner.c-line-typedarray-set-offset-closeout/v1",
+  "date": "2026-10-21",
+  "task": "Ark Runtime TypedArray.set(arrayLike, offset) target-view boundary candidate",
+  "status": "COMPLETED_WITH_BUILD_BLOCKER",
+  "source": {
+    "repository": "openharmony/arkcompiler_ets_runtime",
+    "candidate_commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+    "candidate_tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+    "independent_comparison_commit": "d1a58d59166777e16574ceed64c15f0b2f44a76c",
+    "independent_comparison_tree": "2cd854aa7d9f987de89d31a6a512e735779e75b6",
+    "comparison_result": "Relevant TypedArray.set offset/conversion/backing-writer path unchanged"
+  },
+  "evidence": {
+    "source_and_component_model": "COMPLETED",
+    "component_harness": "COMPLETED_MODEL_AND_NODE_V8_CONTROL_ONLY",
+    "detector_regression": {
+      "status": "COMPLETED",
+      "passed": 11,
+      "failed": 0,
+      "exit_code": 0
+    },
+    "ark_runtime_execution": "NOT_RUN",
+    "product_impact": "UNKNOWN",
+    "severity": "UNSCORED"
+  },
+  "candidate_boundary": {
+    "classification": "target-view cross-boundary write hypothesis",
+    "backing_store_oob_supported": false,
+    "runtime_reachability_proven": false,
+    "product_impact_proven": false
+  },
+  "build_attempts": [
+    {
+      "profile": "rk3568",
+      "last_stage": "GN product dependency resolution",
+      "natural_exit_code": 255,
+      "blocker": "OHOS component weex-loader not found at //base/global/system_resources/systemres/BUILD.gn:28",
+      "runtime_artifacts_produced": []
+    },
+    {
+      "profile_attempt": "host_product@ohemu selection",
+      "last_stage": "HB set module import, before profile selection/GN",
+      "natural_exit_code": 255,
+      "hb_error_code": "0000",
+      "blocker": "ImportError: cannot import name run_application from prompt_toolkit.shortcuts",
+      "runtime_artifacts_produced": []
+    }
+  ],
+  "missing_runtime_artifacts": [
+    "host GN output",
+    "Ninja manifest",
+    "ark_js_vm",
+    "es2abc"
+  ],
+  "report": "typedarray_set_d1a58_source_component_report_20261021.md",
+  "evidence_package": "runtime_evidence_20261021/README.md",
+  "production_rule_profile": "Remains bound to a65; d1a58 was not added to the production CLI"
+}
