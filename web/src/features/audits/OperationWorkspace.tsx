@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Alert, Button, Card, Collapse, Descriptions, Empty, List, Space, Table, Tabs, Tag, Typography, message } from "antd";
+import { Alert, Button, Card, Collapse, Descriptions, Empty, List, Progress, Space, Table, Tabs, Tag, Typography, message } from "antd";
 import { api, terminal } from "../../api";
 import { go, Hash, Header, State } from "../../components";
 import { refreshSelectedOperation } from "../../pages/operationSelection";
@@ -10,6 +10,13 @@ import { experimentHoldoutPresentation, validationScopePresentation } from "./ex
 const { Text } = Typography;
 export type OperationView = "all" | "date" | "branches" | "matrix" | "validation" | "investigate" | "agent" | "agent_research" | "sync" | "queue";
 const kinds: Record<string, string> = { source_sync: "源码同步", repository_import_scan: "在线仓库导入并静态扫描", revision_range: "扫描区间", branch_comparison: "跨版本比较", version_matrix: "版本矩阵", validation: "隔离验证", investigation: "只读调查", agent_investigation: "模型辅助调查", candidate_review_batch: "历史候选队列（已停用）" };
+const importProgressLabels: Record<string, string> = {
+  preparing: "准备导入", download_start: "开始下载", enumerating_objects: "枚举 Git 对象",
+  counting_objects: "统计 Git 对象", compressing_objects: "压缩 Git 对象",
+  receiving_objects: "接收 Git 对象", resolving_objects: "解析 Git 对象",
+  verifying: "校验固定版本", registering: "登记仓库", cache_check: "检查本地缓存",
+  cache_hit: "复用本地缓存", scan_queued: "静态扫描已排队", failed: "导入失败",
+};
 const headings: Record<OperationView, [string, string]> = {
   all: ["高级源码与验证操作", "保留既有操作入口；任务持久化，候选变化与安全影响分别记录。"],
   date: ["时间增量扫描", "按明确时区选择提交区间，记录区间的两个端点并比较候选观察。"],
@@ -187,8 +194,32 @@ export default function OperationWorkspace({ view = "all", operationId, context 
     {selected && <Card className="section-gap" title={<Space>操作详情 <Text copyable>{selected.id}</Text></Space>} extra={<Button onClick={() => { selectedId.current = null; setSelected(null); }}>收起</Button>}>
       <Space wrap><State value={selected.status} /><Text>{kinds[selected.kind] || selected.kind}</Text><Button size="small" onClick={() => go("/tasks/operations/" + selected.id)}>任务中心打开</Button>
         {selected.kind === "repository_import_scan" && selected.result?.scan_job?.id && <Button size="small" type="primary" onClick={() => go("/tasks/" + selected.result.scan_job.id)}>查看自动创建的扫描</Button>}
+        {selected.kind === "repository_import_scan" && ["failed", "interrupted", "timed_out"].includes(selected.status) && <Button size="small" type="primary" onClick={async () => {
+          try {
+            const retried = await api("/operations/" + selected.id + "/retry", {});
+            selectedId.current = retried.id;
+            await show(retried.id);
+            await refresh();
+            message.success("已为同一固定 Commit 创建重新排队任务");
+          } catch (e) { setError(String(e)); }
+        }}>重新排队</Button>}
         {selected.result_sha256 && <><Text>Result SHA-256</Text><Hash value={selected.result_sha256} /></>}</Space>
       {selected.error && <Alert className="section-gap" type="error" message={selected.error} />}
+      {selected.kind === "repository_import_scan" && <Card size="small" className="section-gap" title="固定版本下载进度">
+        {selected.download_progress ? <>
+          <Space wrap><Tag color={selected.download_progress.state === "failed" ? "red" : selected.download_progress.state === "completed" ? "green" : "blue"}>
+            {importProgressLabels[selected.download_progress.phase] || selected.download_progress.phase || "处理中"}
+          </Tag><Text>{selected.download_progress.message}</Text>
+            {selected.download_progress.completed_objects != null && selected.download_progress.total_objects != null &&
+              <Text type="secondary">对象 {selected.download_progress.completed_objects.toLocaleString()} / {selected.download_progress.total_objects.toLocaleString()}</Text>}
+            {selected.download_progress.received_bytes != null && <Text type="secondary">已接收 {(selected.download_progress.received_bytes / 1048576).toFixed(1)} MiB</Text>}
+            {selected.download_progress.bytes_per_second != null && <Text type="secondary">{(selected.download_progress.bytes_per_second / 1048576).toFixed(1)} MiB/s</Text>}
+          </Space>
+          {selected.download_progress.percent != null && <Progress className="section-gap" percent={selected.download_progress.percent}
+            status={selected.download_progress.state === "failed" ? "exception" : selected.download_progress.state === "completed" ? "success" : "active"} />}
+        </> : <Text type="secondary">等待 Worker 开始。下载完成后会校验 Commit，再创建静态扫描任务。</Text>}
+        {selected.spec?.retry_of && <div><Text type="secondary">此任务是对 {selected.spec.retry_of.slice(0, 12)} 的重新排队。</Text></div>}
+      </Card>}
       {selected.kind === "agent_investigation" && !selected.result_sha256 && ["failed", "interrupted", "timed_out", "cancelled"].includes(selected.status) && <Alert className="section-gap" type="warning" showIcon message="本次调查没有可复核结果；候选仍为 unknown" description="任务结束不代表候选是误报或安全。若 Worker 在 Provider 已处理请求后、结果落盘前退出，上游调用和费用仍可能发生。重试前请核对执行事件及 Provider 账单，再重新预览并单独批准新任务。" />}
       {selected.spec?.scan_ids && <Space wrap className="section-gap">端点扫描：{selected.spec.scan_ids.map((id: string) => <Button key={id} size="small" onClick={() => go("/tasks/" + id)}>{id.slice(0, 12)}</Button>)}</Space>}
       {Array.isArray(selected.intelligent_review_progress) && <Card size="small" className="section-gap" title="扫描版本静态与智能审计进度">

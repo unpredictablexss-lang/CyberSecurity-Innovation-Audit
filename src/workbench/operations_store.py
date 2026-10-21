@@ -251,6 +251,42 @@ class Operations:
         self.event(key, "queued", "Immutable operation plan saved")
         return self.get(key)
 
+    def retry_repository_import(self, key):
+        """Queue a new attempt for a failed import without mutating its original plan."""
+        retryable = {"failed", "interrupted", "timed_out"}
+        new_key = uuid.uuid4().hex
+        stamp = now()
+        with self.store.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            original = self.row(db.execute(
+                "SELECT * FROM operations WHERE id=?", (key,)).fetchone())
+            if original["kind"] != "repository_import_scan":
+                raise ValueError("only repository import operations can be retried here")
+            existing = []
+            for row in db.execute("SELECT * FROM operations WHERE kind='repository_import_scan'"):
+                spec = json.loads(row["spec"])
+                if spec.get("retry_of") == key:
+                    existing.append(self.row(row))
+            if existing:
+                # Repeated HTTP submissions return the same attempt, including after it
+                # completes. To deliberately retry again, submit the latest failed attempt.
+                retry = existing[0]
+                retry["retry_reused"] = True
+                return retry
+            if original["status"] not in retryable:
+                raise ValueError("repository import can be retried only after failed, interrupted, or timed-out status")
+            active = db.execute(
+                "SELECT count(*) FROM operations WHERE status IN ('queued','running') AND kind!='candidate_review_batch'").fetchone()[0]
+            if active >= 100:
+                raise ValueError("operation queue full")
+            retry_spec = {**original["spec"], "retry_of": key}
+            db.execute("INSERT INTO operations(id,kind,spec,status,created_at) VALUES(?,?,?,?,?)",
+                       (new_key, "repository_import_scan", json.dumps(retry_spec, sort_keys=True),
+                        "queued", stamp))
+            db.execute("INSERT INTO operation_events(operation_id,created_at,stage,message) VALUES(?,?,?,?)",
+                       (new_key, stamp, "retry_queued", "Explicit retry of failed repository import " + key))
+        return self.get(new_key)
+
     def create_agent_batch(self, specs):
         """Atomically queue a small, explicitly approved set of candidate reviews."""
         if not specs or len(specs) > 5:

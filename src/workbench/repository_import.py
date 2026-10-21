@@ -3,6 +3,8 @@ import fcntl
 import hashlib
 import os
 from pathlib import Path
+import re
+import selectors
 import shutil
 import signal
 import subprocess
@@ -129,13 +131,44 @@ def _terminate_clone(process):
         process.communicate()
 
 
+_GIT_PROGRESS = re.compile(
+    r"^(Enumerating|Counting|Compressing|Receiving|Resolving) objects:\s*"
+    r"(\d+)%\s*\(([\d,]+)/([\d,]+)\)"
+    r"(?:,\s*([0-9.]+)\s*(bytes|KiB|MiB|GiB))?"
+    r"(?:\s*\|\s*([0-9.]+)\s*(bytes|KiB|MiB|GiB)/s)?"
+)
+
+
+def _parse_git_progress(line):
+    match = _GIT_PROGRESS.match(line.strip())
+    if not match:
+        return None
+    phase, percent, completed, total, amount, amount_unit, speed, speed_unit = match.groups()
+
+    def to_bytes(value, unit):
+        if value is None:
+            return None
+        multiplier = {"bytes": 1, "KiB": 1024, "MiB": 1024 ** 2, "GiB": 1024 ** 3}[unit]
+        return int(float(value) * multiplier)
+
+    return {
+        "phase": phase.lower() + "_objects",
+        "percent": int(percent),
+        "completed_objects": int(completed.replace(",", "")),
+        "total_objects": int(total.replace(",", "")),
+        "received_bytes": to_bytes(amount, amount_unit),
+        "bytes_per_second": to_bytes(speed, speed_unit),
+    }
+
+
 def _fetch_to_stage(stage, slug, branch, commit, timeout, *, cache_root=None,
-                    cache_used_before=0, cache_max_bytes=0, minimum_free_bytes=0):
+                    cache_used_before=0, cache_max_bytes=0, minimum_free_bytes=0,
+                    progress=None):
     url = approved_clone_url(slug)
     env = git_environment()
     command = ["git", "-c", "core.hooksPath=/dev/null", "-c", "http.followRedirects=false",
                "-c", "protocol.file.allow=never", "-c", "protocol.ext.allow=never",
-               "-c", "credential.helper=", "clone", "--no-checkout", "--no-recurse-submodules",
+               "-c", "credential.helper=", "clone", "--progress", "--no-checkout", "--no-recurse-submodules",
                "--depth=1", "--single-branch", "--no-tags", "--branch", branch,
                "--", url, str(stage)]
     process = subprocess.Popen(command, env=env, stdout=subprocess.DEVNULL,
@@ -143,7 +176,60 @@ def _fetch_to_stage(stage, slug, branch, commit, timeout, *, cache_root=None,
     start = time.monotonic()
     last_check = 0.0
     failure = None
-    while process.poll() is None:
+    last_progress = 0.0
+    last_percent = -1
+    last_phase = None
+    stderr_tail = bytearray()
+    pending = bytearray()
+    selector = selectors.DefaultSelector()
+    stderr_pipe = getattr(process, "stderr", None)
+    if stderr_pipe is not None:
+        selector.register(stderr_pipe, selectors.EVENT_READ)
+
+    def consume_progress(chunk):
+        nonlocal last_progress, last_percent, last_phase
+        stderr_tail.extend(chunk)
+        if len(stderr_tail) > 65536:
+            del stderr_tail[:-65536]
+        pending.extend(chunk)
+        while True:
+            separators = [index for index in (pending.find(b"\r"), pending.find(b"\n")) if index >= 0]
+            if not separators:
+                if len(pending) > 8192:
+                    del pending[:-8192]
+                return
+            index = min(separators)
+            line = bytes(pending[:index]).decode("utf-8", "replace")
+            del pending[:index + 1]
+            parsed = _parse_git_progress(line)
+            if parsed is None or progress is None:
+                continue
+            now = time.monotonic()
+            percent = parsed["percent"]
+            phase = parsed["phase"]
+            if (phase != last_phase or percent == 100 or percent - last_percent >= 5
+                    or now - last_progress >= 3):
+                progress({"state": "running", **parsed,
+                          "message": "Git 正在接收固定版本对象" if phase == "receiving_objects"
+                          else "Git 正在处理仓库对象"})
+                last_phase, last_percent, last_progress = phase, percent, now
+
+    while True:
+        if selector.get_map():
+            for key, _ in selector.select(timeout=0.1):
+                try:
+                    chunk = os.read(key.fileobj.fileno(), 4096)
+                except OSError:
+                    chunk = b""
+                if chunk:
+                    consume_progress(chunk)
+                else:
+                    selector.unregister(key.fileobj)
+        elif process.poll() is None:
+            time.sleep(0.1)
+
+        if process.poll() is not None and not selector.get_map():
+            break
         elapsed = time.monotonic() - start
         if elapsed > timeout:
             failure = subprocess.TimeoutExpired(command, timeout)
@@ -161,13 +247,15 @@ def _fetch_to_stage(stage, slug, branch, commit, timeout, *, cache_root=None,
             except OSError as exc:
                 failure = exc
                 break
-        time.sleep(0.1)
+    selector.close()
     if failure is not None:
         _terminate_clone(process)
         raise failure
     stderr = process.communicate()[1]
+    if pending:
+        consume_progress(b"\n")
     if process.returncode:
-        detail = stderr.decode("utf-8", "replace")[:1000]
+        detail = (bytes(stderr_tail) + stderr)[-65536:].decode("utf-8", "replace")[:1000]
         if "redirect" in detail.lower():
             raise ValueError("Git redirect refused; repository was not imported")
         if "no space left" in detail.lower() or "disk quota" in detail.lower():
@@ -186,7 +274,11 @@ def _fetch_to_stage(stage, slug, branch, commit, timeout, *, cache_root=None,
     return tree
 
 
-def import_and_queue_scan(settings, store, spec):
+def import_and_queue_scan(settings, store, spec, progress=None):
+    def report(state, phase, message, **extra):
+        if progress is not None:
+            progress({"state": state, "phase": phase, "message": message, **extra})
+
     slug = spec["slug"]
     branch = validate_branch(spec["branch"])
     commit = validate_commit(spec["commit"])
@@ -197,6 +289,7 @@ def import_and_queue_scan(settings, store, spec):
     if estimated is not None and (not isinstance(estimated, int) or isinstance(estimated, bool) or estimated < 0):
         raise ValueError("invalid catalog repository size metadata")
     expected_bytes = (estimated or 0) * 1024
+    report("running", "preparing", "正在准备固定版本下载")
     lockdir = Path(settings.data_dir) / "sync-locks"
     if lockdir.is_symlink():
         raise ValueError("repository import lock directory is unsafe")
@@ -249,6 +342,7 @@ def import_and_queue_scan(settings, store, spec):
             raise ValueError("repository cache target is unsafe")
         stage = family / ("." + commit + ".import-" + uuid.uuid4().hex)
         if target.exists():
+            report("running", "cache_check", "正在校验已有的固定版本缓存")
             if target.is_symlink() or not _within(target, namespace):
                 raise ValueError("repository cache target is unsafe")
             service.check_repository(settings, str(target))
@@ -257,8 +351,10 @@ def import_and_queue_scan(settings, store, spec):
                 raise ValueError("cached repository is pinned to a different commit; explicit cache refresh is required")
             tree = _git(target, "rev-parse", commit + "^{tree}").decode().strip()
             fetched = False
+            report("running", "cache_hit", "已复用固定版本缓存，无需重新下载", percent=100)
         else:
             try:
+                report("running", "download_start", "正在从 GitCode 下载固定 Commit", percent=0)
                 used_before = _directory_size(root)
                 if settings.repository_cache_max_bytes and (
                         used_before + expected_bytes > settings.repository_cache_max_bytes):
@@ -266,7 +362,9 @@ def import_and_queue_scan(settings, store, spec):
                 tree = _fetch_to_stage(stage, slug, branch, commit, timeout,
                                        cache_root=root, cache_used_before=used_before,
                                        cache_max_bytes=settings.repository_cache_max_bytes,
-                                       minimum_free_bytes=settings.repository_cache_min_free_bytes)
+                                       minimum_free_bytes=settings.repository_cache_min_free_bytes,
+                                       progress=progress)
+                report("running", "verifying", "下载完成，正在校验 Commit、Tree 和子模块策略", percent=100)
                 size = _directory_size(stage)
                 if expected_bytes and size > max(expected_bytes * 2, expected_bytes + 1024 ** 2):
                     raise OSError("download exceeded the catalog size estimate; cache import stopped")
@@ -287,12 +385,15 @@ def import_and_queue_scan(settings, store, spec):
             raise ValueError("repository cache path is registered under a conflicting name")
         repo_for_plan = repo or {"id": "pending-registration", "name": "openharmony/" + slug,
                                  "path": str(target)}
+        report("running", "registering", "固定源码已就绪，正在登记仓库并创建扫描任务")
         service.check_repository(settings, repo_for_plan["path"])
         scan_spec = service.make_spec(repo_for_plan, commit, spec["include_paths"], spec["detector_ids"],
                                      spec["scan_timeout_seconds"], spec["memory_mb"])
         if scan_spec["commit"] != commit or scan_spec["git_tree"] != tree:
             raise ValueError("locally resolved tree does not match the immutable preview binding")
         repo, job = store.register_repository_and_create_job("openharmony/" + slug, str(target), scan_spec)
+        report("completed", "scan_queued", "静态扫描任务已创建并排队", percent=100,
+               repository_id=repo["id"], scan_job_id=job["id"], commit=commit)
         return {"status": "completed", "repository": {"id": repo["id"], "name": repo["name"]},
                 "commit": commit, "git_tree": tree, "scan_job": {"id": job["id"], "status": "queued"},
                 "cache": "downloaded" if fetched else "hit",

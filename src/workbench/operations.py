@@ -287,7 +287,23 @@ def execute(settings, store, ops, task):
     if kind == "repository_import_scan":
         from .repository_import import import_and_queue_scan
         ops.event(task["id"], "repository_import", "Importing the catalog-selected immutable revision and queueing a static scan")
-        return import_and_queue_scan(settings, store, spec)
+        def report_import_progress(progress):
+            try:
+                ops.event(task["id"], "repository_import_progress",
+                          json.dumps(progress, sort_keys=True, ensure_ascii=False,
+                                     separators=(",", ":")))
+            except Exception as exc:
+                # Progress is best-effort: a telemetry write must not orphan a running
+                # Git process or change the outcome of fixed-source validation.
+                print("repository import progress event unavailable: " + type(exc).__name__,
+                      flush=True)
+        try:
+            return import_and_queue_scan(settings, store, spec,
+                                         progress=report_import_progress)
+        except Exception:
+            report_import_progress({"state": "failed", "phase": "failed",
+                                    "message": "固定版本导入失败；请查看错误详情后重试"})
+            raise
     if kind == "source_sync":
         url = approved_url(spec["url"])
         from .repository_import import _choose_root, git_environment

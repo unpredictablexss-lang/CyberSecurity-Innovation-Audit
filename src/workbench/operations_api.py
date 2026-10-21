@@ -11,7 +11,7 @@ import zipfile
 from pathlib import Path
 from typing import Literal
 from fastapi import APIRouter, FastAPI, HTTPException
-from fastapi.responses import FileResponse, Response
+from fastapi.responses import FileResponse, JSONResponse, Response
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from .operations import (approved_url, date_selection, enqueue_branch_comparison, enqueue_range,
                          range_plan, multimode_triage_preview, bind_multimode_triage)
@@ -2489,6 +2489,17 @@ def install_routes(app: FastAPI, settings, store):
         item = ops.get(key)
         item["retry_available"] = _smart_operation_retry_available(store, ops, item)
         item["events"] = ops.events(key)
+        if item["kind"] == "repository_import_scan":
+            for event in reversed(item["events"]):
+                if event.get("stage") != "repository_import_progress":
+                    continue
+                try:
+                    progress = json.loads(event.get("message", ""))
+                except (TypeError, ValueError):
+                    break
+                if isinstance(progress, dict) and isinstance(progress.get("phase"), str):
+                    item["download_progress"] = {**progress, "updated_at": event["created_at"]}
+                break
         if item["result_sha256"]:
             item["result"] = ops.result(key)
         item["agent_reviews"] = ops.agent_reviews(key) if item["kind"] == "agent_investigation" else []
@@ -2649,8 +2660,17 @@ def install_routes(app: FastAPI, settings, store):
         return ops.close_agent_blind_session(session_id)
 
     @router.post("/operations/{key}/retry", status_code=201)
-    def retry_interrupted_smart_operation(key: str):
+    def retry_operation(key: str):
         item = ops.get(key)
+        if item["kind"] == "repository_import_scan":
+            try:
+                retried = ops.retry_repository_import(key)
+            except KeyError:
+                raise HTTPException(status_code=404, detail="operation not found") from None
+            except ValueError as exc:
+                raise HTTPException(status_code=409, detail=str(exc)) from None
+            reused = retried.pop("retry_reused", False)
+            return JSONResponse(status_code=200 if reused else 201, content=retried)
         if not _smart_operation_retry_available(store, ops, item):
             raise HTTPException(status_code=409, detail="此任务当前不可重试；请核对任务状态、授权、固定报告和候选队列")
         from .agent import ProviderConfig
