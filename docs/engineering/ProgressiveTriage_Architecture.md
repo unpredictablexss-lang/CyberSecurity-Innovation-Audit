@@ -1,6 +1,6 @@
 # OHScanner 渐进式智能审计架构与实施状态
 
-更新：2026-10-22。当前复核基线为 `main@3069f49a29f31c76aa88de0e9d26f81d9c6fe262`；开发分支 `feat/progressive-ai-triage-phase5-20261022` 从该基线创建，尚未推送。旧的 L0-L3 policy、multi-endpoint runtime、L2/L3 operation 与账本已随 PR #56 等集成进入 main。本轮验证和缺口以文档前部更新记录为准；下方原 2026-10-21 能力矩阵保留为历史快照。
+更新：2026-10-22。当前复核基线为 `main@3069f49a29f31c76aa88de0e9d26f81d9c6fe262`；开发分支 `feat/progressive-ai-triage-phase5-20261022` 已推送，当前提交 `2d18eb57a7d94eb056a9dea0113ae3a9fd6f7fb2`。旧的 L0-L3 policy、multi-endpoint runtime、L2/L3 operation 与账本已随 PR #56 等集成进入 main。本轮验证和缺口以文档前部更新记录为准；下方原 2026-10-21 能力矩阵保留为历史快照。
 
 ## 2026-10-22 主线复核与 Phase 5 验收进度
 
@@ -8,7 +8,11 @@
 
 浏览器路径 `/settings/policy` 曾因 `SettingsView` 的 tab allowlist 漏掉 `policy` 而落回“仓库与源码管理”。当前分支修复为共用 `settingsTab()` 并新增回归用例。隔离服务 `18788` 的策略读取 API 与静态页面 HTTP 状态已核实；Windows 浏览器窗口采集两次超时，真实浏览器点击/保存仍未验证。
 
-截至本记录：前端 127 项通过，TypeScript 检查与生产构建通过。渐进式专项、四模式 worker E2E 与 Python 全量回归仍在运行，最终数量需在交付记录中补全。没有真实 Provider 调用，也未执行冻结 vulnerable/fixed/safe 对照；`triage_benchmark.json` 和比赛对照结论仍未交付。美元预算保持 advisory，候选状态不因此变化。
+截至本记录：渐进式专项 28/28 通过；四类 operation × 静态/智能八组合 API/Worker 测试 1/1 通过；前端 127/127、TypeScript 与生产构建通过。Python 全量回归运行 2063 项，15 fail、31 errors、10 skipped。输出明确包含 sparse checkout 缺失的 `samples/`、`research/` 数据/脚本和 Windows 挂载目录的 CRLF 字节哈希不一致；全量失败未逐项归因，不据此断言剩余错误均由环境造成。
+
+隔离 API 策略读写与持久化重读通过。Windows 浏览器状态采集两次超时，未完成浏览器点击验收。测试期间短暂发现另一个来自 `/home/audit/ohscanner-workbench/main-integration-20261021` 的 `serve --port 8765` 进程；其父进程与本测试无可证实关系，为防止争用已终止该 PID 及其 Worker。当前 8765 无监听，未重启，需由负责人核对运行状态。
+
+没有真实 Provider 调用，也未执行冻结 vulnerable/fixed/safe 对照；`triage_benchmark.json` 和比赛对照结论仍未交付。美元预算保持 advisory，候选状态不因此变化。
 
 ## 当前能力矩阵
 
