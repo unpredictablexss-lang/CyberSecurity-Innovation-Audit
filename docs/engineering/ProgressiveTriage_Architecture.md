@@ -1,5 +1,61 @@
 # OHScanner 渐进式智能审计架构与实施状态
 
+## 2026-10-22 最新主线预算策略集成复核
+
+集成树 `feat/progressive-phase5-main-latest-20261022` 基于 `origin/main@361eb142612d2795cef1d4e3f8ed81a64ced8c7f`，Phase 5 增量已提交、尚未推送。逐段整合保留 #62/#63 的主线策略结构与候选范围约束，并叠加 Phase 5 的任务级策略快照、L2/L3 共享用量账本及 Agent 额度继承。原 `feat/progressive-phase5-main-e2e-20261022` dirty worktree 与队友目录未动。
+
+设置页一次配置标准预设或自定义策略；单轮输出、单次审计输入/累计输出、模型请求数、候选范围、工具步数、并发和时长进入服务端 policy revision/hash。Agent 普通单项/批量/配对预览从同一快照派生限额，批量候选上限也使用同一快照；L2 单请求受策略约束，L3 共享父审计账本；授权预览绑定冻结策略，变更只影响新任务。实际隔离浏览器页 `127.0.0.1:18879/#/settings/policy` 可见全部策略值；API 默认标准策略单轮 1200、输入 400000、累计输出 100000、请求 120、时长 1800。隔离实例 Provider 未配置，无模型调用或扫描。
+
+验证结果：`test_progressive_triage` 51/51；Agent/策略/候选范围定向组 41/41；深度批次 5/5；Web Node 137/137，TS 与生产构建通过。另一个后端组合 46/82 通过，其余 36 项的共同阻断是 WSL `git` 命令缺失，测试夹具无法初始化；全仓 Python 结果不能标为通过。当前 Phase 5 仍缺三类浏览器 Worker E2E、独立冻结 holdout/消融、全仓 Python 回归、真实 Provider 应用级 L2/L3；mock 和协议冒烟不等于产品准确率或漏洞确认。`validated_vulnerability=0`。
+
+
+## 2026-10-22 Phase 5 验证续记（当前状态）
+
+重新 fetch 后，`origin/main=361eb142612d2795cef1d4e3f8ed81a64ced8c7f`，参考分支 `work/pr38-44-e2e-followup-20261020=b469f623b34ca5fd752ab72de66e53927b9dcd9c`，仍是 main 的祖先。当前开发分支 `feat/progressive-phase5-main-e2e-20261022` 的 HEAD 是 `a3ae034bc8c1015da9f4a34c458ab344410b6dcf`，相对 main 为 ahead 1 / behind 9；工作树有 33 个已修改或未跟踪路径。修改集中在 Agent/Operation API、L2/L3 账本、前端、测试与状态文档。为保护这些未提交内容，本次只 fetch 和验证，没有 reset、rebase 或合并；main 最近合入的 #62/#63 等变更与本工作树多个文件重叠，集成须在新隔离工作树逐项叠加。
+
+本次使用 WSL Ubuntu 22.04 的 Python 3.10.12 与 `/tmp/ohscanner-phase5-full-linux-venv-20261022` 依赖环境运行：Agent 路由预算继承/候选门槛 2/2、渐进策略与账本 50/50、L3 深度批次 5/5、多模式 Worker E2E 10/10，合计 67 项通过。多模式 Worker 用临时仓库/数据库与 mock Provider，耗时 230.468 秒。Web Node 测试 125/125、TypeScript 检查、生产构建及 `git diff --check` 通过。Windows Python 3.10 缺少 `tree_sitter`，所以后端结果以 WSL 定向测试为准；没有据此宣称全仓 Python 套件全绿。
+
+隔离浏览器打开 `http://127.0.0.1:18877/#/settings/policy` 后，系统设置策略页成功渲染，能读到 v2 策略、单轮输出上限及 L0/L1/L2/L3 接入状态；没有修改策略、创建扫描或调用模型。该服务只列出合成仓库，Agent Provider 未配置。正式服务 8765 未操作。本次浏览器观察只是页面加载证据，不计作三种审计的交互闭环。
+
+Phase 5 仍未完成：仓库快照、时间增量、跨分支/矩阵三类浏览器到 Worker 的完整交互验收；独立冻结并标注的 vulnerable/fixed/safe 集及消融；当前分支全仓 Python 回归；真实 Provider 的应用级 L2/L3 授权流程。已有的一次 MiMo 协议冒烟和 500 条合成候选控制不能替代这些证据。旧 `auto_triage` R1/R2 尚无累计 Token/调用/总时长账本，普通 Agent 批量预算仍逐候选独立，Provider 美元额度仍为 advisory。未推送、未建 PR、未合并；下一步应先在最新 main 的新工作树中语义整合，再完成上述验收与 Draft PR。
+
+## 2026-10-22 最新远端复核与 PR #63 冲突补记
+
+重新 fetch 后，`origin/main` 为 `6aae77d19332cb00ef37af25abb4244bd33a2cff`；参考分支 `work/pr38-44-e2e-followup-20261020` 仍为 `b469f623b34ca5fd752ab72de66e53927b9dcd9c`，是 main 的祖先，落后 85 个提交。当前开发分支 HEAD `a3ae034bc8c1015da9f4a34c458ab344410b6dcf` 与最新 main 分叉：main 前进 6 个提交，开发分支有 1 个独有提交，另有 25 个文件处于未提交状态；本记录不把旧 HEAD 或未提交修改说成最新主线。
+
+远端 PR #62「统一模型单次输出额度，移除 L2 隐藏限制并细化校验失败原因」已合入最新 main。PR #63「统一候选范围：手动深查支持策略中的 6 条，审计入口读取同一设置」仍为 open/Ready，head `b13d4338e5d8184f751a389a3f07ca3fa5427313`，base 为上述 main。其改动与本工作树的 `src/workbench/operations_api.py`、`src/workbench/progressive_triage/policy.py`、`web/src/features/audits/OperationForms.tsx`、`web/src/features/workbench/IntelligentAuditPolicySettings.tsx` 和状态文档有直接重叠；此外 PR 还改 `src/workbench/api.py`、`operations_store.py`、`triage_limits.py`、`RepositoryAudit.tsx`、候选范围组件与 JobDetail。重叠部分必须在最新基线上按语义合并或叠加审查，不能用本工作树整文件覆盖 PR #63。
+
+Issue #39–#42 经 GitHub API 复核均仍 open。Phase 0/1 基础实现已随 PR #57 等进入 main，不需要重复创建另一套策略/归并/排序基础。当前继续工作应从最新 main（必要时基于 PR #63 叠加）整理未提交增量，再验证 Phase 2–5；当前机器 benchmark 仍只有合成组件规模样例，真实 Provider 调用不是应用级 Agent E2E，浏览器仅有直接路由/API 验证，完整三种审计交互及冻结 holdout 仍缺证据。
+
+独立浏览器验收补记：临时服务 `127.0.0.1:18877` 使用 `/tmp/ohscanner-phase5-browser-20261022/data` 和空源码根目录，Playwright 驱动本机 Chrome。真实点击进入系统设置策略 Tab，切换自定义并将单轮输出上限改为 1250；页面保存后通过 GET 复读确认 revision=1、profile=custom、单轮=1250、任务输入/累计输出额度保持在同一策略。随后真实打开仓库、时间增量、跨版本三个新建入口，三页都没有 Token/额度输入项。该环境没有已批准仓库，所以没有创建扫描任务；此验收证明策略页交互及表单不重复配置，不证明三类 audit→Worker 路径。当前表单也未显示“使用系统策略/预计组数”的摘要，PR #63 的 `CandidateScope` 改动正覆盖此入口，合并方式待协调后复测。
+
+## 2026-10-22 完整目标复核、冲突矩阵与当前 Phase 边界
+
+本节是当前状态；后续较早日期的内容是历史检查点，不能覆盖本节。复核时重新 fetch 了 `main` 与 `work/pr38-44-e2e-followup-20261020`：当前 `origin/main=cfc5aec8fc5bbf7dbad0a5a64b0f5dbb6dc13fba`，参考分支仍为 `b469f623b34ca5fd752ab72de66e53927b9dcd9c` 且是 main 的祖先。当前独立分支 `feat/progressive-phase5-main-e2e-20261022` 的本地提交为 `a3ae034bc8c1015da9f4a34c458ab344410b6dcf`，基于该 main，尚未发布。GitHub 读取确认 PR #38、#44、#57、#61 已合并；Issue #39、#40、#41、#42 仍 open。
+
+Phase 0/1 已由 PR #57 及其进入 main 的实现覆盖，不应另造第二份基础模块：当前源码含 `progressive_triage/{policy,grouping,ranking,runtime}.py`，四档策略持久化和 revision、L0 可逆候选映射、L1 确定性证据排序/家族配额，以及 500 条观察保留测试；设置页/API 已接入真实读写。PR #57 的集成继续实现了 L2/L3 和预算账本。当前主线在单快照与多端点之间仍存在能力差异，详见下方边界；不把“Phase 1 已实现”扩展解释成整项任务完成。
+
+| 领域 | 当前代码与已核实证据 | 未完成或冲突处置 |
+|---|---|---|
+| #40 多端点 DAG | PR #44 已合并并由后续 PR 集成；现有 `operations_api.py`、`operations_store.py`、`OperationForms.tsx` 支持多端点 consent/固定端点/Operation Worker | Issue #40 仍 open；复用现有 DAG 和父任务绑定，不回拷旧分支文件，不覆盖其幂等、重试、静态默认语义 |
+| #41 深度 Agent | main 已有固定 SHA、只读工具、Skeptic 和证据校验；渐进深查复用既有工作流 | Issue #41 仍 open。`progressive-triage-impl-20261021` 和 `progressive-triage-latest-20261021` 都存在未提交的 `agent.py` 改动；另一个工作树改了 operations/Worker/UI。对这些路径只读检查，不清理、不覆盖，任何后续重叠改动先停在独立 adapter/test |
+| 当前渐进模块 | `policy.py`、`grouping.py`、`ranking.py`、`quick_screen.py`、`ledger.py`、`quick_screen_batch.py`、`deep_agent_batch.py` 与相关 API/Worker 已存在 | 全局 Python 发现、完整浏览器三审计流程、父任务预算恢复/撤权全链路及外部账单对照仍须分别验收 |
+| Phase 5 实证 | 当前分支 `a3ae034` 修正 Chat Completions 转发 `parallel_tool_calls=false` 和拒绝非法 tool-call 类型；真实 MiMo 对 3 段合成 C 样例完成一次协议请求（412 tokens） | 该请求不是应用 Agent 端到端，模型标签不是独立真值。浏览器三种审计完整流程、冻结 vulnerable/fixed/safe 基准、性能/成本消融与 `triage_benchmark.json` 尚未交付 |
+
+本分支局部验证：Provider/设置/ProviderConfig 专项 48/48，Web Node 125/125、TypeScript 和生产构建通过；`py_compile` 与 `git diff --check` 通过。已在隔离构建上加载 `/#/settings/policy` 并看到策略控件；该次用直接路由，未单独测鼠标点击、保存和审计闭环。当前 checkout 是 sparse，WSL Git 不能解析其 Windows `.git` 指针；因此本轮没有把不完整 sparse 文件集的全量发现结果冒充全套通过。PR #61 的 CI 曾对 main 运行 2,223 项 Python（19 skipped）并通过，但不是本分支提交的全量复测。
+
+## 2026-10-22 系统设置集中配置渐进审计额度
+
+`/settings/policy` 现显示候选范围、工具步数、并发、审计级模型请求数、累计输入/输出 Token、单轮输出 Token 上限、AI 总时长和费用参考。四档预设一键填充整组参数，自定义仍可逐项调整；保存仅影响后续新任务。L2 单次输出最多 512 tokens 且受此策略上限约束，L3 与普通 Agent 单候选、批量和 R1/R2 对照任务继承配置的上限。普通 Agent 表单不再展示或提交任务级额度；每次仍须预览并授权本次源码发送。页面把运行状态码翻译为中文，并拆短说明区，布局沿用工作台 Ant Design 卡片和响应式栅格。
+
+策略 schema 升为 v2；读取与继续执行旧 v1 冻结策略仍兼容。渐进 L2/L3 账本在每次 Provider 请求前检查模型调用数、累计 Token 预留、并发和自审计开始后的 AI 时长；L2/L3 请求都使用策略中的单轮输出上限，L3 另外执行每组工具步数。普通 Agent 操作也会在预览和创建时读取策略，冻结单任务累计输入/输出、请求、工具步骤、每轮输出和时长上限；改动策略后旧预览需重新生成。Provider 返回的实际用量若超出渐进累计预算，账本停止后续请求并把该结果标成受限/未知。输入 Token 预留按序列化 UTF-8 字节作保守估计，账本再用 Provider 返回的真实 usage 对账；美元金额仍是估算，不能限制外部账单。旧版自动分诊 `auto_triage` R1/R2 的单轮输出上限从任务创建时冻结的系统策略继承，并写入授权摘要及每个 Agent 子任务；这条旧链路仍没有累计 Token、请求数与调查总时长账本，也尚未接入渐进账本，不能把本节解释成全站所有 Agent 路径都已统一限额。批量普通 Agent 的预算按每个候选任务分别应用，当前没有跨候选共享账本。
+
+当前差异尚未提交。验证：渐进策略/账本/授权 API 50/50，L2/L3 批次 9/9；多端点四种操作的授权 Worker 集成单测独立重跑 1/1；Web Node 125/125、TypeScript 与生产构建通过，`git diff --check` 通过。一次包含 82 项的组合运行有一条“端点授权摘要变化”失败，单独重跑该集成测试通过；组合全套未宣称全绿。没有创建或发送真实审计任务，也没有在浏览器点击保存或启动真实任务；候选与漏洞结论边界不变，`validated_vulnerability=0`。
+
+另按现有 500 候选单元测试生成器实跑两次：500 个合成观察归并成 100 组，30 组进入 L1 排序结果，500 个 member 均保留；四个合成家族都入选，计数为 9/8/7/6。两次排序结果 SHA 相同，分别耗时 13.769/12.623 ms（WSL Python 3.10.12）。这是组件规模控制样例，不是 OpenHarmony 数据上的性能、召回或准确率。现有四个历史修复样本仍标记为未重放；机器结果、来源和限制见 [triage_benchmark.json](../research/deliveries/progressive-phase5-chat-completions-20261022/triage_benchmark.json)。
+
+漏洞结论边界：以上都是功能、协议和控制样例证据，不是产品漏洞确认；`validated_vulnerability=0`。费用预算在没有服务商硬限/可证明费率上界的地方仍标 `advisory_only`。
+
 更新：2026-10-22。当前复核基线为 `main@3069f49a29f31c76aa88de0e9d26f81d9c6fe262`；开发分支 `feat/progressive-ai-triage-phase5-20261022` 的上一个已推送节点为 `b82fbfa647789d74792487ded1f4be2f09c6db04`，本记录描述其后的单快照接线增量。旧的 L0-L3 policy、multi-endpoint runtime、L2/L3 operation 与账本已随 PR #56 等集成进入 main。本轮验证和缺口以文档前部更新记录为准；下方原 2026-10-21 能力矩阵保留为历史快照。
 
 ## 2026-10-22 主线复核与 Phase 5 验收进度
@@ -19,6 +75,8 @@
 | 区域 | 已有代码/行为 | 当前边界 |
 |---|---|---|
 | 单仓快照授权 | `api.py` 冻结策略版本/SHA 并纳入 workflow SHA；扫描完成后提供 L0/L1 计划 API，详情页展示候选组；静态模式不调用模型；L2 preview/Worker 按固定 snapshot 计划和策略重新校验 | 单快照 L2 浏览器路径、真实 Provider 小样本仍未验收；旧 `auto_triage` R1/R2 仍是既有路径 |
+
+2026-10-22 额度入口补记：仓库、时间、版本和普通 Agent 的智能任务表单加入只读策略摘要，提示从系统设置配置、任务创建时冻结；不在任务表单加入 Token 编辑项。旧 `auto_triage` R1/R2 的预览现在绑定 `progressive_triage_policy` 版本与 SHA，R1、R2、修复和报告请求均从该快照读取单轮输出上限（服务端保持既有 3000 tokens 上界）。授权弹窗展示策略修订和实际单轮上限。旧链路累计 Token、请求数和总时长仍未接入，页面已明确区分。验证：Provider/预览/多端授权 46 个 Python 测试通过；前端 125 个测试、TypeScript/构建通过；隔离服务浏览器确认策略页预设与额度展示，未创建扫描任务。任务创建页智能模式下的只读摘要尚未做浏览器交互验收。
 | 日期、区间、分支、版本矩阵 | `operations_api.py` 冻结策略快照并把策略 SHA 纳入智能审计 workflow consent；Operation Worker 在端点完成后运行 `progressive_triage.runtime.build_operation_plan`，结果含端点绑定的 L0 manifest、L1 排序和未选原因；风险工作区显示摘要 | 当前只接入这四类父 Operation 的本地归并/排序；快照单任务仍走原路径。L2 仍 `not_scheduled`，新 SQLite 父任务账本及其发送前门尚未接线 |
 | 现有 Agent | `agent.py` 固定 Commit、只读受限工具、脱敏、来源绑定、证据引用校验、已有累计预算扩展 | #41 的完整多阶段反证/evidence graph/补丁对照尚未完成；渐进策略不重写该模块 |
 | 策略设置 | `progressive_triage/policy.py`：四档和自定义严格校验、私有版本化文件、原子替换、审计历史与 revision 冲突；多端点操作创建时持久化不可变策略快照；智能 consent 绑定策略 SHA | 每次保存只影响新任务；只读排序预算仍不等于真实模型调用额度 |

@@ -4,7 +4,7 @@ import { Alert, Button, Card, Checkbox, Collapse, Col, Form, InputNumber, Row, S
 import { api } from "../../api";
 import { go, Header } from "../../components";
 import { approvedDetectorIds, defaultRepositoryRevision, snapshotPayload, planPayload, requestGate, taskAuthorizationPayload, selectedAuditModeValues } from "./model";
-import { AuditProps, AuditModeSelector, auditDefaults, RefField, RepositoryField, RuleNotice, ScopeAvailability, ScopeBudget, useRepositoryRefs } from "./AuditFields";
+import { AuditProps, AuditModeSelector, auditDefaults, PolicyBudgetNotice, RefField, RepositoryField, RuleNotice, ScopeAvailability, ScopeBudget, useRepositoryRefs } from "./AuditFields";
 import AuditPlanView from "./AuditPlanView";
 import TaskTriageConsentModal from "./TaskTriageConsentModal";
 
@@ -130,6 +130,7 @@ export default function RepositoryAudit({ repos, detectors, refresh, health }: A
         onValuesChange={invalidate}
         onFinish={onFinish}>
         <AuditModeSelector />
+        {auditMode === "standard_review" && <PolicyBudgetNotice />}
         <RepositoryField repos={repos} refresh={refresh} onChange={() => {
           defaultedRepository.current = null;
           form.setFieldValue("revision", undefined);

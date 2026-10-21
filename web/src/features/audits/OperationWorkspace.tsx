@@ -372,8 +372,8 @@ export default function OperationWorkspace({ view = "all", operationId, context 
                 row.ranking?.selected && ["not_scheduled", "not_started_candidate"].includes(row.quick_screen_state || "not_scheduled"))}
             /></div>
             <Alert type="info" showIcon
-              message={`固定策略 ${plan.policy_profile || "未知"} · ${plan.grouping?.group_count ?? plan.groups?.length ?? 0} 个候选组 · 阶段：${triagePhaseLabels[activeStatus?.phase] || triagePhaseLabels.deterministic_ranked}`}
-              description="未选、尚未授权或信息不足的组仍是候选；模型意见不改变漏洞确认状态。平台不会因累计令牌数、调用次数、调查时长或费用停止任务；账本用于记录模型用量。" />
+              message={`固定策略 ${plan.policy_profile || "unknown"} · ${plan.grouping?.group_count ?? plan.groups?.length ?? 0} 个候选组 · 阶段：${activeStatus?.phase || "deterministic_ranked"}`}
+              description="未选、尚未授权或信息不足的组仍是候选；模型意见不改变漏洞确认状态。任务按启动时冻结的系统策略限制累计 Token、模型请求、工具步骤和调查时长；美元额度仅用于估算，账本记录实际模型用量。" />
             <Descriptions className="section-gap" size="small" column={{ xs: 1, md: 2 }}>
               <Descriptions.Item label="策略修订 / 摘要 SHA-256">{plan.policy_revision ?? "未知"} · <Hash value={plan.policy_sha256} /></Descriptions.Item>
               <Descriptions.Item label="原始候选观察">{plan.original_observation_count ?? "未知"}</Descriptions.Item>

@@ -84,10 +84,13 @@ export default function ProgressiveDeepInvestigationAction({ jobId, candidateId,
           <Descriptions.Item label="模型服务商 / 模型">{preview.provider?.endpoint_host || "未知"} · {preview.provider?.model || "未知"}</Descriptions.Item>
           <Descriptions.Item label="固定仓库 / Commit">{preview.binding?.repository} · {preview.binding?.commit}</Descriptions.Item>
           <Descriptions.Item label="候选 / 文件">{candidateId} · {preview.binding?.file}</Descriptions.Item>
-          <Descriptions.Item label="已选只读工具">{preview.allowed_tools?.map((tool: string) => toolLabels[tool] || "只读源码工具").join("、") || "无"}</Descriptions.Item>
-          <Descriptions.Item label="累计调查限制">平台不设累计令牌用量、调用次数、步骤、时长或费用上限</Descriptions.Item>
-          <Descriptions.Item label="单次模型请求">单次输出上限 {preview.budgets?.max_output_tokens_per_request == null ? "无本地上限，由模型服务商决定" : String(preview.budgets.max_output_tokens_per_request) + " Token"}；网络超时后保留未决证据</Descriptions.Item>
-
+          <Descriptions.Item label="已选只读工具">{preview.allowed_tools?.join("、") || "无"}</Descriptions.Item>
+          <Descriptions.Item label="冻结的累计上限">
+            输入 {preview.budgets?.progressive_task_shared_input_tokens ?? "未知"} / 输出 {preview.budgets?.progressive_task_shared_output_tokens ?? "未知"} tokens；请求 {preview.budgets?.progressive_task_shared_model_calls ?? "未知"} 次
+          </Descriptions.Item>
+          <Descriptions.Item label="单轮与工具上限">
+            输出 {preview.budgets?.max_output_tokens_per_request ?? "未知"} tokens；每组最多 {preview.budgets?.max_steps ?? "未知"} 步；总时长 {preview.budgets?.progressive_task_shared_wall_seconds ?? "未知"} 秒
+          </Descriptions.Item>
         </Descriptions>
         <Text strong>本次发送的初始上下文</Text>
         <pre className="raw section-gap">{JSON.stringify(preview.initial_context, null, 2)}</pre>

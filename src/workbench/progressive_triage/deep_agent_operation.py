@@ -134,9 +134,10 @@ class BudgetedAgentClient:
         try:
             if self.before_request is not None:
                 self.before_request()
-            # A per-request network timeout protects the Worker from a stuck
-            # socket. The audit itself has no cumulative wall-time cutoff.
-            request_timeout = timeout
+            remaining = self.ledger.get(self.audit_id)["usage"]["wall_seconds_remaining"]
+            if remaining <= 0:
+                raise BudgetError("AI wall-time budget exhausted")
+            request_timeout = min(timeout, remaining)
         except Exception:
             self.ledger.settle(reservation["reservation_id"], outcome="known_not_sent")
             raise

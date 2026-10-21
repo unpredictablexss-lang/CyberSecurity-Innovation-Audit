@@ -1068,7 +1068,7 @@ def _budget_cost_estimate(config, budgets, mode):
 
 def audit_task_consent_preview(plan, workflow_sha256, include_paths, max_candidates,
                                consent_nonce, provider, max_r2_candidates=0,
-                               *, max_cost_usd=None):
+                               *, max_cost_usd=None, system_policy_snapshot=None):
     """Preview candidate-bounded R1/R2 consent without imposing cumulative usage caps."""
     if not provider.configured:
         return {"eligible": False, "reason": "LLM provider is not configured"}
@@ -1083,10 +1083,21 @@ def audit_task_consent_preview(plan, workflow_sha256, include_paths, max_candida
     source = plan.get("source") if isinstance(plan, dict) else None
     if not isinstance(source, dict):
         raise ValueError("scan plan has no fixed source binding")
+    system_policy = (system_policy_snapshot if isinstance(system_policy_snapshot, dict)
+                     else {})
+    frozen_policy = system_policy.get("policy") if isinstance(system_policy, dict) else None
+    frozen_limits = frozen_policy.get("limits") if isinstance(frozen_policy, dict) else None
+    configured_request_output = (frozen_limits.get("max_output_tokens_per_request")
+                                 if isinstance(frozen_limits, dict) else None)
+    if (not isinstance(configured_request_output, int)
+            or isinstance(configured_request_output, bool)
+            or configured_request_output < 128):
+        configured_request_output = 3000
+    request_output_limit = min(3000, configured_request_output)
     r1_budget = {
         "mode": "single_shot",
         "requests_per_candidate": 1,
-        "max_output_tokens_per_request": provider.request_output_tokens,
+        "max_output_tokens_per_request": request_output_limit,
         "max_request_context_tokens": 65536,
         "max_request_context_bytes": MAX_SMART_REQUEST_CONTEXT_BYTES,
         "request_timeout_seconds": 45,
@@ -1100,7 +1111,7 @@ def audit_task_consent_preview(plan, workflow_sha256, include_paths, max_candida
     r2_budget = {
         "mode": "tool_agent",
         "continuous_until_terminal_condition": True,
-        "max_output_tokens_per_request": provider.request_output_tokens,
+        "max_output_tokens_per_request": request_output_limit,
         "max_request_context_tokens": 65536,
         "max_request_context_bytes": MAX_SMART_REQUEST_CONTEXT_BYTES,
         "request_timeout_seconds": 45,
@@ -1115,7 +1126,7 @@ def audit_task_consent_preview(plan, workflow_sha256, include_paths, max_candida
         "skeptic_uses_separate_stage_limit": True,
         "artifact_generation_stage_enabled": True,
         "max_artifact_generation_calls": MAX_ARTIFACT_GENERATION_CALLS,
-        "artifact_output_tokens_per_request": provider.request_output_tokens,
+        "artifact_output_tokens_per_request": request_output_limit,
     }
     budgets = {
         "r1_max_candidates": max_candidates,
@@ -1136,6 +1147,10 @@ def audit_task_consent_preview(plan, workflow_sha256, include_paths, max_candida
         "local_cumulative_token_budget": "none",
         "local_cumulative_usd_budget": "none",
         "local_total_wall_time_budget": "until terminal response, provider/API error, cancellation, or repeated validation failure",
+        "system_policy_revision": system_policy.get("revision"),
+        "system_policy_sha256": system_policy.get("policy_sha256"),
+        "system_policy_profile": frozen_policy.get("profile") if isinstance(frozen_policy, dict) else None,
+        "max_output_tokens_per_request": request_output_limit,
         "max_validation_repairs_per_r2_candidate": None if max_r2_candidates else 0,
         "max_skeptic_requests_per_r2_candidate": MAX_SKEPTIC_CALLS if max_r2_candidates else 0,
         "candidate_selection_is_bounded": True,
@@ -1153,7 +1168,7 @@ def audit_task_consent_preview(plan, workflow_sha256, include_paths, max_candida
     manifest = {
         "schema_version": 2,
         "consent_nonce": consent_nonce,
-        "policy_id": "ohscanner-task-triage-r1-conditional-r2-v6-uncapped",
+        "policy_id": "ohscanner-task-triage-r1-conditional-r2-v7-system-round-cap",
         "binding": {
             "plan_sha256": plan.get("plan_sha256"),
             "workflow_sha256": workflow_sha256,
@@ -1161,6 +1176,13 @@ def audit_task_consent_preview(plan, workflow_sha256, include_paths, max_candida
             "commit": source.get("commit"),
             "tree": source.get("git_tree"),
             "include_paths": sorted(include_paths),
+        },
+        "system_policy": {
+            "revision": system_policy.get("revision"),
+            "policy_sha256": system_policy.get("policy_sha256"),
+            "profile": frozen_policy.get("profile") if isinstance(frozen_policy, dict) else None,
+            "max_output_tokens_per_request": request_output_limit,
+            "cumulative_ledger_enforced": False,
         },
         "provider": {
             "provider": provider.provider,
@@ -1218,12 +1240,13 @@ def audit_task_consent_preview(plan, workflow_sha256, include_paths, max_candida
             "local_total_tool_call_budget": "none",
             "local_total_wall_time_budget": "until_terminal_condition",
             "cumulative_usage_limits_enforced": False,
-            "per_request_output_limit": provider.request_output_tokens,
+            "per_request_output_limit": request_output_limit,
             "provider_request_timeout_seconds": MAX_PROVIDER_REQUEST_SECONDS,
             "termination": ["Provider final response", "user cancellation", "Provider/API error", "three consecutive tool turns without new source evidence"],
         },
         "source_disclosure": [
             "The authorization has no cumulative investigation token, request-count, tool-call, wall-time or spend ceiling enforced by OHScanner. Provider account quota, billing state, network and API availability still apply.",
+            "The single-round output cap is inherited from the frozen system policy; cumulative usage remains unmetered in this legacy R1/R2 path.",
             "At most the user-authorized number of eligible finding metadata, bounded candidate-file excerpts, and recorded evidence obligations from this fixed scan will be sent.",
             "Candidate source is limited to the scanner report inventory and this audit include-path scope; model-selected paths and additional repository tools are not enabled for R1.",
             "If the deterministic R2 gate is met, bounded fixed-commit history, exact-symbol source excerpts, and syntax-only C/C++ callsite candidates from the immutable scan inventory and audit include-path scope may also be sent using read-only tools.",
@@ -1742,6 +1765,7 @@ def _apply_conditional_r2_context(settings, store, spec, prepared):
 DEFAULT_INVESTIGATION_BUDGET = {
     "max_steps": 8, "max_output_tokens": DEFAULT_AGENT_OUTPUT_TOKENS,
     "max_total_input_tokens": 128000, "max_total_output_tokens": 8000,
+    "max_total_model_calls": 120,
     "timeout_seconds": 300,
 }
 
@@ -1846,12 +1870,15 @@ def consent_preview(settings, store, job, report, candidate, spec, provider, pre
         spec.get("max_output_tokens") if artifact_stage_enabled else None)
     if not continuous:
         budgets["skeptic_shares_validation_repair_reserve"] = False
-    budgets["max_total_model_calls"] = (
+    computed_total_model_calls = (
         None if no_cumulative_ceiling or continuous else
         spec["max_steps"] + 1 + MAX_VALIDATION_REPAIRS +
         (MAX_SKEPTIC_CALLS + (MAX_ARTIFACT_GENERATION_CALLS if artifact_stage_enabled else 0)
          if mode == "tool_agent" else 0)
         if mode == "tool_agent" else 1)
+    budgets["max_total_model_calls"] = (
+        min(computed_total_model_calls, spec["max_total_model_calls"])
+        if isinstance(computed_total_model_calls, int) else computed_total_model_calls)
     budgets["consecutive_no_progress_guard"] = 3
     budgets["provider_request_timeout_seconds"] = MAX_PROVIDER_REQUEST_SECONDS
     stage_disclosure = (SKEPTIC_CONSENT_DISCLOSURE + " " + ARTIFACT_GENERATION_DISCLOSURE
@@ -1902,6 +1929,9 @@ def consent_preview(settings, store, job, report, candidate, spec, provider, pre
         "budget_cost_estimate": budget_cost_estimate,
         "agent_execution": agent_execution,
     }
+    system_policy_sha256 = spec.get("system_policy_sha256")
+    if isinstance(system_policy_sha256, str) and re.fullmatch(r"[0-9a-f]{64}", system_policy_sha256):
+        consent_manifest["system_policy_sha256"] = system_policy_sha256
     return {
         "consent_sha256": _hash(consent_manifest),
         "consent_nonce": spec.get("consent_nonce"),
@@ -1913,6 +1943,7 @@ def consent_preview(settings, store, job, report, candidate, spec, provider, pre
         "workflow_id": WORKFLOW_ID, "workflow_version": WORKFLOW_VERSION,
         "inference_settings": inference_settings,
         "mode": mode, "budgets": budgets, "budget_cost_estimate": budget_cost_estimate,
+        "system_policy_sha256": system_policy_sha256,
         "stage_disclosure": stage_disclosure,
         "binding": binding,
         "initial_context_sha256": prepared["initial_context_sha256"],
@@ -4406,9 +4437,10 @@ def execute_agent(settings, store, ops, task, client=None):
         nonlocal retry_output_reserve, provider_http_attempts
         if not continuous and time.monotonic() - started > spec["timeout_seconds"]:
             raise TimeoutError("agent wall-clock budget exceeded")
-        max_model_calls = ((max_steps + 1 + MAX_VALIDATION_REPAIRS + MAX_SKEPTIC_CALLS
-                            + preview.get("budgets", {}).get("max_artifact_generation_calls", 0))
-                           if mode == "tool_agent" else 1)
+        computed_model_calls = ((max_steps + 1 + MAX_VALIDATION_REPAIRS + MAX_SKEPTIC_CALLS
+                                 + preview.get("budgets", {}).get("max_artifact_generation_calls", 0))
+                                if mode == "tool_agent" else 1)
+        max_model_calls = min(computed_model_calls, spec.get("max_total_model_calls", computed_model_calls))
         if not continuous and calls >= max_model_calls:
             raise ValueError("agent model call budget exhausted")
         if ops.get(task["id"])["cancel_requested"]:

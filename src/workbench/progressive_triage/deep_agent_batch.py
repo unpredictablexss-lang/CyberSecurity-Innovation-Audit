@@ -159,7 +159,7 @@ def execute_progressive_deep_agent_batch(settings, store, ops, task):
         "stop_reason": stop_reason, "groups": results, "not_started": not_started,
         "budget": ledger, "candidate_disposition_changed": False,
         "validated_vulnerability": 0,
-        "limitations": ["Deep Agent, Skeptic and draft reporting continue without a cumulative local usage ceiling.",
+        "limitations": ["Deep Agent, Skeptic and draft reporting share the frozen task token, request-count, concurrency and elapsed-time limits.",
                         "Unknown, failed and not-started findings remain candidates; no result confirms a product vulnerability.",
                         "USD remains advisory without a verified Provider-side hard cap."],
     }

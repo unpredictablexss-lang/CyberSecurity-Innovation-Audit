@@ -696,11 +696,12 @@ class AgentInvestigationRequest(Strict):
     experiment_id: str | None = Field(default=None, min_length=1, max_length=64,
                                       pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$")
     mode: Literal["single_shot", "tool_agent"] = "tool_agent"
-    max_steps: int = Field(default=4, ge=1, le=6)
-    max_output_tokens: int | None = Field(default=DEFAULT_AGENT_OUTPUT_TOKENS, ge=128, le=65536)
-    max_total_input_tokens: int = Field(default=128000, ge=1000, le=512000)
-    max_total_output_tokens: int = Field(default=8000, ge=512, le=65536)
-    timeout_seconds: int = Field(default=240, ge=90, le=480)
+    max_steps: int = Field(default=4, ge=1, le=12)
+    max_output_tokens: int = Field(default=1200, ge=128, le=3000)
+    max_total_input_tokens: int = Field(default=128000, ge=1000, le=2_000_000)
+    max_total_output_tokens: int = Field(default=4000, ge=512, le=500_000)
+    max_total_model_calls: int = Field(default=120, ge=1, le=10_000)
+    timeout_seconds: int = Field(default=240, ge=60, le=14_400)
     source_submission_approved: bool = False
     consent_sha256: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
     consent_nonce: str | None = Field(default=None, pattern=r"^[0-9a-f]{32}$")
@@ -745,11 +746,12 @@ class AgentBatchInvestigationRequest(Strict):
     job_id: str
     candidate_ids: list[str] = Field(min_length=1, max_length=MAX_MANUAL_CANDIDATES_PER_BATCH)
     mode: Literal["single_shot", "tool_agent"] = "tool_agent"
-    max_steps: int = Field(default=4, ge=1, le=6)
-    max_output_tokens: int | None = Field(default=DEFAULT_AGENT_OUTPUT_TOKENS, ge=128, le=65536)
-    max_total_input_tokens: int = Field(default=128000, ge=1000, le=512000)
-    max_total_output_tokens: int = Field(default=8000, ge=512, le=65536)
-    timeout_seconds: int = Field(default=240, ge=90, le=480)
+    max_steps: int = Field(default=4, ge=1, le=12)
+    max_output_tokens: int = Field(default=1200, ge=128, le=3000)
+    max_total_input_tokens: int = Field(default=128000, ge=1000, le=2_000_000)
+    max_total_output_tokens: int = Field(default=4000, ge=512, le=500_000)
+    max_total_model_calls: int = Field(default=120, ge=1, le=10_000)
+    timeout_seconds: int = Field(default=240, ge=60, le=14_400)
     source_submission_approved: bool = False
     consent_sha256: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
     consent_nonce: str | None = Field(default=None, pattern=r"^[0-9a-f]{32}$")
@@ -1133,7 +1135,8 @@ def _prepare_operation_triage(settings, body, scan_specs, *, authorization_input
         preview = audit_task_consent_preview(scan["audit_plan"], workflow,
             scan["include_paths"], body.max_triage_candidates,
             authorization.get("consent_nonce"), provider,
-            body.max_r2_candidates, max_cost_usd=body.max_cost_usd)
+            body.max_r2_candidates, max_cost_usd=body.max_cost_usd,
+            system_policy_snapshot=policy_snapshot)
         if (not preview.get("eligible")
                 or preview.get("consent_sha256") != authorization.get("consent_sha256")):
             raise ValueError("model-egress preview expired or changed; review a fresh preview")
@@ -1187,7 +1190,8 @@ def _preview_operation_triage(settings, body, scan_specs, *, consent_nonces=None
                 body.max_triage_candidates, body.max_r2_candidates), policy_snapshot["policy_sha256"])
         preview = audit_task_consent_preview(scan["audit_plan"], workflow,
             scan["include_paths"], body.max_triage_candidates, nonce,
-            provider, body.max_r2_candidates, max_cost_usd=body.max_cost_usd)
+            provider, body.max_r2_candidates, max_cost_usd=body.max_cost_usd,
+            system_policy_snapshot=policy_snapshot)
         if not preview.get("eligible"):
             raise ValueError("automatic triage cannot be authorized: " + preview.get("reason", "provider unavailable"))
         source_binding = ((scan.get("audit_plan") or {}).get("source") or {})
@@ -2189,36 +2193,46 @@ def install_routes(app: FastAPI, settings, store):
         result["checked_at"] = persisted.get("checked_at") if persisted else None
         return result
 
-    def _apply_request_output_policy(body, provider):
-        if ("max_output_tokens" in body.model_fields_set
-                and body.max_output_tokens != provider.request_output_tokens):
-            raise HTTPException(status_code=409, detail="单次输出额度已统一由系统设置的智能审计策略配置；请重新预览授权")
-        body.max_output_tokens = provider.request_output_tokens
-        # A direct single-shot call retains its legacy cumulative accounting,
-        # but its per-task default must never silently reduce the global cap.
-        if provider.request_output_tokens is not None:
-            body.max_total_output_tokens = max(body.max_total_output_tokens, provider.request_output_tokens)
-
-    def _agent_consent_preview(body, provider, *, continuous=None, progressive_bounded=False):
+    def _agent_consent_preview(body, provider, *, continuous=None, progressive_bounded=False,
+                               system_policy_sha256=None):
         from .agent import consent_preview
-        _apply_request_output_policy(body, provider)
         job = store.job(body.job_id)
         if job["status"] not in {"completed", "completed_with_limitations"} or not job.get("report_sha256"):
             raise ValueError("只允许预览已有完整报告的候选")
         report = service.read_report(settings, job)
         candidate = service.finding(report, body.candidate_id)
         preview_spec = body.model_dump()
-        # Keep the user-selected mode. Explicitly consented tool-agent runs
-        # have no local cumulative usage ceiling; single-shot still performs
-        # one Provider request. Per-request controls and fixed read-only scope remain.
+        # Ordinary tasks inherit budgets from System Settings. Progressive L3
+        # retains its ledger-controlled continuous Agent execution semantics.
         preview_spec["continuous_investigation"] = continuous is True
         preview_spec["no_cumulative_token_ceiling"] = (
-            (body.mode == "tool_agent" and (not progressive_bounded or continuous is True))
-            or body.max_output_tokens is None)
+            False if system_policy_sha256 else
+            body.mode == "tool_agent" and (not progressive_bounded or continuous is True))
         preview_spec["provider_request_timeout_seconds"] = 45
         preview_spec["max_provider_retries"] = 0 if progressive_bounded else 1
+        if system_policy_sha256:
+            preview_spec["system_policy_sha256"] = system_policy_sha256
         preview = consent_preview(settings, store, job, report, candidate, preview_spec, provider)
         return job, report, candidate, preview
+
+    def _agent_policy_request(body):
+        """Resolve task budgets from the single system-settings policy snapshot."""
+        from .progressive_triage.policy import PolicyStore, validate_policy
+        state = PolicyStore(settings.data_dir).read()
+        policy = validate_policy(state["policy"])
+        limits = policy["limits"]
+        bounded = body.model_copy(update={
+            "max_steps": limits["max_tool_steps_per_group"],
+            "max_output_tokens": limits.get(
+                "max_output_tokens_per_request", min(1200, limits["max_output_tokens_per_audit"])),
+            "max_total_input_tokens": limits["max_input_tokens_per_audit"],
+            "max_total_output_tokens": limits["max_output_tokens_per_audit"],
+            "max_total_model_calls": limits["max_model_calls_per_audit"],
+            "timeout_seconds": limits["max_ai_wall_seconds"],
+        })
+        snapshot = {"revision": state["revision"], "policy": policy,
+                    "policy_sha256": state["policy_sha256"]}
+        return bounded, snapshot
 
     def _r0_review_complete(item, job, report, candidate):
         if not (item.get("job_id") == job["id"]
@@ -2429,12 +2443,14 @@ def install_routes(app: FastAPI, settings, store):
         policy_sha = content_sha256(policy)
         if frozen.get("policy_sha256") != policy_sha:
             raise HTTPException(status_code=409, detail="冻结策略摘要校验失败")
-        # Progressive L3 follows the same continuously authorized, no-cumulative-
-        # ceiling Agent path as a direct tool investigation. The frozen policy
-        # still controls candidate selection and group scope, while legacy
-        # token/call/time values do not truncate this investigation.
-        max_steps = body.max_steps
-        bounded = body
+        # Each task inherits the immutable system policy captured by the parent
+        # audit. Token and tool limits are configured once in System Settings.
+        limits = policy["limits"]
+        max_steps = min(limits["max_tool_steps_per_group"], 12)
+        bounded = body.model_copy(update={
+            "max_steps": max_steps,
+            "max_output_tokens": limits.get("max_output_tokens_per_request", body.max_output_tokens),
+        })
         _, _, _, preview = _agent_consent_preview(
             bounded, provider, continuous=True, progressive_bounded=True)
         if not preview["agent_execution"]["eligible"]:
@@ -2464,11 +2480,15 @@ def install_routes(app: FastAPI, settings, store):
             "consent_sha256": progressive_consent_sha256,
             "progressive_binding": binding, "progressive_policy": frozen,
             "budgets": {**preview["budgets"],
-                        "progressive_task_shared_input_tokens": None,
-                        "progressive_task_shared_output_tokens": None,
-                        "progressive_task_shared_model_calls": None,
-                        "progressive_task_shared_wall_seconds": None,
-                        "cumulative_usage_limits_enforced": False,
+                        "progressive_task_shared_input_tokens": limits["max_input_tokens_per_audit"],
+                        "progressive_task_shared_output_tokens": limits["max_output_tokens_per_audit"],
+                        "progressive_task_shared_model_calls": limits["max_model_calls_per_audit"],
+                        "progressive_task_shared_wall_seconds": limits["max_ai_wall_seconds"],
+                        "max_output_tokens_per_request": limits.get("max_output_tokens_per_request"),
+                        "local_cumulative_token_budget": "bounded_by_frozen_progressive_policy",
+                        "local_total_model_call_budget": "bounded_by_frozen_progressive_policy",
+                        "local_total_wall_time_budget": "bounded_by_frozen_progressive_policy",
+                        "cumulative_usage_limits_enforced": True,
                         "max_steps": bounded.max_steps},
         })
         return bounded, quick_task, preview
@@ -2595,7 +2615,7 @@ def install_routes(app: FastAPI, settings, store):
                 continue
             request = ProgressiveDeepInvestigationRequest(
                 job_id=child_l2["job_id"], candidate_id=child_l2["candidate_id"],
-                mode="tool_agent", max_steps=policy["limits"]["max_tool_steps_per_group"],
+                mode="tool_agent", max_steps=min(policy["limits"]["max_tool_steps_per_group"], 12),
                 progressive_quick_screen_operation_id=l2["id"], progressive_group_id=group_id,
                 consent_nonce=body.consent_nonce,
             )
@@ -2683,11 +2703,13 @@ def install_routes(app: FastAPI, settings, store):
                 "deep_groups_per_audit": policy["limits"]["deep_groups_per_audit"],
                 "max_model_concurrency": policy["limits"]["max_model_concurrency"],
                 "max_cost_usd": policy["limits"]["max_cost_usd"],
-                "max_model_calls_per_audit": None,
-                "max_input_tokens_per_audit": None,
-                "max_output_tokens_per_audit": None,
-                "max_ai_wall_seconds": None,
-                "cumulative_usage_limits_enforced": False,
+                "max_model_calls_per_audit": policy["limits"]["max_model_calls_per_audit"],
+                "max_input_tokens_per_audit": policy["limits"]["max_input_tokens_per_audit"],
+                "max_output_tokens_per_audit": policy["limits"]["max_output_tokens_per_audit"],
+                "max_output_tokens_per_request": policy["limits"].get("max_output_tokens_per_request"),
+                "max_tool_steps_per_group": min(policy["limits"]["max_tool_steps_per_group"], 12),
+                "max_ai_wall_seconds": policy["limits"]["max_ai_wall_seconds"],
+                "cumulative_usage_limits_enforced": True,
             }, "vulnerability_state_after_review": "candidate",
         }
 
@@ -2780,8 +2802,11 @@ def install_routes(app: FastAPI, settings, store):
         provider = ProviderConfig.from_env(settings.data_dir)
         if not provider.configured:
             raise HTTPException(status_code=503, detail="真实模型未配置；静态扫描和只读调查仍可使用")
+        body, policy_snapshot = _agent_policy_request(body)
         body = _fresh_consent_nonce(body)
-        _, _, _, preview = _agent_consent_preview(body, provider, continuous=True)
+        _, _, _, preview = _agent_consent_preview(
+            body, provider, system_policy_sha256=policy_snapshot["policy_sha256"])
+        preview["system_policy"] = policy_snapshot
         return preview
 
     @router.post("/operations/agent-investigations", status_code=201)
@@ -2796,7 +2821,10 @@ def install_routes(app: FastAPI, settings, store):
         if not body.consent_sha256:
             raise HTTPException(status_code=428, detail="缺少本次源码外发预览指纹，请重新预览")
         _require_consent_nonce(body)
-        job, report, candidate, preview = _agent_consent_preview(body, provider, continuous=True)
+        body, policy_snapshot = _agent_policy_request(body)
+        job, report, candidate, preview = _agent_consent_preview(
+            body, provider, system_policy_sha256=policy_snapshot["policy_sha256"])
+        preview["system_policy"] = policy_snapshot
         if not preview["agent_execution"]["eligible"]:
             raise HTTPException(status_code=409, detail=preview["agent_execution"]["reason"])
         if body.experiment_id:
@@ -2818,10 +2846,13 @@ def install_routes(app: FastAPI, settings, store):
             "experiment_id": body.experiment_id,
             "mode": body.mode, "max_output_tokens": body.max_output_tokens,
             "max_steps": body.max_steps, "max_total_input_tokens": body.max_total_input_tokens,
-            "max_total_output_tokens": body.max_total_output_tokens, "timeout_seconds": body.timeout_seconds,
+            "max_total_output_tokens": body.max_total_output_tokens,
+            "max_total_model_calls": body.max_total_model_calls, "timeout_seconds": body.timeout_seconds,
             "provider_request_timeout_seconds": 45, "max_provider_retries": 1,
             "continuous_investigation": False,
-            "no_cumulative_token_ceiling": body.mode == "tool_agent" or body.max_output_tokens is None,
+            "no_cumulative_token_ceiling": False,
+            "system_policy": policy_snapshot,
+            "system_policy_sha256": policy_snapshot["policy_sha256"],
             "source_submission_approved": True, "source_submission_approved_at": now(),
             "source_consent_sha256": preview["consent_sha256"], "consent_nonce": body.consent_nonce,
             "consent_preview_version": CONSENT_PREVIEW_VERSION,
@@ -2840,14 +2871,15 @@ def install_routes(app: FastAPI, settings, store):
                       " for " + provider.endpoint_host)
         return ops.get(item["id"])
 
-    def _agent_batch_preview(body, provider):
+    def _agent_batch_preview(body, provider, *, system_policy_sha256=None, system_policy=None):
         from .progressive_triage.policy import PolicyStore, manual_candidate_batch_limit
-        scope_state = PolicyStore(settings.data_dir).read()
-        scope_limit = manual_candidate_batch_limit(scope_state["policy"], body.mode)
+        scope_snapshot = (system_policy if isinstance(system_policy, dict)
+                          else PolicyStore(settings.data_dir).read())
+        scope_policy = scope_snapshot.get("policy", scope_snapshot)
+        scope_limit = manual_candidate_batch_limit(scope_policy, body.mode)
         if len(body.candidate_ids) > scope_limit:
             raise HTTPException(status_code=409, detail=(
                 f"本次最多选择 {scope_limit} 条候选，范围来自系统设置的智能审计策略；请调整选择或修改设置后重新预览"))
-        _apply_request_output_policy(body, provider)
         if len(set(body.candidate_ids)) != len(body.candidate_ids):
             raise ValueError("候选列表包含重复 ID")
         job = store.job(body.job_id)
@@ -2861,12 +2893,13 @@ def install_routes(app: FastAPI, settings, store):
                 max_output_tokens=body.max_output_tokens, max_steps=body.max_steps,
                 max_total_input_tokens=body.max_total_input_tokens, max_total_output_tokens=body.max_total_output_tokens,
                 timeout_seconds=body.timeout_seconds)
-            _, _, candidate, preview = _agent_consent_preview(child, provider)
+            _, _, candidate, preview = _agent_consent_preview(
+                child, provider, system_policy_sha256=system_policy_sha256)
             children.append({"candidate_id": candidate_id, "file": candidate["file"],
                              "line": candidate.get("line"), "preview": preview})
         tool_agent = body.mode == "tool_agent"
         manifest = {"version": 2, "job_id": body.job_id, "report_sha256": job["report_sha256"],
-                    "candidate_scope_policy_sha256": scope_state["policy_sha256"],
+                    "candidate_scope_policy_sha256": system_policy_sha256,
                     "candidate_scope_limit": scope_limit,
                     "consent_nonce": body.consent_nonce,
                     "provider_fingerprint": provider.fingerprint,
@@ -2874,12 +2907,12 @@ def install_routes(app: FastAPI, settings, store):
                                     "consent_sha256": item["preview"]["consent_sha256"]} for item in children],
                     "mode": body.mode,
                     "continuous_investigation": False,
-                    "no_cumulative_token_ceiling": tool_agent,
-                    "local_cumulative_token_budget": "none" if tool_agent else "bounded",
-                    "local_cumulative_usd_budget": "none" if tool_agent else "bounded",
-                    "local_total_model_call_budget": "none" if tool_agent else "bounded",
-                    "local_total_tool_call_budget": "none" if tool_agent else "bounded",
-                    "local_total_wall_time_budget": "until_terminal_condition" if tool_agent else "bounded",
+                    "no_cumulative_token_ceiling": False,
+                    "local_cumulative_token_budget": "bounded_by_system_policy",
+                    "local_cumulative_usd_budget": "token_bound_advisory_only",
+                    "local_total_model_call_budget": "bounded_by_system_policy",
+                    "local_total_tool_call_budget": "bounded_by_system_policy",
+                    "local_total_wall_time_budget": "bounded_by_system_policy",
                     "max_output_tokens_per_request": body.max_output_tokens,
                     "provider_request_timeout_seconds": 45,
                     "max_validation_repairs_per_tool_agent": 2 if tool_agent else 0,
@@ -2906,17 +2939,17 @@ def install_routes(app: FastAPI, settings, store):
             "max_total_model_calls": aggregate_model_call_limit,
             "single_shot_candidate_request_count": len(children) if body.mode == "single_shot" else 0,
             "requests_per_candidate": 1 if body.mode == "single_shot" else None,
-            "continuous_until_terminal_condition": tool_agent,
+            "continuous_until_terminal_condition": False,
             "max_output_tokens_per_provider_request": body.max_output_tokens,
             "provider_request_timeout_seconds": 45,
-            "local_cumulative_token_budget": "none" if tool_agent else "bounded",
-            "local_cumulative_cost_budget": "none" if tool_agent else "bounded",
-            "local_total_model_call_budget": "none" if tool_agent else "bounded",
-            "local_total_tool_call_budget": "none" if tool_agent else "bounded",
-            "local_total_wall_time_budget": "until_terminal_condition" if tool_agent else "bounded",
+            "local_cumulative_token_budget": "bounded_by_system_policy",
+            "local_cumulative_cost_budget": "token_bound_advisory_only",
+            "local_total_model_call_budget": "bounded_by_system_policy",
+            "local_total_tool_call_budget": "bounded_by_system_policy",
+            "local_total_wall_time_budget": "bounded_by_system_policy",
             "max_validation_repair_attempts_per_candidate": max_repairs_per_candidate,
             "max_skeptic_requests_per_candidate": max_skeptic_per_candidate,
-            "tool_agent_continuous": tool_agent,
+            "tool_agent_continuous": False,
         }
         return {"schema_version": 1, "consent_sha256": consent,
                 "consent_nonce": body.consent_nonce, "provider": provider.public,
@@ -2926,7 +2959,7 @@ def install_routes(app: FastAPI, settings, store):
                 "blocked_candidate_ids": blocked_candidate_ids,
                 "aggregate_budget": aggregate_budget,
                 "disclosure": ["Each selected candidate creates one independent Agent operation.",
-                               ("The number of operations is bounded by this explicitly authorized candidate list. OHScanner imposes no cumulative token, USD, call-count, or total wall-clock cap. A single_shot candidate makes one Provider request; a tool_agent can use the disclosed read-only tools until a terminal condition. Each request has its output cap and 45-second timeout; Provider billing/quota applies."),
+                               ("The candidate count is bounded by this explicitly authorized list. Each task inherits cumulative token, call, tool-step, and wall-time caps from System Settings; USD is advisory and Provider billing/account quota still apply."),
                                *( [children[0]["preview"].get("stage_disclosure", "")] if children else [] ),
                                "Exact candidate metadata, bounded source excerpt, and approved fixed-commit tool data may be sent.",
                                "No operation is created until this aggregate preview is approved; batch creation is atomic.",
@@ -2938,8 +2971,13 @@ def install_routes(app: FastAPI, settings, store):
         provider = ProviderConfig.from_env(settings.data_dir)
         if not provider.configured:
             raise HTTPException(status_code=503, detail="真实模型未配置；静态扫描和只读调查仍可使用")
+        body, policy_snapshot = _agent_policy_request(body)
         body = _fresh_consent_nonce(body)
-        return _agent_batch_preview(body, provider)
+        preview = _agent_batch_preview(
+            body, provider, system_policy_sha256=policy_snapshot["policy_sha256"],
+            system_policy=policy_snapshot)
+        preview["system_policy"] = policy_snapshot
+        return preview
 
     @router.post("/operations/agent-investigations/batch", status_code=201)
     def agent_investigation_batch(body: AgentBatchInvestigationRequest):
@@ -2952,7 +2990,11 @@ def install_routes(app: FastAPI, settings, store):
         if not body.consent_sha256:
             raise HTTPException(status_code=428, detail="缺少整批预览指纹，请重新预览")
         _require_consent_nonce(body)
-        preview = _agent_batch_preview(body, provider)
+        body, policy_snapshot = _agent_policy_request(body)
+        preview = _agent_batch_preview(
+            body, provider, system_policy_sha256=policy_snapshot["policy_sha256"],
+            system_policy=policy_snapshot)
+        preview["system_policy"] = policy_snapshot
         if preview["blocked_candidate_ids"]:
             raise HTTPException(status_code=409, detail=(
                 "批次包含没有可由 Agent 补充源码义务的候选，拒绝将其发送给模型：" +
@@ -2973,9 +3015,12 @@ def install_routes(app: FastAPI, settings, store):
                 "max_steps": body.max_steps, "max_total_input_tokens": body.max_total_input_tokens,
 
                 "max_total_output_tokens": body.max_total_output_tokens, "timeout_seconds": body.timeout_seconds,
+                "max_total_model_calls": body.max_total_model_calls,
                 "provider_request_timeout_seconds": 45, "max_provider_retries": 1,
                 "continuous_investigation": False,
-                "no_cumulative_token_ceiling": body.mode == "tool_agent" or body.max_output_tokens is None,
+                "no_cumulative_token_ceiling": False,
+                "system_policy": policy_snapshot,
+                "system_policy_sha256": policy_snapshot["policy_sha256"],
                 "source_submission_approved": True, "source_submission_approved_at": now(),
                 "source_consent_sha256": child_preview["consent_sha256"], "consent_nonce": body.consent_nonce,
                 "consent_preview_version": CONSENT_PREVIEW_VERSION,
@@ -2994,14 +3039,18 @@ def install_routes(app: FastAPI, settings, store):
                 "created_count": len(items), "operations": items,
                 "note": "每个候选一个独立任务；结论仍为候选，等待人工审核。"}
 
-    def _agent_pair_previews(body, provider):
-        _apply_request_output_policy(body, provider)
+    def _agent_pair_previews(body, provider, *, system_policy_sha256=None):
         previews = []
         for mode in ("single_shot", "tool_agent"):
             child = AgentInvestigationRequest(job_id=body.job_id, candidate_id=body.candidate_id,
                 experiment_id=body.experiment_id, consent_nonce=body.consent_nonce,
-                mode=mode, max_output_tokens=body.max_output_tokens)
-            job, report, candidate, preview = _agent_consent_preview(child, provider)
+                mode=mode, max_output_tokens=body.max_output_tokens,
+                max_steps=body.max_steps, max_total_input_tokens=body.max_total_input_tokens,
+                max_total_output_tokens=body.max_total_output_tokens,
+                max_total_model_calls=body.max_total_model_calls,
+                timeout_seconds=body.timeout_seconds)
+            job, report, candidate, preview = _agent_consent_preview(
+                child, provider, system_policy_sha256=system_policy_sha256)
             if not preview["agent_execution"]["eligible"]:
                 raise HTTPException(status_code=409, detail=preview["agent_execution"]["reason"])
             baselines = ops.agent_baseline_reviews(body.experiment_id)
@@ -3016,8 +3065,8 @@ def install_routes(app: FastAPI, settings, store):
                     "arms": [{"mode": item["mode"],
                               "consent_sha256": item["preview"]["consent_sha256"]} for item in previews],
                     "single_shot_request_count": 1,
-                    "tool_agent_continuous": True,
-                    "tool_agent_no_cumulative_token_ceiling": True,
+                    "tool_agent_continuous": False,
+                    "tool_agent_no_cumulative_token_ceiling": False,
                     "tool_agent_max_output_tokens_per_request": body.max_output_tokens,
                     "provider_request_timeout_seconds": 45}
         consent = hashlib.sha256(json.dumps(manifest, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
@@ -3030,9 +3079,9 @@ def install_routes(app: FastAPI, settings, store):
             "tool_agent_max_total_model_calls": previews[1]["preview"]["budgets"]["max_total_model_calls"],
             "tool_agent_max_output_tokens_per_request": body.max_output_tokens,
             "provider_request_timeout_seconds": 45,
-            "tool_agent_local_cumulative_token_budget": "none",
-            "tool_agent_local_cumulative_cost_budget": "none",
-            "tool_agent_local_total_wall_time_budget": "until_terminal_condition",
+            "tool_agent_local_cumulative_token_budget": "bounded_by_system_policy",
+            "tool_agent_local_cumulative_cost_budget": "token_bound_advisory_only",
+            "tool_agent_local_total_wall_time_budget": "bounded_by_system_policy",
             "tool_agent_max_validation_repair_attempts": r2_repair_limit,
             "tool_agent_max_skeptic_requests": r2_skeptic_limit,
         }
@@ -3047,7 +3096,7 @@ def install_routes(app: FastAPI, settings, store):
                                "R0 static triage is already recorded and matched to this report and source.",
                                "Each arm receives its own consent-bound initial context; R2 may additionally use only the fixed-commit tools shown in its preview.",
                                previews[1]["preview"].get("stage_disclosure", ""),
-                               "R1 uses one request. R2 has no local cumulative token, USD, model/tool-call, or total wall-clock cap; each Provider request still has the selected output cap and 45-second timeout. Actual billing/quota is controlled by the Provider account.",
+                               "R1 uses one request. R2 inherits cumulative token, call, tool-step, and wall-time caps from System Settings. USD remains advisory; actual billing/account quota is controlled by the Provider.",
                                "All operation rows are created atomically.",
                                "Both model outputs remain candidate-only and must receive blind human review."]}
 
@@ -3057,8 +3106,12 @@ def install_routes(app: FastAPI, settings, store):
         provider = ProviderConfig.from_env(settings.data_dir)
         if not provider.configured:
             raise HTTPException(status_code=503, detail="真实模型未配置；静态扫描和只读调查仍可使用")
+        body, policy_snapshot = _agent_policy_request(body)
         body = _fresh_consent_nonce(body)
-        return _agent_pair_previews(body, provider)
+        preview = _agent_pair_previews(
+            body, provider, system_policy_sha256=policy_snapshot["policy_sha256"])
+        preview["system_policy"] = policy_snapshot
+        return preview
 
     @router.post("/operations/agent-investigations/paired", status_code=201)
     def agent_investigation_pair(body: AgentPairedInvestigationRequest):
@@ -3071,7 +3124,10 @@ def install_routes(app: FastAPI, settings, store):
         if not body.consent_sha256:
             raise HTTPException(status_code=428, detail="缺少配对预览指纹，请重新预览")
         _require_consent_nonce(body)
-        preview = _agent_pair_previews(body, provider)
+        body, policy_snapshot = _agent_policy_request(body)
+        preview = _agent_pair_previews(
+            body, provider, system_policy_sha256=policy_snapshot["policy_sha256"])
+        preview["system_policy"] = policy_snapshot
         if body.consent_sha256 != preview["consent_sha256"]:
             raise HTTPException(status_code=409, detail="R1/R2 配对预览已过期，请重新预览")
         if body.case_id:
@@ -3093,10 +3149,13 @@ def install_routes(app: FastAPI, settings, store):
 
                 "max_steps": body.max_steps, "max_total_input_tokens": body.max_total_input_tokens,
 
-                "max_total_output_tokens": body.max_total_output_tokens, "timeout_seconds": body.timeout_seconds,
+                "max_total_output_tokens": body.max_total_output_tokens,
+                "max_total_model_calls": body.max_total_model_calls, "timeout_seconds": body.timeout_seconds,
                 "provider_request_timeout_seconds": 45, "max_provider_retries": 1,
                 "continuous_investigation": False,
-                "no_cumulative_token_ceiling": arm["mode"] == "tool_agent" or body.max_output_tokens is None,
+                "no_cumulative_token_ceiling": False,
+                "system_policy": policy_snapshot,
+                "system_policy_sha256": policy_snapshot["policy_sha256"],
                 "source_submission_approved": True, "source_submission_approved_at": now(),
                 "source_consent_sha256": arm_preview["consent_sha256"], "consent_nonce": body.consent_nonce,
                 "consent_preview_version": CONSENT_PREVIEW_VERSION,
