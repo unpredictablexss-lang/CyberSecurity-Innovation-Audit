@@ -1,14 +1,14 @@
 # OHScanner 渐进式智能审计架构与实施状态
 
-更新：2026-10-22。当前复核基线为 `main@3069f49a29f31c76aa88de0e9d26f81d9c6fe262`；开发分支 `feat/progressive-ai-triage-phase5-20261022` 已推送，当前提交 `2d18eb57a7d94eb056a9dea0113ae3a9fd6f7fb2`。旧的 L0-L3 policy、multi-endpoint runtime、L2/L3 operation 与账本已随 PR #56 等集成进入 main。本轮验证和缺口以文档前部更新记录为准；下方原 2026-10-21 能力矩阵保留为历史快照。
+更新：2026-10-22。当前复核基线为 `main@3069f49a29f31c76aa88de0e9d26f81d9c6fe262`；开发分支 `feat/progressive-ai-triage-phase5-20261022` 的上一个已推送节点为 `b82fbfa647789d74792487ded1f4be2f09c6db04`，本记录描述其后的单快照接线增量。旧的 L0-L3 policy、multi-endpoint runtime、L2/L3 operation 与账本已随 PR #56 等集成进入 main。本轮验证和缺口以文档前部更新记录为准；下方原 2026-10-21 能力矩阵保留为历史快照。
 
 ## 2026-10-22 主线复核与 Phase 5 验收进度
 
-单仓快照仍通过 `api.py` 的旧 `auto_triage` 路径运行 R1/条件 R2；它没有冻结 `progressive_triage_policy`，也没有把 L0/L1 计划接到单扫描详情/授权门。四类多端点 Operation 才有 policy snapshot、L0/L1 计划和单独授权的 L2/L3。故“快照、时间、版本 × 静态/智能”不能仅凭已有多端点测试称为四级渐进流程全部打通。
+已补单仓快照的 policy revision/hash 冻结与 audit workflow 绑定；固定扫描报告完成后，`/api/v1/scans/{id}/progressive-triage` 通过同一 L0/L1 运行时归并并排序，任务详情显示分页候选组。静态模式显式标为 `ranked_static_only`，继续保留候选且不发起模型请求。多端点子扫描详情会指向父 Operation 统一计划，避免把端点局部排序误当成共享预算结果。单快照 L2 preview/Worker 复核冻结策略和完整 L0/L1 计划并在 worker 执行前重算摘要；该新路径已有专项回归，但尚未做浏览器操作或真实 Provider 请求。
 
 浏览器路径 `/settings/policy` 曾因 `SettingsView` 的 tab allowlist 漏掉 `policy` 而落回“仓库与源码管理”。当前分支修复为共用 `settingsTab()` 并新增回归用例。隔离服务 `18788` 的策略读取 API 与静态页面 HTTP 状态已核实；Windows 浏览器窗口采集两次超时，真实浏览器点击/保存仍未验证。
 
-截至本记录：渐进式专项 28/28 通过；四类 operation × 静态/智能八组合 API/Worker 测试 1/1 通过；前端 127/127、TypeScript 与生产构建通过。Python 全量回归运行 2063 项，15 fail、31 errors、10 skipped。输出明确包含 sparse checkout 缺失的 `samples/`、`research/` 数据/脚本和 Windows 挂载目录的 CRLF 字节哈希不一致；全量失败未逐项归因，不据此断言剩余错误均由环境造成。
+截至本记录：单快照 L0/L1、父 Operation 委派、limited 保留 unknown、L2 固定计划复核与策略 hash 专项回归 34/34 通过（Python 3.14，测试依赖安装在 `/tmp/ohscanner-phase5-deps`）；此前四类 operation × 静态/智能八组合 API/Worker 测试 1/1 通过；前端 Node 127/127、TypeScript 与生产构建通过。Python 全量回归运行 2063 项，15 fail、31 errors、10 skipped。输出明确包含 sparse checkout 缺失的 `samples/`、`research/` 数据/脚本和 Windows 挂载目录的 CRLF 字节哈希不一致；全量失败未逐项归因，不据此断言剩余错误均由环境造成。此次专项仅在隔离依赖目录通过，不等于标准 Linux/Python 版本全套回归。
 
 隔离 API 策略读写与持久化重读通过。Windows 浏览器状态采集两次超时，未完成浏览器点击验收。测试期间短暂发现另一个来自 `/home/audit/ohscanner-workbench/main-integration-20261021` 的 `serve --port 8765` 进程；其父进程与本测试无可证实关系，为防止争用已终止该 PID 及其 Worker。当前 8765 无监听，未重启，需由负责人核对运行状态。
 
@@ -18,7 +18,7 @@
 
 | 区域 | 已有代码/行为 | 当前边界 |
 |---|---|---|
-| 单仓快照授权 | `api.py` 的计划、扫描和 `auto_triage` 授权字段；已有 R1/R2 路径 | 旧 R1/R2 仍按原流程调度；新 `progressive-triage-v1` 策略没有绑定任务快照 |
+| 单仓快照授权 | `api.py` 冻结策略版本/SHA 并纳入 workflow SHA；扫描完成后提供 L0/L1 计划 API，详情页展示候选组；静态模式不调用模型；L2 preview/Worker 按固定 snapshot 计划和策略重新校验 | 单快照 L2 浏览器路径、真实 Provider 小样本仍未验收；旧 `auto_triage` R1/R2 仍是既有路径 |
 | 日期、区间、分支、版本矩阵 | `operations_api.py` 冻结策略快照并把策略 SHA 纳入智能审计 workflow consent；Operation Worker 在端点完成后运行 `progressive_triage.runtime.build_operation_plan`，结果含端点绑定的 L0 manifest、L1 排序和未选原因；风险工作区显示摘要 | 当前只接入这四类父 Operation 的本地归并/排序；快照单任务仍走原路径。L2 仍 `not_scheduled`，新 SQLite 父任务账本及其发送前门尚未接线 |
 | 现有 Agent | `agent.py` 固定 Commit、只读受限工具、脱敏、来源绑定、证据引用校验、已有累计预算扩展 | #41 的完整多阶段反证/evidence graph/补丁对照尚未完成；渐进策略不重写该模块 |
 | 策略设置 | `progressive_triage/policy.py`：四档和自定义严格校验、私有版本化文件、原子替换、审计历史与 revision 冲突；多端点操作创建时持久化不可变策略快照；智能 consent 绑定策略 SHA | 每次保存只影响新任务；只读排序预算仍不等于真实模型调用额度 |

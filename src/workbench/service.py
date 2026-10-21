@@ -21,7 +21,7 @@ def sha(data):
 
 def audit_workflow_sha256(plan_sha256, audit_mode, auto_triage=False,
                           max_triage_candidates=3, max_r2_candidates=0,
-                          max_cost_usd=None):
+                          max_cost_usd=None, progressive_policy_sha256=None):
     if audit_mode not in {"standard_review", "static_only"}:
         raise ValueError("unsupported audit workflow mode")
     if (not isinstance(auto_triage, bool)
@@ -45,6 +45,11 @@ def audit_workflow_sha256(plan_sha256, audit_mode, auto_triage=False,
         "agent_usage_policy": "no_local_cumulative_token_usd_call_or_wall_time_cap_v1"
         if auto_triage and audit_mode == "standard_review" else None,
     }
+    if progressive_policy_sha256 is not None:
+        if (not isinstance(progressive_policy_sha256, str)
+                or not re.fullmatch(r"[a-f0-9]{64}", progressive_policy_sha256)):
+            raise ValueError("invalid progressive triage policy digest")
+        payload["progressive_policy_sha256"] = progressive_policy_sha256
     return sha(json.dumps(payload, sort_keys=True, separators=(",", ":")).encode())
 
 

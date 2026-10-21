@@ -100,6 +100,68 @@ class GroupingAndRankingTests(unittest.TestCase):
         self.assertTrue(all(group["quick_screen_state"] == "not_scheduled" for group in result["groups"]))
         self.assertEqual(result["validated_vulnerability"], 0)
 
+    def test_single_snapshot_runtime_marks_static_only_and_keeps_candidates(self):
+        policy = build_policy()
+        report = {"repository": REPOSITORY, "commit": COMMIT,
+                  "snapshot_sha256": SNAPSHOT, "status": "completed"}
+        findings = [{"id": "candidate-a", "detector_id": "cpp.memory",
+                     "detector_version": "1.0.0", "rule_id": "memory.rule",
+                     "file": "src/a.cpp", "line": 10, "source_sha256": SOURCE,
+                     "severity": "high", "status": "unassessed"}]
+
+        class FakeStore:
+            def job(self, scan_id):
+                return {"id": scan_id, "status": "completed", "report_sha256": "e" * 64}
+
+        task = {"id": "scan-a", "kind": "snapshot", "spec": {
+            "scan_ids": ["scan-a"], "audit_mode": "static_only",
+            "progressive_triage_policy": {"revision": 2, "policy": policy,
+                                           "policy_sha256": content_sha256(policy)},
+        }}
+        result = build_operation_plan(
+            object(), FakeStore(), task,
+            read_report=lambda settings, job: report,
+            findings=lambda value: findings,
+            source_binding_valid=lambda value, candidate: True,
+        )
+        self.assertEqual(result["state"], "ranked_static_only")
+        self.assertEqual(result["original_observation_count"], 1)
+        self.assertEqual(result["ranking"]["selected_group_count"], 1)
+        self.assertTrue(any("no model request is permitted" in value
+                            for value in result["limitations"]))
+        self.assertEqual(result["validated_vulnerability"], 0)
+        self.assertFalse(result["candidate_disposition_changed"])
+
+    def test_limited_snapshot_keeps_observations_unknown_and_unselected(self):
+        policy = build_policy()
+        report = {"repository": REPOSITORY, "commit": COMMIT,
+                  "snapshot_sha256": SNAPSHOT, "status": "completed"}
+        findings = [{"id": "candidate-limited", "detector_id": "cpp.memory",
+                     "rule_id": "memory.rule", "file": "src/a.cpp", "line": 10,
+                     "source_sha256": SOURCE, "severity": "high"}]
+
+        class FakeStore:
+            def job(self, scan_id):
+                return {"id": scan_id, "status": "completed_with_limitations",
+                        "report_sha256": "e" * 64}
+
+        task = {"id": "scan-limited", "kind": "snapshot", "spec": {
+            "scan_ids": ["scan-limited"], "audit_mode": "standard_review",
+            "progressive_triage_policy": {"revision": 0, "policy": policy,
+                                           "policy_sha256": content_sha256(policy)},
+        }}
+        result = build_operation_plan(
+            object(), FakeStore(), task,
+            read_report=lambda settings, job: report,
+            findings=lambda value: findings,
+            source_binding_valid=lambda value, candidate: True,
+        )
+        self.assertEqual(result["state"], "partial_unknown")
+        self.assertEqual(result["original_observation_count"], 1)
+        self.assertEqual(result["ranking"]["selected_group_count"], 0)
+        self.assertTrue(result["groups"][0]["ranking"]["coverage_unknown"])
+        self.assertEqual(result["validated_vulnerability"], 0)
+
     def test_root_cause_grouping_requires_deterministic_source_identity(self):
         identity = {
             "entry_id": "entry:1",
@@ -244,6 +306,68 @@ except ModuleNotFoundError as error:
 
 @unittest.skipIf(TestClient is None, "optional workbench dependencies: install requirements-web.txt")
 class PolicyApiTests(unittest.TestCase):
+    def test_progressive_policy_digest_is_bound_to_audit_workflow_hash(self):
+        from src.workbench.service import audit_workflow_sha256
+
+        base = audit_workflow_sha256("a" * 64, "standard_review")
+        first = audit_workflow_sha256("a" * 64, "standard_review",
+                                      progressive_policy_sha256="b" * 64)
+        second = audit_workflow_sha256("a" * 64, "standard_review",
+                                       progressive_policy_sha256="c" * 64)
+        self.assertNotEqual(base, first)
+        self.assertNotEqual(first, second)
+        with self.assertRaises(ValueError):
+            audit_workflow_sha256("a" * 64, "standard_review",
+                                  progressive_policy_sha256="invalid")
+
+    def test_snapshot_triage_route_returns_bounded_static_only_l0_l1_plan(self):
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        from src.workbench.progressive_triage.policy import policy_envelope
+
+        policy = build_policy()
+        frozen = {"revision": 4, "policy": policy,
+                  "policy_sha256": policy_envelope(policy)["policy_sha256"]}
+        job = {"id": "scan-a", "status": "completed", "report_sha256": "e" * 64,
+               "spec": {"audit_mode": "static_only",
+                        "progressive_triage_policy": frozen}}
+        report = {"repository": REPOSITORY, "commit": COMMIT,
+                  "snapshot_sha256": SNAPSHOT, "status": "completed"}
+        candidates = [{"id": "candidate-a", "detector_id": "cpp.memory",
+                       "detector_version": "1.0.0", "rule_id": "memory.rule",
+                       "file": "src/a.cpp", "line": 10, "source_sha256": SOURCE,
+                       "severity": "high", "status": "unassessed"}]
+
+        with tempfile.TemporaryDirectory() as directory:
+            app = create_app(Settings(Path(directory) / "data", ()))
+            app.state.store.job = lambda key: job
+            with patch("src.workbench.service.read_report", return_value=report), \
+                    patch("src.workbench.service.findings", return_value=candidates), \
+                    patch("src.workbench.smart_audit._source_binding_valid", return_value=True):
+                with TestClient(app) as client:
+                    response = client.get("/api/v1/scans/scan-a/progressive-triage?offset=0&limit=1")
+        self.assertEqual(response.status_code, 200, response.text)
+        body = response.json()
+        self.assertEqual(body["state"], "ranked_static_only")
+        self.assertEqual(body["group_total"], 1)
+        self.assertEqual(len(body["groups"]), 1)
+        self.assertEqual(body["validated_vulnerability"], 0)
+
+    def test_endpoint_in_multi_endpoint_audit_defers_to_parent_budget_plan(self):
+        with tempfile.TemporaryDirectory() as directory:
+            app = create_app(Settings(Path(directory) / "data", ()))
+            app.state.store.job = lambda key: {
+                "id": key, "status": "completed", "report_sha256": "e" * 64,
+                "spec": {"audit_mode": "standard_review",
+                         "progressive_triage_policy": {"revision": 0}},
+            }
+            app.state.operations.audit_parent_for_scan = lambda key: {"id": "parent-operation"}
+            with TestClient(app) as client:
+                response = client.get("/api/v1/scans/scan-a/progressive-triage")
+        self.assertEqual(response.status_code, 200, response.text)
+        self.assertEqual(response.json()["state"], "planned_by_parent_operation")
+        self.assertEqual(response.json()["parent_operation_id"], "parent-operation")
+
     def test_policy_digest_changes_the_frozen_consent_workflow(self):
         from src.workbench.operations_api import _progressive_workflow_sha256
 
@@ -529,6 +653,50 @@ class QuickScreenTests(unittest.TestCase):
 
 
 class QuickScreenOperationTests(unittest.TestCase):
+    def test_snapshot_preview_reuses_frozen_l0_l1_plan_and_static_only_is_rejected(self):
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        from src.workbench.progressive_triage.quick_screen_operation import prepare_quick_screen
+        from src.workbench.progressive_triage.policy import policy_envelope
+
+        policy = build_policy()
+        frozen = {"revision": 3, "policy": policy,
+                  "policy_sha256": policy_envelope(policy)["policy_sha256"]}
+        job = {"id": "job-snapshot", "status": "completed", "report_sha256": "f" * 64,
+               "spec": {"audit_mode": "standard_review",
+                        "progressive_triage_policy": frozen}}
+        report = {"repository": REPOSITORY, "commit": COMMIT,
+                  "snapshot_sha256": SNAPSHOT, "status": "completed"}
+        candidate = {"id": "candidate-snapshot", "file": "src/example.cpp", "line": 50,
+                     "source_sha256": SOURCE, "detector_id": "cpp.memory",
+                     "detector_version": "1.0.0", "rule_id": "memory.rule",
+                     "severity": "high", "evidence": {}}
+        prepared = {"source": {"text": "\n".join(f"line {i}" for i in range(1, 101))},
+                    "initial_context": {"evidence_obligations": []},
+                    "initial_evidence_id": "unused", "redaction_categories": []}
+        provider = SimpleNamespace(fingerprint="provider-v1", model="small-model",
+                                   public={"model": "small-model"})
+        fake_store = SimpleNamespace(job=lambda _: job)
+        settings = SimpleNamespace(data_dir="unused")
+        common_patches = (
+            patch("src.workbench.service.read_report", return_value=report),
+            patch("src.workbench.service.finding", return_value=candidate),
+            patch("src.workbench.service.findings", return_value=[candidate]),
+            patch("src.workbench.smart_audit._source_binding_valid", return_value=True),
+            patch("src.workbench.agent._prepare_candidate_context", return_value=prepared),
+        )
+        with (common_patches[0], common_patches[1], common_patches[2],
+              common_patches[3], common_patches[4]):
+            preview = prepare_quick_screen(settings, fake_store, "job-snapshot",
+                                           "candidate-snapshot", provider, "a" * 32)
+            self.assertTrue(preview["ranking"]["decisions"][0]["selected"])
+            self.assertEqual(preview["consent_manifest"]["audit_parent_plan_sha256"],
+                             preview["ranking"]["plan_sha256"])
+            job["spec"]["audit_mode"] = "static_only"
+            with self.assertRaisesRegex(ValueError, "static-only"):
+                prepare_quick_screen(settings, fake_store, "job-snapshot",
+                                     "candidate-snapshot", provider, "b" * 32)
+
     def test_preview_excerpt_is_redacted_and_within_fixed_line_and_byte_bounds(self):
         from types import SimpleNamespace
         from unittest.mock import patch

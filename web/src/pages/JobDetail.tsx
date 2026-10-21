@@ -94,6 +94,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
   const [job, setJob] = useState<any>(null);
   const [report, setReport] = useState<any>(null);
   const [triageSummary, setTriageSummary] = useState<any>(null);
+  const [progressiveTriage, setProgressiveTriage] = useState<any>(null);
   const [riskSummary, setRiskSummary] = useState<any>(null);
   const [selectedRisk, setSelectedRisk] = useState<any>(null);
   const [coverageSummary, setCoverageSummary] = useState<any>(null);
@@ -168,22 +169,26 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
         setJob(j);
         setEvents(e);
         const triageRequest = api("/scans/" + id + "/triage");
+        const progressiveRequest = api("/scans/" + id + "/progressive-triage?offset=0&limit=50");
         if (j.report_sha256) {
-          const [r, triage, risks, coverage] = await Promise.all([
+          const [r, triage, risks, coverage, progressive] = await Promise.all([
             api("/scans/" + id + "/report"),
             triageRequest,
             api("/scans/" + id + "/risks?limit=100"),
             api("/scans/" + id + "/coverage"),
+            progressiveRequest,
           ]);
           if (live) {
             setReport(r); setTriageSummary(triage);
             setRiskSummary(risks); setCoverageSummary(coverage);
+            setProgressiveTriage(progressive);
           }
         } else {
-          const triage = await triageRequest;
+          const [triage, progressive] = await Promise.all([triageRequest, progressiveRequest]);
           if (live) {
             setReport(null); setTriageSummary(triage);
             setRiskSummary(null); setCoverageSummary(null);
+            setProgressiveTriage(progressive);
           }
         }
         if (terminal.has(j.status) && timer) clearInterval(timer);
@@ -486,6 +491,25 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
         />
       </Card>
       <AuditPlanView plan={job.spec.audit_plan} auditMode={job.spec.audit_mode} />
+      {progressiveTriage && progressiveTriage.state !== "not_available" && <Card className="section-gap" title="渐进式本地候选计划">
+        <Alert className="section-gap" type="info" showIcon
+          message={progressiveTriage.state === "planned_by_parent_operation" ? "候选排序由父审计统一计算" : progressiveTriage.state === "awaiting_static_report" ? "等待固定版本静态报告" : progressiveTriage.state === "ranked_static_only" ? "静态审计：仅本地归并和排序，不会调用模型" : "L0/L1 本地计划；所有原始候选继续保留"}
+          description={progressiveTriage.state === "planned_by_parent_operation" ? "这是多端点审计中的一个固定端点；跨版本分组和共享预算请查看父审计计划。" : "分组和优先级只决定人工复核顺序与后续授权入口，不会把候选判为误报、安全或已确认漏洞。"} />
+        {progressiveTriage.grouping && <Descriptions size="small" column={{ xs: 1, md: 3 }}>
+          <Descriptions.Item label="原始候选">{progressiveTriage.original_observation_count ?? "未知"}</Descriptions.Item>
+          <Descriptions.Item label="根因/重复组">{progressiveTriage.grouping.group_count ?? "未知"}</Descriptions.Item>
+          <Descriptions.Item label="快筛预算选中组">{progressiveTriage.ranking?.selected_group_count ?? "未知"}</Descriptions.Item>
+        </Descriptions>}
+        {Array.isArray(progressiveTriage.groups) && <Table size="small" rowKey="group_id"
+          dataSource={progressiveTriage.groups} pagination={{ pageSize: 8 }} scroll={{ x: 720 }} columns={[
+            { title: "计划组", dataIndex: "group_id", render: (value: string) => <Text code>{value}</Text> },
+            { title: "候选观察", render: (_: unknown, row: any) => row.member_candidate_ids?.length ?? 0 },
+            { title: "优先级", render: (_: unknown, row: any) => row.ranking?.rank ?? "未知" },
+            { title: "后续快筛选择", render: (_: unknown, row: any) => progressiveTriage.state === "ranked_static_only"
+              ? <Tag>仅本地排序</Tag> : row.ranking?.selected ? <Tag color="blue">预算内待授权</Tag> : <Tag>保留待复核</Tag> },
+            { title: "选择原因", render: (_: unknown, row: any) => (row.ranking?.reason_codes || []).join("、") || "未选" },
+          ]} locale={{ emptyText: "暂无可排序候选；不代表源码安全。" }} />}
+      </Card>}
       {job && <Card className="section-gap" title="审计阶段进度">
         <Row gutter={18}>
           <Col xs={24} md={8}><Descriptions size="small" column={1} title="静态扫描">
