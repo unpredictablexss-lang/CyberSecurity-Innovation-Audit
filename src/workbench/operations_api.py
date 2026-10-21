@@ -592,6 +592,7 @@ class ProgressiveDeepInvestigationRequest(AgentInvestigationRequest):
     max_steps: int = Field(default=4, ge=1, le=12)
     progressive_quick_screen_operation_id: str = Field(
         min_length=32, max_length=32, pattern=r"^[0-9a-f]{32}$")
+    progressive_group_id: str | None = Field(default=None, min_length=1, max_length=200)
 
 
 
@@ -2191,13 +2192,33 @@ def install_routes(app: FastAPI, settings, store):
         except ValueError as exc:
             raise HTTPException(status_code=409, detail=str(exc)) from None
 
-    def _progressive_quick_result(operation_id, job_id, candidate_id):
+    def _progressive_quick_result(operation_id, job_id, candidate_id, group_id=None):
         quick_task = ops.get(operation_id)
-        if (quick_task.get("kind") != "progressive_quick_screen"
-                or quick_task.get("status") not in {"completed", "completed_with_limitations"}
+        if (quick_task.get("status") not in {"completed", "completed_with_limitations"}
                 or not quick_task.get("result_sha256")):
             raise HTTPException(status_code=409, detail="L2 快筛任务尚未完成或没有可核验结果")
         result = ops.result(operation_id)
+        if quick_task.get("kind") == "progressive_quick_screen_batch":
+            if not isinstance(group_id, str) or not group_id:
+                raise HTTPException(status_code=422, detail="批量 L2 结果需要指定候选组")
+            spec = quick_task.get("spec") if isinstance(quick_task.get("spec"), dict) else {}
+            item = next((row for row in spec.get("items", [])
+                         if isinstance(row, dict) and row.get("group_id") == group_id), None)
+            group_result = next((row for row in result.get("groups", [])
+                                 if isinstance(row, dict) and row.get("group_id") == group_id), None)
+            child_spec = item.get("spec") if isinstance(item, dict) else None
+            child_result = group_result.get("result") if isinstance(group_result, dict) else None
+            if (not isinstance(child_spec, dict) or not isinstance(group_result, dict)
+                    or group_result.get("state") != "completed" or not isinstance(child_result, dict)
+                    or group_result.get("candidate_id") != candidate_id
+                    or child_spec.get("job_id") != job_id
+                    or child_spec.get("candidate_id") != candidate_id):
+                raise HTTPException(status_code=409, detail="候选组没有匹配的已完成 L2 结果")
+            quick_task = {**quick_task, "spec": child_spec,
+                          "progressive_batch_group_id": group_id}
+            result = child_result
+        elif quick_task.get("kind") != "progressive_quick_screen":
+            raise HTTPException(status_code=409, detail="operation 不是可用的渐进式 L2 快筛")
         assessment = result.get("quick_screen") if isinstance(result, dict) else None
         if (not isinstance(assessment, dict) or assessment.get("state") != "completed"
                 or assessment.get("quick_assessment") != "investigate"):
@@ -2217,7 +2238,8 @@ def install_routes(app: FastAPI, settings, store):
         if body.mode != "tool_agent":
             raise HTTPException(status_code=422, detail="L3 仅复用现有只读跨文件 tool-agent 工作流")
         quick_task, quick_result = _progressive_quick_result(
-            body.progressive_quick_screen_operation_id, body.job_id, body.candidate_id)
+            body.progressive_quick_screen_operation_id, body.job_id, body.candidate_id,
+            body.progressive_group_id)
         quick_spec = quick_task["spec"]
         audit_id = quick_spec.get("audit_operation_id")
         if not isinstance(audit_id, str) or not audit_id:
@@ -2252,6 +2274,7 @@ def install_routes(app: FastAPI, settings, store):
         binding = {
             "quick_screen_operation_id": quick_task["id"],
             "quick_screen_result_sha256": quick_task["result_sha256"],
+            "quick_screen_batch_group_id": quick_task.get("progressive_batch_group_id"),
             "quick_assessment": "investigate", "audit_operation_id": audit_id,
             "group_id": group.get("group_id"), "policy_sha256": frozen["policy_sha256"],
             "candidate_id": body.candidate_id,
@@ -2318,6 +2341,7 @@ def install_routes(app: FastAPI, settings, store):
             "progressive_consent_sha256": preview["consent_sha256"],
             "progressive_quick_screen_operation_id": quick_task["id"],
             "progressive_quick_screen_result_sha256": binding["quick_screen_result_sha256"],
+            "progressive_quick_screen_batch_group_id": binding.get("quick_screen_batch_group_id"),
             "progressive_audit_operation_id": binding["audit_operation_id"],
             "progressive_group_id": binding["group_id"],
             "progressive_policy": preview["progressive_policy"],

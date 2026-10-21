@@ -17,11 +17,31 @@ def progressive_gate(settings, ops, task: dict[str, Any]) -> tuple[dict[str, Any
         raise ValueError("progressive deep Agent is missing its L2/task binding")
     quick_id = spec["progressive_quick_screen_operation_id"]
     quick_task = ops.get(quick_id)
-    if (quick_task.get("kind") != "progressive_quick_screen"
-            or quick_task.get("result_sha256") != spec["progressive_quick_screen_result_sha256"]
+    if (quick_task.get("result_sha256") != spec["progressive_quick_screen_result_sha256"]
             or quick_task.get("status") not in {"completed", "completed_with_limitations"}):
         raise ValueError("the source-bound L2 result is missing, changed, or incomplete")
     quick_result = ops.result(quick_id)
+    if quick_task.get("kind") == "progressive_quick_screen_batch":
+        group_id = spec.get("progressive_quick_screen_batch_group_id")
+        parent_spec = quick_task.get("spec") if isinstance(quick_task.get("spec"), dict) else {}
+        item = next((row for row in parent_spec.get("items", [])
+                     if isinstance(row, dict) and row.get("group_id") == group_id), None)
+        group_result = next((row for row in quick_result.get("groups", [])
+                             if isinstance(row, dict) and row.get("group_id") == group_id), None)
+        quick_spec = item.get("spec") if isinstance(item, dict) else None
+        quick_result = group_result.get("result") if isinstance(group_result, dict) else None
+        if (not isinstance(quick_spec, dict) or not isinstance(group_result, dict)
+                or group_result.get("state") != "completed" or not isinstance(quick_result, dict)
+                or group_result.get("candidate_id") != spec.get("candidate_id")
+                or quick_spec.get("job_id") != spec.get("job_id")
+                or quick_spec.get("candidate_id") != spec.get("candidate_id")):
+            raise ValueError("the requested group has no completed L2 result in this batch")
+    elif quick_task.get("kind") == "progressive_quick_screen":
+        if spec.get("progressive_quick_screen_batch_group_id") is not None:
+            raise ValueError("single-group L2 operation cannot carry a batch group binding")
+        quick_spec = quick_task.get("spec") if isinstance(quick_task.get("spec"), dict) else {}
+    else:
+        raise ValueError("the source-bound L2 operation has an unsupported kind")
     assessment = quick_result.get("quick_screen") if isinstance(quick_result, dict) else None
     if (not isinstance(assessment, dict) or assessment.get("state") != "completed"
             or assessment.get("quick_assessment") != "investigate"):
@@ -29,7 +49,6 @@ def progressive_gate(settings, ops, task: dict[str, Any]) -> tuple[dict[str, Any
     source_binding = quick_result.get("source_binding") if isinstance(quick_result, dict) else None
     if not isinstance(source_binding, dict):
         raise ValueError("L2 result has no fixed source binding")
-    quick_spec = quick_task.get("spec") if isinstance(quick_task.get("spec"), dict) else {}
     quick_group = quick_spec.get("group") if isinstance(quick_spec.get("group"), dict) else {}
     if (quick_spec.get("job_id") != spec.get("job_id")
             or quick_spec.get("candidate_id") != spec.get("candidate_id")

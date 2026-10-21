@@ -427,6 +427,15 @@ export default function OperationWorkspace({ view = "all", operationId, context 
               { title: "快筛状态", dataIndex: "state", render: (value) => <Tag color={value === "completed" ? "green" : value === "quick_unknown" ? "orange" : undefined}>{value || "unknown"}</Tag> },
               { title: "模型建议", dataIndex: "quick_assessment", render: (value) => value || "unknown" },
               { title: "停止/未知原因", dataIndex: "reason_code", render: (value) => value || "无" },
+              { title: "后续操作", render: (_: unknown, row: any) => {
+                if (row.state !== "completed" || row.quick_assessment !== "investigate") return "无需深查授权";
+                const item = (selected.spec?.items || []).find((entry: any) => entry.group_id === row.group_id);
+                const childSpec = item?.spec;
+                if (!childSpec?.job_id || !childSpec?.candidate_id) return "来源绑定不可用";
+                return <ProgressiveDeepInvestigationAction jobId={childSpec.job_id}
+                  candidateId={childSpec.candidate_id} quickScreenOperationId={selected.id}
+                  progressiveGroupId={row.group_id} />;
+              } },
             ]} />
             {Array.isArray(result.not_started) && result.not_started.length > 0 && <Alert type="warning" showIcon message={`${result.not_started.length} 组尚未开始，继续保留为候选`} description={result.not_started.map((row: any) => row.group_id).join("、")} />}
           </>;

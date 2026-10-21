@@ -1302,3 +1302,68 @@ class ProgressiveDeepApiIntegrationTests(unittest.TestCase):
                 quick_result["quick_screen"]["quick_assessment"] = "insufficient_context"
                 rejected = client.post(endpoint + "/preview", headers=headers, json=body)
                 self.assertEqual(rejected.status_code, 409)
+
+    def test_deep_preview_accepts_one_investigate_member_from_l2_batch(self):
+        import os
+        from unittest.mock import patch
+        from src.workbench.operations_store import Operations
+        from src.workbench.progressive_triage.policy import policy_envelope
+
+        batch_id = "a" * 32
+        group_id = "group-1"
+        policy = build_policy()
+        frozen = {"revision": 0, **policy_envelope(policy)}
+        child_spec = {"job_id": "job-1", "candidate_id": "candidate-1",
+                      "audit_operation_id": "job-1", "progressive_policy": frozen,
+                      "group": {"group_id": group_id},
+                      "authorization": {"report_sha256": "b" * 64}}
+        batch = {"id": batch_id, "kind": "progressive_quick_screen_batch",
+                 "status": "completed", "result_sha256": "d" * 64,
+                 "spec": {"audit_operation_id": "job-1", "items": [
+                     {"group_id": group_id, "spec": child_spec}]}}
+        quick_result = {"quick_screen": {"state": "completed", "quick_assessment": "investigate"},
+                        "source_binding": {"report_sha256": "b" * 64, "commit": "c" * 40}}
+        batch_result = {"groups": [{"group_id": group_id, "candidate_id": "candidate-1",
+                                    "state": "completed", "result": quick_result}]}
+        original_get = Operations.get
+        original_result = Operations.result
+
+        def get(ops, key):
+            return batch if key == batch_id else original_get(ops, key)
+
+        def result(ops, key):
+            return batch_result if key == batch_id else original_result(ops, key)
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            app = create_app(Settings(root / "data", (root / "targets",)))
+            repo = app.state.store.add_repository("openharmony/sample", str(root))
+            job = {"id": "job-1", "repository_id": repo["id"], "status": "completed",
+                   "report_sha256": "b" * 64}
+            report = {"repository": "openharmony/sample", "commit": "c" * 40}
+            candidate = {"id": "candidate-1", "file": "src/sample.cpp", "line": 1,
+                         "source_sha256": "a" * 64, "evidence": {"obligations": [{
+                             "kind": "callee_and_policy", "description": "review source binding", "status": "unknown"}]}}
+            source = {"sha256": "a" * 64, "blob": "f" * 40, "text": "int check() {}"}
+            with TestClient(app) as client, patch.dict(os.environ, {
+                    "OHSCANNER_LLM_MODEL": "review-model", "OHSCANNER_LLM_API_KEY": "test-secret"}), \
+                    patch.object(app.state.store, "job", return_value=job), \
+                    patch("src.workbench.operations_api.service.read_report", return_value=report), \
+                    patch("src.workbench.operations_api.service.finding", return_value=candidate), \
+                    patch("src.workbench.operations_api.service.source", return_value=source), \
+                    patch.object(Operations, "get", get), patch.object(Operations, "result", result):
+                headers = {"x-ohscanner-client": "workbench-v1"}
+                body = {"job_id": "job-1", "candidate_id": "candidate-1", "mode": "tool_agent",
+                        "progressive_quick_screen_operation_id": batch_id,
+                        "progressive_group_id": group_id}
+                endpoint = "/api/v1/operations/progressive-deep-investigations"
+                response = client.post(endpoint + "/preview", headers=headers, json=body)
+                self.assertEqual(response.status_code, 200, response.text)
+                preview = response.json()
+                self.assertEqual(preview["progressive_binding"]["quick_screen_operation_id"], batch_id)
+                self.assertEqual(preview["progressive_binding"]["quick_screen_batch_group_id"], group_id)
+                approved = {**body, "source_submission_approved": True,
+                            "consent_nonce": preview["consent_nonce"], "consent_sha256": preview["consent_sha256"]}
+                started = client.post(endpoint, headers=headers, json=approved)
+                self.assertEqual(started.status_code, 201, started.text)
+                self.assertEqual(started.json()["spec"]["progressive_quick_screen_batch_group_id"], group_id)
