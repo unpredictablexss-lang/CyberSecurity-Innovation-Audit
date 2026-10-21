@@ -295,6 +295,19 @@ class WorkbenchTests(unittest.TestCase):
     def test_data06_source_candidate_and_fixed_retest_reach_finding_detail_api(self):
         ipc_repo = Path(os.environ.get("T74_IPC_GIT", ROOT / "tmp/t71-communication-ipc"))
         source_rel = Path("interfaces/innerkits/cj/src/message_sequence_impl.cpp")
+        if not ipc_repo.is_dir():
+            self.skipTest("pinned communication_ipc Git objects are unavailable; set T74_IPC_GIT")
+        for commit in (
+            "84d681288793785e8f39f71c824f211edaed8f1e",
+            "de3a68cc8b7d6f18017fd261060def0e38dce54a",
+        ):
+            try:
+                subprocess.run(
+                    ["git", "-C", str(ipc_repo), "cat-file", "-e", f"{commit}:{source_rel.as_posix()}"],
+                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True,
+                )
+            except (FileNotFoundError, subprocess.CalledProcessError):
+                self.skipTest(f"pinned communication_ipc object {commit} is unavailable; set T74_IPC_GIT")
         target_repo = self.root / "targets" / "openharmony" / "communication_ipc"
         target_repo.mkdir(parents=True)
         git(target_repo, "init", "-q")

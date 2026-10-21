@@ -1022,6 +1022,34 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
                 </Descriptions.Item>
               </Descriptions>
             </Card>}
+            <Descriptions
+              className="section-gap"
+              size="small"
+              bordered
+              column={{ xs: 1, sm: 2, lg: 3 }}
+              title="扫描来源绑定"
+            >
+              <Descriptions.Item label="仓库 / 提交">
+                <Text code copyable>{job.spec?.repository || report?.repository || "unknown"}</Text>
+                <br />
+                <Text code copyable>{job.spec?.commit || report?.commit || "unknown"}</Text>
+              </Descriptions.Item>
+              <Descriptions.Item label="源码 SHA-256">
+                <Text code copyable>{detail.source?.sha256 || detail.source_sha256 || "unavailable"}</Text>
+              </Descriptions.Item>
+              <Descriptions.Item label="Git blob">
+                <Text code copyable>{detail.source?.blob || detail.source_blob_oid || "unavailable"}</Text>
+              </Descriptions.Item>
+              <Descriptions.Item label="Detector / 版本">
+                <Text code>{detail.detector_id || "unknown"}</Text> · {detail.detector_version || "unknown"}
+              </Descriptions.Item>
+              <Descriptions.Item label="规则版本">
+                <Text code>{detail.rule_id || "unknown"}</Text> · {detail.rule_version || "unknown"}
+              </Descriptions.Item>
+              <Descriptions.Item label="扫描快照 SHA-256">
+                <Text code copyable>{report?.snapshot_sha256 || "unavailable"}</Text>
+              </Descriptions.Item>
+            </Descriptions>
             {detail.source ? <>
               <CandidateActions job={job} candidate={detail} />
               <CodeView source={detail.source} line={detail.line} />

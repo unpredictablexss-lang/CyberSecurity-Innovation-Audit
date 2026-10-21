@@ -9,11 +9,12 @@ from src.ohscanner.detectors.catalog import build_registry, catalog_metadata, de
 from src.ohscanner.detectors.known_cves import KnownDisclosedCveDetector, _pasteboard_guard_observation
 from src.ohscanner.fixture import snapshot_digest
 
-PINNED_HEAD = "db77164fdc2af0da02e4d3efc056d84694fd68e8"
+PINNED_LRU_FIXTURE_COMMIT = "HEAD"
+PINNED_LIBPNG_FIXTURE_COMMIT = "HEAD"
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
-def read_pinned_git_blob(relative_path):
-    object_id = f"{PINNED_HEAD}:{relative_path}"
+def read_pinned_git_blob(commit, relative_path):
+    object_id = f"{commit}:{relative_path}"
     process = subprocess.run(
         ["git", "cat-file", "blob", object_id],
         cwd=REPO_ROOT, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
@@ -51,8 +52,10 @@ class KnownDisclosedCveTests(unittest.TestCase):
 
     def test_appdomainverify_cve_2026_58313_real_lru_fix_pair(self):
         vulnerable = read_pinned_git_blob(
+            PINNED_LRU_FIXTURE_COMMIT,
             "tests/fixtures/data_sensitive/d39_cve_2026_58313_lru_vulnerable.h")
         fixed = read_pinned_git_blob(
+            PINNED_LRU_FIXTURE_COMMIT,
             "tests/fixtures/data_sensitive/d39_cve_2026_58313_lru_fixed.h")
         path = "frameworks/common/include/utils/lru_cache_util.h"
 
@@ -404,8 +407,10 @@ class KnownDisclosedCveTests(unittest.TestCase):
 
     def test_libpng_neon_palette_cve_2026_33636_exact_upstream_pair(self):
         vulnerable = read_pinned_git_blob(
+            PINNED_LIBPNG_FIXTURE_COMMIT,
             "tests/fixtures/data_sensitive/cve_2026_33636/libpng-1.6.55-palette_neon_intrinsics.c")
         fixed = read_pinned_git_blob(
+            PINNED_LIBPNG_FIXTURE_COMMIT,
             "tests/fixtures/data_sensitive/cve_2026_33636/libpng-1.6.56-palette_neon_intrinsics.c")
 
         self.assertEqual("3068e9b6e62be16bee2a8f1ff8271a02f32be97f", git_blob_sha1(vulnerable))
