@@ -9,7 +9,7 @@ import uuid
 from datetime import datetime, timezone
 from decimal import Decimal, InvalidOperation
 from .store import now
-from .triage_limits import (MAX_TRIAGE_CANDIDATES_PER_ENDPOINT,
+from .triage_limits import (MAX_MANUAL_CANDIDATES_PER_BATCH, MAX_TRIAGE_CANDIDATES_PER_ENDPOINT,
                             MAX_AUTHORIZED_TRIAGE_QUEUE_ITEMS)
 
 END = {"completed", "completed_with_limitations", "blocked", "failed", "cancelled", "timed_out", "interrupted"}
@@ -666,8 +666,8 @@ class Operations:
 
     def create_agent_batch(self, specs):
         """Atomically queue a small, explicitly approved set of candidate reviews."""
-        if not specs or len(specs) > 5:
-            raise ValueError("Agent batch must contain between one and five candidates")
+        if not specs or len(specs) > MAX_MANUAL_CANDIDATES_PER_BATCH:
+            raise ValueError("Agent batch must contain between one and 1000 candidates")
         keys = [uuid.uuid4().hex for _ in specs]
         stamp = now()
         with self.store.connect() as db:

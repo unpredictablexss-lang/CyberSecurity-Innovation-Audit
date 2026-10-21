@@ -80,14 +80,16 @@ export function planPayload(values, detectors, explicitIds = []) {
 export function taskAuthorizationPayload(values) {
   const enabled = (values?.audit_mode || "standard_review") === "standard_review" &&
     values?.auto_triage === true;
-  const maxCandidates = Number(values?.max_triage_candidates || 3);
-  const maxR2 = enabled && values?.auto_r2 === true
-    ? Math.min(Number(values?.max_r2_candidates ?? 2), maxCandidates) : 0;
-  return {
-    auto_triage: enabled,
-    max_triage_candidates: maxCandidates,
-    max_r2_candidates: maxR2,
-  };
+  const payload = { auto_triage: enabled };
+  if (values?.max_triage_candidates != null)
+    payload.max_triage_candidates = Number(values.max_triage_candidates);
+  if (!enabled || values?.auto_r2 !== true) payload.max_r2_candidates = 0;
+  else if (values?.max_r2_candidates != null) {
+    const deep = Number(values.max_r2_candidates);
+    payload.max_r2_candidates = payload.max_triage_candidates == null
+      ? deep : Math.min(deep, payload.max_triage_candidates);
+  }
+  return payload;
 }
 // Product-facing mode controls whether this operation creates Agent work.
 export function selectedAuditModeValues(values) {
@@ -159,4 +161,10 @@ export function recentRange(days, timezone, now = new Date()) {
 export function requestGate() {
   let sequence = 0;
   return { next: () => ++sequence, invalidate: () => { sequence++; }, current: (id) => id === sequence };
+}
+
+export function candidateBatchLimit(policy, mode) {
+  const key = mode === "tool_agent" ? "deep_groups_per_audit" : "quick_screen_groups_per_audit";
+  const value = policy?.limits?.[key];
+  return Number.isInteger(value) && value >= 0 && value <= 1000 ? value : null;
 }

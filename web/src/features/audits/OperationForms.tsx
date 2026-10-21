@@ -1,3 +1,4 @@
+import CandidateScope from "./CandidateScope";
 import React, { useEffect, useRef, useState } from "react";
 import { Alert, Button, Card, Checkbox, Collapse, Descriptions, Form, Input, InputNumber, Modal, Radio, Select, Space, Tabs, Tag, Typography, message } from "antd";
 import { api } from "../../api";
@@ -14,7 +15,6 @@ export function ComparisonForm({ kind, repos, detectors, cases, busy, agentStatu
   const [form] = Form.useForm();
   const repository = Form.useWatch("repository_id", form);
   const auditMode = Form.useWatch("audit_mode", form) || "static_only";
-  const autoR2 = Form.useWatch("auto_r2", form) !== false;
   const { refs, error: refError } = useRepositoryRefs(repository);
   const [preview, setPreview] = useState<any>(null);
   const [previewBusy, setPreviewBusy] = useState(false);
@@ -106,7 +106,7 @@ export function ComparisonForm({ kind, repos, detectors, cases, busy, agentStatu
     <Form name={"audit-" + kind} form={form} layout="vertical"
       initialValues={{ ...auditDefaults, audit_mode: "static_only", timezone: "Asia/Shanghai", lookback_days: 7,
         reference_time: new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16),
-        repository_id: context.repository_id, max_triage_candidates: 5, auto_r2: true, max_r2_candidates: 3 }}
+        repository_id: context.repository_id, auto_r2: true }}
       onValuesChange={invalidate}
       onFinish={finish}>
       <AuditModeSelector />
@@ -174,15 +174,10 @@ export function ComparisonForm({ kind, repos, detectors, cases, busy, agentStatu
         <ScopeBudget />
         <RuleNotice detectors={detectors} />
         {smartMode && agentStatus?.configured !== false && <>
-          <Form.Item name="max_triage_candidates" label="最多自动调查候选数" extra="每个固定版本 1–10,000 条。准确候选数扫描后统计，未入选或超限候选保持待研判。">
-            <InputNumber min={1} max={10000} precision={0} />
-          </Form.Item>
+          <CandidateScope />
           <Form.Item name="auto_r2" valuePropName="checked" extra="符合证据条件时，在固定源码范围内继续只读跨文件调查。">
             <Checkbox>允许深入追查</Checkbox>
           </Form.Item>
-          {autoR2 && <Form.Item name="max_r2_candidates" label="最多深入追查候选数">
-            <InputNumber min={0} max={Number(form.getFieldValue("max_triage_candidates") || 5)} precision={0} />
-          </Form.Item>}
         </>}
       </> }]} />
       <Button aria-label={submitLabel} className="section-gap" type="primary" htmlType="submit" size="large"

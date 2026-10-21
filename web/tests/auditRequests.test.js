@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { approvedDetectorIds, researchDetectorIds, datePreviewPayload, defaultRepositoryRevision, includePaths, operationPayload, recentRange, requestGate, snapshotPayload, planPayload, auditErrorMessage, taskAuthorizationPayload, auditWorkflowLabel, selectedAuditModeValues } from "../src/features/audits/model.js";
+import { approvedDetectorIds, researchDetectorIds, datePreviewPayload, defaultRepositoryRevision, includePaths, operationPayload, recentRange, requestGate, snapshotPayload, planPayload, auditErrorMessage, taskAuthorizationPayload, candidateBatchLimit, auditWorkflowLabel, selectedAuditModeValues } from "../src/features/audits/model.js";
 const detectors = [
   { id: "test.cpp", version: "2", kind: "research_candidate", supported_languages: ["cpp"] },
   { id: "test.example", version: "1", kind: "example", supported_languages: ["cpp"] },
@@ -32,7 +32,7 @@ test("date preview excludes detector/scope/budget fields required only for execu
   const fields = { repository_id: "repo", branch: "refs/heads/main", start: "2026-10-15T00:00", end: "2026-10-17T00:00", timezone: "Asia/Shanghai" };
   assert.deepEqual(datePreviewPayload({ ...values, ...fields }), fields);
   assert.deepEqual(operationPayload("date", { ...values, ...fields }, detectors), { ...fields,
-    audit_mode: "standard_review", auto_triage: false, max_triage_candidates: 3,
+    audit_mode: "standard_review", auto_triage: false,
     max_r2_candidates: 0,
     include_paths: ["src", "include"], detector_ids: ["test.cpp"], timeout_seconds: 60, memory_mb: 512 });
   assert.throws(() => datePreviewPayload({ ...fields, end: fields.start }), /结束/);
@@ -89,7 +89,7 @@ test("audit preview errors show field validation and API messages in plain langu
 
 test("task-level authorization binds candidate counts without a platform cumulative cost cap", () => {
   assert.deepEqual(taskAuthorizationPayload({ audit_mode: "standard_review" }), {
-    auto_triage: false, max_triage_candidates: 3, max_r2_candidates: 0,
+    auto_triage: false, max_r2_candidates: 0,
   });
   assert.deepEqual(taskAuthorizationPayload({
     audit_mode: "standard_review", auto_triage: true, max_triage_candidates: 3,
@@ -182,11 +182,25 @@ test("all comparison modes serialize consented automatic model review only when 
 test("selected audit mode directly determines whether Agent authorization is included", () => {
   const staticValues = selectedAuditModeValues({ audit_mode: "static_only", auto_triage: true });
   assert.deepEqual(taskAuthorizationPayload(staticValues), {
-    auto_triage: false, max_triage_candidates: 3, max_r2_candidates: 0,
+    auto_triage: false, max_r2_candidates: 0,
   });
   const smartValues = selectedAuditModeValues({ audit_mode: "standard_review", max_triage_candidates: 4,
     auto_r2: true, max_r2_candidates: 2 });
   assert.deepEqual(taskAuthorizationPayload(smartValues), {
     auto_triage: true, max_triage_candidates: 4, max_r2_candidates: 2,
   });
+});
+
+test("new automatic requests defer candidate counts to server policy", () => {
+  assert.deepEqual(taskAuthorizationPayload({ audit_mode: "standard_review", auto_triage: true, auto_r2: true }), { auto_triage: true });
+  assert.deepEqual(taskAuthorizationPayload({ audit_mode: "standard_review", auto_triage: true, auto_r2: false }), { auto_triage: true, max_r2_candidates: 0 });
+});
+
+test("manual batch stage follows current policy including six and zero", () => {
+  const policy = { limits: { quick_screen_groups_per_audit: 30, deep_groups_per_audit: 6 } };
+  assert.equal(candidateBatchLimit(policy, "tool_agent"), 6);
+  assert.equal(candidateBatchLimit(policy, "single_shot"), 30);
+  assert.equal(candidateBatchLimit({ limits: { deep_groups_per_audit: 12 } }, "tool_agent"), 12);
+  assert.equal(candidateBatchLimit({ limits: { deep_groups_per_audit: 0 } }, "tool_agent"), 0);
+  assert.equal(candidateBatchLimit(null, "tool_agent"), null);
 });

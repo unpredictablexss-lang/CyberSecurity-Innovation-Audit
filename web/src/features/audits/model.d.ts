@@ -14,3 +14,5 @@ export function planPayload(values: any, detectors: any[], explicitIds?: string[
 export function taskAuthorizationPayload(values: any): { auto_triage: boolean };
 export function auditErrorMessage(error: unknown): string;
 export function selectedAuditModeValues(values: any): any;
+
+export function candidateBatchLimit(policy: any, mode: string): number | null;

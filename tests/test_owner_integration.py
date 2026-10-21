@@ -75,6 +75,24 @@ class OwnerIntegrationTests(unittest.TestCase):
         for item in service.findings(report):
             self.assertTrue(item['evidence']['obligations'])
 
+    def test_new_single_and_multi_endpoint_disclosures_follow_candidate_policy(self):
+        from src.workbench.progressive_triage.policy import PolicyStore, build_policy
+        from src.workbench.operations_api import TaskTriageOptions, _preview_operation_triage
+        with patch.dict(os.environ, {"OHSCANNER_LLM_MODEL": "test", "OHSCANNER_LLM_API_KEY": "fake-key"}):
+            plan = self.plan(auto_triage=True)
+            self.assertEqual(plan["workflow"]["candidate_limit_per_authorized_batch"], 30)
+            self.assertEqual(plan["workflow"]["conditional_r2_candidate_limit"], 6)
+            PolicyStore(self.settings.data_dir).update(build_policy("deep"), 0)
+            plan = self.plan(auto_triage=True)
+            self.assertEqual(plan["workflow"]["candidate_limit_per_authorized_batch"], 100)
+            self.assertEqual(plan["workflow"]["conditional_r2_candidate_limit"], 20)
+            spec = service.make_spec(self.store.repository(self.repo_id), self.commit, ["."], None, 300, 2048)
+            body = TaskTriageOptions(auto_triage=True)
+            preview = _preview_operation_triage(self.settings, body, [spec, spec])
+            self.assertEqual((body.max_triage_candidates, body.max_r2_candidates), (100, 20))
+            self.assertEqual(len(preview["scans"]), 2)
+            self.assertTrue(all(item["manifest"]["candidate_selection"]["authorized_candidate_count"] == 100 for item in preview["scans"]))
+
     def test_task_level_triage_consent_is_bound_and_revocable(self):
         with patch.dict("os.environ", {
             "OHSCANNER_LLM_BASE_URL": "https://api.xiaomimimo.com/v1",
