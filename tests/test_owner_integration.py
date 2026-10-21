@@ -315,8 +315,7 @@ if os.environ.get("OHSCANNER_TEST_PROVIDER_TRACE"):
         candidate = next(item for item in service.findings(report)
                          if item["file"] == "lifetime.cpp")
         payload = {"job_id": job["id"], "candidate_id": candidate["id"],
-                   "mode": "tool_agent", "max_steps": 2,
-                   "max_output_tokens": 1200}
+                   "mode": "tool_agent", "max_steps": 2}
         provider_env = {
             "OHSCANNER_LLM_BASE_URL": "https://api.xiaomimimo.com/v1",
             "OHSCANNER_LLM_MODEL": "mimo-v2.6-pro",
@@ -329,6 +328,7 @@ if os.environ.get("OHSCANNER_TEST_PROVIDER_TRACE"):
             self.assertEqual(preview_response.status_code, 200, preview_response.text)
             preview = preview_response.json()
             self.assertTrue(preview["agent_execution"]["eligible"], preview)
+            self.assertEqual(preview["budgets"]["max_output_tokens_per_request"], 5000)
             created = self.client.post(
                 "/api/v1/operations/agent-investigations",
                 json={**payload, "source_submission_approved": True,

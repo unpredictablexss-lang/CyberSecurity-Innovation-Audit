@@ -24,6 +24,7 @@ class PolicyUpdate(BaseModel):
     profile: Literal["economical", "standard", "deep", "custom"]
     limits: dict[str, Any] | None = None
     family_quotas: bool | None = None
+    request_output_tokens: int | None = Field(default=5000, ge=128, le=65536, strict=True)
 
 
 def _public_state(state: dict[str, Any]) -> dict[str, Any]:
@@ -63,7 +64,12 @@ def install_routes(app, data_dir) -> PolicyStore:
     @app.put("/api/v1/agent/triage-policy")
     def update_triage_policy(body: PolicyUpdate):
         try:
-            policy = build_policy(body.profile, body.limits, body.family_quotas)
+            current_policy = store.read()["policy"]
+            kwargs = ({"request_output_tokens": body.request_output_tokens}
+                      if "request_output_tokens" in body.model_fields_set else
+                      {"request_output_tokens": current_policy["request_output_tokens"]}
+                      if "request_output_tokens" in current_policy else {})
+            policy = build_policy(body.profile, body.limits, body.family_quotas, **kwargs)
             state = store.update(policy, body.expected_revision)
         except PolicyRevisionConflict as error:
             raise HTTPException(status_code=409, detail=str(error)) from error

@@ -345,7 +345,7 @@ class SensitiveDataRedactionTests(unittest.TestCase):
         prompt = agent._structured_repair_prompt([0], 2,
             previous_error_code="invalid_source_line_range")
         self.assertIn("did not match numbered lines in that same evidence ID and file excerpt", prompt)
-        self.assertIn("do not copy line numbers from another file or excerpt", prompt)
+        self.assertIn("do not copy line numbers from another file or excerpt", prompt.lower())
         self.assertIn("mark it unresolved with no citations", prompt)
 
     def test_provider_response_shape_diagnostics_exclude_response_text(self):
@@ -773,8 +773,8 @@ class ProviderConfigTests(unittest.TestCase):
         self.assertIsNone(manifest["budgets"]["cumulative_token_ceiling"])
         self.assertIsNone(manifest["budgets"]["cumulative_request_ceiling"])
         self.assertIsNone(manifest["budgets"]["cumulative_spend_ceiling"])
-        self.assertEqual(manifest["budgets"]["r1_max_output_tokens_per_request"], 3000)
-        self.assertEqual(manifest["budgets"]["r2_max_output_tokens_per_request"], 3000)
+        self.assertEqual(manifest["budgets"]["r1_max_output_tokens_per_request"], 5000)
+        self.assertEqual(manifest["budgets"]["r2_max_output_tokens_per_request"], 5000)
         self.assertIsNone(manifest["budgets"]["max_validation_repairs"])
         self.assertTrue(any("structured-answer correction may resend" in item
                             for item in manifest["source_disclosure"]))
@@ -809,7 +809,7 @@ class ProviderConfigTests(unittest.TestCase):
         self.assertEqual(preview["cost_budget"]["local_cumulative_usd_budget"], "none")
         self.assertFalse(preview["platform_cost_budget_enforced"])
         self.assertEqual(preview["manifest"]["candidate_selection"]["authorized_candidate_count"], 2)
-        self.assertEqual(preview["manifest"]["budgets"]["r1_max_output_tokens_per_request"], 3000)
+        self.assertEqual(preview["manifest"]["budgets"]["r1_max_output_tokens_per_request"], 5000)
         self.assertIsNone(preview["manifest"]["budgets"]["cumulative_token_ceiling"])
     def test_task_consent_ignores_legacy_usd_caps_for_uncapped_investigations(self):
         plan = {"plan_sha256": "a" * 64, "source": {"repository": "openharmony/demo", "commit": "b" * 40, "git_tree": "c" * 40}}
@@ -1887,7 +1887,7 @@ class AgentExecutionTests(unittest.TestCase):
 
 
 class CandidateArtifactGenerationTests(unittest.TestCase):
-    def _run(self, assessment, *, invalid_citation=False, poc_code=None):
+    def _run(self, assessment, *, invalid_citation=False, poc_code=None, uncapped_output=False):
         source_text = "void run() {\n  check_permission();\n  privileged_call();\n}\n"
         source_sha = hashlib.sha256(source_text.encode()).hexdigest()
         candidate = {"id": "candidate-artifact", "file": "src/guard.cpp", "line": 2,
@@ -1994,6 +1994,7 @@ class CandidateArtifactGenerationTests(unittest.TestCase):
 
         task = {"id": "task-artifact", "spec": {"job_id": "job-artifact",
             "candidate_id": candidate["id"], "mode": "tool_agent",
+            "no_cumulative_token_ceiling": uncapped_output, "report_sha256": "b" * 64,
             "max_output_tokens": None, "continuous_investigation": True,
             "source_submission_approved": True, "provider_fingerprint": "unused",
             "prompt_version": agent.PROMPT_VERSION, "tool_policy_version": agent.TOOL_POLICY_VERSION,
@@ -2017,8 +2018,8 @@ class CandidateArtifactGenerationTests(unittest.TestCase):
         result, client, preview = self._run("likely_true_positive")
         self.assertEqual(preview["budgets"]["artifact_generation_stage_enabled"], True)
         self.assertEqual(preview["budgets"]["max_artifact_generation_calls"], 1)
-        self.assertEqual(preview["budgets"]["max_output_tokens"], 1200)
-        self.assertEqual(preview["budgets"]["artifact_output_tokens_per_request"], 1200)
+        self.assertEqual(preview["budgets"]["max_output_tokens"], 5000)
+        self.assertEqual(preview["budgets"]["artifact_output_tokens_per_request"], 5000)
         self.assertIn(agent.ARTIFACT_GENERATION_DISCLOSURE, preview["stage_disclosure"])
         self.assertEqual(result["artifact_generation"]["status"], "completed")
         self.assertEqual(result["artifact_generation"]["calls_used"], 1)
@@ -2035,10 +2036,10 @@ class CandidateArtifactGenerationTests(unittest.TestCase):
         self.assertEqual(client.budget_phases[-3:], [None, "skeptic_review", "artifact_generation"])
         self.assertGreaterEqual(request_phases.count("tool_call"), 1)
         self.assertLessEqual(max(row["usage"]["output_tokens"] for row in result["model_calls"]), 1200)
-        self.assertEqual(result["model_usage"]["per_request_output_limit_tokens"], 1200)
+        self.assertEqual(result["model_usage"]["per_request_output_limit_tokens"], 5000)
         self.assertEqual(result["model_usage"]["per_request_output_limit_policy"],
                          "bounded")
-        self.assertTrue(all(0 < payload["max_output_tokens"] <= 1200 for payload in client.payloads))
+        self.assertTrue(all(0 < payload["max_output_tokens"] <= 5000 for payload in client.payloads))
         self.assertEqual(result["vulnerability_state"], "candidate")
         self.assertEqual(result["validated_vulnerability"], 0)
 
@@ -2949,6 +2950,27 @@ class AgentFixedCommitToolTests(unittest.TestCase):
             self.assertTrue(result["truncated"])
 
 
+class AgentOutputDefaultTests(unittest.TestCase):
+    def test_default_and_explicit_output_caps_survive_api_and_worker_normalization(self):
+        from src.workbench.operations_api import (AgentInvestigationRequest,
+            AgentBatchInvestigationRequest, ProgressiveDeepInvestigationRequest)
+        requests = [
+            (AgentInvestigationRequest, {"job_id": "job", "candidate_id": "candidate"}),
+            (AgentBatchInvestigationRequest, {"job_id": "job", "candidate_ids": ["candidate"]}),
+            (ProgressiveDeepInvestigationRequest, {"job_id": "job", "candidate_id": "candidate",
+                "progressive_quick_screen_operation_id": "a" * 32}),
+        ]
+        for request_type, payload in requests:
+            with self.subTest(request=request_type.__name__):
+                default = request_type(**payload)
+                self.assertEqual(default.max_output_tokens, 5000)
+                self.assertEqual(agent.bounded_agent_spec(default.model_dump())["max_output_tokens"], 5000)
+                for cap in [1200, 5000, 16000]:
+                    explicit = request_type(**payload, max_output_tokens=cap)
+                    self.assertEqual(agent.bounded_agent_spec(explicit.model_dump())["max_output_tokens"], cap)
+        self.assertEqual(agent.bounded_agent_spec({"mode": "tool_agent"})["max_output_tokens"], 5000)
+
+
 class AgentRouteTests(unittest.TestCase):
     def test_provider_check_requires_explicit_no_source_confirmation(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -3207,6 +3229,8 @@ class AgentRouteTests(unittest.TestCase):
                 self.assertEqual(plan["source_commit"], "c" * 40)
                 self.assertEqual(plan["report_sha256"], "b" * 64)
                 self.assertEqual(plan["mode"], "single_shot")
+                self.assertEqual(preview["budgets"]["max_output_tokens"], 5000)
+                self.assertEqual(plan["max_output_tokens"], 5000)
                 self.assertEqual(plan["experiment_id"], "paired-test-1")
                 self.assertEqual(plan["case_id"], case_id)
                 self.assertEqual(plan["prompt_version"], agent.PROMPT_VERSION)
@@ -3630,21 +3654,21 @@ class AgentRouteTests(unittest.TestCase):
                 self.assertIn("智能调查实验与人工评价", report_md.text)
                 self.assertIn("系统未生成或应用补丁", report_md.text)
                 self.assertIn("不验证引句是否支持模型陈述", report_md.text)
-                self.assertIn("令牌：输入 321 / 输出 55", report_md.text)
+                self.assertIn("模型用量（令牌）：输入 321 / 输出 55", report_md.text)
                 self.assertIn(r"估算费用（非实账）：美元 0\.00043644 / 人民币 0\.00301000", report_md.text)
                 self.assertIn("历史模型摘要（未经核验）", report_md.text)
                 self.assertIn("授权预览 SHA-256", report_md.text)
                 self.assertIn(consent_sha256, report_md.text)
-                self.assertIn("Supported claim:", report_md.text)
+                self.assertIn("模型列出的源码主张：", report_md.text)
                 self.assertIn(r"guarded\_call\(\);", report_md.text)
                 self.assertIn("人工评价", report_md.text)
                 self.assertIn("Product permission boundary", report_md.text)
-                self.assertNotIn("## CONFIRMED", report_md.text)
-                self.assertNotIn("## ALSO CONFIRMED", report_md.text)
-                self.assertNotIn("![evidence]", report_md.text)
-                self.assertNotIn("![next]", report_md.text)
-                self.assertIn(r"\#\# CONFIRMED \[exploit\]\(https://attacker\.invalid\)", report_md.text)
-                self.assertIn(r"\!\[evidence\]\(https://attacker\.invalid/pixel\)", report_md.text)
+                self.assertIn('<pre>Product permission boundary</pre>', report_md.text)
+                self.assertIn('## CONFIRMED [exploit](https://attacker.invalid)</pre>', report_md.text)
+                self.assertIn('![evidence](https://attacker.invalid/pixel)</pre>', report_md.text)
+                self.assertIn('![next](https://attacker.invalid/next)</pre>', report_md.text)
+                self.assertNotIn('<img', report_md.text)
+                self.assertNotIn('<a href="https://attacker.invalid', report_md.text)
 
     def test_agent_review_is_rejected_before_a_completed_agent_result_exists(self):
         with tempfile.TemporaryDirectory() as directory:

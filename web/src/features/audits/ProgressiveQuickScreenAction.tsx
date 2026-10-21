@@ -74,6 +74,7 @@ export default function ProgressiveQuickScreenAction({ jobId, candidateId, enabl
         <Descriptions className="section-gap" bordered size="small" column={2}>
           <Descriptions.Item label="模型端点">{preview.provider?.endpoint_host || preview.provider?.model || "未知"}</Descriptions.Item>
           <Descriptions.Item label="调用与工具">1 次；工具关闭</Descriptions.Item>
+          <Descriptions.Item label="单次输出额度">{preview.disclosure?.max_output_tokens == null ? "无本地上限，由服务商决定" : String(preview.disclosure.max_output_tokens) + " tokens"}</Descriptions.Item>
           <Descriptions.Item label="原始候选">{candidateId}</Descriptions.Item>
           <Descriptions.Item label="来源报告 SHA-256">{preview.evidence?.[0]?.report_sha256 || "未知"}</Descriptions.Item>
           <Descriptions.Item label="策略版本 / SHA">{preview.progressive_policy?.revision} / {preview.progressive_policy?.policy_sha256}</Descriptions.Item>

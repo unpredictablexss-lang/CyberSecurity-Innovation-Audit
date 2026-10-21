@@ -86,7 +86,8 @@ export default function ProgressiveDeepInvestigationAction({ jobId, candidateId,
           <Descriptions.Item label="候选 / 文件">{candidateId} · {preview.binding?.file}</Descriptions.Item>
           <Descriptions.Item label="已选只读工具">{preview.allowed_tools?.map((tool: string) => toolLabels[tool] || "只读源码工具").join("、") || "无"}</Descriptions.Item>
           <Descriptions.Item label="累计调查限制">平台不设累计令牌用量、调用次数、步骤、时长或费用上限</Descriptions.Item>
-          <Descriptions.Item label="单次模型请求">单次输出上限 {preview.budgets?.max_output_tokens_per_request ?? "由模型服务商决定"} 个令牌；网络超时后保留未决证据</Descriptions.Item>
+          <Descriptions.Item label="单次模型请求">单次输出上限 {preview.budgets?.max_output_tokens_per_request == null ? "无本地上限，由模型服务商决定" : String(preview.budgets.max_output_tokens_per_request) + " Token"}；网络超时后保留未决证据</Descriptions.Item>
+
         </Descriptions>
         <Text strong>本次发送的初始上下文</Text>
         <pre className="raw section-gap">{JSON.stringify(preview.initial_context, null, 2)}</pre>
