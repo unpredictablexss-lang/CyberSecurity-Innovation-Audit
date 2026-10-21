@@ -13,6 +13,20 @@ const riskTierLabels = Object.freeze({
   unknown_source_binding: "来源待核候选",
   low_priority_manual: "低优先级候选",
 });
+const humanReviewStatusLabels = Object.freeze({
+  unassessed: "待人工复核",
+  under_review: "人工复核中",
+  plausible_unproven: "人工认为值得验证",
+  likely_false_positive: "人工倾向误报（未确认）",
+  refuted: "人工认为当前证据不支持",
+});
+const humanReviewStatusColors = Object.freeze({
+  unassessed: "default",
+  under_review: "processing",
+  plausible_unproven: "orange",
+  likely_false_positive: "blue",
+  refuted: "default",
+});
 const severityLabels = Object.freeze({
   critical: "严重", high: "高危", medium: "中危",
   low: "低危", info: "提示", unknown: "未分级",
@@ -29,6 +43,12 @@ export function candidateConfidenceLabel(tier) {
 }
 export function candidateConfidenceColor(tier) {
   return riskTierColorMap[tier] || "default";
+}
+export function humanReviewStatusLabel(status) {
+  return humanReviewStatusLabels[status] || "复核状态未知";
+}
+export function humanReviewStatusColor(status) {
+  return humanReviewStatusColors[status] || "default";
 }
 export function candidateVerificationLabel(state) {
   // Cross-audit risk observations are never promoted by model confidence.

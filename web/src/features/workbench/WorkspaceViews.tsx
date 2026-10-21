@@ -10,7 +10,7 @@ import OperationWorkspace from "../audits/OperationWorkspace";
 import AgentProviderSettings from "./AgentProviderSettings";
 import { SourceContext } from "../audits/OperationForms";
 import { jobDetailPath, retainRiskSource, riskQueuePath } from "./navigation";
-import { triageStateLabel, candidateSeverityLabel, candidateSeverityColor, candidateConfidenceLabel, candidateConfidenceColor, candidateVerificationLabel } from "./riskLabels.js";
+import { triageStateLabel, candidateSeverityLabel, candidateSeverityColor, candidateConfidenceLabel, candidateConfidenceColor, candidateVerificationLabel, humanReviewStatusLabel, humanReviewStatusColor } from "./riskLabels.js";
 const { Text, Paragraph } = Typography;
 function AgentSignal({ row }: { row: any }) {
   const signal = row.agent_signal;
@@ -29,6 +29,13 @@ function AgentSignal({ row }: { row: any }) {
         go("/tasks/operations/" + signal.operation_id);
       }}>查看调查报告</Button>}
     </Space>
+  </Tooltip>;
+}
+function HumanReviewStatus({ row }: { row: any }) {
+  return <Tooltip title="这里显示人工复核流程或人工意见，不等于漏洞确认，也不代表已证明安全。">
+    <Tag color={humanReviewStatusColor(row.human_review_status)}>
+      {humanReviewStatusLabel(row.human_review_status)}
+    </Tag>
   </Tooltip>;
 }
 function confidenceBasisHint(row: any) {
@@ -164,7 +171,7 @@ export function RiskCenter({ jobs, query = new URLSearchParams() }: { jobs: any[
     </Card>
     <Card className="section-gap" title={"候选队列 · " + (loading ? "正在读取" : (summary?.filtered_candidate_count ?? 0) + " 项匹配")}>
       <Table<any> rowKey={(row) => row.audit_id + ":" + row.candidate_id} size="small" dataSource={items}
-        pagination={false} loading={loading} scroll={{ x: 1060 }}
+        pagination={false} loading={loading} scroll={{ x: 1190 }}
         onRow={(row) => ({ onClick: () => openCandidate(row), style: { cursor: "pointer" } })}
         columns={[
           { title: "可信程度", render: (_: unknown, row: any) =>
@@ -183,6 +190,7 @@ export function RiskCenter({ jobs, query = new URLSearchParams() }: { jobs: any[
           { title: "仓库 / Commit", render: (_: unknown, row: any) => <><Text>{row.repository}</Text><div className="muted">{String(row.commit || "").slice(0, 12)}</div></> },
           { title: "检测器 / 候选位置", render: (_: unknown, row: any) => <>{row.detector_id || "未知检测器"}<div>{row.file}:{row.line}</div><div className="muted">{row.rule_id}</div></> },
           { title: "AI 研判", render: (_: unknown, row: any) => <AgentSignal row={row} /> },
+          { title: "人工复核", render: (_: unknown, row: any) => <HumanReviewStatus row={row} /> },
           { title: "查看", render: (_: unknown, row: any) => <Button size="small" onClick={(event) => { event.stopPropagation(); openCandidate(row); }}>查看证据 / 人工研判</Button> },
         ]}
         locale={{ emptyText: <Empty description={loading ? "正在读取候选队列…" :
@@ -253,7 +261,7 @@ export function AuditRiskOverview() {
       message={summary.unavailable_report_count + " 份报告无法校验，未计入以上统计"}
       description="受影响任务仍可从任务中心检查其原始状态。" />}
     <Table<any> className="section-gap" size="small" rowKey={(row) => row.audit_id + ":" + row.candidate_id}
-      dataSource={rows} pagination={false} loading={loading} scroll={{ x: 1010 }}
+      dataSource={rows} pagination={false} loading={loading} scroll={{ x: 1140 }}
       onRow={(row) => ({ onClick: () => openCandidate(row), style: { cursor: "pointer" } })}
       columns={[
         { title: "可信程度", render: (_: unknown, row: any) =>
@@ -267,6 +275,7 @@ export function AuditRiskOverview() {
         { title: "仓库 / Commit", render: (_: unknown, row: any) => <><Text>{row.repository}</Text><div className="muted">{String(row.commit || "").slice(0, 12)}</div></> },
         { title: "候选位置", render: (_: unknown, row: any) => <>{row.file}:{row.line}<div className="muted">{row.rule_id}</div></> },
         { title: "AI 研判", render: (_: unknown, row: any) => <AgentSignal row={row} /> },
+        { title: "人工复核", render: (_: unknown, row: any) => <HumanReviewStatus row={row} /> },
         { title: "查看", render: (_: unknown, row: any) => <Button size="small" onClick={(event) => { event.stopPropagation(); openCandidate(row); }}>查看证据 / 人工研判</Button> },
       ]}
       locale={{ emptyText: <Empty description={summary?.available_report_count ? "最近报告没有候选观测；这不代表仓库不存在漏洞。" : "完成一次扫描后，这里会显示近期风险优先队列。"} /> }} />

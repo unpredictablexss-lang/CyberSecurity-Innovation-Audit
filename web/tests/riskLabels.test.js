@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { agentConfidenceLabel, agentScopeLabel, agentVerdictLabel, agentVerdictReasonLabel, analysisStatusLabel, coverageStatusLabel, coverageSummaryLabel, groupingBasisLabel, groupingSymbolLabel, obligationDescriptionLabel, obligationKindLabel, obligationStatusLabel, productStatusLabel, reportLimitationLabel, riskReasonLabel, riskReasonsLabel, scanStageLabel, taskReportStatusLabel, taskTriageStatusLabel, triageStateLabel } from "../src/features/workbench/riskLabels.js";
+import { agentConfidenceLabel, agentScopeLabel, agentVerdictLabel, agentVerdictReasonLabel, analysisStatusLabel, coverageStatusLabel, coverageSummaryLabel, groupingBasisLabel, groupingSymbolLabel, humanReviewStatusColor, humanReviewStatusLabel, obligationDescriptionLabel, obligationKindLabel, obligationStatusLabel, productStatusLabel, reportLimitationLabel, riskReasonLabel, riskReasonsLabel, scanStageLabel, taskReportStatusLabel, taskTriageStatusLabel, triageStateLabel } from "../src/features/workbench/riskLabels.js";
 
 test("Agent verdict labels separate source evidence from product confirmation", () => {
   assert.equal(agentVerdictLabel("confirmed"), "源码证据门通过（产品状态仍未知）");
@@ -95,6 +95,17 @@ test("task detail shows loading states instead of false waiting or unknown label
     "等待静态扫描报告");
 });
 
+
+test("human review status is visible without implying confirmation or safety", () => {
+  assert.equal(humanReviewStatusLabel("unassessed"), "待人工复核");
+  assert.equal(humanReviewStatusLabel("under_review"), "人工复核中");
+  assert.equal(humanReviewStatusLabel("plausible_unproven"), "人工认为值得验证");
+  assert.equal(humanReviewStatusLabel("likely_false_positive"), "人工倾向误报（未确认）");
+  assert.equal(humanReviewStatusLabel("refuted"), "人工认为当前证据不支持");
+  assert.equal(humanReviewStatusLabel("future_state"), "复核状态未知");
+  assert.equal(humanReviewStatusColor("under_review"), "processing");
+  assert.equal(humanReviewStatusColor("future_state"), "default");
+});
 
 test("candidate presentation keeps impact, confidence and confirmation orthogonal", async () => {
   const { candidateSeverityLabel, candidateSeverityColor, candidateConfidenceLabel,
