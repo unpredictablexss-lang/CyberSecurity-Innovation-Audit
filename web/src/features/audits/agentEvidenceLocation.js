@@ -87,7 +87,7 @@ export function evidenceLocation(result, evidenceId, quote = "", lineReference =
     const range = quoteRange(source.text, quote, Number(source.start_line));
     const start = range?.start || Number(source.start_line);
     const end = range?.end || Number(source.end_line);
-    return `${formatRange(source.file, start, end)} · 固定提交`;
+    return `${formatRange(source.file, start, end)} · 扫描代码版本`;
   }
   if (Array.isArray(source.matches) && source.matches.length > 0) {
     const resolved = source.matches.map((match) => {
@@ -100,9 +100,9 @@ export function evidenceLocation(result, evidenceId, quote = "", lineReference =
     }).filter(Boolean);
     if (resolved.length > 0) {
       const extra = source.matches.length > resolved.length ? `；另有${source.matches.length - resolved.length} 处` : "";
-      return `${resolved.slice(0, 3).join("；")}${extra} · 固定提交`;
+      return `${resolved.slice(0, 3).join("；")}${extra} · 扫描代码版本`;
     }
   }
-  if (source.file) return `${source.file} · 固定提交历史`;
+  if (source.file) return `${source.file} · 扫描版本的 Git 历史`;
   return tool.tool || "只读工具证据";
 }

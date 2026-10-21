@@ -1,0 +1,109 @@
+{
+  "results": [
+    {
+      "stage": "baseline",
+      "repeat": 1,
+      "passed": 11,
+      "components": 11,
+      "wall_seconds": 125.8923,
+      "peak_rss_kib": 264624,
+      "files": 9508,
+      "sha256": "c670542bb777ab509555354fe19c07c806321aece834877fe381c0bcdd99234a"
+    },
+    {
+      "stage": "baseline",
+      "repeat": 2,
+      "passed": 11,
+      "components": 11,
+      "wall_seconds": 142.4954,
+      "peak_rss_kib": 264476,
+      "files": 9508,
+      "sha256": "1de1c669e4a81fbcd404e6263b821a939bca77962f18128327d9cdb6c4dfd072"
+    },
+    {
+      "stage": "integrated",
+      "repeat": 1,
+      "passed": 11,
+      "components": 11,
+      "wall_seconds": 126.946,
+      "peak_rss_kib": 265316,
+      "files": 9508,
+      "sha256": "a209bb2b6e9366dbebb770d12c35345f35d721a025915a58f2f8c92383948f1b"
+    },
+    {
+      "stage": "integrated",
+      "repeat": 2,
+      "passed": 11,
+      "components": 11,
+      "wall_seconds": 127.7325,
+      "peak_rss_kib": 265508,
+      "files": 9508,
+      "sha256": "8ab6ddbd664dbb98999b2d2258c34922d82e7e0f06c6b270a10838fb7d765a0f"
+    }
+  ],
+  "claim": "platform cost only; example detector, not detection accuracy",
+  "order": "baseline-1, integrated-1, baseline-2, integrated-2",
+  "baseline_commit": "e6d9a1ae0589dcb26c3f1d9b5ff4d9957443c1c0",
+  "invariants_compared": [
+    "label",
+    "repository",
+    "commit",
+    "scanned_files",
+    "scanned_bytes",
+    "parse_complete",
+    "parse_partial",
+    "analyzed_files",
+    "unexamined_files",
+    "diagnostic_count",
+    "status",
+    "detector_status",
+    "validated_vulnerability"
+  ],
+  "comparisons": [
+    {
+      "run": "baseline-2",
+      "scope_coverage_and_candidate_counts_equal": true,
+      "mismatches": []
+    },
+    {
+      "run": "integrated-1",
+      "scope_coverage_and_candidate_counts_equal": true,
+      "mismatches": []
+    },
+    {
+      "run": "integrated-2",
+      "scope_coverage_and_candidate_counts_equal": true,
+      "mismatches": []
+    }
+  ],
+  "example_diagnostic_counts": {
+    "communication_ipc": 0,
+    "inputmethod_imf": 0,
+    "multimedia_camera_framework": 0,
+    "multimedia_player_framework": 0,
+    "notification_common_event_service": 0,
+    "resourceschedule_background_task_mgr": 0,
+    "security_access_token": 0,
+    "telephony_call_manager": 0,
+    "update_updateservice": 0,
+    "window_window_manager": 0,
+    "c_utils_pinned_m2": 0
+  },
+  "diagnostic_identity_comparisons": [
+    {
+      "run": "baseline-2",
+      "all_diagnostic_identities_equal": true,
+      "mismatches": []
+    },
+    {
+      "run": "integrated-1",
+      "all_diagnostic_identities_equal": true,
+      "mismatches": []
+    },
+    {
+      "run": "integrated-2",
+      "all_diagnostic_identities_equal": true,
+      "mismatches": []
+    }
+  ]
+}

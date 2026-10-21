@@ -5,6 +5,7 @@ from pathlib import Path
 from unittest.mock import patch
 from src.ohscanner.detectors.admission import pending_admissions
 from src.ohscanner.detectors.catalog import build_registry, catalog_metadata, default_detector_ids
+from src.ohscanner.detectors.data.sensitive_exposure import SensitiveExposureDetector
 from src.ohscanner.planning import approved_metadata
 from src.workbench.planning import plan_audit
 from tests.test_audit_plan import manifest

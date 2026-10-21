@@ -6,5 +6,10 @@
     "~/openharmony-audit/perf-corpus"
   ],
   "performance_mode": "balanced",
-  "max_concurrent_scans": 2
+  "max_concurrent_scans": 2,
+  "repository_cache": {
+    "roots": ["~/ohscanner-workbench/data/repo-cache"],
+    "max_bytes": 0,
+    "minimum_free_bytes": 1073741824
+  }
 }

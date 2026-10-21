@@ -1,0 +1,130 @@
+{
+  "schema_version": 1,
+  "tested_code_commit": "ec783c3902cc3572ee3c41ad2e0d66c78c0bc915",
+  "python": {
+    "command": "T74_IPC_GIT=/mnt/d/openHarmonyScanner/tmp/ipc-data06-official-20261021 python -m unittest discover -s tests -v",
+    "environment": "Ubuntu WSL Python 3.12.3; isolated Linux checkout",
+    "tests": 2059,
+    "failures": 0,
+    "skipped": 18,
+    "seconds": 184.888,
+    "skip_records": [
+      "test_manifest_is_source_bound_and_missing_blob_fails_closed (detectors.ark_runtime.test_c13_real_replay.C13RealReplayTests.test_manifest_is_source_bound_and_missing_blob_fails_closed) ... skipped 'pinned Ark Runtime Git store unavailable'",
+      "test_production_cli_replay_is_retained_and_partial_is_not_safe (detectors.ark_runtime.test_c13_real_replay.C13RealReplayTests.test_production_cli_replay_is_retained_and_partial_is_not_safe) ... skipped 'pinned Ark Runtime Git store unavailable'",
+      "test_exact_parent_and_fixed_source_through_registered_adapter (detectors.ark_runtime.test_exception_guard.ExceptionGuardHistoricalTests.test_exact_parent_and_fixed_source_through_registered_adapter) ... skipped 'Pinned Ark Git store not supplied; no implicit fetch'",
+      "test_bound_typedarray_target_stays_partial_but_recovers_lexical_owner (detectors.ark_runtime.test_parser_owner.ParserOwnerTests.test_bound_typedarray_target_stays_partial_but_recovers_lexical_owner) ... skipped 'OHSCANNER_ARK_REPO not configured'",
+      "test_exact_historical_pair (detectors.ark_runtime.test_receiver_guard.ReceiverGuardHistoricalTests.test_exact_historical_pair) ... skipped 'Pinned official Ark Git store not supplied; no implicit fetch'",
+      "test_existing_rescan_counts_and_identity_gap_are_preserved (test_a_ccr_03_finding_identity.SameScopeRescanRegressionTests.test_existing_rescan_counts_and_identity_gap_are_preserved) ... skipped 'same-scope rescan artifact is not present in this checkout'",
+      "test_corpus_ipc_object_stub_send_request_dispatch (test_ipc_entry_index.EntryIndexTests.test_corpus_ipc_object_stub_send_request_dispatch) ... skipped 'perf-corpus/communication_ipc not present'",
+      "setUpClass (test_ipc_t74_cj_array_bounds_integration_challenge.T74CjArrayBoundsOverlayChallenge) ... skipped 'official communication_ipc Git object repo missing: /mnt/d/openHarmonyScanner/tmp/ipc-data06-official-20261021'",
+      "test_attack_triggers_on_the_vulnerable_revision_only (test_poc_runner.Auth01IntegrationTests.test_attack_triggers_on_the_vulnerable_revision_only) ... skipped 'AUTH-01 runtime harness must execute only through the Docker validation worker'",
+      "test_record_keeps_validated_vulnerability_at_zero (test_poc_runner.Auth01IntegrationTests.test_record_keeps_validated_vulnerability_at_zero) ... skipped 'AUTH-01 runtime harness must execute only through the Docker validation worker'",
+      "test_a_changed_digest_fails (test_poc_runner.ReachabilityEvidenceTests.test_a_changed_digest_fails) ... skipped 'the pinned source store is required'",
+      "test_a_moved_quote_fails_instead_of_describing_other_code (test_poc_runner.ReachabilityEvidenceTests.test_a_moved_quote_fails_instead_of_describing_other_code) ... skipped 'the pinned source store is required'",
+      "test_no_block_means_no_claim (test_poc_runner.ReachabilityEvidenceTests.test_no_block_means_no_claim) ... skipped 'the pinned source store is required'",
+      "test_the_harness_declares_a_partial_reachability_block (test_poc_runner.ReachabilityEvidenceTests.test_the_harness_declares_a_partial_reachability_block) ... skipped 'the pinned source store is required'",
+      "test_the_rendered_record_states_what_is_not_established (test_poc_runner.ReachabilityEvidenceTests.test_the_rendered_record_states_what_is_not_established) ... skipped 'the pinned source store is required'",
+      "test_verification_checks_the_digest_and_the_quoted_line (test_poc_runner.ReachabilityEvidenceTests.test_verification_checks_the_digest_and_the_quoted_line) ... skipped 'the pinned source store is required'",
+      "test_real_historical_sources_produce_linked_detector_candidates (test_shared_ptr_race_poc.SharedPtrRacePocTests.test_real_historical_sources_produce_linked_detector_candidates) ... skipped 'historical detector replay requires locally preserved source artifacts: outputs/reports/static_baselines/c_utils_singleton_uaf.vulnerable.codeql/source/base/include/singleton.h, outputs/reports/static_baselines/c_utils_singleton_uaf.fixed.codeql/source/base/include/singleton.h'",
+      "test_source_hashes_and_quotes_are_verified (test_shared_ptr_race_poc.SharedPtrRacePocTests.test_source_hashes_and_quotes_are_verified) ... skipped 'optional preserved historical source artifacts are unavailable: outputs/reports/static_baselines/c_utils_singleton_uaf.vulnerable.codeql/source/base/include/singleton.h, outputs/reports/static_baselines/c_utils_singleton_uaf.fixed.codeql/source/base/include/singleton.h'"
+    ]
+  },
+  "frontend": {
+    "tests": 126,
+    "failures": 0,
+    "typescript_and_production_build": "passed",
+    "node": "22",
+    "commands": [
+      "npm --prefix web test",
+      "npm --prefix web run build"
+    ]
+  },
+  "component_replay": {
+    "job_id": "1772cfdd72f745ed8573224997fd4250",
+    "repository": "openharmony/communication_ipc",
+    "commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "git_tree": "125ecbfa21f430f2f977f0026ab97b70cd27a726",
+    "engine_sha256": "e7dc94e1fb83c3bb55e6f7e2491ca9a9c8919f6669b14fad1b02ae28cc3d93cf",
+    "status": "completed_with_limitations",
+    "indexed_files": 1,
+    "source_bytes": 43767,
+    "parse": {
+      "parsing_status": {
+        "complete": 1
+      },
+      "languages": {
+        "cpp": 1
+      }
+    },
+    "candidate_count": 0,
+    "validated_vulnerability": 0,
+    "candidate_sources_verified": 0,
+    "cli_parity": true,
+    "report_sha256": "99c7d579aeff3010f84aee05f8dd231ee1b86f8fa4a12d138321f330ebad8c22",
+    "scan_seconds": 10.283628641000178,
+    "verification_seconds": 13.034428937000484,
+    "artifact_directory": "/mnt/d/openHarmonyScanner/tmp/final-closeout-ui-final-data/artifacts/1772cfdd72f745ed8573224997fd4250",
+    "limitations": [
+      "Not an accuracy benchmark or runtime vulnerability validation.",
+      "Uses the explicitly requested include scope, not a production exclusion profile."
+    ]
+  },
+  "component_detector_statuses": {
+    "ohscanner.ark.runtime.type_safety": "blocked",
+    "ohscanner.cpp.bounds": "completed",
+    "ohscanner.cpp.integer_bounds": "completed",
+    "ohscanner.cpp.lifetime": "completed",
+    "ohscanner.cpp.null_dereference": "blocked",
+    "ohscanner.cpp.path_traversal": "completed",
+    "ohscanner.cpp.resource_lifetime": "completed",
+    "ohscanner.cpp.shared_ptr_race": "completed",
+    "ohscanner.cpp.unsafe_memory_call": "completed",
+    "ohscanner.data.sensitive_exposure": "blocked",
+    "ohscanner.interface.ipc": "completed",
+    "ohscanner.known_disclosed_cves": "completed",
+    "ohscanner.oh.arkts_js": "blocked"
+  },
+  "sqlite": "fresh isolated databases; v3 backup migration, repeated initialization and crash recovery regressions passed in full suite",
+  "fake_provider": "four operation kinds × static/smart (8 combinations), per-endpoint consent, retries, cancellation, finite budgets, pair bindings covered by full suite; no real paid Provider",
+  "browser": {
+    "origin": "http://localhost:18891",
+    "isolated_data_dir": "D:/openHarmonyScanner/tmp/final-closeout-ui-final-data",
+    "task_id": "1772cfdd72f745ed8573224997fd4250",
+    "checks": [
+      "pinned commit/tree/report/source binding",
+      "coverage limitations and candidate/unknown separation",
+      "no provider configured; no model call"
+    ]
+  },
+  "logs": [
+    {
+      "file": "logs/final-closeout-linux-final-full4.log",
+      "sha256": "d8dcbb228ba9dadd577daed364fde9d7f979fc0c4af849d4698c91057fe6c807",
+      "bytes": 364380
+    },
+    {
+      "file": "logs/final-closeout-web-final-tests.log",
+      "sha256": "91c5431c824cba76896d9c42a0c6563f9a4379565a843127b0f2e12520d0985e",
+      "bytes": 26729
+    },
+    {
+      "file": "logs/final-closeout-web-final-build.log",
+      "sha256": "120a45e3854bfa9273b699aeb14d8feb26f4178443f6999df8f8ac15342140c5",
+      "bytes": 73
+    },
+    {
+      "file": "logs/final-closeout-ui-final-verify3.log",
+      "sha256": "bc23ffc6e721b1e03e17f2ece0665277a5a8c24d4bb37de89e03b717bb244a50",
+      "bytes": 1358
+    }
+  ],
+  "performance": "performance-summary.json",
+  "limitations": [
+    "18 skipped environment/source-object dependent tests remain skipped, not passed.",
+    "Example-detector performance corpus measures platform costs; candidate counts are zero and do not establish semantic equivalence for every research detector.",
+    "Real-source replay has blocked/not-applicable coverage; zero diagnostics is not proof of safety.",
+    "No product image, product accuracy claim or real paid-provider invoice validated.",
+    "Historical experiments retain their original results.",
+    "Existing service and original dirty workspace were not switched or overwritten."
+  ]
+}

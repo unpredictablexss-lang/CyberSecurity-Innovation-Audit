@@ -7,6 +7,8 @@ import re
 import os
 import subprocess
 import sys
+from .triage_limits import (MAX_TRIAGE_CANDIDATES_PER_ENDPOINT,
+                            R1_CANDIDATE_SELECTION_POLICY)
 from src.ohscanner.contracts import safe_relative_path
 from src.ohscanner.detectors.admission import pending_admissions
 from src.ohscanner.detectors.catalog import build_registry, catalog_metadata
@@ -25,7 +27,7 @@ def audit_workflow_sha256(plan_sha256, audit_mode, auto_triage=False,
     if (not isinstance(auto_triage, bool)
             or not isinstance(max_triage_candidates, int)
             or isinstance(max_triage_candidates, bool)
-            or not 1 <= max_triage_candidates <= 5
+            or not 1 <= max_triage_candidates <= MAX_TRIAGE_CANDIDATES_PER_ENDPOINT
             or not isinstance(max_r2_candidates, int)
             or isinstance(max_r2_candidates, bool)
             or not 0 <= max_r2_candidates <= max_triage_candidates):
@@ -34,14 +36,18 @@ def audit_workflow_sha256(plan_sha256, audit_mode, auto_triage=False,
                                     or not re.fullmatch(r"(?:[0-9a-f]{40}|[0-9a-f]{64})", base_commit)):
         raise ValueError("incremental base must be a full lowercase Git commit SHA")
     payload = {
-        "version": 5, "plan_sha256": plan_sha256, "audit_mode": audit_mode,
+        "version": 6, "plan_sha256": plan_sha256, "audit_mode": audit_mode,
         "base_commit": base_commit,
         "auto_triage": auto_triage if audit_mode == "standard_review" else False,
         "max_triage_candidates": max_triage_candidates if auto_triage and audit_mode == "standard_review" else 0,
         "max_r2_candidates": (max_r2_candidates
                               if auto_triage and audit_mode == "standard_review" else 0),
-        "max_cost_usd": (max_cost_usd
-                         if auto_triage and audit_mode == "standard_review" else None),
+        "candidate_selection_policy": R1_CANDIDATE_SELECTION_POLICY
+        if auto_triage and audit_mode == "standard_review" else None,
+        "candidate_max_per_endpoint": MAX_TRIAGE_CANDIDATES_PER_ENDPOINT
+        if auto_triage and audit_mode == "standard_review" else 0,
+        "agent_usage_policy": "no_local_cumulative_token_usd_call_or_wall_time_cap_v1"
+        if auto_triage and audit_mode == "standard_review" else None,
     }
     return sha(json.dumps(payload, sort_keys=True, separators=(",", ":")).encode())
 
@@ -52,14 +58,17 @@ def audit_workflow_summary(audit_mode, auto_triage=False,
     if audit_mode == "standard_review":
         return {
             "scan_stage": "fixed_static_scan",
-            "triage_stage": ("task_authorized_bounded_r1_conditional_r2"
+            "triage_stage": ("task_authorized_r1_conditional_continuous_r2"
                              if auto_triage and max_r2_candidates
-                             else "task_authorized_bounded_r1" if auto_triage
+                             else "task_authorized_r1" if auto_triage
                              else "user_authorized_candidate_batch"),
             "automatic_model_calls": bool(auto_triage),
             "candidate_limit_per_authorized_batch": max_triage_candidates if auto_triage else 5,
+            "candidate_selection_policy": R1_CANDIDATE_SELECTION_POLICY if auto_triage else None,
+            "candidate_max_per_endpoint": MAX_TRIAGE_CANDIDATES_PER_ENDPOINT if auto_triage else 0,
             "conditional_r2_candidate_limit": max_r2_candidates if auto_triage else 0,
-            "platform_cost_budget_usd": (max_cost_usd if auto_triage else None),
+            "platform_cumulative_usage_budget": "none" if auto_triage else None,
+            "provider_billing_and_quota": "provider_account" if auto_triage else None,
             "source_consent_required": True,
         }
     if audit_mode == "static_only":
@@ -67,7 +76,6 @@ def audit_workflow_summary(audit_mode, auto_triage=False,
             "scan_stage": "fixed_static_scan",
             "triage_stage": "not_requested",
             "automatic_model_calls": False,
-            "candidate_limit_per_authorized_batch": 0,
             "source_consent_required": False,
         }
     raise ValueError("unsupported audit workflow mode")

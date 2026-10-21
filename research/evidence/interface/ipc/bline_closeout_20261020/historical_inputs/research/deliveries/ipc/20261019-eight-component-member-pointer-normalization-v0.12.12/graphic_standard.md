@@ -1,0 +1,408 @@
+# OHScanner M2 reviewed-detector execution
+
+> Detection candidates and coverage limitations, NOT validated vulnerabilities.
+
+- Source repository (declared): `openharmony/graphic_standard`
+- Pinned commit: `a73af6bd3bac599b9359cba10ca7b5f82a02d5d9`
+- Git tree: `d5446eefcd0dc9478a0da65c76fafc9f62f973ad`
+- Snapshot SHA-256: `502a6dec2bff6c8811d7c878bc23220e4d480535361f53c80e42f0f9ce900fa1`
+- Source files indexed: 1192
+- Parsing coverage: `{"complete": 969, "not_run": 4, "partial": 219}`
+- Detector runs: 1
+- Total unverified diagnostics: 8
+- Validated vulnerabilities: **0** (no runtime verification performed)
+
+## Per-detector results
+
+| Detector | Execution | Inspected files | Complete | Partial | Not analyzed | Diagnostics | Coverage |
+|---|---|---:|---:|---:|---:|---:|---|
+| `ohscanner.interface.ipc` | completed | 1188 | 969 | 219 | 0 | 8 | partial |
+
+## Candidate evidence and missing proof
+
+| Detector | Candidate ID | File:line | Rule | Unverified proof obligations |
+|---|---|---|---|---|
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:cbd042d830569a3e` | `frameworks/dumper/src/ipc/graphic_dumper_command_stub.cpp:54` | `ipc.auth.missing` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; consequence=unknown |
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:aab45f3a549d04cc` | `frameworks/dumper/src/ipc/graphic_dumper_command_stub.cpp:108` | `ipc.auth.missing` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; consequence=unknown |
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:dd374177b68752da` | `rosen/modules/composer/vsync/src/vsync_connection_stub.cpp:42` | `ipc.capability.export` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; consequence=unknown |
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:6852506eefed4166` | `rosen/modules/render_service/core/transaction/rs_render_service_connection_stub.cpp:48` | `ipc.capability.export` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; consequence=unknown |
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:e156a1f0d83e17da` | `rosen/modules/render_service/core/transaction/rs_render_service_connection_stub.cpp:48` | `ipc.relay.descriptor-boundary` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; consequence=unknown |
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:02b6c8eec57c0db9` | `rosen/modules/render_service/core/transaction/rs_render_service_connection_stub.cpp:422` | `ipc.capability.export` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; consequence=unknown |
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:85a2775a39544697` | `rosen/modules/render_service/core/transaction/rs_render_service_connection_stub.cpp:422` | `ipc.relay.descriptor-boundary` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; consequence=unknown |
+| `ohscanner.interface.ipc` | `ohscanner.interface.ipc:560250730562d803` | `rosen/modules/render_service/core/transaction/rs_render_service_stub.cpp:56` | `ipc.capability.export` | entry_reachability=unknown; callee_and_policy=unknown; security_impact=unknown; consequence=unknown |
+
+## Coverage gaps
+
+Scope counts source inspection, not complete semantic coverage; partial remains unknown.
+Files without a claiming detector: 4
+- `interfaces/kits/js/declaration/api/@ohos.display.d.ts`
+- `interfaces/kits/js/declaration/api/@ohos.window.d.ts`
+- `interfaces/kits/napi/graphic/window_hap/entry/src/main/js/default/app.js`
+- `interfaces/kits/napi/graphic/window_hap/entry/src/main/js/default/pages/index/index.js`
+- `ohscanner.interface.ipc`: partial, 969/1188 applicable files examined; unexamined=219
+
+## Limitations
+
+- Diagnostics are candidates/evidence only, not proof of security impact.
+- Zero diagnostics does NOT mean the component is free of vulnerabilities.
+- Git origin name is user declared; source is pinned local objects, not an OH product build.
+- No compilation flags/macros, symbolic execution, hard plugin timeout or runtime validation.
+- Some indexed source files have no claiming detector; their security analysis is unknown.
+- `ohscanner.interface.ipc`: Model=oh-ipc-2026.10-v32; first-party bounded structured syntax interpretation, no external scanner execution.
+- `ohscanner.interface.ipc`: Private branch pass reconstructs Tree-sitter nodes; public shared facts/schema are unchanged.
+- `ohscanner.interface.ipc`: No compiler CFG, arbitrary virtual dispatch, alias analysis or full-program authorization proof. Macros are expanded only from the scan's own sources and only when unambiguous; the catalogue is never an #include resolution, and what the expander refused is counted in the macro-expansion limitation rather than assumed away.
+- `ohscanner.interface.ipc`: Unmodeled callees/authorization remain evidence obligations; no findings does not establish safety.
+- `ohscanner.interface.ipc`: Interface-descriptor identity is read from the class's own base clause: a comparison is counted as this transaction's guard only when the source names the interface the class implements. A comparison against another interface, or one whose identity the analysed sources do not state, is reported with that reason instead of counting as a guard or as a proven mismatch.
+- `ohscanner.interface.ipc`: Descriptor consistency is separate from caller authorization; relay candidates are not exploit proofs.
+- `ohscanner.interface.ipc`: IPC roots require a source-indexed class dispatcher with code, request Parcel and reply Parcel; explicit service/transport roots and Stub inner helpers are separate allowlisted entry kinds. Test/fuzz/mock path roots are excluded from product candidate analysis and counted in limitations. Entry discovery is not reachability: dispatcher-level guards and macro-conditional reachability remain obligations, not conclusions.
+- `ohscanner.interface.ipc`: Entry-coverage measurements are published in the interface research report, not in this result.
+- `ohscanner.interface.ipc`: Call depth/recursion budget reached at BufferManager::IsSupportedAlloc
+- `ohscanner.interface.ipc`: Call depth/recursion budget reached at BufferQueue::AllocBuffer
+- `ohscanner.interface.ipc`: Call depth/recursion budget reached at BufferQueue::CancelBuffer
+- `ohscanner.interface.ipc`: Call depth/recursion budget reached at BufferQueue::CheckFlushConfig
+- `ohscanner.interface.ipc`: Call depth/recursion budget reached at BufferQueue::CheckRequestConfig
+- `ohscanner.interface.ipc`: Call depth/recursion budget reached at BufferQueue::DeleteBuffers
+- `ohscanner.interface.ipc`: Call depth/recursion budget reached at BufferQueue::DoFlushBuffer
+- `ohscanner.interface.ipc`: Call depth/recursion budget reached at BufferQueue::GetName
+- `ohscanner.interface.ipc`: Call depth/recursion budget reached at BufferQueue::GetQueueSize
+- `ohscanner.interface.ipc`: Call depth/recursion budget reached at BufferQueue::GetUniqueId
+- `ohscanner.interface.ipc`: Call depth/recursion budget reached at BufferQueue::GetUsedSize
+- `ohscanner.interface.ipc`: Call depth/recursion budget reached at BufferQueue::PopFromFreeList
+- `ohscanner.interface.ipc`: Call depth/recursion budget reached at BufferQueue::ReuseBuffer
+- `ohscanner.interface.ipc`: Call depth/recursion budget reached at GraphicDumperServer::AddConfigDeathRecipient
+- `ohscanner.interface.ipc`: Call depth/recursion budget reached at GraphicDumperServer::AddInfoDeathRecipient
+- `ohscanner.interface.ipc`: Call depth/recursion budget reached at GraphicDumperServer::DispenseConfig
+- `ohscanner.interface.ipc`: Call depth/recursion budget reached at GraphicDumperServer::DispenseDump
+- `ohscanner.interface.ipc`: Call depth/recursion budget reached at GraphicDumperServer::HaveConfigDeathRecipient
+- `ohscanner.interface.ipc`: Call depth/recursion budget reached at GraphicDumperServer::HaveInfoDeathRecipient
+- `ohscanner.interface.ipc`: Call depth/recursion budget reached at GraphicDumperServer::HaveObject
+- `ohscanner.interface.ipc`: Call depth/recursion budget reached at GraphicDumperServer::LogHandle
+- `ohscanner.interface.ipc`: Call depth/recursion budget reached at GraphicDumperServer::SendToInfoListener
+- `ohscanner.interface.ipc`: Call depth/recursion budget reached at GraphicDumperServer::VisitEach
+- `ohscanner.interface.ipc`: Call depth/recursion budget reached at RSScreenManager::ReuseVirtualScreenIdLocked
+- `ohscanner.interface.ipc`: Call depth/recursion budget reached at VSyncReceiver::RequestNextVSync
+- `ohscanner.interface.ipc`: Cross-service boundary coverage: 3 call(s) on a handle built by iface_cast<> in the scanned sources, 0 carrying the original caller's identity (SetCallingIdentity with a calling-token value active), 3 executing as the service. Each boundary is recorded with the identity that crossed it; no candidate is emitted from the boundary itself, and a downstream service's own guards are not read from this corpus.
+- `ohscanner.interface.ipc`: Dispatch handler not uniquely resolved: ::OnBufferAvailable; not used as an entry
+- `ohscanner.interface.ipc`: Dispatch handler not uniquely resolved: ::OnScreenChanged; not used as an entry
+- `ohscanner.interface.ipc`: Dispatch handler not uniquely resolved: ::OnSurfaceCapture; not used as an entry
+- `ohscanner.interface.ipc`: Entry/dispatch coverage: 18 dispatcher(s) (18 in stub classes, 0 with a recognizable guard before dispatch), 110 binding(s) by grade {'source_dispatch': 51, 'source_dispatch_case_call': 11, 'virtual_override': 48}, transactions {'dynamic': 106, 'enum': 4}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe.
+- `ohscanner.interface.ipc`: Loops are conservatively explored zero/one iterations; no induction or termination proof.
+- `ohscanner.interface.ipc`: Macro catalogue truncated at 400 source(s): a macro defined only in a file that was not catalogued stays unexpanded, and a guard inside it is not seen.
+- `ohscanner.interface.ipc`: Macro expansion: 174 invocation(s) expanded in 39 file(s), 20 of them carrying control flow; 13 file(s) left unexpanded (ambiguous_definition_variants=2034,conditional_definition_requires_build_profile=23,raw_string_tokenization_not_supported=7,source_local_undef_not_supported=6,variadic_stringify_or_token_paste=1253). The catalogue is the scan's own sources, never #include; where a macro was expanded, quoted conditions come from the expanded form while a finding's line is mapped back to the original file.
+- `ohscanner.interface.ipc`: One-hop callee is not unique (5 definitions) for VsyncCallbackStub::OnVsync; the callee body was not read. The call site therefore stays a candidate.
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/animation_server/export/ianimation_service.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/animation_server/server/include/animation_service_stub.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/dumper/common/graphic_dumper_helper.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/dumper/include/ipc/igraphic_dumper_client_listener.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/dumper/include/ipc/igraphic_dumper_command.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/dumper/include/ipc/igraphic_dumper_info_listener.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/dumper/include/ipc/igraphic_dumper_service.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/fence/include/fence.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/fence/src/fence.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/fence/test/unittest/fence_fd_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/surface/include/buffer_queue_producer.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/surface/src/native_window.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/surface/test/systemtest/native_window_buffer_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/surface/test/systemtest/surface_ipc_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/surface/test/unittest/buffer_client_producer_remote_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/surface/test/unittest/buffer_manager_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/surface/test/unittest/buffer_queue_consumer_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/surface/test/unittest/buffer_queue_producer_remote_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/surface/test/unittest/buffer_queue_producer_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/surface/test/unittest/buffer_queue_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/surface/test/unittest/buffer_shared_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/surface/test/unittest/consumer_surface_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/surface/test/unittest/native_window_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/surface/test/unittest/producer_surface_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/surface/test/unittest/surface_buffer_impl_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/surface/test/unittest/surface_utils_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/vsync/include/ivsync_callback.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/vsync/include/ivsync_manager.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/vsync/src/vsync_helper_impl.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/vsync/test/unittest/vsync_helper_impl_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/vsync/test/unittest/vsync_remote_callback_stub_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/vsync/test/unittest/vsync_remote_callback_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/vsync/test/unittest/vsync_remote_manager_proxy_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/vsync/test/unittest/vsync_remote_manager_stub_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/wmserver/src/layout_controller.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/wmserver/src/screen_info.c
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/wmserver/src/split_mode.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/wmserver/src/split_mode.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/wmserver/src/wmserver.c
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/wmserver/src/wmserver.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in frameworks/wmtest/frameworks/inative_test_ipc.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/inner_api/common/graphic_common.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/inner_api/surface/external_window.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/inner_api/surface/ibuffer_producer.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/inner_api/surface/window.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/inner_api/vsync_module/vsync_module_c.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/inner_api/wmclient/window_manager_type.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/inner_api/wmclient/wm_common.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/napi/graphic/webgl/src/webgl/include/context/webgl2_rendering_context_base.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/napi/graphic/webgl/src/webgl/include/context/webgl2_rendering_context_overloads.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/napi/graphic/webgl/src/webgl/include/context/webgl_rendering_context_base.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/napi/graphic/webgl/src/webgl/include/context/webgl_rendering_context_basic_base.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/napi/graphic/webgl/src/webgl/include/context/webgl_rendering_context_overloads.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/napi/graphic/webgl/src/webgl/include/util/egl_manager.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/napi/graphic/webgl/src/webgl/include/util/object_manager.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/napi/graphic/webgl/src/webgl/include/util/object_source.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/napi/graphic/webgl/src/webgl/include/util/util.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/napi/graphic/webgl/src/webgl/module.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/napi/graphic/webgl/src/webgl/src/egl_manager.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/napi/graphic/webgl/src/webgl/src/util.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/napi/graphic/webgl/src/webgl/src/webgl2_rendering_context.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/napi/graphic/webgl/src/webgl/src/webgl2_rendering_context_base.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/napi/graphic/webgl/src/webgl/src/webgl2_rendering_context_overloads.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/napi/graphic/webgl/src/webgl/src/webgl_rendering_context.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/napi/graphic/webgl/src/webgl/src/webgl_rendering_context_base.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/napi/graphic/webgl/src/webgl/src/webgl_rendering_context_basic_base.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in interfaces/kits/napi/graphic/webgl/src/webgl/src/webgl_rendering_context_overloads.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/include/common/graphic_error.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/2d_graphics/include/c/drawing_bitmap.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/2d_graphics/include/c/drawing_brush.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/2d_graphics/include/c/drawing_canvas.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/2d_graphics/include/c/drawing_color.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/2d_graphics/include/c/drawing_font_collection.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/2d_graphics/include/c/drawing_path.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/2d_graphics/include/c/drawing_pen.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/2d_graphics/include/c/drawing_text_declaration.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/2d_graphics/include/c/drawing_text_typography.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/2d_graphics/include/c/drawing_types.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/animation/window_animation/include/rs_iwindow_animation_controller.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/animation/window_animation/include/rs_iwindow_animation_finished_callback.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/animation/window_animation/include/rs_window_animation_stub.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/composer/hdi_backend/test/systemtest/hdibackend_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/composer/hdi_backend/test/systemtest/hdilayer_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/composer/hdi_backend/test/systemtest/hdioutput_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/composer/hdi_backend/test/systemtest/hdiscreen_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/composer/hdi_backend/test/unittest/hdibackend_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/composer/hdi_backend/test/unittest/hdilayer_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/composer/hdi_backend/test/unittest/hdilayerinfo_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/composer/hdi_backend/test/unittest/hdioutput_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/composer/hdi_backend/test/unittest/hdiscreen_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/composer/vsync/include/ivsync_connection.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/composer/vsync/test/systemtest/vsync_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/composer/vsync/test/unittest/vsync_connection_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/composer/vsync/test/unittest/vsync_controller_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/composer/vsync/test/unittest/vsync_distributor_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/composer/vsync/test/unittest/vsync_generator_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/composer/vsync/test/unittest/vsync_receiver_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/composer/vsync/test/unittest/vsync_sampler_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/effect/egl/include/egl_manager.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/effect/egl/src/egl_manager.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/effect/test/unittest/effect_chain_unittest.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service/core/pipeline/rs_main_thread.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service/core/pipeline/rs_surface_capture_task.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service/core/screen_manager/test/unittest/screen_manager_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_base/include/animation/rs_interpolator.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_base/include/animation/rs_property_accessors.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_base/include/animation/rs_render_animation.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_base/include/animation/rs_render_transition_effect.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_base/include/animation/rs_transition_effect.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_base/include/command/rs_animation_command.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_base/include/command/rs_base_node_command.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_base/include/command/rs_canvas_node_command.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_base/include/command/rs_command.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_base/include/command/rs_display_node_command.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_base/include/command/rs_root_node_command.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_base/include/command/rs_surface_node_command.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_base/include/ipc_callbacks/buffer_available_callback.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_base/include/ipc_callbacks/iapplication_render_thread.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_base/include/ipc_callbacks/screen_change_callback.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_base/include/ipc_callbacks/surface_capture_callback.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_base/include/pipeline/rs_base_render_node.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_base/include/pipeline/rs_canvas_render_node.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_base/include/pipeline/rs_display_render_node.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_base/include/pipeline/rs_draw_cmd.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_base/include/pipeline/rs_draw_cmd_list.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_base/include/pipeline/rs_frame_report.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_base/include/pipeline/rs_render_node.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_base/include/pipeline/rs_root_render_node.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_base/include/pipeline/rs_surface_render_node.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_base/include/platform/ohos/rs_irender_service.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_base/include/platform/ohos/rs_irender_service_connection.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_base/include/render/rs_filter.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_base/include/render/rs_mask.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_base/include/screen_manager/screen_types.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_base/include/transaction/rs_marshalling_helper.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_base/include/transaction/rs_transaction_data.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_base/src/command/rs_command_factory.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_base/src/transaction/rs_marshalling_helper.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_client/core/animation/rs_animation.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_client/core/animation/rs_animation_group.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_client/core/animation/rs_animation_timing_curve.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_client/core/animation/rs_curve_animation.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_client/core/animation/rs_curve_animation.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_client/core/animation/rs_keyframe_animation.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_client/core/animation/rs_keyframe_animation.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_client/core/animation/rs_motion_path_option.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_client/core/animation/rs_path_animation.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_client/core/animation/rs_property_animation.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_client/core/animation/rs_transition.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_client/core/animation/test/unittest/animation/rs_animation_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_client/core/transaction/rs_interfaces.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_client/core/ui/rs_base_node.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_client/core/ui/rs_canvas_node.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_client/core/ui/rs_display_node.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_client/core/ui/rs_node.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_client/core/ui/rs_root_node.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_client/core/ui/rs_surface_node.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_client/core/ui/rs_ui_director.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_client/test/media_callback.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_client/test/unittest/rs_dropframe_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/modules/render_service_client/test/unittest/rs_interfaces_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/test/2d_graphics/unittest/draw/brush_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/test/2d_graphics/unittest/draw/canvas_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/test/2d_graphics/unittest/draw/color_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/test/2d_graphics/unittest/draw/path_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/test/2d_graphics/unittest/draw/pen_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/test/2d_graphics/unittest/effect/color_filter_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/test/2d_graphics/unittest/effect/color_matrix_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/test/2d_graphics/unittest/effect/color_space_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/test/2d_graphics/unittest/effect/filter_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/test/2d_graphics/unittest/effect/mask_filter_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/test/2d_graphics/unittest/effect/path_effect_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/test/2d_graphics/unittest/effect/shader_effect_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/test/2d_graphics/unittest/image/bitmap_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/test/2d_graphics/unittest/image/image_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/test/2d_graphics/unittest/image/picture_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/test/2d_graphics/unittest/utils/camera3d_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/test/2d_graphics/unittest/utils/matrix_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/test/2d_graphics/unittest/utils/point3_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/test/2d_graphics/unittest/utils/point_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/test/2d_graphics/unittest/utils/rect_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/test/2d_graphics/unittest/utils/round_rect_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/test/2d_graphics/unittest/utils/sampling_options_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/test/2d_graphics/unittest/utils/size_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/test/render_service/render_service/unittest/pipeline/rs_drop_frame_processor_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/test/render_service/render_service/unittest/pipeline/rs_hardware_processor_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/test/render_service/render_service/unittest/pipeline/rs_processor_factory_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/test/render_service/render_service/unittest/pipeline/rs_render_service_listener_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/test/render_service/render_service/unittest/pipeline/rs_render_service_visitor_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/test/render_service/render_service/unittest/pipeline/rs_software_processor_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/test/render_service/render_service_base/unittest/render/rs_mask_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/test/render_service/render_service_client/unittest/transaction/rs_transaction_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/test/render_service/render_service_client/unittest/ui/rs_canvas_node_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/test/render_service/render_service_client/unittest/ui/rs_display_node_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/test/render_service/render_service_client/unittest/ui/rs_node_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/test/render_service/render_service_client/unittest/ui/rs_root_node_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/test/render_service/render_service_client/unittest/ui/rs_surface_extractor_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/test/render_service/render_service_client/unittest/ui/rs_surface_node_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in rosen/test/render_service/render_service_client/unittest/ui/rs_ui_director_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in utils/buffer_handle/export/buffer_handle_utils.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in utils/color_manager/test/color_manager_test.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in utils/gslogger/src/gslogger.cpp
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in utils/sync_fence/export/sw_sync.h
+- `ohscanner.interface.ipc`: Partial source: only error-free functions can be inspected in utils/sync_fence/test/unittest/sync_fence_test.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/animation_server/server/src/animation_module.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/animation_server/server/src/animation_service_stub.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/dumper/include/graphic_dumper_hilog.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/dumper/src/graphic_dumper_command_line.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/dumper/src/ipc/graphic_dumper_command_proxy.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/dumper/src/ipc/graphic_dumper_command_stub.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/dumper/src/ipc/graphic_dumper_service_proxy.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/dumper/src/ipc/graphic_dumper_service_stub.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/surface/include/buffer_queue.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/surface/src/buffer_extra_data_impl.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/surface/src/buffer_queue.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/surface/src/buffer_queue_producer.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/surface/src/consumer_surface.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/surface/src/producer_surface.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/surface/src/surface_utils.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/surface/test/unittest/buffer_client_producer_remote_test.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/surface/test/unittest/buffer_queue_producer_remote_test.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/surface/test/unittest/buffer_queue_producer_test.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/surface/test/unittest/buffer_queue_test.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/surface/test/unittest/consumer_surface_test.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/surface/test/unittest/producer_surface_test.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/vsync/include/vsync_log.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/vsync/src/vsync_callback_proxy.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/vsync/src/vsync_helper_impl.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/vsync/src/vsync_manager.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/vsync/src/vsync_manager_proxy.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/vsync/src/vsync_module_impl.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/vsync/test/unittest/vsync_helper_impl_test.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/wm/include/wayland_service.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/wm/include/window_manager_server.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/wm/include/wl_buffer_cache.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/wm/include/wl_display.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/wm/include/wl_dma_buffer_factory.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/wm/include/wl_shm_buffer_factory.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/wm/include/wl_subsurface_factory.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/wm/src/wl_dma_buffer_factory.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/wmtest/frameworks/egl_native_test_class.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/wmtest/frameworks/native_test_class.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/wmtest/test/pref_native_test_1.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/inner_api/surface/window.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: interfaces/inner_api/wmclient/wm_common.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: rosen/modules/animation/window_animation/src/rs_window_animation_stub.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: rosen/modules/composer/vsync/include/vsync_log.h
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: rosen/modules/render_service/core/pipeline/rs_software_processor.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: rosen/modules/render_service/core/screen_manager/rs_screen.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: rosen/modules/render_service/core/screen_manager/rs_screen_manager.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: rosen/samples/2d_graphics/drawing_sample_canvaskit0310.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: rosen/samples/2d_graphics/render_context_sample.cpp
+- `ohscanner.interface.ipc`: Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: utils/option_parser/src/option_parser.cpp
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: BufferQueue::CancelBuffer
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: BufferQueue::FlushBuffer
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: BufferQueue::RequestBuffer
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: BufferQueue::SetQueueSize
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: BufferQueueProducer::CancelBuffer
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: BufferQueueProducer::CheckConnectLocked
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: BufferQueueProducer::CleanCache
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: BufferQueueProducer::Disconnect
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: BufferQueueProducer::FlushBuffer
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: BufferQueueProducer::GetDefaultHeight
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: BufferQueueProducer::GetDefaultUsage
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: BufferQueueProducer::GetDefaultWidth
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: BufferQueueProducer::GetName
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: BufferQueueProducer::GetNameAndUniqueId
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: BufferQueueProducer::GetQueueSize
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: BufferQueueProducer::GetUniqueId
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: BufferQueueProducer::IsSupportedAlloc
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: BufferQueueProducer::RequestBuffer
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: BufferQueueProducer::SetQueueSize
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: BufferQueueProducer::SetTransform
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: GraphicDumperCommandStub::AddInfoListener
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: GraphicDumperHelperImpl::DispenseOnConfigChange
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: GraphicDumperHelperImpl::DispenseOnDump
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: GraphicDumperServer::AddConfigDeathRecipient
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: GraphicDumperServer::AddConfigListener
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: GraphicDumperServer::AddInfoDeathRecipient
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: GraphicDumperServer::AddInfoListener
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: GraphicDumperServer::DispenseConfig
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: GraphicDumperServer::DispenseDump
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: GraphicDumperServer::GetConfig
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: GraphicDumperServer::InfoHandle
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: GraphicDumperServer::SendToInfoListener
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: GraphicDumperServiceStub::AddClientListener
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: INativeTest::ExitTest
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: INativeTest::IPCClientOnMessage
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: INativeTest::PostTask
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: RSMainThread::PostTask
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: RSMainThread::RecvRSTransactionData
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: RSMainThread::RegisterApplicationRenderThread
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: RSMainThread::RequestNextVSync
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: RSScreenManager::AddScreenChangeCallback
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: RSScreenManager::CreateVirtualScreen
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: RSScreenManager::GenerateVirtualScreenIdLocked
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: RSScreenManager::GetRotationLocked
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: RSScreenManager::GetScreenHDRCapabilityLocked
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: RSScreenManager::GetScreenTypeLocked
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: RSScreenManager::GetVirtualScreenResolution
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: RSScreenManager::GetVirtualScreenResolutionLocked
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: RSScreenManager::RemoveScreenChangeCallback
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: RSScreenManager::RemoveVirtualScreen
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: RSScreenManager::RemoveVirtualScreenLocked
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: RSScreenManager::RequestRotationLocked
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: RSScreenManager::SetVirtualScreenSurface
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: Surface::CreateSurfaceAsConsumer
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: Surface::CreateSurfaceAsProducer
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: VSyncDistributor::AddConnection
+- `ohscanner.interface.ipc`: Unresolved multi-outcome helper return: VsyncManager::ListenVsync
+- `ohscanner.interface.ipc`: Owner M2 adapter: single interpretation pass; partial source inspection is not full analysis.
+- `ohscanner.interface.ipc`: Unavailable AST units: 0; cross-file context from these units is unknown.
+- `ohscanner.interface.ipc`: M1 local Git objects pinned by full commit/tree; repository ownership is user-declared.
+- `ohscanner.interface.ipc`: Execution is synchronous; hard timeout/memory isolation is not yet implemented.
+- `ohscanner.interface.ipc`: Diagnostic does not establish vulnerability, reachability or security impact.
+- `ohscanner.interface.ipc`: INCOMPLETE COVERAGE: detector-internal file outcome is unknown/partial; see coverage sidecar.

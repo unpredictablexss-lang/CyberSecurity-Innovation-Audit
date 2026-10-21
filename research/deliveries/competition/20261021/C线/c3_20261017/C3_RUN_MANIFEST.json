@@ -1,0 +1,335 @@
+{
+  "commit_at_run": "4ea5f4020884aed5860a88d50f5a926610e7b98a",
+  "frozen_c2_commit": "33242fbd2b58e2f510fa74f1521e247fea08db27",
+  "implementation_sha256": {
+    "src/ohscanner/detectors/ark_runtime/__init__.py": "3b3d8588d98a48ad44a9ef10cf66be74c927ed9b44c4b387b5ed3d9840db2636",
+    "src/ohscanner/detectors/ark_runtime/analysis.py": "5e1b818981930d34c0f686172b0f2bbf71fa13ae6f4c7819d9cc3bd34c030f80",
+    "src/ohscanner/detectors/ark_runtime/detector.py": "5dd3dfd92c57abe999cf6ce4828f6ce8c40843ef18a718822ce167432aee7d32",
+    "src/ohscanner/detectors/ark_runtime/model.py": "e37e42d282426243d4f66b3a0c6c3f9f393c9f1629c755e2b26b6a253c86768d",
+    "src/ohscanner/detectors/ark_runtime/runtime_ir.py": "f3c2c85f086e223cb5897150f7d1e6890bf568599a287c1a6fe6e5411c2a39ca",
+    "src/ohscanner/detectors/ark_runtime/syntax.py": "efcd76fc5312acf0021ecce701f9506ece1db781f7ba51e6c702b75125e6e5c4",
+    "src/ohscanner/detectors/ark_runtime/type_origin.py": "3ba6af5739953f8a74634df8b2e350542adff9e00db6a7e4e27e353a06aede3a"
+  },
+  "detector_version": "0.2.0",
+  "model": {
+    "version": "0.2.0",
+    "caller": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+    "caller_types": [
+      "GateRef",
+      "GateRef",
+      "GateRef",
+      "Variable*",
+      "Label*",
+      "Label*"
+    ],
+    "store_name": "StoreTypedArrayElement",
+    "store_types": [
+      "GateRef",
+      "GateRef",
+      "GateRef",
+      "GateRef",
+      "GateRef"
+    ],
+    "target_argument": 1,
+    "token_argument": 4,
+    "creator_owner": "panda::ecmascript::kungfu::NewObjectStubBuilder",
+    "creator_name": "NewTypedArray",
+    "creator_arguments": 4,
+    "species_may_change_type": true,
+    "caller_profiles": [
+      "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::CopyWithin",
+      "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Set",
+      "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::With"
+    ],
+    "host_constructors": [
+      [
+        "Label",
+        [
+          1
+        ]
+      ],
+      [
+        "NewObjectStubBuilder",
+        [
+          1
+        ]
+      ],
+      [
+        "BuiltinsArrayStubBuilder",
+        [
+          1
+        ]
+      ],
+      [
+        "JSCallArgs",
+        [
+          0,
+          1
+        ]
+      ],
+      [
+        "CallStubBuilder",
+        [
+          1,
+          8
+        ]
+      ]
+    ],
+    "by_value_operations": [
+      [
+        "TaggedIsUndefinedOrNull",
+        1
+      ],
+      [
+        "TaggedIsHeapObject",
+        1
+      ],
+      [
+        "TaggedIsProtoChangeMarker",
+        1
+      ],
+      [
+        "IsEcmaObject",
+        1
+      ],
+      [
+        "IsFastTypeArray",
+        1
+      ],
+      [
+        "IsCallable",
+        1
+      ],
+      [
+        "HasConstructor",
+        1
+      ],
+      [
+        "GetViewedArrayBuffer",
+        1
+      ],
+      [
+        "IsDetachedBuffer",
+        1
+      ],
+      [
+        "GetPrototypeFromHClass",
+        1
+      ],
+      [
+        "GetProtoChangeMarkerFromHClass",
+        1
+      ],
+      [
+        "GetAccessorHasChanged",
+        1
+      ],
+      [
+        "GetCallArg0",
+        1
+      ],
+      [
+        "GetCallArg1",
+        1
+      ],
+      [
+        "GetArrayLength",
+        1
+      ],
+      [
+        "FastGetPropertyByIndex",
+        4
+      ]
+    ],
+    "readonly_operations": [
+      [
+        "HasPendingException",
+        1
+      ]
+    ],
+    "build_profile": "assumed:NDEBUG=1;ENABLE_ASM_ASSERT=0;not_product_build_verified",
+    "effect_summary_sources": [
+      [
+        "ecmascript/compiler/stub_builder.h",
+        "b784eb0812c27f11c1bfd8673cda4bf884a6a9cd"
+      ],
+      [
+        "ecmascript/compiler/stub_builder-inl.h",
+        "8658e6ee729c3b171639772ad3a1ada06442abd0"
+      ],
+      [
+        "ecmascript/compiler/stub_builder.cpp",
+        "8aae4bfa151e8b8dbd58d03a5cd881f3315151c2"
+      ],
+      [
+        "ecmascript/compiler/hcr_circuit_builder.h",
+        "176dd0a5ee320f814049c2b671119515c746380d"
+      ],
+      [
+        "ecmascript/compiler/mcr_circuit_builder.h",
+        "631911dec663addd62533d6a6808ffe699a6f884"
+      ],
+      [
+        "ecmascript/compiler/lcr_circuit_builder.cpp",
+        "af4d27bcd46ea0a4a2980a805dd7de77970ffb56"
+      ],
+      [
+        "ecmascript/compiler/circuit_builder.cpp",
+        "b4bf452cac6bdeb820b78334be98cb3dc11330cb"
+      ],
+      [
+        "ecmascript/compiler/new_object_stub_builder.h",
+        "f411d72cbca7915e56b9d851beeb57b788e438ac"
+      ],
+      [
+        "ecmascript/compiler/builtins/builtins_stubs.cpp",
+        "715c5d65164369bc93a82aa4a6cc1d19b7970143"
+      ],
+      [
+        "ecmascript/compiler/builtins/builtins_array_stub_builder.h",
+        "88e131561f756db9bd9e57b3078df22ac3c34c6a"
+      ],
+      [
+        "ecmascript/compiler/call_stub_builder.h",
+        "f1f44f44679a9a6d648c8dd0182864d4af7c24f7"
+      ],
+      [
+        "ecmascript/compiler/profiler_operation.h",
+        "e68a2db48f222945629adb637cd50be8a0f93651"
+      ]
+    ],
+    "scalar_operations": [
+      [
+        "GetEnvironment",
+        0
+      ],
+      [
+        "Int32",
+        1
+      ],
+      [
+        "Int64",
+        1
+      ],
+      [
+        "IntPtr",
+        1
+      ],
+      [
+        "Boolean",
+        1
+      ],
+      [
+        "True",
+        0
+      ],
+      [
+        "False",
+        0
+      ],
+      [
+        "Hole",
+        0
+      ],
+      [
+        "Undefined",
+        0
+      ],
+      [
+        "Exception",
+        0
+      ],
+      [
+        "Int32Add",
+        2
+      ],
+      [
+        "Int64Add",
+        2
+      ],
+      [
+        "Int64Sub",
+        2
+      ],
+      [
+        "Int32LessThan",
+        2
+      ],
+      [
+        "Int64LessThan",
+        2
+      ],
+      [
+        "Int64Equal",
+        2
+      ],
+      [
+        "Int32Equal",
+        2
+      ],
+      [
+        "Equal",
+        2
+      ],
+      [
+        "ZExtInt32ToInt64",
+        1
+      ],
+      [
+        "TruncInt64ToInt32",
+        1
+      ],
+      [
+        "SExtInt32ToInt64",
+        1
+      ],
+      [
+        "VariableType::INT32",
+        0
+      ],
+      [
+        "VariableType::INT64",
+        0
+      ],
+      [
+        "VariableType::JS_ANY",
+        0
+      ]
+    ]
+  },
+  "model_sha256": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe",
+  "budget": {
+    "max_source_bytes": 1048576,
+    "max_instructions": 4096,
+    "max_scope_depth": 128,
+    "max_states": 2048,
+    "max_steps": 8192,
+    "max_seconds": 5.0
+  },
+  "parser_packages": {
+    "tree-sitter": "0.26.0",
+    "tree-sitter-c": "0.24.2",
+    "tree-sitter-cpp": "0.23.4"
+  },
+  "python": "3.12.0",
+  "os": "Windows",
+  "argv": [
+    "python",
+    "research/experiments/ark_runtime/c3_20261017/replay.py",
+    "--repo-dir",
+    "<pinned-local-git-store>",
+    "--output",
+    "<new-output>"
+  ],
+  "duration_seconds": 35.324694299997645,
+  "rss": null,
+  "rss_status": "not_measured",
+  "source_remote": "https://github.com/openharmony/arkcompiler_ets_runtime",
+  "gitcode_cross_check": "C2 exact history unavailable; not reclassified as verified",
+  "precision": null,
+  "recall": null,
+  "confirmed": 0,
+  "holdout_executed": false,
+  "production_partial_admission": false,
+  "dynamic_validation": "not_executed"
+}

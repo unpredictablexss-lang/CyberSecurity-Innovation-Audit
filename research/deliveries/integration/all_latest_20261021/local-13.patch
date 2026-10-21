@@ -1,0 +1,206 @@
+diff --git a/docs/Agent方案与对照实验.md b/docs/Agent方案与对照实验.md
+index 53d1316a..89142a22 100644
+--- a/docs/Agent方案与对照实验.md
++++ b/docs/Agent方案与对照实验.md
+@@ -94,3 +94,9 @@ tests.test_agent_workflow 当前 23 项通过，覆盖 endpoint 配置、入队
+ 2. 确定模型服务的数据保留和合规边界后，由负责人通过服务环境配置密钥（不要提交到 Git 或粘贴到审查结果）；只跑一个明确批准的合成候选，先验证 request/usage/限额和内容外发。
+ 3. 再从冻结的窄家族样本开始 R0/R1/R2：同一批静态候选、盲审人工真值、固定模型/prompt/tool预算；统计根因级收益、错误证据引用、unknown、成本与人工复核用时。
+ 4. 只有这些步骤完成后，再考虑 Agent 主动发现 D1/D2、多模型或自动 PoC/修复。自动确认、任意工具和任意仓库外发不在当前原型权限内。
++
++### 2026-10-18 全候选入队身份核对
++
++扫描 Worker 对完整报告调用 `service.findings()`，将该报告的全部 candidate ID（保留报告顺序）和 report SHA-256 一并写入 `candidate_review_batch`；手动重入队使用同一绑定，按完整 spec 幂等去重，不做 Top-K 截断。队列状态分别统计新批次中有身份清单的候选与历史 count-only 批次中的身份未知数量。旧批次不会被伪造补齐身份。
++
++入队仅表示待 Agent 复核，不代表 Agent 已消费或给出意见。自动批次消费仍关闭；原因是已有外发授权按单候选绑定预览 hash，批量源码外发尚无等价的逐批预览和授权流程。面板显示排队 Candidate ID 覆盖数量、历史身份缺失数及关闭原因。单候选仍须单独预览并授权；模型不可用、超时或引用校验失败时，静态 Candidate 保持不变。零候选报告不会创建空批次或触发第二遍 LLM 扫描；partial/未分析范围仍只由扫描报告显示。
+diff --git a/src/workbench/operations_api.py b/src/workbench/operations_api.py
+index 9143d111..817ec13d 100644
+--- a/src/workbench/operations_api.py
++++ b/src/workbench/operations_api.py
+@@ -418,13 +418,23 @@ def install_routes(app: FastAPI, settings, store):
+         job = store.job(body.job_id)
+         report = service.read_report(settings, job)
+         candidates = service.findings(report)
++        if not candidates:
++            raise HTTPException(status_code=409,
++                                detail="该报告没有静态候选；不启动第二遍 LLM 扫描。请按报告中的解析覆盖和 unknown 评估范围。")
+         spec = {"job_id": job["id"], "report_sha256": job["report_sha256"],
+-                "candidate_count_at_enqueue": len(candidates), "timeout_seconds": 60,
++                "candidate_ids": [candidate["id"] for candidate in candidates],
++                "candidate_count_at_enqueue": len(candidates),
++                "review_scope": "all_static_candidates_candidate_only", "timeout_seconds": 60,
+                 "memory_mb": 512}
+         operation = ops.create("candidate_review_batch", spec)
++        from .agent import public_status
++        provider_configured = public_status()["configured"]
+         return {**operation, "candidate_count": len(candidates),
+-                "review_mode": "candidate_only", "model_available": False,
+-                "note": "Candidates remain queued until a configured, source-bound review provider is available; no conclusion was inferred."}
++                "candidate_ids": spec["candidate_ids"],
++                "review_mode": "candidate_only", "model_provider_configured": provider_configured,
++                "automatic_batch_processing_enabled": False,
++                "batch_block_reason": "Batch consumption is disabled pending batch-scoped source-disclosure approval; individual source-bound Agent reviews remain opt-in.",
++                "note": "Every candidate ID remains queued until the batch review workflow is enabled with source-bound approval; provider configuration alone does not consume the queue or establish a conclusion."}
+ 
+     @router.get("/operations")
+     def list_operations():
+diff --git a/src/workbench/operations_store.py b/src/workbench/operations_store.py
+index d3cf5b0c..81d450a2 100644
+--- a/src/workbench/operations_store.py
++++ b/src/workbench/operations_store.py
+@@ -71,6 +71,14 @@ class Operations:
+     def create(self, kind, spec):
+         if kind not in {"source_sync", "revision_range", "version_matrix", "branch_comparison", "validation", "investigation", "candidate_review_batch", "agent_investigation"}:
+             raise ValueError("unknown operation kind")
++        if kind == "candidate_review_batch" and "candidate_ids" in spec:
++            candidate_ids = spec["candidate_ids"]
++            if (not isinstance(candidate_ids, list)
++                    or any(not isinstance(candidate_id, str) or not candidate_id for candidate_id in candidate_ids)):
++                raise ValueError("candidate review batch requires a list of non-empty candidate IDs")
++            declared_count = spec.get("candidate_count_at_enqueue")
++            if declared_count is not None and declared_count != len(candidate_ids):
++                raise ValueError("candidate review batch count does not match its identity list")
+         key = uuid.uuid4().hex
+         with self.store.connect() as db:
+             db.execute("BEGIN IMMEDIATE")
+@@ -135,13 +143,23 @@ class Operations:
+         with self.store.connect() as db:
+             rows = list(db.execute("SELECT id,status,spec,created_at FROM operations WHERE kind='candidate_review_batch' ORDER BY created_at"))
+         counts = {"queued_batches": 0, "running_batches": 0, "finished_batches": 0,
+-                  "queued_candidates": 0, "running_candidates": 0}
++                  "queued_candidates": 0, "running_candidates": 0,
++                  "queued_candidates_with_identity": 0,
++                  "queued_candidates_legacy_identity_unknown": 0}
+         for row in rows:
+             spec = json.loads(row["spec"])
+-            candidates = int(spec.get("candidate_count_at_enqueue", 0))
++            # New batches carry the exact candidate identity set. Keep historical
++            # count-only rows readable without pretending their identities were
++            # recorded retrospectively.
++            has_identity_list = isinstance(spec.get("candidate_ids"), list)
++            candidates = len(spec["candidate_ids"]) if has_identity_list else int(spec.get("candidate_count_at_enqueue", 0))
+             if row["status"] == "queued":
+                 counts["queued_batches"] += 1
+                 counts["queued_candidates"] += candidates
++                if has_identity_list:
++                    counts["queued_candidates_with_identity"] += candidates
++                else:
++                    counts["queued_candidates_legacy_identity_unknown"] += candidates
+             elif row["status"] == "running":
+                 counts["running_batches"] += 1
+                 counts["running_candidates"] += candidates
+@@ -151,7 +169,9 @@ class Operations:
+         return {"schema_version": 1, **counts,
+                 "model_provider_configured": public_status()["configured"],
+                 "automatic_batch_processing_enabled": False,
++                "batch_block_reason": "Batch consumption is disabled pending batch-scoped source-disclosure approval; individual source-bound Agent reviews remain opt-in.",
+                 "limitations": ["Queue summary counts only static findings from completed reports.",
++                                "New batches persist every candidate ID; historical count-only batches have unknown candidate identities.",
+                                 "Zero-candidate and partial/unanalyzed source coverage remain in scan reports and are not second-pass Agent reviews."]}
+ 
+     def event(self, key, stage, message):
+diff --git a/src/workbench/worker.py b/src/workbench/worker.py
+index 3b1acd52..37730a5d 100644
+--- a/src/workbench/worker.py
++++ b/src/workbench/worker.py
+@@ -148,7 +148,9 @@ class Worker:
+                     if candidates:
+                         task = Operations(self.store).create("candidate_review_batch", {
+                             "job_id": key, "report_sha256": final["report_sha256"],
++                            "candidate_ids": [candidate["id"] for candidate in candidates],
+                             "candidate_count_at_enqueue": len(candidates),
++                            "review_scope": "all_static_candidates_candidate_only",
+                             "timeout_seconds": 60, "memory_mb": 512,
+                         })
+                         self.store.event(key, "agent_review_queued",
+diff --git a/tests/test_workbench.py b/tests/test_workbench.py
+index f849b928..60404911 100644
+--- a/tests/test_workbench.py
++++ b/tests/test_workbench.py
+@@ -364,13 +364,19 @@ class WorkbenchTests(unittest.TestCase):
+         queued_items = [x for x in self.app.state.operations.list()
+                         if x["kind"] == "candidate_review_batch" and x["spec"].get("job_id") == job["id"]]
+         self.assertEqual(len(queued_items), 1)
++        self.assertEqual(queued_items[0]["spec"]["candidate_ids"], [item["id"] for item in expected])
++        self.assertEqual(queued_items[0]["spec"]["candidate_count_at_enqueue"], len(expected))
++        self.assertEqual(queued_items[0]["spec"]["review_scope"], "all_static_candidates_candidate_only")
+         queued = self.client.post("/api/v1/operations/agent-review-queue",
+                                   json={"job_id": job["id"]}, headers=HEADERS)
+         self.assertEqual(queued.status_code, 201, queued.text)
+         body = queued.json()
+         self.assertEqual(body["candidate_count"], len(expected))
++        self.assertEqual(body["candidate_ids"], [item["id"] for item in expected])
++        self.assertEqual(body["spec"]["candidate_ids"], [item["id"] for item in expected])
+         self.assertEqual(body["status"], "queued")
+-        self.assertFalse(body["model_available"])
++        self.assertFalse(body["model_provider_configured"])
++        self.assertFalse(body["automatic_batch_processing_enabled"])
+         self.assertEqual(body["spec"]["report_sha256"], job["report_sha256"])
+         queue_status = self.client.get("/api/v1/operations/agent-review-queue/status")
+         self.assertEqual(queue_status.status_code, 200, queue_status.text)
+@@ -382,6 +388,17 @@ class WorkbenchTests(unittest.TestCase):
+         self.assertEqual(again.json()["id"], body["id"])
+         self.assertEqual(self.app.state.operations.get(body["id"])["status"], "queued")
+ 
++    def test_zero_candidate_report_does_not_start_second_pass_agent_scan(self):
++        job = self.completed()
++        with patch("src.workbench.operations_api.service.findings", return_value=[]):
++            response = self.client.post("/api/v1/operations/agent-review-queue",
++                                        json={"job_id": job["id"]}, headers=HEADERS)
++        self.assertEqual(response.status_code, 409, response.text)
++        self.assertIn("不启动第二遍 LLM", response.json()["detail"])
++        self.assertEqual(sum(x["kind"] == "candidate_review_batch"
++                             and x["spec"].get("job_id") == job["id"]
++                             for x in self.app.state.operations.list()), 1)
++
+     def test_agent_proposal_is_append_only_and_requires_exact_fixed_source_citation(self):
+         job = self.completed()
+         candidate = service.findings(service.read_report(self.settings, job))[0]
+diff --git a/tests/test_workbench_operations.py b/tests/test_workbench_operations.py
+index 1f9d84b6..3c8456ba 100644
+--- a/tests/test_workbench_operations.py
++++ b/tests/test_workbench_operations.py
+@@ -85,6 +85,31 @@ class OperationsStoreTests(unittest.TestCase):
+         self.assertIsNone(self.ops.claim())
+         self.assertEqual(self.ops.get(first["id"])["status"], "queued")
+ 
++    def test_candidate_queue_counts_recorded_identity_list_and_reads_legacy_count_only_rows(self):
++        exact = self.ops.create("candidate_review_batch", {
++            "job_id": "a" * 32, "report_sha256": "b" * 64,
++            "candidate_ids": ["candidate-a", "candidate-a", "candidate-b"],
++            "candidate_count_at_enqueue": 3,
++        })
++        legacy = self.ops.create("candidate_review_batch", {
++            "job_id": "c" * 32, "report_sha256": "d" * 64,
++            "candidate_count_at_enqueue": 3,
++        })
++        summary = self.ops.candidate_review_queue()
++        self.assertEqual(summary["queued_candidates"], 6)
++        self.assertEqual(summary["queued_candidates_with_identity"], 3)
++        self.assertEqual(summary["queued_candidates_legacy_identity_unknown"], 3)
++        self.assertEqual(self.ops.get(exact["id"])["spec"]["candidate_ids"], ["candidate-a", "candidate-a", "candidate-b"])
++        self.assertNotIn("candidate_ids", self.ops.get(legacy["id"])["spec"])
++
++    def test_candidate_batch_rejects_an_identity_count_mismatch(self):
++        with self.assertRaisesRegex(ValueError, "does not match"):
++            self.ops.create("candidate_review_batch", {
++                "job_id": "a" * 32, "report_sha256": "b" * 64,
++                "candidate_ids": ["candidate-a", "candidate-b"],
++                "candidate_count_at_enqueue": 1,
++            })
++
+     def test_candidate_batches_do_not_consume_normal_operation_capacity(self):
+         batch = self.ops.create("candidate_review_batch", {"job_id": "a" * 32, "report_sha256": "b" * 64})
+         normal = self.ops.create("investigation", {"job_id": "c" * 32})
+diff --git a/web/src/features/audits/OperationWorkspace.tsx b/web/src/features/audits/OperationWorkspace.tsx
+index 7b1e2aae..8c08a9f7 100644
+--- a/web/src/features/audits/OperationWorkspace.tsx
++++ b/web/src/features/audits/OperationWorkspace.tsx
+@@ -112,7 +112,7 @@ export default function OperationWorkspace({ view = "all", operationId, context
+     <Card className="section-gap" title="操作任务" extra={<Button onClick={() => void refresh().catch((e) => setError(String(e)))}>刷新操作</Button>}>
+       <Alert className="section-gap" type={reviewQueue.queued_candidates ? "warning" : "info"} showIcon
+         message={`Agent 候选复核队列：${reviewQueue.queued_batches || 0} 个批次、${reviewQueue.queued_candidates || 0} 个候选排队；${reviewQueue.running_candidates || 0} 个候选处理中`}
+-        description="自动批量模型复核尚未启用；候选固定绑定原报告并保留排队状态。单候选 Agent 调查需另行预览并同意源码外发，不会自动确认漏洞。零候选及 partial 范围仍以扫描覆盖为准。" />
++        description={<>{reviewQueue.queued_candidates_with_identity || 0} 个排队候选已记录完整 Candidate ID；{reviewQueue.queued_candidates_legacy_identity_unknown || 0} 个历史候选只有数量、身份未知。{reviewQueue.batch_block_reason || "自动批量模型复核尚未启用；"} 单候选 Agent 调查需另行预览并同意源码外发，不会自动确认漏洞。零候选及 partial 范围仍以扫描覆盖为准。</>} />
+       <Table<any> rowKey="id" dataSource={filtered} pagination={{ pageSize: 8 }} scroll={{ x: 640 }} columns={[
+         { title: "任务", render: (_, row) => <><Text strong>{kinds[row.kind] || row.kind}</Text><div className="muted">{row.id.slice(0, 12)}</div></> },
+         { title: "状态", dataIndex: "status", render: (v) => <State value={v} /> },

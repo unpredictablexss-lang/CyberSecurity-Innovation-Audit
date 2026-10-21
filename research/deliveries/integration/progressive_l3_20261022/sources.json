@@ -1,0 +1,23 @@
+{
+  "main_base": "66338c420eeac977ec4666c9226931263218e2c1",
+  "remote_head": "c0969cb25d1f140061fc11e22c444e5be3069ae8",
+  "local_source": "E:/读研/网络安全创新大赛/workspace/progressive-triage-latest-20261021",
+  "patch_sha256": "c47bde4ff364d771c2ee4471385d6ec95ebf27a3d759c6096b2e635e9605d054",
+  "new_deep_agent_sha256": "5c0d3c4a8efe85d82423fbc13cb7ca25d792347c5e0507c8918bf57ddd83f6cf",
+  "decisions": [
+    "Keep main ordinary Agent uncapped behavior; progressive L3 uses separate bounded consent and zero retries.",
+    "Keep main L2 dispatch endpoint fix and parent execution regression, adapting the test to frozen parent ranking.",
+    "Retain the stronger double-consent idempotency match from the remote branch.",
+    "Local cancellation code has equivalent behavior to integrated remote code; local ledger differences are comments.",
+    "Original source worktree and existing service are untouched."
+  ],
+  "validation": {
+    "progressive_tests": 28,
+    "agent_tests": 151,
+    "node": 126,
+    "typescript_build": "passed",
+    "full_python": "pending",
+    "real_provider": "not_run",
+    "browser": "not_run"
+  }
+}

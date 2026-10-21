@@ -33,7 +33,10 @@ def main():
                 [sys.executable, "-m", "src.workbench.worker"],
                 cwd=root,
                 start_new_session=True,
-                env=worker_child_environment(os.environ),
+                # The trusted scan supervisor must validate the Provider identity
+                # captured in task consent before queuing Agent work. Worker.execute
+                # still strips these settings from the isolated detector child.
+                env=worker_child_environment(os.environ, allow_agent_provider=True),
             )
         )
         processes.append(subprocess.Popen(

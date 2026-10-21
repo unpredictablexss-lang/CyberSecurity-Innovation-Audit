@@ -38,13 +38,22 @@ export async function api(path: string, body?: unknown): Promise<any> {
       ["register the repository root, not a subdirectory", "登记路径不是 Git 仓库根目录，请选择包含 .git 的仓库目录。"],
       ["invalid revision; select a local branch, tag or commit", "无法识别该版本。请从本地分支、标签中选择，或输入完整 Commit SHA。"],
       ["source or rule plan changed since preview", "仓库源码或规则计划在预览后发生变化，请重新预览扫描计划。"],
-      ["audit workflow changed since preview", "审计方式在预览后发生变化，请重新预览审计计划。"],
+      ["audit workflow changed since preview", "审计方式在预览后发生变化，请重新检查扫描设置。"],
       ["planning deadline exceeded", "扫描计划生成超时；未创建任务。请缩小仓库范围后重试。"],
       ["planning failed within source/resource limits", "扫描计划生成失败；未创建任务。请检查目录范围和服务端资源限制。"],
       ["no applicable approved detector", "当前仓库范围没有适用的已批准检测器；未创建任务，安全状态仍为未知。"],
     ];
     const translated = messages.find(([needle]) => lower.includes(needle));
     throw new Error(translated ? translated[1] : detail);
+  }
+  return r.json();
+}
+
+export async function apiGet(path: string): Promise<any> {
+  const r = await fetch("/api/v1" + path, { headers: { Accept: "application/json" } });
+  if (!r.ok) {
+    const e = await r.json().catch(() => ({ detail: r.statusText }));
+    throw new Error(typeof e.detail === "string" ? e.detail : JSON.stringify(e.detail));
   }
   return r.json();
 }

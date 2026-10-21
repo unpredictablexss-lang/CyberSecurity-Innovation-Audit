@@ -1,0 +1,295 @@
+diff --git a/src/workbench/operations.py b/src/workbench/operations.py
+index cb98432..6e9565c 100644
+--- a/src/workbench/operations.py
++++ b/src/workbench/operations.py
+@@ -824,6 +824,9 @@ def execute(settings, store, ops, task):
+     if kind == "investigation":
+         return investigation(settings, store, spec)
+     if kind == "agent_investigation":
++        if spec.get("progressive_quick_screen_operation_id"):
++            from .progressive_triage.deep_agent_operation import execute_progressive_deep_agent
++            return execute_progressive_deep_agent(settings, store, ops, task)
+         from .agent import execute_agent
+         return execute_agent(settings, store, ops, task)
+     if kind == "progressive_quick_screen":
+diff --git a/src/workbench/operations_api.py b/src/workbench/operations_api.py
+index 13c9b8b..3c70155 100644
+--- a/src/workbench/operations_api.py
++++ b/src/workbench/operations_api.py
+@@ -580,6 +580,12 @@ class ProgressiveQuickScreenRequest(Strict):
+     consent_expires_at: str | None = Field(default=None, max_length=40)
+ 
+ 
++class ProgressiveDeepInvestigationRequest(AgentInvestigationRequest):
++    max_steps: int = Field(default=4, ge=1, le=12)
++    progressive_quick_screen_operation_id: str = Field(
++        min_length=32, max_length=32, pattern=r"^[0-9a-f]{32}$")
++
++
+ 
+ 
+ class AgentBatchInvestigationRequest(Strict):
+@@ -2012,7 +2018,7 @@ def install_routes(app: FastAPI, settings, store):
+         result["checked_at"] = persisted.get("checked_at") if persisted else None
+         return result
+ 
+-    def _agent_consent_preview(body, provider, *, continuous=None):
++    def _agent_consent_preview(body, provider, *, continuous=None, progressive_bounded=False):
+         from .agent import consent_preview
+         job = store.job(body.job_id)
+         if job["status"] not in {"completed", "completed_with_limitations"} or not job.get("report_sha256"):
+@@ -2024,9 +2030,10 @@ def install_routes(app: FastAPI, settings, store):
+         # have no local cumulative usage ceiling; single-shot still performs
+         # one Provider request. Per-request controls and fixed read-only scope remain.
+         preview_spec["continuous_investigation"] = False
+-        preview_spec["no_cumulative_token_ceiling"] = body.mode == "tool_agent"
++        preview_spec["no_cumulative_token_ceiling"] = (
++            body.mode == "tool_agent" and not progressive_bounded)
+         preview_spec["provider_request_timeout_seconds"] = 45
+-        preview_spec["max_provider_retries"] = 1
++        preview_spec["max_provider_retries"] = 0 if progressive_bounded else 1
+         preview = consent_preview(settings, store, job, report, candidate, preview_spec, provider)
+         return job, report, candidate, preview
+ 
+@@ -2118,6 +2125,152 @@ def install_routes(app: FastAPI, settings, store):
+         except ValueError as exc:
+             raise HTTPException(status_code=409, detail=str(exc)) from None
+ 
++    def _progressive_quick_result(operation_id, job_id, candidate_id):
++        quick_task = ops.get(operation_id)
++        if (quick_task.get("kind") != "progressive_quick_screen"
++                or quick_task.get("status") not in {"completed", "completed_with_limitations"}
++                or not quick_task.get("result_sha256")):
++            raise HTTPException(status_code=409, detail="L2 快筛任务尚未完成或没有可核验结果")
++        result = ops.result(operation_id)
++        assessment = result.get("quick_screen") if isinstance(result, dict) else None
++        if (not isinstance(assessment, dict) or assessment.get("state") != "completed"
++                or assessment.get("quick_assessment") != "investigate"):
++            raise HTTPException(status_code=409, detail="只有完成且建议 investigate 的 L2 结果可以进入深度调查")
++        source_binding = result.get("source_binding") if isinstance(result, dict) else None
++        quick_spec = quick_task.get("spec") if isinstance(quick_task.get("spec"), dict) else {}
++        authorization = quick_spec.get("authorization") if isinstance(quick_spec.get("authorization"), dict) else {}
++        if (quick_spec.get("job_id") != job_id or quick_spec.get("candidate_id") != candidate_id
++                or not isinstance(source_binding, dict)
++                or source_binding.get("report_sha256") != authorization.get("report_sha256")):
++            raise HTTPException(status_code=409, detail="L2 结果与本次固定候选/报告不匹配")
++        return quick_task, result
++
++    def _progressive_deep_preview(body, provider):
++        from .progressive_triage.contracts import content_sha256
++        from .progressive_triage.policy import validate_policy
++        if body.mode != "tool_agent":
++            raise HTTPException(status_code=422, detail="L3 仅复用现有只读跨文件 tool-agent 工作流")
++        quick_task, quick_result = _progressive_quick_result(
++            body.progressive_quick_screen_operation_id, body.job_id, body.candidate_id)
++        quick_spec = quick_task["spec"]
++        audit_id = quick_spec.get("audit_operation_id")
++        if not isinstance(audit_id, str) or not audit_id:
++            raise HTTPException(status_code=409, detail="L2 缺少父审计预算绑定")
++        parent = ops.get(audit_id) if audit_id != body.job_id else None
++        if parent and (parent.get("cancel_requested") or parent.get("status") in
++                       {"cancelled", "failed", "timed_out", "interrupted"}):
++            raise HTTPException(status_code=409, detail="父审计已取消或不可继续")
++        frozen = quick_spec.get("progressive_policy")
++        if not isinstance(frozen, dict):
++            raise HTTPException(status_code=409, detail="L2 结果没有冻结策略")
++        policy = validate_policy(frozen.get("policy"))
++        policy_sha = content_sha256(policy)
++        if frozen.get("policy_sha256") != policy_sha:
++            raise HTTPException(status_code=409, detail="冻结策略摘要校验失败")
++        max_steps = min(body.max_steps, policy["limits"]["max_tool_steps_per_group"])
++        bounded = body.model_copy(update={
++            "max_steps": max_steps,
++            "max_total_input_tokens": min(body.max_total_input_tokens,
++                                           policy["limits"]["max_input_tokens_per_audit"]),
++            "max_total_output_tokens": min(body.max_total_output_tokens,
++                                            policy["limits"]["max_output_tokens_per_audit"]),
++            "timeout_seconds": min(body.timeout_seconds,
++                                    max(90, policy["limits"]["max_ai_wall_seconds"])),
++        })
++        _, _, _, preview = _agent_consent_preview(
++            bounded, provider, continuous=False, progressive_bounded=True)
++        if not preview["agent_execution"]["eligible"]:
++            raise HTTPException(status_code=409, detail=preview["agent_execution"]["reason"])
++        group = quick_spec.get("group") if isinstance(quick_spec.get("group"), dict) else {}
++        source_binding = quick_result.get("source_binding") or {}
++        binding = {
++            "quick_screen_operation_id": quick_task["id"],
++            "quick_screen_result_sha256": quick_task["result_sha256"],
++            "quick_assessment": "investigate", "audit_operation_id": audit_id,
++            "group_id": group.get("group_id"), "policy_sha256": frozen["policy_sha256"],
++            "candidate_id": body.candidate_id,
++            "report_sha256": source_binding.get("report_sha256"),
++            "commit": source_binding.get("commit"),
++        }
++        if not all(isinstance(binding[key], str) and binding[key]
++                   for key in ("group_id", "report_sha256", "commit")):
++            raise HTTPException(status_code=409, detail="L2 固定来源或候选组绑定不完整")
++        agent_consent_sha256 = preview["consent_sha256"]
++        progressive_consent_sha256 = content_sha256({
++            "agent_consent_sha256": agent_consent_sha256,
++            "progressive_binding": binding,
++        })
++        preview.update({
++            "agent_consent_sha256": agent_consent_sha256,
++            "consent_sha256": progressive_consent_sha256,
++            "progressive_binding": binding, "progressive_policy": frozen,
++            "budgets": {**preview["budgets"],
++                        "progressive_task_shared_input_tokens": policy["limits"]["max_input_tokens_per_audit"],
++                        "progressive_task_shared_output_tokens": policy["limits"]["max_output_tokens_per_audit"],
++                        "progressive_task_shared_model_calls": policy["limits"]["max_model_calls_per_audit"],
++                        "progressive_task_shared_wall_seconds": policy["limits"]["max_ai_wall_seconds"],
++                        "max_steps": max_steps},
++        })
++        return bounded, quick_task, preview
++
++    @router.post("/operations/progressive-deep-investigations/preview")
++    def progressive_deep_investigation_preview(body: ProgressiveDeepInvestigationRequest):
++        from .agent import ProviderConfig
++        provider = ProviderConfig.from_env(settings.data_dir)
++        if not provider.configured:
++            raise HTTPException(status_code=503, detail="真实模型未配置；没有发送 Provider 请求")
++        body = _fresh_consent_nonce(body)
++        return _progressive_deep_preview(body, provider)[2]
++
++    @router.post("/operations/progressive-deep-investigations", status_code=201)
++    def progressive_deep_investigation(body: ProgressiveDeepInvestigationRequest):
++        from .agent import (CONSENT_PREVIEW_VERSION, PROMPT_VERSION,
++                            REDACTION_POLICY_VERSION, TOOL_POLICY_VERSION, ProviderConfig)
++        if body.source_submission_approved is not True:
++            raise HTTPException(status_code=428, detail="请先查看完整 L3 源码/工具范围并明确授权")
++        if not body.consent_sha256:
++            raise HTTPException(status_code=428, detail="缺少 L3 预览摘要，请重新预览")
++        _require_consent_nonce(body)
++        provider = ProviderConfig.from_env(settings.data_dir)
++        if not provider.configured:
++            raise HTTPException(status_code=503, detail="真实模型未配置；没有发送 Provider 请求")
++        bounded, quick_task, preview = _progressive_deep_preview(body, provider)
++        if body.consent_sha256 != preview["consent_sha256"]:
++            raise HTTPException(status_code=409, detail="L2 结果、源码范围、模型或策略已变化；请重新预览授权")
++        binding = preview["progressive_binding"]
++        spec = {
++            "job_id": bounded.job_id, "candidate_id": bounded.candidate_id,
++            "case_id": None, "experiment_id": None, "mode": "tool_agent",
++            "max_output_tokens": bounded.max_output_tokens, "max_steps": bounded.max_steps,
++            "max_total_input_tokens": bounded.max_total_input_tokens,
++            "max_total_output_tokens": bounded.max_total_output_tokens,
++            "timeout_seconds": bounded.timeout_seconds,
++            "provider_request_timeout_seconds": 45, "max_provider_retries": 0,
++            "continuous_investigation": False, "no_cumulative_token_ceiling": False,
++            "source_submission_approved": True, "source_submission_approved_at": now(),
++            "source_consent_sha256": preview["agent_consent_sha256"],
++            "progressive_consent_sha256": preview["consent_sha256"],
++            "progressive_quick_screen_operation_id": quick_task["id"],
++            "progressive_quick_screen_result_sha256": binding["quick_screen_result_sha256"],
++            "progressive_audit_operation_id": binding["audit_operation_id"],
++            "progressive_group_id": binding["group_id"],
++            "progressive_policy": preview["progressive_policy"],
++            "progressive_policy_sha256": binding["policy_sha256"],
++            "consent_nonce": body.consent_nonce,
++            "consent_preview_version": CONSENT_PREVIEW_VERSION,
++            "redaction_policy_version": REDACTION_POLICY_VERSION,
++            "provider": provider.provider, "provider_model": provider.model,
++            "provider_host": provider.endpoint_host, "provider_fingerprint": provider.fingerprint,
++            "prompt_version": PROMPT_VERSION, "tool_policy_version": TOOL_POLICY_VERSION,
++            "candidate_source_sha256": preview["binding"]["source_sha256"],
++            "source_commit": preview["binding"]["commit"],
++            "report_sha256": preview["binding"]["report_sha256"],
++        }
++        item = ops.create("agent_investigation", spec)
++        ops.event(item["id"], "progressive_deep_consent",
++                  "User approved L3 fixed-source preview sha256=" + preview["consent_sha256"])
++        return ops.get(item["id"])
++
+     @router.post("/operations/agent-investigations/preview")
+     def agent_investigation_preview(body: AgentInvestigationRequest):
+         from .agent import ProviderConfig
+diff --git a/src/workbench/operations_store.py b/src/workbench/operations_store.py
+index 7d9d3ad..5fa8fcf 100644
+--- a/src/workbench/operations_store.py
++++ b/src/workbench/operations_store.py
+@@ -380,6 +380,11 @@ class Operations:
+                     if prior and json.loads(prior["spec"]).get("consent_sha256") == spec["consent_sha256"]:
+                         return self.row(prior)
+                     raise ValueError("joint comparison approval ticket has already been used")
++            elif kind == "agent_investigation" and spec.get("progressive_consent_sha256"):
++                for row in db.execute("SELECT * FROM operations WHERE kind=?", (kind,)):
++                    existing_spec = json.loads(row["spec"])
++                    if existing_spec.get("progressive_consent_sha256") == spec["progressive_consent_sha256"]:
++                        return self.row(row)
+             elif kind == "agent_investigation" and spec.get("source_consent_sha256"):
+                 # Consent hashes include a fresh preview nonce. A network/client retry with
+                 # the same explicit approval must return the original operation, avoiding
+@@ -1221,6 +1226,9 @@ class Operations:
+                 targets.extend(self.row(item) for item in db.execute(
+                     "SELECT * FROM operations WHERE kind='progressive_quick_screen'")
+                     if json.loads(item["spec"]).get("audit_operation_id") == key)
++                targets.extend(self.row(item) for item in db.execute(
++                    "SELECT * FROM operations WHERE kind='agent_investigation'")
++                    if json.loads(item["spec"]).get("progressive_audit_operation_id") == key)
+             pair_id = row["spec"].get("pair_id")
+             if pair_id and row["kind"] == "agent_investigation" and row["status"] not in END:
+                 targets = [self.row(item) for item in db.execute(
+diff --git a/src/workbench/progressive_triage/api.py b/src/workbench/progressive_triage/api.py
+index b32b25c..70afc3e 100644
+--- a/src/workbench/progressive_triage/api.py
++++ b/src/workbench/progressive_triage/api.py
+@@ -36,9 +36,9 @@ def _public_state(state: dict[str, Any]) -> dict[str, Any]:
+         "presets": PRESETS,
+         "integration": {
+             "grouping_and_ranking": "connected_to_multi_endpoint_operation_results",
+-            "worker_enforcement": "l2_fixed_source_consent_and_parent_budget_gate",
++            "worker_enforcement": "l2_l3_fixed_source_consent_and_parent_budget_gate",
+             "quick_screen_executor": "independent_explicit_consent_operation",
+-            "task_budget_ledger": "shared_across_fixed_endpoints_for_explicit_quick_screen",
++            "task_budget_ledger": "shared_across_fixed_endpoints_for_l2_and_l3",
+             "billing_hard_cap": False,
+             "all_candidates_preserved": True,
+             "task_level_consent_required": True,
+diff --git a/src/workbench/progressive_triage/ledger.py b/src/workbench/progressive_triage/ledger.py
+index b59df0a..cae502f 100644
+--- a/src/workbench/progressive_triage/ledger.py
++++ b/src/workbench/progressive_triage/ledger.py
+@@ -241,14 +241,8 @@ class BudgetLedger:
+             if not dispatch or dispatch["status"] not in {"queued", "running"}:
+                 db.rollback()
+                 raise BudgetError("group is not queued for this model stage")
+-            if stage == "deep_agent":
+-                steps = db.execute(
+-                    "SELECT count(*) FROM budget_reservation WHERE audit_id=? AND group_id=? AND stage='deep_agent' AND status!='known_not_sent'",
+-                    (audit_id, group_id),
+-                ).fetchone()[0]
+-                if steps >= limits["max_tool_steps_per_group"]:
+-                    db.rollback()
+-                    raise BudgetError("per-group deep Agent step budget exhausted")
++            # Existing Agent max_steps limits actual tool steps. This ledger
++            # separately counts every model request, including repairs and Skeptic.
+             inflight = db.execute(
+                 "SELECT count(*) FROM budget_reservation WHERE audit_id=? AND status='reserved'",
+                 (audit_id,),
+diff --git a/web/src/features/audits/OperationWorkspace.tsx b/web/src/features/audits/OperationWorkspace.tsx
+index fffcdee..32cdf0b 100644
+--- a/web/src/features/audits/OperationWorkspace.tsx
++++ b/web/src/features/audits/OperationWorkspace.tsx
+@@ -8,6 +8,7 @@ import { AgentInvestigationForm, ComparisonForm, InvestigationForm, SyncForm, Va
+ import AgentAssessment from "./AgentAssessment";
+ import AgentBlindReview from "./AgentBlindReview";
+ import SourceSyncDetails from "./SourceSyncDetails";
++import ProgressiveDeepInvestigationAction from "./ProgressiveDeepInvestigationAction";
+ import VersionCandidateComparison from "./VersionCandidateComparison";
+ import { buildIntelligentReviewView } from "./operationProgressModel.js";
+ const { Text } = Typography;
+@@ -356,11 +357,9 @@ export default function OperationWorkspace({ view = "all", operationId, context
+               </Descriptions.Item>
+             </Descriptions>
+             <Text type="secondary">引文 ID：{listText(result.evidence_citations)}</Text>
+-            <Alert className="section-gap" type="info" showIcon message="L3 深度 Agent 尚未自动排队" description="当前结果只完成单次、无工具的 L2 快速研判。点击继续会回到固定扫描候选并重新展示深度 Agent 的源码范围与单独授权；可能反证只作为线索，不会自动标误报。" />
++            <Alert className="section-gap" type="info" showIcon message="L3 深度 Agent 需要单独授权" description="只有 L2 完成并建议 investigate 才能继续。提交后复用现有固定版本只读 Agent；它仍是候选调查意见，不会自动确认漏洞或误报。" />
+             {result.quick_assessment === "investigate" && selected.spec?.job_id && selected.spec?.candidate_id &&
+-              <Button className="section-gap" type="primary" onClick={() => go(`/tasks/${encodeURIComponent(selected.spec.job_id)}?tab=findings&candidate_id=${encodeURIComponent(selected.spec.candidate_id)}`)}>
+-                继续深度调查 · 重新预览授权
+-              </Button>}
++              <ProgressiveDeepInvestigationAction jobId={selected.spec.job_id} candidateId={selected.spec.candidate_id} quickScreenOperationId={selected.id} />}
+           </>;
+         })()}
+       </Card>}

@@ -1,5 +1,6 @@
 import unittest
 
+from src.ohscanner.detectors.admission import pending_admission
 from src.ohscanner.detectors.catalog import (
     build_registry,
     catalog_metadata,

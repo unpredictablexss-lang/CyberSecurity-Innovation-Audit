@@ -1,3 +1,60 @@
+// Keep impact severity, evidence confidence, and verification independent.
+const severityColorMap = Object.freeze({
+  critical: "magenta", high: "red", medium: "orange", low: "blue",
+  info: "default", unknown: "default",
+});
+const riskTierColorMap = Object.freeze({
+  high_confidence_candidate: "gold", further_validation: "blue",
+  unknown_source_binding: "default", low_priority_manual: "default",
+});
+const riskTierLabels = Object.freeze({
+  high_confidence_candidate: "高可信候选",
+  further_validation: "待验证候选",
+  unknown_source_binding: "来源待核候选",
+  low_priority_manual: "低优先级候选",
+});
+const humanReviewStatusLabels = Object.freeze({
+  unassessed: "待人工复核",
+  under_review: "人工复核中",
+  plausible_unproven: "人工认为值得验证",
+  likely_false_positive: "人工倾向误报（未确认）",
+  refuted: "人工认为当前证据不支持",
+});
+const humanReviewStatusColors = Object.freeze({
+  unassessed: "default",
+  under_review: "processing",
+  plausible_unproven: "orange",
+  likely_false_positive: "blue",
+  refuted: "default",
+});
+const severityLabels = Object.freeze({
+  critical: "严重", high: "高危", medium: "中危",
+  low: "低危", info: "提示", unknown: "未分级",
+});
+
+export function candidateSeverityLabel(severity) {
+  return severityLabels[severity] || "未分级";
+}
+export function candidateSeverityColor(severity) {
+  return severityColorMap[severity] || "default";
+}
+export function candidateConfidenceLabel(tier) {
+  return riskTierLabels[tier] || "待验证候选";
+}
+export function candidateConfidenceColor(tier) {
+  return riskTierColorMap[tier] || "default";
+}
+export function humanReviewStatusLabel(status) {
+  return humanReviewStatusLabels[status] || "复核状态未知";
+}
+export function humanReviewStatusColor(status) {
+  return humanReviewStatusColors[status] || "default";
+}
+export function candidateVerificationLabel(state) {
+  // Cross-audit risk observations are never promoted by model confidence.
+  return state === "confirmed" ? "已人工核实（请查看证明材料）" : "尚未确认";
+}
+
 export const triageStateLabels = Object.freeze({
   not_requested: "未请求模型", not_triaged: "未研判",
   waiting_for_authorization: "等待本次任务授权", waiting_for_scan: "等待静态扫描",
@@ -8,7 +65,8 @@ export const triageStateLabels = Object.freeze({
   blocked: "受阻", blocked_authorization_changed: "授权已变化，已阻止",
   no_eligible_candidates: "没有符合条件的候选", stopped: "授权已撤销",
   failed: "失败", timed_out: "超时", interrupted: "中断",
-  awaiting_r1: "等待首轮研判", budget_limited: "达到预算上限",
+  awaiting_r1: "等待首轮研判", budget_limited: "已达到候选授权名额",
+  candidate_limit_exceeded: "候选数超过端点保护上限", queue_limit_exceeded: "队列容量不足；候选未研判",
   not_needed: "无需补充核查", failed_selection: "未能选择补充核查",
 });
 
@@ -46,7 +104,7 @@ const agentConfidenceLabels = Object.freeze({
   high: "高（模型自评）", medium: "中（模型自评）",
   low: "低（模型自评）", none: "无",
 });
-const agentScopeLabels = Object.freeze({ fixed_source_code: "固定提交源码", none: "未完成源码验证" });
+const agentScopeLabels = Object.freeze({ fixed_source_code: "本次扫描源码", none: "未完成源码验证" });
 const productStatusLabels = Object.freeze({
   unknown: "未知（待核实）", candidate: "待复核候选",
   confirmed: "已确认（请核对产品验证证据）",
@@ -57,7 +115,7 @@ const agentVerdictReasons = Object.freeze({
   "The model favors the vulnerability hypothesis, but source evidence is incomplete or mixed.": "模型倾向漏洞假设，但源码证据不完整或相互混合。",
   "All source-review obligations contain cited contrary evidence.": "所有源码复核义务均有带引用的相反证据；仍需人工复核。",
   "The model favors a false-positive explanation, but source evidence is incomplete or mixed.": "模型倾向误报解释，但源码证据不完整或相互混合。",
-  "The available fixed-source evidence does not support a stronger Agent verdict.": "当前固定源码证据不足以支持更强的模型分诊结论。",
+  "The available fixed-source evidence does not support a stronger Agent verdict.": "当前扫描源码证据不足以支持更强的模型分诊结论。",
 });
 
 const groupingBasisLabels = Object.freeze({
@@ -140,7 +198,7 @@ const reportLimitations = Object.freeze({
   "Zero diagnostics does NOT mean the component is free of vulnerabilities.":
     "零条候选不代表组件不存在漏洞。",
   "Git origin name is user declared; source is pinned local objects, not an OH product build.":
-    "Git 远端名称由用户声明；扫描绑定的是本地固定对象，不是 OpenHarmony 产品构建产物。",
+    "Git 远端名称由用户声明；扫描绑定的是本地 Git 对象版本，不是 OpenHarmony 产品构建产物。",
   "No compilation flags/macros, symbolic execution, hard plugin timeout or runtime validation.":
     "未纳入构建参数与宏定义，也未执行符号执行或运行时验证；检测器进程级硬超时隔离尚未实现。",
 });
@@ -150,11 +208,11 @@ export function reportLimitationLabel(value) {
 
 const riskReasons = Object.freeze({
   "candidate source identity does not match the immutable report inventory":
-    "候选来源与固定报告清单不一致，需要重新核对。",
+    "候选来源与扫描报告清单不一致，需要重新核对。",
   "a human marked this item as refuted or low-priority; this is not a safety verdict":
     "人工将此项标为驳回或低优先级；这不代表已证明安全。",
   "fixed source/report hashes match and every recorded obligation has a quoted R0 evidence_found review":
-    "固定源码与报告哈希一致，且已逐项完成 R0 引用复核；结论仍为候选。",
+    "本次扫描源码与报告哈希一致，且已逐项完成 R0 引用复核；结论仍为候选。",
   "candidate analysis is partial or unknown": "候选分析不完整或状态未知。",
   "no complete evidence-obligation set is available": "尚无完整的证据义务清单。",
   "no complete quoted static-human evidence review is recorded": "尚未完成带源码引用的静态人工复核。",
@@ -197,4 +255,13 @@ export function riskReasonsLabel(reasons) {
     .map(riskReasonLabel)
     .map((label) => label.replace(/[。；;，,\s]+$/u, ""));
   return labels.length ? labels.join("；") + "。" : "需要进一步核对本项证据。";
+}
+export function highConfidenceAiSummary(summary) {
+  if (typeof summary === "string" && summary.trim()) {
+    return { state: "available", text: summary.trim() };
+  }
+  return {
+    state: "unknown",
+    text: "AI 摘要不可用；页面不推测模型理由，请依据本次扫描源码证据人工复核。",
+  };
 }

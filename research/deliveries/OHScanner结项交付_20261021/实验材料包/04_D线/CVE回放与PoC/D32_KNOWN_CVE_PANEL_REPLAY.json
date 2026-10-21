@@ -1,0 +1,432 @@
+{
+  "schema": 1,
+  "experiment": "D32 pinned known-CVE scans through Workbench API and Worker",
+  "detector": "ohscanner.known_disclosed_cves",
+  "catalog_registered": true,
+  "results": [
+    {
+      "repository": "third_party_libpng",
+      "commit": "e57b1079564a02a50321ec528aa6e41884979d32",
+      "include_paths": [
+        "libpng-1.6.55.tar.gz"
+      ],
+      "expected_cves": [
+        "CVE-2026-33636",
+        "CVE-2026-46675"
+      ],
+      "runs": [
+        {
+          "status": "completed_with_limitations",
+          "detector_status": "blocked",
+          "git_tree": "02b17492f4490ff2e4d17ba74e2080358a500059",
+          "snapshot_sha256": "b5d224b55c41fbb4a37453dd6486259cb9e8798aa5805ae00563bf90704607f5",
+          "report_sha256": "d984c8d6dbcac3c222ef665939ff300ca147c8f4cd5c6355bcb1c2d62a48d24b",
+          "diagnostics": [
+            [
+              "CVE-2026-33636",
+              "libpng-1.6.55.tar.gz.members/libpng-1.6.55/arm/palette_neon_intrinsics.c",
+              63,
+              "d58734a03a91df0f2c11e3558354281d7613888d85c83887586560a270bffa41"
+            ],
+            [
+              "CVE-2026-33636",
+              "libpng-1.6.55.tar.gz.members/libpng-1.6.55/arm/palette_neon_intrinsics.c",
+              108,
+              "d58734a03a91df0f2c11e3558354281d7613888d85c83887586560a270bffa41"
+            ],
+            [
+              "CVE-2026-46675",
+              "libpng-1.6.55.tar.gz.members/libpng-1.6.55/png.h",
+              277,
+              "00e93d3c87cde182df182a3e6090e704b4208d48f9473a6af4c651b8a0be05f1"
+            ]
+          ],
+          "source_bindings": [
+            [
+              "libpng-1.6.55.tar.gz.members/libpng-1.6.55/arm/palette_neon_intrinsics.c",
+              "d58734a03a91df0f2c11e3558354281d7613888d85c83887586560a270bffa41",
+              null,
+              {
+                "archive_path": "libpng-1.6.55.tar.gz",
+                "archive_blob_oid": "975cee2aca0eda6bfa3e9b7a1336c956fcf1b094",
+                "archive_sha256": "71a2c5b1218f60c4c6d2f1954c7eb20132156cae90bdb90b566c24db002782a6",
+                "member_path": "libpng-1.6.55/arm/palette_neon_intrinsics.c",
+                "member_sha256": "d58734a03a91df0f2c11e3558354281d7613888d85c83887586560a270bffa41"
+              }
+            ],
+            [
+              "libpng-1.6.55.tar.gz.members/libpng-1.6.55/png.h",
+              "00e93d3c87cde182df182a3e6090e704b4208d48f9473a6af4c651b8a0be05f1",
+              null,
+              {
+                "archive_path": "libpng-1.6.55.tar.gz",
+                "archive_blob_oid": "975cee2aca0eda6bfa3e9b7a1336c956fcf1b094",
+                "archive_sha256": "71a2c5b1218f60c4c6d2f1954c7eb20132156cae90bdb90b566c24db002782a6",
+                "member_path": "libpng-1.6.55/png.h",
+                "member_sha256": "00e93d3c87cde182df182a3e6090e704b4208d48f9473a6af4c651b8a0be05f1"
+              }
+            ]
+          ],
+          "validated_vulnerability": 0
+        },
+        {
+          "status": "completed_with_limitations",
+          "detector_status": "blocked",
+          "git_tree": "02b17492f4490ff2e4d17ba74e2080358a500059",
+          "snapshot_sha256": "b5d224b55c41fbb4a37453dd6486259cb9e8798aa5805ae00563bf90704607f5",
+          "report_sha256": "00311c2fbcdffcb2e6bc306bd5dd0d99a687839fcfac36fd7d0ef34c3e295280",
+          "diagnostics": [
+            [
+              "CVE-2026-33636",
+              "libpng-1.6.55.tar.gz.members/libpng-1.6.55/arm/palette_neon_intrinsics.c",
+              63,
+              "d58734a03a91df0f2c11e3558354281d7613888d85c83887586560a270bffa41"
+            ],
+            [
+              "CVE-2026-33636",
+              "libpng-1.6.55.tar.gz.members/libpng-1.6.55/arm/palette_neon_intrinsics.c",
+              108,
+              "d58734a03a91df0f2c11e3558354281d7613888d85c83887586560a270bffa41"
+            ],
+            [
+              "CVE-2026-46675",
+              "libpng-1.6.55.tar.gz.members/libpng-1.6.55/png.h",
+              277,
+              "00e93d3c87cde182df182a3e6090e704b4208d48f9473a6af4c651b8a0be05f1"
+            ]
+          ],
+          "source_bindings": [
+            [
+              "libpng-1.6.55.tar.gz.members/libpng-1.6.55/arm/palette_neon_intrinsics.c",
+              "d58734a03a91df0f2c11e3558354281d7613888d85c83887586560a270bffa41",
+              null,
+              {
+                "archive_path": "libpng-1.6.55.tar.gz",
+                "archive_blob_oid": "975cee2aca0eda6bfa3e9b7a1336c956fcf1b094",
+                "archive_sha256": "71a2c5b1218f60c4c6d2f1954c7eb20132156cae90bdb90b566c24db002782a6",
+                "member_path": "libpng-1.6.55/arm/palette_neon_intrinsics.c",
+                "member_sha256": "d58734a03a91df0f2c11e3558354281d7613888d85c83887586560a270bffa41"
+              }
+            ],
+            [
+              "libpng-1.6.55.tar.gz.members/libpng-1.6.55/png.h",
+              "00e93d3c87cde182df182a3e6090e704b4208d48f9473a6af4c651b8a0be05f1",
+              null,
+              {
+                "archive_path": "libpng-1.6.55.tar.gz",
+                "archive_blob_oid": "975cee2aca0eda6bfa3e9b7a1336c956fcf1b094",
+                "archive_sha256": "71a2c5b1218f60c4c6d2f1954c7eb20132156cae90bdb90b566c24db002782a6",
+                "member_path": "libpng-1.6.55/png.h",
+                "member_sha256": "00e93d3c87cde182df182a3e6090e704b4208d48f9473a6af4c651b8a0be05f1"
+              }
+            ]
+          ],
+          "validated_vulnerability": 0
+        }
+      ],
+      "repeat_equal": true
+    },
+    {
+      "repository": "third_party_libtiff",
+      "commit": "d4a0516c477dfbaf1153ae295893ab75aadd63d4",
+      "include_paths": [
+        "libtiff/tif_getimage.c"
+      ],
+      "expected_cves": [
+        "CVE-2025-9900"
+      ],
+      "runs": [
+        {
+          "status": "completed_with_limitations",
+          "detector_status": "blocked",
+          "git_tree": "33beab3b3b50fe6678b1a74ed48ac3b69084c6ec",
+          "snapshot_sha256": "97c42f290a39a34773a8864ab7117104ac385d54b4d2312accb31bef4c769c3f",
+          "report_sha256": "0f5ece0f1f99076cd3f9a56c9cd78a5388f8b988507836dff50044495897726d",
+          "diagnostics": [
+            [
+              "CVE-2025-9900",
+              "libtiff/tif_getimage.c",
+              621,
+              "4b664c80e2e208c2a9cd33042419f69e590ff088c1a3befe99581d1b1df5471a"
+            ]
+          ],
+          "source_bindings": [
+            [
+              "libtiff/tif_getimage.c",
+              "4b664c80e2e208c2a9cd33042419f69e590ff088c1a3befe99581d1b1df5471a",
+              "5121e85b9eb2bc734b557892c0968f629d370b82",
+              null
+            ]
+          ],
+          "validated_vulnerability": 0
+        },
+        {
+          "status": "completed_with_limitations",
+          "detector_status": "blocked",
+          "git_tree": "33beab3b3b50fe6678b1a74ed48ac3b69084c6ec",
+          "snapshot_sha256": "97c42f290a39a34773a8864ab7117104ac385d54b4d2312accb31bef4c769c3f",
+          "report_sha256": "e4afb0688be552b68d625ee7a87a0ec3e6aab31b4ad5bbfe202be7bfecae74f0",
+          "diagnostics": [
+            [
+              "CVE-2025-9900",
+              "libtiff/tif_getimage.c",
+              621,
+              "4b664c80e2e208c2a9cd33042419f69e590ff088c1a3befe99581d1b1df5471a"
+            ]
+          ],
+          "source_bindings": [
+            [
+              "libtiff/tif_getimage.c",
+              "4b664c80e2e208c2a9cd33042419f69e590ff088c1a3befe99581d1b1df5471a",
+              "5121e85b9eb2bc734b557892c0968f629d370b82",
+              null
+            ]
+          ],
+          "validated_vulnerability": 0
+        }
+      ],
+      "repeat_equal": true
+    },
+    {
+      "repository": "third_party_curl",
+      "commit": "1386bb128bb060b284309397b97adcaaec21c003",
+      "include_paths": [
+        "lib/mime.c"
+      ],
+      "expected_cves": [
+        "CVE-2026-92391"
+      ],
+      "runs": [
+        {
+          "status": "completed",
+          "detector_status": "completed",
+          "git_tree": "b96addd5821a610eb0ceacc7e7a83deda64690c2",
+          "snapshot_sha256": "de3e19fa8ee20dd0e89370eaaee0ee017f5da6b33329c30b5954965b1b979885",
+          "report_sha256": "60b3980b5394782eb8a4a87b8597ec671b979399d47e71e31811990b3d796a4c",
+          "diagnostics": [
+            [
+              "CVE-2026-92391",
+              "lib/mime.c",
+              1146,
+              "e3a41025c00fa47b1b23bff6d28ac66119b7d5bd13035e3436c817a6ca53327b"
+            ]
+          ],
+          "source_bindings": [
+            [
+              "lib/mime.c",
+              "e3a41025c00fa47b1b23bff6d28ac66119b7d5bd13035e3436c817a6ca53327b",
+              "1f94afee2c93300a4bf70e743dbd552075cb8b1c",
+              null
+            ]
+          ],
+          "validated_vulnerability": 0
+        },
+        {
+          "status": "completed",
+          "detector_status": "completed",
+          "git_tree": "b96addd5821a610eb0ceacc7e7a83deda64690c2",
+          "snapshot_sha256": "de3e19fa8ee20dd0e89370eaaee0ee017f5da6b33329c30b5954965b1b979885",
+          "report_sha256": "fa84f7610149f8e30d337f5c7628ce09155c7d8f480f802a9aa29409cc108662",
+          "diagnostics": [
+            [
+              "CVE-2026-92391",
+              "lib/mime.c",
+              1146,
+              "e3a41025c00fa47b1b23bff6d28ac66119b7d5bd13035e3436c817a6ca53327b"
+            ]
+          ],
+          "source_bindings": [
+            [
+              "lib/mime.c",
+              "e3a41025c00fa47b1b23bff6d28ac66119b7d5bd13035e3436c817a6ca53327b",
+              "1f94afee2c93300a4bf70e743dbd552075cb8b1c",
+              null
+            ]
+          ],
+          "validated_vulnerability": 0
+        }
+      ],
+      "repeat_equal": true
+    },
+    {
+      "repository": "third_party_cJSON",
+      "commit": "0c2c9dff82cc85539c8362132d7a5f6bf7d1e748",
+      "include_paths": [
+        "cJSON.c",
+        "cJSON_Utils.c"
+      ],
+      "expected_cves": [
+        "CVE-2026-67215",
+        "CVE-2026-67216"
+      ],
+      "runs": [
+        {
+          "status": "completed_with_limitations",
+          "detector_status": "blocked",
+          "git_tree": "0d8e50cc18f9ae178e9969eed40f8a0c94fb3856",
+          "snapshot_sha256": "84452a40925b94a82d038150157e5a3514289d21ea9562bc58d1e202b98b537e",
+          "report_sha256": "c8fc8c816357909e85c563a63f97fa72d9769f73687da096dd556acc621433fc",
+          "diagnostics": [
+            [
+              "CVE-2026-67215",
+              "cJSON_Utils.c",
+              808,
+              "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9"
+            ],
+            [
+              "CVE-2026-67216",
+              "cJSON.c",
+              3067,
+              "427c72055ae68467b451599f36da074351a5ca53f6e103cd30064e32cf0fffbb"
+            ]
+          ],
+          "source_bindings": [
+            [
+              "cJSON.c",
+              "427c72055ae68467b451599f36da074351a5ca53f6e103cd30064e32cf0fffbb",
+              "152b2caa479c9f448001652913c980a6dafb82e0",
+              null
+            ],
+            [
+              "cJSON_Utils.c",
+              "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9",
+              "8fa24f8e9bf452cf1ba49d1325c85423ce742c74",
+              null
+            ]
+          ],
+          "validated_vulnerability": 0
+        },
+        {
+          "status": "completed_with_limitations",
+          "detector_status": "blocked",
+          "git_tree": "0d8e50cc18f9ae178e9969eed40f8a0c94fb3856",
+          "snapshot_sha256": "84452a40925b94a82d038150157e5a3514289d21ea9562bc58d1e202b98b537e",
+          "report_sha256": "475194975670e375129d6ac5a4dc587e31afbf01de565fb0b268c696ebe8a13c",
+          "diagnostics": [
+            [
+              "CVE-2026-67215",
+              "cJSON_Utils.c",
+              808,
+              "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9"
+            ],
+            [
+              "CVE-2026-67216",
+              "cJSON.c",
+              3067,
+              "427c72055ae68467b451599f36da074351a5ca53f6e103cd30064e32cf0fffbb"
+            ]
+          ],
+          "source_bindings": [
+            [
+              "cJSON.c",
+              "427c72055ae68467b451599f36da074351a5ca53f6e103cd30064e32cf0fffbb",
+              "152b2caa479c9f448001652913c980a6dafb82e0",
+              null
+            ],
+            [
+              "cJSON_Utils.c",
+              "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9",
+              "8fa24f8e9bf452cf1ba49d1325c85423ce742c74",
+              null
+            ]
+          ],
+          "validated_vulnerability": 0
+        }
+      ],
+      "repeat_equal": true
+    },
+    {
+      "repository": "miscservices_pasteboard",
+      "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+      "include_paths": [
+        "services/core/src/pasteboard_service.cpp",
+        "services/zidl/src/pasteboard_service_stub.cpp"
+      ],
+      "expected_cves": [
+        "CVE-2025-25212",
+        "CVE-2025-27247"
+      ],
+      "runs": [
+        {
+          "status": "completed_with_limitations",
+          "detector_status": "blocked",
+          "git_tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+          "snapshot_sha256": "010bee868a15d363b206b09312efe4e56826d5bb4142afec82524d1659f95ba8",
+          "report_sha256": "486d118c1649be5af79f3b0b7f857714d708e13a21789d7e8b2a22831ac05979",
+          "diagnostics": [
+            [
+              "CVE-2025-25212",
+              "services/core/src/pasteboard_service.cpp",
+              222,
+              "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52"
+            ],
+            [
+              "CVE-2025-27247",
+              "services/zidl/src/pasteboard_service_stub.cpp",
+              41,
+              "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868"
+            ]
+          ],
+          "source_bindings": [
+            [
+              "services/core/src/pasteboard_service.cpp",
+              "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52",
+              "c380ac266a85edd818caa811f11b99722d351788",
+              null
+            ],
+            [
+              "services/zidl/src/pasteboard_service_stub.cpp",
+              "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+              "3dbc3150ada27a765938f06ea6e8cfd0a2d7146b",
+              null
+            ]
+          ],
+          "validated_vulnerability": 0
+        },
+        {
+          "status": "completed_with_limitations",
+          "detector_status": "blocked",
+          "git_tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+          "snapshot_sha256": "010bee868a15d363b206b09312efe4e56826d5bb4142afec82524d1659f95ba8",
+          "report_sha256": "c67de792e71f8acf95b0038f0a021091c0595cdb2b125a0365301ac87d905c54",
+          "diagnostics": [
+            [
+              "CVE-2025-25212",
+              "services/core/src/pasteboard_service.cpp",
+              222,
+              "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52"
+            ],
+            [
+              "CVE-2025-27247",
+              "services/zidl/src/pasteboard_service_stub.cpp",
+              41,
+              "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868"
+            ]
+          ],
+          "source_bindings": [
+            [
+              "services/core/src/pasteboard_service.cpp",
+              "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52",
+              "c380ac266a85edd818caa811f11b99722d351788",
+              null
+            ],
+            [
+              "services/zidl/src/pasteboard_service_stub.cpp",
+              "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+              "3dbc3150ada27a765938f06ea6e8cfd0a2d7146b",
+              null
+            ]
+          ],
+          "validated_vulnerability": 0
+        }
+      ],
+      "repeat_equal": true
+    }
+  ],
+  "limitations": [
+    "All findings remain candidates; validated_vulnerability is zero.",
+    "Pinned G-mirror component source does not prove product inclusion, reachability, attacker control or impact.",
+    "Blocked/partial coverage is preserved and repeated hits do not prove full analysis.",
+    "TestClient covers API, Worker, report and hash-checked source-viewer paths, not the live service."
+  ]
+}

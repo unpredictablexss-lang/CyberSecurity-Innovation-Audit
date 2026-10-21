@@ -1,0 +1,5 @@
+# Progressive L3 main integration — 2026-10-22
+
+Merges remote `c0969cb2` over main `66338c42`, including the uncommitted local bounded-preview/API compatibility correction. Ordinary Agent behavior from main is retained. L3 requires a completed, fixed-source L2 `investigate` result plus independent consent and shares its audit ledger; it reuses the existing Agent, Skeptic and report flow. Every wrapped Provider request is reserved/settled with opaque retries disabled; parent cancellation is propagated. L2/L3 remain individually initiated, and USD limits remain advisory.
+
+Regression preserves main's L2 parent execution/ledger endpoint fixes and adds actual HTTP L3 preview/start/idempotency/rejection coverage. Sources and local patch are preserved in this directory. Original developer indexes/files and running service are not changed. No real Provider or browser acceptance is claimed. Full final regression and CI status are recorded in the integration PR and external local acceptance receipt.

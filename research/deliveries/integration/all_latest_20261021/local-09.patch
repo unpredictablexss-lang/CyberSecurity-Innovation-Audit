@@ -1,0 +1,1383 @@
+diff --git a/docs/engineering/ProgressiveTriage_Architecture.md b/docs/engineering/ProgressiveTriage_Architecture.md
+new file mode 100644
+index 00000000..935d37f8
+--- /dev/null
++++ b/docs/engineering/ProgressiveTriage_Architecture.md
+@@ -0,0 +1,62 @@
++# Progressive triage policy and evidence selection
++
++## Scope in this change
++
++This change adds deterministic candidate grouping and evidence ranking, a versioned local policy store, and a settings page for the policy presets. It is the policy and selection foundation for the later Worker integration. It does not start an Agent, change an audit task, or enforce the displayed budgets yet.
++
++The modules live under `src/workbench/progressive_triage/`:
++
++- `contracts.py` defines canonical JSON serialization and the policy, grouping, and ranking versions.
++- `grouping.py` retains every observation and only groups exact duplicates with fixed source identity or findings with the same structured deterministic source-root-cause identity. Path, CWE, message text, and model prose alone never merge findings. Root-cause groups keep `root_cause_conclusion: not_inferred`; grouping is not a vulnerability confirmation.
++- `ranking.py` uses local source binding, observed security facts, unresolved evidence obligations, possible impact, source changes, and family coverage to select groups within a requested limit. Findings with incomplete source binding or unknown coverage are retained for manual review and excluded from automatic model selection.
++- `policy.py` validates fixed presets and custom values, and persists revisions in `progressive-triage-policy.json` under the configured workbench data directory. Writes use a process lock, an atomic replacement, a revision check, a restricted file mode, and a content digest.
++- `api.py` exposes `GET` and `PUT /api/v1/agent/triage-policy`. Updates reject extra fields and stale revisions. The existing local workbench request-header and same-origin middleware still protects writes.
++
++## Initial policy presets
++
++The economical, standard, and deep presets use the taskbook's initial suggested values. Standard starts at 30 quick-screen groups, 6 deep groups, 8 tool steps per deep group, 2 concurrent model requests, 1,800 seconds, and a suggested USD 25 budget. These values have not been calibrated through provider-billing or recall experiments. The USD amount is a policy suggestion, not a provider-enforced billing cap. Custom limits have strict integer bounds and cannot set the deep-group count above the quick-screen count.
++
++The settings page saves a policy revision locally. It explicitly reports that the Worker does not consume it yet. It also states that static-only audits remain at zero model calls and that source egress still needs the existing task-level preview and consent.
++
++## Selection and evidence boundary
++
++Selection means “eligible for a future bounded model review.” It does not mean safe, false positive, likely vulnerable, confirmed, or high severity. Every original observation remains in the reversible group manifest. Unselected candidates remain visible to manual review. The ranker never changes finding status or severity.
++
++Exact duplicate grouping and semantic root-cause grouping are reported separately. A semantic group records repeated exact-observation counts and preserves all member observations. When source identity is incomplete, candidates remain separate. Root cause remains `not_inferred` even when a deterministic identity is available.
++
++The grouping helper checks the fixed report/source binding and the shape of the deterministic identity; it does not independently re-read source or authenticate the producer's provenance string. Until a trusted Worker producer binds every referenced fact ID to source spans and exact source hashes, callers must omit semantic identities they cannot prove. The synthetic unit fixtures only verify grouping behavior and do not establish real-code root causes.
++
++## Four-level workflow and state model
++
++The intended path is:
++
++1. **L0, deterministic grouping:** source-bound exact duplicate observations are recognized; semantic grouping is allowed only for an identical deterministic entry/sink/mechanism/relation/source-fact identity. Every observation remains accessible in the group manifest.
++2. **L1, deterministic evidence ranking:** local evidence and family coverage sort groups. A configured quick-screen quota is a maximum for the whole audit operation, not a per-endpoint allowance.
++3. **L2, lightweight model screen:** a later phase may send only selected, source-bound groups after task-level source-egress consent. It should return structured dispositions with cited source ranges and evidence gaps; missing citations, parser uncertainty, or disagreement leaves the group unresolved.
++4. **L3, bounded deep Agent:** a later phase may investigate fewer groups using fixed source tools, explicit step/time limits, stop-on-no-progress, and recorded tool results. L2 or L3 model wording never changes a candidate to confirmed automatically.
++
++The proposed user-facing lifecycle should distinguish `unassessed`, `queued`, `in_progress`, `screened_unresolved`, `deep_investigation`, `stopped_budget`, `stopped_no_progress`, `blocked_source`, and human-reviewed outcomes. L2/L3 output must never set a confirmed disposition. A future human confirmation action must be added to the review contract explicitly; current review labels stay unchanged. This Phase 1 change stores none of those task outcomes and does not replace existing candidate states.
++
++## Policy and future operation schemas
++
++The current settings schema is `progressive-triage-v1`: `profile`, `limits`, `family_quotas`, mandatory `preserve_all_candidates`, and mandatory `consent_required`. The envelope has a monotonic local `revision`, `updated_at`, `updated_by`, policy digest, and a bounded revision history. `PUT` requires `expected_revision`; stale writers receive HTTP 409, invalid or extra fields receive HTTP 422, and writes retain the existing same-origin workbench boundary.
++
++Future Worker integration should freeze the validated policy and digest into one immutable audit-operation record shared by single-revision, range, branch, and matrix endpoints. The operation ledger should track reservations and actual usage by phase, in-flight reservations, provider/model/price snapshot, and stop reason. Before each provider request, the shared ledger must atomically reserve the worst-case permitted usage; concurrent Workers may not spend the same remaining budget. Unknown provider completion or missing usage must settle conservatively or stop for review rather than be counted as zero. A service-side dollar value remains a soft estimate unless provider-side hard limits and an enforceable per-request upper bound are available.
++
++No database migration is needed in Phase 1: policy revisions live in a protected sidecar, and existing task/report/candidate schemas are untouched. A later task-snapshot migration must be additive, versioned, and able to read prior tasks without inventing policy state. Each report should include the frozen policy digest, grouping/ranking versions, selected and unselected group reasons, phase usage, and explicit unresolved/stop reasons.
++
++## Fail-closed conditions and follow-up plan
++
++Incomplete source binding, parser/coverage uncertainty, unsupported structured evidence, stale source identity, missing consent, static-only mode, budget reservation failure, provider usage ambiguity, or an exhausted time/call/token limit must stop or retain the candidate for manual review. The original static candidate set remains queryable and exportable. No plan may drop a candidate or label a non-selected candidate as safe.
++
++Phase 2 adds a consent-bound L2 request/response contract and local mock tests. Phase 3 adds immutable whole-operation snapshots, reservation/settlement ledger, concurrency and restart tests, and explicit stop handling. Phase 4 connects the shared ledger and selection policy to the single-revision and multi-endpoint operation paths without duplicating quotas. Phase 5 measures recall, cost, and user workflow on frozen vulnerable/fixed/safe holdouts and separately reports real-provider or browser evidence when available. The present change intentionally stops before those phases.
++
++## Integration conflict notes
++
++At the reviewed base, Draft PR #38 overlaps Workbench API registration and workspace view code; Draft PR #44 overlaps operations/settings UI paths. Issues #40 and #41 discuss operation-level and Agent-tooling integration. This change adds one route-registration hook in `src/workbench/api.py` and one policy tab in `WorkspaceViews.tsx`, while leaving operation routes, operation persistence, provider settings, task forms, Worker code, and Agent code alone. Before integrating with those changes, resolve route ownership and ensure their task creation paths can freeze one shared policy snapshot.
++
++## Integration boundary
++
++The current policy is not frozen into scan, revision-range, branch-comparison, or matrix task records. No Worker reads its settings, no global task budget is consumed, and no Agent call is triggered by the settings page. Existing consent, provider configuration, task review state, and disclosed-finding boundaries remain authoritative. Follow-up integration must first freeze one policy snapshot for the whole audit task, including all sub-endpoints, then make the Worker consume the same shared ledger; static-only must stay at zero model calls.
++
++The newest `main` base also has open Draft PR work in the Workbench API and settings UI. Review this change against those branches before integration; this implementation does not modify operation routes, provider settings, task creation forms, scanners, detectors, or Worker scheduling.
+diff --git a/docs/项目现状与下一步.md b/docs/项目现状与下一步.md
+index eef308d7..08ecfe1f 100644
+--- a/docs/项目现状与下一步.md
++++ b/docs/项目现状与下一步.md
+@@ -669,3 +669,13 @@ Agent 预算预览现支持 Xiaomi MiMo V2.6 Pro、Flash 和 Pro UltraSpeed 官
+ ## 历史：2026-10-20 首次预推送快照（已由上方记录替代）
+ 
+ 最初的发布审查以 HEAD `631901a90513748d7d72e8c15fa9f9f131132259` 为候选，并将当前负责人工作树的未提交修改列为发布范围；后续复核确认 8765 实际源码 HEAD 已前进到 `99556c81dbd013e981f3c472e391ce2e5902c5e5`，并发现两处 UI 改动仍在原树中未提交。因此当前审查改用独立的 `integration/release-main-20261020` 工作树，选择性接入已复核的 A 检测器和最新 B IPC 提交，保留原 8765 树不变。上方记录中的分支、提交数和测试数仅作首次检查历史，不是最终发布范围或最终验证结果。
++
++### 2026-10-21 Progressive triage Phase 1（跟进 18787 服务代码，隔离分支）
++
++本机 `127.0.0.1:18787` 的只读健康检查返回 `0.1.0`，实际服务工作目录为 `/home/audit/ohscanner/worktrees/pr38-44-e2e-followup-20261020`，分支 `work/issues-39-42-completion-20261021`，HEAD `9e31f46a363d671f59c3031dca1f067ec8d9abf2`，工作树干净。该 HEAD 相对本地 `origin/main` 有 33 个仅服务分支提交、缺少 19 个主线提交，因此本功能在该 HEAD 上新建隔离工作树，不修改正在运行的服务，也不把这个本地跟进分支推送到远端。服务健康/API检查未写入数据、未创建扫描。
++
++新增四档策略的版本化本地设置、严格读取/更新 API、确定性候选分组与预算排序、系统设置页，以及边界说明 `docs/engineering/ProgressiveTriage_Architecture.md`。500 条合成观察测试保留全部成员；未绑定源身份的候选保持分离并留给人工审查。策略保存不等于 Worker 已执行。
++
++验证结果：聚焦 Python/API 测试 7/7 通过；未运行全仓审查或扫描。前端生产构建尚未验证。PR 目标需要与本地跟进分支的远端发布状态协调；不可把 33 个未发布提交混入功能 PR。
++
++明确未实现：设置策略尚未冻结到扫描/多端点任务，Worker 不消费分组、排名、调用次数、Token、时间或美元预算；美元值是建议值，不是账单硬封顶。没有触发模型调用，没有修改扫描器/检测器/Agent/Worker、队友目录或 18787 服务数据。
+diff --git a/src/workbench/api.py b/src/workbench/api.py
+index f63524aa..001002c7 100644
+--- a/src/workbench/api.py
++++ b/src/workbench/api.py
+@@ -585,6 +585,8 @@ def create_app(settings=None):
+ 
+     from .operations_api import install_routes
+     app.state.operations = install_routes(app, settings, store)
++    from .progressive_triage.api import install_routes as install_triage_policy_routes
++    install_triage_policy_routes(app, settings.data_dir)
+ 
+     web = Path(__file__).resolve().parents[2] / "web" / "dist"
+     if web.is_dir():
+diff --git a/src/workbench/progressive_triage/__init__.py b/src/workbench/progressive_triage/__init__.py
+new file mode 100644
+index 00000000..c6495422
+--- /dev/null
++++ b/src/workbench/progressive_triage/__init__.py
+@@ -0,0 +1,16 @@
++"""Deterministic, local-only building blocks for progressive audit triage."""
++
++from .grouping import GROUPING_VERSION, group_candidates
++from .policy import POLICY_VERSION, PolicyStore, build_policy, validate_policy
++from .ranking import RANKING_VERSION, rank_groups
++
++__all__ = [
++    "GROUPING_VERSION",
++    "POLICY_VERSION",
++    "RANKING_VERSION",
++    "PolicyStore",
++    "build_policy",
++    "group_candidates",
++    "rank_groups",
++    "validate_policy",
++]
+diff --git a/src/workbench/progressive_triage/api.py b/src/workbench/progressive_triage/api.py
+new file mode 100644
+index 00000000..85bdd813
+--- /dev/null
++++ b/src/workbench/progressive_triage/api.py
+@@ -0,0 +1,71 @@
++"""Versioned local API for the progressive triage policy settings."""
++
++from __future__ import annotations
++
++from typing import Any, Literal
++
++from fastapi import HTTPException
++from pydantic import BaseModel, ConfigDict, Field
++
++from .policy import (
++    PRESETS,
++    PolicyError,
++    PolicyRevisionConflict,
++    PolicyStore,
++    PolicyStoreError,
++    build_policy,
++)
++
++
++class PolicyUpdate(BaseModel):
++    model_config = ConfigDict(extra="forbid")
++
++    expected_revision: int = Field(ge=0, strict=True)
++    profile: Literal["economical", "standard", "deep", "custom"]
++    limits: dict[str, Any] | None = None
++    family_quotas: bool | None = None
++
++
++def _public_state(state: dict[str, Any]) -> dict[str, Any]:
++    return {
++        "revision": state["revision"],
++        "updated_at": state["updated_at"],
++        "updated_by": state["updated_by"],
++        "policy": state["policy"],
++        "policy_sha256": state["policy_sha256"],
++        "presets": PRESETS,
++        "integration": {
++            "grouping_and_ranking": "pure_functions_not_connected_to_worker",
++            "worker_enforcement": "not_connected",
++            "billing_hard_cap": False,
++            "all_candidates_preserved": True,
++            "task_level_consent_required": True,
++        },
++    }
++
++
++def install_routes(app, data_dir) -> PolicyStore:
++    """Register strict read/update routes and return the backing local store."""
++    store = PolicyStore(data_dir)
++
++    @app.get("/api/v1/agent/triage-policy")
++    def get_triage_policy():
++        try:
++            return _public_state(store.read())
++        except PolicyStoreError as error:
++            raise HTTPException(status_code=500, detail=str(error)) from error
++
++    @app.put("/api/v1/agent/triage-policy")
++    def update_triage_policy(body: PolicyUpdate):
++        try:
++            policy = build_policy(body.profile, body.limits, body.family_quotas)
++            state = store.update(policy, body.expected_revision)
++        except PolicyRevisionConflict as error:
++            raise HTTPException(status_code=409, detail=str(error)) from error
++        except PolicyStoreError as error:
++            raise HTTPException(status_code=500, detail=str(error)) from error
++        except PolicyError as error:
++            raise HTTPException(status_code=422, detail=str(error)) from error
++        return _public_state(state)
++
++    return store
+diff --git a/src/workbench/progressive_triage/contracts.py b/src/workbench/progressive_triage/contracts.py
+new file mode 100644
+index 00000000..032a7280
+--- /dev/null
++++ b/src/workbench/progressive_triage/contracts.py
+@@ -0,0 +1,30 @@
++"""Stable names and serialization helpers shared by the triage policy modules."""
++
++from __future__ import annotations
++
++import hashlib
++import json
++import re
++from typing import Any
++
++
++POLICY_VERSION = "progressive-triage-v1"
++GROUPING_VERSION = "source-bound-groups-v1"
++RANKING_VERSION = "evidence-family-rank-v1"
++SHA256_RE = re.compile(r"^[a-f0-9]{64}$")
++GIT_COMMIT_RE = re.compile(r"^(?:[a-f0-9]{40}|[a-f0-9]{64})$")
++
++
++def canonical_json(value: Any) -> bytes:
++    """Return the canonical UTF-8 representation used for reproducible hashes."""
++    return json.dumps(
++        value,
++        ensure_ascii=False,
++        sort_keys=True,
++        separators=(",", ":"),
++        allow_nan=False,
++    ).encode("utf-8")
++
++
++def content_sha256(value: Any) -> str:
++    return hashlib.sha256(canonical_json(value)).hexdigest()
+diff --git a/src/workbench/progressive_triage/grouping.py b/src/workbench/progressive_triage/grouping.py
+new file mode 100644
+index 00000000..446aae28
+--- /dev/null
++++ b/src/workbench/progressive_triage/grouping.py
+@@ -0,0 +1,197 @@
++"""Conservative, deterministic candidate grouping without model calls."""
++
++from __future__ import annotations
++
++from collections import OrderedDict
++from copy import deepcopy
++import re
++from typing import Any, Iterable
++
++from .contracts import GROUPING_VERSION, GIT_COMMIT_RE, SHA256_RE, content_sha256
++
++
++_ROOT_CAUSE_FIELDS = frozenset({
++    "entry_id", "sink_id", "mechanism_id", "relation_id", "source_fact_ids",
++    "provenance",
++})
++
++
++def _text(value: Any) -> str | None:
++    if isinstance(value, str) and value.strip() and len(value) <= 512:
++        return value.strip()
++    return None
++
++
++def _scope(candidate: dict[str, Any], default_scope: dict[str, Any]) -> dict[str, Any]:
++    result = {}
++    for key in ("repository", "commit", "tree_sha256", "snapshot_sha256", "report_sha256"):
++        value = candidate.get(key, default_scope.get(key))
++        if isinstance(value, str):
++            result[key] = value
++    return result
++
++
++def _scope_is_fixed(scope: dict[str, Any]) -> bool:
++    repository = _text(scope.get("repository"))
++    commit = _text(scope.get("commit"))
++    snapshot = scope.get("snapshot_sha256") or scope.get("report_sha256")
++    return bool(repository and commit and GIT_COMMIT_RE.fullmatch(commit)
++                and isinstance(snapshot, str) and SHA256_RE.fullmatch(snapshot))
++
++
++def _source_hash(candidate: dict[str, Any]) -> str | None:
++    value = candidate.get("source_sha256")
++    return value if isinstance(value, str) and SHA256_RE.fullmatch(value) else None
++
++
++def _candidate_id(candidate: dict[str, Any]) -> str | None:
++    return _text(candidate.get("candidate_id") or candidate.get("id"))
++
++
++def _location_key(candidate: dict[str, Any]) -> tuple[Any, ...] | None:
++    detector = _text(candidate.get("detector_id"))
++    version = _text(candidate.get("detector_version"))
++    rule = _text(candidate.get("rule_id"))
++    file = _text(candidate.get("file"))
++    line = candidate.get("line")
++    column = candidate.get("column")
++    symbol = _text(candidate.get("symbol")) or ""
++    if (not detector or not version or not rule or not file
++            or not isinstance(line, int) or isinstance(line, bool) or line < 1
++            or (column is not None and (not isinstance(column, int) or isinstance(column, bool) or column < 1))):
++        return None
++    if file.startswith(("/", "\\")) or ".." in file.replace("\\", "/").split("/"):
++        return None
++    return detector, version, rule, file, line, column or 0, symbol
++
++
++def _root_cause_key(candidate: dict[str, Any], scope: dict[str, Any]) -> tuple[Any, ...] | None:
++    identity = candidate.get("root_cause_identity")
++    if not _scope_is_fixed(scope) or not _source_hash(candidate) or not isinstance(identity, dict):
++        return None
++    if set(identity) != _ROOT_CAUSE_FIELDS or identity.get("provenance") != "deterministic_source_analysis":
++        return None
++    if not all(_text(identity.get(name)) for name in ("entry_id", "sink_id", "mechanism_id", "relation_id")):
++        return None
++    fact_ids = identity.get("source_fact_ids")
++    if (not isinstance(fact_ids, list) or not fact_ids
++            or any(not _text(item) for item in fact_ids)):
++        return None
++    scope_key = (
++        scope.get("repository"), scope.get("commit"),
++        scope.get("snapshot_sha256") or scope.get("report_sha256"),
++    )
++    return (*scope_key, identity["entry_id"], identity["sink_id"],
++            identity["mechanism_id"], identity["relation_id"], tuple(sorted(set(fact_ids))))
++
++
++def group_candidates(candidates: Iterable[dict[str, Any]], *,
++                     source_scope: dict[str, Any] | None = None) -> dict[str, Any]:
++    """Return a reversible group manifest; uncertain relationships stay separate.
++
++    Strong duplicate identity requires fixed source binding and source hash. Semantic
++    root-cause grouping additionally requires structured, deterministic source facts;
++    matching CWE, path, line, symbol, message, or model prose is never sufficient.
++    """
++    source_scope = dict(source_scope or {})
++    observations = []
++    for index, item in enumerate(candidates):
++        if not isinstance(item, dict):
++            raise ValueError("every candidate must be an object")
++        candidate = deepcopy(item)
++        scope = _scope(candidate, source_scope)
++        candidate_id = _candidate_id(candidate)
++        location = _location_key(candidate)
++        fixed = _scope_is_fixed(scope) and _source_hash(candidate) is not None and location is not None
++        observations.append({
++            "index": index,
++            "candidate": candidate,
++            "candidate_id": candidate_id,
++            "scope": scope,
++            "fixed": fixed,
++            "location": location,
++            "duplicate_key": (
++                scope.get("repository"), scope.get("commit"),
++                scope.get("snapshot_sha256") or scope.get("report_sha256"),
++                _source_hash(candidate), location, candidate_id,
++            ) if fixed and candidate_id else None,
++            "root_key": _root_cause_key(candidate, scope),
++        })
++
++    buckets: OrderedDict[tuple[Any, ...], dict[str, Any]] = OrderedDict()
++    for item in observations:
++        if item["root_key"] is not None:
++            key = ("root_cause_candidate", *item["root_key"])
++            kind = "root_cause_candidate"
++            basis = "same fixed source scope and deterministic entry/sink/mechanism/source-fact identity"
++            confidence = 0.9
++        elif item["duplicate_key"] is not None:
++            key = ("exact_duplicate", *item["duplicate_key"])
++            kind = "duplicate_observation"
++            basis = "same fixed report, candidate identity, source hash, rule, and location"
++            confidence = 1.0
++        else:
++            # Even identical paths or CWE labels remain separate without strong evidence.
++            identity = item["candidate_id"] or content_sha256(item["candidate"])
++            key = ("independent", item["index"], identity)
++            kind = "independent_candidate"
++            basis = "insufficient source-bound identity; kept separate"
++            confidence = 0.0
++        group = buckets.setdefault(key, {
++            "group_kind": kind,
++            "grouping_basis": basis,
++            "grouping_confidence": confidence,
++            "root_cause_conclusion": "not_inferred",
++            "source_scope": item["scope"],
++            "_members": [],
++        })
++        group["_members"].append(item)
++
++    groups = []
++    flattened_member_ids = []
++    for key, value in buckets.items():
++        members = value.pop("_members")
++        member_ids = [item["candidate_id"] for item in members]
++        flattened_member_ids.extend(member_ids)
++        public_members = [item["candidate"] for item in members]
++        exact_duplicate_counts = {}
++        for item in members:
++            duplicate_key = item["duplicate_key"]
++            if duplicate_key is not None:
++                exact_duplicate_counts[duplicate_key] = exact_duplicate_counts.get(duplicate_key, 0) + 1
++        duplicate_observation_count = sum(count - 1 for count in exact_duplicate_counts.values())
++        group_kind = value["group_kind"]
++        grouping_basis = value["grouping_basis"]
++        grouping_confidence = value["grouping_confidence"]
++        # When a semantic root-cause group contains only one exact observation
++        # identity, report it as an exact duplicate group. The full member list
++        # still records every source observation in either case.
++        if group_kind == "root_cause_candidate" and len(exact_duplicate_counts) == 1:
++            group_kind = "duplicate_observation"
++            grouping_basis = "same fixed report, candidate identity, source hash, rule, and location"
++            grouping_confidence = 1.0
++        group_identity = [GROUPING_VERSION, list(key), [item["index"] for item in members]]
++        groups.append({
++            "group_id": "ptg-" + content_sha256(group_identity)[:24],
++            **{**value, "group_kind": group_kind,
++               "grouping_basis": grouping_basis,
++               "grouping_confidence": grouping_confidence},
++            "member_candidate_ids": member_ids,
++            "members": public_members,
++            "observation_count": len(public_members),
++            "exact_duplicate_group_count": len(exact_duplicate_counts),
++            "duplicate_observation_count": duplicate_observation_count,
++            "coverage_unknown": any(not item["fixed"] for item in members),
++        })
++    groups.sort(key=lambda group: group["group_id"])
++    manifest = {
++        "schema_version": 1,
++        "grouping_version": GROUPING_VERSION,
++        "source_scope": source_scope,
++        "input_observation_count": len(observations),
++        "group_count": len(groups),
++        "member_candidate_ids": flattened_member_ids,
++        "groups": groups,
++    }
++    manifest["manifest_sha256"] = content_sha256(manifest)
++    return manifest
+diff --git a/src/workbench/progressive_triage/policy.py b/src/workbench/progressive_triage/policy.py
+new file mode 100644
+index 00000000..0f20d009
+--- /dev/null
++++ b/src/workbench/progressive_triage/policy.py
+@@ -0,0 +1,313 @@
++"""Versioned policy presets and protected local persistence.
++
++The values here are policy defaults. They are not enforcement until an audit task
++freezes and the Worker consumes the policy snapshot in a later integration phase.
++"""
++
++from __future__ import annotations
++
++from datetime import datetime, timezone
++from decimal import Decimal, InvalidOperation
++import fcntl
++import json
++import os
++from pathlib import Path
++import re
++import uuid
++from typing import Any
++
++from .contracts import POLICY_VERSION, content_sha256
++
++
++class PolicyError(ValueError):
++    """The requested policy is malformed or exceeds local service limits."""
++
++
++class PolicyRevisionConflict(PolicyError):
++    """The settings page attempted to overwrite a newer revision."""
++
++
++class PolicyStoreError(PolicyError):
++    """The protected policy sidecar cannot be read or safely replaced."""
++
++
++_LIMIT_BOUNDS = {
++    "quick_screen_groups_per_audit": (1, 10_000),
++    "deep_groups_per_audit": (0, 1_000),
++    "max_tool_steps_per_group": (1, 32),
++    "max_model_concurrency": (1, 8),
++    "max_model_calls_per_audit": (1, 10_000),
++    "max_input_tokens_per_audit": (1_024, 2_000_000),
++    "max_output_tokens_per_audit": (256, 500_000),
++    "max_ai_wall_seconds": (60, 14_400),
++}
++_LIMIT_KEYS = frozenset((*_LIMIT_BOUNDS, "max_cost_usd"))
++_COST_RE = re.compile(r"^(?:0|[1-9]\d{0,5})(?:\.\d{1,8})?$")
++_STORAGE_SCHEMA = 1
++_MAX_STORE_BYTES = 4 * 1024 * 1024
++_MAX_HISTORY = 10_000
++
++
++def _limits(*, quick, deep, steps, concurrency, calls, input_tokens,
++            output_tokens, seconds, cost):
++    return {
++        "quick_screen_groups_per_audit": quick,
++        "deep_groups_per_audit": deep,
++        "max_tool_steps_per_group": steps,
++        "max_model_concurrency": concurrency,
++        "max_model_calls_per_audit": calls,
++        "max_input_tokens_per_audit": input_tokens,
++        "max_output_tokens_per_audit": output_tokens,
++        "max_ai_wall_seconds": seconds,
++        "max_cost_usd": cost,
++    }
++
++
++# The taskbook marks these as initial product defaults, not measured optima.
++PRESETS = {
++    "economical": {
++        "limits": _limits(
++            quick=10, deep=2, steps=6, concurrency=1, calls=40,
++            input_tokens=100_000, output_tokens=20_000, seconds=900, cost="5.00",
++        ),
++        "family_quotas": True,
++    },
++    "standard": {
++        "limits": _limits(
++            quick=30, deep=6, steps=8, concurrency=2, calls=120,
++            input_tokens=400_000, output_tokens=100_000, seconds=1_800, cost="25.00",
++        ),
++        "family_quotas": True,
++    },
++    "deep": {
++        "limits": _limits(
++            quick=100, deep=20, steps=12, concurrency=3, calls=500,
++            input_tokens=2_000_000, output_tokens=500_000, seconds=5_400, cost="100.00",
++        ),
++        "family_quotas": True,
++    },
++}
++PROFILES = frozenset((*PRESETS, "custom"))
++
++
++def _strict_int(value: Any, name: str) -> int:
++    if not isinstance(value, int) or isinstance(value, bool):
++        raise PolicyError(f"{name} must be an integer")
++    low, high = _LIMIT_BOUNDS[name]
++    if not low <= value <= high:
++        raise PolicyError(f"{name} must be between {low} and {high}")
++    return value
++
++
++def _validate_limits(value: Any) -> dict[str, Any]:
++    if not isinstance(value, dict):
++        raise PolicyError("limits must be an object")
++    if set(value) != _LIMIT_KEYS:
++        missing = sorted(_LIMIT_KEYS - set(value))
++        extra = sorted(set(value) - _LIMIT_KEYS)
++        raise PolicyError(f"invalid limit fields (missing={missing}, extra={extra})")
++    result = {key: _strict_int(value[key], key) for key in _LIMIT_BOUNDS}
++    cost = value["max_cost_usd"]
++    if not isinstance(cost, str) or not _COST_RE.fullmatch(cost):
++        raise PolicyError("max_cost_usd must be a non-negative decimal string")
++    try:
++        decimal_cost = Decimal(cost)
++    except InvalidOperation as error:
++        raise PolicyError("max_cost_usd is not a valid decimal") from error
++    if not decimal_cost.is_finite() or decimal_cost <= 0 or decimal_cost > Decimal("1000"):
++        raise PolicyError("max_cost_usd must be greater than 0 and no more than 1000")
++    if result["deep_groups_per_audit"] > result["quick_screen_groups_per_audit"]:
++        raise PolicyError("deep group limit cannot exceed quick-screen group limit")
++    if result["max_model_calls_per_audit"] < (
++        result["quick_screen_groups_per_audit"] + result["deep_groups_per_audit"]
++    ):
++        raise PolicyError("model-call limit must cover at least one call for each selected group")
++    result["max_cost_usd"] = cost
++    return result
++
++
++def build_policy(profile: str = "standard", limits: dict[str, Any] | None = None,
++                 family_quotas: bool | None = None) -> dict[str, Any]:
++    """Create a strict, JSON-safe policy snapshot from a preset or custom values."""
++    if profile not in PROFILES:
++        raise PolicyError("profile must be economical, standard, deep, or custom")
++    if profile == "custom":
++        resolved_limits = _validate_limits(limits if limits is not None else PRESETS["standard"]["limits"])
++        resolved_family_quotas = family_quotas if family_quotas is not None else True
++    else:
++        preset = PRESETS[profile]
++        expected_limits = preset["limits"]
++        if limits is not None and _validate_limits(limits) != expected_limits:
++            raise PolicyError("preset limits are fixed; choose custom to edit them")
++        if family_quotas is not None and family_quotas is not preset["family_quotas"]:
++            raise PolicyError("preset family quota settings are fixed; choose custom to edit them")
++        resolved_limits = dict(expected_limits)
++        resolved_family_quotas = preset["family_quotas"]
++    if not isinstance(resolved_family_quotas, bool):
++        raise PolicyError("family_quotas must be a boolean")
++    return {
++        "policy_version": POLICY_VERSION,
++        "profile": profile,
++        "limits": resolved_limits,
++        "family_quotas": resolved_family_quotas,
++        "preserve_all_candidates": True,
++        "consent_required": True,
++    }
++
++
++def validate_policy(value: Any) -> dict[str, Any]:
++    """Validate a stored policy, rejecting unknown fields and unsafe coercions."""
++    expected = {
++        "policy_version", "profile", "limits", "family_quotas",
++        "preserve_all_candidates", "consent_required",
++    }
++    if not isinstance(value, dict) or set(value) != expected:
++        raise PolicyError("policy fields do not match the supported schema")
++    if value["policy_version"] != POLICY_VERSION:
++        raise PolicyError("unsupported policy version")
++    if value["preserve_all_candidates"] is not True:
++        raise PolicyError("preserving every original candidate is mandatory")
++    if value["consent_required"] is not True:
++        raise PolicyError("task-level consent is mandatory")
++    return build_policy(value["profile"], value["limits"], value["family_quotas"])
++
++
++def policy_envelope(policy: dict[str, Any]) -> dict[str, Any]:
++    normalized = validate_policy(policy)
++    return {
++        "policy": normalized,
++        "policy_sha256": content_sha256(normalized),
++    }
++
++
++class PolicyStore:
++    """Process-safe JSON settings store with atomic replacement and revisions."""
++
++    def __init__(self, data_dir: str | Path):
++        self.data_dir = Path(data_dir)
++        self.path = self.data_dir / "progressive-triage-policy.json"
++        self.lock_path = self.data_dir / ".progressive-triage-policy.lock"
++
++    def _read_unlocked(self) -> dict[str, Any]:
++        if self.path.is_symlink():
++            raise PolicyStoreError("policy file cannot be a symlink")
++        if not self.path.exists():
++            envelope = policy_envelope(build_policy())
++            return {
++                "storage_schema": _STORAGE_SCHEMA,
++                "revision": 0,
++                "updated_at": None,
++                "updated_by": None,
++                **envelope,
++                "history": [],
++            }
++        try:
++            if self.path.stat().st_size > _MAX_STORE_BYTES:
++                raise PolicyStoreError("policy file exceeds the local size limit")
++            stored = json.loads(self.path.read_text(encoding="utf-8"))
++        except PolicyStoreError:
++            raise
++        except (OSError, UnicodeError, json.JSONDecodeError) as error:
++            raise PolicyStoreError("policy file is unreadable or invalid") from error
++        if not isinstance(stored, dict) or stored.get("storage_schema") != _STORAGE_SCHEMA:
++            raise PolicyStoreError("unsupported policy storage schema")
++        try:
++            policy = validate_policy(stored.get("policy"))
++        except PolicyError as error:
++            raise PolicyStoreError("stored policy failed schema validation") from error
++        expected_keys = {
++            "storage_schema", "revision", "updated_at", "updated_by",
++            "policy", "policy_sha256", "history",
++        }
++        if set(stored) != expected_keys:
++            raise PolicyStoreError("policy store contains unknown or missing fields")
++        revision = stored["revision"]
++        history = stored["history"]
++        if (not isinstance(revision, int) or isinstance(revision, bool) or revision < 0
++                or not isinstance(history, list) or len(history) > _MAX_HISTORY):
++            raise PolicyStoreError("policy revision history is malformed")
++        envelope = policy_envelope(policy)
++        if stored["policy_sha256"] != envelope["policy_sha256"]:
++            raise PolicyStoreError("policy hash does not match its stored contents")
++        return {
++            "storage_schema": _STORAGE_SCHEMA,
++            "revision": revision,
++            "updated_at": stored["updated_at"],
++            "updated_by": stored["updated_by"],
++            **envelope,
++            "history": history,
++        }
++
++    def read(self) -> dict[str, Any]:
++        self.data_dir.mkdir(parents=True, exist_ok=True, mode=0o700)
++        lock_fd = os.open(self.lock_path, os.O_CREAT | os.O_RDWR | getattr(os, "O_NOFOLLOW", 0), 0o600)
++        try:
++            fcntl.flock(lock_fd, fcntl.LOCK_SH)
++            return self._read_unlocked()
++        except OSError as error:
++            raise PolicyStoreError("policy store cannot be locked safely") from error
++        finally:
++            os.close(lock_fd)
++
++    def update(self, policy: dict[str, Any], expected_revision: int,
++               actor: str = "local-workbench") -> dict[str, Any]:
++        normalized = validate_policy(policy)
++        if not isinstance(expected_revision, int) or isinstance(expected_revision, bool) or expected_revision < 0:
++            raise PolicyError("expected_revision must be a non-negative integer")
++        self.data_dir.mkdir(parents=True, exist_ok=True, mode=0o700)
++        lock_fd = os.open(self.lock_path, os.O_CREAT | os.O_RDWR | getattr(os, "O_NOFOLLOW", 0), 0o600)
++        try:
++            fcntl.flock(lock_fd, fcntl.LOCK_EX)
++            current = self._read_unlocked()
++            if current["revision"] != expected_revision:
++                raise PolicyRevisionConflict("policy changed; reload before saving")
++            if current["policy"] == normalized:
++                return current
++            if current["revision"] >= _MAX_HISTORY:
++                raise PolicyStoreError("policy history limit reached; archive the local settings first")
++            updated_at = datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
++            envelope = policy_envelope(normalized)
++            event = {
++                "revision": current["revision"] + 1,
++                "updated_at": updated_at,
++                "updated_by": actor,
++                "policy_sha256": envelope["policy_sha256"],
++                "profile": normalized["profile"],
++            }
++            stored = {
++                "storage_schema": _STORAGE_SCHEMA,
++                "revision": event["revision"],
++                "updated_at": updated_at,
++                "updated_by": actor,
++                **envelope,
++                "history": [*current["history"], event],
++            }
++            payload = json.dumps(stored, ensure_ascii=False, sort_keys=True, indent=2).encode("utf-8") + b"\n"
++            if len(payload) > _MAX_STORE_BYTES:
++                raise PolicyStoreError("policy history would exceed the local size limit")
++            temporary = self.data_dir / (".progressive-triage-policy." + uuid.uuid4().hex + ".tmp")
++            fd = os.open(temporary, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
++            try:
++                with os.fdopen(fd, "wb") as target:
++                    target.write(payload)
++                    target.flush()
++                    os.fsync(target.fileno())
++                os.replace(temporary, self.path)
++                dir_fd = os.open(self.data_dir, os.O_RDONLY | getattr(os, "O_DIRECTORY", 0))
++                try:
++                    os.fsync(dir_fd)
++                finally:
++                    os.close(dir_fd)
++            except Exception:
++                try:
++                    temporary.unlink()
++                except OSError:
++                    pass
++                raise
++            return stored
++        except PolicyError:
++            raise
++        except OSError as error:
++            raise PolicyStoreError("policy settings could not be replaced atomically") from error
++        finally:
++            os.close(lock_fd)
+diff --git a/src/workbench/progressive_triage/ranking.py b/src/workbench/progressive_triage/ranking.py
+new file mode 100644
+index 00000000..5a14f815
+--- /dev/null
++++ b/src/workbench/progressive_triage/ranking.py
+@@ -0,0 +1,214 @@
++"""Deterministic local-evidence ranking with a family-diversity first pass."""
++
++from __future__ import annotations
++
++from collections import defaultdict
++import re
++from typing import Any, Iterable
++
++from .contracts import RANKING_VERSION, GIT_COMMIT_RE, SHA256_RE
++
++
++_SEVERITY_POINTS = {"critical": 12, "severe": 12, "high": 9, "medium": 5, "low": 2}
++
++
++def _family_bucket(group: dict[str, Any]) -> str:
++    explicit = group.get("family_bucket")
++    if isinstance(explicit, str) and explicit.strip() and len(explicit) <= 80:
++        return explicit.strip()
++    members = group.get("members") or group.get("candidates") or []
++    detector = " ".join(
++        str(item.get("detector_id") or item.get("tool") or "")
++        for item in members if isinstance(item, dict)
++    ).lower()
++    if any(token in detector for token in ("ipc", "permission", "auth")):
++        return "ipc_authorization"
++    if any(token in detector for token in ("cpp", "cxx", "memory", "bounds", "use-after")):
++        return "cpp_memory_safety"
++    if any(token in detector for token in ("arkts", "javascript", "typescript", "js.")):
++        return "script_api"
++    if any(token in detector for token in ("sensitive", "privacy", "logging", "data-leak")):
++        return "sensitive_data"
++    if any(token in detector for token in ("known-cve", "disclosed", "cve")):
++        return "disclosed_vulnerability"
++    if detector:
++        token = re.sub(r"[^a-z0-9_.-]+", "_", detector.split()[0])[:60]
++        return "detector:" + token
++    return "unknown_family"
++
++
++def _members(group: dict[str, Any]) -> list[dict[str, Any]]:
++    values = group.get("members")
++    if values is None:
++        values = group.get("candidates")
++    return [item for item in values or [] if isinstance(item, dict)]
++
++
++def _member_is_bound(member: dict[str, Any], scope: dict[str, Any]) -> bool:
++    repository = member.get("repository") or member.get("repository_id") or scope.get("repository")
++    commit = member.get("commit") or scope.get("commit")
++    snapshot = (member.get("snapshot_sha256") or member.get("report_sha256")
++                or scope.get("snapshot_sha256") or scope.get("report_sha256"))
++    source_hash = member.get("source_sha256")
++    file = member.get("file")
++    return bool(
++        isinstance(repository, str) and repository
++        and isinstance(commit, str) and GIT_COMMIT_RE.fullmatch(commit)
++        and isinstance(snapshot, str) and SHA256_RE.fullmatch(snapshot)
++        and isinstance(source_hash, str) and SHA256_RE.fullmatch(source_hash)
++        and isinstance(file, str) and file and not file.startswith(("/", "\\"))
++        and ".." not in file.replace("\\", "/").split("/")
++    )
++
++
++def _member_unknown(member: dict[str, Any]) -> bool:
++    status = str(member.get("parse_status") or member.get("coverage_status") or "").lower()
++    return status in {"partial", "blocked", "not_analyzed", "failed", "unknown"}
++
++
++def _facts(member: dict[str, Any]) -> set[str]:
++    evidence = member.get("evidence")
++    if not isinstance(evidence, dict):
++        evidence = {}
++    signals = member.get("evidence_signals")
++    found = set()
++    if isinstance(signals, dict):
++        found.update(key for key, enabled in signals.items() if enabled is True and key in {
++            "entry", "source", "guard", "sink", "effect", "dataflow", "authorization_boundary",
++        })
++    for key in ("entry", "source", "guard", "sink", "effect", "dataflow", "authorization_boundary"):
++        if evidence.get(key):
++            found.add(key)
++    return found
++
++
++def _obligations(member: dict[str, Any]) -> set[str]:
++    values = member.get("evidence_obligations")
++    if values is None and isinstance(member.get("evidence"), dict):
++        values = member["evidence"].get("obligations")
++    if not isinstance(values, list):
++        return set()
++    result = set()
++    for value in values:
++        if isinstance(value, str) and value.strip():
++            result.add(value.strip())
++        elif isinstance(value, dict):
++            identifier = value.get("id") or value.get("obligation") or value.get("name")
++            status = str(value.get("status") or "unresolved").lower()
++            if isinstance(identifier, str) and status not in {"complete", "resolved", "satisfied"}:
++                result.add(identifier)
++    return result
++
++
++def _score(group: dict[str, Any]) -> tuple[int, dict[str, int], list[str], bool, str]:
++    members = _members(group)
++    scope = group.get("source_scope") if isinstance(group.get("source_scope"), dict) else {}
++    bound = bool(members) and all(_member_is_bound(item, scope) for item in members)
++    unknown = bool(group.get("coverage_unknown")) or any(_member_unknown(item) for item in members)
++    facts = set().union(*(_facts(item) for item in members)) if members else set()
++    obligations = set().union(*(_obligations(item) for item in members)) if members else set()
++    severities = []
++    for item in members:
++        assessment = item.get("risk_assessment")
++        if not isinstance(assessment, dict):
++            assessment = {}
++        severities.append(str(item.get("severity") or assessment.get("severity") or "").lower())
++    risk_points = max((_SEVERITY_POINTS.get(value, 0) for value in severities), default=0)
++    changes = any(str(item.get("change_status") or item.get("diff_status") or "").lower()
++                  in {"new", "added", "changed", "modified"} for item in members)
++    components = {
++        "source_binding": 30 if bound and not unknown else 0,
++        "local_security_facts": min(5, len(facts)) * 6,
++        "unresolved_evidence_obligations": min(5, len(obligations)) * 4,
++        "potential_impact": risk_points,
++        "version_change": 8 if changes else 0,
++        "root_cause_signal": 3 if group.get("group_kind") == "root_cause_candidate" else 0,
++    }
++    reasons = []
++    if not bound:
++        reasons.append("source_binding_incomplete")
++    if unknown:
++        reasons.append("coverage_unknown")
++    if obligations:
++        reasons.append("unresolved_evidence_obligations")
++    if facts:
++        reasons.append("source_bound_security_facts")
++    if changes:
++        reasons.append("version_change_observed")
++    family = _family_bucket(group)
++    return sum(components.values()), components, reasons, (not bound or unknown), family
++
++
++def rank_groups(groups: Iterable[dict[str, Any]], limit: int, *,
++                family_quotas: bool = True) -> dict[str, Any]:
++    """Rank groups for optional model spend; never remove or clear any candidate.
++
++    This is a local selection decision only. Non-selected/unknown findings remain
++    available and are not marked safe, false positive, or validated.
++    """
++    if not isinstance(limit, int) or isinstance(limit, bool) or not 0 <= limit <= 10_000:
++        raise ValueError("limit must be an integer between 0 and 10000")
++    if not isinstance(family_quotas, bool):
++        raise ValueError("family_quotas must be boolean")
++    groups = list(groups)
++    prepared = []
++    seen_ids = set()
++    for group in groups:
++        if not isinstance(group, dict):
++            raise ValueError("every group must be an object")
++        group_id = group.get("group_id")
++        if not isinstance(group_id, str) or not group_id or group_id in seen_ids:
++            raise ValueError("group_id must be unique and non-empty")
++        seen_ids.add(group_id)
++        score, components, reasons, blocked, family = _score(group)
++        prepared.append({
++            "group_id": group_id,
++            "score": score,
++            "components": components,
++            "evidence_gaps": sorted(set().union(*(_obligations(item) for item in _members(group)))),
++            "family_bucket": family,
++            "coverage_unknown": blocked,
++            "reason_codes": reasons,
++            "selected": False,
++        })
++    ordered = sorted(prepared, key=lambda item: (-item["score"], item["group_id"]))
++    eligible = [item for item in ordered if not item["coverage_unknown"]]
++    selected_ids = set()
++    family_selected = set()
++    if family_quotas and limit:
++        family_best = {}
++        for item in eligible:
++            family_best.setdefault(item["family_bucket"], item)
++        for family, item in sorted(
++            family_best.items(), key=lambda pair: (-pair[1]["score"], pair[0], pair[1]["group_id"])
++        ):
++            if len(selected_ids) >= limit:
++                break
++            selected_ids.add(item["group_id"])
++            family_selected.add(family)
++            item["reason_codes"].append("family_quota_coverage")
++    for item in eligible:
++        if len(selected_ids) >= limit:
++            break
++        if item["group_id"] not in selected_ids:
++            selected_ids.add(item["group_id"])
++            item["reason_codes"].append("within_model_selection_budget")
++    rank_by_id = {item["group_id"]: index + 1 for index, item in enumerate(ordered)}
++    for item in prepared:
++        item["rank"] = rank_by_id[item["group_id"]]
++        item["selected"] = item["group_id"] in selected_ids
++        if item["coverage_unknown"]:
++            item["reason_codes"].append("retained_for_manual_review_not_auto_selected")
++        elif not item["selected"]:
++            item["reason_codes"].append("model_selection_budget_exhausted")
++        item["reason_codes"] = sorted(set(item["reason_codes"]))
++    decisions = sorted(prepared, key=lambda item: (item["rank"], item["group_id"]))
++    return {
++        "ranking_version": RANKING_VERSION,
++        "selection_limit": limit,
++        "family_quotas": family_quotas,
++        "group_count": len(decisions),
++        "selected_group_count": len(selected_ids),
++        "retained_candidate_count": sum(len(_members(group)) for group in groups),
++        "decisions": decisions,
++    }
+diff --git a/tests/test_progressive_triage.py b/tests/test_progressive_triage.py
+new file mode 100644
+index 00000000..1604c252
+--- /dev/null
++++ b/tests/test_progressive_triage.py
+@@ -0,0 +1,204 @@
++"""Focused contract tests for progressive triage policy and evidence ranking."""
++
++import copy
++import os
++from pathlib import Path
++import tempfile
++import unittest
++
++from src.workbench.progressive_triage import (
++    PolicyStore,
++    build_policy,
++    group_candidates,
++    rank_groups,
++)
++from src.workbench.progressive_triage.policy import (
++    PolicyError,
++    PolicyRevisionConflict,
++    PolicyStoreError,
++)
++
++
++REPOSITORY = "open-harmony/example"
++COMMIT = "a" * 40
++SNAPSHOT = "b" * 64
++SOURCE = "c" * 64
++
++
++def bound_candidate(candidate_id, *, group=0, family="cpp_memory_safety", **extra):
++    return {
++        "candidate_id": candidate_id,
++        "repository": REPOSITORY,
++        "commit": COMMIT,
++        "snapshot_sha256": SNAPSHOT,
++        "source_sha256": SOURCE,
++        "detector_id": family,
++        "detector_version": "1.0.0",
++        "rule_id": "rule-" + family,
++        "file": f"src/file_{group}.cpp",
++        "line": 20 + group,
++        "column": 3,
++        "symbol": f"function_{group}",
++        "cwe": "CWE-284",
++        "status": "unassessed",
++        **extra,
++    }
++
++
++class GroupingAndRankingTests(unittest.TestCase):
++    def test_uncertain_same_path_and_cwe_stay_separate_and_unknown_is_not_selected(self):
++        candidates = [
++            {"candidate_id": "one", "file": "src/shared.cpp", "cwe": "CWE-284", "status": "unassessed"},
++            {"candidate_id": "two", "file": "src/shared.cpp", "cwe": "CWE-284", "status": "unassessed"},
++        ]
++        manifest = group_candidates(candidates)
++        self.assertEqual(manifest["group_count"], 2)
++        ranked = rank_groups(manifest["groups"], 2)
++        self.assertEqual(ranked["selected_group_count"], 0)
++        self.assertTrue(all(row["coverage_unknown"] for row in ranked["decisions"]))
++        self.assertEqual([item["status"] for item in candidates], ["unassessed", "unassessed"])
++
++    def test_root_cause_grouping_requires_deterministic_source_identity(self):
++        identity = {
++            "entry_id": "entry:1",
++            "sink_id": "sink:2",
++            "mechanism_id": "guard:missing",
++            "relation_id": "flow:entry-to-sink",
++            "source_fact_ids": ["fact:1", "fact:2"],
++            "provenance": "deterministic_source_analysis",
++        }
++        candidates = [
++            bound_candidate("one", group=1, root_cause_identity=identity),
++            bound_candidate("one", group=1, root_cause_identity=identity),
++            bound_candidate("two", group=2, root_cause_identity=identity),
++        ]
++        manifest = group_candidates(candidates)
++        self.assertEqual(manifest["group_count"], 1)
++        self.assertEqual(manifest["groups"][0]["group_kind"], "root_cause_candidate")
++        self.assertEqual(manifest["groups"][0]["root_cause_conclusion"], "not_inferred")
++        self.assertEqual(manifest["groups"][0]["exact_duplicate_group_count"], 2)
++        self.assertEqual(manifest["groups"][0]["duplicate_observation_count"], 1)
++        self.assertEqual(manifest["groups"][0]["observation_count"], 3)
++
++        guessed = copy.deepcopy(candidates)
++        for item in guessed:
++            item["root_cause_identity"]["provenance"] = "model_summary"
++        self.assertEqual(group_candidates(guessed)["group_count"], 2)
++
++    def test_500_observations_keep_all_members_and_apply_budget_with_family_coverage(self):
++        detector_families = (
++            "ohscanner.cpp.shared_ptr_race",
++            "ohscanner.interface.ipc",
++            "ohscanner.javascript.typescript",
++            "ohscanner.sensitive_data",
++        )
++        expected_families = {
++            "cpp_memory_safety", "ipc_authorization", "script_api", "sensitive_data"
++        }
++        candidates = []
++        for group in range(100):
++            family = detector_families[group % len(detector_families)]
++            prototype = bound_candidate(f"candidate-{group}", group=group, family=family)
++            candidates.extend(copy.deepcopy(prototype) for _ in range(5))
++
++        manifest = group_candidates(candidates)
++        self.assertEqual(manifest["input_observation_count"], 500)
++        self.assertEqual(manifest["group_count"], 100)
++        self.assertEqual(sum(len(row["members"]) for row in manifest["groups"]), 500)
++
++        # Ranking accepts generators and must still report retained member counts.
++        result = rank_groups(iter(manifest["groups"]), 30, family_quotas=True)
++        self.assertEqual(result["selected_group_count"], 30)
++        self.assertEqual(result["retained_candidate_count"], 500)
++        self.assertEqual(result["group_count"], 100)
++        selected_families = {
++            row["family_bucket"] for row in result["decisions"] if row["selected"]
++        }
++        self.assertEqual(selected_families, expected_families)
++        self.assertEqual(
++            sum(row["selected"] for row in result["decisions"]), 30
++        )
++        self.assertTrue(all(item["status"] == "unassessed" for item in candidates))
++
++    def test_malformed_risk_assessment_does_not_crash_or_gain_score(self):
++        candidate = bound_candidate("one", risk_assessment="untrusted shape")
++        manifest = group_candidates([candidate])
++        result = rank_groups(manifest["groups"], 1)
++        self.assertEqual(result["selected_group_count"], 1)
++        self.assertEqual(result["decisions"][0]["components"]["potential_impact"], 0)
++
++
++class PolicyStoreTests(unittest.TestCase):
++    def test_strict_policy_validation_and_atomic_revision_update(self):
++        policy = build_policy()
++        self.assertEqual(policy["profile"], "standard")
++        with self.assertRaises(PolicyError):
++            build_policy("custom", {**policy["limits"], "unexpected": 1}, True)
++        with self.assertRaises(PolicyError):
++            build_policy("custom", {**policy["limits"], "quick_screen_groups_per_audit": True}, True)
++
++        with tempfile.TemporaryDirectory() as directory:
++            store = PolicyStore(directory)
++            initial = store.read()
++            self.assertEqual(initial["revision"], 0)
++            updated = store.update(build_policy("deep"), expected_revision=0)
++            self.assertEqual(updated["revision"], 1)
++            self.assertEqual(store.read()["policy"], build_policy("deep"))
++            self.assertEqual(os.stat(Path(directory) / "progressive-triage-policy.json").st_mode & 0o777, 0o600)
++            with self.assertRaises(PolicyRevisionConflict):
++                store.update(build_policy("economical"), expected_revision=0)
++
++    def test_dangling_symlink_is_not_treated_as_missing_default_policy(self):
++        with tempfile.TemporaryDirectory() as directory:
++            store = PolicyStore(directory)
++            store.path.symlink_to(Path(directory) / "missing-policy-target")
++            with self.assertRaises(PolicyStoreError):
++                store.read()
++
++
++try:
++    from fastapi.testclient import TestClient
++    from src.workbench.api import create_app
++    from src.workbench.settings import Settings
++except ModuleNotFoundError as error:
++    if error.name.split(".")[0] not in {"fastapi", "httpx", "pydantic", "starlette"}:
++        raise
++    TestClient = None
++
++
++@unittest.skipIf(TestClient is None, "optional workbench dependencies: install requirements-web.txt")
++class PolicyApiTests(unittest.TestCase):
++    def test_policy_routes_reject_weak_requests_and_preserve_revision(self):
++        with tempfile.TemporaryDirectory() as directory:
++            settings = Settings(Path(directory) / "data", ())
++            with TestClient(create_app(settings)) as client:
++                endpoint = "/api/v1/agent/triage-policy"
++                current = client.get(endpoint)
++                self.assertEqual(current.status_code, 200, current.text)
++                self.assertEqual(current.json()["policy"]["profile"], "standard")
++                self.assertEqual(current.json()["integration"]["worker_enforcement"], "not_connected")
++
++                body = {"expected_revision": 0, "profile": "deep"}
++                headers = {"x-ohscanner-client": "workbench-v1"}
++                saved = client.put(endpoint, json=body, headers=headers)
++                self.assertEqual(saved.status_code, 200, saved.text)
++                self.assertEqual(saved.json()["revision"], 1)
++                self.assertEqual(saved.json()["policy"]["profile"], "deep")
++
++                stale = client.put(endpoint, json=body, headers=headers)
++                self.assertEqual(stale.status_code, 409, stale.text)
++                extra = client.put(endpoint, json={**body, "auto_confirm": True}, headers=headers)
++                self.assertEqual(extra.status_code, 422, extra.text)
++                limits = {**saved.json()["policy"]["limits"], "deep_groups_per_audit": 9999}
++                invalid_limits = client.put(
++                    endpoint,
++                    json={"expected_revision": 1, "profile": "custom", "limits": limits},
++                    headers=headers,
++                )
++                self.assertEqual(invalid_limits.status_code, 422, invalid_limits.text)
++                missing_header = client.put(endpoint, json=body)
++                self.assertEqual(missing_header.status_code, 403, missing_header.text)
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/web/src/features/workbench/IntelligentAuditPolicySettings.tsx b/web/src/features/workbench/IntelligentAuditPolicySettings.tsx
+new file mode 100644
+index 00000000..d4152184
+--- /dev/null
++++ b/web/src/features/workbench/IntelligentAuditPolicySettings.tsx
+@@ -0,0 +1,164 @@
++import React, { useEffect, useMemo, useState } from "react";
++import { Alert, Button, Card, Col, Input, InputNumber, Radio, Row, Space, Spin, Switch, Tag, Typography, message } from "antd";
++
++const { Paragraph, Text } = Typography;
++const API_PATH = "/api/v1/agent/triage-policy";
++const LIMIT_FIELDS: Array<{ key: string; label: string; min: number; max: number; unit?: string }> = [
++  { key: "quick_screen_groups_per_audit", label: "快速研判组数（整个任务）", min: 1, max: 10_000, unit: "组" },
++  { key: "deep_groups_per_audit", label: "深度 Agent 组数（整个任务）", min: 0, max: 1_000, unit: "组" },
++  { key: "max_tool_steps_per_group", label: "跨文件工具步骤（每个深度组）", min: 1, max: 32, unit: "步" },
++  { key: "max_model_concurrency", label: "模型请求并发", min: 1, max: 8, unit: "路" },
++  { key: "max_ai_wall_seconds", label: "AI 调查时间预算", min: 60, max: 14_400, unit: "秒" },
++  { key: "max_model_calls_per_audit", label: "模型调用参考上限（整个任务）", min: 1, max: 10_000, unit: "次" },
++  { key: "max_input_tokens_per_audit", label: "输入 Token 参考上限（整个任务）", min: 1_024, max: 2_000_000, unit: "tokens" },
++  { key: "max_output_tokens_per_audit", label: "输出 Token 参考上限（整个任务）", min: 256, max: 500_000, unit: "tokens" },
++];
++
++type Limits = Record<string, number | string>;
++type Profile = "economical" | "standard" | "deep" | "custom";
++
++export default function IntelligentAuditPolicySettings() {
++  const [loading, setLoading] = useState(true);
++  const [saving, setSaving] = useState(false);
++  const [error, setError] = useState("");
++  const [revision, setRevision] = useState(0);
++  const [updatedAt, setUpdatedAt] = useState<string | null>(null);
++  const [profile, setProfile] = useState<Profile>("standard");
++  const [limits, setLimits] = useState<Limits>({});
++  const [familyQuotas, setFamilyQuotas] = useState(true);
++  const [presets, setPresets] = useState<Record<string, { limits: Limits; family_quotas: boolean }>>({});
++
++  const load = async () => {
++    setLoading(true);
++    setError("");
++    try {
++      const response = await fetch(API_PATH);
++      const body = await response.json();
++      if (!response.ok) throw new Error(body.detail || response.statusText);
++      setRevision(body.revision);
++      setUpdatedAt(body.updated_at);
++      setProfile(body.policy.profile);
++      setLimits(body.policy.limits);
++      setFamilyQuotas(body.policy.family_quotas);
++      setPresets(body.presets || {});
++    } catch (reason) {
++      setError(String(reason));
++    } finally {
++      setLoading(false);
++    }
++  };
++
++  useEffect(() => { void load(); }, []);
++
++  const isCustom = profile === "custom";
++  const changedLimitsValid = useMemo(() => LIMIT_FIELDS.every(({ key, min, max }) => {
++    const value = limits[key];
++    return typeof value === "number" && Number.isInteger(value) && value >= min && value <= max;
++  }) && typeof limits.max_cost_usd === "string"
++    && /^(?:0|[1-9]\d{0,5})(?:\.\d{1,8})?$/.test(limits.max_cost_usd)
++    && Number(limits.max_cost_usd) > 0 && Number(limits.max_cost_usd) <= 1000, [limits]);
++
++  const selectProfile = (next: Profile) => {
++    setProfile(next);
++    if (next !== "custom" && presets[next]) {
++      setLimits(presets[next].limits);
++      setFamilyQuotas(presets[next].family_quotas);
++    }
++    if (next === "custom" && !Object.keys(limits).length && presets.standard) {
++      setLimits({ ...presets.standard.limits });
++      setFamilyQuotas(presets.standard.family_quotas);
++    }
++  };
++
++  const editLimit = (key: string, value: number | string | null) => {
++    setProfile("custom");
++    if (key === "max_cost_usd") {
++      setLimits((current) => ({ ...current, [key]: String(value ?? "") }));
++      return;
++    }
++    if (typeof value === "number" && Number.isFinite(value)) {
++      setLimits((current) => ({ ...current, [key]: Math.trunc(value) }));
++    }
++  };
++
++  const save = async () => {
++    setSaving(true);
++    setError("");
++    try {
++      const response = await fetch(API_PATH, {
++        method: "PUT",
++        headers: { "Content-Type": "application/json", "X-OHScanner-Client": "workbench-v1" },
++        body: JSON.stringify({
++          expected_revision: revision,
++          profile,
++          ...(isCustom ? { limits, family_quotas: familyQuotas } : {}),
++        }),
++      });
++      const body = await response.json();
++      if (!response.ok) throw new Error(body.detail || response.statusText);
++      setRevision(body.revision);
++      setUpdatedAt(body.updated_at);
++      setProfile(body.policy.profile);
++      setLimits(body.policy.limits);
++      setFamilyQuotas(body.policy.family_quotas);
++      message.success("智能审计策略已保存到本机设置");
++    } catch (reason) {
++      setError(String(reason));
++      if (String(reason).includes("policy changed")) void load();
++    } finally {
++      setSaving(false);
++    }
++  };
++
++  if (loading) return <Card><Spin /></Card>;
++  return <Space direction="vertical" size="middle" style={{ width: "100%" }}>
++    <Alert type="warning" showIcon message="策略已可保存，尚未接入审计 Worker"
++      description="本页配置只为之后接入调度器的新任务准备，目前不会改变任务队列、触发模型或限制实际费用。单纯静态审计仍为零模型调用；任务级源码外发仍须单独预览并授权。美元数值是策略建议，不是 Provider 账单硬封顶。" />
++    {error && <Alert type="error" showIcon message="策略读取或保存失败" description={error} />}
++    <Card title="选择策略" extra={<Tag color={updatedAt ? "green" : "blue"}>{updatedAt ? `已保存 · 修订 ${revision}` : "使用默认标准策略"}</Tag>}>
++      <Radio.Group value={profile} onChange={(event) => selectProfile(event.target.value)}>
++        <Space wrap>
++          <Radio.Button value="economical">经济</Radio.Button>
++          <Radio.Button value="standard">标准（推荐）</Radio.Button>
++          <Radio.Button value="deep">深度</Radio.Button>
++          <Radio.Button value="custom">自定义</Radio.Button>
++        </Space>
++      </Radio.Group>
++      <Paragraph type="secondary" style={{ marginTop: 14, marginBottom: 0 }}>
++        配额针对一次完整审计任务；时间范围、分支对比和版本矩阵不得按端点重复发放。
++        初始预设来自产品建议，尚未通过真实 Provider 费用和召回实验验证。
++      </Paragraph>
++    </Card>
++    <Card title="资源预算" extra={isCustom ? <Tag>自定义</Tag> : <Tag>{profile}</Tag>}>
++      <Row gutter={[16, 8]}>
++        {LIMIT_FIELDS.map(({ key, label, min, max, unit }) => (
++          <Col xs={24} md={12} key={key}>
++            <Text>{label}</Text>
++            <InputNumber style={{ width: "100%", marginTop: 6 }} min={min} max={max}
++              precision={0} step={1} disabled={!isCustom || saving}
++              value={typeof limits[key] === "number" ? limits[key] as number : undefined}
++              addonAfter={unit} onChange={(value) => editLimit(key, value)} />
++          </Col>
++        ))}
++        <Col xs={24} md={12}>
++          <Text>美元预算建议值（软预算）</Text>
++          <Input style={{ marginTop: 6 }} disabled={!isCustom || saving} value={String(limits.max_cost_usd || "")}
++            addonAfter="USD" onChange={(event) => editLimit("max_cost_usd", event.target.value)} />
++        </Col>
++      </Row>
++      <Space style={{ marginTop: 18 }}>
++        <Switch checked={familyQuotas} disabled={!isCustom || saving} onChange={(checked) => setFamilyQuotas(checked)} />
++        <Text>启用漏洞家族覆盖配额</Text>
++      </Space>
++      <Paragraph type="secondary" style={{ marginTop: 12 }}>
++        当前代码中的分组和本地证据排序是确定性纯函数；设置保存成功不表示这些上限已由 Worker 执行。
++        未选入模型预算的静态候选仍保留供人工查看，不会变成误报或安全结论。
++      </Paragraph>
++      <Space>
++        <Button type="primary" onClick={() => void save()} loading={saving} disabled={saving || (isCustom && !changedLimitsValid)}>保存策略</Button>
++        <Button onClick={() => void load()} disabled={saving}>重新读取</Button>
++        {updatedAt && <Text type="secondary">最近保存：{new Date(updatedAt).toLocaleString()}</Text>}
++      </Space>
++    </Card>
++  </Space>;
++}
+diff --git a/web/src/features/workbench/WorkspaceViews.tsx b/web/src/features/workbench/WorkspaceViews.tsx
+index 11797b68..065fe484 100644
+--- a/web/src/features/workbench/WorkspaceViews.tsx
++++ b/web/src/features/workbench/WorkspaceViews.tsx
+@@ -8,6 +8,7 @@ import Cases from "../../pages/Cases";
+ import JobDetail from "../../pages/JobDetail";
+ import OperationWorkspace from "../audits/OperationWorkspace";
+ import AgentProviderSettings from "./AgentProviderSettings";
++import IntelligentAuditPolicySettings from "./IntelligentAuditPolicySettings";
+ import { SourceContext } from "../audits/OperationForms";
+ import { jobDetailPath, retainRiskSource, riskQueuePath } from "./navigation";
+ import { triageStateLabel } from "./riskLabels.js";
+@@ -298,12 +299,13 @@ export function ReportCenter({ jobs, cases }: { jobs: any[]; cases: any[] }) {
+ }
+ export function SettingsView({ repos, detectors, health, refresh, tab }: { repos: any[]; detectors: any[]; health: any; refresh: () => Promise<void>; tab: string }) {
+   return <><Header title="系统设置" description="管理当前本地源码、规则能力与运行状态；未接入的配置明确保留限制。" />
+-    <Tabs activeKey={["sources", "capabilities", "runtime", "agent"].includes(tab) ? tab : "sources"} onChange={(key) => go("/settings/" + key)} items={[
++    <Tabs activeKey={["sources", "capabilities", "runtime", "agent", "policy"].includes(tab) ? tab : "sources"} onChange={(key) => go("/settings/" + key)} items={[
+       { key: "sources", label: "仓库与源码管理", children: <><Alert type="info" message="官方清单与镜像身份核验待接入" description="当前登记本地仓库或显式同步 allowlist 源码；不会根据仓库名称冒充官方身份认证。" />
+         <Repositories repos={repos} roots={health?.target_roots || []} refresh={refresh} embedded />
+         <OperationWorkspace view="sync" /></> },
+       { key: "capabilities", label: "语言与规则", children: <Capabilities detectors={detectors} embedded /> },
+       { key: "agent", label: "Agent / LLM", children: <AgentProviderSettings /> },
++      { key: "policy", label: "智能审计策略与资源预算", children: <IntelligentAuditPolicySettings /> },
+       { key: "runtime", label: "Worker 状态", children: <Card title="当前服务状态">
+         <Descriptions column={1} items={[
+           { key: "health", label: "API", children: health?.status || "未知" },
