@@ -305,6 +305,31 @@ export default function OperationWorkspace({ view = "all", operationId, context 
       {selected.kind === "agent_investigation" && !selected.result_sha256 && ["failed", "interrupted", "timed_out", "cancelled"].includes(selected.status) && <Alert className="section-gap" type="warning" showIcon message="本次调查没有可复核结果；候选仍为 unknown" description="任务结束不代表候选是误报或安全。若 Worker 在 Provider 已处理请求后、结果落盘前退出，上游调用和费用仍可能发生。重试前请核对执行事件及 Provider 账单，再重新预览并单独批准新任务。" />}
       {selected.result?.scan_job_id && <Button className="section-gap" onClick={() => go("/tasks/" + selected.result.scan_job_id)}>打开同步后扫描任务 · {String(selected.result.scan_job_id).slice(0, 12)}</Button>}
       {selected.spec?.scan_ids && <Space wrap className="section-gap">端点扫描：{selected.spec.scan_ids.map((id: string) => <Button key={id} size="small" onClick={() => go("/tasks/" + id)}>{id.slice(0, 12)}</Button>)}</Space>}
+      {selected.result?.progressive_triage && <Card size="small" className="section-gap" title="渐进式筛选 · L0 归并 / L1 排序">
+        {(() => {
+          const plan = selected.result.progressive_triage;
+          const groups = Array.isArray(plan.groups) ? plan.groups : [];
+          return <>
+            <Alert type="info" showIcon
+              message={`固定策略 ${plan.policy_profile || "unknown"} · ${groups.length} 个候选组 · ${plan.ranking?.selected_group_count ?? 0} 组列为优先复核`}
+              description="本结果只完成确定性归并与预算排序。L2 快速研判、L3 Agent 尚未调度；未选或未知仍是候选，不代表安全或误报。" />
+            <Descriptions className="section-gap" size="small" column={{ xs: 1, md: 2 }}>
+              <Descriptions.Item label="策略修订 / 摘要 SHA-256">{plan.policy_revision ?? "未知"} · <Hash value={plan.policy_sha256} /></Descriptions.Item>
+              <Descriptions.Item label="原始候选观察">{plan.original_observation_count ?? "未知"}</Descriptions.Item>
+              <Descriptions.Item label="调度状态">{plan.state || "unknown"}</Descriptions.Item>
+              <Descriptions.Item label="确认漏洞数">{plan.validated_vulnerability ?? 0}</Descriptions.Item>
+            </Descriptions>
+            <Table<any> size="small" rowKey="group_id" dataSource={groups} pagination={{ pageSize: 5 }} scroll={{ x: 720 }} columns={[
+              { title: "排序", dataIndex: ["ranking", "rank"], width: 70 },
+              { title: "组 / 家族", render: (_: any, row: any) => <><Text>{row.group_id}</Text><div className="muted">{row.ranking?.family_bucket || "unknown"}</div></> },
+              { title: "候选成员", render: (_: any, row: any) => Array.isArray(row.members) ? row.members.length : 0 },
+              { title: "队列状态", render: (_: any, row: any) => row.ranking?.selected
+                ? <Tag color="blue">优先组 · 尚未调度</Tag> : <Tag>保留候选</Tag> },
+              { title: "选择依据", render: (_: any, row: any) => (row.ranking?.reason_codes || []).join(" · ") || "无" },
+            ]} />
+          </>;
+        })()}
+      </Card>}
       {selected.kind === "recent_window_comparison" && selected.result && <RecentWindowSummary
         result={selected.result} openScan={(id) => go("/tasks/" + id)} />}
       {Array.isArray(selected.intelligent_review_progress) && <Card size="small" className="section-gap" title="固定版本静态与智能审计进度">

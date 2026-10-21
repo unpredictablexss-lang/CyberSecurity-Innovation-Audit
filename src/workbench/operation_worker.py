@@ -222,6 +222,12 @@ def main():
                     raise
             else:
                 raise
+        if (task.get("kind") in {"revision_range", "recent_window_comparison",
+                                  "branch_comparison", "version_matrix"}
+                and isinstance(task.get("spec", {}).get("progressive_triage_policy"), dict)
+                and isinstance(result, dict)):
+            from .progressive_triage.runtime import build_operation_plan
+            result["progressive_triage"] = build_operation_plan(settings, store, task)
         if task.get("kind") == "agent_investigation" and not result.get("_operation_error"):
             peak_rss_kib = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
             result["execution_telemetry"] = {
