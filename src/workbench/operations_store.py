@@ -1001,6 +1001,24 @@ class Operations:
         with self.store.connect() as db:
             return [self.row(r) for r in db.execute("SELECT * FROM operations ORDER BY created_at DESC LIMIT 200")]
 
+    def progressive_operations_for_audit(self, audit_id):
+        """Return L2/L3 child operations explicitly bound to one audit task."""
+        if not isinstance(audit_id, str) or not audit_id:
+            raise ValueError("invalid progressive audit ID")
+        with self.store.connect() as db:
+            rows = list(db.execute(
+                "SELECT * FROM operations WHERE kind IN ('progressive_quick_screen','agent_investigation') ORDER BY created_at",
+            ))
+        matches = []
+        for raw in rows:
+            item = self.row(raw)
+            spec = item.get("spec") if isinstance(item.get("spec"), dict) else {}
+            bound_audit = (spec.get("audit_operation_id") if item["kind"] == "progressive_quick_screen"
+                           else spec.get("progressive_audit_operation_id"))
+            if bound_audit == audit_id:
+                matches.append(item)
+        return matches
+
     def audit_parent_for_scan(self, job_id):
         """Resolve a multi-endpoint audit parent without guessing across parents."""
         if not isinstance(job_id, str) or not job_id:

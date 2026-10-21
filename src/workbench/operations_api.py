@@ -3163,6 +3163,46 @@ def install_routes(app: FastAPI, settings, store):
     def list_operations():
         return ops.list()
 
+    def _progressive_status(audit_id):
+        from .progressive_triage.status import build_progressive_status
+        try:
+            return build_progressive_status(settings, ops, audit_id)
+        except KeyError:
+            raise HTTPException(status_code=404, detail="audit operation not found") from None
+        except ValueError as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from None
+
+    @router.get("/audits/{audit_id}/ai-usage")
+    def progressive_ai_usage(audit_id: str):
+        status = _progressive_status(audit_id)
+        return {
+            "audit_operation_id": audit_id,
+            "phase": status["phase"],
+            "phase_counts": status["phase_counts"],
+            "budget": status["budget"],
+            "cost_enforcement": status["cost_enforcement"],
+            "stop_reason": status["stop_reason"],
+            "policy_revision": status["policy_revision"],
+            "policy_sha256": status["policy_sha256"],
+            "candidate_disposition_changed": False,
+            "validated_vulnerability": 0,
+        }
+
+    @router.get("/audits/{audit_id}/triage-groups")
+    def progressive_triage_groups(audit_id: str, offset: int = 0, limit: int = 50):
+        if (not isinstance(offset, int) or isinstance(offset, bool) or offset < 0
+                or not isinstance(limit, int) or isinstance(limit, bool) or not 1 <= limit <= 200):
+            raise HTTPException(status_code=422, detail="offset must be non-negative and limit must be 1..200")
+        status = _progressive_status(audit_id)
+        groups = status["groups"]
+        return {
+            **{key: value for key, value in status.items() if key != "groups"},
+            "group_total": len(groups),
+            "offset": offset,
+            "limit": limit,
+            "groups": groups[offset:offset + limit],
+        }
+
     @router.get("/operations/{key}")
     def operation(key: str):
         item = ops.get(key)

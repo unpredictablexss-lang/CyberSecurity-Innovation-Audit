@@ -48,6 +48,91 @@ def bound_candidate(candidate_id, *, group=0, family="cpp_memory_safety", **extr
     }
 
 
+class ProgressiveStatusTests(unittest.TestCase):
+    def test_status_projects_plan_and_child_operations_without_changing_findings(self):
+        from types import SimpleNamespace
+        from src.workbench.progressive_triage.status import build_progressive_status
+
+        policy = build_policy()
+        frozen = {"revision": 7, "policy": policy,
+                  "policy_sha256": content_sha256(policy)}
+        plan = {
+            "state": "ranked_waiting_for_authorized_quick_screen",
+            "policy_revision": 7, "policy_sha256": frozen["policy_sha256"],
+            "original_observation_count": 2,
+            "ranking": {"decisions": [{"group_id": "g1", "selected": True}]},
+            "groups": [{"group_id": "g1", "members": [
+                {"candidate_id": "c1"}, {"candidate_id": "c2"}],
+                "ranking": {"selected": True}, "state": "selected_for_quick_screen"}],
+            "validated_vulnerability": 0,
+        }
+        audit = {"id": "audit-1", "kind": "revision_range", "status": "completed",
+                 "result_sha256": "r" * 64,
+                 "spec": {"progressive_triage_policy": frozen}}
+        quick = {"id": "quick-1", "kind": "progressive_quick_screen", "status": "running",
+                 "created_at": "2026-10-22T01:00:00Z",
+                 "spec": {"audit_operation_id": "audit-1", "group": {"group_id": "g1"}}}
+
+        class FakeOperations:
+            def get(self, key):
+                self.asserted_key = key
+                return audit
+
+            def result(self, key):
+                return {"progressive_triage": plan}
+
+            def progressive_operations_for_audit(self, key):
+                return [quick]
+
+        with tempfile.TemporaryDirectory() as directory:
+            status = build_progressive_status(SimpleNamespace(data_dir=Path(directory)),
+                                              FakeOperations(), "audit-1")
+        self.assertEqual(status["phase"], "quick_screening")
+        self.assertEqual(status["phase_counts"]["candidate_count"], 2)
+        self.assertEqual(status["phase_counts"]["unassessed_group_members"], 2)
+        self.assertEqual(status["groups"][0]["quick_screen_state"], "running")
+        self.assertIsNone(status["budget"])
+        self.assertFalse(status["candidate_disposition_changed"])
+        self.assertEqual(status["validated_vulnerability"], 0)
+        self.assertEqual(plan["groups"][0]["members"], [{"candidate_id": "c1"}, {"candidate_id": "c2"}])
+
+    def test_task_usage_and_group_routes_are_read_only_and_paginated(self):
+        from unittest.mock import patch
+        from src.workbench.api import create_app
+        from src.workbench.settings import Settings
+        from fastapi.testclient import TestClient
+
+        policy = build_policy()
+        frozen = {"revision": 1, "policy": policy,
+                  "policy_sha256": content_sha256(policy)}
+        audit = {"id": "audit-2", "kind": "version_matrix", "status": "completed",
+                 "result_sha256": "r" * 64, "spec": {"progressive_triage_policy": frozen}}
+        plan = {"state": "ranked_waiting_for_authorized_quick_screen",
+                "original_observation_count": 2,
+                "ranking": {"decisions": [{"group_id": "g1", "selected": True},
+                                            {"group_id": "g2", "selected": False}]},
+                "groups": [{"group_id": "g1", "members": [{"candidate_id": "c1"}]},
+                           {"group_id": "g2", "members": [{"candidate_id": "c2"}]}]}
+        with tempfile.TemporaryDirectory() as directory:
+            app = create_app(Settings(Path(directory) / "data", ()))
+            with patch("src.workbench.operations_store.Operations.get", return_value=audit), \
+                    patch("src.workbench.operations_store.Operations.result",
+                          return_value={"progressive_triage": plan}), \
+                    patch("src.workbench.operations_store.Operations.progressive_operations_for_audit",
+                          return_value=[]):
+                with TestClient(app) as client:
+                    usage = client.get("/api/v1/audits/audit-2/ai-usage")
+                    groups = client.get("/api/v1/audits/audit-2/triage-groups?offset=1&limit=1")
+                    invalid = client.get("/api/v1/audits/audit-2/triage-groups?limit=201")
+        self.assertEqual(usage.status_code, 200, usage.text)
+        self.assertEqual(usage.json()["phase_counts"]["candidate_count"], 2)
+        self.assertFalse(usage.json()["candidate_disposition_changed"])
+        self.assertEqual(groups.status_code, 200, groups.text)
+        self.assertEqual(groups.json()["group_total"], 2)
+        self.assertEqual([row["group_id"] for row in groups.json()["groups"]], ["g2"])
+        self.assertEqual(invalid.status_code, 422)
+
+
 class GroupingAndRankingTests(unittest.TestCase):
     def test_uncertain_same_path_and_cwe_stay_separate_and_unknown_is_not_selected(self):
         candidates = [
