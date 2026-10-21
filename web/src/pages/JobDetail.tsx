@@ -48,13 +48,53 @@ import SourceEvidence from "../SourceEvidence";
 import CandidateActions from "../features/workbench/CandidateActions";
 import { requestGate } from "../features/audits/model";
 import { disclosureReviewed, disclosureSelectionMatches } from "../features/audits/egressDisclosure.js";
-import { analysisStatusLabel, coverageSummaryLabel, groupingBasisLabel, groupingSymbolLabel, obligationDescriptionLabel, obligationKindLabel, obligationStatusLabel, reportLimitationLabel, riskReasonsLabel, scanStageLabel, taskReportStatusLabel, taskTriageStatusLabel, triageStateLabel } from "../features/workbench/riskLabels.js";
+import { candidateConfidenceColor, candidateConfidenceLabel, candidateSeverityColor, candidateSeverityLabel, analysisStatusLabel, coverageSummaryLabel, groupingBasisLabel, groupingSymbolLabel, obligationDescriptionLabel, obligationKindLabel, obligationStatusLabel, reportLimitationLabel, riskReasonsLabel, scanStageLabel, taskReportStatusLabel, taskTriageStatusLabel, triageStateLabel } from "../features/workbench/riskLabels.js";
 const { Text, Title, Paragraph } = Typography;
+function HighConfidenceCandidateReason({ risk, jobId }: { risk: any; jobId: string }) {
+  if (risk?.risk_tier !== "high_confidence_candidate") return null;
+  const signal = risk.agent_signal || {};
+  const locations = Array.isArray(signal.evidence_locations) ? signal.evidence_locations : [];
+  const explanation = signal.confidence_reason || risk.reason
+    || (risk.confidence_basis === "human_r0"
+      ? "人工 R0 已对固定源码中的证据义务逐项引用复核。"
+      : "固定源码证据门已通过；具体义务与源码仍需人工核对。");
+  const openEvidence = (location: any) => {
+    const query = new URLSearchParams({
+      tab: "source",
+      source_file: location.file,
+      source_line: String(location.line_start),
+    });
+    go("/tasks/" + encodeURIComponent(jobId) + "?" + query.toString());
+  };
+  return <Card className="section-gap" size="small" title="为什么列为高可信">
+    <Space wrap><Tag color="gold">高可信候选</Tag><Tag color="orange">待人工复核</Tag></Space>
+    <Paragraph className="section-gap">{explanation}</Paragraph>
+    {signal.summary && <Alert className="section-gap" type="info" showIcon
+      message="智能研判摘要"
+      description={<>
+        <Paragraph style={{ marginBottom: 4 }}>{signal.summary}</Paragraph>
+        <Text type="secondary">摘要由系统根据模型结构化研判生成；引用存在性经过校验，语义是否支持结论仍需人工判断。</Text>
+      </>} />}
+    {locations.length > 0 ? <div className="section-gap">
+      <Text strong>固定源码证据位置</Text>
+      <div>{locations.map((location: any, index: number) =>
+        <Button key={location.file + ":" + location.line_start + ":" + location.line_end + ":" + index}
+          type="link" size="small" onClick={() => openEvidence(location)}>
+          {location.file}:{location.line_start}{location.line_end !== location.line_start ? "–" + location.line_end : ""}
+        </Button>)}</div>
+      {signal.evidence_locations_truncated_count > 0 && <Text type="secondary">
+        另有 {signal.evidence_locations_truncated_count} 处位置未展开
+      </Text>}
+    </div> : <Text type="secondary">该分层来自人工 R0 复核；可在下方逐项检查固定源码和证据义务。</Text>}
+    <Text type="secondary">高可信表示证据优先级较高，不代表漏洞已确认。</Text>
+  </Card>;
+}
 export default function JobDetail({ id, initialTab = "findings", candidateId, sourceFile, sourceLine, health }: { id: string; initialTab?: string; candidateId?: string; sourceFile?: string; sourceLine?: number; health?: any }) {
   const [job, setJob] = useState<any>(null);
   const [report, setReport] = useState<any>(null);
   const [triageSummary, setTriageSummary] = useState<any>(null);
   const [riskSummary, setRiskSummary] = useState<any>(null);
+  const [selectedRisk, setSelectedRisk] = useState<any>(null);
   const [coverageSummary, setCoverageSummary] = useState<any>(null);
   const [reportSnapshots, setReportSnapshots] = useState<any[]>([]);
   const [events, setEvents] = useState<any[]>([]);
@@ -228,6 +268,21 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
       .catch((e) => { if (live) setError(String(e)); });
     return () => { live = false; };
   }, [id, report?.snapshot_sha256, initialTab, sourceFile]);
+  useEffect(() => {
+    if (!detail?.id) {
+      setSelectedRisk(null);
+      return;
+    }
+    let live = true;
+    setSelectedRisk(null);
+    api("/scans/" + encodeURIComponent(id) + "/risks?candidate_id="
+      + encodeURIComponent(detail.id) + "&limit=1")
+      .then((value) => {
+        if (live) setSelectedRisk((value.items || []).find((item: any) => item.candidate_id === detail.id) || null);
+      })
+      .catch(() => { if (live) setSelectedRisk(null); });
+    return () => { live = false; };
+  }, [id, detail?.id]);
   useEffect(() => {
     if (job && candidateId && candidateAutoOpened.current !== candidateId) {
       candidateAutoOpened.current = candidateId;
@@ -429,11 +484,12 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
           </Descriptions></Col>
           <Col xs={24} md={8}><Descriptions size="small" column={1} title="智能研判">
             <Descriptions.Item label="状态">{taskTriageStatusLabel(triageSummary, job)}</Descriptions.Item>
-            <Descriptions.Item label="已完成 / 失败">{triageSummary?.triage_progress?.completed_count ?? 0} / {triageSummary?.triage_progress?.failed_count ?? 0}</Descriptions.Item>
+            <Descriptions.Item label="完成 / 有限制 / 失败">{triageSummary?.triage_progress?.completed_count ?? 0} / {triageSummary?.triage_progress?.completed_with_limitations_count ?? 0} / {triageSummary?.triage_progress?.failed_count ?? 0}</Descriptions.Item>
+            <Descriptions.Item label="报告候选 / 授权 / 已入队">{triageSummary?.triage_progress?.candidate_count ?? "扫描后统计"} / {triageSummary?.triage_progress?.authorized_candidate_count ?? 0} / {triageSummary?.triage_progress?.queued_count ?? 0}</Descriptions.Item>
             <Descriptions.Item label="处理中 / 未研判">{triageSummary?.triage_progress?.pending_count ?? 0} / {triageSummary?.triage_progress?.not_triaged_count ?? riskSummary?.triage_counts?.not_triaged ?? 0}</Descriptions.Item>
           </Descriptions></Col>
         </Row>
-        <Text type="secondary">未授权、预算外和失败项保持未研判，不会被计为低风险。</Text>
+        <Text type="secondary">未授权、超过每端点候选上限、超过受控队列容量或失败的候选仍保持未研判，不会被计为低风险；需缩小范围并重新预览授权。</Text>
       </Card>}
       {report && <>
         <Row gutter={18} className="section-gap">
@@ -463,7 +519,10 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
           <Table size="small" rowKey="candidate_id" pagination={false}
             dataSource={(riskSummary?.items || []).slice(0, 20)}
             columns={[
-              { title: "风险层级", dataIndex: "risk_tier_label" },
+              { title: "可信程度", render: (_: unknown, row: any) =>
+                  <Tag color={candidateConfidenceColor(row.risk_tier)}>{candidateConfidenceLabel(row.risk_tier)}</Tag> },
+              { title: "危害等级（初判）", render: (_: unknown, row: any) =>
+                  <Tag color={candidateSeverityColor(row.severity)}>{candidateSeverityLabel(row.severity)}</Tag> },
               { title: "候选", dataIndex: "candidate_id", render: (value: string) => <Text code>{String(value).slice(0, 12)}</Text> },
               { title: "规则", dataIndex: "rule_id" },
               { title: "位置", render: (_: unknown, row: any) => row.file + ":" + row.line },
@@ -493,8 +552,8 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
               <Descriptions className="section-gap" size="small" column={1} bordered>
                 <Descriptions.Item label="任务级授权">{triageSummary.authorization.revoked ? "已撤销" : "有效"}</Descriptions.Item>
                 <Descriptions.Item label="模型目的地">{triageSummary.authorization.provider?.endpoint_host} · {triageSummary.authorization.provider?.model}</Descriptions.Item>
-                <Descriptions.Item label="自动研判预算">最多 {triageSummary.authorization.candidate_limit} 条候选；Token 与请求次数受限</Descriptions.Item>
-                {triageSummary.authorization.conditional_r2_candidate_limit > 0 && <Descriptions.Item label="补充核查预算">最多 {triageSummary.authorization.conditional_r2_candidate_limit} 条高/严重候选；只在源码义务仍未解决时追加</Descriptions.Item>}
+                <Descriptions.Item label="自动研判候选授权">每端点最多 {triageSummary.authorization.candidate_limit} 条（保护上限 10,000）；平台不设累计 Token、费用、调用次数或总时长上限</Descriptions.Item>
+                {triageSummary.authorization.conditional_r2_candidate_limit > 0 && <Descriptions.Item label="深入追查候选授权">最多 {triageSummary.authorization.conditional_r2_candidate_limit} 条高/严重候选；只在源码义务仍未解决时追加</Descriptions.Item>}
                 <Descriptions.Item label="工作台费用预算">{triageSummary.authorization.platform_cost_budget_enforced
                   ? "USD " + triageSummary.authorization.cost_budget.maximum_usd
                     + "（固定费率卡最坏估算 USD " + triageSummary.authorization.cost_budget.estimated_maximum_usd + "）"
@@ -509,14 +568,14 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
               columns={[
                 { title: "批次", dataIndex: "id", render: (value: string) => <Text code>{String(value).slice(0, 12)}</Text> },
                 { title: "状态", dataIndex: "state", render: (value: string) => triageLabels[value] || value },
-                { title: "入选 / 候选", render: (_: unknown, row: any) => row.selected_count + " / " + row.candidate_count },
-                { title: "任务", dataIndex: "operation_ids", render: (ids: string[]) => ids?.length || 0 },
+                { title: "候选 / 授权 / 入队 / 未研判", render: (_: unknown, row: any) => [row.candidate_count, row.authorized_candidate_count, row.queued_count, row.not_triaged_count].join(" / ") },
+                { title: "已创建任务", dataIndex: "operation_ids", render: (ids: string[]) => ids?.length || 0 },
                 { title: "补充核查", render: (_: unknown, row: any) => {
                   const followup = row.conditional_r2 || {};
                   const labels: Record<string, string> = {
                     not_requested: "未启用", awaiting_r1: "等待条件复核", queued: "已排队",
-                    budget_limited: "预算内部分排队", not_needed: "当前无需追加",
-                    blocked_authorization_changed: "授权变化，未追加",
+                    budget_limited: "候选授权数已用尽", not_needed: "当前无需追加",
+                    candidate_limit_reached: "超过深入追查授权数", blocked_authorization_changed: "授权变化，未追加",
                   };
                   return (labels[followup.state] || followup.state || "未启用")
                     + (followup.operation_ids?.length ? " · " + followup.operation_ids.length + " 项" : "");
@@ -633,6 +692,14 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
                             <Text code>{f.rule_id}</Text>
                             <div className="muted">{f.candidate_cwe}</div>
                           </>
+                        ),
+                      },
+                      {
+                        title: "危害等级（初判）",
+                        render: (_: any, f: any) => (
+                          <Tag color={candidateSeverityColor(f.risk_presentation?.severity)}>
+                            {candidateSeverityLabel(f.risk_presentation?.severity)}
+                          </Tag>
                         ),
                       },
                       {
@@ -949,6 +1016,9 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
                 <Tag color="gold">规则候选 · 尚未确认</Tag>
                 <Text code>{detail.rule_id}</Text>
                 {detail.candidate_cwe && <Tag>{detail.candidate_cwe}</Tag>}
+                <Tag color={candidateSeverityColor(detail.risk_presentation?.severity)}>
+                  {candidateSeverityLabel(detail.risk_presentation?.severity)} · 初判
+                </Tag>
               </Space>}
               description={<div>
                 <Text type="secondary">检测器原始说明：用于定位候选线索，不代表漏洞已确认。</Text>
@@ -1050,6 +1120,12 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
                 <Text code copyable>{report?.snapshot_sha256 || "unavailable"}</Text>
               </Descriptions.Item>
             </Descriptions>
+
+            <HighConfidenceCandidateReason
+              jobId={id}
+              risk={selectedRisk?.candidate_id === detail.id ? selectedRisk
+                : (riskSummary?.items || []).find((item: any) => item.candidate_id === detail.id)}
+            />
             {detail.source ? <>
               <CandidateActions job={job} candidate={detail} />
               <CodeView source={detail.source} line={detail.line} />
@@ -1192,15 +1268,14 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
         onCancel={() => { setBatchOpen(false); setBatchDisclosureOpened([]); setBatchSubmissionApproved(false); }}
       >
         {batchBusy && !batchPreview ? <Spin /> : batchPreview ? <>
-          <Alert type="warning" showIcon message={"确认后将为每条候选分别创建一个" + (batchMode === "single_shot" ? "单轮模型辅助研判" : "有界工具增强调查") + "任务；下列源码上下文会发送给所示模型端点。模型结论仍是候选，需人工审核。"} />
+          <Alert type="warning" showIcon message={"确认后将为每条候选分别创建一个" + (batchMode === "single_shot" ? "单次模型研判" : "连续工具增强调查") + "任务；下列源码上下文会发送给所示模型端点。模型结论仍是候选，需人工审核。"} />
           <Descriptions className="section-gap" bordered size="small" column={2}>
             <Descriptions.Item label="模型端点">{batchPreview.provider?.endpoint_host || "未显示"}</Descriptions.Item>
             <Descriptions.Item label="候选数">{batchPreview.candidate_count}</Descriptions.Item>
-            <Descriptions.Item label="最大模型调用">{batchPreview.aggregate_budget?.max_model_calls}</Descriptions.Item>
-            <Descriptions.Item label="最大结构化修复调用">{batchPreview.aggregate_budget?.max_validation_repair_calls}</Descriptions.Item>
-            <Descriptions.Item label="最大输入 Token">{batchPreview.aggregate_budget?.max_total_input_tokens}</Descriptions.Item>
-            <Descriptions.Item label="最大输出 Token">{batchPreview.aggregate_budget?.max_total_output_tokens}</Descriptions.Item>
-            <Descriptions.Item label="顺序执行最坏耗时（秒）">{batchPreview.aggregate_budget?.max_wall_seconds_sequential}</Descriptions.Item>
+            <Descriptions.Item label="请求次数语义">{batchMode === "single_shot" ? "每候选恰好 1 次 Provider 请求" : "无平台累计模型调用上限，直到终止条件"}</Descriptions.Item>
+            <Descriptions.Item label="每请求输出上限">{batchPreview.aggregate_budget?.max_output_tokens_per_provider_request ?? "未知"} tokens</Descriptions.Item>
+            <Descriptions.Item label="单次 Provider 请求超时">{batchPreview.aggregate_budget?.provider_request_timeout_seconds ?? 45} 秒</Descriptions.Item>
+            <Descriptions.Item label="累计 Token / 费用 / 总时长">{batchMode === "single_shot" ? "单次请求；按所选模式限制为一次" : "平台不设累计上限；Provider 账户计费与额度适用"}</Descriptions.Item>
             <Descriptions.Item label="整批预算费用最高估算（非硬上限）">{batchPreview.aggregate_budget_cost_estimate
               ? <Space wrap><Text>≤ USD {batchPreview.aggregate_budget_cost_estimate.maximum_usd}{batchPreview.aggregate_budget_cost_estimate.maximum_cny ? " / CNY " + batchPreview.aggregate_budget_cost_estimate.maximum_cny : ""}；{batchPreview.aggregate_budget_cost_estimate.candidate_or_arm_count} 个任务；{batchPreview.aggregate_budget_cost_estimate.maximum_cny ? "USD/CNY 为独立官方价目参考；" : ""}按{batchPreview.aggregate_budget_cost_estimate.basis === "realtime_payg_all_input_uncached" ? "实时按量费率、输入全部按缓存未命中" : "峰值费率、输入全部按缓存未命中"}</Text><a href={batchPreview.aggregate_budget_cost_estimate.rate_source_url} target="_blank" rel="noreferrer">费率来源</a></Space>
               : "费用未知（该 Provider / 模型没有匹配的已知费率）"}</Descriptions.Item>

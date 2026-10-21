@@ -6,12 +6,99 @@ import { refreshSelectedOperation } from "../../pages/operationSelection";
 import { AgentInvestigationForm, ComparisonForm, InvestigationForm, SyncForm, ValidationForm, SourceContext } from "./OperationForms";
 import AgentAssessment from "./AgentAssessment";
 import AgentBlindReview from "./AgentBlindReview";
+import SourceSyncDetails from "./SourceSyncDetails";
+import VersionCandidateComparison from "./VersionCandidateComparison";
+import { buildIntelligentReviewView } from "./operationProgressModel.js";
 const { Text } = Typography;
+export function buildRecentWindowSummary(result: any) {
+  if (!result || typeof result !== "object") return null;
+  const sourceWindows = Array.isArray(result.windows) ? result.windows.slice(0, 2) : [];
+  const displayWindows = Array.from({ length: 2 }, (_, index) => sourceWindows[index] || { status: "unknown" });
+  const endpointDiff = result.between_window_endpoints || {};
+  const rows = endpointDiff.candidate_comparison;
+  const comparisonAvailable = Array.isArray(rows);
+  const candidates = comparisonAvailable ? rows : [];
+  const counts = { new_candidate: 0, disappeared_candidate: 0, persistent_candidate: 0, unknown: 0 };
+  for (const row of candidates) {
+    if (row?.status === "new_candidate") counts.new_candidate += 1;
+    else if (row?.status === "disappeared_candidate") counts.disappeared_candidate += 1;
+    else if (row?.status === "persistent_candidate") counts.persistent_candidate += 1;
+    else counts.unknown += 1;
+  }
+  const endpoints = endpointDiff;
+  return {
+    status: result.status || "unknown",
+    lookbackDays: result.lookback_days,
+    referenceTime: result.reference_time,
+    timezone: result.timezone,
+    windows: displayWindows.map((window: any, index: number) => ({
+      key: index,
+      label: index === 0 ? `${result.lookback_days ?? "N"} 日窗口` : "最近 1 日窗口",
+      period: window?.label || "时间范围未知",
+      selectedCommitCount: Number.isInteger(window?.selected_commit_count) ? window.selected_commit_count : null,
+      baseline: window?.baseline || null,
+      endpoint: window?.endpoint || null,
+      scanId: Array.isArray(result.scan_ids) ? result.scan_ids[index * 2 + 1] || null : null,
+    })),
+    betweenEndpoints: {
+      from: endpoints.from || null,
+      to: endpoints.to || null,
+      changedFileCount: Array.isArray(endpoints.changes) ? endpoints.changes.length : null,
+      impact: endpoints.impact || result.impact || "unknown",
+    },
+    comparisonAvailable,
+    reason: result.reason || null,
+    candidates,
+    counts: comparisonAvailable ? counts : { ...counts, unknown: null },
+    impact: result.impact || "unknown",
+    validatedVulnerability: Number.isInteger(result.validated_vulnerability)
+      ? result.validated_vulnerability : 0,
+  };
+}
+
+function RecentWindowSummary({ result, openScan }: { result: any; openScan: (id: string) => void }) {
+  const summary = buildRecentWindowSummary(result);
+  if (!summary) return null;
+  const labels: Record<string, string> = {
+    new_candidate: "新增候选观察", disappeared_candidate: "消失候选观察",
+    persistent_candidate: "持续候选", unknown: "未知",
+    unknown_detector_version_changed: "检测器版本变化，未知",
+  };
+  const color: Record<string, string> = { new_candidate: "blue", disappeared_candidate: "orange",
+    persistent_candidate: "default", unknown: "default", unknown_detector_version_changed: "default" };
+  return <Card className="section-gap" size="small" title="N 日 / 1 日候选观察差异">
+    <Alert type={summary.comparisonAvailable ? "info" : "warning"} showIcon
+      message={summary.comparisonAvailable ? "显示固定快照间的静态候选变化，不判断漏洞何时引入或修复。" : "比较未完成，候选差异未知。"}
+      description={`${summary.reason ? `${summary.reason} ` : ""}影响：${summary.impact}；已确认漏洞：${summary.validatedVulnerability}。候选新增或消失不等于漏洞引入或修复。`} />
+    <Descriptions className="section-gap" size="small" column={{ xs: 1, md: 2 }}>
+      {summary.windows.map((window: any) => <Descriptions.Item key={window.key} label={window.label}>
+        {window.period}<br />提交数：{window.selectedCommitCount ?? "未知"}<br />
+        固定端点：{window.baseline ? window.baseline.slice(0, 12) : "未知"} → {window.endpoint ? window.endpoint.slice(0, 12) : "未知"}
+        {window.scanId && <div><Button size="small" onClick={() => openScan(window.scanId)}>查看该窗口扫描</Button></div>}
+      </Descriptions.Item>)}
+      <Descriptions.Item label="两个窗口端点之间">
+        {summary.betweenEndpoints.from ? summary.betweenEndpoints.from.slice(0, 12) : "未知"} → {summary.betweenEndpoints.to ? summary.betweenEndpoints.to.slice(0, 12) : "未知"}<br />
+        变更文件：{summary.betweenEndpoints.changedFileCount ?? "未知"}；影响：{summary.betweenEndpoints.impact}
+      </Descriptions.Item>
+      <Descriptions.Item label="候选观察数">
+        新增 {summary.counts.new_candidate} · 消失 {summary.counts.disappeared_candidate} · 持续 {summary.counts.persistent_candidate} · 未知 {summary.counts.unknown ?? "未知"}
+      </Descriptions.Item>
+    </Descriptions>
+    <Table<any> size="small" rowKey={(row) => [row.detector_id, row.rule_id, row.file, row.symbol].join("|")}
+      dataSource={summary.candidates} pagination={{ pageSize: 5 }} scroll={{ x: 850 }} columns={[
+        { title: "观察状态", dataIndex: "status", render: (value) => <Tag color={color[value] || "default"}>{labels[value] || "未知"}</Tag> },
+        { title: "检测器 / 规则", render: (_: any, row: any) => <>{row.detector_id || "未知"}<div className="muted">{row.rule_id || "未知"}</div></> },
+        { title: "文件 / 符号", render: (_: any, row: any) => <>{row.file || "未知"}<div className="muted">{row.symbol || "未知"}</div></> },
+        { title: "前 / 后端候选数", render: (_: any, row: any) => `${Array.isArray(row.before) ? row.before.length : "未知"} / ${Array.isArray(row.after) ? row.after.length : "未知"}` },
+        { title: "身份匹配依据", dataIndex: "match_basis", render: (value) => value === "detector_rule_path_symbol" ? "检测器、规则、文件、符号" : "未知" },
+      ]} locale={{ emptyText: summary.comparisonAvailable ? "暂无候选观察差异；不表示源码无漏洞。" : "比较未完成；候选差异未知。" }} />
+  </Card>;
+}
 export type OperationView = "all" | "date" | "branches" | "matrix" | "validation" | "investigate" | "agent" | "agent_research" | "sync" | "queue";
-const kinds: Record<string, string> = { source_sync: "源码同步", revision_range: "固定区间", branch_comparison: "跨版本比较", version_matrix: "版本矩阵", validation: "隔离验证", investigation: "只读调查", agent_investigation: "模型辅助调查", candidate_review_batch: "历史候选队列（已停用）" };
+const kinds: Record<string, string> = { source_sync: "源码同步 / 自动扫描", source_sync_batch: "多仓库批量同步", revision_range: "固定区间", branch_comparison: "跨版本比较", recent_window_comparison: "N 日 / 1 日对照", version_matrix: "版本矩阵", validation: "隔离验证", investigation: "只读调查", agent_investigation: "模型辅助调查", candidate_review_batch: "历史候选队列（已停用）" };
 const headings: Record<OperationView, [string, string]> = {
   all: ["高级源码与验证操作", "保留既有操作入口；任务持久化，候选变化与安全影响分别记录。"],
-  date: ["时间增量扫描", "按明确时区选择提交区间，固定两个端点并比较候选观察。"],
+  date: ["时间增量扫描", "按明确时区固定时间端点；支持单一区间和 N 日 / 1 日双窗口候选对照。"],
   branches: ["跨版本安全分析", "比较同一仓库的分支、Tag 或 Commit；候选变化不等于漏洞引入或修复。"],
   matrix: ["影响与修复", "先核对多个固定版本的候选观察，再补充影响与修复证据。"],
   validation: ["PoC 验证", "围绕绑定源码和注册 Harness 申请隔离验证，保留失败与未知项。"],
@@ -61,22 +148,23 @@ export default function OperationWorkspace({ view = "all", operationId, context 
     try { const item = await api(path, payload); selectedId.current = item.id; setSelected(item); await refresh(); message.success("任务已加入持久化队列"); }
     catch (e) { setError(String(e)); } finally { setBusy(false); }
   };
-  const props = { repos, detectors, cases, busy, submit, context };
+  const props = { repos, detectors, cases, busy, agentStatus, submit, context };
   const forms = [
     { key: "sync", label: "同步源码", children: <SyncForm {...props} /> },
     { key: "range", label: "两个 SHA 区间", children: <ComparisonForm {...props} kind="range" /> },
     { key: "date", label: "提交者日期区间", children: <ComparisonForm {...props} kind="date" /> },
+    { key: "recent", label: "N 日与 1 日对照", children: <ComparisonForm {...props} kind="recent" /> },
     { key: "branches", label: "跨分支比较", children: <ComparisonForm {...props} kind="branches" /> },
     { key: "matrix", label: "版本矩阵", children: <ComparisonForm {...props} kind="matrix" /> },
     { key: "validation", label: "隔离验证", children: <ValidationForm {...props} /> },
     { key: "investigate", label: "只读调查", children: <InvestigationForm {...props} /> },
     { key: "agent", label: "模型辅助调查", children: <AgentInvestigationForm busy={busy} submit={submit} context={context} cases={cases} agentStatus={agentStatus} /> },
   ];
-  const filtered = view === "agent_research" ? [] : rows.filter((r) => r.kind !== "candidate_review_batch" && (view === "all" || view === "queue" || (view === "date" ? r.kind === "revision_range" : view === "branches" ? ["branch_comparison", "revision_range"].includes(r.kind) : r.kind === ({ matrix: "version_matrix", validation: "validation", investigate: "investigation", agent: "agent_investigation", sync: "source_sync" } as Record<string, string>)[view])));
+  const filtered = view === "agent_research" ? [] : rows.filter((r) => r.kind !== "candidate_review_batch" && (view === "all" || view === "queue" || (view === "date" ? ["revision_range", "recent_window_comparison"].includes(r.kind) : view === "branches" ? ["branch_comparison", "revision_range"].includes(r.kind) : view === "sync" ? ["source_sync", "source_sync_batch"].includes(r.kind) : r.kind === ({ matrix: "version_matrix", validation: "validation", investigate: "investigation", agent: "agent_investigation" } as Record<string, string>)[view])));
   return <>
     <Header title={headings[view][0]} description={headings[view][1]} />
     {error && <Alert className="section-gap" type="error" showIcon message={error} />}
-    {view === "all" ? <Tabs items={forms} /> : view === "branches" ? <Tabs items={[forms[3], forms[4]]} /> : view === "investigate" ? <Tabs items={[forms[6], forms[7]]} /> : view === "agent_research" ? null : forms.find((f) => f.key === view)?.children}
+    {view === "all" ? <Tabs items={forms} /> : view === "date" ? <Tabs items={[forms[2], forms[3]]} /> : view === "branches" ? <Tabs items={[forms[4], forms[5]]} /> : view === "investigate" ? <Tabs items={[forms[7], forms[8]]} /> : view === "agent_research" ? null : forms.find((f) => f.key === view)?.children}
     {view === "agent_research" && agentEvaluation && <Card className="section-gap" size="small" title="模型执行与成本评估（最近 200 个任务）">
       <Alert type="info" showIcon message="Token 为 Provider 完整返回用量的合计；费用仅按已知费率估算，实际账单未核验。耗时来自任务记录和 Agent 子进程；RSS 是子进程高水位，不含 Docker 容器与 Provider 侧资源。以上不构成漏洞准确率或独立真值。" description={agentEvaluation.execution_limitation} />
       <Table<any> className="section-gap" size="small" rowKey={(row) => [row.mode, row.provider, row.endpoint_host, row.model, row.prompt_version, row.tool_policy_version].join("|")}
@@ -118,17 +206,17 @@ export default function OperationWorkspace({ view = "all", operationId, context 
           { title: "复核人 / 秒", render: (_, row) => `${row.reviewer} / ${row.elapsed_seconds ?? "unknown"}` },
           { title: "记录哈希", dataIndex: "record_sha256", render: (value) => <Hash value={value} /> },
         ]} />
-    </Card>}    {view === "agent_research" && agentEvaluation?.paired_comparisons?.length > 0 && <Card className="section-gap" size="small" title="同候选 R1 / R2 配对反馈">
+    </Card>}    {view === "agent_research" && agentEvaluation?.paired_comparisons?.length > 0 && <Card className="section-gap" size="small" title="同一候选的调查方式对照反馈">
       <Alert type="info" showIcon message="仅按实验批次、固定 repo/commit/candidate、模型和提示/工具版本配对操作者自报评价；不是随机实验、漏洞真值或因果效果。" />
       <Table<any> className="section-gap" size="small"
         rowKey={(row) => [row.experiment_id, row.repository, row.commit, row.candidate_id, row.model].join("|")}
         dataSource={agentEvaluation.paired_comparisons} pagination={false} scroll={{ x: 1000 }} columns={[
           { title: "实验批次", dataIndex: "experiment_id" },
           { title: "固定候选", render: (_, row) => <><Text>{row.repository}</Text><div className="muted">{row.commit.slice(0, 12)} · {row.candidate_id.slice(0, 12)}</div></> },
-          { title: "R0 静态基线", render: (_, row) => row.r0_static_baseline ? `${row.r0_static_baseline.dispositions.investigate} 调查 / ${row.r0_static_baseline.dispositions.likely_noise} 噪声 / ${row.r0_static_baseline.dispositions.unknown} 未知；${row.r0_static_baseline.median_elapsed_seconds ?? "unknown"} 秒` : "未记录" },
+          { title: "人工静态基线", render: (_, row) => row.r0_static_baseline ? `${row.r0_static_baseline.dispositions.investigate} 调查 / ${row.r0_static_baseline.dispositions.likely_noise} 噪声 / ${row.r0_static_baseline.dispositions.unknown} 未知；${row.r0_static_baseline.median_elapsed_seconds ?? "unknown"} 秒` : "未记录" },
           { title: "模型", dataIndex: "model" },
-          { title: "R1 评价 / 引文 / 中位秒", render: (_, row) => `${row.single_shot.review_count} / ${row.single_shot.citation_accuracy.all_accurate}·${row.single_shot.citation_accuracy.some_incorrect + row.single_shot.citation_accuracy.mostly_incorrect} / ${row.single_shot.median_elapsed_seconds ?? "unknown"}` },
-          { title: "R2 评价 / 引文 / 中位秒", render: (_, row) => `${row.tool_agent.review_count} / ${row.tool_agent.citation_accuracy.all_accurate}·${row.tool_agent.citation_accuracy.some_incorrect + row.tool_agent.citation_accuracy.mostly_incorrect} / ${row.tool_agent.median_elapsed_seconds ?? "unknown"}` },
+          { title: "单轮研判评价 / 引文 / 中位秒", render: (_, row) => `${row.single_shot.review_count} / ${row.single_shot.citation_accuracy.all_accurate}·${row.single_shot.citation_accuracy.some_incorrect + row.single_shot.citation_accuracy.mostly_incorrect} / ${row.single_shot.median_elapsed_seconds ?? "unknown"}` },
+          { title: "跨文件调查评价 / 引文 / 中位秒", render: (_, row) => `${row.tool_agent.review_count} / ${row.tool_agent.citation_accuracy.all_accurate}·${row.tool_agent.citation_accuracy.some_incorrect + row.tool_agent.citation_accuracy.mostly_incorrect} / ${row.tool_agent.median_elapsed_seconds ?? "unknown"}` },
         ]} />
     </Card>}    {view === "agent_research" && <AgentBlindReview operations={rows} />}
     {view === "matrix" && <Alert className="section-gap" type="info" showIcon message="影响与修复仍需独立证据" description="当前矩阵只记录候选观察。补丁生成、补丁应用和修复后产品验证尚未接入；不会用候选消失自动判定已修复。" />}
@@ -151,10 +239,72 @@ export default function OperationWorkspace({ view = "all", operationId, context 
         {selected.result_sha256 && <><Text>Result SHA-256</Text><Hash value={selected.result_sha256} /></>}</Space>
       {selected.error && <Alert className="section-gap" type="error" message={selected.error} />}
       {selected.kind === "agent_investigation" && !selected.result_sha256 && ["failed", "interrupted", "timed_out", "cancelled"].includes(selected.status) && <Alert className="section-gap" type="warning" showIcon message="本次调查没有可复核结果；候选仍为 unknown" description="任务结束不代表候选是误报或安全。若 Worker 在 Provider 已处理请求后、结果落盘前退出，上游调用和费用仍可能发生。重试前请核对执行事件及 Provider 账单，再重新预览并单独批准新任务。" />}
+      {selected.result?.scan_job_id && <Button className="section-gap" onClick={() => go("/tasks/" + selected.result.scan_job_id)}>打开同步后扫描任务 · {String(selected.result.scan_job_id).slice(0, 12)}</Button>}
       {selected.spec?.scan_ids && <Space wrap className="section-gap">端点扫描：{selected.spec.scan_ids.map((id: string) => <Button key={id} size="small" onClick={() => go("/tasks/" + id)}>{id.slice(0, 12)}</Button>)}</Space>}
-      {selected.kind === "agent_investigation" && selected.result ? <AgentAssessment result={selected.result} reviews={selected.agent_reviews || []}
+      {selected.kind === "recent_window_comparison" && selected.result && <RecentWindowSummary
+        result={selected.result} openScan={(id) => go("/tasks/" + id)} />}
+      {Array.isArray(selected.intelligent_review_progress) && <Card size="small" className="section-gap" title="固定版本静态与智能审计进度">
+        <Alert type="info" showIcon message="端点静态对比完成不等于智能研判完成"
+          description="每个固定版本的 Agent 都独立获得源码外发授权；模型处理失败、候选超出本次授权名额或尚未研判不代表源码安全。" />
+        <Table<any> size="small" rowKey="scan_id" pagination={false} dataSource={selected.intelligent_review_progress}
+          columns={[
+            { title: "版本", render: (_: any, row: any) => <><Hash value={row.commit} /><div><Button size="small" onClick={() => go("/tasks/" + row.scan_id)}>查看扫描任务</Button></div></> },
+            { title: "静态扫描", dataIndex: "scan_status", render: (value: string) => <State value={value} /> },
+            { title: "智能研判", render: (_: any, row: any) => {
+              const progress = buildIntelligentReviewView(row);
+              if (!progress) return <Text type="secondary">暂无智能研判摘要</Text>;
+              const countLabels: Record<string, string> = {
+                queued: "排队", running: "运行", completed: "完成",
+                completed_with_limitations: "有限制", failed: "失败",
+                cancelled: "取消", timed_out: "超时", interrupted: "中断", blocked: "受阻",
+              };
+              const renderPhase = (name: string, phase: any) => <div key={name}>
+                <Text strong>{name}</Text> <Tag color={phase.state === "completed" ? "green"
+                  : phase.state === "completed_with_limitations" || phase.state === "partially_completed" ? "orange"
+                    : ["failed", "timed_out", "interrupted", "blocked"].includes(phase.state) ? "red" : undefined}>
+                  {phase.stateLabel}
+                </Tag>
+                <div className="muted">{Object.entries(phase.counts).map(([key, value]) => `${countLabels[key]} ${value}`).join(" · ")}</div>
+                {!phase.summariesReturned && <Alert className="section-gap" type="warning" showIcon message={`${name} 子任务摘要未由本次 API 响应提供`}
+                  description="缺少 operation ID、状态和结果绑定字段，因此这里不提供 Agent 详情入口；这不表示模型没有运行或没有结果。" />}
+                {phase.summariesReturned && phase.operations.length === 0 && <Alert className="section-gap" type="info" showIcon
+                  message={`${name} 子任务列表为空`}
+                  description={phase.operationCount ? `阶段计数记录 ${phase.operationCount} 项，但没有返回可核对的逐项摘要；不提供详情入口。` : "当前响应明确返回空子任务列表；这只表示没有关联子任务记录，不代表源码安全。"} />}
+                {phase.operations.length > 0 && <Space direction="vertical" size={2} className="section-gap">
+                  {phase.operations.map((item: any, index: number) => <Space wrap key={`${item.id || "missing"}-${index}`}>
+                    <Tag color={item.status === "completed" ? "green" : item.status === "completed_with_limitations" ? "orange" : ["failed", "timed_out", "interrupted", "blocked"].includes(item.status) ? "red" : "default"}>{item.statusLabel}</Tag>
+                    <Text>候选 {item.candidateId ? item.candidateId.slice(0, 12) : "未知"}</Text>
+                    <Text>Commit {item.commit ? item.commit.slice(0, 12) : "未知"}</Text>
+                    <Text type="secondary">Result SHA-256</Text>{item.resultSha256 ? <Hash value={item.resultSha256} /> : <Text type="secondary">{["queued", "running"].includes(item.status) ? "结果尚未生成" : "摘要未提供或无效"}</Text>}
+                    {item.reportSha256 && <><Text type="secondary">Report SHA-256</Text><Hash value={item.reportSha256} /></>}
+                    {item.bindingValid && item.id
+                      ? <Button size="small" onClick={() => void show(item.id)}>查看 {name} 操作详情</Button>
+                      : <Text type="danger">{item.bindingIssue || "结果绑定不完整，已隐藏详情入口"}</Text>}
+                  </Space>)}
+                </Space>}
+                {phase.reasons.map((reason: any, index: number) => <Alert key={`${reason.operationId || "reason"}-${index}`} className="section-gap"
+                  type="error" showIcon message={`${reason.statusLabel}${reason.operationId ? ` · ${reason.operationId}` : ""}${reason.candidateId ? ` · 候选 ${reason.candidateId.slice(0, 12)}` : ""}`}
+                  description={reason.reason} />)}
+              </div>;
+              return <Space direction="vertical" size={6} style={{ width: "100%" }}>
+                <Tag color={progress.stateTone === "success" ? "green" : progress.stateTone === "warning" ? "orange" : progress.stateTone === "error" ? "red" : "default"}>{progress.stateLabel}</Tag>
+                {progress.reason && <Text type="secondary">{progress.reason}</Text>}
+                <Text type="secondary">候选数：{progress.candidateCount ?? "未知"}；模型结果不等于产品漏洞确认。</Text>
+                {renderPhase("初步调查", progress.r1)}
+                {renderPhase("深入追查", progress.r2)}
+              </Space>;
+            } },
+          ]} />
+      </Card>}
+      {(selected.kind === "version_matrix" || selected.kind === "recent_window_comparison") && <VersionCandidateComparison operation={selected}
+        onOperationCreated={(item: any) => { if (item?.id) void show(item.id); }} />}
+      {["source_sync", "source_sync_batch"].includes(selected.kind) ? <SourceSyncDetails operation={selected} />
+        : selected.kind === "agent_investigation" && selected.result ? <AgentAssessment result={selected.result} reviews={selected.agent_reviews || []}
         onSubmit={async (review: any) => { await api("/operations/" + selected.id + "/agent-reviews", review); await show(selected.id); }} /> : <pre className="json-view">{JSON.stringify(selected.result || selected.spec, null, 2)}</pre>}
-      <Text strong>执行事件</Text><pre className="raw">{JSON.stringify(selected.events || [], null, 2)}</pre>
+      {selected.kind === "source_sync_batch"
+        ? <Collapse className="section-gap" items={[{ key: "events", label: "同步事件（高级）",
+            children: <pre className="raw">{JSON.stringify(selected.events || [], null, 2)}</pre> }]} />
+        : <><Text strong>执行事件</Text><pre className="raw">{JSON.stringify(selected.events || [], null, 2)}</pre></>}
       {selected.result_sha256 && <Button href={"/api/v1/operations/" + selected.id + "/result"} target="_blank">查看原始结果 JSON</Button>}
     </Card>}
     </>}
