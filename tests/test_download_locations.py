@@ -31,7 +31,13 @@ class DownloadLocationTests(unittest.TestCase):
         self.assertFalse((self.data / download_locations.REGISTRY_FILENAME).exists())
 
     def test_wsl_accepts_windows_drive_paths_and_maps_them_to_mnt(self):
-        with patch.object(download_locations, "_is_wsl", return_value=True):
+        original_is_dir = Path.is_dir
+        def is_dir(path):
+            if path == Path("/mnt/g"):
+                return True  # Simulate a mounted drive on CI hosts without G:.
+            return original_is_dir(path)
+
+        with patch.object(download_locations, "_is_wsl", return_value=True),              patch.object(Path, "is_dir", autospec=True, side_effect=is_dir):
             result = download_locations.normalize_download_dir(self.settings, r"G:\OpenHarmony")
         self.assertEqual(Path(result), Path("/mnt/g/OpenHarmony"))
 
