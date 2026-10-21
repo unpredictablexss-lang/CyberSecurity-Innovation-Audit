@@ -8,13 +8,21 @@ from typing import Any
 AUDIT_KINDS = {"revision_range", "recent_window_comparison", "branch_comparison", "version_matrix"}
 
 
-def build_progressive_status(settings, ops, audit_id: str) -> dict[str, Any]:
+def build_progressive_status(settings, ops, audit_id: str, *, store=None) -> dict[str, Any]:
     """Summarize one audit's immutable L0/L1 plan, L2/L3 work, and budget ledger.
 
     This is a read-only projection. It never creates a ledger or schedules Provider work.
     """
-    audit = ops.get(audit_id)
-    if audit.get("kind") not in AUDIT_KINDS:
+    try:
+        audit = ops.get(audit_id)
+    except KeyError:
+        if store is None:
+            raise
+        job = store.job(audit_id)
+        audit = {"id": audit_id, "kind": "snapshot", "status": job.get("status"),
+                 "spec": job.get("spec", {}), "report_sha256": job.get("report_sha256")}
+    is_snapshot = audit.get("kind") == "snapshot"
+    if audit.get("kind") not in AUDIT_KINDS and not is_snapshot:
         raise ValueError("operation is not a supported multi-endpoint audit")
     spec = audit.get("spec") if isinstance(audit.get("spec"), dict) else {}
     policy_snapshot = spec.get("progressive_triage_policy")
@@ -22,7 +30,15 @@ def build_progressive_status(settings, ops, audit_id: str) -> dict[str, Any]:
         raise ValueError("audit has no frozen progressive policy")
 
     result = None
-    if audit.get("result_sha256"):
+    if is_snapshot and store is not None and audit.get("status") in {"completed", "completed_with_limitations"}:
+        from .runtime import build_operation_plan
+        result = {"progressive_triage": build_operation_plan(settings, store, {
+            "id": audit_id, "kind": "snapshot",
+            "spec": {"progressive_triage_policy": policy_snapshot,
+                     "scan_ids": [audit_id],
+                     "audit_mode": spec.get("audit_mode", "static_only")},
+        })}
+    elif audit.get("result_sha256"):
         result = ops.result(audit_id)
     plan = result.get("progressive_triage") if isinstance(result, dict) else None
     plan = plan if isinstance(plan, dict) else None

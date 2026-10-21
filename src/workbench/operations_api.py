@@ -3166,7 +3166,7 @@ def install_routes(app: FastAPI, settings, store):
     def _progressive_status(audit_id):
         from .progressive_triage.status import build_progressive_status
         try:
-            return build_progressive_status(settings, ops, audit_id)
+            return build_progressive_status(settings, ops, audit_id, store=store)
         except KeyError:
             raise HTTPException(status_code=404, detail="audit operation not found") from None
         except ValueError as exc:

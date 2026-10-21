@@ -49,6 +49,45 @@ def bound_candidate(candidate_id, *, group=0, family="cpp_memory_safety", **extr
 
 
 class ProgressiveStatusTests(unittest.TestCase):
+    def test_snapshot_status_uses_frozen_scan_policy_and_read_only_report(self):
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        from src.workbench.progressive_triage.status import build_progressive_status
+
+        policy = build_policy()
+        frozen = {"revision": 2, "policy": policy,
+                  "policy_sha256": content_sha256(policy)}
+        report = {"repository": REPOSITORY, "commit": COMMIT,
+                  "snapshot_sha256": SNAPSHOT, "status": "completed"}
+        candidates = [{"id": "candidate-snapshot", "detector_id": "cpp.memory",
+                       "detector_version": "1.0.0", "rule_id": "memory.rule",
+                       "file": "src/a.cpp", "line": 12, "source_sha256": SOURCE,
+                       "severity": "high", "status": "unassessed"}]
+
+        class FakeStore:
+            def job(self, key):
+                return {"id": key, "status": "completed", "report_sha256": "e" * 64,
+                        "spec": {"audit_mode": "standard_review",
+                                 "progressive_triage_policy": frozen}}
+
+        class FakeOperations:
+            def get(self, _key):
+                raise KeyError("operation not found")
+
+            def progressive_operations_for_audit(self, _key):
+                return []
+
+        with tempfile.TemporaryDirectory() as directory, \
+                patch("src.workbench.service.read_report", return_value=report), \
+                patch("src.workbench.service.findings", return_value=candidates), \
+                patch("src.workbench.smart_audit._source_binding_valid", return_value=True):
+            status = build_progressive_status(SimpleNamespace(data_dir=Path(directory)),
+                                              FakeOperations(), "snapshot-1", store=FakeStore())
+        self.assertEqual(status["phase"], "awaiting_quick_screen_authorization")
+        self.assertEqual(status["phase_counts"]["candidate_count"], 1)
+        self.assertEqual(status["groups"][0]["members"][0]["candidate_id"], "candidate-snapshot")
+        self.assertEqual(status["validated_vulnerability"], 0)
+
     def test_status_projects_plan_and_child_operations_without_changing_findings(self):
         from types import SimpleNamespace
         from src.workbench.progressive_triage.status import build_progressive_status
