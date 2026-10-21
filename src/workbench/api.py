@@ -292,6 +292,14 @@ def create_app(settings=None):
         service.check_repository(settings, repo["path"])
         return service.revisions(repo)
 
+    def progressive_policy_snapshot():
+        current = app.state.triage_policy.read()
+        return {
+            "revision": current["revision"],
+            "policy": current["policy"],
+            "policy_sha256": current["policy_sha256"],
+        }
+
     @app.get("/api/v1/scans")
     def scans():
         return store.jobs()
@@ -308,10 +316,13 @@ def create_app(settings=None):
             repo, body.revision, body.include_paths, body.detector_ids,
             body.timeout_seconds, body.memory_mb, base_commit=body.base_commit,
         )
+        progressive_policy = progressive_policy_snapshot()
         workflow_sha256 = service.audit_workflow_sha256(
             plan["plan_sha256"], body.audit_mode, body.auto_triage,
             body.max_triage_candidates, body.max_r2_candidates,
-            body.max_cost_usd, base_commit=body.base_commit)
+            body.max_cost_usd,
+            progressive_policy_sha256=progressive_policy["policy_sha256"],
+            base_commit=body.base_commit)
         triage_preview = None
         if body.auto_triage:
             if body.audit_mode != "standard_review":
@@ -331,6 +342,7 @@ def create_app(settings=None):
             "workflow": service.audit_workflow_summary(
                 body.audit_mode, body.auto_triage, body.max_triage_candidates,
                 body.max_r2_candidates),
+            "progressive_triage_policy": progressive_policy,
         }
         if body.base_commit:
             result["base_commit"] = body.base_commit
@@ -358,16 +370,20 @@ def create_app(settings=None):
         )
         if body.expected_plan_sha256 and body.expected_plan_sha256 != spec["plan_sha256"]:
             raise ValueError("Source or rule plan changed since preview; refresh the plan before scanning")
+        progressive_policy = progressive_policy_snapshot()
         workflow_sha256 = service.audit_workflow_sha256(
             spec["plan_sha256"], body.audit_mode, body.auto_triage,
             body.max_triage_candidates, body.max_r2_candidates,
-            body.max_cost_usd, base_commit=body.base_commit)
+            body.max_cost_usd,
+            progressive_policy_sha256=progressive_policy["policy_sha256"],
+            base_commit=body.base_commit)
         if body.expected_workflow_sha256 and body.expected_workflow_sha256 != workflow_sha256:
             raise ValueError("Audit workflow changed since preview; refresh the plan before scanning")
         spec["audit_mode"] = body.audit_mode
         spec["max_r2_candidates"] = body.max_r2_candidates
         spec["max_cost_usd"] = body.max_cost_usd
         spec["workflow_sha256"] = workflow_sha256
+        spec["progressive_triage_policy"] = progressive_policy
         if body.auto_triage:
             if body.audit_mode != "standard_review":
                 raise ValueError("automatic triage is only available in standard review mode")
@@ -394,6 +410,64 @@ def create_app(settings=None):
     @app.get("/api/v1/scans/{key}")
     def scan_detail(key: str):
         return store.job(key)
+
+    @app.get("/api/v1/scans/{key}/progressive-triage")
+    def scan_progressive_triage(key: str, offset: int = Query(default=0, ge=0),
+                                limit: int = Query(default=50, ge=1, le=200)):
+        job = store.job(key)
+        policy_snapshot = job.get("spec", {}).get("progressive_triage_policy")
+        if not isinstance(policy_snapshot, dict):
+            return {
+                "state": "not_available",
+                "reason": "legacy_scan_has_no_frozen_progressive_policy",
+                "candidate_disposition_changed": False,
+                "validated_vulnerability": 0,
+            }
+        parent_operation_id = job.get("spec", {}).get("progressive_audit_operation_id")
+        if not parent_operation_id:
+            try:
+                parent = app.state.operations.audit_parent_for_scan(key)
+                parent_operation_id = parent.get("id") if parent else None
+            except (KeyError, ValueError):
+                parent_operation_id = None
+        if parent_operation_id:
+            return {
+                "state": "planned_by_parent_operation",
+                "parent_operation_id": parent_operation_id,
+                "reason": "multi_endpoint_budget_and_ranking_are_owned_by_the_parent_audit",
+                "candidate_disposition_changed": False,
+                "validated_vulnerability": 0,
+            }
+        if job.get("status") not in {"completed", "completed_with_limitations"} or not job.get("report_sha256"):
+            return {
+                "state": "awaiting_static_report",
+                "policy_revision": policy_snapshot.get("revision"),
+                "policy_sha256": policy_snapshot.get("policy_sha256"),
+                "candidate_disposition_changed": False,
+                "validated_vulnerability": 0,
+            }
+        from .progressive_triage.runtime import build_operation_plan
+        result = build_operation_plan(settings, store, {
+            "kind": "snapshot",
+            "spec": {
+                "progressive_triage_policy": policy_snapshot,
+                "scan_ids": [key],
+                "audit_mode": job.get("spec", {}).get("audit_mode", "static_only"),
+            },
+        })
+        total = len(result["groups"])
+        page_groups = result["groups"][offset:offset + limit]
+        page_group_ids = {item["group_id"] for item in page_groups}
+        page_decisions = [item for item in result["ranking"]["decisions"]
+                          if item["group_id"] in page_group_ids]
+        return {
+            **result,
+            "group_total": total,
+            "offset": offset,
+            "limit": limit,
+            "groups": page_groups,
+            "ranking": {**result["ranking"], "decisions": page_decisions},
+        }
 
     @app.post("/api/v1/scans/{key}/cancel")
     def cancel(key: str):
@@ -427,8 +501,15 @@ def create_app(settings=None):
         spec["retry_of"] = key
         audit_mode = old.get("audit_mode", "static_only")
         spec["audit_mode"] = audit_mode
+        old_policy = old.get("progressive_triage_policy")
+        if isinstance(old_policy, dict):
+            spec["progressive_triage_policy"] = old_policy
         spec["workflow_sha256"] = service.audit_workflow_sha256(
-            spec["plan_sha256"], audit_mode, base_commit=spec.get("base_commit"))
+            spec["plan_sha256"], audit_mode,
+            max_cost_usd=old.get("max_cost_usd"),
+            progressive_policy_sha256=(old_policy.get("policy_sha256")
+                                       if isinstance(old_policy, dict) else None),
+            base_commit=spec.get("base_commit"))
         return store.create_job(repo["id"], spec)
 
     @app.get("/api/v1/scans/{key}/events")

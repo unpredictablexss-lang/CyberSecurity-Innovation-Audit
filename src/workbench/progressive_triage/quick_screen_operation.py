@@ -17,6 +17,7 @@ from .quick_screen import (
     run_quick_screen,
 )
 from .ranking import rank_groups
+from ..store import Store
 
 
 def prepare_quick_screen(settings, store, job_id: str, candidate_id: str,
@@ -154,17 +155,50 @@ def prepare_quick_screen(settings, store, job_id: str, candidate_id: str,
         ranking = {"decisions": [plan_decision], "plan_sha256": parent_plan_sha256}
         selected = plan_decision
     else:
-        policy_state = PolicyStore(settings.data_dir).read()
-        policy = validate_policy(policy_state["policy"])
-        policy_sha256 = policy_envelope(policy)["policy_sha256"]
-        if policy_sha256 != policy_state["policy_sha256"]:
-            raise ValueError("progressive triage policy changed while preparing quick-screen consent")
-        policy_revision = policy_state["revision"]
         audit_operation_id = job_id
-        ranking = rank_groups([group], policy["limits"]["quick_screen_groups_per_audit"],
-                              family_quotas=policy["family_quotas"])
-        selected = next((row for row in ranking["decisions"]
-                         if row["group_id"] == group["group_id"]), None)
+        frozen_policy = job.get("spec", {}).get("progressive_triage_policy")
+        if isinstance(frozen_policy, dict):
+            if job.get("spec", {}).get("audit_mode") == "static_only":
+                raise ValueError("static-only audit cannot schedule an AI quick screen")
+            policy = validate_policy(frozen_policy.get("policy"))
+            policy_sha256 = policy_envelope(policy)["policy_sha256"]
+            if (frozen_policy.get("policy_sha256") != policy_sha256
+                    or not isinstance(frozen_policy.get("revision"), int)):
+                raise ValueError("snapshot progressive policy is invalid")
+            policy_revision = frozen_policy["revision"]
+            from .runtime import build_operation_plan
+            snapshot_plan = build_operation_plan(settings, store, {
+                "kind": "snapshot",
+                "spec": {"progressive_triage_policy": frozen_policy,
+                         "audit_mode": job.get("spec", {}).get("audit_mode", "standard_review"),
+                         "scan_ids": [job_id]},
+            })
+            matches = [item for item in snapshot_plan["groups"]
+                       if any(isinstance(member, dict)
+                              and member.get("candidate_id") == candidate_id
+                              and member.get("repository") == report["repository"]
+                              and member.get("commit") == report["commit"]
+                              and member.get("report_sha256") == job["report_sha256"]
+                              for member in item.get("members", []))]
+            if len(matches) != 1:
+                raise ValueError("candidate is not uniquely present in the fixed snapshot plan")
+            planned_group = matches[0]
+            selected = next((row for row in snapshot_plan["ranking"]["decisions"]
+                             if row.get("group_id") == planned_group.get("group_id")), None)
+            group = {**planned_group, "representative_candidate_id": candidate_id}
+            parent_plan_sha256 = content_sha256(snapshot_plan)
+            ranking = {"decisions": [selected], "plan_sha256": parent_plan_sha256}
+        else:
+            policy_state = PolicyStore(settings.data_dir).read()
+            policy = validate_policy(policy_state["policy"])
+            policy_sha256 = policy_envelope(policy)["policy_sha256"]
+            if policy_sha256 != policy_state["policy_sha256"]:
+                raise ValueError("progressive triage policy changed while preparing quick-screen consent")
+            policy_revision = policy_state["revision"]
+            ranking = rank_groups([group], policy["limits"]["quick_screen_groups_per_audit"],
+                                  family_quotas=policy["family_quotas"])
+            selected = next((row for row in ranking["decisions"]
+                             if row["group_id"] == group["group_id"]), None)
     if not selected or not selected["selected"]:
         raise ValueError("local evidence ranking did not select this candidate for quick screen")
     authorization = {
@@ -320,6 +354,36 @@ def execute_quick_screen(settings, task: dict[str, Any], provider=None, ops=None
             if (not plan_decision or plan_decision.get("selected") is not True
                     or manifest.get("ranking") != expected_ranking):
                 raise ValueError("quick-screen candidate is not selected by its frozen parent L1 ranking")
+        elif manifest.get("audit_parent_plan_sha256"):
+            job_store = Store(settings.data_dir)
+            job = job_store.job(spec.get("job_id"))
+            frozen_policy = job.get("spec", {}).get("progressive_triage_policy")
+            if (not isinstance(frozen_policy, dict)
+                    or frozen_policy != spec.get("progressive_policy")
+                    or job.get("spec", {}).get("audit_mode") == "static_only"):
+                raise ValueError("snapshot policy changed or does not authorize intelligent review")
+            from .runtime import build_operation_plan
+            snapshot_plan = build_operation_plan(settings, job_store, {
+                "kind": "snapshot",
+                "spec": {"progressive_triage_policy": frozen_policy,
+                         "audit_mode": job.get("spec", {}).get("audit_mode", "standard_review"),
+                         "scan_ids": [job["id"]]},
+            })
+            plan_digest = content_sha256(snapshot_plan)
+            if manifest.get("audit_parent_plan_sha256") != plan_digest:
+                raise ValueError("snapshot L0/L1 plan changed after consent")
+            plan_group = next((item for item in snapshot_plan["groups"]
+                               if item.get("group_id") == spec["group"].get("group_id")), None)
+            plan_decision = next((row for row in snapshot_plan["ranking"]["decisions"]
+                                  if row.get("group_id") == spec["group"].get("group_id")), None)
+            expected_group = ({**plan_group,
+                               "representative_candidate_id": spec.get("candidate_id")}
+                              if plan_group else None)
+            expected_ranking = {"decisions": [plan_decision], "plan_sha256": plan_digest}
+            if (not plan_group or spec.get("group") != expected_group
+                    or not plan_decision or plan_decision.get("selected") is not True
+                    or manifest.get("ranking") != expected_ranking):
+                raise ValueError("quick-screen candidate is not selected by its frozen snapshot L1 ranking")
         else:
             ranking = rank_groups([spec["group"]], policy["limits"]["quick_screen_groups_per_audit"],
                                   family_quotas=policy["family_quotas"])

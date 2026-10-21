@@ -835,6 +835,12 @@ def execute(settings, store, ops, task):
         result["status"] = ("completed" if result.get("state") == "completed"
                             else "completed_with_limitations")
         return result
+    if kind == "progressive_quick_screen_batch":
+        from .progressive_triage.quick_screen_batch import execute_quick_screen_batch
+        return execute_quick_screen_batch(settings, store, ops, task)
+    if kind == "progressive_deep_agent_batch":
+        from .progressive_triage.deep_agent_batch import execute_progressive_deep_agent_batch
+        return execute_progressive_deep_agent_batch(settings, store, ops, task)
     if kind == "version_candidate_comparison":
         from .joint_candidate_comparison_runtime import execute_joint_comparison
         return execute_joint_comparison(settings, store, ops, task)

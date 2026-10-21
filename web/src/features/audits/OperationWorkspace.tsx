@@ -9,9 +9,18 @@ import AgentAssessment from "./AgentAssessment";
 import AgentBlindReview from "./AgentBlindReview";
 import SourceSyncDetails from "./SourceSyncDetails";
 import ProgressiveDeepInvestigationAction from "./ProgressiveDeepInvestigationAction";
+import ProgressiveDeepInvestigationBatchAction from "./ProgressiveDeepInvestigationBatchAction";
+import ProgressiveQuickScreenBatchAction from "./ProgressiveQuickScreenBatchAction";
 import VersionCandidateComparison from "./VersionCandidateComparison";
 import { buildIntelligentReviewView } from "./operationProgressModel.js";
 const { Text } = Typography;
+function budgetPhaseSummary(usage: any) {
+  const labels: Record<string, string> = { quick_screen: "L2", deep_agent: "L3", structured_repair: "结构修复", skeptic: "Skeptic", report: "报告草案" };
+  const rows = Object.entries(usage?.by_phase || {}) as [string, any][];
+  const summary = rows.filter(([, value]) => value.model_calls_allocated > 0)
+    .map(([phase, value]) => `${labels[phase] || phase} ${value.model_calls_allocated}`).join(" · ");
+  return summary || "尚无模型请求";
+}
 const importProgressLabels: Record<string,string> = {queued:"等待导入", cloning:"下载源码", fetching:"同步源码", verifying:"核验固定版本", scanning:"静态扫描", completed:"已完成", failed:"失败"};
 export function buildRecentWindowSummary(result: any) {
   if (!result || typeof result !== "object") return null;
@@ -98,7 +107,7 @@ function RecentWindowSummary({ result, openScan }: { result: any; openScan: (id:
   </Card>;
 }
 export type OperationView = "all" | "date" | "branches" | "matrix" | "validation" | "investigate" | "agent" | "agent_research" | "sync" | "queue";
-const kinds: Record<string, string> = { source_sync: "源码同步 / 自动扫描", source_sync_batch: "多仓库批量同步", revision_range: "固定区间", branch_comparison: "跨版本比较", recent_window_comparison: "N 日 / 1 日对照", version_matrix: "版本矩阵", validation: "隔离验证", investigation: "只读调查", agent_investigation: "模型辅助调查", progressive_quick_screen: "渐进式 L2 快速研判", candidate_review_batch: "历史候选队列（已停用）" };
+const kinds: Record<string, string> = { source_sync: "源码同步 / 自动扫描", source_sync_batch: "多仓库批量同步", revision_range: "固定区间", branch_comparison: "跨版本比较", recent_window_comparison: "N 日 / 1 日对照", version_matrix: "版本矩阵", validation: "隔离验证", investigation: "只读调查", agent_investigation: "模型辅助调查", progressive_quick_screen: "渐进式 L2 快速研判", progressive_quick_screen_batch: "任务级 L2 批量快筛", candidate_review_batch: "历史候选队列（已停用）" };
 const headings: Record<OperationView, [string, string]> = {
   all: ["高级源码与验证操作", "保留既有操作入口；任务持久化，候选变化与安全影响分别记录。"],
   date: ["时间增量扫描", "按明确时区固定时间端点；支持单一区间和 N 日 / 1 日双窗口候选对照。"],
@@ -114,6 +123,7 @@ const headings: Record<OperationView, [string, string]> = {
 export default function OperationWorkspace({ view = "all", operationId, context = {} }: { view?: OperationView; operationId?: string; context?: SourceContext }) {
   const [repos, setRepos] = useState<any[]>([]), [detectors, setDetectors] = useState<any[]>([]), [cases, setCases] = useState<any[]>([]);
   const [rows, setRows] = useState<any[]>([]), [selected, setSelected] = useState<any>(null);
+  const [progressiveStatus, setProgressiveStatus] = useState<any>(null);
   const [reviewQueue, setReviewQueue] = useState<any>({ queued_batches: 0, running_batches: 0, queued_candidates: 0, running_candidates: 0 });
   const [error, setError] = useState(""), [busy, setBusy] = useState(false), [agentStatus, setAgentStatus] = useState<any>(null);
   const [agentEvaluation, setAgentEvaluation] = useState<any>(null);
@@ -125,7 +135,18 @@ export default function OperationWorkspace({ view = "all", operationId, context 
     setError((current) => current === "TypeError: Failed to fetch" ? "" : current);
     setRepos(r); setDetectors(d); setCases(c); setRows(o); setAgentStatus(a); setReviewQueue(q);
     const id = selectedId.current;
-    if (id) await refreshSelectedOperation(id, (key) => api("/operations/" + key), () => live.current ? selectedId.current : null, setSelected);
+    if (id) {
+      const item = await refreshSelectedOperation(id, (key) => api("/operations/" + key), () => live.current ? selectedId.current : null, setSelected);
+      if (["revision_range", "recent_window_comparison", "branch_comparison", "version_matrix"].includes(item.kind)) {
+        try {
+          const [usage, groups] = await Promise.all([
+            api("/audits/" + id + "/ai-usage"),
+            api("/audits/" + id + "/triage-groups?offset=0&limit=200"),
+          ]);
+          if (live.current && selectedId.current === id) setProgressiveStatus({ ...usage, groups: groups.groups, group_total: groups.group_total });
+        } catch { if (live.current && selectedId.current === id) setProgressiveStatus(null); }
+      } else if (live.current && selectedId.current === id) setProgressiveStatus(null);
+    }
   }, []);
   useEffect(() => {
     if (view !== "agent_research") { setAgentEvaluation(null); return; }
@@ -144,7 +165,15 @@ export default function OperationWorkspace({ view = "all", operationId, context 
   }, [refresh]);
   const show = async (id: string) => {
     selectedId.current = id;
-    try { await refreshSelectedOperation(id, (key) => api("/operations/" + key), () => live.current ? selectedId.current : null, setSelected); }
+    try {
+      const item = await refreshSelectedOperation(id, (key) => api("/operations/" + key), () => live.current ? selectedId.current : null, setSelected);
+      if (["revision_range", "recent_window_comparison", "branch_comparison", "version_matrix"].includes(item.kind)) {
+        const [usage, groups] = await Promise.all([
+          api("/audits/" + id + "/ai-usage"), api("/audits/" + id + "/triage-groups?offset=0&limit=200"),
+        ]);
+        if (live.current && selectedId.current === id) setProgressiveStatus({ ...usage, groups: groups.groups, group_total: groups.group_total });
+      } else setProgressiveStatus(null);
+    }
     catch (e) { setError(String(e)); }
   };
   const submit = async (path: string, payload: any) => {
@@ -306,26 +335,50 @@ export default function OperationWorkspace({ view = "all", operationId, context 
       {selected.kind === "agent_investigation" && !selected.result_sha256 && ["failed", "interrupted", "timed_out", "cancelled"].includes(selected.status) && <Alert className="section-gap" type="warning" showIcon message="本次调查没有可复核结果；候选仍为 unknown" description="任务结束不代表候选是误报或安全。若 Worker 在 Provider 已处理请求后、结果落盘前退出，上游调用和费用仍可能发生。重试前请核对执行事件及 Provider 账单，再重新预览并单独批准新任务。" />}
       {selected.result?.scan_job_id && <Button className="section-gap" onClick={() => go("/tasks/" + selected.result.scan_job_id)}>打开同步后扫描任务 · {String(selected.result.scan_job_id).slice(0, 12)}</Button>}
       {selected.spec?.scan_ids && <Space wrap className="section-gap">端点扫描：{selected.spec.scan_ids.map((id: string) => <Button key={id} size="small" onClick={() => go("/tasks/" + id)}>{id.slice(0, 12)}</Button>)}</Space>}
-      {selected.result?.progressive_triage && <Card size="small" className="section-gap" title="渐进式筛选 · L0 归并 / L1 排序">
+      {selected.result?.progressive_triage && <Card size="small" className="section-gap" title="渐进式审计 · L0 归并 / L1 排序 / L2-L3 状态">
         {(() => {
           const plan = selected.result.progressive_triage;
-          const groups = Array.isArray(plan.groups) ? plan.groups : [];
+          const activeStatus = progressiveStatus?.audit_operation_id === selected.id ? progressiveStatus : null;
+          const groups = Array.isArray(activeStatus?.groups) ? activeStatus.groups : Array.isArray(plan.groups) ? plan.groups : [];
+          const budget = activeStatus?.budget || {};
           return <>
+            <div className="section-gap"><ProgressiveQuickScreenBatchAction
+              auditOperationId={selected.id}
+              enabled={selected.spec?.audit_mode !== "static_only" && groups.some((row: any) =>
+                row.ranking?.selected && ["not_scheduled", "not_started_candidate"].includes(row.quick_screen_state || "not_scheduled"))}
+            /></div>
             <Alert type="info" showIcon
-              message={`固定策略 ${plan.policy_profile || "unknown"} · ${groups.length} 个候选组 · ${plan.ranking?.selected_group_count ?? 0} 组列为优先复核`}
-              description="本结果只完成确定性归并与预算排序。L2 快速研判、L3 Agent 尚未调度；未选或未知仍是候选，不代表安全或误报。" />
+              message={`固定策略 ${plan.policy_profile || "unknown"} · ${plan.grouping?.group_count ?? plan.groups?.length ?? 0} 个候选组 · 阶段：${activeStatus?.phase || "deterministic_ranked"}`}
+              description="未选、尚未授权或信息不足的组仍是候选；模型意见不改变漏洞确认状态。仅美元预算为估算，任务调度上限见下方账本。" />
             <Descriptions className="section-gap" size="small" column={{ xs: 1, md: 2 }}>
               <Descriptions.Item label="策略修订 / 摘要 SHA-256">{plan.policy_revision ?? "未知"} · <Hash value={plan.policy_sha256} /></Descriptions.Item>
               <Descriptions.Item label="原始候选观察">{plan.original_observation_count ?? "未知"}</Descriptions.Item>
-              <Descriptions.Item label="调度状态">{plan.state || "unknown"}</Descriptions.Item>
+              <Descriptions.Item label="L0 归并组 / L1 选中">{activeStatus ? `${activeStatus.phase_counts.candidate_groups} / ${activeStatus.phase_counts.selected_for_quick_screen}` : `${plan.grouping?.group_count ?? groups.length} / ${plan.ranking?.selected_group_count ?? 0}`}</Descriptions.Item>
+              <Descriptions.Item label="L2 完成 / L3 完成">{activeStatus ? `${activeStatus.phase_counts.quick_screen_completed} / ${activeStatus.phase_counts.deep_agent_completed}` : "0 / 0"}</Descriptions.Item>
+              <Descriptions.Item label="未完成快筛的组成员">{activeStatus?.phase_counts.unassessed_group_members ?? plan.original_observation_count ?? "未知"}</Descriptions.Item>
+              <Descriptions.Item label="模型请求 / 在途">{budget.usage ? `${budget.usage.model_calls_allocated} / ${budget.usage.model_calls_in_flight}` : "尚未开始"}</Descriptions.Item>
+              <Descriptions.Item label="按阶段调用数">{budgetPhaseSummary(budget.usage)}</Descriptions.Item>
+              <Descriptions.Item label="输入 / 输出 Token">{budget.usage ? `${budget.usage.input_tokens_allocated} / ${budget.usage.output_tokens_allocated}` : "尚未开始"}</Descriptions.Item>
+              <Descriptions.Item label="停止原因">{activeStatus?.stop_reason || budget.stop_reason || "无"}</Descriptions.Item>
               <Descriptions.Item label="确认漏洞数">{plan.validated_vulnerability ?? 0}</Descriptions.Item>
             </Descriptions>
+            {activeStatus?.group_total > groups.length && <Text type="secondary">当前展示前 {groups.length} / {activeStatus.group_total} 组；完整列表可通过任务 triage-groups API 分页读取。</Text>}
             <Table<any> size="small" rowKey="group_id" dataSource={groups} pagination={{ pageSize: 5 }} scroll={{ x: 720 }} columns={[
               { title: "排序", dataIndex: ["ranking", "rank"], width: 70 },
               { title: "组 / 家族", render: (_: any, row: any) => <><Text>{row.group_id}</Text><div className="muted">{row.ranking?.family_bucket || "unknown"}</div></> },
               { title: "候选成员", render: (_: any, row: any) => Array.isArray(row.members) ? row.members.length : 0 },
-              { title: "队列状态", render: (_: any, row: any) => row.ranking?.selected
-                ? <Tag color="blue">优先组 · 尚未调度</Tag> : <Tag>保留候选</Tag> },
+              { title: "L1 决定", render: (_: any, row: any) => row.ranking?.selected
+                ? <Tag color="blue">优先复核</Tag> : <Tag>保留候选</Tag> },
+              { title: "L2 快筛", render: (_: any, row: any) => {
+                const state = row.quick_screen_state || "not_scheduled";
+                const labels: Record<string, string> = { not_scheduled: "未授权/未排队", queued: "排队中", running: "执行中", completed: "已完成", partial: "部分/受限", unknown: "结果未知" };
+                return <Tag color={state === "completed" ? "green" : state === "running" ? "processing" : state === "unknown" || state === "partial" ? "orange" : undefined}>{labels[state] || state}</Tag>;
+              } },
+              { title: "L3 深查", render: (_: any, row: any) => {
+                const state = row.deep_agent_state || "not_scheduled";
+                const labels: Record<string, string> = { not_scheduled: "未授权/未排队", queued: "排队中", running: "执行中", completed: "已完成", partial: "部分/受限", unknown: "结果未知" };
+                return <Tag color={state === "completed" ? "green" : state === "running" ? "processing" : state === "unknown" || state === "partial" ? "orange" : undefined}>{labels[state] || state}</Tag>;
+              } },
               { title: "选择依据", render: (_: any, row: any) => (row.ranking?.reason_codes || []).join(" · ") || "无" },
             ]} />
           </>;
@@ -360,6 +413,68 @@ export default function OperationWorkspace({ view = "all", operationId, context 
             <Alert className="section-gap" type="info" showIcon message="L3 深度 Agent 需要单独授权" description="只有 L2 完成并建议 investigate 才能继续。提交后复用现有固定版本只读 Agent；它仍是候选调查意见，不会自动确认漏洞或标记误报。" />
             {result.quick_assessment === "investigate" && selected.spec?.job_id && selected.spec?.candidate_id &&
               <ProgressiveDeepInvestigationAction jobId={selected.spec.job_id} candidateId={selected.spec.candidate_id} quickScreenOperationId={selected.id} />}
+          </>;
+        })()}
+      </Card>}
+      {selected.kind === "progressive_quick_screen_batch" && selected.result && <Card size="small" className="section-gap" title="任务级 L2 批量快筛">
+        {(() => {
+          const result = selected.result;
+          const groups = Array.isArray(result.groups) ? result.groups : [];
+          return <>
+            <div className="section-gap"><ProgressiveDeepInvestigationBatchAction
+              quickScreenBatchId={selected.id}
+              enabled={groups.some((row: any) => row.state === "completed" && row.quick_assessment === "investigate")}
+            /></div>
+            <Alert className="section-gap" type="info" showIcon
+              message={`处理 ${result.processed_group_count ?? groups.length} / ${result.selected_group_count ?? "未知"} 组；已完成 ${result.completed_group_count ?? 0} 组`}
+              description={`停止原因：${result.stop_reason || "未知"}。未开始、失败或结果未知的组仍为候选；本任务不会自动排除或确认漏洞。`} />
+            <Descriptions size="small" column={{ xs: 1, md: 2 }}>
+              <Descriptions.Item label="授权 SHA-256"><Hash value={result.consent_sha256} /></Descriptions.Item>
+              <Descriptions.Item label="确认漏洞数">{result.validated_vulnerability ?? 0}</Descriptions.Item>
+              <Descriptions.Item label="模型请求 / 在途">{result.budget?.usage ? `${result.budget.usage.model_calls_allocated} / ${result.budget.usage.model_calls_in_flight}` : "未知"}</Descriptions.Item>
+              <Descriptions.Item label="美元上限性质">{result.budget?.cost?.enforcement || "advisory_only"}</Descriptions.Item>
+            </Descriptions>
+            <Table<any> className="section-gap" size="small" rowKey="group_id" dataSource={groups} pagination={{ pageSize: 10 }} scroll={{ x: 800 }} columns={[
+              { title: "候选组", dataIndex: "group_id" },
+              { title: "代表候选", dataIndex: "candidate_id" },
+              { title: "快筛状态", dataIndex: "state", render: (value) => <Tag color={value === "completed" ? "green" : value === "quick_unknown" ? "orange" : undefined}>{value || "unknown"}</Tag> },
+              { title: "模型建议", dataIndex: "quick_assessment", render: (value) => value || "unknown" },
+              { title: "停止/未知原因", dataIndex: "reason_code", render: (value) => value || "无" },
+              { title: "后续操作", render: (_: unknown, row: any) => {
+                if (row.state !== "completed" || row.quick_assessment !== "investigate") return "无需深查授权";
+                const item = (selected.spec?.items || []).find((entry: any) => entry.group_id === row.group_id);
+                const childSpec = item?.spec;
+                if (!childSpec?.job_id || !childSpec?.candidate_id) return "来源绑定不可用";
+                return <ProgressiveDeepInvestigationAction jobId={childSpec.job_id}
+                  candidateId={childSpec.candidate_id} quickScreenOperationId={selected.id}
+                  progressiveGroupId={row.group_id} />;
+              } },
+            ]} />
+            {Array.isArray(result.not_started) && result.not_started.length > 0 && <Alert type="warning" showIcon message={`${result.not_started.length} 组尚未开始，继续保留为候选`} description={result.not_started.map((row: any) => row.group_id).join("、")} />}
+          </>;
+        })()}
+      </Card>}
+      {selected.kind === "progressive_deep_agent_batch" && selected.result && <Card size="small" className="section-gap" title="任务级 L3 深度调查批次">
+        {(() => {
+          const result = selected.result;
+          const groups = Array.isArray(result.groups) ? result.groups : [];
+          return <>
+            <Alert className="section-gap" type="info" showIcon
+              message={`处理 ${result.processed_group_count ?? groups.length} / ${result.eligible_group_count ?? "未知"} 组；完成 ${result.completed_group_count ?? 0} 组`}
+              description={`停止原因：${result.stop_reason || "未知"}。失败、未知和未开始的候选仍保留；L3 结果不会自动确认漏洞。`} />
+            <Descriptions size="small" column={{ xs: 1, md: 2 }}>
+              <Descriptions.Item label="任务授权 SHA-256"><Hash value={result.consent_sha256} /></Descriptions.Item>
+              <Descriptions.Item label="确认漏洞数">{result.validated_vulnerability ?? 0}</Descriptions.Item>
+              <Descriptions.Item label="模型请求 / 在途">{result.budget?.usage ? `${result.budget.usage.model_calls_allocated} / ${result.budget.usage.model_calls_in_flight}` : "未知"}</Descriptions.Item>
+              <Descriptions.Item label="美元额度性质">{result.budget?.cost?.enforcement || "advisory_only"}</Descriptions.Item>
+            </Descriptions>
+            <Table<any> className="section-gap" size="small" rowKey="group_id" dataSource={groups} pagination={{ pageSize: 10 }} scroll={{ x: 720 }} columns={[
+              { title: "候选组", dataIndex: "group_id" },
+              { title: "候选", dataIndex: "candidate_id" },
+              { title: "L3 状态", dataIndex: "state", render: (value) => <Tag color={value === "completed" ? "green" : value === "unknown" ? "orange" : undefined}>{value || "unknown"}</Tag> },
+              { title: "结果 / 停止原因", render: (_: unknown, row: any) => row.reason || row.result?.status || "unknown" },
+            ]} />
+            {Array.isArray(result.not_started) && result.not_started.length > 0 && <Alert type="warning" showIcon message={`${result.not_started.length} 组尚未开始，继续保留为候选`} description={result.not_started.map((row: any) => row.group_id).join("、")} />}
           </>;
         })()}
       </Card>}

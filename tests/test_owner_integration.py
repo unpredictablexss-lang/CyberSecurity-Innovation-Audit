@@ -37,7 +37,8 @@ class OwnerIntegrationTests(unittest.TestCase):
     def test_automatic_plan_is_frozen_and_worker_matches_cli(self):
         plan = self.plan()
         static_plan = {key: value for key, value in plan.items()
-                       if key not in {'audit_mode', 'workflow_sha256', 'workflow'}}
+                       if key not in {'audit_mode', 'workflow_sha256', 'workflow',
+                                      'progressive_triage_policy'}}
         self.assertEqual(plan['audit_mode'], 'standard_review')
         self.assertEqual(plan['workflow']['triage_stage'], 'user_authorized_candidate_batch')
         self.assertEqual(plan['selection_mode'], 'automatic')
@@ -48,6 +49,8 @@ class OwnerIntegrationTests(unittest.TestCase):
         self.assertIn('partial.cpp', [f['file'] for f in plan['parse_limitations']])
         job = self.scan(expected_plan_sha256=plan['plan_sha256'])
         self.assertEqual(job['spec']['audit_plan'], static_plan)
+        self.assertEqual(job['spec']['progressive_triage_policy'],
+                         plan['progressive_triage_policy'])
         self.assertEqual(job['spec']['plan_sha256'], plan['plan_sha256'])
         self.assertEqual(job['spec']['audit_mode'], 'standard_review')
         self.assertEqual(job['spec']['workflow_sha256'], plan['workflow_sha256'])

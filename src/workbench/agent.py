@@ -84,6 +84,7 @@ MAX_CALLSITE_RESULTS = 12
 MAX_CALLSITE_EXCERPT_LINES = 5
 MAX_CALLSITE_LINE_CHARS = 160
 MAX_SKEPTIC_SOURCE_BYTES = 8 * 1024
+SUPPORTED_PROVIDER_PROTOCOLS = frozenset({"openai-responses", "openai-chat-completions"})
 
 
 @dataclass(frozen=True)
@@ -97,12 +98,16 @@ class ProviderConfig:
     @classmethod
     def from_env(cls, data_dir=None):
         from .provider_settings import DEFAULT_BASE_URL, environment_overrides, read_settings
-        saved = ({"base_url": DEFAULT_BASE_URL, "model": "", "proxy_url": "", "api_key": ""}
+        saved = ({"base_url": DEFAULT_BASE_URL, "model": "", "proxy_url": "", "api_key": "",
+                  "api_protocol": "openai-responses"}
                  if environment_overrides() else read_settings(data_dir))
         base = os.environ.get("OHSCANNER_LLM_BASE_URL", saved["base_url"]).strip().rstrip("/")
         model = os.environ.get("OHSCANNER_LLM_MODEL", saved["model"]).strip()
         key = os.environ.get("OHSCANNER_LLM_API_KEY", saved["api_key"])
         proxy = os.environ.get("OHSCANNER_LLM_PROXY_URL", saved["proxy_url"]).strip()
+        protocol = os.environ.get("OHSCANNER_LLM_API_PROTOCOL", saved["api_protocol"]).strip()
+        if protocol not in SUPPORTED_PROVIDER_PROTOCOLS:
+            raise ValueError("unsupported LLM API protocol")
         validate_base_url(base)
         if proxy:
             validate_proxy_url(proxy)
@@ -110,7 +115,7 @@ class ProviderConfig:
             raise ValueError("invalid LLM model identifier")
         if key and (len(key) > 4096 or any(ord(ch) < 33 or ord(ch) > 126 for ch in key)):
             raise ValueError("invalid LLM API key format")
-        return cls(base, model, key, proxy)
+        return cls(base, model, key, proxy, provider=protocol)
 
     @property
     def configured(self):
@@ -131,6 +136,7 @@ class ProviderConfig:
         return {
             "configured": self.configured,
             "provider": self.provider,
+            "api_protocol": self.provider,
             "model": self.model or None,
             "endpoint_host": self.endpoint_host,
             "proxy_scheme": proxy.scheme if proxy else None,
@@ -208,6 +214,10 @@ def _safe_tool_rejection(error):
 
 
 def _reasoning_effort(config, *, tool_calls=False):
+    # Reasoning controls are not part of the portable Chat Completions subset.
+    # Keep provider-specific controls out of generic requests; model defaults apply.
+    if config.provider == "openai-chat-completions":
+        return None
     # MiMo charges reasoning against max_output_tokens. Keep R1 structured
     # answers available for the validated result; retain low reasoning for R2
     # tool selection. Its API documents all non-none effort levels as enabled.
@@ -259,6 +269,208 @@ class ProviderQuotaError(ValueError):
     error_code = "provider_quota_exhausted"
 
 
+def _chat_content_text(content):
+    if isinstance(content, str):
+        return content
+    if not isinstance(content, list):
+        raise ValueError("OpenAI-compatible chat input content has an unsupported shape")
+    chunks = []
+    for part in content:
+        if not isinstance(part, dict):
+            raise ValueError("OpenAI-compatible chat input content has an unsupported shape")
+        kind = part.get("type")
+        if kind in {"input_text", "output_text", "text"} and isinstance(part.get("text"), str):
+            chunks.append(part["text"])
+        else:
+            raise ValueError("OpenAI-compatible chat input contains an unsupported content part")
+    return "\n".join(chunks)
+
+
+def _chat_completions_payload(payload):
+    """Translate the Agent's protocol-neutral Responses-shaped request to Chat Completions."""
+    messages = []
+    instructions = payload.get("instructions")
+    if isinstance(instructions, str) and instructions:
+        messages.append({"role": "system", "content": instructions})
+
+    input_value = payload.get("input")
+    if isinstance(input_value, str):
+        input_items = [{"role": "user", "content": input_value}]
+    elif isinstance(input_value, list):
+        input_items = input_value
+    else:
+        raise ValueError("OpenAI-compatible chat input has an unsupported shape")
+
+    pending_calls = []
+
+    def flush_calls():
+        if pending_calls:
+            messages.append({"role": "assistant", "tool_calls": list(pending_calls)})
+            pending_calls.clear()
+
+    for item in input_items:
+        if not isinstance(item, dict):
+            raise ValueError("OpenAI-compatible chat input item has an unsupported shape")
+        kind = item.get("type")
+        if kind == "function_call":
+            call_id, name, arguments = item.get("call_id"), item.get("name"), item.get("arguments")
+            if not isinstance(call_id, str) or not call_id or not isinstance(name, str) or not name:
+                raise ValueError("OpenAI-compatible chat history contains an invalid tool call")
+            if not isinstance(arguments, str):
+                arguments = json.dumps(arguments, ensure_ascii=False, separators=(",", ":"))
+            pending_calls.append({"id": call_id, "type": "function",
+                                  "function": {"name": name, "arguments": arguments}})
+            continue
+        if kind == "function_call_output":
+            flush_calls()
+            call_id, output = item.get("call_id"), item.get("output")
+            if not isinstance(call_id, str) or not call_id or not isinstance(output, str):
+                raise ValueError("OpenAI-compatible chat history contains an invalid tool result")
+            messages.append({"role": "tool", "tool_call_id": call_id, "content": output})
+            continue
+        flush_calls()
+        role = item.get("role")
+        if role not in {"system", "developer", "user", "assistant"}:
+            raise ValueError("OpenAI-compatible chat history contains an unsupported role")
+        content = _chat_content_text(item.get("content", ""))
+        messages.append({"role": role, "content": content})
+    flush_calls()
+
+    request = {"model": payload.get("model"), "messages": messages, "stream": False}
+    max_tokens = payload.get("max_output_tokens")
+    if max_tokens is not None:
+        request["max_tokens"] = max_tokens
+
+    tools = payload.get("tools")
+    if tools is not None:
+        if not isinstance(tools, list):
+            raise ValueError("OpenAI-compatible chat tools have an unsupported shape")
+        chat_tools = []
+        for tool in tools:
+            if not isinstance(tool, dict) or tool.get("type") != "function":
+                raise ValueError("OpenAI-compatible chat only supports function tools")
+            # `strict` is not consistently implemented by compatible gateways.
+            # The application validates arguments locally before dispatch.
+            function = {key: tool[key] for key in ("name", "description", "parameters")
+                        if key in tool}
+            if not isinstance(function.get("name"), str) or not isinstance(function.get("parameters"), dict):
+                raise ValueError("OpenAI-compatible chat function schema is invalid")
+            chat_tools.append({"type": "function", "function": function})
+        request["tools"] = chat_tools
+        choice = payload.get("tool_choice")
+        if isinstance(choice, str) and choice in {"auto", "none", "required"}:
+            request["tool_choice"] = choice
+        elif isinstance(choice, dict) and choice.get("type") == "function" and isinstance(choice.get("name"), str):
+            request["tool_choice"] = {"type": "function", "function": {"name": choice["name"]}}
+        elif choice is not None:
+            raise ValueError("OpenAI-compatible chat tool choice is invalid")
+
+    text_spec = payload.get("text")
+    format_spec = text_spec.get("format") if isinstance(text_spec, dict) else None
+    if isinstance(format_spec, dict):
+        format_type = format_spec.get("type")
+        if format_type == "json_object":
+            request["response_format"] = {"type": "json_object"}
+        elif format_type == "json_schema":
+            schema = format_spec.get("schema")
+            if not isinstance(schema, dict):
+                raise ValueError("OpenAI-compatible chat JSON schema is invalid")
+            schema_text = json.dumps(schema, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+            schema_instruction = (
+                "Return only one JSON object that follows this output schema exactly. "
+                "The server validates the object against this schema:\n" + schema_text
+            )
+            if messages and messages[0].get("role") == "system":
+                messages[0]["content"] += "\n\n" + schema_instruction
+            else:
+                messages.insert(0, {"role": "system", "content": schema_instruction})
+            # JSON object mode is broadly implemented; the application performs
+            # the authoritative schema validation after decoding the response.
+            request["response_format"] = {"type": "json_object"}
+        else:
+            raise ValueError("OpenAI-compatible chat output format is unsupported")
+    return request
+
+
+def _responses_shape_from_chat_completion(response):
+    """Normalize one non-streaming Chat Completions result for the existing Agent workflow."""
+    choices = response.get("choices") if isinstance(response, dict) else None
+    if not isinstance(choices, list) or not choices or not isinstance(choices[0], dict):
+        raise ValueError("OpenAI-compatible chat response did not match the Chat Completions shape")
+    choice = choices[0]
+    message = choice.get("message")
+    if not isinstance(message, dict):
+        raise ValueError("OpenAI-compatible chat response did not include an assistant message")
+    output = []
+    refusal = message.get("refusal")
+    if isinstance(refusal, str) and refusal:
+        output.append({"type": "message", "role": "assistant",
+                       "content": [{"type": "refusal", "refusal": refusal}]})
+    else:
+        content = message.get("content")
+        if isinstance(content, str) and content:
+            output.append({"type": "message", "role": "assistant",
+                           "content": [{"type": "output_text", "text": content}]})
+        elif content is not None and not isinstance(content, list):
+            raise ValueError("OpenAI-compatible chat response content has an unsupported shape")
+        elif isinstance(content, list):
+            chunks = []
+            for part in content:
+                if isinstance(part, dict) and part.get("type") == "text" and isinstance(part.get("text"), str):
+                    chunks.append(part["text"])
+                else:
+                    raise ValueError("OpenAI-compatible chat response content has an unsupported part")
+            if chunks:
+                output.append({"type": "message", "role": "assistant",
+                               "content": [{"type": "output_text", "text": "\n".join(chunks)}]})
+
+    tool_calls = message.get("tool_calls", [])
+    if tool_calls is None:
+        tool_calls = []
+    if not isinstance(tool_calls, list):
+        raise ValueError("OpenAI-compatible chat response tool calls have an unsupported shape")
+    seen_ids = set()
+    for call in tool_calls:
+        function = call.get("function") if isinstance(call, dict) else None
+        call_id = call.get("id") if isinstance(call, dict) else None
+        if (not isinstance(function, dict) or not isinstance(call_id, str) or not call_id
+                or call_id in seen_ids or not isinstance(function.get("name"), str)
+                or not isinstance(function.get("arguments"), str)):
+            raise ValueError("OpenAI-compatible chat response contains an invalid function call")
+        seen_ids.add(call_id)
+        output.append({"type": "function_call", "call_id": call_id,
+                       "name": function["name"], "arguments": function["arguments"]})
+
+    finish_reason = choice.get("finish_reason")
+    if finish_reason == "length":
+        status, incomplete = "incomplete", {"reason": "max_output_tokens"}
+    elif finish_reason in {"stop", "tool_calls", "content_filter"}:
+        status, incomplete = "completed", None
+        if finish_reason == "content_filter" and not output:
+            output.append({"type": "message", "role": "assistant",
+                           "content": [{"type": "refusal", "refusal": "content_filter"}]})
+    else:
+        status, incomplete = "incomplete", {"reason": "provider_incomplete"}
+    if not output:
+        raise ValueError("OpenAI-compatible chat response did not include assistant content or tool calls")
+
+    usage = response.get("usage")
+    if isinstance(usage, dict):
+        details = usage.get("prompt_tokens_details")
+        output_details = usage.get("completion_tokens_details")
+        usage = {
+            "input_tokens": usage.get("prompt_tokens"),
+            "output_tokens": usage.get("completion_tokens"),
+            "total_tokens": usage.get("total_tokens"),
+            "input_tokens_details": ({"cached_tokens": details.get("cached_tokens")}
+                                      if isinstance(details, dict) else None),
+            "output_tokens_details": ({"reasoning_tokens": output_details.get("reasoning_tokens")}
+                                       if isinstance(output_details, dict) else None),
+        }
+    return {"id": response.get("id"), "status": status, "output": output,
+            "usage": usage, "incomplete_details": incomplete}
+
+
 def _safe_provider_quota_code(error):
     """Extract only a small allowlisted quota code; never expose provider bodies."""
     try:
@@ -280,7 +492,7 @@ def _safe_provider_quota_code(error):
 
 
 class ResponsesClient:
-    """Small stdlib-only client for the OpenAI Responses API."""
+    """Small stdlib-only Provider client with Responses and Chat adapters."""
 
     supports_per_request_retry_budget = True
 
@@ -302,9 +514,17 @@ class ResponsesClient:
         if (not isinstance(retry_limit, int) or isinstance(retry_limit, bool)
                 or not 0 <= retry_limit <= self.max_retries):
             raise ValueError("provider retry budget exceeds its authorized maximum")
-        payload = _provider_compat_payload(self.config, payload)
-        data = json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode()
-        request = Request(self.config.base_url + "/responses", data=data, method="POST", headers={
+        if self.config.provider == "openai-chat-completions":
+            request_payload = _chat_completions_payload(payload)
+            endpoint = "/chat/completions"
+        elif self.config.provider == "openai-responses":
+            request_payload = _provider_compat_payload(self.config, payload)
+            endpoint = "/responses"
+        else:
+            raise ValueError("unsupported LLM API protocol")
+        data = json.dumps(request_payload, ensure_ascii=False, separators=(",", ":")).encode()
+        wire_request_sha256 = hashlib.sha256(data).hexdigest()
+        request = Request(self.config.base_url + endpoint, data=data, method="POST", headers={
             "Authorization": "Bearer " + self.config.api_key,
             "Content-Type": "application/json",
             "Accept": "application/json",
@@ -353,11 +573,14 @@ class ResponsesClient:
             result = json.loads(raw)
         except (UnicodeDecodeError, json.JSONDecodeError):
             raise ValueError("LLM provider returned invalid JSON") from None
+        if self.config.provider == "openai-chat-completions":
+            result = _responses_shape_from_chat_completion(result)
         if (not isinstance(result, dict) or not isinstance(result.get("output"), list)
                 or any(not isinstance(item, dict) for item in result["output"])
                 or (result.get("usage") is not None and not isinstance(result["usage"], dict))):
             raise ValueError("LLM provider response did not match the Responses API shape")
         result["_ohscanner_transport_attempts"] = attempts + 1
+        result["_ohscanner_wire_request_sha256"] = wire_request_sha256
         return result
 
 
@@ -4219,6 +4442,9 @@ def execute_agent(settings, store, ops, task, client=None):
             request_timeout = min(request_timeout, remaining_seconds)
         call_started = time.monotonic()
         try:
+            set_budget_phase = getattr(client, "set_budget_phase", None)
+            if callable(set_budget_phase):
+                set_budget_phase(request_phase)
             create_with_timeout = getattr(client, "create_with_timeout", None)
             if getattr(client, "supports_per_request_retry_budget", False):
                 response = client.create_with_timeout(
@@ -4246,6 +4472,12 @@ def execute_agent(settings, store, ops, task, client=None):
                 raise ValueError(str(exc)) from None
             raise
         calls += 1
+        wire_request_hash = response.get("_ohscanner_wire_request_sha256")
+        if (isinstance(wire_request_hash, str) and len(wire_request_hash) == 64
+                and all(ch in "0123456789abcdef" for ch in wire_request_hash)):
+            # This hashes the serialized HTTP body, not headers or credentials.
+            # Synthetic clients retain the protocol-neutral payload hash.
+            request_hash = wire_request_hash
         attempts_used = response.get("_ohscanner_transport_attempts", 1)
         if (not isinstance(attempts_used, int) or isinstance(attempts_used, bool)
                 or not 1 <= attempts_used <= effective_provider_retries + 1):
@@ -5106,6 +5338,7 @@ def provider_connectivity_check(config=None, client=None, timeout=20):
     return {
         "ok": True,
         "provider": config.provider,
+        "api_protocol": config.provider,
         "model": config.model,
         "endpoint_host": config.endpoint_host,
         "duration_ms": duration_ms,

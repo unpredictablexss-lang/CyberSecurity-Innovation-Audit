@@ -38,6 +38,22 @@ def _is_consented_quick_screen(task):
     auth = spec.get("authorization") if isinstance(spec.get("authorization"), dict) else {}
     digest = spec.get("consent_sha256")
     nonce = spec.get("consent_nonce")
+    if task.get("kind") == "progressive_quick_screen_batch":
+        try:
+            from .progressive_triage.quick_screen_batch import batch_manifest_sha
+            manifest = spec.get("consent_manifest")
+            return (spec.get("source_submission_approved") is True
+                    and isinstance(digest, str) and len(digest) == 64
+                    and all(ch in "0123456789abcdef" for ch in digest)
+                    and isinstance(nonce, str) and len(nonce) == 32
+                    and all(ch in "0123456789abcdef" for ch in nonce)
+                    and isinstance(manifest, dict)
+                    and manifest.get("consent_nonce") == nonce
+                    and manifest.get("audit_operation_id") == spec.get("audit_operation_id")
+                    and batch_manifest_sha(spec) == digest
+                    and isinstance(spec.get("items"), list) and 1 <= len(spec["items"]) <= 1000)
+        except (TypeError, ValueError):
+            return False
     return (task.get("kind") == "progressive_quick_screen"
             and spec.get("source_submission_approved") is True
             and isinstance(digest, str) and len(digest) == 64
@@ -47,6 +63,33 @@ def _is_consented_quick_screen(task):
             and auth.get("consent_sha256") == digest
             and auth.get("authorized") is True
             and isinstance(spec.get("consent_manifest"), dict))
+
+
+def _is_consented_deep_agent_batch(task):
+    if task.get("kind") != "progressive_deep_agent_batch":
+        return False
+    spec = task.get("spec") if isinstance(task.get("spec"), dict) else {}
+    manifest = spec.get("consent_manifest")
+    items = spec.get("items")
+    try:
+        from .progressive_triage.deep_agent_batch import deep_batch_manifest_sha
+        digest, nonce = spec.get("consent_sha256"), spec.get("consent_nonce")
+        return (spec.get("source_submission_approved") is True
+                and isinstance(digest, str) and len(digest) == 64
+                and all(ch in "0123456789abcdef" for ch in digest)
+                and isinstance(nonce, str) and len(nonce) == 32
+                and all(ch in "0123456789abcdef" for ch in nonce)
+                and isinstance(manifest, dict)
+                and manifest.get("audit_operation_id") == spec.get("audit_operation_id")
+                and manifest.get("consent_nonce") == nonce
+                and deep_batch_manifest_sha(spec) == digest
+                and isinstance(items, list) and 1 <= len(items) <= 100
+                and all(isinstance(row, dict) and isinstance(row.get("spec"), dict)
+                        and row["spec"].get("source_submission_approved") is True
+                        and isinstance(row["spec"].get("progressive_consent_sha256"), str)
+                        for row in items))
+    except (TypeError, ValueError):
+        return False
 
 
 def _is_continuous_tool_agent(task):
@@ -70,6 +113,15 @@ def _hard_deadline_seconds(task):
         return bounded["timeout_seconds"] + 10
     if task.get("kind") == "progressive_quick_screen":
         return 100
+    if task.get("kind") == "progressive_quick_screen_batch":
+        spec = task.get("spec") if isinstance(task.get("spec"), dict) else {}
+        limits = spec.get("progressive_policy", {}).get("policy", {}).get("limits", {})
+        seconds = limits.get("max_ai_wall_seconds", 300)
+        return (seconds if isinstance(seconds, int) and not isinstance(seconds, bool) else 300) + 10
+    if task.get("kind") == "progressive_deep_agent_batch":
+        limits = spec.get("progressive_policy", {}).get("policy", {}).get("limits", {})
+        seconds = limits.get("max_ai_wall_seconds", 300)
+        return (seconds if isinstance(seconds, int) and not isinstance(seconds, bool) else 300) + 10
     return spec.get("timeout_seconds", 600)
 
 
@@ -117,6 +169,7 @@ class OperationWorker:
                             allow_agent_provider=(not self.validation and (
                                 task.get("kind") == "agent_investigation"
                                 or _is_consented_quick_screen(task)
+                                or _is_consented_deep_agent_batch(task)
                                 or _is_consented_joint_comparison(task, self.ops)))),
                          "OHSCANNER_DATA": str(self.settings.data_dir),
                          "OHSCANNER_TARGET_ROOTS": os.pathsep.join(map(str, self.settings.target_roots)),
@@ -227,6 +280,7 @@ def main():
         task = ops.get(args.child)
         if (task.get("kind") != "agent_investigation"
                 and not _is_consented_quick_screen(task)
+                and not _is_consented_deep_agent_batch(task)
                 and not _is_consented_joint_comparison(task, ops)):
             remove_agent_provider_environment(os.environ)
         memory = task["spec"].get("memory_mb", 2048) * 1024 * 1024

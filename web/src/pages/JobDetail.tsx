@@ -47,10 +47,18 @@ import AuditPlanView from "../features/audits/AuditPlanView";
 import SourceEvidence from "../SourceEvidence";
 import CandidateActions from "../features/workbench/CandidateActions";
 import ProgressiveQuickScreenAction from "../features/audits/ProgressiveQuickScreenAction";
+import ProgressiveQuickScreenBatchAction from "../features/audits/ProgressiveQuickScreenBatchAction";
 import { requestGate } from "../features/audits/model";
 import { disclosureReviewed, disclosureSelectionMatches } from "../features/audits/egressDisclosure.js";
 import { candidateConfidenceColor, candidateConfidenceLabel, candidateSeverityColor, candidateSeverityLabel, analysisStatusLabel, coverageSummaryLabel, groupingBasisLabel, groupingSymbolLabel, obligationDescriptionLabel, obligationKindLabel, obligationStatusLabel, reportLimitationLabel, riskReasonsLabel, scanStageLabel, taskReportStatusLabel, taskTriageStatusLabel, triageStateLabel } from "../features/workbench/riskLabels.js";
 const { Text, Title, Paragraph } = Typography;
+function budgetPhaseSummary(usage: any) {
+  const labels: Record<string, string> = { quick_screen: "L2", deep_agent: "L3", structured_repair: "结构修复", skeptic: "Skeptic", report: "报告草案" };
+  const rows = Object.entries(usage?.by_phase || {}) as [string, any][];
+  const summary = rows.filter(([, value]) => value.model_calls_allocated > 0)
+    .map(([phase, value]) => `${labels[phase] || phase} ${value.model_calls_allocated}`).join(" · ");
+  return summary || "尚无模型请求";
+}
 function HighConfidenceCandidateReason({ risk, jobId }: { risk: any; jobId: string }) {
   if (risk?.risk_tier !== "high_confidence_candidate") return null;
   const signal = risk.agent_signal || {};
@@ -94,6 +102,8 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
   const [job, setJob] = useState<any>(null);
   const [report, setReport] = useState<any>(null);
   const [triageSummary, setTriageSummary] = useState<any>(null);
+  const [progressiveTriage, setProgressiveTriage] = useState<any>(null);
+  const [progressiveStatus, setProgressiveStatus] = useState<any>(null);
   const [riskSummary, setRiskSummary] = useState<any>(null);
   const [selectedRisk, setSelectedRisk] = useState<any>(null);
   const [coverageSummary, setCoverageSummary] = useState<any>(null);
@@ -168,22 +178,39 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
         setJob(j);
         setEvents(e);
         const triageRequest = api("/scans/" + id + "/triage");
+        const progressiveRequest = api("/scans/" + id + "/progressive-triage?offset=0&limit=50");
+        const loadProgressiveStatus = async (plan: any) => {
+          const auditId = plan?.state === "planned_by_parent_operation" ? plan.parent_operation_id
+            : plan?.state !== "not_available" && j.report_sha256 ? id : null;
+          if (!auditId) return null;
+          try {
+            const [usage, groups] = await Promise.all([
+              api("/audits/" + auditId + "/ai-usage"),
+              api("/audits/" + auditId + "/triage-groups?offset=0&limit=50"),
+            ]);
+            return { ...usage, groups: groups.groups, group_total: groups.group_total };
+          } catch { return null; }
+        };
         if (j.report_sha256) {
-          const [r, triage, risks, coverage] = await Promise.all([
+          const [r, triage, risks, coverage, progressive] = await Promise.all([
             api("/scans/" + id + "/report"),
             triageRequest,
             api("/scans/" + id + "/risks?limit=100"),
             api("/scans/" + id + "/coverage"),
+            progressiveRequest,
           ]);
+          const progressiveState = await loadProgressiveStatus(progressive);
           if (live) {
             setReport(r); setTriageSummary(triage);
             setRiskSummary(risks); setCoverageSummary(coverage);
+            setProgressiveTriage(progressive); setProgressiveStatus(progressiveState);
           }
         } else {
-          const triage = await triageRequest;
+          const [triage, progressive] = await Promise.all([triageRequest, progressiveRequest]);
           if (live) {
             setReport(null); setTriageSummary(triage);
             setRiskSummary(null); setCoverageSummary(null);
+            setProgressiveTriage(progressive); setProgressiveStatus(null);
           }
         }
         if (terminal.has(j.status) && timer) clearInterval(timer);
@@ -491,6 +518,47 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
         />
       </Card>
       <AuditPlanView plan={{ ...job.spec.audit_plan, base_commit: job.spec.base_commit }} auditMode={job.spec.audit_mode} />
+      {progressiveTriage && progressiveTriage.state !== "not_available" && <Card className="section-gap" title="渐进式审计 · L0-L3 计划与进度">
+        <Alert className="section-gap" type="info" showIcon
+          message={progressiveTriage.state === "planned_by_parent_operation" ? "候选排序由父审计统一计算" : progressiveTriage.state === "awaiting_static_report" ? "等待固定版本静态报告" : progressiveTriage.state === "ranked_static_only" ? "静态审计：仅本地归并和排序，不会调用模型" : "L0/L1 本地计划；所有原始候选继续保留"}
+          description={progressiveTriage.state === "planned_by_parent_operation" ? "这是多端点审计中的一个固定端点；跨版本分组和共享预算请查看父审计计划。" : "分组和优先级只决定人工复核顺序与后续授权入口，不会把候选判为误报、安全或已确认漏洞。"} />
+        {progressiveTriage.state !== "planned_by_parent_operation" && job.spec?.audit_mode !== "static_only" &&
+          <div className="section-gap"><ProgressiveQuickScreenBatchAction auditOperationId={id}
+            enabled={Boolean(progressiveTriage.ranking?.selected_group_count)
+              && (progressiveStatus?.groups || progressiveTriage.groups || []).some((row: any) => row.ranking?.selected
+                && ["not_scheduled", "not_started_candidate"].includes(row.quick_screen_state || "not_scheduled"))} /></div>}
+        {progressiveTriage.grouping && <Descriptions size="small" column={{ xs: 1, md: 3 }}>
+          <Descriptions.Item label="原始候选">{progressiveTriage.original_observation_count ?? "未知"}</Descriptions.Item>
+          <Descriptions.Item label="根因/重复组">{progressiveTriage.grouping.group_count ?? "未知"}</Descriptions.Item>
+          <Descriptions.Item label="快筛预算选中组">{progressiveTriage.ranking?.selected_group_count ?? "未知"}</Descriptions.Item>
+        </Descriptions>}
+        {progressiveStatus && <Descriptions className="section-gap" size="small" column={{ xs: 1, md: 3 }}>
+          <Descriptions.Item label="当前阶段">{progressiveStatus.phase}</Descriptions.Item>
+          <Descriptions.Item label="L2 完成 / L3 完成">{progressiveStatus.phase_counts?.quick_screen_completed ?? 0} / {progressiveStatus.phase_counts?.deep_agent_completed ?? 0}</Descriptions.Item>
+          <Descriptions.Item label="模型请求 / 在途">{progressiveStatus.budget?.usage ? `${progressiveStatus.budget.usage.model_calls_allocated} / ${progressiveStatus.budget.usage.model_calls_in_flight}` : "尚未开始"}</Descriptions.Item>
+          <Descriptions.Item label="按阶段调用数">{budgetPhaseSummary(progressiveStatus.budget?.usage)}</Descriptions.Item>
+          <Descriptions.Item label="输入 / 输出 Token">{progressiveStatus.budget?.usage ? `${progressiveStatus.budget.usage.input_tokens_allocated} / ${progressiveStatus.budget.usage.output_tokens_allocated}` : "尚未开始"}</Descriptions.Item>
+          <Descriptions.Item label="停止原因">{progressiveStatus.stop_reason || "无"}</Descriptions.Item>
+          <Descriptions.Item label="确认漏洞数">{progressiveStatus.validated_vulnerability ?? 0}</Descriptions.Item>
+        </Descriptions>}
+        {Array.isArray(progressiveTriage.groups) && <Table size="small" rowKey="group_id"
+          dataSource={progressiveTriage.groups} pagination={{ pageSize: 8 }} scroll={{ x: 720 }} columns={[
+            { title: "计划组", dataIndex: "group_id", render: (value: string) => <Text code>{value}</Text> },
+            { title: "候选观察", render: (_: unknown, row: any) => row.member_candidate_ids?.length ?? 0 },
+            { title: "优先级", render: (_: unknown, row: any) => row.ranking?.rank ?? "未知" },
+            { title: "L1 / L2 快筛", render: (_: unknown, row: any) => {
+              const current = progressiveStatus?.groups?.find((item: any) => item.group_id === row.group_id);
+              const state = current?.quick_screen_state;
+              return <Space><Tag color={row.ranking?.selected ? "blue" : undefined}>{row.ranking?.selected ? "优先复核" : "保留候选"}</Tag>
+                {state && <Tag color={state === "completed" ? "green" : state === "running" ? "processing" : state === "unknown" || state === "partial" ? "orange" : undefined}>{state}</Tag>}</Space>;
+            } },
+            { title: "L3 深查", render: (_: unknown, row: any) => {
+              const current = progressiveStatus?.groups?.find((item: any) => item.group_id === row.group_id);
+              return current?.deep_agent_state ? <Tag color={current.deep_agent_state === "completed" ? "green" : current.deep_agent_state === "running" ? "processing" : current.deep_agent_state === "unknown" || current.deep_agent_state === "partial" ? "orange" : undefined}>{current.deep_agent_state}</Tag> : <Tag>未授权/未排队</Tag>;
+            } },
+            { title: "选择原因", render: (_: unknown, row: any) => (row.ranking?.reason_codes || []).join("、") || "未选" },
+          ]} locale={{ emptyText: "暂无可排序候选；不代表源码安全。" }} />}
+      </Card>}
       {job && <Card className="section-gap" title="审计阶段进度">
         <Row gutter={18}>
           <Col xs={24} md={8}><Descriptions size="small" column={1} title="静态扫描">

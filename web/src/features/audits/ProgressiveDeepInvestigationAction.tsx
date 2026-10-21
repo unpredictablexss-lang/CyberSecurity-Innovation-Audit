@@ -5,10 +5,11 @@ import { go } from "../../components";
 
 const { Paragraph, Text } = Typography;
 
-export default function ProgressiveDeepInvestigationAction({ jobId, candidateId, quickScreenOperationId }: {
+export default function ProgressiveDeepInvestigationAction({ jobId, candidateId, quickScreenOperationId, progressiveGroupId }: {
   jobId: string;
   candidateId: string;
   quickScreenOperationId: string;
+  progressiveGroupId?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -24,6 +25,7 @@ export default function ProgressiveDeepInvestigationAction({ jobId, candidateId,
       const value = await api("/operations/progressive-deep-investigations/preview", {
         job_id: jobId, candidate_id: candidateId,
         progressive_quick_screen_operation_id: quickScreenOperationId,
+        progressive_group_id: progressiveGroupId,
         mode: "tool_agent",
       });
       setPreview(value);
@@ -42,6 +44,7 @@ export default function ProgressiveDeepInvestigationAction({ jobId, candidateId,
       const operation = await api("/operations/progressive-deep-investigations", {
         job_id: jobId, candidate_id: candidateId,
         progressive_quick_screen_operation_id: quickScreenOperationId,
+        progressive_group_id: progressiveGroupId,
         mode: "tool_agent",
         max_steps: preview.budgets?.max_steps,
         max_output_tokens: preview.budgets?.max_output_tokens,

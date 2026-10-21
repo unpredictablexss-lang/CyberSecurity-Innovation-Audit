@@ -548,6 +548,7 @@ class ProviderCheckRequest(Strict):
 
 
 class ProviderSettingsRequest(Strict):
+    api_protocol: Literal["openai-responses", "openai-chat-completions"] = "openai-responses"
     base_url: str = Field(min_length=1, max_length=500)
     model: str = Field(min_length=1, max_length=200)
     proxy_url: str = Field(default="", max_length=500)
@@ -580,12 +581,30 @@ class ProgressiveQuickScreenRequest(Strict):
     consent_expires_at: str | None = Field(default=None, max_length=40)
 
 
+class ProgressiveQuickScreenBatchRequest(Strict):
+    audit_operation_id: str = Field(min_length=1, max_length=200)
+    source_submission_approved: bool = False
+    consent_sha256: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
+    consent_nonce: str | None = Field(default=None, pattern=r"^[0-9a-f]{32}$")
+    consent_expires_at: str | None = Field(default=None, max_length=40)
+
+
 class ProgressiveDeepInvestigationRequest(AgentInvestigationRequest):
     max_steps: int = Field(default=4, ge=1, le=12)
     progressive_quick_screen_operation_id: str = Field(
         min_length=32, max_length=32, pattern=r"^[0-9a-f]{32}$")
+    progressive_group_id: str | None = Field(default=None, min_length=1, max_length=200)
 
 
+
+
+class ProgressiveDeepInvestigationBatchRequest(Strict):
+    progressive_quick_screen_batch_id: str = Field(
+        min_length=32, max_length=32, pattern=r"^[0-9a-f]{32}$")
+    source_submission_approved: bool = False
+    consent_sha256: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
+    consent_nonce: str | None = Field(default=None, pattern=r"^[0-9a-f]{32}$")
+    consent_expires_at: str | None = Field(default=None, max_length=40)
 
 
 class AgentBatchInvestigationRequest(Strict):
@@ -1942,6 +1961,7 @@ def install_routes(app: FastAPI, settings, store):
             last_check = {key: last_check.get(key) for key in (
                 "checked_at", "endpoint_host", "model", "duration_ms", "input_tokens", "output_tokens")}
         return {
+            "api_protocol": provider.provider if env_source else saved["api_protocol"],
             "base_url": provider.base_url if env_source else saved["base_url"],
             "model": provider.model if env_source else saved["model"],
             "proxy_url": provider.proxy_url if env_source else saved["proxy_url"],
@@ -1976,6 +1996,7 @@ def install_routes(app: FastAPI, settings, store):
         if len(key) > 4096 or any(ord(ch) < 33 or ord(ch) > 126 for ch in key):
             raise ValueError("API Key 格式无效")
         write_settings({
+            "api_protocol": body.api_protocol,
             "base_url": body.base_url.strip().rstrip("/"),
             "model": model,
             "proxy_url": body.proxy_url.strip(),
@@ -2072,6 +2093,64 @@ def install_routes(app: FastAPI, settings, store):
                                     provider, body.consent_nonce, body.consent_expires_at,
                                     audit_parent=parent, audit_parent_plan=parent_plan)
 
+    def _quick_screen_batch_preview(body, provider):
+        from .progressive_triage.quick_screen_batch import prepare_quick_screen_batch
+        return prepare_quick_screen_batch(
+            settings, store, ops, body.audit_operation_id, provider,
+            body.consent_nonce, body.consent_expires_at,
+        )
+
+    @router.post("/operations/progressive-quick-screen-batches/preview")
+    def progressive_quick_screen_batch_preview(body: ProgressiveQuickScreenBatchRequest):
+        from .agent import ProviderConfig
+        provider = ProviderConfig.from_env(settings.data_dir)
+        if not provider.configured:
+            raise HTTPException(status_code=503, detail="真实模型未配置；没有发送 Provider 请求")
+        body = _fresh_consent_nonce(body)
+        try:
+            preview = _quick_screen_batch_preview(body, provider)
+            return {**preview, "items": [
+                {"group_id": item["group_id"], "candidate_id": item["spec"]["candidate_id"],
+                 "job_id": item["spec"]["job_id"]}
+                for item in preview["items"]
+            ]}
+        except (KeyError, ValueError, OSError) as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from None
+
+    @router.post("/operations/progressive-quick-screen-batches", status_code=201)
+    def progressive_quick_screen_batch(body: ProgressiveQuickScreenBatchRequest):
+        from .agent import ProviderConfig
+        if not body.source_submission_approved:
+            raise HTTPException(status_code=428, detail="请先查看本任务所有 L2 源码片段并明确授权")
+        if not body.consent_sha256 or not body.consent_expires_at:
+            raise HTTPException(status_code=428, detail="缺少本次任务级 L2 预览摘要或有效期")
+        _require_consent_nonce(body)
+        provider = ProviderConfig.from_env(settings.data_dir)
+        if not provider.configured:
+            raise HTTPException(status_code=503, detail="真实模型未配置；没有发送 Provider 请求")
+        try:
+            preview = _quick_screen_batch_preview(body, provider)
+        except (KeyError, ValueError, OSError) as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from None
+        if body.consent_sha256 != preview["consent_sha256"]:
+            raise HTTPException(status_code=409, detail="任务级 L2 外发清单、源码、策略或 Provider 已变化；请重新预览")
+        spec = {
+            "source_submission_approved": True,
+            "audit_operation_id": preview["audit_operation_id"],
+            "progressive_policy": preview["progressive_policy"],
+            "consent_nonce": preview["consent_nonce"],
+            "consent_sha256": preview["consent_sha256"],
+            "consent_expires_at": preview["consent_expires_at"],
+            "consent_manifest": preview["batch_manifest"],
+            "items": preview["items"],
+            "provider_fingerprint": provider.fingerprint,
+            "provider_model": provider.model,
+        }
+        try:
+            return ops.create("progressive_quick_screen_batch", spec)
+        except ValueError as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from None
+
     @router.post("/operations/progressive-quick-screens/preview")
     def progressive_quick_screen_preview(body: ProgressiveQuickScreenRequest):
         from .agent import ProviderConfig
@@ -2125,13 +2204,33 @@ def install_routes(app: FastAPI, settings, store):
         except ValueError as exc:
             raise HTTPException(status_code=409, detail=str(exc)) from None
 
-    def _progressive_quick_result(operation_id, job_id, candidate_id):
+    def _progressive_quick_result(operation_id, job_id, candidate_id, group_id=None):
         quick_task = ops.get(operation_id)
-        if (quick_task.get("kind") != "progressive_quick_screen"
-                or quick_task.get("status") not in {"completed", "completed_with_limitations"}
+        if (quick_task.get("status") not in {"completed", "completed_with_limitations"}
                 or not quick_task.get("result_sha256")):
             raise HTTPException(status_code=409, detail="L2 快筛任务尚未完成或没有可核验结果")
         result = ops.result(operation_id)
+        if quick_task.get("kind") == "progressive_quick_screen_batch":
+            if not isinstance(group_id, str) or not group_id:
+                raise HTTPException(status_code=422, detail="批量 L2 结果需要指定候选组")
+            spec = quick_task.get("spec") if isinstance(quick_task.get("spec"), dict) else {}
+            item = next((row for row in spec.get("items", [])
+                         if isinstance(row, dict) and row.get("group_id") == group_id), None)
+            group_result = next((row for row in result.get("groups", [])
+                                 if isinstance(row, dict) and row.get("group_id") == group_id), None)
+            child_spec = item.get("spec") if isinstance(item, dict) else None
+            child_result = group_result.get("result") if isinstance(group_result, dict) else None
+            if (not isinstance(child_spec, dict) or not isinstance(group_result, dict)
+                    or group_result.get("state") != "completed" or not isinstance(child_result, dict)
+                    or group_result.get("candidate_id") != candidate_id
+                    or child_spec.get("job_id") != job_id
+                    or child_spec.get("candidate_id") != candidate_id):
+                raise HTTPException(status_code=409, detail="候选组没有匹配的已完成 L2 结果")
+            quick_task = {**quick_task, "spec": child_spec,
+                          "progressive_batch_group_id": group_id}
+            result = child_result
+        elif quick_task.get("kind") != "progressive_quick_screen":
+            raise HTTPException(status_code=409, detail="operation 不是可用的渐进式 L2 快筛")
         assessment = result.get("quick_screen") if isinstance(result, dict) else None
         if (not isinstance(assessment, dict) or assessment.get("state") != "completed"
                 or assessment.get("quick_assessment") != "investigate"):
@@ -2151,7 +2250,8 @@ def install_routes(app: FastAPI, settings, store):
         if body.mode != "tool_agent":
             raise HTTPException(status_code=422, detail="L3 仅复用现有只读跨文件 tool-agent 工作流")
         quick_task, quick_result = _progressive_quick_result(
-            body.progressive_quick_screen_operation_id, body.job_id, body.candidate_id)
+            body.progressive_quick_screen_operation_id, body.job_id, body.candidate_id,
+            body.progressive_group_id)
         quick_spec = quick_task["spec"]
         audit_id = quick_spec.get("audit_operation_id")
         if not isinstance(audit_id, str) or not audit_id:
@@ -2186,6 +2286,7 @@ def install_routes(app: FastAPI, settings, store):
         binding = {
             "quick_screen_operation_id": quick_task["id"],
             "quick_screen_result_sha256": quick_task["result_sha256"],
+            "quick_screen_batch_group_id": quick_task.get("progressive_batch_group_id"),
             "quick_assessment": "investigate", "audit_operation_id": audit_id,
             "group_id": group.get("group_id"), "policy_sha256": frozen["policy_sha256"],
             "candidate_id": body.candidate_id,
@@ -2252,6 +2353,7 @@ def install_routes(app: FastAPI, settings, store):
             "progressive_consent_sha256": preview["consent_sha256"],
             "progressive_quick_screen_operation_id": quick_task["id"],
             "progressive_quick_screen_result_sha256": binding["quick_screen_result_sha256"],
+            "progressive_quick_screen_batch_group_id": binding.get("quick_screen_batch_group_id"),
             "progressive_audit_operation_id": binding["audit_operation_id"],
             "progressive_group_id": binding["group_id"],
             "progressive_policy": preview["progressive_policy"],
@@ -2270,6 +2372,239 @@ def install_routes(app: FastAPI, settings, store):
         ops.event(item["id"], "progressive_deep_consent",
                   "User approved L3 fixed-source preview sha256=" + preview["consent_sha256"])
         return ops.get(item["id"])
+
+    def _progressive_deep_batch_preview(body, provider):
+        from datetime import datetime, timedelta, timezone
+        from .progressive_triage.contracts import content_sha256
+        from .progressive_triage.policy import validate_policy
+        from .progressive_triage.ledger import BudgetLedger
+        from .progressive_triage.deep_agent_batch import MAX_BATCH_ITEMS
+
+        l2 = ops.get(body.progressive_quick_screen_batch_id)
+        if (l2.get("kind") != "progressive_quick_screen_batch"
+                or l2.get("status") not in {"completed", "completed_with_limitations"}
+                or not l2.get("result_sha256")):
+            raise HTTPException(status_code=409, detail="L2 批次尚未完成或结果不可核验")
+        l2_result = ops.result(l2["id"])
+        l2_spec = l2.get("spec") if isinstance(l2.get("spec"), dict) else {}
+        audit_id = l2_spec.get("audit_operation_id")
+        frozen = l2_spec.get("progressive_policy")
+        if not isinstance(audit_id, str) or not isinstance(frozen, dict):
+            raise HTTPException(status_code=409, detail="L2 批次缺少任务或策略绑定")
+        policy = validate_policy(frozen.get("policy"))
+        if frozen.get("policy_sha256") != content_sha256(policy):
+            raise HTTPException(status_code=409, detail="L2 冻结策略摘要无效")
+
+        batch_rows = {row.get("group_id"): row for row in l2_result.get("groups", [])
+                      if isinstance(row, dict)}
+        existing_groups = set()
+        for operation in ops.progressive_operations_for_audit(audit_id):
+            child_spec = operation.get("spec") if isinstance(operation.get("spec"), dict) else {}
+            if operation.get("kind") == "agent_investigation":
+                group = child_spec.get("progressive_group_id")
+                if isinstance(group, str):
+                    existing_groups.add(group)
+            elif operation.get("kind") == "progressive_deep_agent_batch":
+                existing_groups.update(row.get("group_id") for row in child_spec.get("items", [])
+                                       if isinstance(row, dict) and isinstance(row.get("group_id"), str))
+
+        ledger_path = settings.data_dir / "progressive-triage-budget.sqlite3"
+        deep_dispatched = 0
+        if ledger_path.is_file():
+            try:
+                deep_dispatched = BudgetLedger(ledger_path).get(audit_id)["phase_counts"]["deep_agent_groups"]
+            except (OSError, ValueError):
+                pass
+        slots = max(0, policy["limits"]["deep_groups_per_audit"] - max(deep_dispatched, len(existing_groups)))
+        expiry = body.consent_expires_at or (datetime.now(timezone.utc) + timedelta(minutes=10)).isoformat()
+        selected = []
+        skipped = []
+        for l2_item in l2_spec.get("items", []):
+            if not isinstance(l2_item, dict):
+                continue
+            group_id = l2_item.get("group_id")
+            row = batch_rows.get(group_id)
+            child_l2 = l2_item.get("spec") if isinstance(l2_item.get("spec"), dict) else {}
+            if group_id in existing_groups:
+                skipped.append({"group_id": group_id, "reason": "already_scheduled"})
+                continue
+            if (not isinstance(row, dict) or row.get("state") != "completed"
+                    or row.get("quick_assessment") != "investigate"):
+                continue
+            if len(selected) >= min(MAX_BATCH_ITEMS, slots):
+                skipped.append({"group_id": group_id, "reason": "task_deep_group_budget_exhausted"})
+                continue
+            request = ProgressiveDeepInvestigationRequest(
+                job_id=child_l2["job_id"], candidate_id=child_l2["candidate_id"],
+                mode="tool_agent", max_steps=policy["limits"]["max_tool_steps_per_group"],
+                progressive_quick_screen_operation_id=l2["id"], progressive_group_id=group_id,
+                consent_nonce=body.consent_nonce,
+            )
+            bounded, quick_task, preview = _progressive_deep_preview(request, provider)
+            binding = preview["progressive_binding"]
+            from .agent import (CONSENT_PREVIEW_VERSION, PROMPT_VERSION,
+                                REDACTION_POLICY_VERSION, TOOL_POLICY_VERSION)
+            child_spec = {
+                "job_id": bounded.job_id, "candidate_id": bounded.candidate_id,
+                "case_id": None, "experiment_id": None, "mode": "tool_agent",
+                "max_output_tokens": bounded.max_output_tokens, "max_steps": bounded.max_steps,
+                "max_total_input_tokens": bounded.max_total_input_tokens,
+                "max_total_output_tokens": bounded.max_total_output_tokens,
+                "timeout_seconds": bounded.timeout_seconds,
+                "provider_request_timeout_seconds": 45, "max_provider_retries": 0,
+                "continuous_investigation": False, "no_cumulative_token_ceiling": False,
+                "source_submission_approved": True,
+                "source_consent_sha256": preview["agent_consent_sha256"],
+                "progressive_consent_sha256": preview["consent_sha256"],
+                "progressive_quick_screen_operation_id": quick_task["id"],
+                "progressive_quick_screen_result_sha256": binding["quick_screen_result_sha256"],
+                "progressive_quick_screen_batch_group_id": binding.get("quick_screen_batch_group_id"),
+                "progressive_audit_operation_id": binding["audit_operation_id"],
+                "progressive_group_id": binding["group_id"],
+                "progressive_policy": preview["progressive_policy"],
+                "progressive_policy_sha256": binding["policy_sha256"],
+                "consent_nonce": body.consent_nonce,
+                "consent_preview_version": CONSENT_PREVIEW_VERSION,
+                "redaction_policy_version": REDACTION_POLICY_VERSION,
+                "provider": provider.provider, "provider_model": provider.model,
+                "provider_host": provider.endpoint_host, "provider_fingerprint": provider.fingerprint,
+                "prompt_version": PROMPT_VERSION, "tool_policy_version": TOOL_POLICY_VERSION,
+                "candidate_source_sha256": preview["binding"]["source_sha256"],
+                "source_commit": preview["binding"]["commit"],
+                "report_sha256": preview["binding"]["report_sha256"],
+            }
+            selected.append({"group_id": group_id, "spec": child_spec,
+                             "disclosure": {
+                                 "group_id": group_id, "job_id": child_spec["job_id"],
+                                 "candidate_id": child_spec["candidate_id"],
+                                 "repository": preview["binding"].get("repository"),
+                                 "commit": child_spec["source_commit"],
+                                 "report_sha256": child_spec["report_sha256"],
+                                 "source_sha256": child_spec["candidate_source_sha256"],
+                                 "file": preview["binding"].get("file"),
+                                 "allowed_tools": preview.get("allowed_tools", []),
+                                 "initial_context": preview.get("initial_context"),
+                                 "additional_tool_data_scope": preview.get("additional_tool_data_scope", []),
+                                 "disclosure": preview.get("disclosure", []),
+                                 "budgets": preview.get("budgets", {}),
+                                 "consent_sha256": preview["consent_sha256"],
+                             }})
+            existing_groups.add(group_id)
+        if not selected:
+            raise HTTPException(status_code=409, detail="没有剩余预算内可继续的 investigate 组")
+        expiry = expiry.replace("Z", "+00:00") if expiry.endswith("Z") else expiry
+        consent_manifest = {
+            "schema_version": 1, "audit_operation_id": audit_id,
+            "l2_batch_operation_id": l2["id"], "l2_batch_result_sha256": l2["result_sha256"],
+            "policy_sha256": frozen["policy_sha256"],
+            "consent_nonce": body.consent_nonce, "consent_expires_at": expiry,
+            "provider_fingerprint": provider.fingerprint, "model": provider.model,
+            "selected_group_count": len(selected), "skipped": skipped,
+            "items": [{
+                "group_id": item["group_id"],
+                "progressive_consent_sha256": item["spec"]["progressive_consent_sha256"],
+                "source_consent_sha256": item["spec"]["source_consent_sha256"],
+                "job_id": item["spec"]["job_id"], "candidate_id": item["spec"]["candidate_id"],
+                "report_sha256": item["spec"]["report_sha256"],
+                "source_commit": item["spec"]["source_commit"],
+            } for item in selected],
+        }
+        digest = content_sha256(consent_manifest)
+        disclosures = [item["disclosure"] for item in selected]
+        items = [{"group_id": item["group_id"], "spec": item["spec"]} for item in selected]
+        return {
+            "eligible": True, "audit_operation_id": audit_id,
+            "l2_batch_operation_id": l2["id"], "l2_batch_result_sha256": l2["result_sha256"],
+            "progressive_policy": frozen, "provider": provider.public,
+            "consent_nonce": body.consent_nonce, "consent_expires_at": expiry,
+            "consent_sha256": digest, "consent_manifest": consent_manifest,
+            "items": items, "disclosures": disclosures,
+            "selected_group_count": len(selected), "skipped": skipped,
+            "budget_limits": policy["limits"], "vulnerability_state_after_review": "candidate",
+        }
+
+    @router.post("/operations/progressive-deep-investigation-batches/preview")
+    def progressive_deep_investigation_batch_preview(body: ProgressiveDeepInvestigationBatchRequest):
+        from .agent import ProviderConfig
+        provider = ProviderConfig.from_env(settings.data_dir)
+        if not provider.configured:
+            raise HTTPException(status_code=503, detail="真实模型未配置；没有发送 Provider 请求")
+        body = _fresh_consent_nonce(body)
+        try:
+            preview = _progressive_deep_batch_preview(body, provider)
+            return {**preview, "items": [{"group_id": row["group_id"],
+                                           "candidate_id": row["spec"]["candidate_id"]}
+                                          for row in preview["items"]]}
+        except HTTPException:
+            raise
+        except (KeyError, ValueError, OSError) as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from None
+
+    @router.post("/operations/progressive-deep-investigation-batches", status_code=201)
+    def progressive_deep_investigation_batch(body: ProgressiveDeepInvestigationBatchRequest):
+        from datetime import datetime
+        from .agent import ProviderConfig
+        if body.source_submission_approved is not True:
+            raise HTTPException(status_code=428, detail="请先检查本任务全部 L3 范围并明确授权")
+        if not body.consent_sha256 or not body.consent_expires_at:
+            raise HTTPException(status_code=428, detail="缺少任务级 L3 清单摘要或有效期")
+        _require_consent_nonce(body)
+        try:
+            l2 = ops.get(body.progressive_quick_screen_batch_id)
+            audit_id = l2.get("spec", {}).get("audit_operation_id")
+            if isinstance(audit_id, str) and audit_id:
+                for prior in ops.progressive_operations_for_audit(audit_id):
+                    prior_spec = prior.get("spec") if isinstance(prior.get("spec"), dict) else {}
+                    if (prior.get("kind") != "progressive_deep_agent_batch"
+                            or prior_spec.get("consent_sha256") != body.consent_sha256):
+                        continue
+                    try:
+                        expires = datetime.fromisoformat(body.consent_expires_at.replace("Z", "+00:00"))
+                    except (AttributeError, TypeError, ValueError):
+                        raise HTTPException(status_code=409, detail="L3 授权有效期无效；请重新预览") from None
+                    if (expires.tzinfo is None
+                            or prior_spec.get("consent_nonce") != body.consent_nonce
+                            or prior_spec.get("consent_expires_at") != body.consent_expires_at
+                            or prior_spec.get("audit_operation_id") != audit_id
+                            or prior_spec.get("l2_batch_operation_id") != l2.get("id")
+                            or prior_spec.get("l2_batch_result_sha256") != l2.get("result_sha256")
+                            or not isinstance(prior_spec.get("consent_manifest"), dict)):
+                        raise HTTPException(status_code=409, detail="相同 L3 授权已存在但当前绑定已变化；请重新预览")
+                    return prior
+        except HTTPException:
+            raise
+        except (KeyError, ValueError, OSError) as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from None
+        provider = ProviderConfig.from_env(settings.data_dir)
+        if not provider.configured:
+            raise HTTPException(status_code=503, detail="真实模型未配置；没有发送 Provider 请求")
+        try:
+            preview = _progressive_deep_batch_preview(body, provider)
+        except HTTPException:
+            raise
+        except (KeyError, ValueError, OSError) as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from None
+        if body.consent_sha256 != preview["consent_sha256"]:
+            raise HTTPException(status_code=409, detail="L2 结果、候选范围、源码、策略或 Provider 已变化；请重新预览")
+        spec = {
+            "source_submission_approved": True,
+            "audit_operation_id": preview["audit_operation_id"],
+            "l2_batch_operation_id": preview["l2_batch_operation_id"],
+            "l2_batch_result_sha256": preview["l2_batch_result_sha256"],
+            "progressive_policy": preview["progressive_policy"],
+            "consent_nonce": preview["consent_nonce"],
+            "consent_expires_at": preview["consent_expires_at"],
+            "consent_sha256": preview["consent_sha256"],
+            "consent_manifest": preview["consent_manifest"],
+            "items": [{"group_id": item["group_id"],
+                       "spec": {**item["spec"], "source_submission_approved_at": now()}}
+                      for item in preview["items"]],
+            "provider_fingerprint": provider.fingerprint, "provider_model": provider.model,
+        }
+        try:
+            return ops.create("progressive_deep_agent_batch", spec)
+        except ValueError as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from None
 
     @router.post("/operations/agent-investigations/preview")
     def agent_investigation_preview(body: AgentInvestigationRequest):
@@ -3162,6 +3497,46 @@ def install_routes(app: FastAPI, settings, store):
     @router.get("/operations")
     def list_operations():
         return ops.list()
+
+    def _progressive_status(audit_id):
+        from .progressive_triage.status import build_progressive_status
+        try:
+            return build_progressive_status(settings, ops, audit_id, store=store)
+        except KeyError:
+            raise HTTPException(status_code=404, detail="audit operation not found") from None
+        except ValueError as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from None
+
+    @router.get("/audits/{audit_id}/ai-usage")
+    def progressive_ai_usage(audit_id: str):
+        status = _progressive_status(audit_id)
+        return {
+            "audit_operation_id": audit_id,
+            "phase": status["phase"],
+            "phase_counts": status["phase_counts"],
+            "budget": status["budget"],
+            "cost_enforcement": status["cost_enforcement"],
+            "stop_reason": status["stop_reason"],
+            "policy_revision": status["policy_revision"],
+            "policy_sha256": status["policy_sha256"],
+            "candidate_disposition_changed": False,
+            "validated_vulnerability": 0,
+        }
+
+    @router.get("/audits/{audit_id}/triage-groups")
+    def progressive_triage_groups(audit_id: str, offset: int = 0, limit: int = 50):
+        if (not isinstance(offset, int) or isinstance(offset, bool) or offset < 0
+                or not isinstance(limit, int) or isinstance(limit, bool) or not 1 <= limit <= 200):
+            raise HTTPException(status_code=422, detail="offset must be non-negative and limit must be 1..200")
+        status = _progressive_status(audit_id)
+        groups = status["groups"]
+        return {
+            **{key: value for key, value in status.items() if key != "groups"},
+            "group_total": len(groups),
+            "offset": offset,
+            "limit": limit,
+            "groups": groups[offset:offset + limit],
+        }
 
     @router.get("/operations/{key}")
     def operation(key: str):

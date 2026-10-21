@@ -10,7 +10,7 @@ import JobDetail from "../../pages/JobDetail";
 import OperationWorkspace from "../audits/OperationWorkspace";
 import AgentProviderSettings from "./AgentProviderSettings";
 import { SourceContext } from "../audits/OperationForms";
-import { jobDetailPath, retainRiskSource, riskQueuePath } from "./navigation";
+import { jobDetailPath, retainRiskSource, riskQueuePath, settingsTab } from "./navigation";
 import { triageStateLabel, candidateSeverityLabel, candidateSeverityColor, candidateConfidenceLabel, candidateConfidenceColor, candidateVerificationLabel, humanReviewStatusLabel, humanReviewStatusColor } from "./riskLabels.js";
 const { Text, Paragraph } = Typography;
 function AgentSignal({ row }: { row: any }) {
@@ -340,7 +340,7 @@ export function ReportCenter({ jobs, cases }: { jobs: any[]; cases: any[] }) {
 }
 export function SettingsView({ repos, detectors, health, refresh, tab }: { repos: any[]; detectors: any[]; health: any; refresh: () => Promise<void>; tab: string }) {
   return <><Header title="系统设置" description="管理当前本地源码、规则能力与运行状态；未接入的配置明确保留限制。" />
-    <Tabs activeKey={["sources", "capabilities", "runtime", "agent"].includes(tab) ? tab : "sources"} onChange={(key) => go("/settings/" + key)} items={[
+    <Tabs activeKey={settingsTab(tab)} onChange={(key) => go("/settings/" + key)} items={[
       { key: "sources", label: "仓库与源码管理", children: <><Alert type="info" message="在线仓库目录" description="浏览 OpenHarmony 仓库，选择后同步到本地并按需排队扫描。" />
         <Repositories repos={repos} roots={health?.target_roots || []} refresh={refresh} embedded />
         <OperationWorkspace view="sync" /></> },
