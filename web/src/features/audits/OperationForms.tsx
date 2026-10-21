@@ -3,83 +3,122 @@ import { Alert, Button, Card, Checkbox, Collapse, Descriptions, Form, Input, Inp
 import { api } from "../../api";
 import { Hash, go } from "../../components";
 import { analysisStatusLabel, coverageStatusLabel, triageStateLabel } from "../workbench/riskLabels.js";
-import { auditDefaults, RepositoryField, RefField, RuleNotice, ScopeAvailability, ScopeBudget, useRepositoryRefs } from "./AuditFields";
-import { approvedDetectorIds, datePreviewPayload, operationPayload, recentRange, requestGate } from "./model";
+import { auditDefaults, AuditModeSelector, RepositoryField, RefField, RuleNotice, ScopeAvailability, ScopeBudget, useRepositoryRefs } from "./AuditFields";
+import { approvedDetectorIds, datePreviewPayload, operationPayload, recentRange, requestGate, selectedAuditModeValues } from "./model";
+import TaskTriageConsentModal from "./TaskTriageConsentModal";
 import { canApproveSourceSubmission, canCreateAgentInvestigation, disclosureReviewed, disclosureSelectionMatches, redactionNotice } from "./egressDisclosure.js";
 const { Text } = Typography;
 export type SourceContext = { job_id?: string; candidate_id?: string; repository_id?: string; case_id?: string };
 export type OperationFormProps = { context?: SourceContext; repos: any[]; detectors: any[]; cases: any[]; busy: boolean; agentStatus?: any; submit: (path: string, payload: any) => Promise<void> };
 export function ComparisonForm({ kind, repos, detectors, cases, busy, agentStatus, submit, context = {} }: OperationFormProps & { kind: "date" | "recent" | "branches" | "range" | "matrix" }) {
-  const [form] = Form.useForm(); const repository = Form.useWatch("repository_id", form); const auditMode = Form.useWatch("audit_mode", form) || "standard_review";
-  const autoTriage = Form.useWatch("auto_triage", form) === true; const autoR2 = Form.useWatch("auto_r2", form) === true;
+  const [form] = Form.useForm();
+  const repository = Form.useWatch("repository_id", form);
+  const auditMode = Form.useWatch("audit_mode", form) || "static_only";
+  const autoR2 = Form.useWatch("auto_r2", form) !== false;
   const { refs, error: refError } = useRepositoryRefs(repository);
-  const [preview, setPreview] = useState<any>(null); const [previewBusy, setPreviewBusy] = useState(false);
-  const [triagePreview, setTriagePreview] = useState<any>(null); const [triagePreviewBusy, setTriagePreviewBusy] = useState(false);
-  const [error, setError] = useState(""); const gate = useRef(requestGate());
-  let ready = false; try { ready = approvedDetectorIds(detectors).length > 0; } catch { /* blocked */ }
+  const [preview, setPreview] = useState<any>(null);
+  const [previewBusy, setPreviewBusy] = useState(false);
+  const [triagePreview, setTriagePreview] = useState<any>(null);
+  const [consentOpen, setConsentOpen] = useState(false);
+  const [consentBusy, setConsentBusy] = useState(false);
+  const [error, setError] = useState("");
+  const gate = useRef(requestGate());
+  const pendingPayload = useRef<any>(null);
+  const smartMode = auditMode === "standard_review";
+  let ready = false;
+  try { ready = approvedDetectorIds(detectors).length > 0; } catch { /* blocked */ }
   const submitLabel = kind === "date" ? "固定区间并创建任务" : kind === "recent" ? "创建 N 日与 1 日对照" : kind === "matrix" ? "创建版本矩阵" : "扫描并比较两个端点";
-  const invalidate = () => { gate.current.invalidate(); setPreview(null); setTriagePreview(null); setPreviewBusy(false); setTriagePreviewBusy(false); setError(""); form.setFieldValue("authorize_triage_egress", false); };
+  const submitPath = kind === "date" ? "/operations/date-ranges" : kind === "recent" ? "/operations/recent-comparisons" : kind === "matrix" ? "/operations/version-matrices" : kind === "range" ? "/operations/revision-ranges" : "/operations/branch-comparisons";
+  const invalidate = () => {
+    gate.current.invalidate();
+    setPreview(null);
+    setTriagePreview(null);
+    setConsentOpen(false);
+    setPreviewBusy(false);
+    pendingPayload.current = null;
+    setError("");
+  };
+  async function finish(values: any) {
+    const ticket = gate.current.next();
+    setError("");
+    const selected = selectedAuditModeValues(values);
+    try {
+      const payload = operationPayload(kind, selected, detectors);
+      if (!payload.auto_triage) {
+        await submit(submitPath, payload);
+        return;
+      }
+      if (agentStatus?.configured === false) throw new Error("模型服务尚未配置。请先配置模型，或切换到静态审计。");
+      setPreviewBusy(true);
+      setTriagePreview(null);
+      const result = await api("/operations/scan-previews", { kind, payload });
+      if (!gate.current.current(ticket)) return;
+      const consent = result?.triage_authorization_preview;
+      if (consent?.eligible !== true || !Array.isArray(consent.scans) || !consent.scans.length) {
+        throw new Error(consent?.reason || "无法生成完整的模型外发预览，没有创建任务。");
+      }
+      pendingPayload.current = payload;
+      setTriagePreview(consent);
+      setConsentOpen(true);
+    } catch (e) {
+      if (gate.current.current(ticket)) setError(String(e));
+    } finally {
+      if (gate.current.current(ticket)) setPreviewBusy(false);
+    }
+  }
+  async function authorizeAndCreate() {
+    const payload = pendingPayload.current;
+    const scans = triagePreview?.scans;
+    if (!payload?.auto_triage || triagePreview?.eligible !== true || !Array.isArray(scans) || !scans.length) return;
+    if (scans.some((item: any) => !item.plan_sha256 || !item.workflow_sha256 || !item.consent_sha256 || !item.consent_nonce)) {
+      setError("授权预览缺少固定计划或授权摘要，请重新预览。");
+      setConsentOpen(false);
+      setTriagePreview(null);
+      return;
+    }
+    setConsentBusy(true);
+    setError("");
+    try {
+      await submit(submitPath, {
+        ...payload,
+        triage_authorizations: scans.map((item: any) => ({
+          plan_sha256: item.plan_sha256,
+          workflow_sha256: item.workflow_sha256,
+          consent_sha256: item.consent_sha256,
+          consent_nonce: item.consent_nonce,
+        })),
+      });
+      setConsentOpen(false);
+      pendingPayload.current = null;
+    } catch (e) {
+      setError(String(e));
+      setConsentOpen(false);
+      setTriagePreview(null);
+      pendingPayload.current = null;
+    } finally {
+      setConsentBusy(false);
+    }
+  }
   return <Card title={kind === "date" ? "时间范围与固定端点" : kind === "recent" ? "近 N 日与近 1 日提交对照" : kind === "matrix" ? "关联案例的版本矩阵" : "选择两个版本"}>
     {kind !== "matrix" && <ScopeAvailability />}
     {error && <Alert className="section-gap" type="error" showIcon message={error} />}
     {refError && <Alert type="warning" message={refError} />}
-    <Form name={"audit-" + kind} form={form} layout="vertical" initialValues={{ ...auditDefaults, timezone: "Asia/Shanghai", lookback_days: 7, reference_time: new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16), repository_id: context.repository_id, auto_triage: false, max_triage_candidates: 3, auto_r2: false, max_r2_candidates: 0, max_cost_usd: "0.10" }} onValuesChange={(changed) => { if (!Object.prototype.hasOwnProperty.call(changed, "authorize_triage_egress")) invalidate(); }}
-      onFinish={async (values) => {
-        try {
-          const payload = operationPayload(kind, values, detectors);
-          if (payload.auto_triage) {
-            if (!values.authorize_triage_egress || !triagePreview?.eligible) throw new Error("请先预览并确认每个端点的源码外发授权。");
-            payload.triage_authorizations = triagePreview.scans.map((item: any) => ({
-              plan_sha256: item.plan_sha256, workflow_sha256: item.workflow_sha256,
-              consent_sha256: item.consent_sha256, consent_nonce: item.consent_nonce,
-            }));
-          }
-          await submit(kind === "date" ? "/operations/date-ranges" : kind === "recent" ? "/operations/recent-comparisons" : kind === "matrix" ? "/operations/version-matrices" : kind === "range" ? "/operations/revision-ranges" : "/operations/branch-comparisons", payload);
-        }
-        catch (e) { setError(String(e)); }
-      }}>
-      <Form.Item name="audit_mode" label="审计方式">
-        <Radio.Group>
-          <Space direction="vertical">
-            <Radio value="standard_review">智能安全审计（标准研判）</Radio>
-            <Radio value="static_only">仅静态扫描</Radio>
-          </Space>
-        </Radio.Group>
-      </Form.Item>
+    <Form name={"audit-" + kind} form={form} layout="vertical"
+      initialValues={{ ...auditDefaults, audit_mode: "static_only", timezone: "Asia/Shanghai", lookback_days: 7,
+        reference_time: new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16),
+        repository_id: context.repository_id, max_triage_candidates: 5, auto_r2: true, max_r2_candidates: 3 }}
+      onValuesChange={invalidate}
+      onFinish={finish}>
+      <AuditModeSelector />
       <Alert className="section-gap" type="info" showIcon
-        message={auditMode === "standard_review" ? "智能审计将在端点扫描完成后提供候选研判入口" : "本次只运行静态扫描"}
-        description={auditMode === "standard_review"
-          ? "可对各端点分别预览并授权有界 Agent 研判，也可不授权、扫描后再逐候选复核。默认不会调用模型或外发源码；候选及模型意见都不等于漏洞确认。"
-          : "扫描不会自动调用模型。之后如需智能研判，可从候选详情查看实际外发预览并单独授权。"} />
-      {auditMode === "standard_review" && agentStatus?.configured && <>
-        <Form.Item name="auto_triage" valuePropName="checked"><Checkbox>扫描完成后自动进行 Agent 单轮研判</Checkbox></Form.Item>
-        {autoTriage && <>
-          <Form.Item name="max_triage_candidates" label="每个端点最多研判候选数"><InputNumber min={1} max={5} precision={0} /></Form.Item>
-          <Form.Item name="max_cost_usd" label="每个端点 USD 预算上限" rules={[{ required: true }, { validator: (_, value) => /^\d{1,6}(?:\.\d{1,8})?$/.test(String(value || "")) && Number(value) > 0 ? Promise.resolve() : Promise.reject(new Error("请输入大于 0 的 USD 金额")) }]}><InputNumber stringMode min="0.00000001" max="999999" step="0.01" /></Form.Item>
-          <Form.Item name="auto_r2" valuePropName="checked"><Checkbox>R1 仍有未解决源码义务时，允许符合条件的补充调查</Checkbox></Form.Item>
-          {autoR2 && <Form.Item name="max_r2_candidates" label="每个端点最多补充调查候选数"><InputNumber min={0} max={Number(form.getFieldValue("max_triage_candidates") || 3)} precision={0} /></Form.Item>}
-          <Button className="section-gap" loading={triagePreviewBusy} disabled={!repos.length} onClick={async () => {
-            const ticket = gate.current.next(); setTriagePreviewBusy(true); setTriagePreview(null); setError("");
-            try {
-              const values = await form.validateFields();
-              const payload = operationPayload(kind, values, detectors);
-              const result = await api("/operations/scan-previews", { kind, payload });
-              if (gate.current.current(ticket)) setTriagePreview(result.triage_authorization_preview);
-            } catch (e) { if (gate.current.current(ticket)) setError(String(e)); }
-            finally { if (gate.current.current(ticket)) setTriagePreviewBusy(false); }
-          }}>预览每个端点的源码外发与费用</Button>
-          {triagePreview?.eligible && <>
-            <Alert className="section-gap" type="warning" showIcon message={`端点数 ${triagePreview.scans.length} · 请求上限 ${triagePreview.model_calls} · 总费用估算 USD ${triagePreview.aggregate_estimated_cost?.maximum_usd ?? "未知"}`}
-              description={<Space direction="vertical">{triagePreview.scans.map((item: any, index: number) => <div key={item.consent_sha256}><Text strong>{index + 1}. 固定提交 <Hash value={item.commit} /></Text><div>{item.provider?.endpoint_host} · {item.provider?.model} · 每端点预算 USD {item.cost_budget?.maximum_usd}</div><div>{(item.manifest?.source_disclosure || []).join(" ")}</div></div>)}<Text type="secondary">费用使用已复核费率卡作最坏用量估算；不是 Provider 实际账单硬上限。</Text></Space>} />
-            <Form.Item name="authorize_triage_egress" valuePropName="checked" rules={[{ validator: (_, value) => value ? Promise.resolve() : Promise.reject(new Error("需逐项审阅并明确授权模型源码外发")) }]}>
-              <Checkbox>我已审阅以上全部端点、Provider 和源码外发范围，并授权这些任务按预算自动进行 Agent 研判</Checkbox>
-            </Form.Item>
-          </>}
-        </>}
-      </>}
-      {auditMode === "standard_review" && !agentStatus?.configured && <Alert className="section-gap" type="info" message="模型服务未配置，标准研判仅创建静态扫描和候选复核入口。" />}
+        message={smartMode ? "智能审计：先静态扫描，再调查候选证据" : "静态审计：只运行本地检测器"}
+        description={smartMode
+          ? "点击后先读取固定版本并展示模型目的地、源码范围和候选上限；只有你在授权弹窗中同意，任务才会创建。静态扫描完成后才会把限定证据发送给模型。模型意见仍需人工复核。"
+          : "点击后直接创建静态扫描任务，不调用模型、不发送源码；扫描结果和覆盖情况供人工复核。"} />
+      {smartMode && agentStatus?.configured === false && <Alert className="section-gap" type="warning" showIcon message="模型服务尚未配置，智能审计暂不可用；静态审计仍可使用。" />}
       <RepositoryField repos={repos} onChange={() => {
-        form.setFieldsValue({ branch: undefined, baseline_ref: undefined, endpoint_ref: undefined, baseline: undefined, endpoint: undefined, commits_text: undefined }); invalidate();
+        form.setFieldsValue({ branch: undefined, baseline_ref: undefined, endpoint_ref: undefined, baseline: undefined, endpoint: undefined, commits_text: undefined });
+        invalidate();
       }} />
       {kind === "date" ? <>
         <RefField name="branch" label="分支或标签" refs={refs} />
@@ -87,7 +126,7 @@ export function ComparisonForm({ kind, repos, detectors, cases, busy, agentStatu
         <Form.Item name="start" label="开始时间（包含）" rules={[{ required: true }]}><Input type="datetime-local" step={1} onInput={(event) => { form.setFieldValue("start", event.currentTarget.value); invalidate(); }} /></Form.Item>
         <Form.Item name="end" label="结束时间（不包含）" rules={[{ required: true }]}><Input type="datetime-local" step={1} onInput={(event) => { form.setFieldValue("end", event.currentTarget.value); invalidate(); }} /></Form.Item>
         <Form.Item name="timezone" label="所选时间的时区" rules={[{ required: true }]}><Select options={["Asia/Shanghai", "UTC", "America/Los_Angeles", "Europe/London"].map((value) => ({ value, label: value }))} /></Form.Item>
-        <Alert type="info" message="按提交者时间与 first-parent 选择 [开始, 结束) 区间；当前扫描固定两端。" description="不等于逐提交扫描、合入时间审计或完整增量引擎。预览可能包含拓扑跨度内的区间外提交。" />
+        <Alert type="info" message="按提交者时间与 first-parent 选择时间窗口，扫描固定两个端点。" description="这不是逐提交扫描；预览区间只用于核对选出的固定提交，不创建任务。" />
         <Button aria-label="预览时间区间" className="section-gap" loading={previewBusy} onClick={async () => {
           const ticket = gate.current.next(); setPreviewBusy(true); setPreview(null); setError("");
           try {
@@ -96,45 +135,73 @@ export function ComparisonForm({ kind, repos, detectors, cases, busy, agentStatu
             if (gate.current.current(ticket)) setPreview(result);
           } catch (e) { if (gate.current.current(ticket)) setError(String(e)); }
           finally { if (gate.current.current(ticket)) setPreviewBusy(false); }
-        }}>预览时间区间</Button>
-        {preview && <Alert className="section-gap" type="success" showIcon message={`命中 ${preview.selected_commits.length} 个提交 · 拓扑跨度外 ${preview.intervening_outside_date.length} 个`}
-          description={<Space direction="vertical"><Text>{preview.branch} · {preview.timezone} · [{preview.start}, {preview.end})</Text><Space wrap>基线 <Hash value={preview.baseline} /> 终点 <Hash value={preview.endpoint} /></Space>
-            <Text type="secondary">预览不创建任务；若 Ref 在提交前移动，最终以入队时固定的 SHA 为准。</Text></Space>} />}
+        }}>预览时间范围（可选）</Button>
+        {preview && <Alert className="section-gap" type="success" showIcon message={"已选中 " + preview.selected_commits.length + " 个提交；拓扑跨度外 " + preview.intervening_outside_date.length + " 个"}
+          description={<Space direction="vertical"><Text>{preview.branch} · {preview.timezone} · [{preview.start}, {preview.end})</Text><Text type="secondary">预览不创建任务；提交时会重新解析并固定版本。</Text>
+            <Collapse items={[{ key: "fixed-commits", label: "技术详情：固定提交", children: <Space wrap>基线 <Hash value={preview.baseline} /> 终点 <Hash value={preview.endpoint} /></Space> }]} /></Space>} />}
       </> : kind === "recent" ? <>
         <RefField name="branch" label="分支或标签" refs={refs} />
         <Form.Item name="lookback_days" label="N 日窗口长度" rules={[{ required: true }]}><InputNumber min={2} max={90} precision={0} /></Form.Item>
         <Form.Item name="reference_time" label="对照时点（本地时间）" rules={[{ required: true }]}><Input type="datetime-local" step={1} /></Form.Item>
         <Form.Item name="timezone" label="所选时间的时区" rules={[{ required: true }]}><Select options={["Asia/Shanghai", "UTC", "America/Los_Angeles", "Europe/London"].map((value) => ({ value, label: value }))} /></Form.Item>
-        <Alert type="info" message="两段不重叠窗口分别比较固定基线和终点" description="例如 N=7 时，对比 [时点−7天, 时点−1天) 与 [时点−1天, 时点)。每段只扫描两个端点，按 first-parent 提交者时间选提交；不等于逐提交扫描、漏洞引入证明或完整增量引擎。两段都没有提交时会拒绝创建任务。" />
+        <Alert type="info" message="系统会对比两个不重叠时间窗口的固定端点。" description="例如 N=7 时，对比时点前第 7 天至前 1 天，以及最近 1 天；这不是逐提交扫描或漏洞引入证明。两段都没有提交时，系统会拒绝创建任务。" />
         <Button aria-label="预览近N日和近1日区间" className="section-gap" loading={previewBusy} onClick={async () => {
           const ticket = gate.current.next(); setPreviewBusy(true); setPreview(null); setError("");
           try {
             const values = await form.validateFields(["repository_id", "branch", "lookback_days", "reference_time", "timezone"]);
-            const payload = operationPayload("recent", values, detectors);
+            const payload = operationPayload("recent", selectedAuditModeValues(values), detectors);
             const result = await api("/operations/recent-comparisons/preview", payload);
             if (gate.current.current(ticket)) setPreview(result);
           } catch (e) { if (gate.current.current(ticket)) setError(String(e)); }
           finally { if (gate.current.current(ticket)) setPreviewBusy(false); }
-        }}>预览两个时间窗口</Button>
-        {preview?.long_window && <Alert className="section-gap" type="success" showIcon message={`已预览 ${preview.long_window.selected_commits.length} 个较早提交、${preview.one_day_window.selected_commits.length} 个近 1 日提交`}
-          description={<Space direction="vertical"><Text>{preview.branch} · {preview.timezone} · 时点 {preview.reference_time}</Text><Space wrap>较早窗口基线 <Hash value={preview.long_window.baseline} /> 终点 <Hash value={preview.long_window.endpoint} /></Space><Space wrap>近 1 日基线 <Hash value={preview.one_day_window.baseline} /> 终点 <Hash value={preview.one_day_window.endpoint} /></Space><Text type="secondary">预览不创建任务；提交时会重新解析并固定 SHA。</Text></Space>} />}
-      </> : kind === "branches" ? <><RefField name="baseline_ref" label="基准版本" refs={refs} /><RefField name="endpoint_ref" label="对比版本" refs={refs} />
-        <Alert type="info" message="支持分支、Tag、完整 SHA；入队时固定两个端点，不要求祖先关系。" />
-      </> : kind === "range" ? <><Form.Item name="baseline" label="Baseline 完整 SHA" rules={[{ required: true }]}><Input /></Form.Item><Form.Item name="endpoint" label="Endpoint 完整 SHA" rules={[{ required: true }]}><Input /></Form.Item></> : <>
+        }}>预览时间窗口（可选）</Button>
+        {preview?.long_window && <Alert className="section-gap" type="success" showIcon message={"已预览 " + preview.long_window.selected_commits.length + " 个较早提交、" + preview.one_day_window.selected_commits.length + " 个最近 1 日提交"}
+          description={<Space direction="vertical"><Text>{preview.branch} · {preview.timezone} · 对照时点 {preview.reference_time}</Text><Text type="secondary">预览不创建任务；提交时会重新解析并固定版本。</Text>
+            <Collapse items={[{ key: "fixed-commits", label: "技术详情：固定提交", children: <Space wrap>较早窗口：<Hash value={preview.long_window.baseline} /> → <Hash value={preview.long_window.endpoint} /><br />最近 1 日：<Hash value={preview.one_day_window.baseline} /> → <Hash value={preview.one_day_window.endpoint} /></Space> }]} /></Space>} />}
+      </> : kind === "branches" ? <>
+        <RefField name="baseline_ref" label="基准版本" refs={refs} />
+        <RefField name="endpoint_ref" label="目标版本" refs={refs} />
+        <Alert type="info" message="支持分支、Tag 或完整 Commit；创建时会固定两个版本。" />
+      </> : kind === "range" ? <>
+        <Form.Item name="baseline" label="基准版本完整 SHA" rules={[{ required: true }]}><Input /></Form.Item>
+        <Form.Item name="endpoint" label="目标版本完整 SHA" rules={[{ required: true }]}><Input /></Form.Item>
+      </> : <>
         <Form.Item name="case_id" label="调查案例" rules={[{ required: true }]}><Select placeholder="案例必须已关联所选仓库的候选" options={cases.map((c) => ({ value: c.id, label: c.title }))} /></Form.Item>
-        <Form.Item name="commits_text" label="2–8 个完整 SHA（每行一个或逗号分隔）" rules={[{ required: true }]}><Input.TextArea rows={3} /></Form.Item>
+        <Form.Item name="commits_text" label="2–8 个完整 Commit（每行一个或逗号分隔）" rules={[{ required: true }]}><Input.TextArea rows={3} /></Form.Item>
         {!cases.length && <Alert type="info" message="请先从风险候选建立调查案例，再创建版本矩阵。" action={<Button size="small" onClick={() => go("/risks")}>查看风险</Button>} />}
       </>}
-      <ScopeBudget /><RuleNotice detectors={detectors} />
-      <Button aria-label={submitLabel} className="section-gap" type="primary" htmlType="submit" size="large" loading={busy} disabled={!ready || !repos.length || (kind === "matrix" && !cases.length)}>{submitLabel}</Button>
+      <Collapse className="audit-options" items={[{ key: "advanced", label: "高级范围与调查设置", children: <>
+        <ScopeBudget />
+        <RuleNotice detectors={detectors} />
+        {smartMode && agentStatus?.configured !== false && <>
+          <Form.Item name="max_triage_candidates" label="最多自动调查候选数" extra="每个固定版本 1–10,000 条。准确候选数扫描后统计，未入选或超限候选保持待研判。">
+            <InputNumber min={1} max={10000} precision={0} />
+          </Form.Item>
+          <Form.Item name="auto_r2" valuePropName="checked" extra="符合证据条件时，在固定源码范围内继续只读跨文件调查。">
+            <Checkbox>允许深入追查</Checkbox>
+          </Form.Item>
+          {autoR2 && <Form.Item name="max_r2_candidates" label="最多深入追查候选数">
+            <InputNumber min={0} max={Number(form.getFieldValue("max_triage_candidates") || 5)} precision={0} />
+          </Form.Item>}
+        </>}
+      </> }]} />
+      <Button aria-label={submitLabel} className="section-gap" type="primary" htmlType="submit" size="large"
+        loading={busy || previewBusy}
+        disabled={!ready || !repos.length || (kind === "matrix" && !cases.length) || (smartMode && agentStatus?.configured === false)}>
+        {smartMode ? "预览授权并开始智能审计" : submitLabel}
+      </Button>
     </Form>
+    <TaskTriageConsentModal open={consentOpen} preview={triagePreview} loading={consentBusy}
+      onCancel={() => { setConsentOpen(false); setTriagePreview(null); pendingPayload.current = null; }}
+      onConfirm={() => void authorizeAndCreate()} />
   </Card>;
-}
-export function SyncForm({ busy, submit, detectors }: Pick<OperationFormProps, "busy" | "submit" | "detectors">) {
+}export function SyncForm({ busy, submit, detectors }: Pick<OperationFormProps, "busy" | "submit" | "detectors">) {
   const [form] = Form.useForm();
   const scanAfterSync = Form.useWatch("scan_after_sync", form) === true;
+  const selectedNames: string[] = Form.useWatch("catalog_selection", form) || [];
   let defaults: string[] = []; try { defaults = approvedDetectorIds(detectors); } catch { /* no approved detectors */ }
   const [catalog, setCatalog] = useState<any>(null), [catalogPage, setCatalogPage] = useState(1);
+  const [selectedCatalog, setSelectedCatalog] = useState<Record<string, any>>({});
   const [catalogBusy, setCatalogBusy] = useState(false), [catalogError, setCatalogError] = useState("");
   const loadCatalog = async (page = catalogPage) => {
     setCatalogBusy(true); setCatalogError("");
@@ -142,41 +209,82 @@ export function SyncForm({ busy, submit, detectors }: Pick<OperationFormProps, "
     catch (error) { setCatalogError(String(error)); }
     finally { setCatalogBusy(false); }
   };
-  return <Card title="在线仓库中心 · 同步与扫描"><Form name="source-sync" form={form} layout="vertical" initialValues={{ timeout_seconds: 900, scan_after_sync: false, revision: "HEAD", include_paths: ["."], detector_ids: defaults, audit_mode: "static_only", scan_timeout_seconds: 600, memory_mb: 2048 }} onFinish={({ catalog_selection, ...values }) => void submit("/operations/source-sync", values)}>
+  const selectCatalogRows = (names: string[]) => {
+    const bounded = names.slice(0, 8);
+    if (names.length > 8) message.warning("每批最多选择 8 个仓库，请分批同步。");
+    const available = { ...selectedCatalog };
+    for (const item of catalog?.repositories || []) available[item.name] = item;
+    const next: Record<string, any> = {};
+    for (const name of bounded) if (available[name]) next[name] = available[name];
+    setSelectedCatalog(next);
+    form.setFieldValue("catalog_selection", bounded);
+    if (bounded.length === 1 && next[bounded[0]]) {
+      const item = next[bounded[0]];
+      form.setFieldsValue({ repository: item.name, url: item.url,
+        revision: item.default_branch ? "refs/remotes/origin/" + item.default_branch : "HEAD" });
+    }
+    if (bounded.length) form.setFieldValue("audit_mode", "static_only");
+  };
+  const finish = async ({ catalog_selection, ...values }: any) => {
+    try {
+      const names: string[] = Array.isArray(catalog_selection) ? catalog_selection : [];
+      if (names.length) {
+        if (names.length > 8) throw new Error("每批最多同步 8 个仓库。");
+        const items = names.map((name) => selectedCatalog[name]).filter(Boolean);
+        if (items.length !== names.length) throw new Error("部分仓库信息已失效，请重新加载目录并选择。");
+        const repositories = items.map((item: any) => ({
+          repository: item.name, url: item.url, timeout_seconds: values.timeout_seconds,
+          scan_after_sync: values.scan_after_sync === true,
+          revision: item.default_branch ? "refs/remotes/origin/" + item.default_branch : "HEAD",
+          include_paths: values.include_paths?.length ? values.include_paths : ["."],
+          detector_ids: values.detector_ids?.length ? values.detector_ids : null,
+          audit_mode: "static_only",
+          scan_timeout_seconds: values.scan_timeout_seconds, memory_mb: values.memory_mb,
+        }));
+        await submit("/operations/source-sync/batch", { repositories });
+      } else {
+        await submit("/operations/source-sync", values);
+      }
+    } catch (error) { setCatalogError(String(error)); }
+  };
+  return <Card title="在线仓库中心 · 同步与扫描"><Form name="source-sync" form={form} layout="vertical" initialValues={{ timeout_seconds: 900, scan_after_sync: false, revision: "HEAD", include_paths: ["."], detector_ids: defaults, audit_mode: "static_only", scan_timeout_seconds: 600, memory_mb: 2048 }} onFinish={finish}>
     <Space wrap className="section-gap">
-      <Button loading={catalogBusy} onClick={() => void loadCatalog(1)}>加载 GitHub OpenHarmony 仓库</Button>
+      <Button loading={catalogBusy} onClick={() => void loadCatalog(1)}>加载 OpenHarmony 仓库目录</Button>
       {catalog && <><Button disabled={catalogBusy || catalog.page <= 1} onClick={() => void loadCatalog(catalog.page - 1)}>上一页</Button><Text type="secondary">第 {catalog.page} 页，每页最多 {catalog.per_page} 项</Text><Button disabled={catalogBusy || !catalog.next_page} onClick={() => void loadCatalog(catalog.next_page)}>下一页</Button></>}
     </Space>
-    {catalogError && <Alert className="section-gap" type="warning" showIcon message="在线清单暂不可用；可手动填写允许的 HTTPS 仓库地址" description={catalogError} />}
+    {catalogError && <Alert className="section-gap" type="warning" showIcon message="仓库操作未完成" description={catalogError} />}
     {catalog && <>
-      <Alert className="section-gap" type="info" showIcon message={`发现 ${catalog.repositories.length} 个 GitHub OpenHarmony 组织条目 · ${catalog.retrieved_at}`}
-        description="选择仓库后可查看默认分支、填写扫描范围，再提交同步或同步并扫描。" />
-      <Form.Item name="catalog_selection" label="从在线目录选择（可继续手动编辑下方仓库名和地址）">
-        <Select showSearch optionFilterProp="label" placeholder="搜索本页仓库名或描述"
+      <Alert className="section-gap" type="info" showIcon message={`当前页 ${catalog.repositories.length} 个 OpenHarmony 仓库 · 已选 ${selectedNames.length}/8`}
+        description="可跨页选择仓库，提交后按顺序逐个同步。每批最多 8 个，不会批量下载整个组织。" />
+      <Form.Item name="catalog_selection" label="选择一个或多个在线仓库">
+        <Select mode="multiple" maxCount={8} showSearch optionFilterProp="label" maxTagCount="responsive"
+          placeholder="搜索当前页仓库名或描述"
           options={(catalog.repositories || []).map((item: any) => ({ value: item.name,
             label: item.name + (item.archived ? " · 已归档" : "") + (item.fork ? " · fork" : "") +
               (item.description ? " · " + item.description : "") }))}
-          onChange={(name) => {
-            const item = catalog.repositories.find((row: any) => row.name === name);
-            if (item) form.setFieldsValue({ repository: item.name, url: item.url,
-              revision: item.default_branch ? "refs/remotes/origin/" + item.default_branch : "HEAD" });
-          }} />
+          onChange={selectCatalogRows} />
       </Form.Item>
     </>}
-    <Form.Item name="repository" label="OpenHarmony 仓库名" rules={[{ required: true }]}><Input placeholder="openharmony/commonlibrary_c_utils" /></Form.Item>
-    <Form.Item name="url" label="HTTPS 地址（GitHub / Gitee / GitCode 的 OpenHarmony 仓库）" rules={[{ required: true }]}><Input placeholder="https://gitee.com/openharmony/commonlibrary_c_utils.git" /></Form.Item>
-    <Form.Item name="timeout_seconds" label="同步超时（秒）"><InputNumber min={10} max={3600} /></Form.Item>
-    <Form.Item name="scan_after_sync" valuePropName="checked"><Checkbox>同步成功后自动固定版本并排队静态扫描</Checkbox></Form.Item>
+    {!selectedNames.length && <>
+      <Form.Item name="repository" label="OpenHarmony 仓库名" rules={[{ required: true }]}><Input placeholder="openharmony/commonlibrary_c_utils" /></Form.Item>
+      <Form.Item name="url" label="HTTPS 地址（GitHub / Gitee / GitCode 的 OpenHarmony 仓库）" rules={[{ required: true }]}><Input placeholder="https://gitee.com/openharmony/commonlibrary_c_utils.git" /></Form.Item>
+    </>}
+    <Form.Item name="timeout_seconds" label="每仓同步超时（秒）"><InputNumber min={10} max={3600} /></Form.Item>
+    <Form.Item name="scan_after_sync" valuePropName="checked"><Checkbox>同步成功后固定版本并排队静态扫描</Checkbox></Form.Item>
     {scanAfterSync && <>
-      <Form.Item name="revision" label="同步后扫描版本" rules={[{ required: true }]}><Input placeholder="HEAD 或 refs/remotes/origin/master" /></Form.Item>
+      {!selectedNames.length
+        ? <Form.Item name="revision" label="同步后扫描版本" rules={[{ required: true }]}><Input placeholder="HEAD 或 refs/remotes/origin/master" /></Form.Item>
+        : <Alert className="section-gap" type="info" showIcon message="批量扫描使用各仓库目录中的默认分支" description="每个扫描任务固定自己的提交和文件树；批量扫描只运行静态检测，不会自动调用模型。" />}
       <Form.Item name="include_paths" label="纳入路径"><Select mode="tags" tokenSeparators={[",", "\n"]} /></Form.Item>
       <Form.Item name="detector_ids" label="扫描器"><Select mode="multiple" options={detectors.filter((item) => item.kind === "research_candidate" && item.default_enabled !== false).map((item) => ({ value: item.id, label: item.id + " · " + item.version }))} /></Form.Item>
-      <Form.Item name="audit_mode" label="扫描后的审计方式"><Radio.Group><Space direction="vertical"><Radio value="static_only">仅静态扫描</Radio><Radio value="standard_review">标准研判（结果中提供 Agent 入口）</Radio></Space></Radio.Group></Form.Item>
+      {!selectedNames.length && <Form.Item name="audit_mode" label="扫描后的审计方式"><Radio.Group><Space direction="vertical"><Radio value="static_only">仅静态扫描</Radio><Radio value="standard_review">标准研判（结果中提供 Agent 入口）</Radio></Space></Radio.Group></Form.Item>}
       <Form.Item name="scan_timeout_seconds" label="单次扫描超时（秒）"><InputNumber min={30} max={3600} /></Form.Item>
       <Form.Item name="memory_mb" label="扫描内存预算（MB）"><InputNumber min={256} max={8192} /></Form.Item>
     </>}
-    <Alert type="info" message={scanAfterSync ? "同步完成后直接创建固定 SHA 的扫描任务" : "同步仓库到本地源码目录"} description="同步不会运行仓库构建脚本。标准研判不会自动发送源码给模型；Agent 分析需在审计计划中单独预览并授权。" />
-    <Button className="section-gap" type="primary" htmlType="submit" loading={busy}>{scanAfterSync ? "同步并排队扫描" : "排队同步"}</Button>
+    <Alert type="info" message={scanAfterSync ? "同步成功后创建固定版本扫描任务" : "同步仓库到本地源码目录"} description="同步不会运行仓库构建脚本。单仓标准研判也不会自动发送源码给模型；Agent 分析需单独预览并授权。" />
+    <Button className="section-gap" type="primary" htmlType="submit" loading={busy}>
+      {selectedNames.length > 1 ? "批量同步所选仓库" : selectedNames.length === 1 ? "同步所选仓库" : scanAfterSync ? "同步并排队扫描" : "排队同步"}
+    </Button>
   </Form></Card>;
 }
 export function InvestigationForm({ busy, submit, context = {} }: Pick<OperationFormProps, "busy" | "submit" | "context">) {
@@ -383,16 +491,12 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
     setPairBusy(true); setPairError(""); setPairPreview(null); setPairDisclosureOpened([]); setPairSubmissionApproved(false);
     try {
       const values = await form.validateFields(["job_id", "candidate_id", "experiment_id",
-        "case_id", "max_steps", "max_output_tokens", "max_total_input_tokens",
-        "max_total_output_tokens", "timeout_seconds"]);
+        "case_id", "max_output_tokens"]);
       if (!values.experiment_id?.trim()) throw new Error("请先填写实验批次 ID");
       const result = await api("/operations/agent-investigations/paired/preview", {
         job_id: values.job_id, candidate_id: values.candidate_id,
         experiment_id: values.experiment_id?.trim(), case_id: values.case_id || undefined,
-        max_steps: values.max_steps, max_output_tokens: values.max_output_tokens,
-        max_total_input_tokens: values.max_total_input_tokens,
-        max_total_output_tokens: values.max_total_output_tokens,
-        timeout_seconds: values.timeout_seconds,
+        max_output_tokens: values.max_output_tokens,
       });
       setPairPreview(result); setPairDisclosureOpened([]); setPairSubmissionApproved(false);
     } catch (e) { setPairError(String(e)); }
@@ -406,11 +510,7 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
         job_id: form.getFieldValue("job_id"), candidate_id: form.getFieldValue("candidate_id"),
         experiment_id: form.getFieldValue("experiment_id")?.trim(),
         case_id: form.getFieldValue("case_id") || undefined,
-        max_steps: form.getFieldValue("max_steps"),
         max_output_tokens: form.getFieldValue("max_output_tokens"),
-        max_total_input_tokens: form.getFieldValue("max_total_input_tokens"),
-        max_total_output_tokens: form.getFieldValue("max_total_output_tokens"),
-        timeout_seconds: form.getFieldValue("timeout_seconds"),
         source_submission_approved: true, consent_sha256: pairPreview.consent_sha256,
         consent_nonce: pairPreview.consent_nonce,
       });
@@ -423,10 +523,14 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
   const requestPreview = async () => {
     const ticket = previewGate.current.next(); setPreviewBusy(true); setPreview(null); setPreviewError(""); setPreviewDisclosureOpened(false);
     try {
-      const values = await form.validateFields(["job_id", "candidate_id", "experiment_id", "case_id", "mode", "max_steps",
-        "max_output_tokens", "max_total_input_tokens", "max_total_output_tokens", "timeout_seconds"]);
+      const values = await form.validateFields(["job_id", "candidate_id", "experiment_id", "case_id", "mode",
+        "max_output_tokens"]);
       const result = await api("/operations/agent-investigations/preview",
-        { ...values, source_submission_approved: false });
+        { job_id: values.job_id, candidate_id: values.candidate_id,
+          experiment_id: values.experiment_id, case_id: values.case_id,
+          mode: values.mode,
+          max_output_tokens: values.max_output_tokens,
+          source_submission_approved: false });
       if (previewGate.current.current(ticket)) {
         setPreview(result); setPreviewDisclosureOpened(false); form.setFieldValue("source_submission_approved", false);
       }
@@ -439,21 +543,24 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
   return <Card title="模型辅助候选调查">
     {contextHolder}
     {!ready ? <Alert type="warning" showIcon message="模型服务尚未配置" description={(agentStatus?.missing?.length ? "Worker 环境缺少：" + agentStatus.missing.join(", ") : "请由服务管理员配置 OHSCANNER_LLM_MODEL 和 OHSCANNER_LLM_API_KEY") + "；密钥不在浏览器或数据库保存。"} /> :
-      <Alert type="info" showIcon message={"目的地：" + agentStatus.endpoint_host + " · 模型：" + agentStatus.model} description="先生成本次外发预览；模型、方式、预算或固定候选变化后，预览与授权都会失效。" />}
+      <Alert type="info" showIcon message={"目的地：" + agentStatus.endpoint_host + " · 模型：" + agentStatus.model} description="先生成本次外发预览；模型、方式、单次输出上限或固定候选变化后，预览与授权都会失效。" />}
     {ready && <Space className="section-gap" wrap>
       <Button loading={providerCheckBusy} onClick={checkProvider}>测试模型服务连通性（无源码）</Button>
       {providerCheckResult && <Text type="secondary">最近通过：{providerCheckResult.endpoint_host} · {providerCheckResult.model} · {providerCheckResult.duration_ms} ms · 输入/输出 Token {providerCheckResult.usage?.input_tokens ?? "未知"}/{providerCheckResult.usage?.output_tokens ?? "未知"}</Text>}
     </Space>}
     {providerCheckError && <Alert className="section-gap" type="error" showIcon message={providerCheckError} />}
     {previewError && <Alert className="section-gap" type="error" showIcon message={previewError} />}
-    <Form name="agent-candidate-investigation" form={form} layout="vertical" initialValues={{ mode: "tool_agent", max_steps: 4, max_output_tokens: 1200, max_total_input_tokens: 24000, max_total_output_tokens: 4000, timeout_seconds: 240, job_id: context.job_id, candidate_id: context.candidate_id, case_id: context.case_id }}
+    <Form name="agent-candidate-investigation" form={form} layout="vertical" initialValues={{ mode: "tool_agent", max_output_tokens: 1200, job_id: context.job_id, candidate_id: context.candidate_id, case_id: context.case_id }}
       onValuesChange={(changed) => {
         if (!("source_submission_approved" in changed)) invalidatePreview();
         setPairPreview(null); setPairError(""); setPairDisclosureOpened([]); setPairSubmissionApproved(false);
         if ("experiment_id" in changed) setBaselineStatus(null);
       }}
       onFinish={(values) => {
-        const { r0_reviewer, r0_disposition, r0_elapsed_seconds, r0_notes, r0_obligation_reviews, r0_obligations_acknowledged, ...agentValues } = values;
+        const agentValues = { ...values };
+        delete agentValues.r0_reviewer; delete agentValues.r0_disposition;
+        delete agentValues.r0_elapsed_seconds; delete agentValues.r0_notes;
+        delete agentValues.r0_obligation_reviews; delete agentValues.r0_obligations_acknowledged;
         if (!preview) { setPreviewError("请先预览本次外发内容"); return; }
         void submit("/operations/agent-investigations", { ...agentValues, experiment_id: values.experiment_id?.trim() || undefined, consent_sha256: preview.consent_sha256, consent_nonce: preview.consent_nonce });
       }}>
@@ -511,7 +618,7 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
         </>}
       </Card>
       <Collapse className="section-gap" items={[{ key: "research-baseline", label: "人工静态基线与模型对照（高级研究）", children: <Card size="small" title="人工静态基线">
-        <Alert type="info" showIcon message="仅记录静态证据下的人工分诊和耗时，不是漏洞真值。带实验批次运行 R1/R2 前必须先保存该记录；保存后该批次不能再补写 R0。" />
+        <Alert type="info" showIcon message="仅记录人工静态分诊和复核耗时，不是漏洞真值。开始调查方式对照前先保存该基线；保存后不能补写。" />
         <Space wrap className="section-gap">
           <Form.Item name="r0_reviewer" label="R0 复核人" rules={[{ required: Boolean(experimentId), max: 100 }]}><Input maxLength={100} /></Form.Item>
           <Form.Item name="r0_disposition" label="静态分诊" rules={[{ required: Boolean(experimentId) }]}>
@@ -525,9 +632,9 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
         </Space>
         <Form.Item name="r0_notes" label="总体静态依据和未知项"><Input.TextArea rows={2} maxLength={1200} /></Form.Item>
         {staticCandidate?.evidence?.obligations?.length > 0 && <>
-          <Text strong>逐项 R0 人工判断（作为 R1/R2 对照基线）</Text>
+          <Text strong>逐项人工判断（调查方式对照基线）</Text>
           {staticCandidate.evidence.obligations_truncated && <Alert className="section-gap" type="warning" showIcon
-            message="静态义务超过 40 项；R0 与 Agent 本轮都只处理预览中的前 40 项。" />}
+            message="静态义务超过 40 项；人工基线与自动调查本轮都只处理预览中的前 40 项。" />}
           <Alert className="section-gap" type="warning" showIcon
             message="每条义务必须单独判断；有证据或反向证据时必须引用已展示的固定源码行。无法仅凭现有片段判断时先补读同一文件的固定行范围；仍无法判断就选 unresolved，不要猜测。" />
           <Space wrap className="section-gap" align="end">
@@ -591,34 +698,28 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
           </Form.Item>
         </>}
         {baselineError && <Alert type="error" showIcon message={baselineError} />}
-        {baselineStatus && <Alert className="section-gap" type="success" showIcon message={"R0 已记录：" + baselineStatus.disposition + " · 逐项复核 " + (baselineStatus.obligations_reviewed ?? 0) + " 项 · " + baselineStatus.record_sha256} />}
+        {baselineStatus && <Alert className="section-gap" type="success" showIcon message={"人工静态基线已保存：" + baselineStatus.disposition + " · 逐项复核 " + (baselineStatus.obligations_reviewed ?? 0) + " 项 · " + baselineStatus.record_sha256} />}
         <Button className="section-gap" loading={baselineBusy} disabled={!experimentId || !context.job_id || !context.candidate_id || !staticReviewReady || staticPreviewBusy}
-          onClick={() => void recordBaseline()}>追加 R0 静态基线</Button>
+          onClick={() => void recordBaseline()}>保存人工静态基线</Button>
         <Button className="section-gap" loading={pairBusy} disabled={!ready || !experimentId || !context.job_id || !context.candidate_id || !staticReviewReady || staticPreviewBusy || !agentSourceActionable}
-          onClick={() => void requestPairPreview()}>预览并创建 R1/R2 配对实验</Button>
+          onClick={() => void requestPairPreview()}>预览两种调查方式并启动对照</Button>
         {pairError && <Alert className="section-gap" type="error" showIcon message={pairError} />}
       </Card> }]} />
-      <Modal title="R1/R2 配对源码外发预览" open={Boolean(pairPreview)} width={900}
-        confirmLoading={pairBusy} okText="批准并原子创建两组任务" cancelText="取消"
+      <Modal title="调查方式对照的源码发送预览" open={Boolean(pairPreview)} width={900}
+        confirmLoading={pairBusy} okText="批准并创建两种调查任务" cancelText="取消"
         okButtonProps={{ disabled: !pairDisclosureReviewed || !pairSubmissionApproved }}
         onOk={() => void enqueuePair()} onCancel={() => { setPairPreview(null); setPairDisclosureOpened([]); setPairSubmissionApproved(false); }}>
         {pairPreview && <>
-          <Alert type="warning" showIcon message="确认后为同一候选创建 R1 单轮和 R2 工具 Agent 两个任务。必须已有同来源 R0；模型结果仍是候选，盲审完成前不要比较哪组更好。" />
+          <Alert type="warning" showIcon message="确认后会对同一候选分别运行单轮模型研判和跨文件工具调查。必须先有同来源的人工静态基线；结果仍是待复核候选，盲审完成前不要比较哪种方式更好。" />
           <Descriptions className="section-gap" bordered size="small" column={2}>
             <Descriptions.Item label="实验批次">{pairPreview.experiment_id}</Descriptions.Item>
             <Descriptions.Item label="模型端点">{pairPreview.provider?.endpoint_host} · {pairPreview.provider?.model}</Descriptions.Item>
             <Descriptions.Item label="固定候选" span={2}>{pairPreview.candidate?.repository} @ {pairPreview.candidate?.commit} · {pairPreview.candidate?.candidate_id}</Descriptions.Item>
-            <Descriptions.Item label="总模型调用上限">{pairPreview.aggregate_budget?.max_model_calls}</Descriptions.Item>
-            <Descriptions.Item label="结构化修复调用上限">{pairPreview.aggregate_budget?.max_validation_repair_calls}</Descriptions.Item>
-            <Descriptions.Item label="总输入 Token 上限">{pairPreview.aggregate_budget?.max_total_input_tokens}</Descriptions.Item>
-            <Descriptions.Item label="总输出 Token 上限">{pairPreview.aggregate_budget?.max_total_output_tokens}</Descriptions.Item>
-            <Descriptions.Item label="顺序执行最坏耗时（秒）">{pairPreview.aggregate_budget?.max_wall_seconds_sequential}</Descriptions.Item>
-            <Descriptions.Item label="整组预算费用最高估算（非硬上限）">{pairPreview.aggregate_budget_cost_estimate
-              ? <Space wrap><Text>≤ USD {pairPreview.aggregate_budget_cost_estimate.maximum_usd}{pairPreview.aggregate_budget_cost_estimate.maximum_cny ? " / CNY " + pairPreview.aggregate_budget_cost_estimate.maximum_cny : ""}；{pairPreview.aggregate_budget_cost_estimate.candidate_or_arm_count} 个任务；{pairPreview.aggregate_budget_cost_estimate.maximum_cny ? "USD/CNY 为独立官方价目参考；" : ""}按{pairPreview.aggregate_budget_cost_estimate.basis === "realtime_payg_all_input_uncached" ? "实时按量费率、输入全部按缓存未命中" : "峰值费率、输入全部按缓存未命中"}</Text><a href={pairPreview.aggregate_budget_cost_estimate.rate_source_url} target="_blank" rel="noreferrer">费率来源</a></Space>
-              : "费用未知（该 Provider / 模型没有匹配的已知费率）"}</Descriptions.Item>
+            <Descriptions.Item label="单轮模型研判">每候选一个 Provider 请求，单次输出上限 {pairPreview.aggregate_budget?.single_shot_max_output_tokens_per_request ?? pairPreview.arms?.[0]?.preview?.budgets?.max_output_tokens} tokens，45 秒超时</Descriptions.Item>
+            <Descriptions.Item label="跨文件工具调查">不设平台累计 Token、费用、调用次数或总时长上限；Provider 账户计费和额度适用</Descriptions.Item>
           </Descriptions>
           <Text type="secondary">整组预览 SHA-256：{pairPreview.consent_sha256}</Text>
-          {pairPreview.arms?.map((arm: any) => <Card key={arm.mode} className="section-gap" size="small" title={arm.mode === "single_shot" ? "R1 单轮模型复核" : "R2 工具型 Agent"}>
+          {pairPreview.arms?.map((arm: any) => <Card key={arm.mode} className="section-gap" size="small" title={arm.mode === "single_shot" ? "单轮模型研判" : "跨文件智能调查"}>
             <Text>上下文 UTF-8 字节：{arm.preview?.initial_context_utf8_bytes} · 工具思考：{arm.preview?.inference_settings?.tool_call_reasoning_effort || "无"} · 结构化输出思考：{arm.preview?.inference_settings?.structured_output_reasoning_effort || "服务商默认"} · 单次输出上限：{arm.preview?.budgets?.max_output_tokens} tokens · 源码 SHA-256：{arm.preview?.binding?.source_sha256}</Text>
             <Alert type="warning" showIcon message="自动脱敏不是完整 DLP，请检查本组完整外发预览"
               description={redactionNotice(arm.preview)} />
@@ -635,24 +736,20 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
           <ul>{pairPreview.disclosure?.map((line: string) => <li key={line}>{line}</li>)}</ul>
           <Checkbox checked={pairSubmissionApproved} disabled={!pairDisclosureReviewed}
             onChange={(event) => setPairSubmissionApproved(event.target.checked)}>
-            我已逐组展开并检查 R1、R2 的完整外发上下文与工具范围，允许按此预览向模型发送
+            我已展开并检查两种调查的完整发送内容和只读工具范围，允许按此预览发送给模型
           </Checkbox>
         </>}
       </Modal>
       <Form.Item name="case_id" label="关联案例（可选）"><Select allowClear placeholder="选择后纳入案例报告导出" options={linkedCases.map((item: any) => ({ value: item.id, label: item.title }))} /></Form.Item>
       <Form.Item name="mode" label="调查方式"><Radio.Group options={[
         { value: "single_shot", label: "模型辅助研判（单轮）" },
-        { value: "tool_agent", label: "工具增强调查（有界只读）" },
+        { value: "tool_agent", label: "工具增强调查（固定源码只读）" },
       ]} /></Form.Item>
 
-      <Collapse className="section-gap" items={[{ key: "execution-budget", label: "高级设置：调查步数、Token 与超时", children: <Space wrap>
-        {mode === "tool_agent" && <Form.Item name="max_steps" label="工具步骤上限"><InputNumber min={1} max={6} /></Form.Item>}
-        <Form.Item name="max_output_tokens" label="单次输出 Token 上限"><InputNumber min={128} max={3000} /></Form.Item>
-        <Form.Item name="max_total_input_tokens" label="总输入 Token 上限（UTF-8 请求字节预检）"><InputNumber min={1000} max={64000} /></Form.Item>
-        <Form.Item name="max_total_output_tokens" label="总输出 Token 上限"><InputNumber min={512} max={12000} /></Form.Item>
-        <Form.Item name="timeout_seconds" label="超时（秒）"><InputNumber min={90} max={480} /></Form.Item>
+      <Collapse className="section-gap" items={[{ key: "execution-budget", label: "单次请求设置", children: <Space wrap>
+        <Form.Item name="max_output_tokens" label="单次 Provider 输出上限"><InputNumber min={128} max={3000} /></Form.Item>
       </Space> }]} />
-      <Text type="secondary">默认预算已设上限；生成预览后可查看本次数据范围和费用估算。</Text>
+      <Text type="secondary">平台不设调查累计 Token、费用、模型/工具调用次数或总时长上限；服务商账户计费和额度适用。单次请求最多输出此处设置的 Token，45 秒无响应会结束该次请求。工具只读并限定在本次固定候选及扫描源码范围；连续 3 轮没有新增源码证据时会请求总结，用户也可随时取消。</Text>
       <Button className="section-gap" loading={previewBusy} disabled={!ready || !context.job_id || !context.candidate_id}
         onClick={() => void requestPreview()}>预览本次将发送的数据</Button>
       {preview && <Card className="section-gap" size="small" title="外发预览：仅限本次固定候选">
@@ -661,8 +758,11 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
             <Descriptions.Item label="目的地">{preview.provider.endpoint_host} · {preview.provider.model}</Descriptions.Item>
             <Descriptions.Item label="方式">{preview.mode === "single_shot" ? "单轮模型研判" : "工具增强只读调查"}</Descriptions.Item>
             <Descriptions.Item label="推理强度">工具调用 {preview.inference_settings?.tool_call_reasoning_effort || "无"}；结构化输出 {preview.inference_settings?.structured_output_reasoning_effort || "服务商默认"}</Descriptions.Item>
-            <Descriptions.Item label="结构化修复上限">{preview.budgets?.max_validation_repairs ?? 0} 次（受总调用、Token 和时限预算约束）</Descriptions.Item>
-            <Descriptions.Item label="预算费用暴露估算（非硬上限）">{preview.budget_cost_estimate?.status === "budget_based_upper_estimate"
+            <Descriptions.Item label="结构化修复上限">{preview.budgets?.max_validation_repairs ?? 0} 次；每次按单请求输出上限执行</Descriptions.Item>
+            <Descriptions.Item label="Skeptic 请求">{preview.budgets?.max_skeptic_calls ?? 0} 次；与修复调用分别计数</Descriptions.Item>
+            <Descriptions.Item label="费用边界">{preview.budget_cost_estimate?.status === "unbounded_local_usage"
+              ? "本地无累计费用上限，费用按服务商实际计费与账户额度执行；此信息不是账单或费用预测。"
+              : preview.budget_cost_estimate?.status === "budget_based_upper_estimate"
               ? <Space wrap><Text>≤ USD {preview.budget_cost_estimate.maximum_usd}{preview.budget_cost_estimate.maximum_cny ? " / CNY " + preview.budget_cost_estimate.maximum_cny : ""}；{preview.budget_cost_estimate.maximum_cny ? "USD/CNY 为独立官方价目参考；" : ""}按{preview.budget_cost_estimate.basis === "realtime_payg_all_input_uncached" ? "实时按量费率、输入全部按缓存未命中" : "峰值费率、输入全部按缓存未命中"}估算；费率快照 {preview.budget_cost_estimate.rate_card_id}</Text><a href={preview.budget_cost_estimate.rate_source_url} target="_blank" rel="noreferrer">费率来源</a></Space>
               : "费用未知（该 Provider / 模型没有匹配的已知费率）"}</Descriptions.Item>
             <Descriptions.Item label="固定来源">{preview.binding.repository} @ {preview.binding.commit}</Descriptions.Item>
@@ -672,6 +772,8 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
             <Descriptions.Item label="上下文 SHA-256" span={2}><Text code>{preview.initial_context_sha256}</Text></Descriptions.Item>
             <Descriptions.Item label="授权预览 SHA-256" span={2}><Text code>{preview.consent_sha256}</Text></Descriptions.Item>
           </Descriptions>
+          <Alert type="info" showIcon message="独立反证阶段与授权范围"
+            description={preview.stage_disclosure} />
           {preview.agent_execution && !preview.agent_execution.eligible && <Alert type="error" showIcon
             message="该候选不适合发送给模型" description={preview.agent_execution.reason} />}
           <Alert type="warning" showIcon message="自动脱敏不是完整 DLP，请检查完整外发预览"

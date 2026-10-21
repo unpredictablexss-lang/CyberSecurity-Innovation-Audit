@@ -12,6 +12,32 @@ import { SourceContext } from "../audits/OperationForms";
 import { jobDetailPath, retainRiskSource, riskQueuePath } from "./navigation";
 import { triageStateLabel, candidateSeverityLabel, candidateSeverityColor, candidateConfidenceLabel, candidateConfidenceColor, candidateVerificationLabel } from "./riskLabels.js";
 const { Text, Paragraph } = Typography;
+function AgentSignal({ row }: { row: any }) {
+  const signal = row.agent_signal;
+  if (!signal) return triageStateLabel(row.triage_state);
+  const color = signal.assessment === "likely_true_positive" ? "volcano"
+    : signal.assessment === "likely_false_positive" ? "blue" : "default";
+  return <Tooltip title="这是模型基于固定源码给出的研判倾向，不代表漏洞已确认；请打开候选核对证据。">
+    <Space direction="vertical" size={0}>
+      <Tag color={color}>{signal.label}</Tag>
+      {signal.evidence_chain_complete && <Tag color="green">AI 证据链完整 · 待人工核语义</Tag>}
+      <Text type="secondary" style={{ fontSize: 12 }}>
+        {signal.evidence_chain_complete ? "固定源码和跨文件引用已齐全，漏洞仍是候选" : "待人工核对"}
+      </Text>
+      {signal.operation_id && <Button type="link" size="small" onClick={(event) => {
+        event.stopPropagation();
+        go("/tasks/operations/" + signal.operation_id);
+      }}>查看调查报告</Button>}
+    </Space>
+  </Tooltip>;
+}
+function confidenceBasisHint(row: any) {
+  if (row.confidence_basis === "agent_evidence_graph")
+    return "智能调查的固定源码绑定、跨文件义务引用、独立反证和报告校验均已完成；引文语义及产品影响仍需人工复核，漏洞状态保持候选。";
+  if (row.confidence_basis === "human_r0")
+    return "人工已对固定源码中的全部证据义务逐项引用复核；漏洞状态仍为候选。";
+  return "可信程度由固定源码证据门计算；高可信候选仍不是已确认漏洞。";
+}
 function severityBasisHint(row: any) {
   if (row.severity_evidence === "cwe_type_heuristic_unverified")
     return "仅按 " + (row.severity_basis || "CWE 漏洞类型") + " 的潜在危害进行初步分类；尚未证明可利用性或产品安全影响。";
@@ -156,7 +182,7 @@ export function RiskCenter({ jobs, query = new URLSearchParams() }: { jobs: any[
               : candidateVerificationLabel(row.vulnerability_state) },
           { title: "仓库 / Commit", render: (_: unknown, row: any) => <><Text>{row.repository}</Text><div className="muted">{String(row.commit || "").slice(0, 12)}</div></> },
           { title: "检测器 / 候选位置", render: (_: unknown, row: any) => <>{row.detector_id || "未知检测器"}<div>{row.file}:{row.line}</div><div className="muted">{row.rule_id}</div></> },
-          { title: "研判状态", dataIndex: "triage_state", render: (value: string) => triageStateLabel(value) },
+          { title: "AI 研判", render: (_: unknown, row: any) => <AgentSignal row={row} /> },
           { title: "查看", render: (_: unknown, row: any) => <Button size="small" onClick={(event) => { event.stopPropagation(); openCandidate(row); }}>查看证据 / 人工研判</Button> },
         ]}
         locale={{ emptyText: <Empty description={loading ? "正在读取候选队列…" :
@@ -231,14 +257,16 @@ export function AuditRiskOverview() {
       onRow={(row) => ({ onClick: () => openCandidate(row), style: { cursor: "pointer" } })}
       columns={[
         { title: "可信程度", render: (_: unknown, row: any) =>
-          <Tag color={candidateConfidenceColor(row.risk_tier)}>{candidateConfidenceLabel(row.risk_tier)}</Tag> },
+          <Tooltip title={confidenceBasisHint(row)}>
+            <Tag color={candidateConfidenceColor(row.risk_tier)}>{candidateConfidenceLabel(row.risk_tier)}</Tag>
+          </Tooltip> },
         { title: "危害等级（初判）", render: (_: unknown, row: any) =>
           <Tooltip title={severityBasisHint(row)}>
               <Tag color={candidateSeverityColor(row.severity)}>{candidateSeverityLabel(row.severity)}</Tag>
             </Tooltip> },
         { title: "仓库 / Commit", render: (_: unknown, row: any) => <><Text>{row.repository}</Text><div className="muted">{String(row.commit || "").slice(0, 12)}</div></> },
         { title: "候选位置", render: (_: unknown, row: any) => <>{row.file}:{row.line}<div className="muted">{row.rule_id}</div></> },
-        { title: "研判状态", dataIndex: "triage_state", render: (value: string) => triageStateLabel(value) },
+        { title: "AI 研判", render: (_: unknown, row: any) => <AgentSignal row={row} /> },
         { title: "查看", render: (_: unknown, row: any) => <Button size="small" onClick={(event) => { event.stopPropagation(); openCandidate(row); }}>查看证据 / 人工研判</Button> },
       ]}
       locale={{ emptyText: <Empty description={summary?.available_report_count ? "最近报告没有候选观测；这不代表仓库不存在漏洞。" : "完成一次扫描后，这里会显示近期风险优先队列。"} /> }} />

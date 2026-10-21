@@ -3,12 +3,16 @@
 Authored controls verify wiring/evidence gates, not product accuracy.
 """
 import json
+import os
 import subprocess
 import unittest
 from unittest.mock import patch
 from tests import test_workbench as fixtures
 from src.ohscanner.execution import run_fixed_commit_scan
-from src.workbench import service
+from src.workbench import operations, service, smart_audit
+from tests.test_risk_confidence import build_valid_agent_result
+from src.workbench.operations_store import Operations
+from src.workbench.operation_worker import OperationWorker
 from src.workbench.worker import Worker
 
 
@@ -70,7 +74,7 @@ class OwnerIntegrationTests(unittest.TestCase):
             "OHSCANNER_LLM_MODEL": "mimo-v2.6-pro",
             "OHSCANNER_LLM_API_KEY": "test-provider-key",
         }, clear=False):
-            plan = self.plan(auto_triage=True, max_triage_candidates=2, max_cost_usd="0.10")
+            plan = self.plan(auto_triage=True, max_triage_candidates=2)
             consent = plan["triage_authorization_preview"]
             self.assertTrue(consent["eligible"])
             self.assertEqual(consent["manifest"]["candidate_limit"], 2)
@@ -80,7 +84,7 @@ class OwnerIntegrationTests(unittest.TestCase):
             self.assertTrue(plan["workflow"]["automatic_model_calls"])
 
             job = self.scan(
-                auto_triage=True, max_triage_candidates=2, max_cost_usd="0.10",
+                auto_triage=True, max_triage_candidates=2,
                 expected_plan_sha256=plan["plan_sha256"],
                 expected_workflow_sha256=plan["workflow_sha256"],
                 expected_triage_consent_sha256=consent["consent_sha256"],
@@ -107,7 +111,375 @@ class OwnerIntegrationTests(unittest.TestCase):
             self.assertEqual(self.store.triage_authorization(job["id"])["consent_sha256"],
                              consent["consent_sha256"])
 
-    def test_task_cost_budget_is_required_and_bound_to_preview(self):
+    def test_real_workers_fixed_endpoints_and_fake_agent_provider_e2e(self):
+        """Exercise static and Agent subprocess Workers; the fake provider proves wiring only."""
+        (self.repo / "endpoint-note.txt").write_text("second fixed endpoint\n")
+        fixtures.git(self.repo, "add", "endpoint-note.txt")
+        fixtures.git(self.repo, "commit", "-qm", "second endpoint")
+        endpoint = fixtures.git(self.repo, "rev-parse", "HEAD")
+        payload = {
+            "repository_id": self.repo_id, "baseline": self.commit, "endpoint": endpoint,
+            "include_paths": ["."], "detector_ids": [
+                "ohscanner.cpp.lifetime", "ohscanner.cpp.shared_ptr_race",
+            ],
+            "timeout_seconds": 90, "memory_mb": 1024, "audit_mode": "standard_review",
+            "auto_triage": True, "max_triage_candidates": 1,
+            "max_r2_candidates": 0,
+        }
+        provider_env = {
+            "OHSCANNER_LLM_BASE_URL": "https://api.xiaomimimo.com/v1",
+            "OHSCANNER_LLM_MODEL": "mimo-v2.6-pro",
+            "OHSCANNER_LLM_API_KEY": "synthetic-no-network-key",
+        }
+        with patch.dict(os.environ, provider_env, clear=False):
+            preview_response = self.client.post(
+                "/api/v1/operations/scan-previews",
+                json={"kind": "range", "payload": payload}, headers=fixtures.HEADERS,
+            )
+            self.assertEqual(preview_response.status_code, 200, preview_response.text)
+            preview = preview_response.json()["triage_authorization_preview"]
+            self.assertTrue(preview["eligible"])
+            authorizations = [
+                {key: item[key] for key in (
+                    "plan_sha256", "workflow_sha256", "consent_sha256", "consent_nonce")}
+                for item in preview["scans"]
+            ]
+            created = self.client.post(
+                "/api/v1/operations/revision-ranges",
+                json={**payload, "triage_authorizations": authorizations},
+                headers=fixtures.HEADERS,
+            )
+            self.assertEqual(created.status_code, 201, created.text)
+            operation_id = created.json()["id"]
+            scan_ids = created.json()["spec"]["scan_ids"]
+
+            # Run the actual isolated scanner subprocess for both immutable commits.
+            Worker(self.settings).run(once=True)
+            triage_batches = []
+            for job_id, expected_commit in zip(scan_ids, (self.commit, endpoint)):
+                job = self.store.job(job_id)
+                self.assertEqual(job["status"], "completed_with_limitations", job)
+                self.assertEqual(job["spec"]["commit"], expected_commit)
+                self.assertTrue(job["report_sha256"])
+                batch = Operations(self.store).triage_batches_for_job(
+                    job_id, job["report_sha256"])[-1]
+                self.assertEqual(batch["status"], "queued", batch)
+                self.assertGreaterEqual(batch["candidate_count"], 2, batch)
+                self.assertEqual(batch["selected_count"], 1, batch)
+                triage_batches.append(batch)
+
+            queued = self.client.get(
+                "/api/v1/operations/" + operation_id, headers=fixtures.HEADERS)
+            self.assertEqual(queued.status_code, 200, queued.text)
+            progress = queued.json()["intelligent_review_progress"]
+            self.assertEqual([item["scan_status"] for item in progress],
+                             ["completed_with_limitations"] * 2)
+            self.assertTrue(all(item["agent_authorized"] for item in progress))
+            self.assertTrue(all(item["agent_status"] == "queued" for item in progress))
+            for item, batch in zip(progress, triage_batches):
+                self.assertEqual(len(item["r1_operations"]), 1)
+                queued_summary = item["r1_operations"][0]
+                queued_operation = Operations(self.store).smart_triage_operations(batch["id"])[0]
+                self.assertEqual(queued_summary["id"], queued_operation["id"])
+                self.assertEqual(queued_summary["status"], "queued")
+                self.assertIsNone(queued_summary["result_sha256"])
+                self.assertEqual(queued_summary["candidate_id"], queued_operation["spec"]["candidate_id"])
+                self.assertEqual(queued_summary["commit"], queued_operation["spec"]["source_commit"])
+                self.assertEqual(queued_summary["report_sha256"], queued_operation["spec"]["report_sha256"])
+                self.assertEqual(item["r2_operations"], [])
+
+            ops = Operations(self.store)
+            # A test-only sitecustomize replaces the provider client inside the real
+            # child process. The production OperationWorker still applies its process
+            # boundary, environment filter, resource limits, timeout and result write.
+            fake_provider_dir = self.root / "fake-provider"
+            fake_provider_dir.mkdir()
+            fake_provider_dir.joinpath("sitecustomize.py").write_text(r'''
+import json
+import os
+
+if os.environ.get("OHSCANNER_TEST_PROVIDER_TRACE"):
+    from src.workbench import agent
+
+    class FakeResponsesClient:
+        def __init__(self, *args, **kwargs):
+            pass
+
+        def create_with_timeout(self, request, timeout):
+            return self.create(request)
+
+        def create(self, request, **kwargs):
+            context = json.loads(request["input"][0]["content"][0]["text"])
+            candidate_id = context.get("candidate_id")
+            obligations = context.get("evidence_obligations", [])
+            if not candidate_id or not obligations:
+                raise ValueError("fake provider received an incomplete candidate request")
+            trace_path = os.environ["OHSCANNER_TEST_PROVIDER_TRACE"]
+            with open(trace_path, "a", encoding="utf-8") as trace:
+                trace.write(json.dumps({"candidate_id": candidate_id,
+                                        "obligation_count": len(obligations)}) + "\n")
+            result = {
+                "summary": "Synthetic review; human verification remains required.",
+                "assessment": "needs_more_evidence",
+                "supported_claims": [],
+                "obligation_reviews": [
+                    {"obligation_index": index, "disposition": "unresolved", "citations": []}
+                    for index in range(len(obligations))
+                ],
+                "unsupported_claims": [], "unknowns": ["Product reachability"],
+                "next_steps": ["Review the fixed source and runtime path."],
+            }
+            return {
+                "status": "completed",
+                "output": [{"type": "message", "content": [
+                    {"type": "output_text", "text": json.dumps(result)}]}],
+                "usage": {"input_tokens": 120, "output_tokens": 30, "total_tokens": 150},
+            }
+
+    agent.ResponsesClient = FakeResponsesClient
+''')
+            trace_path = self.root / "fake-provider-trace.jsonl"
+            old_pythonpath = os.environ.get("PYTHONPATH", "")
+            worker_pythonpath = os.pathsep.join(
+                path for path in (str(fake_provider_dir), str(fixtures.ROOT), old_pythonpath)
+                if path
+            )
+            worker_test_env = {
+                "PYTHONPATH": worker_pythonpath,
+                "OHSCANNER_TEST_PROVIDER_TRACE": str(trace_path),
+            }
+            # The operation itself uses the production parent/child dispatcher.
+            with patch.dict(os.environ, worker_test_env, clear=False):
+                OperationWorker(self.settings).run(once=True)
+                parent = ops.get(operation_id)
+                self.assertIn(parent["status"], {"completed", "completed_with_limitations"}, parent)
+            expected_agent_ids = [key for batch in triage_batches for key in batch["operation_ids"]]
+            self.assertEqual(len(expected_agent_ids), 2)
+            for expected_id in expected_agent_ids:
+                with patch.dict(os.environ, worker_test_env, clear=False):
+                    OperationWorker(self.settings).run(once=True)
+                task = ops.get(expected_id)
+                self.assertEqual(task["kind"], "agent_investigation")
+                stored = self.client.get(
+                    "/api/v1/operations/" + task["id"], headers=fixtures.HEADERS).json()
+                self.assertIn(
+                    stored["status"], {"completed", "completed_with_limitations"},
+                    {"operation": stored, "worker_log":
+                     (ops.directory(task["id"]) / "worker.log").read_text(errors="replace")},
+                )
+                self.assertEqual(stored["result"]["vulnerability_state"], "candidate")
+                self.assertEqual(stored["result"]["validated_vulnerability"], 0)
+                self.assertTrue(stored["result"]["agent_assessment"]["obligation_reviews"])
+                self.assertNotIn("synthetic-no-network-key", json.dumps(stored))
+                self.assertTrue((ops.directory(task["id"]) / "child-result.json").is_file())
+
+            provider_trace = [json.loads(line) for line in trace_path.read_text().splitlines()]
+            self.assertEqual(len(provider_trace), 2)
+            self.assertTrue(all(item["obligation_count"] > 0 for item in provider_trace))
+
+            completed = self.client.get(
+                "/api/v1/operations/" + operation_id, headers=fixtures.HEADERS).json()
+            final_progress = completed["intelligent_review_progress"]
+            self.assertTrue(all(item["agent_status"] == "partially_completed" for item in final_progress))
+            for index, (item, batch) in enumerate(zip(final_progress, triage_batches)):
+                self.assertEqual(len(item["r1_operations"]), 1)
+                completed_summary = item["r1_operations"][0]
+                completed_operation = Operations(self.store).smart_triage_operations(batch["id"])[0]
+                self.assertEqual(completed_summary["status"], "completed_with_limitations")
+                self.assertTrue(completed_summary["result_sha256"])
+                self.assertEqual(completed_summary["id"], expected_agent_ids[index])
+                self.assertEqual(completed_summary["candidate_id"], completed_operation["spec"]["candidate_id"])
+                self.assertEqual(completed_summary["commit"], completed_operation["spec"]["source_commit"])
+                self.assertEqual(completed_summary["report_sha256"], completed_operation["spec"]["report_sha256"])
+                self.assertEqual(item["r2_operations"], [])
+            self.assertTrue(all(item["candidate_count"] >= 2 for item in final_progress))
+            self.assertTrue(all(item["r1_selected_count"] == 1 for item in final_progress))
+            self.assertTrue(all(item["r1_not_selected_count"] >= 1 for item in final_progress))
+            self.assertTrue(all(item["report_available"] for item in final_progress))
+            self.assertTrue(all(not item["model_result_is_product_vulnerability_confirmation"]
+                                for item in final_progress))
+
+    def test_tool_agent_worker_e2e_reads_bound_source_and_preserves_candidate(self):
+        job = self.scan(detector_ids=["ohscanner.cpp.lifetime"])
+        Worker(self.settings).run(once=True)
+        job = self.store.job(job["id"])
+        self.assertIn(job["status"], {"completed", "completed_with_limitations"}, job)
+        report = service.read_report(self.settings, job)
+        candidate = next(item for item in service.findings(report)
+                         if item["file"] == "lifetime.cpp")
+        payload = {"job_id": job["id"], "candidate_id": candidate["id"],
+                   "mode": "tool_agent", "max_steps": 2,
+                   "max_output_tokens": 1200}
+        provider_env = {
+            "OHSCANNER_LLM_BASE_URL": "https://api.xiaomimimo.com/v1",
+            "OHSCANNER_LLM_MODEL": "mimo-v2.6-pro",
+            "OHSCANNER_LLM_API_KEY": "synthetic-no-network-key",
+        }
+        with patch.dict(os.environ, provider_env, clear=False):
+            preview_response = self.client.post(
+                "/api/v1/operations/agent-investigations/preview",
+                json=payload, headers=fixtures.HEADERS)
+            self.assertEqual(preview_response.status_code, 200, preview_response.text)
+            preview = preview_response.json()
+            self.assertTrue(preview["agent_execution"]["eligible"], preview)
+            created = self.client.post(
+                "/api/v1/operations/agent-investigations",
+                json={**payload, "source_submission_approved": True,
+                      "consent_sha256": preview["consent_sha256"],
+                      "consent_nonce": preview["consent_nonce"]},
+                headers=fixtures.HEADERS)
+            self.assertEqual(created.status_code, 201, created.text)
+
+        fake_provider_dir = self.root / "fake-tool-provider"
+        fake_provider_dir.mkdir()
+        fake_provider_dir.joinpath("sitecustomize.py").write_text(r'''
+import json
+import os
+
+if os.environ.get("OHSCANNER_TEST_TOOL_TRACE"):
+    from src.workbench import agent
+
+    class FakeResponsesClient:
+        def __init__(self, *args, **kwargs):
+            self.tool_requests = 0
+            self.obligation_count = 0
+            self.candidate_id = None
+
+        def create_with_timeout(self, request, timeout):
+            return self.create(request)
+
+        def create(self, request, **kwargs):
+            schema_name = request.get("text", {}).get("format", {}).get("name")
+            if schema_name == "ohscanner_skeptic_review":
+                context = {"candidate_id": self.candidate_id,
+                           "evidence_obligations": [None] * self.obligation_count}
+            else:
+                inputs = request.get("input", [])
+                context = json.loads(inputs[0]["content"][0]["text"])
+                self.candidate_id = context.get("candidate_id")
+                self.obligation_count = len(context.get("evidence_obligations", []))
+            trace_path = os.environ["OHSCANNER_TEST_TOOL_TRACE"]
+            if request.get("tools"):
+                self.tool_requests += 1
+                if self.tool_requests == 1:
+                    with open(trace_path, "a", encoding="utf-8") as trace:
+                        trace.write(json.dumps({"phase": "tool_call",
+                            "commit": os.environ["OHSCANNER_TEST_TOOL_EXPECTED_COMMIT"],
+                            "candidate_id": context["candidate_id"]}) + "\n")
+                    return {"status": "completed", "output": [{
+                        "type": "function_call", "call_id": "fixed-source-call-1",
+                        "name": "read_candidate_enclosing_function", "arguments": "{}"}],
+                        "usage": {"input_tokens": 100, "output_tokens": 20,
+                                  "total_tokens": 120}}
+                return {"status": "completed", "output": [{"type": "message",
+                    "content": [{"type": "output_text", "text": "Synthesize only cited source evidence."}]}],
+                    "usage": {"input_tokens": 110, "output_tokens": 15,
+                              "total_tokens": 125}}
+
+            obligations = context.get("evidence_obligations", [])
+            if schema_name == "ohscanner_skeptic_review":
+                value = {"reviews": [{"obligation_index": index, "result": "unknown",
+                                      "citations": []}
+                                     for index in range(len(obligations))]}
+                phase = "skeptic"
+                trace_extra = {}
+            elif schema_name == "ohscanner_candidate_artifacts":
+                value = {
+                    "vulnerability_report": {
+                        "title": "Fixed-source candidate report",
+                        "summary": "Evidence is incomplete; product reachability remains unknown.",
+                        "root_cause": "The source path requires human review.",
+                        "impact": "Product impact is unknown.", "preconditions": [],
+                        "attack_path": [], "remediation": "Review the applicable product policy.",
+                        "citations": [],
+                    },
+                    "poc_draft": {
+                        "title": "Evidence-gated local test draft", "language": "",
+                        "code": "", "prerequisites": [], "run_steps": [],
+                        "expected_observation": "Evidence is insufficient for a test draft.",
+                        "negative_control": "", "citations": [],
+                    },
+                }
+                phase = "artifact_generation"
+                trace_extra = {
+                    "candidate_binding": context.get("candidate_binding"),
+                    "source_evidence_ids": [item.get("evidence_id")
+                        for item in context.get("source_evidence", [])
+                        if isinstance(item, dict)],
+                }
+            else:
+                value = {"summary": "Synthetic source review; human/runtime evidence is still required.",
+                    "assessment": "needs_more_evidence", "supported_claims": [],
+                    "obligation_reviews": [
+                        {"obligation_index": index, "disposition": "unresolved", "citations": []}
+                        for index in range(len(obligations))],
+                    "unsupported_claims": [], "unknowns": ["Product reachability"],
+                    "next_steps": ["Review the fixed source and validate the runtime path."]}
+                phase = "structured_review"
+                trace_extra = {}
+            with open(trace_path, "a", encoding="utf-8") as trace:
+                trace.write(json.dumps({"phase": phase, "schema": schema_name,
+                                        "candidate_id": context["candidate_id"],
+                                        **trace_extra}) + "\n")
+            return {"status": "completed", "output": [{"type": "message", "content": [
+                {"type": "output_text", "text": json.dumps(value)}]}],
+                "usage": {"input_tokens": 130, "output_tokens": 30,
+                          "total_tokens": 160}}
+
+    agent.ResponsesClient = FakeResponsesClient
+''')
+        trace_path = self.root / "tool-agent-provider-trace.jsonl"
+        old_pythonpath = os.environ.get("PYTHONPATH", "")
+        worker_pythonpath = os.pathsep.join(
+            path for path in (str(fake_provider_dir), str(fixtures.ROOT), old_pythonpath)
+            if path)
+        with patch.dict(os.environ, {
+            "PYTHONPATH": worker_pythonpath,
+            **provider_env,
+            "OHSCANNER_TEST_TOOL_TRACE": str(trace_path),
+            "OHSCANNER_TEST_TOOL_EXPECTED_COMMIT": self.commit,
+        }, clear=False):
+            OperationWorker(self.settings).run(once=True)
+
+        operation = Operations(self.store).get(created.json()["id"])
+        self.assertIn(operation["status"], {"completed", "completed_with_limitations"},
+                      {"operation": operation, "worker_log":
+                       (Operations(self.store).directory(operation["id"]) / "worker.log").read_text(errors="replace")})
+        stored = self.client.get("/api/v1/operations/" + operation["id"],
+                                 headers=fixtures.HEADERS).json()
+        result = stored["result"]
+        self.assertEqual(result["binding"]["commit"], self.commit)
+        self.assertEqual(result["binding"]["candidate_id"], candidate["id"])
+        self.assertEqual(result["vulnerability_state"], "candidate")
+        self.assertEqual(result["validated_vulnerability"], 0)
+        tool_calls = result["tool_calls"]
+        self.assertEqual(len(tool_calls), 1)
+        self.assertEqual(tool_calls[0]["tool"], "read_candidate_enclosing_function")
+        self.assertEqual(tool_calls[0]["evidence_kind"], "source_code")
+        self.assertIn("lifetime.cpp", tool_calls[0]["result"]["file"])
+        self.assertTrue(tool_calls[0]["result_sha256"])
+        self.assertEqual(result["agent_assessment"]["assessment"], "needs_more_evidence")
+        self.assertEqual(result["skeptic_review"]["status"], "completed")
+        self.assertEqual(result["artifact_generation"]["status"], "completed")
+        self.assertEqual(result["agent_assessment"]["vulnerability_report"]["status"], "draft_unverified")
+        self.assertEqual(result["agent_assessment"]["poc_draft"]["status"], "insufficient_evidence")
+        self.assertEqual(result["agent_assessment"]["poc_draft"]["code"], "")
+        self.assertNotIn("synthetic-no-network-key", json.dumps(stored))
+        provider_trace = [json.loads(line) for line in trace_path.read_text().splitlines()]
+        self.assertEqual([item["phase"] for item in provider_trace],
+                         ["tool_call", "structured_review", "skeptic", "artifact_generation"])
+        self.assertTrue(all(item["candidate_id"] == candidate["id"]
+                            for item in provider_trace))
+        artifact_trace = provider_trace[-1]
+        self.assertEqual(artifact_trace["candidate_binding"]["candidate_id"], candidate["id"])
+        self.assertEqual(artifact_trace["candidate_binding"]["commit"], result["binding"]["commit"])
+        self.assertEqual(artifact_trace["candidate_binding"]["report_sha256"],
+                         result["binding"]["report_sha256"])
+        self.assertEqual(artifact_trace["candidate_binding"]["source_sha256"],
+                         result["binding"]["source_sha256"])
+        self.assertIn(tool_calls[0]["evidence_id"], artifact_trace["source_evidence_ids"])
+
+    def test_task_triage_has_no_platform_budget_cap_and_is_bound_to_preview(self):
         with patch.dict("os.environ", {
             "OHSCANNER_LLM_BASE_URL": "https://api.xiaomimimo.com/v1",
             "OHSCANNER_LLM_MODEL": "mimo-v2.6-pro",
@@ -118,19 +490,27 @@ class OwnerIntegrationTests(unittest.TestCase):
                 json=self.request(auto_triage=True, max_triage_candidates=2),
                 headers=fixtures.HEADERS,
             )
-            self.assertEqual(no_budget.status_code, 409, no_budget.text)
-            self.assertIn("费用上限", no_budget.text)
+            self.assertEqual(no_budget.status_code, 200, no_budget.text)
+            preview = no_budget.json()["triage_authorization_preview"]
+            self.assertTrue(preview["eligible"])
+            manifest = preview["manifest"]
+            for key in ("max_total_model_calls", "max_total_tool_calls"):
+                self.assertIsNone(manifest["budgets"].get(key), key)
+            self.assertEqual(manifest["budgets"]["local_cumulative_token_budget"], "none")
+            self.assertEqual(manifest["budgets"]["local_cumulative_usd_budget"], "none")
+            self.assertEqual(manifest["budgets"]["local_total_wall_time_budget"], "none")
+            self.assertEqual(manifest["usage_policy"]["local_cumulative_token_budget"], "none")
+            self.assertEqual(manifest["usage_policy"]["local_cumulative_usd_budget"], "none")
+            self.assertEqual(manifest["usage_policy"]["local_total_wall_time_budget"], "none")
 
-            plan = self.plan(auto_triage=True, max_triage_candidates=2,
-                             max_cost_usd="0.10")
-            changed_plan = self.plan(auto_triage=True, max_triage_candidates=2,
-                                     max_cost_usd="0.11")
+            plan = self.plan(auto_triage=True, max_triage_candidates=2)
+            changed_plan = self.plan(auto_triage=True, max_triage_candidates=1)
             self.assertNotEqual(plan["workflow_sha256"], changed_plan["workflow_sha256"])
             consent = plan["triage_authorization_preview"]
             stale = self.client.post(
                 "/api/v1/scans",
                 json=self.request(
-                    auto_triage=True, max_triage_candidates=2, max_cost_usd="0.11",
+                    auto_triage=True, max_triage_candidates=1,
                     expected_plan_sha256=plan["plan_sha256"],
                     expected_workflow_sha256=plan["workflow_sha256"],
                     expected_triage_consent_sha256=consent["consent_sha256"],
@@ -166,10 +546,10 @@ class OwnerIntegrationTests(unittest.TestCase):
             "OHSCANNER_LLM_MODEL": "mimo-v2.6-pro",
             "OHSCANNER_LLM_API_KEY": "test-provider-key",
         }, clear=False):
-            plan = self.plan(auto_triage=True, max_triage_candidates=2, max_cost_usd="0.10")
+            plan = self.plan(auto_triage=True, max_triage_candidates=2)
             consent = plan["triage_authorization_preview"]
             job = self.scan(
-                auto_triage=True, max_triage_candidates=2, max_cost_usd="0.10",
+                auto_triage=True, max_triage_candidates=2,
                 expected_plan_sha256=plan["plan_sha256"],
                 expected_workflow_sha256=plan["workflow_sha256"],
                 expected_triage_consent_sha256=consent["consent_sha256"],
@@ -276,6 +656,100 @@ class OwnerIntegrationTests(unittest.TestCase):
             headers=fixtures.HEADERS,
         )
         self.assertEqual(invalid_detector.status_code, 409)
+
+    def test_risk_overview_surfaces_bound_agent_tendency_without_confirming_vulnerability(self):
+        job = self.scan()
+        Worker(self.settings).run(once=True)
+        job = self.store.job(job["id"])
+        report = service.read_report(self.settings, job)
+        candidate = service.findings(report)[0]
+        operations = Operations(self.store)
+        operation = operations.create("agent_investigation", {
+            "job_id": job["id"], "report_sha256": job["report_sha256"],
+            "candidate_id": candidate["id"], "mode": "tool_agent",
+        })
+        claimed = operations.claim()
+        self.assertEqual(claimed["id"], operation["id"])
+        result = {
+            "status": "completed_with_limitations",
+            "vulnerability_state": "candidate",
+            "validated_vulnerability": 0,
+            "binding": {
+                "job_id": job["id"], "repository": report["repository"],
+                "commit": report["commit"], "tree": report.get("tree"),
+                "snapshot_sha256": report.get("snapshot_sha256"),
+                "report_sha256": job["report_sha256"],
+                "candidate_id": candidate["id"], "file": candidate["file"],
+                "source_sha256": candidate["source_sha256"],
+            },
+            "agent_assessment": {"assessment": "likely_true_positive"},
+        }
+        operations.finish(operation["id"], result=result)
+        response = self.client.get("/api/v1/overview/risks?scan_limit=10",
+                                   headers=fixtures.HEADERS)
+        self.assertEqual(response.status_code, 200, response.text)
+        item = next(row for row in response.json()["items"]
+                    if row["audit_id"] == job["id"] and row["candidate_id"] == candidate["id"])
+        self.assertEqual(item["agent_signal"], {
+            "assessment": "likely_true_positive", "label": "模型倾向真实候选",
+            "operation_id": operation["id"],
+            "human_review_required": True, "product_state": "candidate",
+            "evidence_chain_complete": False, "evidence_chain_reason": None,
+        })
+        self.assertEqual(item["vulnerability_state"], "candidate")
+        self.assertEqual(response.json()["validated_vulnerability"], 0)
+
+    def test_complete_agent_evidence_graph_raises_only_candidate_confidence(self):
+        job = self.scan()
+        Worker(self.settings).run(once=True)
+        job = self.store.job(job["id"])
+        report = service.read_report(self.settings, job)
+        candidate = service.findings(report)[0]
+        obligations = candidate.get("evidence", {}).get("obligations", [])
+        binding = {
+            "job_id": job["id"], "repository": report["repository"],
+            "commit": report["commit"], "tree": report.get("tree"),
+            "snapshot_sha256": report.get("snapshot_sha256"),
+            "report_sha256": job["report_sha256"], "candidate_id": candidate["id"],
+            "file": candidate["file"], "source_sha256": candidate["source_sha256"],
+        }
+        result = build_valid_agent_result(
+            binding=binding, candidate_file=candidate["file"],
+            obligation_count=len(obligations),
+        )
+        operations = Operations(self.store)
+        operation = operations.create("agent_investigation", {
+            "job_id": job["id"], "report_sha256": job["report_sha256"],
+            "candidate_id": candidate["id"], "mode": "tool_agent",
+        })
+        self.assertEqual(operations.claim()["id"], operation["id"])
+        operations.finish(operation["id"], result=result)
+        self.assertTrue(smart_audit._source_binding_valid(report, candidate), candidate)
+        stored_result = operations.result(operation["id"])
+        self.assertEqual(stored_result["binding"], result["binding"])
+        self.assertEqual(stored_result["mode"], "tool_agent")
+        stored_operation = operations.agent_investigations_for_job(
+            job["id"], job.get("report_sha256"))[0]
+        self.assertIsNotNone(
+            smart_audit._agent_signal(operations, stored_operation, job, report, candidate),
+            {"operation": stored_operation, "binding": stored_result.get("binding"),
+             "agent_assessment": stored_result.get("agent_assessment"),
+             "state": stored_result.get("vulnerability_state"),
+             "validated": stored_result.get("validated_vulnerability")},
+        )
+
+        response = self.client.get("/api/v1/overview/risks?scan_limit=10",
+                                   headers=fixtures.HEADERS)
+        self.assertEqual(response.status_code, 200, response.text)
+        item = next(row for row in response.json()["items"]
+                    if row["audit_id"] == job["id"] and row["candidate_id"] == candidate["id"])
+        self.assertEqual(item["risk_tier"], "high_confidence_candidate", repr(item.get("agent_signal")))
+        self.assertTrue(item["agent_signal"]["evidence_chain_complete"],
+                        item["agent_signal"].get("evidence_chain_reason"))
+        self.assertEqual(item["confidence_basis"], "agent_evidence_graph")
+        self.assertTrue(item["agent_signal"]["evidence_chain_complete"])
+        self.assertEqual(item["vulnerability_state"], "candidate")
+        self.assertEqual(response.json()["validated_vulnerability"], 0)
 
     def test_overview_risk_queue_paginates_after_combined_filters(self):
         job = self.scan()
@@ -399,10 +873,10 @@ class OwnerIntegrationTests(unittest.TestCase):
             "OHSCANNER_LLM_MODEL": "mimo-v2.6-pro",
             "OHSCANNER_LLM_API_KEY": "test-provider-key",
         }, clear=False):
-            plan = self.plan(auto_triage=True, max_triage_candidates=1, max_cost_usd="0.10")
+            plan = self.plan(auto_triage=True, max_triage_candidates=1)
             consent = plan["triage_authorization_preview"]
             job = self.scan(
-                auto_triage=True, max_triage_candidates=1, max_cost_usd="0.10",
+                auto_triage=True, max_triage_candidates=1,
                 expected_plan_sha256=plan["plan_sha256"],
                 expected_workflow_sha256=plan["workflow_sha256"],
                 expected_triage_consent_sha256=consent["consent_sha256"],
@@ -472,15 +946,18 @@ class OwnerIntegrationTests(unittest.TestCase):
             "OHSCANNER_LLM_MODEL": "mimo-v2.6-pro",
             "OHSCANNER_LLM_API_KEY": "test-provider-key",
         }, clear=False):
-            plan = self.plan(auto_triage=True, max_triage_candidates=2, max_r2_candidates=1,
-                             max_cost_usd="0.10")
+            plan = self.plan(auto_triage=True, max_triage_candidates=2, max_r2_candidates=1)
             consent = plan["triage_authorization_preview"]
             self.assertEqual(consent["manifest"]["conditional_r2"]["mode"], "tool_agent")
             self.assertEqual(consent["manifest"]["r2_candidate_limit"], 1)
-            self.assertEqual(consent["manifest"]["budgets"]["max_requests"], 14)
+            budgets = consent["manifest"]["budgets"]
+            for key in ("max_total_model_calls", "max_total_tool_calls"):
+                self.assertIsNone(budgets.get(key), key)
+            self.assertEqual(budgets["local_cumulative_token_budget"], "none")
+            self.assertEqual(budgets["local_cumulative_usd_budget"], "none")
+            self.assertEqual(budgets["local_total_wall_time_budget"], "none")
             job = self.scan(
                 auto_triage=True, max_triage_candidates=2, max_r2_candidates=1,
-                max_cost_usd="0.10",
                 expected_plan_sha256=plan["plan_sha256"],
                 expected_workflow_sha256=plan["workflow_sha256"],
                 expected_triage_consent_sha256=consent["consent_sha256"],
@@ -532,7 +1009,7 @@ class OwnerIntegrationTests(unittest.TestCase):
                     saved = enqueue_authorized_r2_followups(
                         self.settings, self.store, ops, batch["id"])
                     self.assertTrue(source_gate.called, repr(saved.get("r2_candidate_manifest")))
-                    self.assertEqual(saved["r2_status"], "budget_limited")
+                    self.assertEqual(saved["r2_status"], "candidate_limit_reached")
                     self.assertEqual(len(saved["r2_operation_ids"]), 1)
                     r2 = ops.get(saved["r2_operation_ids"][0])
                     parent = next(item for item in completed_r1
@@ -540,7 +1017,8 @@ class OwnerIntegrationTests(unittest.TestCase):
                     selected_candidate = next(item for item in candidates
                                               if item["id"] == r2["spec"]["candidate_id"])
                     self.assertEqual(r2["spec"]["mode"], "tool_agent")
-                    self.assertEqual(r2["spec"]["max_steps"], 2)
+                    self.assertTrue(r2["spec"]["continuous_investigation"])
+                    self.assertNotIn("max_steps", r2["spec"])
                     self.assertEqual(r2["spec"]["r1_result_sha256"], parent["result_sha256"])
                     prepared = {
                         "source": {"sha256": selected_candidate["source_sha256"]},
@@ -564,7 +1042,7 @@ class OwnerIntegrationTests(unittest.TestCase):
                     self.assertEqual(summary.status_code, 200, summary.text)
                     batch_view = next(item for item in summary.json()["batches"]
                                       if item["id"] == batch["id"])
-                    self.assertEqual(batch_view["conditional_r2"]["state"], "budget_limited")
+                    self.assertEqual(batch_view["conditional_r2"]["state"], "candidate_limit_reached")
                     self.assertEqual(batch_view["conditional_r2"]["operation_ids"],
                                      saved["r2_operation_ids"])
                     revoked = self.client.post(
@@ -787,7 +1265,8 @@ class OwnerIntegrationTests(unittest.TestCase):
         self.assertIn('No reviewed sensitive-source model', ' '.join(run['limitations']))
         self.assertTrue(any(item['rule_id'] == 'data.log.sensitive-value'
                             for item in run['diagnostics']))
-        self.assertEqual(run['tool_version'], '0.21.0')
+        from src.ohscanner.detectors.data.sensitive_exposure import SensitiveExposureDetector
+        self.assertEqual(run['tool_version'], SensitiveExposureDetector.version)
         self.assertEqual(report['validated_vulnerability'], 0)
 
     def test_changed_branch_after_preview_requires_new_plan(self):

@@ -121,13 +121,13 @@ export default function AgentBlindReview({ operations }: { operations: any[] }) 
     finally { setBusy(false); }
   };
   const reviewed = session?.items?.filter((item: any) => item.reviewed).length || 0;
-  return <Card className="section-gap" title="R1 / R2 离线匿名盲审">
+  return <Card className="section-gap" title="智能调查结果离线匿名盲审">
     <Alert type="warning" showIcon message="离线复核，不把原操作详情交给复核人" description="导出的复核包不含模式、模型、仓库/提交/候选标识或原操作 ID。把 JSON 和离线表单交给独立复核人；复核期间不要共享主工作台访问权限。自然语言和证据数量仍可能泄露实验组别，因此保留复核人的猜测备注。" />
     <Space direction="vertical" className="section-gap" style={{ width: "100%" }}>
       <Space wrap>
         <Select style={{ minWidth: 220 }} placeholder="选择实验批次" value={experimentId} options={experimentOptions}
           disabled={busy} onChange={(value) => { setExperimentId(value); setPairKeys([]); }} />
-        <Select mode="multiple" style={{ minWidth: 420 }} placeholder="选择完整的候选配对（R1 + R2）" value={pairKeys}
+        <Select mode="multiple" style={{ minWidth: 420 }} placeholder="选择已完成两种调查的候选配对" value={pairKeys}
           options={operationOptions} disabled={!experimentId || busy} onChange={(values) => {
             if (values.length > 10) { message.warning("一次最多选择 10 组完整配对"); return; }
             setPairKeys(values);
@@ -136,15 +136,15 @@ export default function AgentBlindReview({ operations }: { operations: any[] }) 
           创建盲审会话
         </Button>
       </Space>
-      <Text type="secondary">选择一组就会同时加入 R1 和 R2 两条结果；最多选 10 组。创建时服务端还会核对源码绑定、实验配置和同源码 R0 静态基线。复核条目随机排序；在线会话状态接口不返回源码包或未揭盲的组别映射。</Text>
+      <Text type="secondary">选择一组会同时加入单轮研判和跨文件调查两条结果；最多选 10 组。创建时服务端会核对源码绑定、实验配置和同源码人工静态基线。复核条目随机排序；在线会话状态接口不返回源码包或未揭盲的组别映射。</Text>
       {experimentOptions.length === 0 && <Alert type="info" showIcon
         message="当前没有已完成的实验批次可供盲审"
-        description="先为固定候选完成人工 R0 静态基线，再按同一源码和实验配置完成 R1/R2。此面板只读取已完成结果，不会启动扫描或模型调用。" />}
+        description="先为固定候选保存人工静态基线，再按同一源码和实验配置完成单轮研判与跨文件调查。此面板只读取已完成结果，不会启动扫描或模型调用。" />}
       {experimentId && pairing.eligibleOperationCount === 0 && <Alert type="info" showIcon
-        message="这个实验批次还没有可用于盲审的已完成 R1/R2 结果"
-        description="先完成同一固定候选的 R1 单轮和 R2 工具 Agent；当前页面不会自动启动模型任务。" />}
+        message="这个实验批次还没有可用于盲审的成对调查结果"
+        description="先完成同一固定候选的单轮模型研判和跨文件调查；当前页面不会自动启动模型任务。" />}
       {experimentId && pairing.eligibleOperationCount > 0 && pairing.pairs.length === 0 && <Alert type="warning" showIcon
-        message="暂时没有完整且唯一的 R1/R2 配对"
+        message="暂时没有完整且唯一的调查结果配对"
         description={`已完成结果 ${pairing.eligibleOperationCount} 条；缺少一侧的配对 ${pairing.incompletePairCount} 组，重复或有歧义的配对 ${pairing.ambiguousPairCount} 组。请检查实验批次和候选绑定后刷新。`} />}
       <Space.Compact style={{ width: "100%" }}>
         <Input aria-label="盲审会话编号" value={sessionId} onChange={(event) => {
@@ -174,7 +174,7 @@ export default function AgentBlindReview({ operations }: { operations: any[] }) 
           const claimRows = Object.values<any>(row.claim_evidence_support_agreement)
             .reduce((sum, value) => sum + value.comparable_items, 0);
           return <Alert key={mode} className="section-gap" type="info" showIcon
-            message={`${mode === "single_shot" ? "R1 单轮" : "R2 工具 Agent"}：${row.reviewed_operations} 个结果；独立复核人标签数 ${row.unique_reviewer_labels_min}-${row.unique_reviewer_labels_max}`}
+            message={`${mode === "single_shot" ? "单轮研判" : "跨文件调查"}：${row.reviewed_operations} 个结果；独立复核人标签数 ${row.unique_reviewer_labels_min}-${row.unique_reviewer_labels_max}`}
             description={`引文准确性两两一致 ${percent(row.agreement.citation_accuracy.pairwise_agreement)}；人工分诊两两一致 ${percent(row.agreement.post_review_disposition.pairwise_agreement)}；义务判定 ${obligationRows} 项，支持性主张 ${claimRows} 项。`} />;
         })}
       </>}
@@ -193,7 +193,7 @@ export default function AgentBlindReview({ operations }: { operations: any[] }) 
         </Space>}
         {session.state === "closed" && <>
           <Alert type="warning" showIcon message="揭盲证据包包含源码上下文和完整 Agent 结果"
-            description="仅在受控审查目录保存或分享。包内含 R0 记录、盲审评分、固定作业配置、结果哈希及总包哈希。" />
+            description="仅在受控审查目录保存或分享。包内含 人工基线记录、盲审评分、固定作业配置、结果哈希及总包哈希。" />
           <Button className="section-gap" loading={busy} onClick={() => void exportEvidenceBundle()}>
             下载揭盲审计证据包
           </Button>
@@ -221,7 +221,7 @@ export default function AgentBlindReview({ operations }: { operations: any[] }) 
             const obligationAgreement = stats.obligation_disposition_concordance;
             const claimSupport = stats.claim_evidence_support;
             return <Alert key={mode} className="section-gap" type="info" showIcon
-              message={`${mode === "single_shot" ? "R1 单轮" : "R2 工具 Agent"}：${stats.review_count} 条复核；看后建议 investigate ${disposition.investigate} / likely_noise ${disposition.likely_noise} / unknown ${disposition.unknown}`}
+              message={`${mode === "single_shot" ? "单轮研判" : "跨文件调查"}：${stats.review_count} 条复核；看后建议 investigate ${disposition.investigate} / likely_noise ${disposition.likely_noise} / unknown ${disposition.unknown}`}
               description={`有用/部分/无用/不安全：${useful.useful}/${useful.partially_useful}/${useful.not_useful}/${useful.unsafe}；引文全对/部分错/多数错/未检查：${citations.all_accurate}/${citations.some_incorrect}/${citations.mostly_incorrect}/${citations.not_checked}；证据义务与模型判定一致 ${obligationAgreement.exact_matches}/${obligationAgreement.reviewed_obligations}、分歧 ${obligationAgreement.differences}、未评 ${obligationAgreement.not_reviewed}（不代表漏洞真值）；逐条主张证据支持（支持/部分/不支持/未知）：${claimSupport.supported}/${claimSupport.partially_supported}/${claimSupport.unsupported}/${claimSupport.unverifiable}，未评 ${claimSupport.not_reviewed}（证据语义复核，不是漏洞真值、Precision 或 Recall）；复核中位用时：${stats.median_elapsed_seconds ?? "unknown"} 秒`} />;
           })}
         </div>}

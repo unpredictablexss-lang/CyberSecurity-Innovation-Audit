@@ -39,6 +39,13 @@ class OperationsStoreTests(unittest.TestCase):
     def tearDown(self):
         self.temp.cleanup()
 
+    def test_legacy_r2_budget_status_is_exposed_as_candidate_limit(self):
+        row = {"r2_status": "budget_limited", "candidate_manifest": "[]",
+               "operation_ids": "[]", "r2_operation_ids": "[]",
+               "r2_candidate_manifest": "[]"}
+        self.assertEqual(Operations.triage_batch_row(row)["r2_status"],
+                         "candidate_limit_reached")
+
     def test_first_start_store_schema_initialization_is_serialized(self):
         with tempfile.TemporaryDirectory() as directory:
             data_dir = Path(directory) / "fresh-data"
@@ -381,7 +388,10 @@ class OperationEndToEndTests(unittest.TestCase):
                 "actual_charge_verified": False, "hard_spend_cap": False}
             return {"eligible": True, "consent_sha256": digest, "consent_nonce": nonce,
                 "provider": active_provider.public,
-                "manifest": {"consent_nonce": nonce, "source_disclosure": ["fixed source excerpts"],
+                "manifest": {"consent_nonce": nonce,
+                    "binding": {"plan_sha256": plan["plan_sha256"],
+                                "workflow_sha256": workflow},
+                    "source_disclosure": ["fixed source excerpts"],
                     "budgets": {"max_requests": candidate_limit * 2,
                         "r1_max_model_calls": candidate_limit, "r2_max_model_calls": 0},
                     "cost_budget": {"maximum_usd": max_cost_usd}},
@@ -390,7 +400,7 @@ class OperationEndToEndTests(unittest.TestCase):
         base = {"repository_id": self.repo["id"], "include_paths": ["."],
             "detector_ids": self.detectors, "timeout_seconds": 30, "memory_mb": 512,
             "audit_mode": "standard_review", "auto_triage": True,
-            "max_triage_candidates": 2, "max_r2_candidates": 0, "max_cost_usd": "0.20",
+            "max_triage_candidates": 2, "max_r2_candidates": 0,
             "baseline_ref": "refs/heads/main", "endpoint_ref": "refs/heads/feature"}
         headers = {"X-OHScanner-Client": "workbench-v1"}
         with patch("src.workbench.agent.ProviderConfig.from_env", return_value=provider), \
@@ -413,6 +423,8 @@ class OperationEndToEndTests(unittest.TestCase):
             self.assertIsNotNone(authorization)
             self.assertEqual(job["spec"]["audit_mode"], "standard_review")
             self.assertTrue(job["spec"]["workflow"]["automatic_model_calls"])
+            self.assertEqual(job["spec"]["workflow"]["platform_cumulative_usage_budget"], "none")
+            self.assertIsNone(job["spec"]["max_cost_usd"])
             self.assertEqual(authorization["consent_sha256"], job["spec"]["triage_authorization"]["consent_sha256"])
 
     def test_recent_window_endpoint_queues_four_fixed_scans_and_keeps_impact_unknown(self):
@@ -546,6 +558,43 @@ class OperationLifecycleTests(unittest.TestCase):
         self.settings.initialize()
         self.store = Store(self.settings.data_dir)
         self.ops = Operations(self.store)
+
+    def test_continuous_agent_has_no_outer_deadline_and_quota_is_explicit_failure(self):
+        from src.workbench.agent import ProviderQuotaError
+        from src.workbench.operation_worker import (
+            _commit_provider_quota_failure, _hard_deadline_seconds, _provider_quota_failure,
+        )
+
+        continuous = {"kind": "agent_investigation",
+                      "spec": {"mode": "tool_agent", "continuous_investigation": True,
+                               "timeout_seconds": 90}}
+        bounded = {"kind": "agent_investigation",
+                   "spec": {"mode": "tool_agent", "continuous_investigation": False,
+                            "timeout_seconds": 90}}
+        single_shot = {"kind": "agent_investigation",
+                       "spec": {"mode": "single_shot", "continuous_investigation": True}}
+        self.assertIsNone(_hard_deadline_seconds(continuous))
+        self.assertEqual(_hard_deadline_seconds(bounded), 90)
+        self.assertIsNone(_hard_deadline_seconds(single_shot))
+
+        result = _provider_quota_failure(
+            ProviderQuotaError("Provider quota or billing limit exhausted (HTTP 429; code=insufficient_quota)"))
+        self.assertEqual(result["_operation_error"]["code"], "provider_quota_exhausted")
+        self.assertIn("insufficient_quota", result["_operation_error"]["message"])
+
+        class CapturingOps:
+            def __init__(self):
+                self.finished = None
+
+            def finish(self, operation_id, **kwargs):
+                self.finished = (operation_id, kwargs)
+
+        ops = CapturingOps()
+        self.assertTrue(_commit_provider_quota_failure(ops, {"id": "op-1", **continuous}, result))
+        self.assertEqual(ops.finished, ("op-1", {
+            "error": "provider_quota_exhausted: " + result["_operation_error"]["message"],
+            "state": "failed",
+        }))
 
     def test_worker_restart_marks_running_operations_interrupted(self):
         task = self.ops.create("investigation", {"job_id": "j" * 32})

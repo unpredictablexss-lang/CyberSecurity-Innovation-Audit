@@ -6,6 +6,8 @@ import json
 import os
 from pathlib import Path
 import re
+import shutil
+import signal
 import subprocess
 import time
 from urllib.parse import urlsplit
@@ -49,12 +51,72 @@ def range_plan(settings, store, repository_id, baseline, endpoint, includes, det
     return repo, a, b, commits
 
 
+
+def multimode_triage_preview(scan_specs, body, provider, nonces):
+    """Build a separately consented, immutable source-egress preview per endpoint."""
+    from .agent import audit_task_consent_preview
+    if body.get("audit_mode") != "standard_review" or not body.get("auto_triage"):
+        raise ValueError("automatic model triage requires standard review and an explicit preview")
+    if len(scan_specs) != len(nonces) or not scan_specs or len(scan_specs) > 8:
+        raise ValueError("invalid endpoint count or consent nonce count")
+    max_candidates = body.get("max_triage_candidates", 3)
+    max_r2 = body.get("max_r2_candidates", 0)
+    previews = []
+    for spec, nonce in zip(scan_specs, nonces):
+        workflow = service.audit_workflow_sha256(
+            spec["plan_sha256"], "standard_review", True, max_candidates, max_r2
+        )
+        preview = audit_task_consent_preview(
+            spec["audit_plan"], workflow, spec["include_paths"], max_candidates,
+            nonce, provider, max_r2
+        )
+        if not preview.get("eligible"):
+            raise ValueError("endpoint automatic triage unavailable: " + preview.get("reason", "unknown"))
+        previews.append({"commit": spec["commit"], "plan_sha256": spec["plan_sha256"],
+                         "workflow_sha256": workflow, **preview})
+    return previews
+
+
+def bind_multimode_triage(settings, scan_specs, body):
+    """Fail closed on every endpoint before any scan or operation is queued."""
+    approvals = body.get("triage_approvals") or []
+    if not body.get("auto_triage", False):
+        if approvals:
+            raise ValueError("model authorization submitted for a static-only operation")
+        return scan_specs
+    if body.get("audit_mode") != "standard_review":
+        raise ValueError("automatic triage is only supported in standard review mode")
+    if len(approvals) != len(scan_specs):
+        raise ValueError("each fixed endpoint needs its own reviewed model consent")
+    from .agent import ProviderConfig
+    provider = ProviderConfig.from_env(settings.data_dir)
+    if not provider.configured:
+        raise ValueError("model provider not configured; static endpoint scans remain available")
+    nonces = [row.get("consent_nonce") if isinstance(row, dict) else None for row in approvals]
+    previews = multimode_triage_preview(scan_specs, body, provider, nonces)
+    enriched = []
+    for spec, approval, preview in zip(scan_specs, approvals, previews):
+        if approval.get("consent_sha256") != preview["consent_sha256"]:
+            raise ValueError("endpoint consent expired: source, model, policy or budget changed")
+        enriched.append({
+            **spec, "audit_mode": "standard_review",
+            "workflow_sha256": preview["workflow_sha256"],
+            "max_r2_candidates": body.get("max_r2_candidates", 0),
+            "max_cost_usd": None,
+            "triage_authorization": {
+                "authorized": True, "consent_sha256": preview["consent_sha256"],
+                "snapshot": preview["manifest"],
+            },
+        })
+    return enriched
+
+
 def enqueue_range(settings, store, ops, body):
     repo, a, b, commits = range_plan(settings, store, body["repository_id"], body["baseline"],
                                     body["endpoint"], body["include_paths"], body["detector_ids"],
                                     body["timeout_seconds"], body["memory_mb"])
     audit_mode = body.get("audit_mode", "standard_review")
-    scans = [{**a, "audit_mode": audit_mode}, {**b, "audit_mode": audit_mode}]
+    scans = bind_multimode_triage(settings, [{**a, "audit_mode": audit_mode}, {**b, "audit_mode": audit_mode}], body)
     return ops.create_with_scans("revision_range", {"repository_id": repo["id"], "baseline": a["commit"],
         "endpoint": b["commit"], "commits": commits, "audit_mode": audit_mode,
         "timeout_seconds": body["timeout_seconds"] * 2 + 60,
@@ -73,7 +135,7 @@ def enqueue_branch_comparison(settings, store, ops, body):
                                body["timeout_seconds"], body["memory_mb"])
              for item in (before, after)]
     audit_mode = body.get("audit_mode", "standard_review")
-    specs = [{**spec, "audit_mode": audit_mode} for spec in specs]
+    specs = bind_multimode_triage(settings, [{**spec, "audit_mode": audit_mode} for spec in specs], body)
     return ops.create_with_scans("branch_comparison", {
         "repository_id": repo["id"], "audit_mode": audit_mode,
         "baseline_ref": body["baseline_ref"], "baseline": before["commit"],
@@ -254,8 +316,344 @@ def investigation(settings, store, spec):
             "validated_vulnerability": 0}
 
 
+MAX_SOURCE_SYNC_BATCH_REPOSITORIES = 8
+SOURCE_SYNC_MIN_FREE_BYTES = 512 * 1024 * 1024
+
+
+class SourceSyncSafetyLimit(RuntimeError):
+    """A batch stopped before the configured cache volume reserve was consumed."""
+
+
+def _source_sync_batch_cancelled(ops, operation_id):
+    return ops.batch_sync_cancel_requested(operation_id)
+
+
+def _ensure_source_sync_free_space(base):
+    if shutil.disk_usage(base).free <= SOURCE_SYNC_MIN_FREE_BYTES:
+        raise SourceSyncSafetyLimit(
+            "Stopped to preserve at least 512 MiB of free space on the repository cache volume"
+        )
+
+
+def _start_source_sync_process(command, env):
+    return subprocess.Popen(command, env=env, start_new_session=True)
+
+
+def _terminate_source_sync_process(process):
+    if process.poll() is not None:
+        return
+    try:
+        os.killpg(process.pid, signal.SIGTERM)
+    except (ProcessLookupError, PermissionError):
+        process.terminate()
+    try:
+        process.wait(timeout=2)
+    except subprocess.TimeoutExpired:
+        try:
+            os.killpg(process.pid, signal.SIGKILL)
+        except (ProcessLookupError, PermissionError):
+            process.kill()
+        process.wait(timeout=2)
+
+
+def _acquire_source_sync_lock(lock, timeout_seconds, base, ops, operation_id):
+    """Wait for the per-repository lock without making batch cancel wait indefinitely."""
+    deadline = time.monotonic() + timeout_seconds
+    while True:
+        if _source_sync_batch_cancelled(ops, operation_id):
+            return False
+        _ensure_source_sync_free_space(base)
+        try:
+            import fcntl
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            return deadline - time.monotonic()
+        except BlockingIOError:
+            if time.monotonic() >= deadline:
+                raise subprocess.TimeoutExpired("repository sync lock", timeout_seconds)
+            time.sleep(0.1)
+
+
+def _run_source_sync_process(command, env, timeout_seconds, base, ops, operation_id):
+    """Run one Git transfer with timeout, cancellation and free-space checks."""
+    _ensure_source_sync_free_space(base)
+    process = _start_source_sync_process(command, env)
+    deadline = time.monotonic() + timeout_seconds
+    try:
+        while True:
+            if _source_sync_batch_cancelled(ops, operation_id):
+                _terminate_source_sync_process(process)
+                return "cancelled"
+            _ensure_source_sync_free_space(base)
+            return_code = process.poll()
+            if return_code is not None:
+                if return_code:
+                    raise subprocess.CalledProcessError(return_code, command)
+                _ensure_source_sync_free_space(base)
+                return "completed"
+            if time.monotonic() >= deadline:
+                raise subprocess.TimeoutExpired(command, timeout_seconds)
+            time.sleep(0.1)
+    except BaseException:
+        # Stop Git before the caller removes a partial clone or records failure.
+        _terminate_source_sync_process(process)
+        raise
+
+
+def _remove_new_sync_target(target, base):
+    """Remove only a partial clone path created by this operation."""
+    if target.is_symlink():
+        return
+    try:
+        if target.resolve(strict=False).parent == base and target.is_dir():
+            shutil.rmtree(target)
+    except (OSError, RuntimeError):
+        return
+
+
+def _source_sync_item_event(ops, operation_id, stage, payload):
+    ops.event(operation_id, stage, json.dumps(payload, ensure_ascii=False, sort_keys=True))
+
+
+def _safe_sync_error(error, action):
+    if isinstance(error, SourceSyncSafetyLimit):
+        return str(error)
+    if isinstance(error, subprocess.TimeoutExpired):
+        return "Git " + action + " exceeded this repository's timeout"
+    if isinstance(error, subprocess.CalledProcessError):
+        return "Git " + action + " failed with exit status " + str(error.returncode)
+    return type(error).__name__ + ": " + str(error)[:500]
+
+
+def _sync_source_batch_item(settings, store, ops, task, entry, index, total):
+    """Apply the single-source security checks to one batch row."""
+    name = entry.get("name")
+    if not isinstance(name, str) or not re.fullmatch(r"openharmony/[A-Za-z0-9_-]{1,100}", name):
+        raise ValueError("repository name is outside the OpenHarmony allowlist")
+    url = approved_url(entry.get("url", ""))
+    expected = "/" + name + (".git" if urlsplit(url).path.endswith(".git") else "")
+    if urlsplit(url).path != expected:
+        raise ValueError("repository URL path must match the approved repository name")
+
+    base = (settings.data_dir / "repo-cache").resolve()
+    base.mkdir(parents=True, exist_ok=True)
+    target = base / name.split("/", 1)[1]
+    if target.is_symlink() or target.resolve(strict=False).parent != base:
+        raise ValueError("unsafe repository cache path")
+    was_present = False
+    action = "not_started"
+    lockdir = settings.data_dir / "sync-locks"
+    lockdir.mkdir(exist_ok=True)
+    import fcntl
+    clone_attempted = False
+    sync_finished = False
+    try:
+        with (lockdir / (target.name + ".lock")).open("a") as lock:
+            remaining = _acquire_source_sync_lock(
+                lock, entry["timeout_seconds"], base, ops, task["id"]
+            )
+            if remaining is False:
+                return {"repository": name, "status": "cancelled", "sync_action": action,
+                        "scan_status": "not_started"}
+            if target.is_symlink() or target.resolve(strict=False).parent != base:
+                raise ValueError("unsafe repository cache path")
+            was_present = target.exists()
+            action = "fetch" if was_present else "clone"
+            _source_sync_item_event(ops, task["id"], "source_sync_batch_item_started", {
+                "index": index, "total": total, "repository": name, "status": "running",
+                "action": action,
+            })
+            command = ["git", "-c", "core.hooksPath=/dev/null",
+                       "-c", "http.followRedirects=false",
+                       "-c", "fetch.recurseSubmodules=false",
+                       "-c", "protocol.file.allow=never", "-c", "protocol.ext.allow=never",
+                       "-c", "credential.helper="]
+            if was_present:
+                service.check_repository(settings, str(target))
+                command += ["-C", str(target), "fetch", "--no-recurse-submodules",
+                            "--prune", "--tags", url, "+refs/heads/*:refs/remotes/origin/*"]
+            else:
+                command += ["clone", "--no-checkout", "--no-recurse-submodules",
+                            "--", url, str(target)]
+            env = {**os.environ, "GIT_TERMINAL_PROMPT": "0", "GIT_CONFIG_NOSYSTEM": "1",
+                   "GIT_CONFIG_GLOBAL": "/dev/null", "GIT_CONFIG_SYSTEM": "/dev/null",
+                   "GIT_ALLOW_PROTOCOL": "https"}
+            clone_attempted = not was_present
+            outcome = _run_source_sync_process(
+                command, env, remaining, base, ops, task["id"]
+            )
+            if outcome == "cancelled":
+                if clone_attempted:
+                    _remove_new_sync_target(target, base)
+                return {"repository": name, "status": "cancelled", "sync_action": action,
+                        "scan_status": "not_started"}
+            sync_finished = True
+    except Exception:
+        if clone_attempted and not sync_finished:
+            _remove_new_sync_target(target, base)
+        raise
+
+    # Reacquire the same lock while registering. Concurrent syncs may have
+    # completed their transfer before either one reaches this point.
+    with (lockdir / (target.name + ".lock")).open("a") as registration_lock:
+        fcntl.flock(registration_lock, fcntl.LOCK_EX)
+        checked_path = service.check_repository(settings, str(target))
+        existing = next((repo for repo in store.repositories()
+                         if repo["path"] == str(checked_path)), None)
+        repo = existing or store.add_repository(name, str(checked_path))
+    head = service.revision(repo, "HEAD")
+    remote_refs = [ref for ref in service.revisions(repo)
+                   if ref["ref"].startswith("refs/remotes/origin/")]
+    scan_job = None
+    scan_error = None
+    try:
+        # Reuse the existing fixed-commit scan handoff with this repository's
+        # own scan settings, rather than the outer batch spec.
+        scan_task = {**task, "spec": entry}
+        scan_job = enqueue_synced_scan(settings, store, ops, scan_task, repo)
+    except Exception as exc:
+        scan_error = type(exc).__name__ + ": " + str(exc)[:500]
+    return {
+        "repository": name,
+        "repository_id": repo["id"],
+        "status": "completed_with_limitations" if scan_error else "completed",
+        "sync_action": action,
+        "local_head_after_sync": head["commit"],
+        "git_tree_after_sync": head.get("tree"),
+        "remote_ref_count": len(remote_refs),
+        "scan_job_id": scan_job["id"] if scan_job else None,
+        "scan_commit": scan_job["spec"]["commit"] if scan_job else None,
+        "scan_tree": scan_job["spec"].get("git_tree") if scan_job else None,
+        "scan_status": scan_job["status"] if scan_job else ("failed" if scan_error else "not_requested"),
+        "error": scan_error,
+        "limitations": (["Repository objects were synchronized without checkout or build."]
+            + (["The queued scan is static only and does not create model-egress authorization."]
+               if scan_job else [])),
+    }
+
+
+def execute_source_sync_batch(settings, store, ops, task):
+    entries = task["spec"].get("repositories")
+    if not isinstance(entries, list) or not 1 <= len(entries) <= MAX_SOURCE_SYNC_BATCH_REPOSITORIES:
+        raise ValueError("source sync batch must contain one to eight repository entries")
+    first_by_name = {}
+    unique_count = 0
+    unique_timeout_total = 0
+    for index, entry in enumerate(entries, start=1):
+        name = entry.get("name")
+        if not isinstance(name, str) or not re.fullmatch(r"openharmony/[A-Za-z0-9_-]{1,100}", name):
+            raise ValueError("repository name is outside the OpenHarmony allowlist")
+        url = approved_url(entry.get("url", ""))
+        expected = "/" + name + (".git" if urlsplit(url).path.endswith(".git") else "")
+        if urlsplit(url).path != expected:
+            raise ValueError("repository URL path must match the approved repository name")
+        timeout_seconds = entry.get("timeout_seconds")
+        if (not isinstance(timeout_seconds, int) or isinstance(timeout_seconds, bool)
+                or not 10 <= timeout_seconds <= 3600):
+            raise ValueError("each repository timeout must be between 10 and 3600 seconds")
+        prior = first_by_name.get(name.casefold())
+        if prior is None:
+            first_by_name[name.casefold()] = (index, entry)
+            unique_count += 1
+            unique_timeout_total += timeout_seconds
+        elif prior[1] != entry:
+            raise ValueError("duplicate repository entries must use the same URL and scan options")
+    if unique_timeout_total > 7200:
+        raise ValueError("batch total Git timeout cannot exceed two hours")
+
+    results = []
+    safety_stop = False
+    cancelled = False
+    for index, entry in enumerate(entries, start=1):
+        name = entry["name"]
+        prior = first_by_name[name.casefold()][0]
+        if prior != index:
+            row = {"repository": name, "status": "skipped_duplicate", "duplicate_of": prior,
+                   "scan_status": "not_started"}
+            results.append(row)
+            _source_sync_item_event(ops, task["id"], "source_sync_batch_item_skipped", {
+                "index": index, "total": len(entries), "repository": name,
+                "status": row["status"], "duplicate_of": prior,
+            })
+            continue
+        if cancelled or safety_stop or _source_sync_batch_cancelled(ops, task["id"]):
+            cancelled = cancelled or _source_sync_batch_cancelled(ops, task["id"])
+            status = "not_started"
+            row = {"repository": name, "status": status, "scan_status": "not_started"}
+            results.append(row)
+            _source_sync_item_event(ops, task["id"], "source_sync_batch_item_skipped", {
+                "index": index, "total": len(entries), "repository": name,
+                "status": status, "reason": "cancelled" if cancelled else "disk_safety_stop",
+            })
+            continue
+        try:
+            row = _sync_source_batch_item(settings, store, ops, task, entry, index, len(entries))
+        except SourceSyncSafetyLimit as exc:
+            safety_stop = True
+            row = {"repository": name, "status": "failed", "scan_status": "not_started",
+                   "error": _safe_sync_error(exc, "transfer")}
+        except Exception as exc:
+            row = {"repository": name, "status": "failed", "scan_status": "not_started",
+                   "error": _safe_sync_error(exc, "transfer")}
+        results.append(row)
+        stage = ("source_sync_batch_item_cancelled" if row["status"] == "cancelled"
+                 else "source_sync_batch_item_failed" if row["status"] == "failed"
+                 else "source_sync_batch_item_completed")
+        _source_sync_item_event(ops, task["id"], stage, {
+            "index": index, "total": len(entries), **row,
+        })
+        if row["status"] == "cancelled":
+            cancelled = True
+
+    if _source_sync_batch_cancelled(ops, task["id"]):
+        cancelled = True
+    if cancelled:
+        # Scans already queued by this batch are owned by the batch. Request
+        # cancellation for any that have not finished; terminal scans stay intact.
+        for row in results:
+            scan_job_id = row.get("scan_job_id")
+            if not scan_job_id:
+                continue
+            try:
+                scan_job = store.cancel(scan_job_id)
+                row["scan_status"] = scan_job["status"]
+            except Exception as exc:
+                row["scan_cancellation_error"] = type(exc).__name__
+    succeeded = sum(row["status"] in {"completed", "completed_with_limitations"} for row in results)
+    failed = sum(row["status"] == "failed" for row in results)
+    duplicates = sum(row["status"] == "skipped_duplicate" for row in results)
+    not_started = sum(row["status"] == "not_started" for row in results)
+    scans_enqueued = sum(bool(row.get("scan_job_id")) for row in results)
+    scans_cancelled = sum(row.get("scan_status") == "cancelled" for row in results)
+    if cancelled:
+        status = "cancelled"
+    elif succeeded == 0 and failed:
+        status = "failed"
+    elif failed or any(row.get("scan_status") == "failed" for row in results):
+        status = "completed_with_limitations"
+    else:
+        status = "completed"
+    return {
+        "status": status,
+        "repositories": results,
+        "summary": {
+            "requested": len(entries), "unique": unique_count, "succeeded": succeeded,
+            "failed": failed, "duplicates_skipped": duplicates,
+            "not_started": not_started, "static_scans_enqueued": scans_enqueued,
+            "static_scans_cancelled": scans_cancelled,
+            "disk_safety_stop": safety_stop, "cancellation_requested": cancelled,
+        },
+        "limits": {"max_repositories": MAX_SOURCE_SYNC_BATCH_REPOSITORIES,
+                   "maximum_total_git_timeout_seconds": 7200,
+                   "minimum_free_disk_bytes": SOURCE_SYNC_MIN_FREE_BYTES},
+        "limitations": ["Repositories are synchronized serially; no checkout, submodule, hook or build is run.",
+                        "Each auto-queued scan pins its own immutable commit/tree and is static only; no model consent is added."],
+    }
+
+
 def execute(settings, store, ops, task):
     spec, kind = task["spec"], task["kind"]
+    if kind == "source_sync_batch":
+        return execute_source_sync_batch(settings, store, ops, task)
     if kind == "source_sync":
         url = approved_url(spec["url"])
         base = (settings.data_dir / "repo-cache").resolve()
@@ -268,20 +666,28 @@ def execute(settings, store, ops, task):
         import fcntl
         with (lockdir / (target.name + ".lock")).open("a") as lock:
             fcntl.flock(lock, fcntl.LOCK_EX)
-            command = ["git", "-c", "core.hooksPath=/dev/null", "-c", "protocol.file.allow=never",
-                       "-c", "protocol.ext.allow=never", "-c", "credential.helper="]
+            command = ["git", "-c", "core.hooksPath=/dev/null",
+                       "-c", "http.followRedirects=false", "-c", "fetch.recurseSubmodules=false",
+                       "-c", "protocol.file.allow=never", "-c", "protocol.ext.allow=never",
+                       "-c", "credential.helper="]
             if target.exists():
                 service.check_repository(settings, str(target))
-                command += ["-C", str(target), "fetch", "--prune", "--tags", url, "+refs/heads/*:refs/remotes/origin/*"]
+                command += ["-C", str(target), "fetch", "--no-recurse-submodules",
+                            "--prune", "--tags", url, "+refs/heads/*:refs/remotes/origin/*"]
             else:
-                command += ["clone", "--no-checkout", "--", url, str(target)]
+                command += ["clone", "--no-checkout", "--no-recurse-submodules",
+                            "--", url, str(target)]
             env = {**os.environ, "GIT_TERMINAL_PROMPT": "0", "GIT_CONFIG_NOSYSTEM": "1",
                    "GIT_CONFIG_GLOBAL": "/dev/null", "GIT_CONFIG_SYSTEM": "/dev/null",
                    "GIT_ALLOW_PROTOCOL": "https"}
             ops.event(task["id"], "git_sync", "Explicit approved clone/fetch, no checkout/build")
             subprocess.run(command, env=env, check=True, timeout=spec["timeout_seconds"])
-        existing = next((r for r in store.repositories() if r["path"] == str(target)), None)
-        repo = existing or store.add_repository(spec["name"], str(target))
+        with (lockdir / (target.name + ".lock")).open("a") as registration_lock:
+            fcntl.flock(registration_lock, fcntl.LOCK_EX)
+            checked_path = service.check_repository(settings, str(target))
+            existing = next((r for r in store.repositories()
+                             if r["path"] == str(checked_path)), None)
+            repo = existing or store.add_repository(spec["name"], str(checked_path))
         remote_refs = [r for r in service.revisions(repo) if r["ref"].startswith("refs/remotes/origin/")]
         scan_job = enqueue_synced_scan(settings, store, ops, task, repo)
         return {"status": "completed", "repository": repo, "url": url,
@@ -299,6 +705,9 @@ def execute(settings, store, ops, task):
     if kind == "agent_investigation":
         from .agent import execute_agent
         return execute_agent(settings, store, ops, task)
+    if kind == "version_candidate_comparison":
+        from .joint_candidate_comparison_runtime import execute_joint_comparison
+        return execute_joint_comparison(settings, store, ops, task)
     if kind == "validation":
         from .validation import execute_validation
         return execute_validation(settings, store, ops, task)

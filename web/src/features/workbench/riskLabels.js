@@ -45,7 +45,8 @@ export const triageStateLabels = Object.freeze({
   blocked: "受阻", blocked_authorization_changed: "授权已变化，已阻止",
   no_eligible_candidates: "没有符合条件的候选", stopped: "授权已撤销",
   failed: "失败", timed_out: "超时", interrupted: "中断",
-  awaiting_r1: "等待首轮研判", budget_limited: "达到预算上限",
+  awaiting_r1: "等待首轮研判", budget_limited: "已达到候选授权名额",
+  candidate_limit_exceeded: "候选数超过端点保护上限", queue_limit_exceeded: "队列容量不足；候选未研判",
   not_needed: "无需补充核查", failed_selection: "未能选择补充核查",
 });
 

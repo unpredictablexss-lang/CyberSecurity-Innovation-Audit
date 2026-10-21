@@ -7,7 +7,7 @@ test("no recognized secret formats still warns that source may contain secrets",
   assert.match(message, /未检测到已知凭据格式/);
   assert.match(message, /不代表源码中没有秘密/);
   assert.match(message, /不是完整 DLP/);
-  assert.match(message, /R2 可能追加发送的数据范围/);
+  assert.match(message, /跨文件追查可能追加发送的数据范围/);
   assert.match(message, /policy-1/);
 });
 

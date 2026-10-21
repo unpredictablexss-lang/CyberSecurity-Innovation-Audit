@@ -738,6 +738,257 @@ class WorkbenchTests(unittest.TestCase):
         self.assertEqual(self.client.get(f"/api/v1/cases/{case['id']}/report.json").json()
                          ["validated_vulnerability"], 0)
 
+    def test_case_report_exposes_agent_and_fixed_harness_evidence_without_promotion(self):
+        job = self.completed()
+        candidate = service.findings(service.read_report(self.settings, job))[0]
+        case = self.client.post("/api/v1/cases", headers=HEADERS, json={
+            "title": "case report evidence view",
+            "links": [{"job_id": job["id"], "candidate_id": candidate["id"], "rationale": "inspect fixed evidence"}],
+        }).json()
+        self.store.add_source_evidence(job["id"], candidate["id"], {
+            "file": candidate["file"], "start_line": candidate["line"], "end_line": candidate["line"],
+            "note": "Reviewer-recorded source location",
+        })
+        self.store.add_review(job["id"], candidate["id"], "needs_more_evidence",
+                              "reviewer:test", "Product entry still needs review.", 0)
+
+        ops = self.app.state.operations
+        agent = ops.create("agent_investigation", {
+            "case_id": case["id"], "job_id": job["id"], "candidate_id": candidate["id"],
+            "experiment_id": "case-report-eval",
+        })
+        self.assertEqual(ops.claim()["id"], agent["id"])
+        ops.finish(agent["id"], {
+            "status": "completed", "case_id": case["id"], "vulnerability_state": "candidate",
+            "validated_vulnerability": 0, "mode": "tool_agent", "experiment_id": "case-report-eval",
+            "binding": {"repository": "fixture/sample", "commit": self.commit,
+                        "file": candidate["file"], "line": candidate["line"],
+                        "candidate_id": candidate["id"]},
+            "summary_provenance": "server_generated_from_structured_triage",
+            "initial_evidence": {"evidence_id": "evidence-1", "context": {
+                "file": candidate["file"], "evidence_obligations": [{"kind": "reachability", "description": "Trace product entry."}],
+            }},
+            "tool_calls": [{"tool": "read_source", "status": "completed"}],
+            "model_calls": [{"model": "test-model"}], "model_usage": {"input_tokens": 10, "output_tokens": 4},
+            "agent_assessment": {
+                "assessment": "needs_more_evidence", "summary": "Trace the product entry.",
+                "supported_claims": [{"claim": "A guarded source branch exists.", "obligation_indices": [0],
+                                      "citations": [{"evidence_id": "evidence-1", "quote": "if (guard)"}]}],
+                "obligation_reviews": [{"obligation_index": 0, "disposition": "unresolved", "citations": []}],
+                "unknowns": ["Whether an external caller reaches this path."],
+                "unsupported_claims": ["A remote attacker can reach it."],
+                "next_steps": ["Review the product entry path."],
+                "vulnerability_report": {"status": "draft_unverified", "title": "Candidate report",
+                    "citations": [{"file": candidate["file"], "line_start": candidate["line"], "line_end": candidate["line"]}]},
+                "poc_draft": {"status": "insufficient_evidence", "code": "", "citations": []},
+            },
+            "limitations": ["Product reachability is unknown."],
+        }, state="completed")
+        ops.record_agent_review(agent["id"], {
+            "reviewer": "reviewer:test", "usefulness": "partially_useful",
+            "citation_accuracy": "all_accurate", "claim_adjudications": [
+                {"claim_index": 0, "disposition": "supported"}],
+            "post_review_disposition": "investigate", "elapsed_seconds": 35,
+            "notes": "Source citation was useful; keep reachability open.",
+        })
+
+        validation = ops.create("validation", {
+            "case_id": case["id"], "harness_id": "auth01_descriptor_bypass",
+            "target_repository": "fixture/sample", "target_commit": self.commit,
+            "cutils_commit": "c" * 40,
+        })
+        self.assertEqual(ops.claim(validation=True)["id"], validation["id"])
+        ops.finish(validation["id"], {
+            "status": "completed_with_limitations", "case_id": case["id"],
+            "validation_gate": "passed", "gate_reason": "fixed revision controls passed",
+            "reachability_status": "unknown", "validated_vulnerability": 0,
+            "input_manifest_sha256": "a" * 64, "validation_command_sha256": "b" * 64,
+            "docker_log_sha256": "d" * 64, "docker_exit_code": 0,
+            "result": {"harness": "auth01_descriptor_bypass", "family": "AUTH-01",
+                "revisions": {"vulnerable": {
+                    "commit": "e" * 40, "state": "stable_reproduced",
+                    "build": {"compiler": "clang++", "compiler_version": "test", "sanitizers": ["address"], "returncode": 0},
+                    "replay": {"label": "stable_reproduced", "attempts": 3, "triggered": 3, "all_cases_match": True,
+                               "cases": [{"case_id": "no_token", "role": "attack", "expected": "trigger",
+                                          "observed": ["trigger"] * 3, "matches_expectation": [True] * 3}]},
+                    "expectations_met": {"no_token": True},
+                }}},
+            "patched_revision": {"synthetic_commit": "f" * 40, "base_commit": "e" * 40,
+                                 "fixed_commit": "5" * 40, "patch_sha256": "9" * 64},
+            "limitations": ["Harness calls the stub directly; product entry reachability is not proven."],
+        }, state="completed_with_limitations")
+
+        response = self.client.get(f"/api/v1/cases/{case['id']}/report.json")
+        self.assertEqual(response.status_code, 200, response.text)
+        data = response.json()
+        self.assertEqual(data["validated_vulnerability"], 0)
+        self.assertEqual(data["candidates"][0]["source_evidence"][0]["note"], "Reviewer-recorded source location")
+        self.assertEqual(data["candidates"][0]["reviews"][0]["status"], "needs_more_evidence")
+        agent_row = next(item for item in data["operations"] if item["id"] == agent["id"])
+        self.assertEqual(agent_row["agent_triage"]["human_reviews"][0]["usefulness"], "partially_useful")
+        self.assertEqual(agent_row["agent_triage"]["vulnerability_report"]["status"], "draft_unverified")
+        self.assertEqual(agent_row["agent_triage"]["poc_draft"]["status"], "insufficient_evidence")
+        self.assertEqual(agent_row["agent_triage"]["artifact_generation"], None)
+        self.assertEqual(agent_row["agent_triage"]["tool_calls"][0]["tool"], "read_source")
+        validation_row = next(item for item in data["operations"] if item["id"] == validation["id"])
+        evidence = validation_row["validation_evidence"]
+        self.assertEqual(evidence["harness_id"], "auth01_descriptor_bypass")
+        self.assertEqual(evidence["revisions"]["vulnerable"]["replay_cases"][0]["case_id"], "no_token")
+        self.assertEqual(evidence["docker_log_sha256"], "d" * 64)
+        self.assertEqual(validation_row["reachability_status"], "unknown")
+        self.assertEqual(validation_row["validated_vulnerability"], 0)
+
+        markdown = self.client.get(f"/api/v1/cases/{case['id']}/report.md")
+        self.assertEqual(markdown.status_code, 200, markdown.text)
+        self.assertIn("人工登记源码证据", markdown.text)
+        self.assertIn("Agent 建议", markdown.text)
+        self.assertIn("固定 Harness：auth01\\_descriptor\\_bypass", markdown.text)
+        self.assertIn("案例 no", markdown.text)
+        self.assertIn("经门控确认的漏洞数：0", markdown.text)
+        self.assertIn("漏洞数：0", markdown.text)
+        self.assertIn("Product reachability is unknown", markdown.text)
+
+    def test_case_report_queries_exact_case_and_discloses_more_than_twenty_operations(self):
+        job = self.completed()
+        candidate = service.findings(service.read_report(self.settings, job))[0]
+        case = self.client.post("/api/v1/cases", headers=HEADERS, json={
+            "title": "case report operation truncation",
+            "links": [{"job_id": job["id"], "candidate_id": candidate["id"], "rationale": "test"}],
+        }).json()
+        ops = self.app.state.operations
+        for index in range(25):
+            operation = ops.create("validation", {"case_id": case["id"], "test_index": index})
+            self.assertEqual(ops.claim(validation=True)["id"], operation["id"])
+            ops.finish(operation["id"], {
+                "status": "completed_with_limitations", "case_id": case["id"],
+                "validation_gate": "not_passed", "reachability_status": "unknown",
+                "validated_vulnerability": 0, "test_index": index,
+            }, state="completed_with_limitations")
+
+        # More recent unrelated operations used to push this case outside the
+        # global 200-row list before the report applied its case_id filter.
+        with self.store.connect() as db:
+            for index in range(205):
+                db.execute(
+                    "INSERT INTO operations(id,kind,spec,status,created_at) VALUES(?,?,?,?,?)",
+                    (f"{index:032x}", "investigation", json.dumps({"case_id": "another-case"}),
+                     "completed", "2099-01-01T00:00:00Z"),
+                )
+
+        report = self.client.get(f"/api/v1/cases/{case['id']}/report.json")
+        self.assertEqual(report.status_code, 200, report.text)
+        data = report.json()
+        self.assertEqual(len(data["operations"]), 20)
+        self.assertEqual(data["operation_summaries"], {
+            "total": 25, "included": 20, "truncated": True, "limit": 20,
+        })
+        self.assertTrue(all(item["kind"] == "validation" for item in data["operations"]))
+        markdown = self.client.get(f"/api/v1/cases/{case['id']}/report.md")
+        self.assertEqual(markdown.status_code, 200, markdown.text)
+        self.assertIn("展示 20 / 25 条", markdown.text)
+        self.assertIn("最近 20 条结果", markdown.text)
+        self.assertIn("未展开的 5 条操作仍存在", markdown.text)
+        self.assertEqual(data["validated_vulnerability"], 0)
+
+    def test_case_report_exports_structured_agent_drafts_and_escaped_html_manifest(self):
+        job = self.completed()
+        candidate = service.findings(service.read_report(self.settings, job))[0]
+        case = self.client.post("/api/v1/cases", headers=HEADERS, json={
+            "title": "structured export case",
+            "links": [{"job_id": job["id"], "candidate_id": candidate["id"], "rationale": "review"}],
+        }).json()
+        ops = self.app.state.operations
+        operation = ops.create("agent_investigation", {
+            "case_id": case["id"], "job_id": job["id"], "candidate_id": candidate["id"],
+        })
+        self.assertEqual(ops.claim()["id"], operation["id"])
+        hostile = "<script>alert(1)</script><img src=x onerror=alert(2)>"
+        ops.finish(operation["id"], {
+            "status": "completed", "case_id": case["id"], "vulnerability_state": "candidate",
+            "validated_vulnerability": 0, "artifact_generation": {"status": "completed", "calls_used": 1},
+            "agent_assessment": {
+                "assessment": "needs_more_evidence", "summary": "fixed source needs review",
+                "supported_claims": [], "obligation_reviews": [], "unknowns": ["Product reachability"],
+                "unsupported_claims": [], "next_steps": ["Review the fixed product entry."],
+                "vulnerability_report": {
+                    "status": "draft_unverified", "title": hostile,
+                    "summary": "Candidate summary", "root_cause": "Root cause draft",
+                    "impact": "unknown", "preconditions": ["Reviewed build required"],
+                    "attack_path": ["Trace the call path"], "remediation": "Add authorization check",
+                    "citations": [{"evidence_id": "evidence-1", "file": "src/example.cpp",
+                                   "line_start": 4, "line_end": 6, "quote": hostile}],
+                },
+                "poc_draft": {
+                    "status": "draft_unexecuted", "title": "Local regression draft", "language": "cpp",
+                    "code": "<script>alert(3)</script>\n```\nreturn;\n```",
+                    "prerequisites": ["Use a disposable local build"],
+                    "run_steps": ["Review the draft; do not execute automatically."],
+                    "expected_observation": "The fixed guard rejects the input.",
+                    "negative_control": "A safe input remains accepted.",
+                    "citations": [{"evidence_id": "evidence-2", "file": "src/example.cpp",
+                                   "line_start": 8, "line_end": 9, "quote": "if (safe)"}],
+                },
+            },
+        }, state="completed")
+
+        markdown = self.client.get(f"/api/v1/cases/{case['id']}/report.md")
+        self.assertEqual(markdown.status_code, 200, markdown.text)
+        self.assertIn("AI 漏洞报告草案与 PoC 计划", markdown.text)
+        self.assertIn("Root cause draft", markdown.text)
+        self.assertIn("Add authorization check", markdown.text)
+        self.assertIn("PoC 验证计划（AI 草案，未执行）", markdown.text)
+        self.assertIn("未执行、未验证；candidate / unknown", markdown.text)
+        self.assertIn("Local regression draft", markdown.text)
+        self.assertIn("固定 Harness 结果另列", markdown.text)
+
+        html_report = self.client.get(f"/api/v1/cases/{case['id']}/report.html")
+        self.assertEqual(html_report.status_code, 200, html_report.text)
+        self.assertIn("text/html", html_report.headers["content-type"])
+        self.assertIn("AI 草案 · 未执行 · 未验证 · candidate / unknown", html_report.text)
+        self.assertIn("Root cause draft", html_report.text)
+        self.assertIn("Add authorization check", html_report.text)
+        self.assertIn("&lt;script&gt;alert(1)&lt;/script&gt;", html_report.text)
+        self.assertIn("&lt;img src=x onerror=alert(2)&gt;", html_report.text)
+        self.assertNotIn("<script>alert(1)</script>", html_report.text)
+        self.assertNotIn("<img src=x onerror=alert(2)>", html_report.text)
+
+        manifest_response = self.client.get(f"/api/v1/cases/{case['id']}/manifest.json")
+        self.assertEqual(manifest_response.status_code, 200, manifest_response.text)
+        manifest = manifest_response.json()
+        self.assertEqual(set(manifest["artifacts"]), {"report.json", "report.md", "report.html"})
+        for artifact, endpoint in (
+            ("report.json", "report.json"), ("report.md", "report.md"), ("report.html", "report.html")
+        ):
+            response = self.client.get(f"/api/v1/cases/{case['id']}/{endpoint}")
+            self.assertEqual(response.status_code, 200, response.text)
+            self.assertEqual(manifest["artifacts"][artifact]["sha256"], hashlib.sha256(response.content).hexdigest())
+            self.assertEqual(manifest["artifacts"][artifact]["size_bytes"], len(response.content))
+        self.assertEqual(manifest["scope"]["validated_vulnerability"], 0)
+
+    def test_combined_audit_markdown_discloses_risk_detail_truncation(self):
+        from src.workbench.operations_api import _combined_audit_report_markdown
+
+        items = [{
+            "risk_tier_label": "高可信候选", "detector_id": "test.detector", "rule_id": "test.rule",
+            "candidate_id": f"candidate{index}", "file": f"src/file-{index}.cpp", "line": index + 1,
+            "source_sha256": f"{index:064x}", "triage": {"state": "not_triaged"},
+            "reasons": ["fixed source review needed"],
+        } for index in range(25)]
+        document = {
+            "report_snapshot_id": "snapshot-1", "report_snapshot_sha256": "a" * 64,
+            "scan": {"report_sha256": "b" * 64, "repository": "fixture/sample", "commit": "c" * 40,
+                     "tree": "d" * 40, "status": "completed"},
+            "triage": {"state": "not_triaged", "authorization": None},
+            "validated_vulnerability": 0,
+            "risk_snapshot": {"counts": {"high_confidence_candidate": 25}, "items": items,
+                              "limitations": []},
+            "coverage": {"source_parsing": {}}, "limitations": [],
+        }
+        markdown = _combined_audit_report_markdown(document)
+        self.assertIn("统计覆盖 25 条候选观测；本节仅展示前 20 条明细，另有 5 条明细未展开", markdown)
+        self.assertIn("candidate19", markdown)
+        self.assertNotIn("candidate20", markdown)
+
     def test_case_links_require_existing_run_candidates(self):
         job = self.completed()
         identity = service.findings(service.read_report(self.settings, job))[0]["id"]

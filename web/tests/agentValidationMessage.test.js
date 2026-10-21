@@ -19,7 +19,7 @@ test("unknown rejection codes get a safe fallback without implying a vulnerabili
 
 test("provider output truncation is explicit and retry requires a fresh preview and consent", () => {
   const message = structuredAnswerRejection("provider_incomplete", "max_output_tokens");
-  assert.match(message, /达到本次输出 token 上限/);
+  assert.match(message, /达到本次单请求输出 token 上限/);
   assert.match(message, /已丢弃不完整答复/);
   assert.match(message, /所有证据义务仍保持未决/);
   assert.match(message, /重新预览并单独授权/);

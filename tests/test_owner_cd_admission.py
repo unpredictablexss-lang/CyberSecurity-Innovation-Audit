@@ -5,6 +5,7 @@ from pathlib import Path
 from unittest.mock import patch
 from src.ohscanner.detectors.admission import pending_admissions
 from src.ohscanner.detectors.catalog import build_registry, catalog_metadata, default_detector_ids
+from src.ohscanner.detectors.data.sensitive_exposure import SensitiveExposureDetector
 from src.ohscanner.planning import approved_metadata
 from src.workbench.planning import plan_audit
 from tests.test_audit_plan import manifest
@@ -38,7 +39,7 @@ class AdmissionBoundaryTests(unittest.TestCase):
         self.assertEqual(metadata['kind'], 'research_candidate')
         self.assertFalse(metadata['default_enabled'])
         detector = build_registry((ident,)).detectors()[0]
-        self.assertEqual(detector.version, '0.21.0')
+        self.assertEqual(detector.version, SensitiveExposureDetector.version)
         self.assertNotIn(ident, {row['id'] for row in pending_admissions()})
         automatic = plan_audit(manifest(), approved_metadata())
         automatic_row = next(row for row in automatic['detectors'] if row['id'] == ident)
