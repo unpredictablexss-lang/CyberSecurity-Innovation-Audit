@@ -46,6 +46,7 @@ import { State, Hash, go, CodeView, Header, labels } from "../components";
 import AuditPlanView from "../features/audits/AuditPlanView";
 import SourceEvidence from "../SourceEvidence";
 import CandidateActions from "../features/workbench/CandidateActions";
+import ProgressiveQuickScreenAction from "../features/audits/ProgressiveQuickScreenAction";
 import { requestGate } from "../features/audits/model";
 import { disclosureReviewed, disclosureSelectionMatches } from "../features/audits/egressDisclosure.js";
 import { candidateConfidenceColor, candidateConfidenceLabel, candidateSeverityColor, candidateSeverityLabel, analysisStatusLabel, coverageSummaryLabel, groupingBasisLabel, groupingSymbolLabel, obligationDescriptionLabel, obligationKindLabel, obligationStatusLabel, reportLimitationLabel, riskReasonsLabel, scanStageLabel, taskReportStatusLabel, taskTriageStatusLabel, triageStateLabel } from "../features/workbench/riskLabels.js";
@@ -736,7 +737,11 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
                       {
                         title: "",
                         render: (_: any, f: any) => (
-                          <Button onClick={() => void open(f)}>查看证据</Button>
+                          <Space wrap>
+                            <Button onClick={() => void open(f)}>查看证据</Button>
+                            <ProgressiveQuickScreenAction jobId={id} candidateId={f.id}
+                              enabled={Boolean(job?.report_sha256 && agentProvider?.configured)} />
+                          </Space>
                         ),
                       },
                     ]}

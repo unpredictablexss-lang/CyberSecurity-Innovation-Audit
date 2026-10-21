@@ -824,8 +824,17 @@ def execute(settings, store, ops, task):
     if kind == "investigation":
         return investigation(settings, store, spec)
     if kind == "agent_investigation":
+        if spec.get("progressive_quick_screen_operation_id"):
+            from .progressive_triage.deep_agent_operation import execute_progressive_deep_agent
+            return execute_progressive_deep_agent(settings, store, ops, task)
         from .agent import execute_agent
         return execute_agent(settings, store, ops, task)
+    if kind == "progressive_quick_screen":
+        from .progressive_triage.quick_screen_operation import execute_quick_screen
+        result = execute_quick_screen(settings, task, ops=ops)
+        result["status"] = ("completed" if result.get("state") == "completed"
+                            else "completed_with_limitations")
+        return result
     if kind == "version_candidate_comparison":
         from .joint_candidate_comparison_runtime import execute_joint_comparison
         return execute_joint_comparison(settings, store, ops, task)

@@ -33,6 +33,22 @@ def _is_consented_joint_comparison(task, ops=None):
                 task.get("id"), spec["consent_nonce"], spec["consent_sha256"]))
 
 
+def _is_consented_quick_screen(task):
+    spec = task.get("spec") if isinstance(task.get("spec"), dict) else {}
+    auth = spec.get("authorization") if isinstance(spec.get("authorization"), dict) else {}
+    digest = spec.get("consent_sha256")
+    nonce = spec.get("consent_nonce")
+    return (task.get("kind") == "progressive_quick_screen"
+            and spec.get("source_submission_approved") is True
+            and isinstance(digest, str) and len(digest) == 64
+            and all(ch in "0123456789abcdef" for ch in digest)
+            and isinstance(nonce, str) and len(nonce) == 32
+            and all(ch in "0123456789abcdef" for ch in nonce)
+            and auth.get("consent_sha256") == digest
+            and auth.get("authorized") is True
+            and isinstance(spec.get("consent_manifest"), dict))
+
+
 def _is_continuous_tool_agent(task):
     spec = task.get("spec") if isinstance(task.get("spec"), dict) else {}
     return (task.get("kind") == "agent_investigation"
@@ -45,6 +61,8 @@ def _hard_deadline_seconds(task):
     if task.get("kind") == "agent_investigation":
         from .agent import bounded_agent_spec
         return bounded_agent_spec(spec)["timeout_seconds"] + 10
+    if task.get("kind") == "progressive_quick_screen":
+        return 100
     return spec.get("timeout_seconds", 600)
 
 
@@ -91,6 +109,7 @@ class OperationWorker:
                     env={**worker_child_environment(os.environ,
                             allow_agent_provider=(not self.validation and (
                                 task.get("kind") == "agent_investigation"
+                                or _is_consented_quick_screen(task)
                                 or _is_consented_joint_comparison(task, self.ops)))),
                          "OHSCANNER_DATA": str(self.settings.data_dir),
                          "OHSCANNER_TARGET_ROOTS": os.pathsep.join(map(str, self.settings.target_roots)),
@@ -200,6 +219,7 @@ def main():
         ops = Operations(store)
         task = ops.get(args.child)
         if (task.get("kind") != "agent_investigation"
+                and not _is_consented_quick_screen(task)
                 and not _is_consented_joint_comparison(task, ops)):
             remove_agent_provider_environment(os.environ)
         memory = task["spec"].get("memory_mb", 2048) * 1024 * 1024

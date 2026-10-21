@@ -6,7 +6,7 @@ from pathlib import Path
 import sqlite3
 import statistics
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from decimal import Decimal, InvalidOperation
 from .store import now
 from .triage_limits import (MAX_TRIAGE_CANDIDATES_PER_ENDPOINT,
@@ -291,8 +291,43 @@ class Operations:
                     and row["consent_sha256"] == consent_sha256)
 
     def create(self, kind, spec):
-        if kind not in {"source_sync", "source_sync_batch", "repository_import_scan", "revision_range", "version_matrix", "branch_comparison", "recent_window_comparison", "validation", "investigation", "candidate_review_batch", "agent_investigation", "version_candidate_comparison"}:
+        if kind not in {"source_sync", "source_sync_batch", "repository_import_scan", "revision_range", "version_matrix", "branch_comparison", "recent_window_comparison", "validation", "investigation", "candidate_review_batch", "agent_investigation", "version_candidate_comparison", "progressive_quick_screen"}:
             raise ValueError("unknown operation kind")
+        if kind == "progressive_quick_screen":
+            from .progressive_triage.contracts import SHA256_RE, content_sha256
+            required = ("consent_nonce", "consent_sha256", "job_id", "candidate_id",
+                        "consent_manifest", "group", "evidence", "authorization")
+            if (not isinstance(spec, dict)
+                    or spec.get("source_submission_approved") is not True
+                    or any(not isinstance(spec.get(name), str) or not spec[name]
+                           for name in required[:4])
+                    or not isinstance(spec.get("consent_manifest"), dict)
+                    or not isinstance(spec.get("group"), dict)
+                    or not isinstance(spec.get("evidence"), list)
+                    or not isinstance(spec.get("authorization"), dict)
+                    or not isinstance(spec.get("progressive_policy"), dict)
+                    or not isinstance(spec.get("ranking"), dict)
+                    or not isinstance(spec.get("audit_operation_id"), str)
+                    or spec["consent_manifest"].get("audit_operation_id") != spec.get("audit_operation_id")
+                    or not SHA256_RE.fullmatch(spec["consent_sha256"])
+                    or len(spec["consent_nonce"]) != 32
+                    or any(ch not in "0123456789abcdef" for ch in spec["consent_nonce"])
+                    or content_sha256(spec["consent_manifest"]) != spec["consent_sha256"]
+                    or spec["consent_manifest"].get("group") != spec["group"]
+                    or spec["consent_manifest"].get("evidence") != spec["evidence"]
+                    or spec["consent_manifest"].get("ranking") != spec["ranking"]
+                    or spec["consent_manifest"].get("policy") != spec["progressive_policy"].get("policy")
+                    or spec["consent_manifest"].get("policy_sha256") != spec["progressive_policy"].get("policy_sha256")
+                    or spec["consent_manifest"].get("policy_revision") != spec["progressive_policy"].get("revision")
+                    or spec["authorization"].get("consent_sha256") != spec["consent_sha256"]):
+                raise ValueError("progressive quick screen requires a fixed, explicit consent binding")
+            try:
+                expiry = datetime.fromisoformat(spec.get("consent_expires_at", "").replace("Z", "+00:00"))
+            except (AttributeError, TypeError, ValueError):
+                raise ValueError("progressive quick screen consent expiry is invalid") from None
+            if (expiry.tzinfo is None or expiry <= datetime.now(timezone.utc)
+                    or spec["consent_manifest"].get("consent_expires_at") != spec["consent_expires_at"]):
+                raise ValueError("progressive quick screen consent has expired or changed")
         if kind == "version_candidate_comparison":
             required = ("from_commit", "from_candidate_id", "to_commit", "to_candidate_id",
                         "consent_nonce", "consent_sha256", "consent_expires_at",
@@ -345,6 +380,12 @@ class Operations:
                     if prior and json.loads(prior["spec"]).get("consent_sha256") == spec["consent_sha256"]:
                         return self.row(prior)
                     raise ValueError("joint comparison approval ticket has already been used")
+            elif kind == "agent_investigation" and spec.get("progressive_consent_sha256"):
+                for row in db.execute("SELECT * FROM operations WHERE kind=?", (kind,)):
+                    existing_spec = json.loads(row["spec"])
+                    if (existing_spec.get("progressive_consent_sha256") == spec["progressive_consent_sha256"]
+                            and existing_spec.get("source_consent_sha256") == spec.get("source_consent_sha256")):
+                        return self.row(row)
             elif kind == "agent_investigation" and spec.get("source_consent_sha256"):
                 # Consent hashes include a fresh preview nonce. A network/client retry with
                 # the same explicit approval must return the original operation, avoiding
@@ -352,6 +393,27 @@ class Operations:
                 for row in db.execute("SELECT * FROM operations WHERE kind=?", (kind,)):
                     existing_spec = json.loads(row["spec"])
                     if existing_spec.get("source_consent_sha256") == spec["source_consent_sha256"]:
+                        return self.row(row)
+            elif kind == "progressive_quick_screen":
+                # A repeated submission of one approval returns the recorded operation;
+                # it cannot create a second billable request.
+                audit_operation_id = spec["audit_operation_id"]
+                if audit_operation_id != spec["job_id"]:
+                    parent_row = db.execute("SELECT kind,spec,status,cancel_requested FROM operations WHERE id=?",
+                                            (audit_operation_id,)).fetchone()
+                    if not parent_row or parent_row["kind"] not in {
+                            "revision_range", "version_matrix", "branch_comparison", "recent_window_comparison"}:
+                        raise ValueError("progressive quick screen parent audit does not exist")
+                    parent_spec = json.loads(parent_row["spec"])
+                    if (spec["job_id"] not in parent_spec.get("scan_ids", [])
+                            or parent_spec.get("progressive_triage_policy") != spec["progressive_policy"]
+                            or parent_spec.get("audit_mode") == "static_only"
+                            or parent_row["cancel_requested"]
+                            or parent_row["status"] in {"cancelled", "failed", "timed_out", "interrupted"}):
+                        raise ValueError("progressive quick screen is not bound to its frozen intelligent audit")
+                for row in db.execute("SELECT * FROM operations WHERE kind=?", (kind,)):
+                    existing_spec = json.loads(row["spec"])
+                    if existing_spec.get("consent_sha256") == spec["consent_sha256"]:
                         return self.row(row)
             if kind == "repository_import_scan":
                 prior = db.execute("SELECT id FROM operations WHERE kind=? AND spec=? AND status IN ('queued','running') ORDER BY created_at DESC LIMIT 1",
@@ -939,6 +1001,23 @@ class Operations:
         with self.store.connect() as db:
             return [self.row(r) for r in db.execute("SELECT * FROM operations ORDER BY created_at DESC LIMIT 200")]
 
+    def audit_parent_for_scan(self, job_id):
+        """Resolve a multi-endpoint audit parent without guessing across parents."""
+        if not isinstance(job_id, str) or not job_id:
+            raise ValueError("invalid scan job ID")
+        kinds = {"revision_range", "version_matrix", "branch_comparison", "recent_window_comparison"}
+        with self.store.connect() as db:
+            rows = list(db.execute("SELECT * FROM operations WHERE kind IN (?,?,?,?)",
+                                   tuple(sorted(kinds))))
+        parents = []
+        for raw in rows:
+            row = self.row(raw)
+            if job_id in row["spec"].get("scan_ids", []):
+                parents.append(row)
+        if len(parents) > 1:
+            raise ValueError("scan job is linked to multiple audit operations; shared budget cannot be resolved")
+        return parents[0] if parents else None
+
     def report_operations_for_case(self, case_id, limit=20):
         """Return result-bearing operations bound to one case, with explicit truncation."""
         if not isinstance(case_id, str) or not case_id.strip():
@@ -1144,6 +1223,15 @@ class Operations:
             if row["kind"] == "candidate_review_batch" and row["status"] not in END:
                 raise ValueError("candidate review batches cannot be cancelled; all candidates must remain queued until review or explicit resolution")
             targets = [row]
+            if row["kind"] in {"revision_range", "version_matrix", "branch_comparison", "recent_window_comparison"}:
+                for item in db.execute(
+                        "SELECT * FROM operations WHERE kind IN ('progressive_quick_screen','agent_investigation')"):
+                    child_spec = json.loads(item["spec"])
+                    child_audit = (child_spec.get("audit_operation_id")
+                                   if item["kind"] == "progressive_quick_screen"
+                                   else child_spec.get("progressive_audit_operation_id"))
+                    if child_audit == key:
+                        targets.append(self.row(item))
             pair_id = row["spec"].get("pair_id")
             if pair_id and row["kind"] == "agent_investigation" and row["status"] not in END:
                 targets = [self.row(item) for item in db.execute(

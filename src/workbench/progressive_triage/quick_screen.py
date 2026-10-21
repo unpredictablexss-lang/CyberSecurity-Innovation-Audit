@@ -286,9 +286,13 @@ def _normalize_result(value: Any, group_id: str, allowed_ids: set[str]) -> dict[
 
 def run_quick_screen(provider: Any, group: dict[str, Any], evidence: Any,
                      authorization: dict[str, Any], *, provider_fingerprint: str,
-                     model: str) -> dict[str, Any]:
+                     model: str, timeout_seconds: int = MAX_REQUEST_SECONDS) -> dict[str, Any]:
     """Perform one explicit, no-tools quick screen; all failures degrade to unknown."""
     group_id = group.get("group_id") if isinstance(group, dict) else None
+    if (not isinstance(timeout_seconds, int) or isinstance(timeout_seconds, bool)
+            or not 1 <= timeout_seconds <= MAX_REQUEST_SECONDS):
+        return {"group_id": group_id, "state": "quick_unknown",
+                "reason_code": "quick_screen_timeout_out_of_bounds", "validated_vulnerability": 0}
     try:
         payload, allowed_ids = build_quick_screen_request(
             group, evidence, authorization, provider_fingerprint, model
@@ -297,7 +301,7 @@ def run_quick_screen(provider: Any, group: dict[str, Any], evidence: Any,
         return {"group_id": group_id, "state": "quick_unknown",
                 "reason_code": str(error), "validated_vulnerability": 0}
     try:
-        response = provider.create(payload, timeout=MAX_REQUEST_SECONDS, max_retries=0)
+        response = provider.create(payload, timeout=timeout_seconds, max_retries=0)
         if response.get("status") != "completed":
             raise ValueError("provider_response_incomplete")
         text = _response_text(response)

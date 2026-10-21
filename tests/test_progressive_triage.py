@@ -251,6 +251,93 @@ class PolicyApiTests(unittest.TestCase):
         self.assertEqual(baseline, _progressive_workflow_sha256("a" * 64, "b" * 64))
         self.assertNotEqual(baseline, _progressive_workflow_sha256("a" * 64, "c" * 64))
 
+    def test_quick_screen_start_without_explicit_consent_makes_no_provider_call(self):
+        from unittest.mock import patch
+        from types import SimpleNamespace
+
+        class Provider(SimpleNamespace):
+            calls = 0
+
+            def create(self, *args, **kwargs):
+                self.calls += 1
+                raise AssertionError("no consent means no Provider request")
+
+        provider = Provider(configured=True)
+        with tempfile.TemporaryDirectory() as directory:
+            settings = Settings(Path(directory) / "data", ())
+            with patch("src.workbench.agent.ProviderConfig.from_env", return_value=provider):
+                with TestClient(create_app(settings)) as client:
+                    response = client.post("/api/v1/operations/progressive-quick-screens", headers={
+                        "x-ohscanner-client": "workbench-v1"}, json={
+                            "job_id": "a" * 32, "candidate_id": "candidate-1",
+                            "source_submission_approved": False,
+                        })
+        self.assertEqual(response.status_code, 428, response.text)
+        self.assertEqual(provider.calls, 0)
+
+    def test_quick_screen_preview_start_persists_one_idempotent_operation(self):
+        from datetime import datetime, timedelta, timezone
+        from unittest.mock import patch
+        from types import SimpleNamespace
+
+        from src.workbench.progressive_triage.contracts import content_sha256
+        from src.workbench.progressive_triage.policy import policy_envelope
+
+        provider = SimpleNamespace(configured=True, fingerprint="f" * 64,
+                                   model="screen-model", public={"model": "screen-model"})
+
+        def prepare(_settings, _store, job_id, candidate_id, active_provider, nonce, expiry=None,
+                    audit_parent=None, audit_parent_plan=None):
+            expiry = expiry or (datetime.now(timezone.utc) + timedelta(minutes=8)).isoformat()
+            policy = build_policy()
+            policy_sha256 = policy_envelope(policy)["policy_sha256"]
+            progressive_policy = {"revision": 0, "policy": policy,
+                                  "policy_sha256": policy_sha256}
+            group = {"group_id": "g1", "members": [{"candidate_id": candidate_id}]}
+            evidence = [{"evidence_id": "e1", "text": "fixed excerpt"}]
+            ranking = {"decisions": [{"group_id": "g1", "selected": True}]}
+            manifest = {"consent_nonce": nonce, "consent_expires_at": expiry,
+                        "audit_operation_id": job_id,
+                        "group": group, "evidence": evidence,
+                        "policy_revision": 0, "policy": policy,
+                        "policy_sha256": policy_sha256, "ranking": ranking}
+            digest = content_sha256(manifest)
+            return {"eligible": True, "consent_nonce": nonce, "consent_expires_at": expiry,
+                    "consent_sha256": digest, "consent_manifest": manifest,
+                    "group": group, "evidence": evidence,
+                    "progressive_policy": progressive_policy, "ranking": ranking,
+                    "audit_operation_id": job_id,
+                    "authorization": {"authorized": True, "consent_sha256": digest},
+                    "provider": active_provider.public,
+                    "disclosure": {"tools_enabled": False}}
+
+        with tempfile.TemporaryDirectory() as directory:
+            settings = Settings(Path(directory) / "data", ())
+            with patch("src.workbench.agent.ProviderConfig.from_env", return_value=provider):
+                with patch("src.workbench.progressive_triage.quick_screen_operation.prepare_quick_screen",
+                           side_effect=prepare):
+                    with TestClient(create_app(settings)) as client:
+                        headers = {"x-ohscanner-client": "workbench-v1"}
+                        preview = client.post("/api/v1/operations/progressive-quick-screens/preview",
+                            headers=headers, json={"job_id": "a" * 32,
+                                                  "candidate_id": "candidate-1"})
+                        self.assertEqual(preview.status_code, 200, preview.text)
+                        body = preview.json()
+                        start_body = {"job_id": "a" * 32, "candidate_id": "candidate-1",
+                                      "source_submission_approved": True,
+                                      "consent_nonce": body["consent_nonce"],
+                                      "consent_sha256": body["consent_sha256"],
+                                      "consent_expires_at": body["consent_expires_at"]}
+                        started = client.post("/api/v1/operations/progressive-quick-screens",
+                                              headers=headers, json=start_body)
+                        self.assertEqual(started.status_code, 201, started.text)
+                        replay = client.post("/api/v1/operations/progressive-quick-screens",
+                                             headers=headers, json=start_body)
+                        self.assertEqual(replay.status_code, 201, replay.text)
+        self.assertEqual(started.json()["id"], replay.json()["id"])
+        self.assertEqual(started.json()["kind"], "progressive_quick_screen")
+        self.assertEqual(started.json()["status"], "queued")
+
     def test_policy_routes_reject_weak_requests_and_preserve_revision(self):
         with tempfile.TemporaryDirectory() as directory:
             settings = Settings(Path(directory) / "data", ())
@@ -259,7 +346,12 @@ class PolicyApiTests(unittest.TestCase):
                 current = client.get(endpoint)
                 self.assertEqual(current.status_code, 200, current.text)
                 self.assertEqual(current.json()["policy"]["profile"], "standard")
-                self.assertEqual(current.json()["integration"]["worker_enforcement"], "not_connected")
+                self.assertEqual(current.json()["integration"]["worker_enforcement"],
+                                 "l2_l3_fixed_source_consent_and_parent_budget_gate")
+                self.assertEqual(current.json()["integration"]["quick_screen_executor"],
+                                 "independent_explicit_consent_operation")
+                self.assertEqual(current.json()["integration"]["task_budget_ledger"],
+                                 "shared_across_fixed_endpoints_for_l2_and_l3")
                 self.assertEqual(current.json()["integration"]["grouping_and_ranking"],
                                  "connected_to_multi_endpoint_operation_results")
 
@@ -436,6 +528,217 @@ class QuickScreenTests(unittest.TestCase):
         self.assertEqual(provider.calls, 1)
 
 
+class QuickScreenOperationTests(unittest.TestCase):
+    def test_preview_excerpt_is_redacted_and_within_fixed_line_and_byte_bounds(self):
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        from src.workbench.progressive_triage.quick_screen_operation import prepare_quick_screen
+
+        with tempfile.TemporaryDirectory() as directory:
+            data_dir = Path(directory) / "data"
+            data_dir.mkdir(mode=0o700)
+            settings = SimpleNamespace(data_dir=data_dir)
+            source_lines = [f"int statement_{index};" for index in range(100)]
+            source_lines[49] = "Authorization: Bearer test-secret-value"
+            source_text = "\n".join(source_lines)
+            job = {"id": "job-1", "status": "completed", "report_sha256": "f" * 64}
+            report = {"repository": REPOSITORY, "commit": COMMIT,
+                      "snapshot_sha256": SNAPSHOT, "status": "completed"}
+            candidate = {"id": "candidate-1", "file": "src/example.cpp", "line": 50,
+                         "source_sha256": SOURCE, "detector_id": "cpp.memory",
+                         "rule_id": "memory.rule", "severity": "high", "evidence": {}}
+            prepared = {"source": {"text": source_text}, "initial_context": {
+                "evidence_obligations": [{"description": "check length origin"}]},
+                "initial_evidence_id": "unused", "redaction_categories": []}
+            provider = SimpleNamespace(fingerprint="provider-v1", model="small-model",
+                                       public={"model": "small-model"})
+            with patch("src.workbench.service.read_report", return_value=report), \
+                    patch("src.workbench.service.finding", return_value=candidate), \
+                    patch("src.workbench.smart_audit._source_binding_valid", return_value=True), \
+                    patch("src.workbench.agent._prepare_candidate_context", return_value=prepared):
+                preview = prepare_quick_screen(settings, SimpleNamespace(job=lambda _: job),
+                                               "job-1", "candidate-1", provider, "a" * 32)
+            evidence = preview["evidence"][0]
+            self.assertLessEqual(evidence["line_end"] - evidence["line_start"], 39)
+            self.assertLessEqual(len(evidence["text"].encode("utf-8")), 8_192)
+            self.assertEqual(evidence["source_sha256"], SOURCE)
+            self.assertNotIn("test-secret-value", evidence["text"])
+            self.assertTrue(evidence["sensitive_redactions"])
+            self.assertTrue(preview["ranking"]["decisions"][0]["selected"])
+            self.assertEqual(preview["consent_sha256"], content_sha256(preview["consent_manifest"]))
+
+    def test_multi_endpoint_preview_uses_parent_frozen_selection_and_group(self):
+        from datetime import datetime, timedelta, timezone
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        from src.workbench.progressive_triage.quick_screen_operation import prepare_quick_screen
+        from src.workbench.progressive_triage.ranking import rank_groups
+        from src.workbench.progressive_triage.policy import policy_envelope
+        from src.workbench.progressive_triage.contracts import content_sha256
+
+        fixture = QuickScreenTests()
+        fixture.setUp()
+        policy = build_policy()
+        policy_sha = policy_envelope(policy)["policy_sha256"]
+        envelope = {"revision": 4, "policy": policy, "policy_sha256": policy_sha}
+        endpoint_member = {"candidate_id": "candidate-1", "repository": REPOSITORY,
+                           "commit": COMMIT, "report_sha256": "f" * 64,
+                           "snapshot_sha256": SNAPSHOT, "source_sha256": SOURCE,
+                           "source_binding_verified": True, "file": "src/example.cpp",
+                           "line": 50, "coverage_status": "completed", "severity": "high"}
+        parent_group = {"group_id": "root-cause-group-7", "members": [endpoint_member],
+                        "evidence_gaps": ["inspect caller"]}
+        ranking = rank_groups([parent_group], policy["limits"]["quick_screen_groups_per_audit"],
+                              family_quotas=policy["family_quotas"])
+        parent_plan = {"groups": [{**parent_group, "ranking": ranking["decisions"][0]}],
+                       "ranking": ranking}
+        parent = {"id": "b" * 32, "status": "completed", "cancel_requested": False,
+                  "spec": {"scan_ids": ["job-1"], "audit_mode": "standard_review",
+                           "progressive_triage_policy": envelope}}
+        job = {"id": "job-1", "status": "completed", "report_sha256": "f" * 64}
+        report = {"repository": REPOSITORY, "commit": COMMIT,
+                  "snapshot_sha256": SNAPSHOT, "status": "completed"}
+        candidate = {"id": "candidate-1", "file": "src/example.cpp", "line": 50,
+                     "source_sha256": SOURCE, "detector_id": "cpp.memory",
+                     "rule_id": "memory.rule", "severity": "high", "evidence": {}}
+        prepared = {"source": {"text": "\n".join(f"line {i}" for i in range(1, 101))},
+                    "initial_context": {"evidence_obligations": []},
+                    "initial_evidence_id": "unused", "redaction_categories": []}
+        provider = SimpleNamespace(fingerprint="provider-v1", model="small-model",
+                                   public={"model": "small-model"})
+        with patch("src.workbench.service.read_report", return_value=report), \
+                patch("src.workbench.service.finding", return_value=candidate), \
+                patch("src.workbench.smart_audit._source_binding_valid", return_value=True), \
+                patch("src.workbench.agent._prepare_candidate_context", return_value=prepared):
+            preview = prepare_quick_screen(SimpleNamespace(data_dir="unused"),
+                                           SimpleNamespace(job=lambda _: job), "job-1",
+                                           "candidate-1", provider, "c" * 32,
+                                           audit_parent=parent, audit_parent_plan=parent_plan)
+        self.assertEqual(preview["audit_operation_id"], parent["id"])
+        self.assertEqual(preview["group"]["group_id"], "root-cause-group-7")
+        self.assertEqual(preview["ranking"]["decisions"][0]["group_id"], "root-cause-group-7")
+        self.assertEqual(preview["consent_manifest"]["audit_parent_plan_sha256"],
+                         content_sha256(parent_plan))
+
+    def _task(self):
+        from datetime import datetime, timedelta, timezone
+        from src.workbench.progressive_triage.quick_screen_operation import PROMPT_VERSION, QUICK_SCREEN_VERSION
+        from src.workbench.progressive_triage.policy import policy_envelope
+        from src.workbench.progressive_triage.ranking import rank_groups
+
+        fixture = QuickScreenTests()
+        fixture.setUp()
+        policy = build_policy()
+        policy_sha256 = policy_envelope(policy)["policy_sha256"]
+        group = {**fixture.group, "members": [{
+            **fixture.group["members"][0], "repository": REPOSITORY, "commit": COMMIT,
+            "snapshot_sha256": SNAPSHOT, "source_sha256": SOURCE,
+            "source_binding_verified": True, "file": "src/example.cpp",
+        }]}
+        ranking = rank_groups([group], policy["limits"]["quick_screen_groups_per_audit"],
+                              family_quotas=policy["family_quotas"])
+        expires = (datetime.now(timezone.utc) + timedelta(minutes=5)).isoformat()
+        manifest = {
+            "consent_nonce": "e" * 32,
+            "consent_expires_at": expires,
+            "audit_operation_id": "job-1",
+            "audit_operation_id": "job-1",
+            "quick_screen_version": QUICK_SCREEN_VERSION,
+            "prompt_version": PROMPT_VERSION,
+            "group": group,
+            "evidence": fixture.evidence,
+            "fixed_source": {key: fixture.authorization[key] for key in
+                             ("repository", "commit", "report_sha256")},
+            "provider_fingerprint": fixture.provider_fingerprint,
+            "model": fixture.model,
+            "redaction_policy_version": fixture.authorization["redaction_policy_version"],
+            "policy_revision": 0,
+            "policy": policy,
+            "policy_sha256": policy_sha256,
+            "ranking": ranking,
+        }
+        digest = content_sha256(manifest)
+        authorization = {**fixture.authorization, "consent_sha256": digest}
+        spec = {
+            "source_submission_approved": True,
+            "consent_nonce": "e" * 32,
+            "consent_sha256": digest,
+            "consent_expires_at": expires,
+            "audit_operation_id": "job-1",
+            "consent_manifest": manifest,
+            "group": group,
+            "evidence": fixture.evidence,
+            "authorization": authorization,
+            "job_id": "job-1",
+            "progressive_policy": {"revision": 0, "policy": policy,
+                                   "policy_sha256": policy_sha256},
+            "ranking": ranking,
+        }
+        return fixture, {"kind": "progressive_quick_screen", "spec": spec}
+
+    def test_operation_rechecks_exact_consent_and_executes_no_tools_once(self):
+        from src.workbench.progressive_triage.quick_screen_operation import execute_quick_screen
+        from types import SimpleNamespace
+
+        fixture, task = self._task()
+
+        class Provider:
+            configured = True
+            fingerprint = fixture.provider_fingerprint
+            model = fixture.model
+
+            def __init__(self):
+                self.calls = []
+
+            def create(self, payload, **kwargs):
+                self.calls.append((payload, kwargs))
+                return fixture.response()
+
+        provider = Provider()
+        with tempfile.TemporaryDirectory() as directory:
+            settings = SimpleNamespace(data_dir=Path(directory))
+            result = execute_quick_screen(settings, task, provider)
+            replay_provider = Provider()
+            replay = execute_quick_screen(settings, task, replay_provider)
+        self.assertEqual(result["state"], "completed")
+        self.assertEqual(result["vulnerability_state"], "candidate")
+        self.assertEqual(result["validated_vulnerability"], 0)
+        self.assertEqual(result["quick_screen"]["usage"]["input_tokens"], 700)
+        self.assertEqual(len(provider.calls), 1)
+        self.assertEqual(result["budget"]["usage"]["model_calls_allocated"], 1)
+        self.assertEqual(result["budget"]["usage"]["input_tokens_allocated"], 700)
+        self.assertEqual(result["budget"]["usage"]["output_tokens_allocated"], 120)
+        self.assertEqual(result["budget"]["cost"]["enforcement"], "advisory_only")
+        self.assertEqual(replay["reason_code"], "prior_request_outcome_not_replayed")
+        self.assertEqual(replay_provider.calls, [])
+        payload, kwargs = provider.calls[0]
+        self.assertNotIn("tools", payload)
+        self.assertEqual(kwargs, {"timeout": 90, "max_retries": 0})
+
+    def test_modified_evidence_after_consent_never_reaches_provider(self):
+        from src.workbench.progressive_triage.quick_screen_operation import execute_quick_screen
+        from types import SimpleNamespace
+
+        fixture, task = self._task()
+        task["spec"]["evidence"] = [{**task["spec"]["evidence"][0], "text": "changed source"}]
+
+        class Provider:
+            configured = True
+            fingerprint = fixture.provider_fingerprint
+            model = fixture.model
+            calls = 0
+
+            def create(self, *args, **kwargs):
+                self.calls += 1
+                raise AssertionError("modified consent payload must not be sent")
+
+        provider = Provider()
+        with tempfile.TemporaryDirectory() as directory:
+            result = execute_quick_screen(SimpleNamespace(data_dir=Path(directory)), task, provider)
+        self.assertEqual(result["state"], "quick_unknown")
+        self.assertEqual(provider.calls, 0)
+
+
 class BudgetLedgerTests(unittest.TestCase):
     def setUp(self):
         from src.workbench.progressive_triage.contracts import content_sha256
@@ -517,6 +820,64 @@ class BudgetLedgerTests(unittest.TestCase):
                                          "deep_agent", evidence_gate="quick_screen_investigate")
             self.assertEqual(deep["status"], "queued")
             self.assertEqual(ledger.get("audit-2")["phase_counts"]["deep_agent_groups"], 1)
+
+    def test_budgeted_agent_client_settles_usage_and_never_replays_unknown_calls(self):
+        from src.workbench.progressive_triage.deep_agent_operation import BudgetedAgentClient
+        from src.workbench.progressive_triage.ledger import BudgetError
+
+        class FakeClient:
+            timeout = 10
+            def __init__(self, response=None, error=None):
+                self.response, self.error, self.calls = response, error, 0
+            def create_with_timeout(self, payload, timeout, max_retries=None):
+                self.calls += 1
+                if self.error:
+                    raise self.error
+                return self.response
+
+        with tempfile.TemporaryDirectory() as directory:
+            ledger, policy, sha = self.create(directory)
+            ledger.create_audit("audit-client", policy, sha)
+            ledger.dispatch_group("audit-client", "group-client", "endpoint-client",
+                                  "quick_screen", evidence_gate="ranked_and_selected")
+            quick = ledger.reserve("audit-client", "quick-client", "endpoint-client", "group-client",
+                                   "quick_screen", max_input_tokens=1000, max_output_tokens=512)
+            ledger.settle(quick["reservation_id"], outcome="completed", input_tokens=20,
+                          output_tokens=10, quick_assessment="investigate")
+            ledger.dispatch_group("audit-client", "group-client", "endpoint-client",
+                                  "deep_agent", evidence_gate="quick_screen_investigate")
+            client = FakeClient({"usage": {"input_tokens": 80, "output_tokens": 40}})
+            wrapped = BudgetedAgentClient(client, ledger, audit_id="audit-client", operation_id="op-client",
+                                          endpoint_id="endpoint-client", group_id="group-client")
+            wrapped.create_with_timeout({"max_output_tokens": 128}, 10)
+            self.assertEqual(client.calls, 1)
+            usage = ledger.get("audit-client")["usage"]
+            self.assertEqual(usage["model_calls_allocated"], 2)
+            self.assertEqual(usage["input_tokens_allocated"], 100)
+            self.assertEqual(usage["output_tokens_allocated"], 50)
+
+        with tempfile.TemporaryDirectory() as directory:
+            ledger, policy, sha = self.create(directory)
+            ledger.create_audit("audit-unknown", policy, sha)
+            ledger.dispatch_group("audit-unknown", "group-unknown", "endpoint-unknown",
+                                  "quick_screen", evidence_gate="ranked_and_selected")
+            quick = ledger.reserve("audit-unknown", "quick-unknown", "endpoint-unknown", "group-unknown",
+                                   "quick_screen", max_input_tokens=1000, max_output_tokens=512)
+            ledger.settle(quick["reservation_id"], outcome="completed", input_tokens=20,
+                          output_tokens=10, quick_assessment="investigate")
+            ledger.dispatch_group("audit-unknown", "group-unknown", "endpoint-unknown",
+                                  "deep_agent", evidence_gate="quick_screen_investigate")
+            client = FakeClient(error=TimeoutError("ambiguous Provider timeout"))
+            wrapped = BudgetedAgentClient(client, ledger, audit_id="audit-unknown", operation_id="op-unknown",
+                                          endpoint_id="endpoint-unknown", group_id="group-unknown")
+            with self.assertRaises(TimeoutError):
+                wrapped.create_with_timeout({"max_output_tokens": 128}, 10)
+            with self.assertRaises(BudgetError):
+                wrapped.create_with_timeout({"max_output_tokens": 128}, 10)
+            self.assertEqual(client.calls, 1)
+            usage = ledger.get("audit-unknown")["usage"]
+            self.assertEqual(usage["model_calls_allocated"], 2)
+            self.assertEqual(usage["model_calls_in_flight"], 0)
 
     def test_strict_cost_fails_closed_without_provider_cap_and_known_not_sent_releases(self):
         from src.workbench.progressive_triage.ledger import BudgetError
