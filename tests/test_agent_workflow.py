@@ -3163,9 +3163,9 @@ class AgentRouteTests(unittest.TestCase):
                 self.assertEqual(preview_response.status_code, 200, preview_response.text)
                 preview = preview_response.json()
                 self.assertEqual(preview["candidate_count"], 2)
-                self.assertIsNone(preview["aggregate_budget"]["max_total_model_calls"])
+                self.assertGreater(preview["aggregate_budget"]["max_total_model_calls"], 0)
                 self.assertEqual(preview["aggregate_budget"]["single_shot_candidate_request_count"], 2)
-                self.assertEqual(preview["aggregate_budget"]["local_cumulative_token_budget"], "none")
+                self.assertEqual(preview["aggregate_budget"]["local_cumulative_token_budget"], "bounded")
                 self.assertFalse(preview["aggregate_budget"]["tool_agent_continuous"])
                 self.assertEqual([x["candidate_id"] for x in preview["candidates"]],
                                  ["candidate-1", "candidate-2"])
@@ -3178,7 +3178,7 @@ class AgentRouteTests(unittest.TestCase):
                 self.assertEqual(tool_preview["aggregate_budget"]["max_validation_repair_attempts_per_candidate"], 2)
                 self.assertIsNone(tool_preview["aggregate_budget"]["max_total_model_calls"])
                 self.assertEqual(tool_preview["aggregate_budget"]["max_skeptic_requests_per_candidate"], 1)
-                self.assertEqual(tool_preview["aggregate_budget"]["local_cumulative_cost_budget"], "none")
+                self.assertEqual(tool_preview["aggregate_budget"]["local_cumulative_cost_budget"], "bounded")
                 self.assertTrue(any("Skeptic" in item
                                     for item in tool_preview["disclosure"]))
                 stale = client.post("/api/v1/operations/agent-investigations/batch",
@@ -3268,8 +3268,8 @@ class AgentRouteTests(unittest.TestCase):
                 self.assertEqual(preview_response.status_code, 200, preview_response.text)
                 preview = preview_response.json()
                 self.assertEqual([arm["mode"] for arm in preview["arms"]], ["single_shot", "tool_agent"])
-                self.assertIsNone(preview["aggregate_budget"]["tool_agent_max_total_model_calls"])
-                self.assertEqual(preview["aggregate_budget"]["tool_agent_local_cumulative_token_budget"], "none")
+                self.assertGreater(preview["aggregate_budget"]["tool_agent_max_total_model_calls"], 0)
+                self.assertEqual(preview["aggregate_budget"]["tool_agent_local_cumulative_token_budget"], "bounded")
                 self.assertEqual(preview["aggregate_budget"]["tool_agent_max_validation_repair_attempts"], 2)
                 self.assertEqual(preview["aggregate_budget"]["tool_agent_max_skeptic_requests"], 1)
                 stale = client.post("/api/v1/operations/agent-investigations/paired",

@@ -4892,7 +4892,7 @@ def execute_agent(settings, store, ops, task, client=None):
     if model_tool_calls_skipped:
         result["limitations"].append(
             "The provider requested more read-only tool calls than the remaining fixed budget; excess calls were not executed.")
-    if any(item.get("error_code") == "tool_result_too_large" for item in tool_trace):
+    if any((item.get("result") or {}).get("error_code") == "tool_result_too_large" for item in tool_trace):
         result["limitations"].append("An oversized tool response was rejected; the model could continue with narrower fixed-source queries.")
     from .agent_evidence_graph import build_evidence_graph
     if provider_incomplete_reason == "repeated_tool_result_limit":

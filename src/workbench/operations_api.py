@@ -2108,7 +2108,7 @@ def install_routes(app: FastAPI, settings, store):
                     "candidates": [{"candidate_id": item["candidate_id"],
                                     "consent_sha256": item["preview"]["consent_sha256"]} for item in children],
                     "mode": body.mode,
-                    "continuous_investigation": tool_agent,
+                    "continuous_investigation": False,
                     "local_cumulative_token_budget": "bounded",
                     "local_cumulative_usd_budget": "bounded",
                     "local_total_model_call_budget": "bounded",
@@ -2134,7 +2134,7 @@ def install_routes(app: FastAPI, settings, store):
             "max_total_model_calls": sum(item["preview"]["budgets"]["max_total_model_calls"] for item in children),
             "single_shot_candidate_request_count": len(children) if body.mode == "single_shot" else 0,
             "requests_per_candidate": 1 if body.mode == "single_shot" else None,
-            "continuous_until_terminal_condition": body.mode == "tool_agent",
+            "continuous_until_terminal_condition": False,
             "max_output_tokens_per_provider_request": body.max_output_tokens,
             "provider_request_timeout_seconds": 45,
             "local_cumulative_token_budget": "bounded",
@@ -2144,7 +2144,7 @@ def install_routes(app: FastAPI, settings, store):
             "local_total_wall_time_budget": "bounded",
             "max_validation_repair_attempts_per_candidate": max_repairs_per_candidate,
             "max_skeptic_requests_per_candidate": max_skeptic_per_candidate,
-            "tool_agent_continuous": tool_agent,
+            "tool_agent_continuous": False,
         }
         return {"schema_version": 1, "consent_sha256": consent,
                 "consent_nonce": body.consent_nonce, "provider": provider.public,
@@ -2242,7 +2242,7 @@ def install_routes(app: FastAPI, settings, store):
                     "arms": [{"mode": item["mode"],
                               "consent_sha256": item["preview"]["consent_sha256"]} for item in previews],
                     "single_shot_request_count": 1,
-                    "tool_agent_continuous": True,
+                    "tool_agent_continuous": False,
                     "tool_agent_max_output_tokens_per_request": body.max_output_tokens,
                     "provider_request_timeout_seconds": 45}
         consent = hashlib.sha256(json.dumps(manifest, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
@@ -3635,7 +3635,7 @@ def install_routes(app: FastAPI, settings, store):
         for record in data.get("candidates", []):
             for evidence in record.get("source_evidence", []):
                 rows.append("- " + md(evidence.get("file")) + ": " + md(evidence.get("note")))
-        rows += ["", "## Agent 建议", "## AI 修复与验证建议（未经验证）", "## AI 漏洞报告草案与 PoC 计划", "## PoC 验证计划（AI 草案，未执行）", "未执行、未验证；candidate / unknown", "## PoC / 隔离验证记录", "固定 Harness 结果另列；AI 草案不代替已执行的验证。", "## Agent 实验与人工评价", "最近 20 条结果；完整范围见操作计数。", "AI 草案不是已验证补丁，PoC 草案未执行。"]
+        rows += ["", "## Agent 建议", "## AI 修复与验证建议（未经验证）", "## AI 漏洞报告草案与 PoC 计划", "## PoC 验证计划（AI 草案，未执行）", "未执行、未验证；candidate / unknown", "## PoC / 隔离验证记录", "固定 Harness 结果另列；AI 草案不代替已执行的验证。", "## Agent 实验与人工评价", "最近 20 条结果；完整范围见操作计数。", "AI 草案 · 未执行 · 未验证 · candidate / unknown", "系统未生成或应用补丁；AI 草案不是已验证补丁，PoC 草案未执行。"]
         for operation in data.get("operations", []):
             triage = operation.get("agent_triage") or {}
             for advice in triage.get("model_suggestions", []):
