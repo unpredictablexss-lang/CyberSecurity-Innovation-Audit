@@ -108,6 +108,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("");
   const [detail, setDetail] = useState<any>(null);
+  const selectedRisk = (riskSummary?.items || []).find((item: any) => item.candidate_id === detail?.id);
   const selectedDetailId = useRef<string | null>(null);
   const detailGate = useRef(requestGate());
   const candidateAutoOpened = useRef<string | null>(null);
