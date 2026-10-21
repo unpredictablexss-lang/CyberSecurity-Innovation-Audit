@@ -1,3 +1,60 @@
+// Keep impact severity, evidence confidence, and verification independent.
+const severityColorMap = Object.freeze({
+  critical: "magenta", high: "red", medium: "orange", low: "blue",
+  info: "default", unknown: "default",
+});
+const riskTierColorMap = Object.freeze({
+  high_confidence_candidate: "gold", further_validation: "blue",
+  unknown_source_binding: "default", low_priority_manual: "default",
+});
+const riskTierLabels = Object.freeze({
+  high_confidence_candidate: "高可信候选",
+  further_validation: "待验证候选",
+  unknown_source_binding: "来源待核候选",
+  low_priority_manual: "低优先级候选",
+});
+const humanReviewStatusLabels = Object.freeze({
+  unassessed: "待人工复核",
+  under_review: "人工复核中",
+  plausible_unproven: "人工认为值得验证",
+  likely_false_positive: "人工倾向误报（未确认）",
+  refuted: "人工认为当前证据不支持",
+});
+const humanReviewStatusColors = Object.freeze({
+  unassessed: "default",
+  under_review: "processing",
+  plausible_unproven: "orange",
+  likely_false_positive: "blue",
+  refuted: "default",
+});
+const severityLabels = Object.freeze({
+  critical: "严重", high: "高危", medium: "中危",
+  low: "低危", info: "提示", unknown: "未分级",
+});
+
+export function candidateSeverityLabel(severity) {
+  return severityLabels[severity] || "未分级";
+}
+export function candidateSeverityColor(severity) {
+  return severityColorMap[severity] || "default";
+}
+export function candidateConfidenceLabel(tier) {
+  return riskTierLabels[tier] || "待验证候选";
+}
+export function candidateConfidenceColor(tier) {
+  return riskTierColorMap[tier] || "default";
+}
+export function humanReviewStatusLabel(status) {
+  return humanReviewStatusLabels[status] || "复核状态未知";
+}
+export function humanReviewStatusColor(status) {
+  return humanReviewStatusColors[status] || "default";
+}
+export function candidateVerificationLabel(state) {
+  // Cross-audit risk observations are never promoted by model confidence.
+  return state === "confirmed" ? "已人工核实（请查看证明材料）" : "尚未确认";
+}
+
 export const triageStateLabels = Object.freeze({
   not_requested: "未请求模型", not_triaged: "未研判",
   waiting_for_authorization: "等待本次任务授权", waiting_for_scan: "等待静态扫描",
@@ -8,7 +65,8 @@ export const triageStateLabels = Object.freeze({
   blocked: "受阻", blocked_authorization_changed: "授权已变化，已阻止",
   no_eligible_candidates: "没有符合条件的候选", stopped: "授权已撤销",
   failed: "失败", timed_out: "超时", interrupted: "中断",
-  awaiting_r1: "等待首轮研判", budget_limited: "达到预算上限",
+  awaiting_r1: "等待首轮研判", budget_limited: "已达到候选授权名额",
+  candidate_limit_exceeded: "候选数超过端点保护上限", queue_limit_exceeded: "队列容量不足；候选未研判",
   not_needed: "无需补充核查", failed_selection: "未能选择补充核查",
 });
 

@@ -4,8 +4,10 @@ import hashlib
 import json
 from . import agent, service
 from .store import now
+from .triage_limits import (MAX_TRIAGE_CANDIDATES_PER_ENDPOINT,
+                            R1_CANDIDATE_SELECTION_POLICY, R1_OVERFLOW_POLICY)
 
-RISK_POLICY_VERSION = "ohscanner-evidence-risk-tiers-0.2.0"
+RISK_POLICY_VERSION = "ohscanner-evidence-risk-tiers-0.3.0"
 
 
 def _digest(value):
@@ -15,9 +17,90 @@ def _digest(value):
 
 
 def _severity(candidate):
+    # Use the *same* tentative tier that the risk API displays. The scanner
+    # currently emits severity='unassessed'; otherwise AI routing would ignore
+    # a CWE-based high-risk label shown in the UI.
+    # This changes scheduling priority only, not confidence/verification.
+    value = severity_metadata(candidate)["severity"]
     return {"critical": 5, "high": 4, "medium": 3, "low": 2, "info": 1}.get(
-        str(candidate.get("severity", "")).lower(), 0
+        value, 0
     )
+
+
+SEVERITY_LABELS = {
+    "critical": "严重", "high": "高危", "medium": "中危",
+    "low": "低危", "info": "提示", "unknown": "未分级",
+}
+
+# Conservative *type-based* triage display only. These are NOT CVSS scores,
+# demonstrated exploitability, known vulnerable versions, or product impact.
+# Missing/ambiguous CWE mappings always stay ungraded.
+CWE_TYPE_SEVERITY = {
+    "CWE-22": "high",    # path traversal (potential access boundary)
+    "CWE-78": "high",    # OS command injection
+    "CWE-94": "high",    # code injection
+    "CWE-119": "high",   # memory bounds
+    "CWE-125": "high",   # out-of-bounds read
+    "CWE-415": "high",   # double free
+    "CWE-416": "high",   # use after free
+    "CWE-787": "high",   # out-of-bounds write
+    "CWE-862": "high",   # missing authorization
+    "CWE-863": "high",   # incorrect authorization
+    "CWE-129": "medium", # improper array index
+    "CWE-190": "medium", # integer overflow
+    "CWE-191": "medium", # integer underflow
+    "CWE-200": "medium", # information exposure
+    "CWE-319": "medium", # cleartext transmission
+    "CWE-362": "medium", # race condition
+    "CWE-400": "medium", # resource exhaustion
+    "CWE-476": "medium", # null dereference
+    "CWE-522": "medium", # insufficient credentials protection
+    "CWE-532": "medium", # sensitive information in log
+    "CWE-681": "medium", # numeric conversion
+    "CWE-732": "medium", # incorrect permission assignment
+    "CWE-770": "medium", # unrestricted resource allocation
+}
+
+
+def severity_metadata(candidate):
+    """Return an *unverified* risk-type estimate, not a verified impact score.
+
+    Scanner contract currently sets ToolDiagnostic.severity='unassessed'.
+    A CWE can supply an explicitly labeled heuristic tier for user triage;
+    it must never influence evidence confidence or confirmation gates.
+    """
+    value = str(candidate.get("severity") or "").lower()
+    if value in SEVERITY_LABELS and value != "unknown":
+        return {
+            "severity": value, "severity_label": SEVERITY_LABELS[value],
+            "severity_evidence": "detector_preliminary_unverified",
+            "severity_basis": None,
+        }
+    for field in ("consequence_cwe", "candidate_cwe"):
+        cwe = candidate.get(field)
+        if isinstance(cwe, str) and cwe in CWE_TYPE_SEVERITY:
+            value = CWE_TYPE_SEVERITY[cwe]
+            return {
+                "severity": value, "severity_label": SEVERITY_LABELS[value],
+                "severity_evidence": "cwe_type_heuristic_unverified",
+                "severity_basis": cwe,
+            }
+    return {
+        "severity": "unknown", "severity_label": SEVERITY_LABELS["unknown"],
+        "severity_evidence": "insufficient_evidence",
+        "severity_basis": None,
+    }
+
+
+def _select_r1_candidates(eligible, candidate_count, limit):
+    """Select the deterministic first R1 set, failing closed above the endpoint cap."""
+    if candidate_count > MAX_TRIAGE_CANDIDATES_PER_ENDPOINT:
+        return [], True
+    ordered = sorted(eligible, key=lambda item: (
+        -item[2], -_severity(item[0]), item[0].get("file", ""),
+        int(item[0].get("line") or 0), item[0]["id"],
+    ))
+    return ordered[:limit], False
 
 
 def coverage_snapshot(job, report):
@@ -253,12 +336,16 @@ def risk_snapshot(settings, store, ops, job, report):
     for operation in job_agent_operations:
         candidate_id = operation.get("candidate_id")
         if candidate_id:
+            candidate = candidate_by_id.get(candidate_id)
+            signal = (_agent_signal(ops, operation, job, report, candidate)
+                      if candidate else None)
             operation_by_candidate.setdefault(candidate_id, []).append({
                 "operation_id": operation["id"],
                 "status": operation["status"],
                 "mode": operation.get("mode"),
                 "result_sha256": operation.get("result_sha256"),
                 "cancel_requested": operation.get("cancel_requested", False),
+                "agent_signal": signal,
             })
 
     tier_labels = {
@@ -286,12 +373,17 @@ def risk_snapshot(settings, store, ops, job, report):
             and all(row.get("disposition") == "evidence_found"
                     for row in gate_review.get("obligation_reviews", []) if isinstance(row, dict))
         )
+        operations = operation_by_candidate.get(original["id"], [])
+        agent_signal = next((item["agent_signal"] for item in reversed(operations)
+                             if item.get("agent_signal")), None)
+        agent_chain_complete = bool(agent_signal and agent_signal.get("evidence_chain_complete"))
         contrary_reviewed = bool(
             bound and obligations and gate_review
             and gate_review.get("disposition") == "likely_noise"
             and all(row.get("disposition") == "contrary_evidence"
                     for row in gate_review.get("obligation_reviews", []) if isinstance(row, dict))
         )
+        confidence_basis = None
         ai_evidence = _agent_source_evidence(ops, job, report, candidate, job_agent_operations)
         if not bound:
             tier = "unknown_source_binding"
@@ -300,12 +392,19 @@ def risk_snapshot(settings, store, ops, job, report):
             tier = "low_priority_manual"
             reasons = ["a human marked this item as refuted or low-priority; this is not a safety verdict"]
         elif ai_evidence:
+            confidence_basis = "ai_source_evidence"
             tier = "high_confidence_candidate"
             reasons = ["AI 在固定源码中给出带可定位引文的支持性判断；仍需人工复核"]
         elif gate_complete:
             tier = "high_confidence_candidate"
-            reasons = ["fixed source/report hashes match and every recorded obligation has a quoted R0 evidence_found review"]
+            confidence_basis = "human_r0"
+            reasons = ["固定源码与报告哈希一致；人工 R0 已逐项引用复核全部证据义务。漏洞仍是候选。"]
+        elif agent_chain_complete:
+            tier = "high_confidence_candidate"
+            confidence_basis = "agent_evidence_graph"
+            reasons = ["Agent 的固定源码调查、跨文件义务引用、独立反证和报告校验均完成；引用语义与产品影响仍待人工复核。"]
         else:
+            confidence_basis = None
             tier = "further_validation"
             reasons = []
             if evidence.get("analysis_status") != "analyzed":
@@ -323,7 +422,6 @@ def risk_snapshot(settings, store, ops, job, report):
                 reasons.append("additional independent validation remains necessary")
 
         triage = triage_by_candidate.get(original["id"])
-        operations = operation_by_candidate.get(original["id"], [])
         if operations:
             if any(x["status"] == "running" and x.get("cancel_requested") for x in operations):
                 operation_state = "stopping"
@@ -367,8 +465,10 @@ def risk_snapshot(settings, store, ops, job, report):
             "severity": original.get("severity", "unknown"),
             "evidence_level": "candidate", "vulnerability_state": "candidate",
             "risk_tier": tier, "risk_tier_label": tier_labels[tier],
-            "confidence_basis": ("ai_source_evidence" if ai_evidence else
-                                 "human_static_review" if gate_complete and tier == "high_confidence_candidate" else None),
+            "confidence_basis": confidence_basis,
+            # Severity (potential impact) is orthogonal to evidence confidence.
+            # Neither the detector nor a model is permitted to confirm a product flaw.
+            **severity_metadata(original),
             "ai_summary": ai_evidence.get("summary") if ai_evidence else None,
             "ai_evidence": ai_evidence.get("citations", []) if ai_evidence else [],
             "ai_review_operation_id": ai_evidence.get("operation_id") if ai_evidence else None,
@@ -379,6 +479,7 @@ def risk_snapshot(settings, store, ops, job, report):
             "r0_review_id": gate_review.get("id") if gate_review else None,
             "r0_review_sha256": gate_review.get("record_sha256") if gate_review else None,
             "triage": triage, "agent_operations": operations,
+            "agent_signal": agent_signal,
             "report_sha256": job.get("report_sha256"),
         })
     tier_order = {"high_confidence_candidate": 0, "further_validation": 1,
@@ -407,6 +508,241 @@ def risk_snapshot(settings, store, ops, job, report):
             "Validated vulnerabilities are counted only through the existing human assessment and passed runtime-reachability gate; this static risk view does not set that state.",
         ],
     }
+
+
+def _agent_evidence_chain_gate(result, expected, candidate):
+    """Qualify a source-bound, cross-file Agent trace as a high-priority candidate only.
+
+    This gate checks completeness and provenance, not whether a citation semantically
+    proves the model claim or whether a product entry point is reachable.
+    """
+    def fail(reason):
+        return False, reason
+
+    if not isinstance(result, dict) or result.get("mode") != "tool_agent":
+        return fail("tool-agent investigation is missing")
+    if (result.get("vulnerability_state") != "candidate"
+            or type(result.get("validated_vulnerability")) is not int
+            or result.get("validated_vulnerability") != 0):
+        return fail("product state is not candidate-only")
+    graph = result.get("evidence_graph")
+    if not isinstance(graph, dict):
+        return fail("server-authored evidence graph is missing")
+    graph_binding = graph.get("binding")
+    if not isinstance(graph_binding, dict):
+        return fail("evidence graph source binding is missing")
+    for key in ("job_id", "repository", "commit", "report_sha256", "candidate_id"):
+        if not expected.get(key) or graph_binding.get(key) != expected.get(key):
+            return fail("evidence graph does not match the fixed scan binding")
+    for key in ("tree", "snapshot_sha256"):
+        if expected.get(key) is not None and graph_binding.get(key) != expected.get(key):
+            return fail("evidence graph does not match the fixed source snapshot")
+    if graph_binding.get("source_scope") != "fixed_scan_commit":
+        return fail("evidence graph source scope is not fixed")
+    if (graph.get("product_state") != "candidate"
+            or type(graph.get("validated_vulnerability")) is not int
+            or graph.get("validated_vulnerability") != 0):
+        return fail("evidence graph does not preserve candidate-only status")
+    unresolved = graph.get("unresolved_references")
+    if not isinstance(unresolved, list) or unresolved:
+        return fail("one or more graph references remain unresolved")
+
+    nodes = graph.get("nodes")
+    edges = graph.get("edges")
+    if not isinstance(nodes, list) or not isinstance(edges, list):
+        return fail("evidence graph nodes or edges are unavailable")
+    node_by_id = {node.get("id"): node for node in nodes
+                  if isinstance(node, dict) and isinstance(node.get("id"), str)}
+    required_stages = {
+        "collect_fixed_source_evidence": {"completed"},
+        "primary_source_triage": {"accepted"},
+        "independent_skeptic": {"completed"},
+        "candidate_report_and_poc_draft": {"completed"},
+        "validate_report": {"accepted"},
+    }
+    stage_status = {node.get("stage_id"): node.get("status") for node in nodes
+                    if isinstance(node, dict) and node.get("node_type") == "workflow_stage"}
+    if any(stage_status.get(stage) not in statuses
+           for stage, statuses in required_stages.items()):
+        return fail("one or more investigation stages are incomplete")
+
+    assessment = result.get("agent_assessment")
+    assessment = assessment if isinstance(assessment, dict) else {}
+    if assessment.get("assessment") != "likely_true_positive":
+        return fail("Agent did not complete a positive source-level triage")
+    if not isinstance(assessment.get("unsupported_claims"), list) or assessment["unsupported_claims"]:
+        return fail("unsupported claims remain")
+    verdict = result.get("agent_verdict")
+    if (not isinstance(verdict, dict) or verdict.get("status") != "confirmed"
+            or verdict.get("confidence") != "high"
+            or verdict.get("scope") != "fixed_source_code"
+            or verdict.get("product_status") != "unknown"):
+        return fail("server-derived fixed-source evidence gate did not pass")
+
+    initial = result.get("initial_evidence")
+    initial = initial if isinstance(initial, dict) else {}
+    context = initial.get("context")
+    context = context if isinstance(context, dict) else {}
+    obligations = context.get("evidence_obligations")
+    reviews = assessment.get("obligation_reviews")
+    if (not isinstance(obligations, list) or not obligations
+            or not isinstance(reviews, list) or len(reviews) != len(obligations)):
+        return fail("not every static evidence obligation has a review")
+    source_edges = [edge for edge in edges if isinstance(edge, dict)
+                    and edge.get("type") == "validated_citation_reference"
+                    and edge.get("source") == "stage:primary_source_triage"]
+    review_indices = [row.get("obligation_index") for row in reviews if isinstance(row, dict)]
+    expected_indices = set(range(len(obligations)))
+    if (len(review_indices) != len(obligations)
+            or any(not isinstance(index, int) or isinstance(index, bool)
+                   for index in review_indices)
+            or set(review_indices) != expected_indices):
+        return fail("evidence obligation reviews are missing or duplicated")
+    bound_file_names = set()
+    for row in reviews:
+        if (not isinstance(row, dict) or row.get("disposition") != "evidence_found"
+                or not isinstance(row.get("obligation_index"), int)
+                or not isinstance(row.get("citations"), list) or not row["citations"]):
+            return fail("an evidence obligation is unresolved or lacks a source citation")
+        for citation in row["citations"]:
+            if not isinstance(citation, dict):
+                return fail("an obligation citation is malformed")
+            evidence_id, file_name = citation.get("evidence_id"), citation.get("file")
+            start, end = citation.get("line_start"), citation.get("line_end")
+            if (not isinstance(evidence_id, str) or not isinstance(file_name, str)
+                    or not isinstance(start, int) or isinstance(start, bool)
+                    or not isinstance(end, int) or isinstance(end, bool)
+                    or end < start):
+                return fail("an obligation citation has no fixed file and line range")
+            target_id = "evidence:" + evidence_id
+            target = node_by_id.get(target_id)
+            matching_edge = any(
+                edge.get("target") == target_id and edge.get("file") == file_name
+                and edge.get("line_start") == start and edge.get("line_end") == end
+                for edge in source_edges)
+            if (not matching_edge or not isinstance(target, dict)
+                    or target.get("node_type") != "fixed_source_evidence"
+                    or target.get("status") != "available"):
+                return fail("an obligation citation is not bound to available fixed-source lines")
+            source_binding = target.get("source_binding")
+            files = source_binding.get("files", []) if isinstance(source_binding, dict) else []
+            file_binding = next((item for item in files if isinstance(item, dict)
+                                 and item.get("file") == file_name), None)
+            source_hash = file_binding.get("source_sha256") if isinstance(file_binding, dict) else None
+            if (not file_binding or file_binding.get("binding_status") != "bound"
+                    or not isinstance(source_hash, str) or len(source_hash) != 64
+                    or any(character not in "0123456789abcdef" for character in source_hash.lower())):
+                return fail("an obligation citation source hash is not fixed")
+            bound_file_names.add(file_name)
+    if not any(file_name != candidate.get("file") for file_name in bound_file_names):
+        return fail("the completed trace contains no cross-file source citation")
+
+    skeptic = result.get("skeptic_review")
+    skeptic = skeptic if isinstance(skeptic, dict) else {}
+    skeptic_rows = skeptic.get("reviews")
+    skeptic_indices = [row.get("obligation_index") for row in skeptic_rows
+                       if isinstance(row, dict)] if isinstance(skeptic_rows, list) else []
+    if (skeptic.get("status") != "completed" or not isinstance(skeptic_rows, list)
+            or len(skeptic_rows) != len(obligations)
+            or len(skeptic_indices) != len(obligations)
+            or any(not isinstance(index, int) or isinstance(index, bool)
+                   for index in skeptic_indices)
+            or set(skeptic_indices) != expected_indices
+            or any(not isinstance(row, dict)
+                   or row.get("result") != "no_counterevidence_observed"
+                   for row in skeptic_rows)):
+        return fail("independent skeptic left contrary evidence or an obligation unresolved")
+
+    artifact = result.get("artifact_generation")
+    report = assessment.get("vulnerability_report")
+    if (not isinstance(artifact, dict) or artifact.get("status") != "completed"
+            or not isinstance(report, dict) or report.get("status") != "draft_unverified"):
+        return fail("candidate report stage is incomplete")
+    draft_edges = [edge for edge in edges if isinstance(edge, dict)
+                   and edge.get("type") == "draft_citation_reference"
+                   and edge.get("source") == "stage:candidate_report_and_poc_draft"]
+    if not draft_edges:
+        return fail("candidate report has no fixed-source citation")
+    return True, "all source trace stages and cross-file citations are complete; semantics and product impact remain for human review"
+
+
+def _agent_signal(ops, operation, job, report, candidate):
+    """Return a source-bound model tendency without promoting candidate state."""
+    if not _source_binding_valid(report, candidate):
+        return None
+    if (operation.get("status") not in {"completed", "completed_with_limitations"}
+            or not operation.get("result_sha256")):
+        return None
+    try:
+        result = ops.result(operation["id"])
+    except (OSError, ValueError, KeyError, TypeError):
+        return None
+    binding = result.get("binding") if isinstance(result, dict) else None
+    if not isinstance(binding, dict):
+        return None
+    expected = {
+        "job_id": job.get("id"), "repository": report.get("repository"),
+        "commit": report.get("commit"), "tree": report.get("tree"),
+        "snapshot_sha256": report.get("snapshot_sha256"),
+        "report_sha256": job.get("report_sha256"),
+        "candidate_id": candidate.get("id"), "file": candidate.get("file"),
+        "source_sha256": candidate.get("source_sha256"),
+    }
+    if any(binding.get(key) != value for key, value in expected.items()):
+        return None
+    if (result.get("vulnerability_state") != "candidate"
+            or type(result.get("validated_vulnerability")) is not int
+            or result.get("validated_vulnerability") != 0):
+        return None
+    assessment_record = result.get("agent_assessment")
+    assessment = assessment_record.get("assessment") if isinstance(assessment_record, dict) else None
+    labels = {
+        "likely_true_positive": "模型倾向真实候选",
+        "likely_false_positive": "模型倾向误报",
+        "needs_more_evidence": "模型认为还需证据",
+        "unknown": "模型判断未知",
+    }
+    if assessment not in labels:
+        return None
+    chain_complete, chain_reason = _agent_evidence_chain_gate(result, expected, candidate)
+    signal = {"assessment": assessment, "label": labels[assessment],
+              "operation_id": operation["id"], "human_review_required": True,
+              "product_state": "candidate",
+              "evidence_chain_complete": chain_complete,
+              "evidence_chain_reason": chain_reason if chain_complete else None}
+    if chain_complete:
+        if (result.get("summary_provenance") == "server_generated_from_structured_triage"
+                and isinstance(result.get("summary"), str)):
+            signal["summary"] = result["summary"]
+            signal["summary_provenance"] = "server_generated_from_structured_triage"
+        locations = []
+        seen_locations = set()
+        for review in (assessment_record.get("obligation_reviews", [])
+                       if isinstance(assessment_record, dict) else []):
+            if not isinstance(review, dict):
+                continue
+            for citation in review.get("citations", []):
+                if not isinstance(citation, dict):
+                    continue
+                file_name = citation.get("file")
+                line_start, line_end = citation.get("line_start"), citation.get("line_end")
+                if (not isinstance(file_name, str) or not file_name
+                        or not isinstance(line_start, int) or isinstance(line_start, bool)
+                        or not isinstance(line_end, int) or isinstance(line_end, bool)
+                        or line_start < 1 or line_end < line_start):
+                    continue
+                key = (file_name, line_start, line_end)
+                if key in seen_locations:
+                    continue
+                seen_locations.add(key)
+                locations.append({"file": file_name, "line_start": line_start, "line_end": line_end})
+        signal["evidence_locations"] = locations[:12]
+        signal["evidence_locations_truncated_count"] = max(0, len(locations) - 12)
+        signal["confidence_reason"] = (
+            "每项静态证据义务都有固定源码引用，调查包含跨文件证据，并完成独立反证与报告校验。"
+            "引用语义和产品影响仍需人工复核。"
+        )
+    return signal
 
 
 def _path_in_scope(path, includes):
@@ -454,7 +790,7 @@ def _authorization_is_current(settings, store, job, provider):
 
 
 def enqueue_authorized_triage(settings, store, ops, job):
-    """Persist and queue every eligible fixed-scope R1 task under active task consent."""
+    """Persist and queue only explicitly authorized eligible R1 tasks."""
     spec = job["spec"]
     if spec.get("audit_mode") != "standard_review":
         return None
@@ -477,12 +813,53 @@ def enqueue_authorized_triage(settings, store, ops, job):
     candidates = service.findings(report)
     candidate_manifest = []
     eligible = []
+    limit = int(snapshot["candidate_limit"])
+    if len(candidates) > MAX_TRIAGE_CANDIDATES_PER_ENDPOINT:
+        candidate_manifest = [{
+            "candidate_id": candidate.get("id"),
+            "file": candidate.get("file"),
+            "line": candidate.get("line"),
+            "source_sha256": candidate.get("source_sha256"),
+            "state": "not_triaged",
+            "reason": "fixed per-endpoint candidate cap exceeded; no Agent operations were queued",
+        } for candidate in candidates]
+        batch_consent = _digest({
+            "task_authorization_sha256": authorization["consent_sha256"],
+            "report_sha256": job["report_sha256"],
+            "selection_policy": R1_CANDIDATE_SELECTION_POLICY,
+            "overflow_policy": R1_OVERFLOW_POLICY,
+            "actual_candidate_count": len(candidates),
+            "authorized_candidate_count": limit,
+            "queued_count": 0,
+            "not_triaged_count": len(candidates),
+            "candidate_manifest": candidate_manifest,
+        })
+        return ops.record_triage_batch({
+            "id": batch_id, "audit_id": job["id"], "report_sha256": job["report_sha256"],
+            "authorization_sha256": authorization["consent_sha256"],
+            "batch_consent_sha256": batch_consent,
+            "status": "candidate_limit_exceeded", "candidate_count": len(candidates),
+            "selected_count": 0, "candidate_manifest": candidate_manifest,
+            "operation_ids": [], "created_at": now(),
+            "error": ("This fixed report contains " + str(len(candidates))
+                      + " candidates, above the per-endpoint limit of "
+                      + str(MAX_TRIAGE_CANDIDATES_PER_ENDPOINT)
+                      + "; no Agent operation was queued. Narrow the source scope or create separately reviewed smaller audits."),
+            "r2_status": "not_requested",
+        })
     preview_spec = {
-        "mode": "single_shot", "max_output_tokens": 3000,
+        **agent.bounded_agent_spec({"mode": "single_shot",
+                                    "max_output_tokens": 3000,
+                                    "no_cumulative_token_ceiling": True}),
+        "mode": "single_shot",
+        "max_output_tokens": 3000,
         "max_request_context_tokens": 65536,
         "max_request_context_bytes": agent.MAX_SMART_REQUEST_CONTEXT_BYTES,
         "request_timeout_seconds": 45,
-        "max_provider_retries": 1, "no_cumulative_token_ceiling": True,
+        "provider_request_timeout_seconds": 45,
+        "max_provider_retries": 1,
+        "no_cumulative_token_ceiling": True,
+        "continuous_investigation": False,
         "consent_nonce": snapshot.get("consent_nonce"),
     }
     if error:
@@ -520,14 +897,18 @@ def enqueue_authorized_triage(settings, store, ops, job):
         except Exception as exc:
             row.update({"state": "not_triaged", "reason": "candidate context unavailable: " + type(exc).__name__})
         candidate_manifest.append(row)
-    eligible.sort(key=lambda item: (
-        -item[2], -_severity(item[0]), item[0].get("file", ""),
-        int(item[0].get("line") or 0), item[0]["id"],
-    ))
-    selected = eligible
+    selected, overflowed = _select_r1_candidates(
+        eligible, len(candidates), limit)
+    if overflowed:
+        raise AssertionError("candidate cap must fail closed before source triage")
+    selected_ids = {item[0]["id"] for item in selected}
     for _, _, _, row in eligible:
-        row["state"] = "selected"
-        row["reason"] = "automatically included: source-reviewable candidate within the authorized fixed scope"
+        if row["candidate_id"] in selected_ids:
+            row["state"] = "selected"
+            row["reason"] = "selected by deterministic priority within the user-authorized candidate limit"
+        else:
+            row["state"] = "not_triaged"
+            row["reason"] = "user-authorized candidate limit reached; not assessed as safe"
     batch_consent = _digest({
         "task_authorization_sha256": authorization["consent_sha256"],
         "report_sha256": job["report_sha256"],
@@ -570,7 +951,36 @@ def enqueue_authorized_triage(settings, store, ops, job):
             "smart_triage_batch_id": batch_id,
             "triage_authorization_sha256": authorization["consent_sha256"],
         })
-    batch, _ = ops.create_authorized_triage_batch(record, child_specs)
+    try:
+        batch, _ = ops.create_authorized_triage_batch(record, child_specs)
+    except ValueError as exc:
+        if not str(exc).startswith("authorized triage queue capacity exceeded:"):
+            raise
+        for row in candidate_manifest:
+            if row.get("state") == "selected":
+                row["state"] = "not_triaged"
+                row["reason"] = "authorized Agent queue capacity reached; split scope and review a fresh authorization"
+        queue_record = {
+            **record,
+            "batch_consent_sha256": _digest({
+                "task_authorization_sha256": authorization["consent_sha256"],
+                "report_sha256": job["report_sha256"],
+                "selection_policy": R1_CANDIDATE_SELECTION_POLICY,
+                "queue_policy": "max_80000_authorized_auto_triage_operations",
+                "candidate_count": len(candidates),
+                "authorized_candidate_count": limit,
+                "queued_count": 0,
+                "not_triaged_count": len(candidates),
+                "candidate_manifest": candidate_manifest,
+            }),
+            "status": "queue_limit_exceeded",
+            "selected_count": 0,
+            "candidate_manifest": candidate_manifest,
+            "operation_ids": [],
+            "r2_status": "not_requested",
+            "error": str(exc) + "; no operations from this endpoint were queued; narrow scope or submit a separately previewed and authorized batch.",
+        }
+        return ops.record_triage_batch(queue_record)
     return batch
 
 
@@ -671,25 +1081,37 @@ def enqueue_authorized_r2_followups(settings, store, ops, batch_id):
         -len(item[3]), -_severity(item[0]), item[0].get("file", ""),
         int(item[0].get("line") or 0), item[0]["id"],
     ))
-    selected = eligible if not auth_error else []
+    limit = int(authorization["snapshot"].get("r2_candidate_limit", 0))
+    selected = eligible[:limit] if not auth_error else []
     selected_ids = {item[0]["id"] for item in selected}
     r2_preview_spec = {
-        "mode": "tool_agent", "max_output_tokens": 1000,
-        "max_request_context_tokens": 65536,
-        "max_request_context_bytes": agent.MAX_SMART_REQUEST_CONTEXT_BYTES,
-        "request_timeout_seconds": 45,
-        "max_provider_retries": 1, "no_cumulative_token_ceiling": True,
+        **agent.bounded_agent_spec({"mode": "tool_agent"}),
+        "provider_request_timeout_seconds": 45, "max_provider_retries": 1,
+        "continuous_investigation": False,
+        "include_paths": list(job.get("spec", {}).get("include_paths", [])),
         "consent_nonce": authorization["snapshot"].get("consent_nonce"),
     }
     selected_specs = []
     for candidate, r1_operation, _r1_result, unresolved, row in eligible:
         if candidate["id"] not in selected_ids:
-            row.update({"state": "not_selected", "reason": "authorization changed before deep research"})
+            row.update({"state": "not_selected", "reason": "user-authorized conditional R2 candidate limit reached"})
             continue
         try:
+            candidate_r2_spec = {
+                **r2_preview_spec,
+                # Bind the exact child identity before computing source consent.
+                # The Worker recomputes the digest from this persisted spec, so
+                # preview and execution must observe the same R1/candidate/report.
+                "job_id": job["id"],
+                "candidate_id": candidate["id"],
+                "report_sha256": job["report_sha256"],
+                "r1_operation_id": r1_operation["id"],
+                "r1_result_sha256": r1_operation["result_sha256"],
+                "r2_unresolved_obligation_indices": unresolved,
+            }
             prepared = agent._prepare_candidate_context(settings, store, job, report, candidate)
             preview = agent.consent_preview(
-                settings, store, job, report, candidate, r2_preview_spec,
+                settings, store, job, report, candidate, candidate_r2_spec,
                 provider, prepared=prepared,
             )
             if not preview.get("agent_execution", {}).get("eligible"):
@@ -698,7 +1120,7 @@ def enqueue_authorized_r2_followups(settings, store, ops, batch_id):
                 continue
             binding = preview["binding"]
             selected_specs.append({
-                **r2_preview_spec, "job_id": job["id"], "candidate_id": candidate["id"],
+                **candidate_r2_spec, "job_id": job["id"], "candidate_id": candidate["id"],
                 "case_id": None, "experiment_id": None, "source_submission_approved": True,
                 "source_submission_approved_at": now(),
                 "source_consent_sha256": preview["consent_sha256"],
@@ -715,6 +1137,7 @@ def enqueue_authorized_r2_followups(settings, store, ops, batch_id):
                 "r1_operation_id": r1_operation["id"],
                 "r1_result_sha256": r1_operation["result_sha256"],
                 "r2_unresolved_obligation_indices": unresolved,
+                "continuous_investigation": False,
                 "r2_reason": "critical/high severity with unresolved source-reviewable obligations after R1",
             })
             row.update({"state": "selected", "reason": "critical/high severity with unresolved source-reviewable obligations after R1"})
@@ -723,8 +1146,10 @@ def enqueue_authorized_r2_followups(settings, store, ops, batch_id):
             selected_ids.discard(candidate["id"])
     if auth_error:
         status = "blocked_authorization_changed"
+    elif limit == 0:
+        status = "not_needed"
     elif selected_specs:
-        status = "queued"
+        status = "candidate_limit_reached" if len(eligible) > limit else "queued"
     elif any(row.get("state") == "blocked" for row in manifest) or eligible:
         status = "failed_selection"
     else:

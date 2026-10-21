@@ -42,7 +42,8 @@ import {
 import "antd/dist/reset.css";
 import { api, artifact, terminal } from "../api";
 import { State, Hash, go, CodeView, Header, labels } from "../components";
-import { caseAgentEvidencePresentation, casePocPlanPresentation, caseRemediationDraftPresentation } from "../features/workbench/caseReport.js";
+import { caseAgentEvidencePresentation, caseRemediationDraftPresentation, casePocPlanPresentation } from "../features/workbench/caseReport.js";
+import CaseEvidenceReport from "../features/cases/CaseEvidenceReport";
 const { Text, Title, Paragraph } = Typography;
 const caseOutcomeLabels: Record<string, string> = {
   candidate: "候选，继续调查",
@@ -233,6 +234,7 @@ function CaseReviewPanel({ caseId, onStatusChange }: { caseId: string; onStatusC
       message="这个案例关联了多条候选，暂不能整体标为已确认"
       description="请为每条候选分别建立案例并复核，避免一条候选的验证结果误确认其他候选。" />}
     {loading && !report ? <Spin /> : <>
+      {report && <CaseEvidenceReport report={report} />}
       <Form form={form} layout="vertical" initialValues={{ outcome: "candidate" }} onFinish={(values) => void recordAssessment(values)}>
         <Space wrap>
           <Form.Item name="reviewer" label="复核人（手工填写）" rules={[{ required: true, max: 100 }]}><Input maxLength={100} /></Form.Item>
@@ -287,17 +289,18 @@ export default function Cases({ embedded = false }: { embedded?: boolean } = {})
       })
       .catch((e) => setError(String(e)));
   }, []);
-  const downloadReport = async (caseId: string, kind: "json" | "md" | "manifest.json" | "bundle.zip") => {
+  const downloadReport = async (caseId: string, kind: "json" | "md" | "html" | "manifest") => {
     try {
-      const endpoint = kind === "manifest.json" ? "report.manifest.json"
-        : kind === "bundle.zip" ? "report.bundle.zip" : "report." + kind;
-      const response = await fetch("/api/v1/cases/" + caseId + "/" + endpoint);
+      const reportPath = kind === "manifest" ? "/manifest.json" : "/report." + kind;
+      const response = await fetch("/api/v1/cases/" + caseId + reportPath);
       if (!response.ok) throw new Error(await response.text());
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
       const anchor = document.createElement("a");
       anchor.href = url;
-      anchor.download = "ohscanner-case-" + caseId + "." + kind;
+      anchor.download = kind === "manifest"
+        ? "ohscanner-case-" + caseId + "-manifest.json"
+        : "ohscanner-case-" + caseId + "." + kind;
       anchor.click();
       URL.revokeObjectURL(url);
     } catch (e) { message.error(String(e)); }
@@ -323,12 +326,10 @@ export default function Cases({ embedded = false }: { embedded?: boolean } = {})
             } },
             { title: "关联观测", render: (_: any, c: any) => c.links.length },
             { title: "报告", render: (_: any, c: any) => <Space wrap>
-              <Button size="small" type="primary" onClick={() => void downloadReport(c.id, "bundle.zip")}>下载完整报告包</Button>
-              <Button size="small" href={"/api/v1/cases/" + encodeURIComponent(c.id) + "/report.html"}
-                target="_blank" rel="noopener noreferrer">打开可读报告</Button>
+              <Button size="small" onClick={() => void downloadReport(c.id, "html")}>可读报告</Button>
               <Button size="small" onClick={() => void downloadReport(c.id, "md")}>Markdown</Button>
               <Button size="small" onClick={() => void downloadReport(c.id, "json")}>JSON</Button>
-              <Button size="small" onClick={() => void downloadReport(c.id, "manifest.json")}>证据清单</Button>
+              <Button size="small" onClick={() => void downloadReport(c.id, "manifest")}>校验清单</Button>
             </Space> },
             {
               title: "创建时间",

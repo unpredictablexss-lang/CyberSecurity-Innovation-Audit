@@ -1,5 +1,6 @@
+import IntelligentAuditPolicySettings from "./IntelligentAuditPolicySettings";
 import React, { useEffect, useState } from "react";
-import { Alert, Button, Card, Col, Descriptions, Empty, Input, Pagination, Row, Select, Space, Statistic, Table, Tabs, Tag, Typography } from "antd";
+import { Alert, Button, Card, Col, Descriptions, Empty, Input, Pagination, Row, Select, Space, Statistic, Table, Tabs, Tag, Tooltip, Typography } from "antd";
 import { api, artifact, terminal } from "../../api";
 import { go, Hash, Header, State } from "../../components";
 import Repositories from "../../pages/Repositories";
@@ -10,8 +11,48 @@ import OperationWorkspace from "../audits/OperationWorkspace";
 import AgentProviderSettings from "./AgentProviderSettings";
 import { SourceContext } from "../audits/OperationForms";
 import { jobDetailPath, retainRiskSource, riskQueuePath } from "./navigation";
-import { triageStateLabel } from "./riskLabels.js";
+import { triageStateLabel, candidateSeverityLabel, candidateSeverityColor, candidateConfidenceLabel, candidateConfidenceColor, candidateVerificationLabel, humanReviewStatusLabel, humanReviewStatusColor } from "./riskLabels.js";
 const { Text, Paragraph } = Typography;
+function AgentSignal({ row }: { row: any }) {
+  const signal = row.agent_signal;
+  if (!signal) return triageStateLabel(row.triage_state);
+  const color = signal.assessment === "likely_true_positive" ? "volcano"
+    : signal.assessment === "likely_false_positive" ? "blue" : "default";
+  return <Tooltip title="这是模型基于固定源码给出的研判倾向，不代表漏洞已确认；请打开候选核对证据。">
+    <Space direction="vertical" size={0}>
+      <Tag color={color}>{signal.label}</Tag>
+      {signal.evidence_chain_complete && <Tag color="green">AI 证据链完整 · 待人工核语义</Tag>}
+      <Text type="secondary" style={{ fontSize: 12 }}>
+        {signal.evidence_chain_complete ? "固定源码和跨文件引用已齐全，漏洞仍是候选" : "待人工核对"}
+      </Text>
+      {signal.operation_id && <Button type="link" size="small" onClick={(event) => {
+        event.stopPropagation();
+        go("/tasks/operations/" + signal.operation_id);
+      }}>查看调查报告</Button>}
+    </Space>
+  </Tooltip>;
+}
+function HumanReviewStatus({ row }: { row: any }) {
+  return <Tooltip title="这里显示人工复核流程或人工意见，不等于漏洞确认，也不代表已证明安全。">
+    <Tag color={humanReviewStatusColor(row.human_review_status)}>
+      {humanReviewStatusLabel(row.human_review_status)}
+    </Tag>
+  </Tooltip>;
+}
+function confidenceBasisHint(row: any) {
+  if (row.confidence_basis === "agent_evidence_graph")
+    return "智能调查的固定源码绑定、跨文件义务引用、独立反证和报告校验均已完成；引文语义及产品影响仍需人工复核，漏洞状态保持候选。";
+  if (row.confidence_basis === "human_r0")
+    return "人工已对固定源码中的全部证据义务逐项引用复核；漏洞状态仍为候选。";
+  return "可信程度由固定源码证据门计算；高可信候选仍不是已确认漏洞。";
+}
+function severityBasisHint(row: any) {
+  if (row.severity_evidence === "cwe_type_heuristic_unverified")
+    return "仅按 " + (row.severity_basis || "CWE 漏洞类型") + " 的潜在危害进行初步分类；尚未证明可利用性或产品安全影响。";
+  if (row.severity_evidence === "detector_preliminary_unverified")
+    return "检测器给出的初步风险级别；并非运行时漏洞确认或正式 CVSS 评级。";
+  return "当前候选缺少足够的类型或影响信息，因此暂未分级；不代表低风险。";
+}
 function riskDetailsAction(row: any) {
   if (row.risk_tier === "high_confidence_candidate") {
     return row.confidence_basis === "ai_source_evidence" ? "查看 AI 理由与证据" : "查看复核依据";
@@ -75,10 +116,10 @@ export function RiskCenter({ jobs, query = new URLSearchParams() }: { jobs: any[
     go(jobDetailPath(row.audit_id, "findings") + "&candidate_id=" + encodeURIComponent(row.candidate_id));
   };
   const items = summary?.items || [];
-  return <><Header title="风险中心" description="跨审计查看候选队列；可按风险层级、研判状态、仓库和检测器筛选，并直接打开对应版本的证据。" />
+  return <><Header title="风险中心" description="按证据可信程度、潜在危害等级及研判状态筛选。每条风险可查看固定源码与人工复核入口。" />
     <Alert className="section-gap" type="info" showIcon
-      message="候选观测不等于已确认漏洞"
-      description={"队列仅汇总最近 " + filters.scan_limit + " 份可校验报告，最多保留任务中的最近 200 项。高可信项仍是待复核候选；未研判、解析不完整和来源未知均不会被当作安全结论。"} />
+      message="可信程度 ≠ 潜在危害等级 ≠ 漏洞确认状态"
+      description={"仅展示最近 " + filters.scan_limit + " 份可校验报告中的候选观测。红色/橙色表示检测器初步危害分级，不代表已确认；金色高可信需要独立的确定性证据门。部分解析、模型未研判、来源未知都不代表安全。"} />
     {error && <Alert className="section-gap" type="error" showIcon message="风险队列暂不可用" description={error} />}
     <Card className="section-gap" title="筛选候选">
       <Space wrap>
@@ -137,24 +178,27 @@ export function RiskCenter({ jobs, query = new URLSearchParams() }: { jobs: any[
     </Card>
     <Card className="section-gap" title={"候选队列 · " + (loading ? "正在读取" : (summary?.filtered_candidate_count ?? 0) + " 项匹配")}>
       <Table<any> rowKey={(row) => row.audit_id + ":" + row.candidate_id} size="small" dataSource={items}
-        pagination={false} loading={loading}
+        pagination={false} loading={loading} scroll={{ x: 1190 }}
         onRow={(row) => ({ onClick: () => openCandidate(row), style: { cursor: "pointer" } })}
         columns={[
-          { title: "严重程度", render: (_: unknown, row: any) => {
-            const labels: Record<string, string> = { critical: "严重", high: "高", medium: "中", low: "低", info: "提示" };
-            const colors: Record<string, string> = { critical: "red", high: "volcano", medium: "orange", low: "blue" };
-            return <Tag color={colors[row.severity]}>{labels[row.severity] || "未分级"}</Tag>;
-          } },
-          { title: "可信度", render: (_: unknown, row: any) => row.risk_tier === "high_confidence_candidate"
-            ? <Tag color="gold">高可信候选 · 待复核</Tag>
-            : <Tag>{row.risk_tier_label || "待进一步验证"}</Tag> },
-          { title: "漏洞状态", render: (_: unknown, row: any) => row.vulnerability_state === "confirmed"
-            ? <Tag color="green">已确认</Tag>
-            : row.vulnerability_state === "unknown" ? <Tag>未知</Tag> : <Tag>候选</Tag> },
+          { title: "可信程度", render: (_: unknown, row: any) =>
+            <Tag color={candidateConfidenceColor(row.risk_tier)}>{candidateConfidenceLabel(row.risk_tier)}</Tag> },
+          { title: "危害等级（初判）", render: (_: unknown, row: any) =>
+            <Tooltip title={severityBasisHint(row)}>
+              <Tag color={candidateSeverityColor(row.severity)}>{candidateSeverityLabel(row.severity)}</Tag>
+            </Tooltip> },
+          { title: "漏洞状态", render: (_: unknown, row: any) =>
+            row.validated_case_ids?.length
+              ? <Space direction="vertical" size={0}>
+                  <Tag color="green">关联已验证案例</Tag>
+                  <Text type="secondary" style={{ fontSize: 12 }}>候选本身仍需核对</Text>
+                </Space>
+              : candidateVerificationLabel(row.vulnerability_state) },
           { title: "仓库 / Commit", render: (_: unknown, row: any) => <><Text>{row.repository}</Text><div className="muted">{String(row.commit || "").slice(0, 12)}</div></> },
           { title: "检测器 / 候选位置", render: (_: unknown, row: any) => <>{row.detector_id || "未知检测器"}<div>{row.file}:{row.line}</div><div className="muted">{row.rule_id}</div></> },
-          { title: "研判状态", dataIndex: "triage_state", render: (value: string) => triageStateLabel(value) },
-          { title: "查看", render: (_: unknown, row: any) => <Button size="small" onClick={(event) => { event.stopPropagation(); openCandidate(row); }}>{riskDetailsAction(row)}</Button> },
+          { title: "AI 研判", render: (_: unknown, row: any) => <AgentSignal row={row} /> },
+          { title: "人工复核", render: (_: unknown, row: any) => <HumanReviewStatus row={row} /> },
+          { title: "查看", render: (_: unknown, row: any) => <Button size="small" onClick={(event) => { event.stopPropagation(); openCandidate(row); }}>查看证据 / 人工研判</Button> },
         ]}
         locale={{ emptyText: <Empty description={loading ? "正在读取候选队列…" :
           summary?.evaluated_scan_count ? "当前筛选没有候选；这不代表仓库不存在漏洞。" : "暂无可校验的扫描报告。"} /> }} />
@@ -200,7 +244,7 @@ export function AuditRiskOverview() {
     extra={<Button type="link" onClick={() => go("/risks?scan_limit=10")}>打开风险中心 →</Button>}>
     <Alert type="info" showIcon
       message="按最近 10 份已保存扫描报告汇总候选观测"
-      description="重复观察不会自动归并为根因；候选数不等于漏洞数。高可信项仍是待复核候选，模型未完成或未请求的项目单独保留。" />
+      description="可信程度根据证据门计算，危害等级只是检测器初判；高可信也不是已确认。模型未完成或未请求的候选继续保留。" />
     {error && <Alert className="section-gap" type="warning" showIcon message="风险摘要暂不可用" description={error} />}
     <Row gutter={[12, 12]} className="section-gap">{[
       { title: "高可信候选", value: summary?.counts?.high_confidence_candidate ?? "—" },
@@ -224,24 +268,22 @@ export function AuditRiskOverview() {
       message={summary.unavailable_report_count + " 份报告无法校验，未计入以上统计"}
       description="受影响任务仍可从任务中心检查其原始状态。" />}
     <Table<any> className="section-gap" size="small" rowKey={(row) => row.audit_id + ":" + row.candidate_id}
-      dataSource={rows} pagination={false} loading={loading}
+      dataSource={rows} pagination={false} loading={loading} scroll={{ x: 1140 }}
       onRow={(row) => ({ onClick: () => openCandidate(row), style: { cursor: "pointer" } })}
       columns={[
-        { title: "严重程度", render: (_: unknown, row: any) => {
-          const labels: Record<string, string> = { critical: "严重", high: "高", medium: "中", low: "低", info: "提示" };
-          const colors: Record<string, string> = { critical: "red", high: "volcano", medium: "orange", low: "blue" };
-          return <Tag color={colors[row.severity]}>{labels[row.severity] || "未分级"}</Tag>;
-        } },
-        { title: "可信度", render: (_: unknown, row: any) => row.risk_tier === "high_confidence_candidate"
-          ? <Tag color="gold">高可信候选 · 待复核</Tag>
-          : <Tag>{row.risk_tier_label || "待进一步验证"}</Tag> },
-        { title: "漏洞状态", render: (_: unknown, row: any) => row.vulnerability_state === "confirmed"
-            ? <Tag color="green">已确认</Tag>
-            : row.vulnerability_state === "unknown" ? <Tag>未知</Tag> : <Tag>候选</Tag> },
-          { title: "仓库 / Commit", render: (_: unknown, row: any) => <><Text>{row.repository}</Text><div className="muted">{String(row.commit || "").slice(0, 12)}</div></> },
+        { title: "可信程度", render: (_: unknown, row: any) =>
+          <Tooltip title={confidenceBasisHint(row)}>
+            <Tag color={candidateConfidenceColor(row.risk_tier)}>{candidateConfidenceLabel(row.risk_tier)}</Tag>
+          </Tooltip> },
+        { title: "危害等级（初判）", render: (_: unknown, row: any) =>
+          <Tooltip title={severityBasisHint(row)}>
+              <Tag color={candidateSeverityColor(row.severity)}>{candidateSeverityLabel(row.severity)}</Tag>
+            </Tooltip> },
+        { title: "仓库 / Commit", render: (_: unknown, row: any) => <><Text>{row.repository}</Text><div className="muted">{String(row.commit || "").slice(0, 12)}</div></> },
         { title: "候选位置", render: (_: unknown, row: any) => <>{row.file}:{row.line}<div className="muted">{row.rule_id}</div></> },
-        { title: "研判状态", dataIndex: "triage_state", render: (value: string) => triageStateLabel(value) },
-        { title: "查看", render: (_: unknown, row: any) => <Button size="small" onClick={(event) => { event.stopPropagation(); openCandidate(row); }}>{riskDetailsAction(row)}</Button> },
+        { title: "AI 研判", render: (_: unknown, row: any) => <AgentSignal row={row} /> },
+        { title: "人工复核", render: (_: unknown, row: any) => <HumanReviewStatus row={row} /> },
+        { title: "查看", render: (_: unknown, row: any) => <Button size="small" onClick={(event) => { event.stopPropagation(); openCandidate(row); }}>查看证据 / 人工研判</Button> },
       ]}
       locale={{ emptyText: <Empty description={summary?.available_report_count ? "最近报告没有候选观测；这不代表仓库不存在漏洞。" : "完成一次扫描后，这里会显示近期风险优先队列。"} /> }} />
     <Text type="secondary">统计范围：已检查 {summary?.evaluated_scan_count ?? 0} / 最多 {summary?.scan_limit ?? 10} 份报告；模型状态 {Object.entries(triage).map(([state, count]) => triageStateLabel(state) + " " + count).join(" · ") || "暂无记录"}。点击候选可打开本次扫描源码和证据义务。</Text>
@@ -299,10 +341,11 @@ export function ReportCenter({ jobs, cases }: { jobs: any[]; cases: any[] }) {
 export function SettingsView({ repos, detectors, health, refresh, tab }: { repos: any[]; detectors: any[]; health: any; refresh: () => Promise<void>; tab: string }) {
   return <><Header title="系统设置" description="管理当前本地源码、规则能力与运行状态；未接入的配置明确保留限制。" />
     <Tabs activeKey={["sources", "capabilities", "runtime", "agent"].includes(tab) ? tab : "sources"} onChange={(key) => go("/settings/" + key)} items={[
-      { key: "sources", label: "仓库与源码管理", children: <><Alert type="info" message="官方清单与镜像身份核验待接入" description="当前登记本地仓库或显式同步 allowlist 源码；不会根据仓库名称冒充官方身份认证。" />
+      { key: "sources", label: "仓库与源码管理", children: <><Alert type="info" message="在线仓库目录" description="浏览 OpenHarmony 仓库，选择后同步到本地并按需排队扫描。" />
         <Repositories repos={repos} roots={health?.target_roots || []} refresh={refresh} embedded />
         <OperationWorkspace view="sync" /></> },
       { key: "capabilities", label: "语言与规则", children: <Capabilities detectors={detectors} embedded /> },
+      { key: "policy", label: "智能审计策略与资源预算", children: <IntelligentAuditPolicySettings /> },
       { key: "agent", label: "Agent / LLM", children: <AgentProviderSettings /> },
       { key: "runtime", label: "Worker 状态", children: <Card title="当前服务状态">
         <Descriptions column={1} items={[

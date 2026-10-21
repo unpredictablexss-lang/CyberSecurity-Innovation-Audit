@@ -3,10 +3,12 @@ from pathlib import Path
 import subprocess
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from fastapi.testclient import TestClient
 
 from src.workbench.api import create_app
+from src.workbench import repository_management
 from src.workbench.settings import Settings
 
 
@@ -37,7 +39,7 @@ class RepositoryManagementTests(unittest.TestCase):
         self.base = Path(self.temp.name)
         self.root = self.base / "trusted"
         self.root.mkdir()
-        self.settings = Settings(self.base / "data", (self.root,))
+        self.settings = Settings(self.base / "data", (self.root, self.base / "data" / "repo-cache"))
         self.client = TestClient(create_app(self.settings))
         self.addCleanup(self.client.close)
 
@@ -49,6 +51,85 @@ class RepositoryManagementTests(unittest.TestCase):
         )
         self.assertEqual(response.status_code, 201, response.text)
         return response.json()
+
+    def test_online_catalog_discovers_only_openharmony_org_and_caches_page(self):
+        class Response:
+            headers = {"Link": '<https://api.github.com/orgs/openharmony/repos?per_page=100&page=2>; rel="next"'}
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *_args):
+                return False
+
+            def read(self, _limit):
+                return json.dumps([
+                    {"name": "commonlibrary", "full_name": "openharmony/commonlibrary",
+                     "owner": {"login": "openharmony"}, "default_branch": "master",
+                     "description": "public source", "stargazers_count": 12,
+                     "updated_at": "2026-10-01T00:00:00Z", "archived": False, "fork": False},
+                    {"name": "spoof", "full_name": "attacker/spoof",
+                     "owner": {"login": "attacker"}, "default_branch": "main"},
+                    {"name": "bad/name", "full_name": "openharmony/bad/name",
+                     "owner": {"login": "openharmony"}, "default_branch": "main"},
+                ]).encode()
+
+        repository_management._ONLINE_CATALOG_CACHE.clear()
+        with patch("src.workbench.repository_management.urlopen", return_value=Response()) as open_url:
+            response = self.client.get("/api/v1/repositories/online-catalog?page=1")
+            self.assertEqual(response.status_code, 200, response.text)
+            result = response.json()
+            self.assertEqual(result["next_page"], 2)
+            self.assertFalse(result["identity_verified"])
+            self.assertEqual([row["name"] for row in result["repositories"]],
+                             ["openharmony/commonlibrary"])
+            self.assertEqual(result["repositories"][0]["url"],
+                             "https://github.com/openharmony/commonlibrary.git")
+            self.assertEqual(result["repositories"][0]["source_id"],
+                             "https://github.com/openharmony/commonlibrary")
+            self.assertEqual(self.client.get("/api/v1/repositories/online-catalog?page=1").status_code, 200)
+            self.assertEqual(open_url.call_count, 1)
+
+    def test_online_catalog_rejects_out_of_bound_page(self):
+        with self.assertRaisesRegex(ValueError, "between 1 and 20"):
+            repository_management.online_repository_catalog(21)
+        response = self.client.get("/api/v1/repositories/online-catalog?page=21")
+        self.assertEqual(response.status_code, 422, response.text)
+
+    def test_source_sync_preflight_is_read_only_and_identifies_the_exact_source(self):
+        body = {"repositories": [{"repository": "openharmony/sample",
+            "url": "https://github.com/openharmony/sample.git", "timeout_seconds": 60,
+            "scan_after_sync": True, "revision": "HEAD", "include_paths": ["."],
+            "detector_ids": ["ohscanner.cpp.lifetime"], "audit_mode": "static_only",
+            "scan_timeout_seconds": 60, "memory_mb": 512}]}
+        response = self.client.post("/api/v1/operations/source-sync/preview",
+            headers={"X-OHScanner-Client": "workbench-v1"}, json=body)
+        self.assertEqual(response.status_code, 200, response.text)
+        result = response.json()
+        self.assertTrue(result["eligible"])
+        self.assertEqual(result["repository_count"], 1)
+        self.assertEqual(result["repositories"][0]["action"], "clone")
+        self.assertEqual(result["repositories"][0]["source_id"],
+                         "https://github.com/openharmony/sample")
+        self.assertFalse((self.settings.data_dir / "repo-cache" / "sample").exists())
+        self.assertNotIn("path", response.text)
+        self.assertIsNone(result["repository_size_estimate_bytes"])
+
+    def test_source_sync_preflight_blocks_same_name_cache_from_another_source(self):
+        target = self.settings.data_dir / "repo-cache" / "sample"
+        init_repo(target)
+        subprocess.run(["git", "-C", str(target), "remote", "add", "origin",
+                        "https://gitee.com/openharmony/sample.git"], check=True)
+        response = self.client.post("/api/v1/operations/source-sync/preview",
+            headers={"X-OHScanner-Client": "workbench-v1"}, json={"repositories": [{
+                "repository": "openharmony/sample", "url": "https://github.com/openharmony/sample.git",
+                "timeout_seconds": 60}]})
+        self.assertEqual(response.status_code, 200, response.text)
+        row = response.json()["repositories"][0]
+        self.assertFalse(row["eligible"])
+        self.assertEqual(row["cache_state"], "source_conflict")
+        self.assertIn("不同或未知", row["reason"])
+        self.assertNotIn(str(target), response.text)
 
     def test_catalog_hides_paths_and_disambiguates_duplicate_names(self):
         first = init_repo(self.root / "first")

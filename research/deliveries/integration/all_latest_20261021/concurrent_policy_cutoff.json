@@ -1,0 +1,9 @@
+{
+  "source": "/mnt/e/读研/网络安全创新大赛/workspace/progressive-triage-impl-20261021",
+  "base_commit": "4f75a65775b202b8220a208ebdb50fdb5c8dbb4d",
+  "snapshot_commit": "b7238ce40dd7e867a6f3e6d873a0c6c91ce67f8a",
+  "patch": "local-progressive-latest-cutoff.patch",
+  "sha256": "43635e50be511c0d306b3413ede8c4ca9b4f1152c7fa0b9234af2adb5fc0284e",
+  "captured_utc": "2026-10-21T14:08:54.815373+00:00",
+  "disposition": "Concurrent alternative progressive policy development preserved as a reviewable patch; not automatically executed in production."
+}

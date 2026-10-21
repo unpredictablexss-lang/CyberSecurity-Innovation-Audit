@@ -7,16 +7,18 @@ import sqlite3
 import subprocess
 import uuid
 from typing import Literal
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Query, Request
 from fastapi.responses import JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 from .settings import Settings
 from .store import Store, TERMINAL
 from . import service
-from .repository_management import discover_repositories, repository_catalog, repository_roots
+from .repository_management import (discover_repositories, online_repository_catalog,
+                                   repository_catalog, repository_roots)
 from .source_roots import add_managed_root, record_root_check, remove_managed_root
+from .triage_limits import MAX_TRIAGE_CANDIDATES_PER_ENDPOINT
 
 
 class StrictModel(BaseModel):
@@ -46,9 +48,18 @@ class AuditPlanInput(StrictModel):
     memory_mb: int = Field(default=2048, ge=256, le=8192)
     audit_mode: Literal["standard_review", "static_only"] = "standard_review"
     auto_triage: bool = False
-    max_triage_candidates: int = Field(default=3)
-    max_r2_candidates: int = Field(default=0)
-    max_cost_usd: str | None = None  # Legacy client field; ignored for ordinary smart review.
+    max_triage_candidates: int = Field(default=5, ge=1, le=MAX_TRIAGE_CANDIDATES_PER_ENDPOINT)
+    max_r2_candidates: int = Field(default=0, ge=0, le=MAX_TRIAGE_CANDIDATES_PER_ENDPOINT)
+    max_cost_usd: str | None = Field(default=None, min_length=1, max_length=16,
+                                     pattern=r"^\d{1,6}(?:\.\d{1,8})?$")
+
+    @model_validator(mode="after")
+    def default_r2_for_opted_in_triage(self):
+        if "max_r2_candidates" not in self.model_fields_set:
+            self.max_r2_candidates = (
+                min(3, self.max_triage_candidates) if self.auto_triage else 0
+            )
+        return self
 
 
 class ScanInput(AuditPlanInput):
@@ -101,6 +112,8 @@ def create_app(settings=None):
     settings.initialize()
     store = Store(settings.data_dir)
     app = FastAPI(title="OHScanner Local Audit Workbench", version="0.1.0")
+    from .progressive_triage.api import install_routes as install_triage_policy_routes
+    app.state.triage_policy = install_triage_policy_routes(app, settings.data_dir)
     app.state.store = store
     app.state.settings = settings
     app.add_middleware(
@@ -229,6 +242,10 @@ def create_app(settings=None):
     def repository_catalog_route():
         return repository_catalog(settings, store)
 
+    @app.get("/api/v1/repositories/online-catalog")
+    def online_repository_catalog_route(page: int = Query(default=1, ge=1, le=20)):
+        return online_repository_catalog(page)
+
     @app.get("/api/v1/repositories/roots")
     def repository_roots_route():
         return repository_roots(settings, store)
@@ -268,6 +285,10 @@ def create_app(settings=None):
 
     @app.post("/api/v1/audit-plans")
     def audit_plan(body: AuditPlanInput):
+        if body.max_r2_candidates > body.max_triage_candidates:
+            raise ValueError("conditional R2 candidate budget cannot exceed the R1 candidate budget")
+        if body.max_r2_candidates and not body.auto_triage:
+            raise ValueError("conditional R2 requires task-level automatic triage authorization")
         repo = store.repository(body.repository_id)
         service.check_repository(settings, repo["path"])
         _, plan = service.audit_plan(
@@ -303,6 +324,10 @@ def create_app(settings=None):
 
     @app.post("/api/v1/scans", status_code=201)
     def scan(body: ScanInput):
+        if body.max_r2_candidates > body.max_triage_candidates:
+            raise ValueError("conditional R2 candidate budget cannot exceed the R1 candidate budget")
+        if body.max_r2_candidates and not body.auto_triage:
+            raise ValueError("conditional R2 requires task-level automatic triage authorization")
         repo = store.repository(body.repository_id)
         service.check_repository(settings, repo["path"])
         spec = service.make_spec(
@@ -321,6 +346,8 @@ def create_app(settings=None):
         if body.expected_workflow_sha256 and body.expected_workflow_sha256 != workflow_sha256:
             raise ValueError("Audit workflow changed since preview; refresh the plan before scanning")
         spec["audit_mode"] = body.audit_mode
+        spec["max_r2_candidates"] = body.max_r2_candidates
+        spec["max_cost_usd"] = body.max_cost_usd
         spec["workflow_sha256"] = workflow_sha256
         if body.auto_triage:
             if body.audit_mode != "standard_review":
@@ -404,10 +431,14 @@ def create_app(settings=None):
             raise ValueError("invalid pagination")
         report = service.read_report(settings, store.job(key))
         items = service.findings(report)
+        from .smart_audit import severity_metadata
         latest = {}
         for entry in store.reviews(key):
             latest[entry["candidate_id"]] = entry
         for item in items:
+            # Keep the immutable/raw diagnostic severity intact. Presentation is
+            # a separate derived field shared with /overview/risks.
+            item["risk_presentation"] = severity_metadata(item)
             item["latest_review"] = latest.get(item["id"])
             item["review_status"] = (
                 item["latest_review"]["status"]
@@ -457,6 +488,7 @@ def create_app(settings=None):
         job = store.job(key)
         report = service.read_report(settings, job)
         item = service.finding(report, identity)
+        from .smart_audit import severity_metadata
         try:
             source = service.source(settings, store, job, item["file"])
         except (ValueError, KeyError, OSError, subprocess.SubprocessError, UnicodeError):
@@ -471,6 +503,7 @@ def create_app(settings=None):
             source_limitation = None
         return {
             **item,
+            "risk_presentation": severity_metadata(item),
             "source": source,
             "source_status": source_status,
             "source_limitation": source_limitation,

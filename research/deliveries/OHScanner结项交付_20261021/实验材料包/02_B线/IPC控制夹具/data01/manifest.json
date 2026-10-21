@@ -1,0 +1,51 @@
+[
+  {
+    "sample_id": "position_underflow_positive",
+    "data_origin": "synthetic",
+    "family": "DATA-01",
+    "expected_rule": "ipc.parcel.position-underflow",
+    "file": "position_underflow_positive.cpp",
+    "split": "design",
+    "variant": "positive",
+    "notes": "The rewind target is a parcel size minus a parcel-derived length, with no bound relating the two. GetDataSize() is the size fact and ReadInt32() is the subtrahend, so the subtraction is on a read position and its result can be negative."
+  },
+  {
+    "sample_id": "position_underflow_fixed",
+    "data_origin": "synthetic",
+    "family": "DATA-01",
+    "expected_rule": null,
+    "file": "position_underflow_fixed.cpp",
+    "split": "design",
+    "variant": "fixed",
+    "notes": "position_underflow_positive plus one guard line binding the subtrahend below the size (pos < 0 || GetDataSize() < pos). The bound is on the operands of the subtraction itself, which is what the rule asks for; the subtraction expression is unchanged.",
+    "control_rules": [
+      "ipc.parcel.position-underflow"
+    ]
+  },
+  {
+    "sample_id": "position_underflow_safe",
+    "data_origin": "synthetic",
+    "family": "DATA-01",
+    "expected_rule": null,
+    "file": "position_underflow_safe.cpp",
+    "split": "design",
+    "variant": "safe",
+    "notes": "The same size-minus-length subtraction, consumed as a length and checked nonnegative instead of used as a read position. The rule is about rewinding a read position, not about size arithmetic in general, so no rewind raises nothing.",
+    "control_rules": [
+      "ipc.parcel.position-underflow"
+    ]
+  },
+  {
+    "sample_id": "copy_range_safe",
+    "data_origin": "synthetic",
+    "family": "DATA-01",
+    "expected_rule": null,
+    "file": "copy_range_safe.cpp",
+    "split": "design",
+    "variant": "safe",
+    "control_rules": [
+      "ipc.parcel.copy-range"
+    ],
+    "notes": "The copy length equals the fixed destination capacity and is not derived from a request field; this is an explicit bounded copy, not a Parcel-controlled copy size."
+  }
+]

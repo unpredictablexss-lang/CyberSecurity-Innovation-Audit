@@ -200,8 +200,8 @@ export default function Repositories({
         {onlineError && <Alert className="section-gap" type="error" showIcon message="在线仓库操作未完成" description={onlineError} />}
         {onlineCatalog?.stale && <Alert className="section-gap" type="warning" showIcon message="当前目录缓存已过期" description={onlineCatalog.refresh_error || "刷新在线目录失败；请连接 GitCode 并刷新后再预览版本。"} />}
         {onlineOperation && <Alert className="section-gap" type="success" showIcon
-          message="固定版本导入任务已创建"
-          description={<span>下载操作：<a href={`#/tasks/operations/${onlineOperation.id}`}>查看下载进度</a>。只有下载和 Commit 校验成功后，系统才会自动创建固定版本的静态扫描；候选结果仍需复核。</span>}
+          message="静态扫描任务已持久化排队"
+          description={<span>下载操作：<a href={`#/tasks/operations/${onlineOperation.id}`}>查看任务进度</a>。下载成功后会自动创建对应的静态扫描任务；候选结果仍需复核。</span>}
         />}
         <Table className="section-gap" size="small" rowKey="slug" loading={onlineLoading}
           dataSource={onlineCatalog?.items || []} pagination={{ current: onlineCatalog?.page || 1, pageSize: onlineCatalog?.per_page || 30, total: onlineCatalog?.total || 0, showSizeChanger: false, onChange: (page) => void loadOnlineCatalog({ page }) }}

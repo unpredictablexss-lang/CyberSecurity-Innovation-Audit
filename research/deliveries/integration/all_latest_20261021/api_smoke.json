@@ -1,0 +1,9 @@
+{
+  "/": 200,
+  "/api/v1/health": 200,
+  "/api/v1/detectors": 200,
+  "/api/v1/agent/triage-policy": 200,
+  "openapi_route_count": 99,
+  "progressive_worker_enforcement": "not_connected",
+  "model_calls": 0
+}

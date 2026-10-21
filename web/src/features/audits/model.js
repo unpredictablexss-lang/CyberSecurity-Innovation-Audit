@@ -3,6 +3,15 @@ export function auditWorkflowLabel(plan, auditMode = plan?.audit_mode) {
   const mode = auditMode ?? plan?.audit_mode;
   const workflow = plan?.workflow || {};
   if (mode === "static_only") return "仅静态扫描";
+  const limit = Number.isInteger(workflow.candidate_limit_per_authorized_batch)
+    ? "最多 " + workflow.candidate_limit_per_authorized_batch + " 条候选"
+    : "候选";
+  if (workflow.triage_stage === "task_authorized_r1_conditional_continuous_r2") {
+    const r2Limit = Number.isInteger(workflow.conditional_r2_candidate_limit)
+      ? "最多补充核查 " + workflow.conditional_r2_candidate_limit + " 条"
+      : "有限数量的补充核查";
+    return "标准研判：静态扫描后，" + limit + "初步研判；高/严重且仍有源码义务未解决时，" + r2Limit + "持续追查";
+  }
   if (workflow.automatic_model_calls) {
     return "智能审计：对本次扫描范围内所有满足证据条件的候选逐项调查；高/严重且仍缺源码证据的候选继续追查。按服务商按量计费，可随时取消。";
   }
@@ -75,8 +84,21 @@ export function planPayload(values, detectors, explicitIds = []) {
   return snapshotPayload(values, detectors, explicitIds);
 }
 export function taskAuthorizationPayload(values) {
-  const enabled = values?.audit_mode === "standard_review";
-  return { auto_triage: enabled };
+  const enabled = (values?.audit_mode || "standard_review") === "standard_review" &&
+    values?.auto_triage === true;
+  const maxCandidates = Number(values?.max_triage_candidates || 3);
+  const maxR2 = enabled && values?.auto_r2 === true
+    ? Math.min(Number(values?.max_r2_candidates ?? 2), maxCandidates) : 0;
+  return {
+    auto_triage: enabled,
+    max_triage_candidates: maxCandidates,
+    max_r2_candidates: maxR2,
+  };
+}
+// Product-facing mode controls whether this operation creates Agent work.
+export function selectedAuditModeValues(values) {
+  const auditMode = values?.audit_mode === "static_only" ? "static_only" : "standard_review";
+  return { ...values, audit_mode: auditMode, auto_triage: auditMode === "standard_review" };
 }
 export function auditErrorMessage(error) {
   const fieldMessages = Array.isArray(error?.errorFields)
@@ -100,12 +122,18 @@ export function operationPayload(kind, values, detectors, explicitIds = []) {
   const payload = common(values, detectors, explicitIds);
   const auditMode = values.audit_mode || "standard_review";
   if (!["standard_review", "static_only"].includes(auditMode)) throw new Error("审计方式无效，请重新选择。");
-  const authorized = auditMode === "standard_review";
-  const scanPayload = {
-    ...payload, audit_mode: auditMode,
-    ...(authorized ? { auto_triage: true } : {}),
-  };
+  const scanPayload = { ...payload, audit_mode: auditMode,
+    ...(auditMode === "standard_review" ? taskAuthorizationPayload(values) : {}) };
   if (kind === "date") return { ...scanPayload, ...datePreviewPayload(values) };
+  if (kind === "recent") {
+    if (!values.branch || !values.reference_time || !values.timezone)
+      throw new Error("请填写仓库、分支、对照时点和时区。");
+    const days = Number(values.lookback_days || 7);
+    if (!Number.isInteger(days) || days < 2 || days > 90)
+      throw new Error("N 日窗口需要在 2 到 90 天之间。");
+    return { ...scanPayload, branch: values.branch.trim(), lookback_days: days,
+      reference_time: values.reference_time, timezone: values.timezone };
+  }
   if (kind === "branches") {
     if (!values.baseline_ref || !values.endpoint_ref) throw new Error("请填写两个版本。");
     if (values.baseline_ref === values.endpoint_ref) throw new Error("请选择两个不同的版本。");

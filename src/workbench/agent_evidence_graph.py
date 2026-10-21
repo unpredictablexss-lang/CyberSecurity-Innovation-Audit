@@ -299,6 +299,8 @@ def build_evidence_graph(binding, initial_evidence, tool_calls, model_calls,
         "binding": scope_base,
         "binding_sha256": binding_sha256,
         "root_node_id": candidate_node,
+        "product_state": "candidate",
+        "validated_vulnerability": 0,
         "nodes": nodes,
         "edges": edges,
         "summary": {

@@ -1,0 +1,166 @@
+{
+  "detector_version": "0.12.13",
+  "model": "oh-ipc-2026.10-v33",
+  "runner_commit": "4a8806acaa456120c496f185c8a424e0fca1671a",
+  "temp_sources": "D:\\openHarmonyScanner\\tmp\\b-ipc-eight-run-d844686f",
+  "targets": [
+    {
+      "repository": "openharmony/aafwk_standard",
+      "cache": "ability_ability_runtime",
+      "commit": "834a566b1372268c7bbb0c40362322f812ca6efc",
+      "expected_tree": "c3744c8c230573a4bcdb76bf49493a1ea61c72d1",
+      "status": "completed_with_limitations",
+      "tree": "c3744c8c230573a4bcdb76bf49493a1ea61c72d1",
+      "snapshot_sha256": "13aead400f536e53d1aa39c6c70d4bb48d70045ef25e88efbf633deee660deb6",
+      "selected_source_files": 1771,
+      "parsing": {
+        "complete": 1246,
+        "not_run": 18,
+        "partial": 507
+      },
+      "observations": 15,
+      "rule_counts": {
+        "ipc.auth.missing": 7,
+        "ipc.capability.export": 7,
+        "ipc.relay.descriptor-boundary": 1
+      },
+      "json_sha256": "b9f102edbdc21ff76825156ef2f3752dbf921aea247ff0f5ab76e052d96c6f53"
+    },
+    {
+      "repository": "openharmony/applications_contacts_data",
+      "cache": "applications_contacts_data",
+      "commit": "341cc3bf41b48e9a5f278dd088f40a2041d2f1c9",
+      "expected_tree": "2054824c04bb403eeea128a9262edfb3001efa4f",
+      "status": "completed_with_limitations",
+      "tree": "2054824c04bb403eeea128a9262edfb3001efa4f",
+      "snapshot_sha256": "375f9962e275d88a2ea3e1915ddea3a48f8f06008e96509b7e432324f4ba3afc",
+      "selected_source_files": 360,
+      "parsing": {
+        "complete": 199,
+        "not_run": 142,
+        "partial": 19
+      },
+      "observations": 4,
+      "rule_counts": {
+        "ipc.auth.missing": 1,
+        "ipc.relay.descriptor-boundary": 3
+      },
+      "json_sha256": "ab21c8cf451eb8a6e4e06afe6647ca33214f9c0b1c174f51a3fefa8d9b2d7104"
+    },
+    {
+      "repository": "openharmony/communication_netmanager_ext",
+      "cache": "communication_netmanager_ext",
+      "commit": "8c35917b7e2f152813b13a20530a8452cf73d938",
+      "expected_tree": "e26372f6cd65be928b9c1cf4a96d3c7dd5ece804",
+      "status": "completed_with_limitations",
+      "tree": "e26372f6cd65be928b9c1cf4a96d3c7dd5ece804",
+      "snapshot_sha256": "d3c302ffe06ab7e1e002b92c4eba224fdcc1600c2de7b2eb65d9d49a932872f1",
+      "selected_source_files": 654,
+      "parsing": {
+        "complete": 441,
+        "not_run": 22,
+        "partial": 191
+      },
+      "observations": 0,
+      "rule_counts": {},
+      "json_sha256": "9ed5befc13f5ee38efa7f9cb87924f5a26d29977ab58f5db84bb8d2d6ad53eee"
+    },
+    {
+      "repository": "openharmony/distributeddatamgr_relational_store",
+      "cache": "distributeddatamgr_relational_store",
+      "commit": "42f13ea84e2f90ed511a2bd4aa5be14c5996eba8",
+      "expected_tree": "f4698163f10e769c9014daa6e65856b12def8fdf",
+      "status": "completed_with_limitations",
+      "tree": "f4698163f10e769c9014daa6e65856b12def8fdf",
+      "snapshot_sha256": "69074839144fa0495b0c1d92aef80fca93730158c19a38b0e7ba61834a2932ec",
+      "selected_source_files": 1350,
+      "parsing": {
+        "complete": 790,
+        "not_run": 185,
+        "partial": 375
+      },
+      "observations": 0,
+      "rule_counts": {},
+      "json_sha256": "f349628329f03fc796934efac31e83fee2ad0a36a001ac08137fe3b3b46c09fd"
+    },
+    {
+      "repository": "openharmony/graphic_standard",
+      "cache": "graphic_graphic_2d",
+      "commit": "a73af6bd3bac599b9359cba10ca7b5f82a02d5d9",
+      "expected_tree": "d5446eefcd0dc9478a0da65c76fafc9f62f973ad",
+      "status": "completed_with_limitations",
+      "tree": "d5446eefcd0dc9478a0da65c76fafc9f62f973ad",
+      "snapshot_sha256": "502a6dec2bff6c8811d7c878bc23220e4d480535361f53c80e42f0f9ce900fa1",
+      "selected_source_files": 1192,
+      "parsing": {
+        "complete": 969,
+        "not_run": 4,
+        "partial": 219
+      },
+      "observations": 8,
+      "rule_counts": {
+        "ipc.auth.missing": 2,
+        "ipc.capability.export": 4,
+        "ipc.relay.descriptor-boundary": 2
+      },
+      "json_sha256": "cd10768964b8eb26e391b8bba482fc8f6bade145fc0913d7cc264da2b7a07f41"
+    },
+    {
+      "repository": "openharmony/miscservices_pasteboard",
+      "cache": "distributeddatamgr_pasteboard",
+      "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+      "expected_tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+      "status": "completed_with_limitations",
+      "tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+      "snapshot_sha256": "b1a29ee4fbd60595395d4757efe9a998caf9a262adc296f80a0ee4003ba95648",
+      "selected_source_files": 68,
+      "parsing": {
+        "complete": 59,
+        "not_run": 1,
+        "partial": 8
+      },
+      "observations": 2,
+      "rule_counts": {
+        "ipc.auth.missing": 2
+      },
+      "json_sha256": "e190e6e968cfda2e2e82b703513336c34f9fe768e316a93d7e53d242bde9d024"
+    },
+    {
+      "repository": "openharmony/multimedia_histreamer",
+      "cache": "multimedia_histreamer",
+      "commit": "847aafa3dc32bcf92eb8a2d2277b8d34bff98362",
+      "expected_tree": "6b0d47808cbb711a343c8817f262ec7cde87bf0b",
+      "status": "completed_with_limitations",
+      "tree": "6b0d47808cbb711a343c8817f262ec7cde87bf0b",
+      "snapshot_sha256": "9583e43690522343d20bdd130e13ed6bcc05e0c752bad51ae37a35a90df982e7",
+      "selected_source_files": 576,
+      "parsing": {
+        "complete": 346,
+        "partial": 230
+      },
+      "observations": 0,
+      "rule_counts": {},
+      "json_sha256": "d58fe272bdbb54b09f2529a197c835fd511b067878da33cd999e7cb051b7053d"
+    },
+    {
+      "repository": "openharmony/security_deviceauth",
+      "cache": "security_deviceauth",
+      "commit": "2cf21e46f43c63857c40a79b004eda14f79b04c2",
+      "expected_tree": "cfbe02de9d5f4720dc4aa19f5a8d83afa6cabaf8",
+      "status": "completed_with_limitations",
+      "tree": "cfbe02de9d5f4720dc4aa19f5a8d83afa6cabaf8",
+      "snapshot_sha256": "fde064a622d247a71173f072f08313ff28820cd3c192ce3693312b44aba7a5ff",
+      "selected_source_files": 436,
+      "parsing": {
+        "complete": 291,
+        "partial": 145
+      },
+      "observations": 1,
+      "rule_counts": {
+        "ipc.relay.descriptor-boundary": 1
+      },
+      "json_sha256": "749d7ef2e11ec70fa7957b4f8f6b57c88c75bb2bbce52cc3f6a6e26989565a21"
+    }
+  ],
+  "temp_sources_retry": "D:\\openHarmonyScanner\\tmp\\b-ipc-eight-retry-6a9b472f"
+}

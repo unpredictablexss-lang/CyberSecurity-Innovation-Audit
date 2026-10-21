@@ -32,7 +32,7 @@ def main():
     registered = next(
         (
             r
-            for r in client.get("/api/v1/repositories").json()
+            for r in client.get("/api/v1/repositories/managed").json()
             if r["path"] == str(repo)
         ),
         None,

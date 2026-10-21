@@ -13,3 +13,4 @@ export function requestGate(): { next(): number; invalidate(): void; current(id:
 export function planPayload(values: any, detectors: any[], explicitIds?: string[]): any;
 export function taskAuthorizationPayload(values: any): { auto_triage: boolean };
 export function auditErrorMessage(error: unknown): string;
+export function selectedAuditModeValues(values: any): any;

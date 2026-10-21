@@ -34,18 +34,22 @@ class MultiEndpointAuthorizationTests(unittest.TestCase):
             for char in ("a", "b")
         ]
         self.body = {"audit_mode": "standard_review", "auto_triage": True,
-                     "max_triage_candidates": 2, "max_r2_candidates": 1,
-                     "max_cost_usd": "5.00"}
+                     "max_triage_candidates": 2, "max_r2_candidates": 1}
 
     def tearDown(self):
         self.tmp.cleanup()
 
     @staticmethod
-    def fake_preview(plan, workflow, paths, candidates, nonce, provider, r2):
+    def fake_preview(plan, workflow, paths, candidates, nonce, provider, r2, *, max_cost_usd=None):
         digest = hashlib.sha256((plan["plan_sha256"] + workflow + nonce).encode()).hexdigest()
         return {"eligible": True, "consent_sha256": digest, "consent_nonce": nonce,
                 "manifest": {"binding": {"plan_sha256": plan["plan_sha256"],
                                          "workflow_sha256": workflow},
+                             "budgets": {"max_total_model_calls": None,
+                                         "r1_max_model_calls": candidates,
+                                         "r2_max_model_calls": None,
+                                         "local_cumulative_token_budget": "none",
+                                         "local_cumulative_usd_budget": "none"},
                              "candidate_limit": candidates, "r2_candidate_limit": r2,
                              "consent_nonce": nonce}}
 
@@ -74,6 +78,7 @@ class MultiEndpointAuthorizationTests(unittest.TestCase):
                              scan["triage_authorization"]["consent_sha256"])
             self.assertEqual(auth["snapshot"]["binding"]["plan_sha256"],
                              scan["plan_sha256"])
+            self.assertEqual(job["spec"]["max_cost_usd"], None)
             self.assertFalse(auth["revoked"])
 
     def test_retried_approved_submission_reuses_original_operation_and_jobs(self):
@@ -161,12 +166,19 @@ class MultiEndpointAuthorizationTests(unittest.TestCase):
     def test_strict_request_budget_and_nonce_validation(self):
         base = {"repository_id": self.repo["id"], "baseline": "a" * 40,
                 "endpoint": "b" * 40, "detector_ids": ["ohscanner.cpp.lifetime"]}
-        good = RangeRequest.model_validate({**base, "auto_triage": True, "max_cost_usd": "5.00"})
+        good = RangeRequest.model_validate({**base, "auto_triage": True})
         self.assertTrue(good.auto_triage)
-        for cost in ("abc", "0x55", "5.2.1", "-1", "5 USD"):
-            with self.subTest(cost=cost):
-                request = RangeRequest.model_validate({**base, "max_cost_usd": cost})
-                self.assertEqual(request.max_cost_usd, cost)  # Legacy field is ignored by smart-audit policy.
+        self.assertEqual(good.max_triage_candidates, 5)
+        self.assertEqual(good.max_r2_candidates, 3)
+        static_default = RangeRequest.model_validate({**base})
+        self.assertFalse(static_default.auto_triage)
+        self.assertEqual(static_default.max_r2_candidates, 0)
+        explicit_no_deep_review = RangeRequest.model_validate({
+            **base, "auto_triage": True, "max_r2_candidates": 0})
+        self.assertEqual(explicit_no_deep_review.max_r2_candidates, 0)
+        for cost in ("0", "abc", "0x55", "5.2.1", "-1", "5 USD"):
+            with self.subTest(cost=cost), self.assertRaises(Exception):
+                RangeRequest.model_validate({**base, "max_cost_usd": cost})
         with self.assertRaises(Exception):
             BranchComparisonRequest.model_validate({
                 "repository_id": self.repo["id"], "baseline_ref": "main", "endpoint_ref": "dev",

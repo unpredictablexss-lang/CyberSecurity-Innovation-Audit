@@ -1,5 +1,6 @@
 import os
 import json
+import hashlib
 import subprocess
 import tempfile
 import time
@@ -8,6 +9,7 @@ import unittest
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from unittest.mock import patch
+from types import SimpleNamespace
 
 from fastapi.testclient import TestClient
 from src.workbench.api import create_app
@@ -36,6 +38,13 @@ class OperationsStoreTests(unittest.TestCase):
 
     def tearDown(self):
         self.temp.cleanup()
+
+    def test_legacy_r2_budget_status_is_exposed_as_candidate_limit(self):
+        row = {"r2_status": "budget_limited", "candidate_manifest": "[]",
+               "operation_ids": "[]", "r2_operation_ids": "[]",
+               "r2_candidate_manifest": "[]"}
+        self.assertEqual(Operations.triage_batch_row(row)["r2_status"],
+                         "candidate_limit_reached")
 
     def test_first_start_store_schema_initialization_is_serialized(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -157,6 +166,60 @@ class PlanningTests(unittest.TestCase):
             with self.subTest(url=url), self.assertRaises(ValueError):
                 approved_url(url)
 
+    def test_recent_window_planner_freezes_disjoint_n_day_and_one_day_ranges(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            repo_path = root / "targets" / "repo"
+            repo_path.mkdir(parents=True)
+            subprocess.run(["git", "init", "-q"], cwd=repo_path, check=True)
+            env = {**os.environ, "GIT_AUTHOR_NAME": "test", "GIT_AUTHOR_EMAIL": "test@example.invalid",
+                   "GIT_COMMITTER_NAME": "test", "GIT_COMMITTER_EMAIL": "test@example.invalid"}
+            for index, stamp in enumerate(("2024-12-31T00:00:00Z", "2025-01-01T00:00:00Z",
+                                           "2025-01-02T00:00:00Z", "2025-01-03T00:00:00Z",
+                                           "2025-01-04T00:00:00Z")):
+                (repo_path / "source.cpp").write_text("int x = " + str(index) + ";\n")
+                subprocess.run(["git", "add", "source.cpp"], cwd=repo_path, env=env, check=True)
+                commit_env = {**env, "GIT_AUTHOR_DATE": stamp, "GIT_COMMITTER_DATE": stamp}
+                subprocess.run(["git", "commit", "-q", "-m", str(index)], cwd=repo_path,
+                               env=commit_env, check=True)
+            settings = Settings(root / "data", (root / "targets",))
+            settings.initialize()
+            store = Store(settings.data_dir)
+            repo = store.add_repository("openharmony/recent-test", str(repo_path))
+            selected = operations.recent_window_selections(settings, store, repo["id"], "HEAD", 3,
+                "2025-01-05T00:00:00", "UTC")
+            long_commits = selected["long_window"]["selected_commits"]
+            one_day_commits = selected["one_day_window"]["selected_commits"]
+            self.assertEqual(len(long_commits), 2)
+            self.assertEqual(len(one_day_commits), 1)
+            self.assertFalse(set(long_commits) & set(one_day_commits))
+            self.assertEqual(selected["long_window"]["endpoint"], selected["one_day_window"]["baseline"])
+
+    def test_sync_and_scan_helper_queues_a_pinned_scan_without_implicit_model_authorization(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            target = root / "targets" / "repo"
+            target.mkdir(parents=True)
+            settings = Settings(root / "data", (root / "targets",))
+            settings.initialize()
+            store = Store(settings.data_dir)
+            repo = store.add_repository("openharmony/sync-test", str(target))
+            ops = Operations(store)
+            task = ops.create("source_sync", {"scan_after_sync": True, "revision": "HEAD",
+                "include_paths": ["."], "detector_ids": ["test-detector"],
+                "scan_timeout_seconds": 60, "memory_mb": 512, "audit_mode": "standard_review"})
+            pinned = {"commit": "b" * 40, "git_tree": "c" * 40, "plan_sha256": "d" * 64,
+                "repository": repo["name"], "include_paths": ["."], "detector_ids": ["test-detector"],
+                "detector_versions": {}, "audit_plan": {"plan_sha256": "d" * 64},
+                "timeout_seconds": 60, "memory_mb": 512}
+            with patch.object(service, "revisions", return_value=[]), \
+                    patch.object(service, "make_spec", return_value=pinned):
+                job = operations.enqueue_synced_scan(settings, store, ops, task, repo)
+            self.assertEqual(job["status"], "queued")
+            self.assertEqual(job["spec"]["commit"], "b" * 40)
+            self.assertEqual(job["spec"]["audit_mode"], "standard_review")
+            self.assertIsNone(store.triage_authorization(job["id"]))
+
     def test_range_comparison_does_not_call_static_candidate_a_fix(self):
         before = {"detector_runs": [], "detector_coverage": {"detectors": {"d": {"analyzed_files": ["a.cpp"], "evidence_obligations": []}}},
                   "_workbench": {"source_inventory": [{"file": "a.cpp"}]}}
@@ -219,6 +282,22 @@ class OperationsApiTests(unittest.TestCase):
             response = client.post("/api/v1/operations/source-sync", headers={"X-OHScanner-Client": "workbench-v1"},
                                    json={"repository": "openharmony/a", "url": "https://evil.example/openharmony/a"})
             self.assertIn(response.status_code, (409, 422))
+
+    def test_sync_api_persists_explicit_auto_scan_request_and_defaults_to_static_mode(self):
+        with tempfile.TemporaryDirectory() as directory:
+            settings = Settings(Path(directory) / "data", (Path(directory) / "targets",))
+            client = TestClient(create_app(settings))
+            response = client.post("/api/v1/operations/source-sync",
+                headers={"X-OHScanner-Client": "workbench-v1"},
+                json={"repository": "openharmony/sample", "url": "https://github.com/openharmony/sample.git",
+                    "scan_after_sync": True, "revision": "HEAD", "include_paths": ["."],
+                    "detector_ids": ["ohscanner.cpp.lifetime"], "audit_mode": "static_only"})
+            self.assertEqual(response.status_code, 201, response.text)
+            self.assertEqual(response.json()["kind"], "source_sync")
+            self.assertTrue(response.json()["spec"]["scan_after_sync"])
+            self.assertEqual(response.json()["spec"]["revision"], "HEAD")
+            self.assertEqual(response.json()["spec"]["audit_mode"], "static_only")
+            client.close()
 
 
 class OperationEndToEndTests(unittest.TestCase):
@@ -298,6 +377,181 @@ class OperationEndToEndTests(unittest.TestCase):
         self.assertEqual(len(item["result"]["scan_ids"]), len(operation["spec"]["scan_ids"]))
         self.assertEqual(len(item["result_sha256"]), 64)
         return item
+
+    def test_branch_operation_binds_per_endpoint_model_consent_to_fixed_plans(self):
+        provider = SimpleNamespace(configured=True, public={"endpoint_host": "model.example", "model": "review-model"})
+
+        def fake_preview(plan, workflow, includes, candidate_limit, nonce, active_provider,
+                         r2_limit=0, *, max_cost_usd=None):
+            digest = hashlib.sha256((plan["plan_sha256"] + workflow + nonce).encode()).hexdigest()
+            estimate = {"status": "budget_based_upper_estimate", "currency": "USD",
+                "maximum_usd": "0.02", "rate_card_id": "test-card", "rate_source_url": "https://example.invalid/rates",
+                "actual_charge_verified": False, "hard_spend_cap": False}
+            return {"eligible": True, "consent_sha256": digest, "consent_nonce": nonce,
+                "provider": active_provider.public,
+                "manifest": {"consent_nonce": nonce,
+                    "binding": {"plan_sha256": plan["plan_sha256"],
+                                "workflow_sha256": workflow},
+                    "source_disclosure": ["fixed source excerpts"],
+                    "budgets": {"max_requests": candidate_limit * 2,
+                        "r1_max_model_calls": candidate_limit, "r2_max_model_calls": 0},
+                    "cost_budget": {"maximum_usd": max_cost_usd}},
+                "estimated_cost": estimate, "cost_budget": {"maximum_usd": max_cost_usd}}
+
+        base = {"repository_id": self.repo["id"], "include_paths": ["."],
+            "detector_ids": self.detectors, "timeout_seconds": 30, "memory_mb": 512,
+            "audit_mode": "standard_review", "auto_triage": True,
+            "max_triage_candidates": 2, "max_r2_candidates": 0,
+            "baseline_ref": "refs/heads/main", "endpoint_ref": "refs/heads/feature"}
+        headers = {"X-OHScanner-Client": "workbench-v1"}
+        with patch("src.workbench.agent.ProviderConfig.from_env", return_value=provider), \
+                patch("src.workbench.agent.audit_task_consent_preview", side_effect=fake_preview):
+            response = self.client.post("/api/v1/operations/scan-previews", headers=headers,
+                                        json={"kind": "branches", "payload": base})
+            self.assertEqual(response.status_code, 200, response.text)
+            preview = response.json()["triage_authorization_preview"]
+            self.assertTrue(preview["eligible"])
+            self.assertEqual(len(preview["scans"]), 2)
+            auths = [{key: item[key] for key in ("plan_sha256", "workflow_sha256", "consent_sha256", "consent_nonce")}
+                     for item in preview["scans"]]
+            submitted = self.client.post("/api/v1/operations/branch-comparisons", headers=headers,
+                json={**base, "triage_authorizations": auths})
+        self.assertEqual(submitted.status_code, 201, submitted.text)
+        scans = [self.store.job(key) for key in submitted.json()["spec"]["scan_ids"]]
+        self.assertEqual(len(scans), 2)
+        for job in scans:
+            authorization = self.store.triage_authorization(job["id"])
+            self.assertIsNotNone(authorization)
+            self.assertEqual(job["spec"]["audit_mode"], "standard_review")
+            self.assertTrue(job["spec"]["workflow"]["automatic_model_calls"])
+            self.assertEqual(job["spec"]["workflow"]["platform_cumulative_usage_budget"], "none")
+            self.assertIsNone(job["spec"]["max_cost_usd"])
+            self.assertEqual(authorization["consent_sha256"], job["spec"]["triage_authorization"]["consent_sha256"])
+
+    def test_recent_window_endpoint_queues_four_fixed_scans_and_keeps_impact_unknown(self):
+        headers = {"X-OHScanner-Client": "workbench-v1"}
+        payload = {"repository_id": self.repo["id"], "branch": "refs/heads/main",
+            "lookback_days": 2, "reference_time": "2025-01-04T00:00:00", "timezone": "UTC",
+            "include_paths": ["."], "detector_ids": self.detectors,
+            "timeout_seconds": 30, "memory_mb": 512, "audit_mode": "static_only"}
+        preview = self.client.post("/api/v1/operations/recent-comparisons/preview",
+            headers=headers, json=payload)
+        self.assertEqual(preview.status_code, 200, preview.text)
+        self.assertEqual(len(preview.json()["long_window"]["selected_commits"]), 1)
+        self.assertEqual(len(preview.json()["one_day_window"]["selected_commits"]), 1)
+        operation = self.client.post("/api/v1/operations/recent-comparisons",
+            headers=headers, json=payload)
+        self.assertEqual(operation.status_code, 201, operation.text)
+        self.assertEqual(len(operation.json()["spec"]["scan_ids"]), 4)
+        result = self._run_operation(operation.json())["result"]
+        self.assertEqual(len(result["windows"]), 2)
+        self.assertEqual([item["selected_commit_count"] for item in result["windows"]], [1, 1])
+        self.assertEqual(result["impact"], "unknown")
+        self.assertEqual(result["validated_vulnerability"], 0)
+
+    def test_sha_range_date_range_and_version_matrix_reach_persisted_reports(self):
+        source_job = self._scan(self.commits[0])
+        report = service.read_report(self.settings, source_job)
+        candidates = service.findings(report)
+        self.assertTrue(candidates, "fixture must produce a reviewable candidate")
+        case_response = self.client.post("/api/v1/cases", headers={"X-OHScanner-Client": "workbench-v1"},
+            json={"title": "temporary integration case", "links": [{"job_id": source_job["id"],
+                  "candidate_id": candidates[0]["id"], "rationale": "isolated test fixture"}]})
+        self.assertEqual(case_response.status_code, 201, case_response.text)
+        case_id = case_response.json()["id"]
+
+        headers = {"X-OHScanner-Client": "workbench-v1"}
+        base = {"repository_id": self.repo["id"], "include_paths": ["."], "detector_ids": self.detectors,
+                "timeout_seconds": 30, "memory_mb": 512}
+        sha_range = self.client.post("/api/v1/operations/revision-ranges", headers=headers, json={
+            **base, "audit_mode": "static_only", "baseline": self.commits[0], "endpoint": self.commits[1]})
+        self.assertEqual(sha_range.status_code, 201, sha_range.text)
+        self.assertEqual(sha_range.json()["spec"]["commits"], [self.commits[1]])
+        self.assertEqual(sha_range.json()["spec"]["audit_mode"], "static_only")
+        self.assertEqual([self.store.job(key)["spec"]["audit_mode"] for key in sha_range.json()["spec"]["scan_ids"]], ["static_only", "static_only"])
+        range_result = self._run_operation(sha_range.json())
+        self.assertEqual(range_result["result"]["baseline"], self.commits[0])
+        self.assertEqual(range_result["result"]["endpoint"], self.commits[1])
+
+        date_range = self.client.post("/api/v1/operations/date-ranges", headers=headers, json={
+            **base, "audit_mode": "static_only", "branch": "HEAD",
+            "start": "2025-01-02T00:00:00+00:00",
+            "end": "2025-01-03T00:00:00+00:00", "timezone": "UTC"})
+        self.assertEqual(date_range.status_code, 201, date_range.text)
+        self.assertEqual(date_range.json()["spec"]["audit_mode"], "static_only")
+        self.assertEqual([self.store.job(key)["spec"]["audit_mode"] for key in date_range.json()["spec"]["scan_ids"]], ["static_only", "static_only"])
+        self.assertTrue(all(self.store.triage_authorization(key) is None
+                            for key in date_range.json()["spec"]["scan_ids"]))
+        selection = date_range.json()["spec"]["date_selection"]
+        self.assertEqual(selection["selected_commits"], [self.commits[1]])
+        self.assertEqual(selection["baseline"], self.commits[0])
+        self.assertEqual(selection["endpoint"], self.commits[1])
+        operation_count_before_preview = len(self.client.get("/api/v1/operations").json())
+        preview = self.client.post("/api/v1/operations/date-ranges/preview", headers=headers, json={
+            "repository_id": self.repo["id"], "branch": "refs/heads/main", "start": "2025-01-02T00:00:00",
+            "end": "2025-01-03T00:00:00", "timezone": "UTC"})
+        self.assertEqual(preview.status_code, 200, preview.text)
+        self.assertEqual(preview.json()["branch"], "refs/heads/main")
+        self.assertEqual(preview.json()["selected_commits"], [self.commits[1]])
+        shanghai_preview = self.client.post("/api/v1/operations/date-ranges/preview", headers=headers, json={
+            "repository_id": self.repo["id"], "branch": "refs/heads/main", "start": "2025-01-02T08:00:00",
+            "end": "2025-01-02T08:00:01", "timezone": "Asia/Shanghai"})
+        self.assertEqual(shanghai_preview.status_code, 200, shanghai_preview.text)
+        self.assertEqual(shanghai_preview.json()["selected_commits"], [self.commits[1]])
+        empty_preview = self.client.post("/api/v1/operations/date-ranges/preview", headers=headers, json={
+            "repository_id": self.repo["id"], "branch": "refs/heads/main", "start": "2025-01-02T08:00:00",
+            "end": "2025-01-02T08:00:00", "timezone": "Asia/Shanghai"})
+        self.assertEqual(empty_preview.status_code, 409)
+        self.assertEqual(len(self.client.get("/api/v1/operations").json()), operation_count_before_preview)
+        date_result = self._run_operation(date_range.json())
+        self.assertEqual(date_result["result"]["date_selection"]["boundary"], "[start,end)")
+
+        matrix = self.client.post("/api/v1/operations/version-matrices", headers=headers, json={
+            **base, "audit_mode": "static_only", "case_id": case_id, "commits": self.commits[:2]})
+        self.assertEqual(matrix.status_code, 201, matrix.text)
+        self.assertEqual(matrix.json()["spec"]["commits"], self.commits[:2])
+        self.assertEqual(matrix.json()["spec"]["audit_mode"], "static_only")
+        self.assertEqual([self.store.job(key)["spec"]["audit_mode"] for key in matrix.json()["spec"]["scan_ids"]], ["static_only", "static_only"])
+        matrix_result = self._run_operation(matrix.json())
+        self.assertEqual(len(matrix_result["result"]["versions"]), 2)
+        self.assertEqual(len(matrix_result["result"]["comparisons"]), 1)
+        self.assertEqual(matrix_result["result"]["validated_vulnerability"], 0)
+
+        refs = self.client.get("/api/v1/repositories/" + self.repo["id"] + "/revisions").json()
+        self.assertIn("refs/heads/main", {item["ref"] for item in refs})
+        self.assertIn("refs/heads/feature", {item["ref"] for item in refs})
+        branch_comparison = self.client.post("/api/v1/operations/branch-comparisons", headers=headers, json={
+            **base, "audit_mode": "static_only", "baseline_ref": "refs/heads/main",
+            "endpoint_ref": "refs/heads/feature"})
+        self.assertEqual(branch_comparison.status_code, 201, branch_comparison.text)
+        branch_spec = branch_comparison.json()["spec"]
+        self.assertEqual(branch_spec["audit_mode"], "static_only")
+        self.assertEqual([self.store.job(key)["spec"]["audit_mode"] for key in branch_spec["scan_ids"]], ["static_only", "static_only"])
+        self.assertTrue(all(self.store.triage_authorization(key) is None
+                            for key in branch_spec["scan_ids"]))
+        self.assertEqual(branch_spec["baseline"], self.commits[2])
+        self.assertEqual(branch_spec["endpoint"], self.feature_commit)
+        self.assertEqual(branch_spec["baseline_ref"], "refs/heads/main")
+        self.assertEqual(branch_spec["endpoint_ref"], "refs/heads/feature")
+        self.assertNotEqual(branch_spec["baseline"], branch_spec["endpoint"])
+        invalid_ref = self.client.post("/api/v1/operations/branch-comparisons", headers=headers, json={
+            **base, "baseline_ref": "refs/heads/not-present", "endpoint_ref": "refs/heads/feature"})
+        self.assertEqual(invalid_ref.status_code, 409)
+        same_ref = self.client.post("/api/v1/operations/branch-comparisons", headers=headers, json={
+            **base, "baseline_ref": "refs/heads/main", "endpoint_ref": "refs/heads/main"})
+        self.assertEqual(same_ref.status_code, 409)
+        # Move the selected branch after queueing; the operation must keep its pinned object ID.
+        subprocess.run(["git", "update-ref", "refs/heads/feature", self.commits[1]], cwd=self.repo_path, check=True)
+        branch_result = self._run_operation(branch_comparison.json())
+        self.assertEqual(branch_result["result"]["baseline"], self.commits[2])
+        self.assertEqual(branch_result["result"]["endpoint"], self.feature_commit)
+        self.assertEqual(branch_result["result"]["impact"], "unknown")
+        self.assertEqual(branch_result["result"]["validated_vulnerability"], 0)
+        self.assertEqual(len(branch_result["result"]["candidate_comparison"]), 1)
+
+        # A newly opened Store sees the exact same hashed operation artifact.
+        reopened = Operations(Store(self.settings.data_dir))
+        self.assertEqual(reopened.result(range_result["id"]), range_result["result"])
 
     def test_four_operation_kinds_static_and_smart_modes_persist_through_workers(self):
         """Exercise all eight mode combinations through HTTP, scan workers and saved operations.
@@ -424,103 +678,6 @@ class OperationEndToEndTests(unittest.TestCase):
                                     headers=headers)
                                 self.assertEqual(stopped.status_code, 200, stopped.text)
 
-    def test_sha_range_date_range_and_version_matrix_reach_persisted_reports(self):
-        source_job = self._scan(self.commits[0])
-        report = service.read_report(self.settings, source_job)
-        candidates = service.findings(report)
-        self.assertTrue(candidates, "fixture must produce a reviewable candidate")
-        case_response = self.client.post("/api/v1/cases", headers={"X-OHScanner-Client": "workbench-v1"},
-            json={"title": "temporary integration case", "links": [{"job_id": source_job["id"],
-                  "candidate_id": candidates[0]["id"], "rationale": "isolated test fixture"}]})
-        self.assertEqual(case_response.status_code, 201, case_response.text)
-        case_id = case_response.json()["id"]
-
-        headers = {"X-OHScanner-Client": "workbench-v1"}
-        base = {"repository_id": self.repo["id"], "include_paths": ["."], "detector_ids": self.detectors,
-                "timeout_seconds": 30, "memory_mb": 512}
-        sha_range = self.client.post("/api/v1/operations/revision-ranges", headers=headers, json={
-            **base, "audit_mode": "static_only", "baseline": self.commits[0], "endpoint": self.commits[1]})
-        self.assertEqual(sha_range.status_code, 201, sha_range.text)
-        self.assertEqual(sha_range.json()["spec"]["commits"], [self.commits[1]])
-        self.assertEqual(sha_range.json()["spec"]["audit_mode"], "static_only")
-        self.assertEqual([self.store.job(key)["spec"]["audit_mode"] for key in sha_range.json()["spec"]["scan_ids"]], ["static_only", "static_only"])
-        range_result = self._run_operation(sha_range.json())
-        self.assertEqual(range_result["result"]["baseline"], self.commits[0])
-        self.assertEqual(range_result["result"]["endpoint"], self.commits[1])
-
-        date_range = self.client.post("/api/v1/operations/date-ranges", headers=headers, json={
-            **base, "branch": "HEAD", "start": "2025-01-02T00:00:00+00:00",
-            "end": "2025-01-03T00:00:00+00:00", "timezone": "UTC"})
-        self.assertEqual(date_range.status_code, 201, date_range.text)
-        self.assertEqual(date_range.json()["spec"]["audit_mode"], "standard_review")
-        self.assertEqual([self.store.job(key)["spec"]["audit_mode"] for key in date_range.json()["spec"]["scan_ids"]], ["standard_review", "standard_review"])
-        selection = date_range.json()["spec"]["date_selection"]
-        self.assertEqual(selection["selected_commits"], [self.commits[1]])
-        self.assertEqual(selection["baseline"], self.commits[0])
-        self.assertEqual(selection["endpoint"], self.commits[1])
-        operation_count_before_preview = len(self.client.get("/api/v1/operations").json())
-        preview = self.client.post("/api/v1/operations/date-ranges/preview", headers=headers, json={
-            "repository_id": self.repo["id"], "branch": "refs/heads/main", "start": "2025-01-02T00:00:00",
-            "end": "2025-01-03T00:00:00", "timezone": "UTC"})
-        self.assertEqual(preview.status_code, 200, preview.text)
-        self.assertEqual(preview.json()["branch"], "refs/heads/main")
-        self.assertEqual(preview.json()["selected_commits"], [self.commits[1]])
-        shanghai_preview = self.client.post("/api/v1/operations/date-ranges/preview", headers=headers, json={
-            "repository_id": self.repo["id"], "branch": "refs/heads/main", "start": "2025-01-02T08:00:00",
-            "end": "2025-01-02T08:00:01", "timezone": "Asia/Shanghai"})
-        self.assertEqual(shanghai_preview.status_code, 200, shanghai_preview.text)
-        self.assertEqual(shanghai_preview.json()["selected_commits"], [self.commits[1]])
-        empty_preview = self.client.post("/api/v1/operations/date-ranges/preview", headers=headers, json={
-            "repository_id": self.repo["id"], "branch": "refs/heads/main", "start": "2025-01-02T08:00:00",
-            "end": "2025-01-02T08:00:00", "timezone": "Asia/Shanghai"})
-        self.assertEqual(empty_preview.status_code, 409)
-        self.assertEqual(len(self.client.get("/api/v1/operations").json()), operation_count_before_preview)
-        date_result = self._run_operation(date_range.json())
-        self.assertEqual(date_result["result"]["date_selection"]["boundary"], "[start,end)")
-
-        matrix = self.client.post("/api/v1/operations/version-matrices", headers=headers, json={
-            **base, "audit_mode": "static_only", "case_id": case_id, "commits": self.commits[:2]})
-        self.assertEqual(matrix.status_code, 201, matrix.text)
-        self.assertEqual(matrix.json()["spec"]["commits"], self.commits[:2])
-        self.assertEqual(matrix.json()["spec"]["audit_mode"], "static_only")
-        self.assertEqual([self.store.job(key)["spec"]["audit_mode"] for key in matrix.json()["spec"]["scan_ids"]], ["static_only", "static_only"])
-        matrix_result = self._run_operation(matrix.json())
-        self.assertEqual(len(matrix_result["result"]["versions"]), 2)
-        self.assertEqual(len(matrix_result["result"]["comparisons"]), 1)
-        self.assertEqual(matrix_result["result"]["validated_vulnerability"], 0)
-
-        refs = self.client.get("/api/v1/repositories/" + self.repo["id"] + "/revisions").json()
-        self.assertIn("refs/heads/main", {item["ref"] for item in refs})
-        self.assertIn("refs/heads/feature", {item["ref"] for item in refs})
-        branch_comparison = self.client.post("/api/v1/operations/branch-comparisons", headers=headers, json={
-            **base, "baseline_ref": "refs/heads/main", "endpoint_ref": "refs/heads/feature"})
-        self.assertEqual(branch_comparison.status_code, 201, branch_comparison.text)
-        branch_spec = branch_comparison.json()["spec"]
-        self.assertEqual(branch_spec["audit_mode"], "standard_review")
-        self.assertEqual([self.store.job(key)["spec"]["audit_mode"] for key in branch_spec["scan_ids"]], ["standard_review", "standard_review"])
-        self.assertEqual(branch_spec["baseline"], self.commits[2])
-        self.assertEqual(branch_spec["endpoint"], self.feature_commit)
-        self.assertEqual(branch_spec["baseline_ref"], "refs/heads/main")
-        self.assertEqual(branch_spec["endpoint_ref"], "refs/heads/feature")
-        self.assertNotEqual(branch_spec["baseline"], branch_spec["endpoint"])
-        invalid_ref = self.client.post("/api/v1/operations/branch-comparisons", headers=headers, json={
-            **base, "baseline_ref": "refs/heads/not-present", "endpoint_ref": "refs/heads/feature"})
-        self.assertEqual(invalid_ref.status_code, 409)
-        same_ref = self.client.post("/api/v1/operations/branch-comparisons", headers=headers, json={
-            **base, "baseline_ref": "refs/heads/main", "endpoint_ref": "refs/heads/main"})
-        self.assertEqual(same_ref.status_code, 409)
-        # Move the selected branch after queueing; the operation must keep its pinned object ID.
-        subprocess.run(["git", "update-ref", "refs/heads/feature", self.commits[1]], cwd=self.repo_path, check=True)
-        branch_result = self._run_operation(branch_comparison.json())
-        self.assertEqual(branch_result["result"]["baseline"], self.commits[2])
-        self.assertEqual(branch_result["result"]["endpoint"], self.feature_commit)
-        self.assertEqual(branch_result["result"]["impact"], "unknown")
-        self.assertEqual(branch_result["result"]["validated_vulnerability"], 0)
-        self.assertEqual(len(branch_result["result"]["candidate_comparison"]), 1)
-
-        # A newly opened Store sees the exact same hashed operation artifact.
-        reopened = Operations(Store(self.settings.data_dir))
-        self.assertEqual(reopened.result(range_result["id"]), range_result["result"])
 
 
 class OperationLifecycleTests(unittest.TestCase):
@@ -534,6 +691,43 @@ class OperationLifecycleTests(unittest.TestCase):
         self.settings.initialize()
         self.store = Store(self.settings.data_dir)
         self.ops = Operations(self.store)
+
+    def test_legacy_continuous_agent_is_bounded_and_quota_is_explicit_failure(self):
+        from src.workbench.agent import ProviderQuotaError
+        from src.workbench.operation_worker import (
+            _commit_provider_quota_failure, _hard_deadline_seconds, _provider_quota_failure,
+        )
+
+        continuous = {"kind": "agent_investigation",
+                      "spec": {"mode": "tool_agent", "continuous_investigation": True,
+                               "timeout_seconds": 90}}
+        bounded = {"kind": "agent_investigation",
+                   "spec": {"mode": "tool_agent", "continuous_investigation": False,
+                            "timeout_seconds": 90}}
+        single_shot = {"kind": "agent_investigation",
+                       "spec": {"mode": "single_shot", "continuous_investigation": True}}
+        self.assertEqual(_hard_deadline_seconds(continuous), 100)
+        self.assertEqual(_hard_deadline_seconds(bounded), 100)
+        self.assertEqual(_hard_deadline_seconds(single_shot), 310)
+
+        result = _provider_quota_failure(
+            ProviderQuotaError("Provider quota or billing limit exhausted (HTTP 429; code=insufficient_quota)"))
+        self.assertEqual(result["_operation_error"]["code"], "provider_quota_exhausted")
+        self.assertIn("insufficient_quota", result["_operation_error"]["message"])
+
+        class CapturingOps:
+            def __init__(self):
+                self.finished = None
+
+            def finish(self, operation_id, **kwargs):
+                self.finished = (operation_id, kwargs)
+
+        ops = CapturingOps()
+        self.assertTrue(_commit_provider_quota_failure(ops, {"id": "op-1", **continuous}, result))
+        self.assertEqual(ops.finished, ("op-1", {
+            "error": "provider_quota_exhausted: " + result["_operation_error"]["message"],
+            "state": "failed",
+        }))
 
     def test_worker_restart_marks_running_operations_interrupted(self):
         task = self.ops.create("investigation", {"job_id": "j" * 32})

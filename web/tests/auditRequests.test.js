@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { approvedDetectorIds, researchDetectorIds, datePreviewPayload, defaultRepositoryRevision, includePaths, operationPayload, recentRange, requestGate, snapshotPayload, planPayload, auditErrorMessage, taskAuthorizationPayload, auditWorkflowLabel } from "../src/features/audits/model.js";
+import { approvedDetectorIds, researchDetectorIds, datePreviewPayload, defaultRepositoryRevision, includePaths, operationPayload, recentRange, requestGate, snapshotPayload, planPayload, auditErrorMessage, taskAuthorizationPayload, auditWorkflowLabel, selectedAuditModeValues } from "../src/features/audits/model.js";
 const detectors = [
   { id: "test.cpp", version: "2", kind: "research_candidate", supported_languages: ["cpp"] },
   { id: "test.example", version: "1", kind: "example", supported_languages: ["cpp"] },
@@ -25,7 +25,10 @@ test("invalid include scopes and budgets fail before submission", () => {
 test("date preview excludes detector/scope/budget fields required only for execution", () => {
   const fields = { repository_id: "repo", branch: "refs/heads/main", start: "2026-10-15T00:00", end: "2026-10-17T00:00", timezone: "Asia/Shanghai" };
   assert.deepEqual(datePreviewPayload({ ...values, ...fields }), fields);
-  assert.deepEqual(operationPayload("date", { ...values, ...fields }, detectors), { ...fields, audit_mode: "standard_review", auto_triage: true, include_paths: ["src", "include"], detector_ids: ["test.cpp"], timeout_seconds: 60, memory_mb: 512 });
+  assert.deepEqual(operationPayload("date", { ...values, ...fields }, detectors), { ...fields,
+    audit_mode: "standard_review", auto_triage: false, max_triage_candidates: 3,
+    max_r2_candidates: 0,
+    include_paths: ["src", "include"], detector_ids: ["test.cpp"], timeout_seconds: 60, memory_mb: 512 });
   assert.throws(() => datePreviewPayload({ ...fields, end: fields.start }), /结束/);
 });
 test("matrix drops commits_text and uses complete distinct source IDs", () => {
@@ -34,6 +37,16 @@ test("matrix drops commits_text and uses complete distinct source IDs", () => {
   assert.deepEqual(body.commits, [a, b]); assert.equal(body.case_id, "case");
   assert.equal("commits_text" in body, false); assert.equal("revision" in body, false); assert.equal("include_text" in body, false);
   for (const text of [a, a + "," + a, "abc,def", [a,b,a,b,a,b,a,b,a].join(",")]) assert.throws(() => operationPayload("matrix", { ...values, case_id: "case", commits_text: text }, detectors));
+});
+test("recent window comparison includes fixed time, timezone, and bounded N-day selection", () => {
+  const body = operationPayload("recent", { ...values, branch: "refs/heads/main",
+    lookback_days: 7, reference_time: "2026-10-20T12:00", timezone: "Asia/Shanghai" }, detectors);
+  assert.equal(body.branch, "refs/heads/main");
+  assert.equal(body.lookback_days, 7);
+  assert.equal(body.reference_time, "2026-10-20T12:00");
+  assert.equal(body.timezone, "Asia/Shanghai");
+  assert.throws(() => operationPayload("recent", { ...values, branch: "main",
+    lookback_days: 91, reference_time: "2026-10-20T12:00", timezone: "UTC" }, detectors), /2 到 90/);
 });
 test("branch comparison permits refs and SHA but rejects identical endpoints", () => {
   const body = operationPayload("branches", { ...values, baseline_ref: "refs/tags/a", endpoint_ref: "b".repeat(40) }, detectors);
@@ -68,15 +81,19 @@ test("audit preview errors show field validation and API messages in plain langu
   assert.equal(auditErrorMessage({}), "审计计划预览失败，请检查必填项和扫描范围后重试。");
 });
 
-test("smart audit enables consented automatic review without task-level ceilings", () => {
-  assert.deepEqual(taskAuthorizationPayload({ audit_mode: "standard_review" }), { auto_triage: true });
+test("task-level authorization binds candidate counts without a platform cumulative cost cap", () => {
+  assert.deepEqual(taskAuthorizationPayload({ audit_mode: "standard_review" }), {
+    auto_triage: false, max_triage_candidates: 3, max_r2_candidates: 0,
+  });
   assert.deepEqual(taskAuthorizationPayload({
     audit_mode: "standard_review", auto_triage: true, max_triage_candidates: 3,
     auto_r2: true, max_r2_candidates: 5, max_cost_usd: "0.10",
-  }), { auto_triage: true });
-  assert.deepEqual(taskAuthorizationPayload({
+  }), {
+    auto_triage: true, max_triage_candidates: 3, max_r2_candidates: 3,
+  });
+  assert.equal("max_cost_usd" in taskAuthorizationPayload({
     audit_mode: "static_only", auto_triage: true, max_cost_usd: "0.10",
-  }), { auto_triage: false });
+  }), false);
 });
 
 test("plan preview sends source selection only, with no browser-chosen rule list", () => {
@@ -155,19 +172,20 @@ test("audit workflow label uses the task-level mode when an older nested plan om
   assert.equal(auditWorkflowLabel({}, undefined), "历史扫描任务：未记录审计方式");
 });
 
-test("audit workflow label does not expose legacy candidate and spend caps", () => {
+test("audit workflow label describes the frozen conditional triage scope", () => {
   assert.equal(auditWorkflowLabel({ workflow: {
-    triage_stage: "task_authorized_bounded_r1_conditional_r2",
+    triage_stage: "task_authorized_r1_conditional_continuous_r2",
     candidate_limit_per_authorized_batch: 3,
     conditional_r2_candidate_limit: 2,
   } }, "standard_review"),
-  "智能审计：静态扫描后，对本次扫描范围内满足证据条件的候选逐项预览并授权模型调查。");
+  "标准研判：静态扫描后，最多 3 条候选初步研判；高/严重且仍有源码义务未解决时，最多补充核查 2 条持续追查");
 });
 
 
 test("all comparison modes serialize consented automatic model review only when enabled", () => {
   const a = "a".repeat(40), b = "b".repeat(40);
-  const withAI = { ...values, auto_triage: true };
+  const withAI = { ...values, auto_triage: true, auto_r2: true, max_triage_candidates: 5,
+    max_r2_candidates: 2, max_cost_usd: "5.00" };
   const inputs = [
     ["date", { branch: "main", start: "2026-10-01T00:00", end: "2026-10-05T00:00", timezone: "UTC" }],
     ["range", { baseline: a, endpoint: b }],
@@ -178,12 +196,24 @@ test("all comparison modes serialize consented automatic model review only when 
     const body = operationPayload(kind, { ...withAI, ...extra }, detectors);
     assert.equal(body.audit_mode, "standard_review", kind);
     assert.equal(body.auto_triage, true, kind);
-    assert.equal("max_triage_candidates" in body, false, kind);
-    assert.equal("max_r2_candidates" in body, false, kind);
+    assert.equal(body.max_triage_candidates, 5, kind);
+    assert.equal(body.max_r2_candidates, 2, kind);
     assert.equal("max_cost_usd" in body, false, kind);
     assert.equal("triage_approvals" in body, false, kind);
     const noAI = operationPayload(kind, { ...withAI, ...extra, audit_mode: "static_only" }, detectors);
     assert.equal("auto_triage" in noAI, false, kind);
     assert.equal("max_cost_usd" in noAI, false, kind);
   }
+});
+
+test("selected audit mode directly determines whether Agent authorization is included", () => {
+  const staticValues = selectedAuditModeValues({ audit_mode: "static_only", auto_triage: true });
+  assert.deepEqual(taskAuthorizationPayload(staticValues), {
+    auto_triage: false, max_triage_candidates: 3, max_r2_candidates: 0,
+  });
+  const smartValues = selectedAuditModeValues({ audit_mode: "standard_review", max_triage_candidates: 4,
+    auto_r2: true, max_r2_candidates: 2 });
+  assert.deepEqual(taskAuthorizationPayload(smartValues), {
+    auto_triage: true, max_triage_candidates: 4, max_r2_candidates: 2,
+  });
 });

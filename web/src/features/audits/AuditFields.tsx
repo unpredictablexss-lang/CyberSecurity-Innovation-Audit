@@ -1,10 +1,28 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Alert, AutoComplete, Button, Checkbox, Col, Collapse, Form, Input, InputNumber, Row, Select, Space, Typography } from "antd";
+import { Alert, AutoComplete, Button, Checkbox, Col, Collapse, Form, Input, InputNumber, Radio, Row, Select, Space, Typography } from "antd";
 import { api } from "../../api";
 import { go } from "../../components";
 import { approvedDetectorIds, requestGate } from "./model";
 const { Text } = Typography;
 export type AuditProps = { repos: any[]; detectors: any[]; refresh: () => Promise<void> };
+export function AuditModeSelector() {
+  return <Form.Item name="audit_mode" label="本次审计方式" className="audit-mode-field">
+    <Radio.Group className="audit-mode-options" aria-label="本次审计方式">
+      <Radio className="audit-mode-option" value="static_only">
+        <span className="audit-mode-copy">
+          <strong>静态审计</strong>
+          <small>本地扫描并标出高、中、低危；未分级项保留为候选</small>
+        </span>
+      </Radio>
+      <Radio className="audit-mode-option" value="standard_review">
+        <span className="audit-mode-copy">
+          <strong>智能审计</strong>
+          <small>自动初审候选并在后台追查跨文件证据；先确认发送范围</small>
+        </span>
+      </Radio>
+    </Radio.Group>
+  </Form.Item>;
+}
 export function useRepositoryRefs(repositoryId?: string) {
   const [refs, setRefs] = useState<any[]>([]);
   const [loadedFor, setLoadedFor] = useState<string | null>(null);
@@ -112,8 +130,8 @@ export function RuleNotice({ detectors }: { detectors: any[] }) {
   </div>;
 }
 export function ScopeAvailability() {
-  return <div className="scope-note"><Space wrap><Text strong>审计范围</Text><Text>单仓库 · 扫描版本快照</Text></Space>
-    <p>每个任务会记录所选仓库和提交版本，确保候选与证据对应同一版本。官方仓库目录与多仓批量审计尚未开放；请先在设置中登记本地仓库，再按仓库分别创建任务。</p>
-    <Button type="link" onClick={() => go("/settings/sources")}>登记仓库或显式同步源码 →</Button></div>;
+  return <div className="scope-note"><Space wrap><Text strong>审计范围</Text><Text>固定仓库与版本</Text></Space>
+    <p>任务会绑定已登记仓库和固定源码版本；时间或跨版本审计会分别固定所选端点。</p>
+    <Button type="link" onClick={() => go("/settings/sources")}>登记仓库或同步在线源码 →</Button></div>;
 }
 export const auditDefaults = { include_text: ".", timeout_seconds: 600, memory_mb: 2048, full_rules_research: false, audit_mode: "standard_review" };

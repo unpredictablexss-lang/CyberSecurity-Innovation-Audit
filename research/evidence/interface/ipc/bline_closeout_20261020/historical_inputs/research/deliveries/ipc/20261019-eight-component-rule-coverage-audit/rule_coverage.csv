@@ -1,0 +1,20 @@
+rule_id,family_id,fixed_eight_repo_diagnostics,candidate_anchor_complete,candidate_anchor_partial,manifest_positive_controls_exact_rule,manifest_fixed_controls_exact_rule,manifest_safe_controls_exact_rule,family_positive_controls,family_fixed_controls,family_safe_controls,rule_specific_fixed_safe_linkage,per_rule_file_applicability
+ipc.auth.caller-class,AUTH-03,0,0,0,1,1,1,6,6,1,not encoded in manifest,not instrumented
+ipc.auth.denial-transport-success,AUTH-07,0,0,0,1,1,1,1,1,1,not encoded in manifest,not instrumented
+ipc.auth.flow,AUTH-05,0,0,0,1,1,1,1,1,1,not encoded in manifest,not instrumented
+ipc.auth.guard-coverage,AUTH-04,0,0,0,5,2,2,5,2,2,not encoded in manifest,not instrumented
+ipc.auth.identity-domain,AUTH-03,0,0,0,1,1,0,6,6,1,not encoded in manifest,not instrumented
+ipc.auth.missing,AUTH-02,12,12,0,17,4,3,17,4,3,not encoded in manifest,not instrumented
+ipc.auth.object-owner,AUTH-03,0,0,0,1,1,0,6,6,1,not encoded in manifest,not instrumented
+ipc.auth.request-identity,AUTH-03,0,0,0,1,1,0,6,6,1,not encoded in manifest,not instrumented
+ipc.auth.service-identity,AUTH-03,0,0,0,2,1,0,6,6,1,not encoded in manifest,not instrumented
+ipc.capability.export,CAP-01,11,11,0,10,4,2,10,4,2,not encoded in manifest,not instrumented
+ipc.data.sensitive-flow,DATA-04,0,0,0,1,1,1,1,1,1,not encoded in manifest,not instrumented
+ipc.network.auth-session-whitelist,AUTH-06,0,0,0,1,1,1,1,1,1,not encoded in manifest,not instrumented
+ipc.parcel.bounds,DATA-02,0,0,0,1,1,1,2,2,1,not encoded in manifest,not instrumented
+ipc.parcel.copy-range,DATA-01,0,0,0,2,1,0,3,2,1,not encoded in manifest,not instrumented
+ipc.parcel.lifecycle,DATA-03,0,0,0,1,1,1,1,1,1,not encoded in manifest,not instrumented
+ipc.parcel.position-underflow,DATA-01,0,0,0,1,1,1,3,2,1,not encoded in manifest,not instrumented
+ipc.parcel.write-bounds,DATA-02,0,0,0,1,1,0,2,2,1,not encoded in manifest,not instrumented
+ipc.relay.descriptor-boundary,AUTH-01,7,5,2,17,6,1,17,6,1,not encoded in manifest,not instrumented
+ipc.tlv.fixed-width-length,DATA-05,0,0,0,1,1,1,1,1,1,not encoded in manifest,not instrumented

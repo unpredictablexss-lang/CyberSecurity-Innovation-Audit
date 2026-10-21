@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "source_package": "../20261019-eight-component-current-v0.12.12",
+  "source_manifest_sha256": "72ef1843fb749c062c2a08d4de1c4c3ac8ed0ad622b19b0efa2306382be42707",
+  "basis": "Production CLI output for detector 0.12.12/model v32. Each row binds repository+full commit+tree+file+line+rule+symbol+source SHA; Git blob OID and byte SHA were independently recomputed from pinned Git objects.",
+  "candidate_observations": 30,
+  "complete_source_observations": 11,
+  "partial_source_observations": 19,
+  "not_analyzed_source_observations": 0,
+  "unique_anchor_clusters": 28,
+  "review_policy": "Partial is unknown, never safe. Multi-rule findings at one source anchor retain separate rows and share a root_cluster only as an additional review view. No candidate is marked confirmed.",
+  "targets": [
+    [
+      "openharmony/aafwk_standard",
+      "834a566b1372268c7bbb0c40362322f812ca6efc",
+      "c3744c8c230573a4bcdb76bf49493a1ea61c72d1"
+    ],
+    [
+      "openharmony/applications_contacts_data",
+      "341cc3bf41b48e9a5f278dd088f40a2041d2f1c9",
+      "2054824c04bb403eeea128a9262edfb3001efa4f"
+    ],
+    [
+      "openharmony/graphic_standard",
+      "a73af6bd3bac599b9359cba10ca7b5f82a02d5d9",
+      "d5446eefcd0dc9478a0da65c76fafc9f62f973ad"
+    ],
+    [
+      "openharmony/miscservices_pasteboard",
+      "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+      "e374a0d61c9ec664ddd29fc17002797828c480ee"
+    ],
+    [
+      "openharmony/security_deviceauth",
+      "2cf21e46f43c63857c40a79b004eda14f79b04c2",
+      "cfbe02de9d5f4720dc4aa19f5a8d83afa6cabaf8"
+    ]
+  ]
+}

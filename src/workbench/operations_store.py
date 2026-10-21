@@ -9,6 +9,8 @@ import uuid
 from datetime import datetime
 from decimal import Decimal, InvalidOperation
 from .store import now
+from .triage_limits import (MAX_TRIAGE_CANDIDATES_PER_ENDPOINT,
+                            MAX_AUTHORIZED_TRIAGE_QUEUE_ITEMS)
 
 END = {"completed", "completed_with_limitations", "blocked", "failed", "cancelled", "timed_out", "interrupted"}
 
@@ -213,14 +215,111 @@ class Operations:
                     );
                     INSERT OR IGNORE INTO schema_migrations VALUES(9);
                     """)
+            with store.connect() as db:
+                current_version = db.execute("SELECT max(version) FROM schema_migrations").fetchone()[0]
+            if current_version < 10:
+                backups = store.root / "backups"
+                backups.mkdir(exist_ok=True)
+                with sqlite3.connect(store.path) as src, sqlite3.connect(backups / ("before-v10-" + uuid.uuid4().hex + ".sqlite3")) as dst:
+                    src.backup(dst)
+                with store.connect() as db:
+                    db.executescript("""
+                    CREATE TABLE IF NOT EXISTS operation_cancellations(
+                      operation_id TEXT PRIMARY KEY REFERENCES operations(id),
+                      requested_at TEXT NOT NULL,
+                      reason TEXT NOT NULL
+                    );
+                    INSERT OR IGNORE INTO schema_migrations VALUES(10);
+                    """)
+            with store.connect() as db:
+                current_version = db.execute("SELECT max(version) FROM schema_migrations").fetchone()[0]
+            if current_version < 11:
+                backups = store.root / "backups"
+                backups.mkdir(exist_ok=True)
+                with sqlite3.connect(store.path) as src, sqlite3.connect(backups / ("before-v11-" + uuid.uuid4().hex + ".sqlite3")) as dst:
+                    src.backup(dst)
+                with store.connect() as db:
+                    db.executescript("""
+                    CREATE TABLE IF NOT EXISTS joint_comparison_preview_tickets(
+                      consent_nonce TEXT PRIMARY KEY,
+                      consent_sha256 TEXT NOT NULL,
+                      expires_at TEXT NOT NULL,
+                      issued_at TEXT NOT NULL,
+                      consumed_by TEXT REFERENCES operations(id),
+                      consumed_at TEXT
+                    );
+                    CREATE INDEX IF NOT EXISTS joint_comparison_ticket_expiry
+                      ON joint_comparison_preview_tickets(expires_at,consumed_by);
+                    INSERT OR IGNORE INTO schema_migrations VALUES(11);
+                    """)
     def directory(self, key):
         if len(key) != 32 or any(c not in "0123456789abcdef" for c in key):
             raise ValueError("invalid operation ID")
         return self.store.root / "operations" / key
 
+    def issue_joint_comparison_preview_ticket(self, consent_nonce, consent_sha256, expires_at):
+        """Persist a short-lived, one-use approval binding created by a preview."""
+        if (not isinstance(consent_nonce, str) or len(consent_nonce) != 32
+                or any(ch not in "0123456789abcdef" for ch in consent_nonce)
+                or not isinstance(consent_sha256, str) or len(consent_sha256) != 64
+                or any(ch not in "0123456789abcdef" for ch in consent_sha256)):
+            raise ValueError("joint comparison preview ticket binding is invalid")
+        try:
+            expiry = datetime.fromisoformat(expires_at.replace("Z", "+00:00"))
+        except (TypeError, ValueError, AttributeError):
+            raise ValueError("joint comparison preview ticket expiry is invalid") from None
+        if expiry.tzinfo is None or expiry <= datetime.now(expiry.tzinfo):
+            raise ValueError("joint comparison preview ticket has expired")
+        with self.store.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            db.execute("DELETE FROM joint_comparison_preview_tickets WHERE consumed_by IS NULL AND expires_at<=?",
+                       (datetime.now(expiry.tzinfo).isoformat(timespec="seconds"),))
+            active = db.execute("SELECT count(*) FROM joint_comparison_preview_tickets WHERE consumed_by IS NULL").fetchone()[0]
+            if active >= 512:
+                raise ValueError("too many unused joint comparison previews; wait for older previews to expire")
+            try:
+                db.execute("INSERT INTO joint_comparison_preview_tickets(consent_nonce,consent_sha256,expires_at,issued_at) VALUES(?,?,?,?)",
+                           (consent_nonce, consent_sha256, expiry.isoformat(timespec="seconds"), now()))
+            except sqlite3.IntegrityError:
+                raise ValueError("joint comparison preview ticket nonce already exists") from None
+
+    def joint_comparison_ticket_allows_worker(self, operation_id, consent_nonce, consent_sha256):
+        with self.store.connect() as db:
+            row = db.execute("SELECT consumed_by,consent_sha256 FROM joint_comparison_preview_tickets WHERE consent_nonce=?",
+                             (consent_nonce,)).fetchone()
+        return bool(row and row["consumed_by"] == operation_id
+                    and row["consent_sha256"] == consent_sha256)
+
     def create(self, kind, spec):
-        if kind not in {"source_sync", "repository_import_scan", "revision_range", "version_matrix", "branch_comparison", "validation", "investigation", "candidate_review_batch", "agent_investigation"}:
+        if kind not in {"source_sync", "source_sync_batch", "repository_import_scan", "revision_range", "version_matrix", "branch_comparison", "recent_window_comparison", "validation", "investigation", "candidate_review_batch", "agent_investigation", "version_candidate_comparison"}:
             raise ValueError("unknown operation kind")
+        if kind == "version_candidate_comparison":
+            required = ("from_commit", "from_candidate_id", "to_commit", "to_candidate_id",
+                        "consent_nonce", "consent_sha256", "consent_expires_at",
+                        "provider_fingerprint", "joint_context_sha256", "joint_binding_snapshot")
+            parent_ids = ("matrix_operation_id", "recent_window_operation_id")
+            selected_parent_ids = ([name for name in parent_ids
+                                    if isinstance(spec.get(name), str) and spec[name]]
+                                   if isinstance(spec, dict) else [])
+            if (not isinstance(spec, dict)
+                    or spec.get("source_submission_approved") is not True
+                    or len(selected_parent_ids) != 1
+                    or any(len(spec[name]) != 32
+                           or any(ch not in "0123456789abcdef" for ch in spec[name])
+                           for name in selected_parent_ids)
+                    or any(not isinstance(spec.get(name), str) or not spec[name] for name in required[:-1])
+                    or not isinstance(spec.get("joint_binding_snapshot"), dict)
+                    or len(spec["consent_nonce"]) != 32
+                    or any(ch not in "0123456789abcdef" for ch in spec["consent_nonce"])
+                    or any(len(spec[name]) != 64 or any(ch not in "0123456789abcdef" for ch in spec[name])
+                           for name in ("consent_sha256", "provider_fingerprint", "joint_context_sha256"))):
+                raise ValueError("joint version comparison requires a complete explicit consent binding")
+            try:
+                expiry = datetime.fromisoformat(spec["consent_expires_at"].replace("Z", "+00:00"))
+            except (TypeError, ValueError, AttributeError):
+                raise ValueError("joint version comparison consent expiry is invalid") from None
+            if expiry.tzinfo is None or expiry <= datetime.now(expiry.tzinfo):
+                raise ValueError("joint version comparison consent has expired")
         key = uuid.uuid4().hex
         with self.store.connect() as db:
             db.execute("BEGIN IMMEDIATE")
@@ -231,6 +330,21 @@ class Operations:
                                    (kind, json.dumps(spec, sort_keys=True))).fetchone()
                 if prior:
                     return self.row(db.execute("SELECT * FROM operations WHERE id=?", (prior[0],)).fetchone())
+            elif kind == "version_candidate_comparison":
+                ticket = db.execute("SELECT * FROM joint_comparison_preview_tickets WHERE consent_nonce=?",
+                                    (spec["consent_nonce"],)).fetchone()
+                if (not ticket or ticket["consent_sha256"] != spec["consent_sha256"]
+                        or ticket["expires_at"] != spec["consent_expires_at"]):
+                    raise ValueError("joint comparison approval ticket is missing or does not match this preview")
+                expiry = datetime.fromisoformat(ticket["expires_at"].replace("Z", "+00:00"))
+                if expiry.tzinfo is None or expiry <= datetime.now(expiry.tzinfo):
+                    raise ValueError("joint comparison approval ticket has expired")
+                if ticket["consumed_by"]:
+                    prior = db.execute("SELECT * FROM operations WHERE id=? AND kind=?",
+                                       (ticket["consumed_by"], kind)).fetchone()
+                    if prior and json.loads(prior["spec"]).get("consent_sha256") == spec["consent_sha256"]:
+                        return self.row(prior)
+                    raise ValueError("joint comparison approval ticket has already been used")
             elif kind == "agent_investigation" and spec.get("source_consent_sha256"):
                 # Consent hashes include a fresh preview nonce. A network/client retry with
                 # the same explicit approval must return the original operation, avoiding
@@ -248,44 +362,13 @@ class Operations:
                 raise ValueError("operation queue full")
             db.execute("INSERT INTO operations(id,kind,spec,status,created_at) VALUES(?,?,?,?,?)",
                        (key, kind, json.dumps(spec, sort_keys=True), "queued", now()))
+            if kind == "version_candidate_comparison":
+                changed = db.execute("UPDATE joint_comparison_preview_tickets SET consumed_by=?,consumed_at=? WHERE consent_nonce=? AND consent_sha256=? AND consumed_by IS NULL",
+                                     (key, now(), spec["consent_nonce"], spec["consent_sha256"])).rowcount
+                if changed != 1:
+                    raise ValueError("joint comparison approval ticket could not be consumed")
         self.event(key, "queued", "Immutable operation plan saved")
         return self.get(key)
-
-    def retry_repository_import(self, key):
-        """Queue a new attempt for a failed import without mutating its original plan."""
-        retryable = {"failed", "interrupted", "timed_out"}
-        new_key = uuid.uuid4().hex
-        stamp = now()
-        with self.store.connect() as db:
-            db.execute("BEGIN IMMEDIATE")
-            original = self.row(db.execute(
-                "SELECT * FROM operations WHERE id=?", (key,)).fetchone())
-            if original["kind"] != "repository_import_scan":
-                raise ValueError("only repository import operations can be retried here")
-            existing = []
-            for row in db.execute("SELECT * FROM operations WHERE kind='repository_import_scan'"):
-                spec = json.loads(row["spec"])
-                if spec.get("retry_of") == key:
-                    existing.append(self.row(row))
-            if existing:
-                # Repeated HTTP submissions return the same attempt, including after it
-                # completes. To deliberately retry again, submit the latest failed attempt.
-                retry = existing[0]
-                retry["retry_reused"] = True
-                return retry
-            if original["status"] not in retryable:
-                raise ValueError("repository import can be retried only after failed, interrupted, or timed-out status")
-            active = db.execute(
-                "SELECT count(*) FROM operations WHERE status IN ('queued','running') AND kind!='candidate_review_batch'").fetchone()[0]
-            if active >= 100:
-                raise ValueError("operation queue full")
-            retry_spec = {**original["spec"], "retry_of": key}
-            db.execute("INSERT INTO operations(id,kind,spec,status,created_at) VALUES(?,?,?,?,?)",
-                       (new_key, "repository_import_scan", json.dumps(retry_spec, sort_keys=True),
-                        "queued", stamp))
-            db.execute("INSERT INTO operation_events(operation_id,created_at,stage,message) VALUES(?,?,?,?)",
-                       (new_key, stamp, "retry_queued", "Explicit retry of failed repository import " + key))
-        return self.get(new_key)
 
     def create_agent_batch(self, specs):
         """Atomically queue a small, explicitly approved set of candidate reviews."""
@@ -352,6 +435,9 @@ class Operations:
         item["operation_ids"] = json.loads(item["operation_ids"])
         item["r2_operation_ids"] = json.loads(item.get("r2_operation_ids") or "[]")
         item["r2_candidate_manifest"] = json.loads(item.get("r2_candidate_manifest") or "[]")
+        # Normalize the legacy label without rewriting historical operation rows.
+        if item.get("r2_status") == "budget_limited":
+            item["r2_status"] = "candidate_limit_reached"
         return item
 
     def record_triage_batch(self, record):
@@ -381,8 +467,8 @@ class Operations:
         return self.triage_batch_row(row)
 
     def create_authorized_triage_batch(self, record, specs):
-        if not specs:
-            raise ValueError("authorized triage batch must contain at least one candidate")
+        if (not specs or len(specs) > MAX_TRIAGE_CANDIDATES_PER_ENDPOINT):
+            raise ValueError("authorized triage batch must contain one to 10,000 candidates per endpoint")
         if any(spec.get("triage_authorization_sha256") != record["authorization_sha256"]
                or spec.get("smart_triage_batch_id") != record["id"] for spec in specs):
             raise ValueError("triage operation does not match its audit authorization batch")
@@ -406,14 +492,12 @@ class Operations:
                                  or cancellation[0] == record["report_sha256"]):
                 return None, []
             active = db.execute("SELECT count(*) FROM operations WHERE status IN ('queued','running') AND kind!='candidate_review_batch'").fetchone()[0]
-            uncapped_smart_batch = all(
-                spec.get("no_cumulative_token_ceiling") is True
-                and spec.get("smart_triage_batch_id") == record["id"]
-                and spec.get("triage_authorization_sha256") == record["authorization_sha256"]
-                for spec in specs
-            )
-            if not uncapped_smart_batch and active + len(specs) > 100:
-                raise ValueError("operation queue full")
+            if active + len(specs) > MAX_AUTHORIZED_TRIAGE_QUEUE_ITEMS:
+                raise ValueError(
+                    "authorized triage queue capacity exceeded: active=" + str(active)
+                    + ", requested=" + str(len(specs))
+                    + ", limit=" + str(MAX_AUTHORIZED_TRIAGE_QUEUE_ITEMS)
+                )
             db.execute(
                 "INSERT INTO smart_triage_batches(id,audit_id,report_sha256,authorization_sha256,batch_consent_sha256,status,candidate_count,selected_count,candidate_manifest,operation_ids,created_at,error,r2_status) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
                 (record["id"], record["audit_id"], record["report_sha256"],
@@ -427,7 +511,7 @@ class Operations:
                 db.execute("INSERT INTO operations(id,kind,spec,status,created_at) VALUES(?,?,?,?,?)",
                            (key, "agent_investigation", json.dumps(spec, sort_keys=True), "queued", stamp))
                 db.execute("INSERT INTO operation_events(operation_id,created_at,stage,message) VALUES(?,?,?,?)",
-                           (key, stamp, "queued", "Task-level consent authorized bounded automatic single-shot triage"))
+                           (key, stamp, "queued", "Task-level consent authorized automatic Agent triage; no local cumulative usage cap"))
         with self.store.connect() as db:
             batch = self.triage_batch_row(db.execute(
                 "SELECT * FROM smart_triage_batches WHERE id=?", (record["id"],)).fetchone())
@@ -504,9 +588,9 @@ class Operations:
             for batch_row in batches:
                 db.execute(
                     "UPDATE smart_triage_batches SET status='cancelled', "
-                    "r2_status=CASE WHEN r2_status IN ('awaiting_r1','queued','budget_limited') "
+                    "r2_status=CASE WHEN r2_status IN ('awaiting_r1','queued','budget_limited','candidate_limit_reached') "
                     "THEN 'cancelled' ELSE r2_status END, "
-                    "r2_error=CASE WHEN r2_status IN ('awaiting_r1','queued','budget_limited') "
+                    "r2_error=CASE WHEN r2_status IN ('awaiting_r1','queued','budget_limited','candidate_limit_reached') "
                     "THEN 'triage cancelled by user' ELSE r2_error END WHERE id=?",
                     (batch_row["id"],),
                 )
@@ -546,10 +630,14 @@ class Operations:
 
     def create_authorized_r2_batch(self, batch_id, decision_sha256, candidate_manifest,
                                    specs, status, error=None):
-        allowed = {"queued", "not_needed", "budget_limited", "selection_limited",
+        allowed = {"queued", "not_needed", "budget_limited", "candidate_limit_reached",
                    "blocked_authorization_changed", "failed_selection"}
-        if status not in allowed or (specs and status not in {"queued", "budget_limited", "selection_limited"}):
+        if status == "budget_limited":
+            status = "candidate_limit_reached"
+        if status not in allowed or (specs and status not in {"queued", "candidate_limit_reached"}):
             raise ValueError("invalid conditional R2 batch decision")
+        if len(specs) > MAX_TRIAGE_CANDIDATES_PER_ENDPOINT:
+            raise ValueError("conditional R2 batch exceeds 10,000 candidates per endpoint")
         keys = [uuid.uuid4().hex for _ in specs]
         stamp = now()
         with self.store.connect() as db:
@@ -624,8 +712,12 @@ class Operations:
                     raise ValueError("conditional R2 operation is outside its completed fixed R1 result")
             if specs:
                 active = db.execute("SELECT count(*) FROM operations WHERE status IN ('queued','running') AND kind!='candidate_review_batch'").fetchone()[0]
-                if not uncapped_smart_r2 and active + len(specs) > 100:
-                    raise ValueError("operation queue full")
+                if active + len(specs) > MAX_AUTHORIZED_TRIAGE_QUEUE_ITEMS:
+                    raise ValueError(
+                        "authorized triage queue capacity exceeded: active=" + str(active)
+                        + ", requested=" + str(len(specs))
+                        + ", limit=" + str(MAX_AUTHORIZED_TRIAGE_QUEUE_ITEMS)
+                    )
                 for key, spec in zip(keys, specs):
                     db.execute("INSERT INTO operations(id,kind,spec,status,created_at) VALUES(?,?,?,?,?)",
                                (key, "agent_investigation", json.dumps(spec, sort_keys=True), "queued", stamp))
@@ -775,7 +867,7 @@ class Operations:
 
     def create_with_scans(self, kind, spec, repository_id, scan_specs):
         """Create an operation and its immutable endpoint jobs in one DB transaction."""
-        if kind not in {"revision_range", "version_matrix", "branch_comparison"} or not scan_specs:
+        if kind not in {"revision_range", "version_matrix", "branch_comparison", "recent_window_comparison"} or not scan_specs:
             raise ValueError("invalid scan operation")
         key = uuid.uuid4().hex
         job_ids = [uuid.uuid4().hex for _ in scan_specs]
@@ -817,19 +909,16 @@ class Operations:
                            (job_id, stamp, "source_pinned", "Requested revision resolved to immutable commit/tree"))
                 authorization = scan_spec.get("triage_authorization")
                 if isinstance(authorization, dict) and authorization.get("authorized") is True:
-                    digest = authorization.get("consent_sha256")
-                    snapshot = authorization.get("snapshot")
+                    digest, snapshot = authorization.get("consent_sha256"), authorization.get("snapshot")
                     if (not isinstance(digest, str) or len(digest) != 64
                             or not isinstance(snapshot, dict)):
-                        raise ValueError("invalid immutable endpoint model authorization")
-                    if snapshot.get("binding", {}).get("plan_sha256") != scan_spec.get("plan_sha256"):
-                        raise ValueError("endpoint model authorization is bound to another scan plan")
-                    if snapshot.get("binding", {}).get("workflow_sha256") != scan_spec.get("workflow_sha256"):
-                        raise ValueError("endpoint model authorization is bound to another workflow")
-                    db.execute(
-                        "INSERT INTO triage_authorizations(audit_id,consent_sha256,snapshot,created_at) VALUES(?,?,?,?)",
-                        (job_id, digest, json.dumps(snapshot, sort_keys=True), stamp),
-                    )
+                        raise ValueError("invalid task-level triage authorization snapshot")
+                    binding = snapshot.get("binding", {})
+                    if (binding.get("plan_sha256") != scan_spec.get("plan_sha256")
+                            or binding.get("workflow_sha256") != scan_spec.get("workflow_sha256")):
+                        raise ValueError("endpoint model authorization is bound to another scan plan or workflow")
+                    db.execute("INSERT INTO triage_authorizations(audit_id,consent_sha256,snapshot,created_at) VALUES(?,?,?,?)",
+                               (job_id, digest, json.dumps(snapshot, sort_keys=True), stamp))
             db.execute("INSERT INTO operation_events(operation_id,created_at,stage,message) VALUES(?,?,?,?)",
                        (key, stamp, "queued", "Operation and endpoint scans committed atomically"))
         return self.get(key)
@@ -849,6 +938,26 @@ class Operations:
     def list(self):
         with self.store.connect() as db:
             return [self.row(r) for r in db.execute("SELECT * FROM operations ORDER BY created_at DESC LIMIT 200")]
+
+    def report_operations_for_case(self, case_id, limit=20):
+        """Return result-bearing operations bound to one case, with explicit truncation."""
+        if not isinstance(case_id, str) or not case_id.strip():
+            raise ValueError("case ID must be a non-empty string")
+        if not isinstance(limit, int) or isinstance(limit, bool) or not 1 <= limit <= 200:
+            raise ValueError("case report operation limit must be between 1 and 200")
+        predicate = "json_extract(spec, '$.case_id')=? AND result_sha256 IS NOT NULL"
+        with self.store.connect() as db:
+            total = db.execute(
+                "SELECT count(*) FROM operations WHERE " + predicate, (case_id,)
+            ).fetchone()[0]
+            rows = list(db.execute(
+                "SELECT * FROM operations WHERE " + predicate
+                + " ORDER BY created_at DESC, id DESC LIMIT ?",
+                (case_id, limit),
+            ))
+        items = [self.row(row) for row in rows]
+        return {"items": items, "total": total, "included": len(items),
+                "truncated": total > len(items), "limit": limit}
 
     def agent_investigations_for_job(self, job_id, report_sha256=None):
         with self.store.connect() as db:
@@ -909,8 +1018,7 @@ class Operations:
                 raise KeyError("operation not found")
             spec = json.loads(old["spec"])
             if (old["kind"] != "agent_investigation" or old["status"] != "interrupted"
-                    or old["result_sha256"] or old["cancel_requested"]
-                    or spec.get("no_cumulative_token_ceiling") is not True):
+                    or old["result_sha256"] or old["cancel_requested"]):
                 raise ValueError("only an interrupted, result-free authorized smart investigation can be retried")
             batch_id = spec.get("smart_triage_batch_id")
             audit_id = spec.get("job_id")
@@ -1045,18 +1153,47 @@ class Operations:
             for target in targets:
                 if target["status"] in END:
                     continue
-                db.execute("UPDATE operations SET cancel_requested=1 WHERE id=?", (target["id"],))
-                if target["status"] == "queued":
-                    db.execute("UPDATE operations SET status='cancelled',finished_at=? WHERE id=?",
-                               (stamp, target["id"]))
+                if target["kind"] == "source_sync_batch" and target["status"] == "running":
+                    # Keep the parent Worker alive so the handler can stop its active
+                    # Git process and persist completed per-repository results.
+                    db.execute(
+                        "INSERT OR IGNORE INTO operation_cancellations(operation_id,requested_at,reason) VALUES(?,?,?)",
+                        (target["id"], stamp, "user_requested"),
+                    )
+                else:
+                    db.execute("UPDATE operations SET cancel_requested=1 WHERE id=?", (target["id"],))
+                    if target["status"] == "queued":
+                        db.execute("UPDATE operations SET status='cancelled',finished_at=? WHERE id=?",
+                                   (stamp, target["id"]))
                 cancelled_ids.append(target["id"])
         # Cancel owned endpoint scans, never unrelated jobs.
         for job in row["spec"].get("scan_ids", []):
             self.store.cancel(job)
         for target_id in cancelled_ids:
-            self.event(target_id, "cancel_requested",
-                       "Cancellation propagated to the paired R1/R2 experiment" if pair_id else "Cancellation requested")
+            target_kind = self.get(target_id)["kind"]
+            message = ("Source sync cancellation requested; active Git transfer will stop safely"
+                       if target_kind in {"source_sync", "source_sync_batch"} else
+                       "Cancellation propagated to the paired R1/R2 experiment" if pair_id else
+                       "Cancellation requested")
+            self.event(target_id, "cancel_requested", message)
         return self.get(key)
+
+    def batch_sync_cancel_requested(self, key):
+        with self.store.connect() as db:
+            row = db.execute(
+                "SELECT 1 FROM operation_cancellations WHERE operation_id=?", (key,)
+            ).fetchone()
+        return row is not None
+
+    def source_sync_cancel_requested(self, key):
+        """Read cancellation state for a running single or batch source sync."""
+        with self.store.connect() as db:
+            row = db.execute(
+                "SELECT o.cancel_requested, EXISTS("
+                "SELECT 1 FROM operation_cancellations c WHERE c.operation_id=o.id) "
+                "FROM operations o WHERE o.id=?", (key,)
+            ).fetchone()
+        return bool(row and (row[0] or row[1]))
 
     def finish(self, key, result=None, error=None, state=None):
         digest = None
@@ -1079,6 +1216,20 @@ class Operations:
                 return
             if current["cancel_requested"]:
                 status, digest = "cancelled", None
+            elif (current["kind"] == "source_sync_batch"
+                  and db.execute("SELECT 1 FROM operation_cancellations WHERE operation_id=?", (key,)).fetchone()):
+                status = "cancelled"
+                if result is not None:
+                    result["status"] = "cancelled"
+                    result["cancellation_requested"] = True
+                    folder = self.directory(key)
+                    folder.mkdir(parents=True, exist_ok=True)
+                    data = (json.dumps(result, sort_keys=True, ensure_ascii=False, indent=2) + "\n").encode()
+                    path = folder / "result.json"
+                    temporary = folder / "result.pending"
+                    temporary.write_bytes(data)
+                    temporary.replace(path)
+                    digest = hashlib.sha256(data).hexdigest()
             db.execute("UPDATE operations SET status=?,result_sha256=?,error=?,finished_at=? WHERE id=?",
                        (status, digest, error, now(), key))
         self.event(key, status, error or "Operation result committed")
@@ -2000,3 +2151,39 @@ class Operations:
         with self.store.connect() as db:
             return [{"id": r["id"], "created_at": r["created_at"], **json.loads(r["record"])}
                     for r in db.execute("SELECT * FROM case_assessments WHERE case_id=? ORDER BY id", (case_id,))]
+
+    def retry_repository_import(self, key):
+        """Queue a new attempt for a failed import without mutating its original plan."""
+        retryable = {"failed", "interrupted", "timed_out"}
+        new_key = uuid.uuid4().hex
+        stamp = now()
+        with self.store.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            original = self.row(db.execute(
+                "SELECT * FROM operations WHERE id=?", (key,)).fetchone())
+            if original["kind"] != "repository_import_scan":
+                raise ValueError("only repository import operations can be retried here")
+            existing = []
+            for row in db.execute("SELECT * FROM operations WHERE kind='repository_import_scan'"):
+                spec = json.loads(row["spec"])
+                if spec.get("retry_of") == key:
+                    existing.append(self.row(row))
+            if existing:
+                # Repeated HTTP submissions return the same attempt, including after it
+                # completes. To deliberately retry again, submit the latest failed attempt.
+                retry = existing[0]
+                retry["retry_reused"] = True
+                return retry
+            if original["status"] not in retryable:
+                raise ValueError("repository import can be retried only after failed, interrupted, or timed-out status")
+            active = db.execute(
+                "SELECT count(*) FROM operations WHERE status IN ('queued','running') AND kind!='candidate_review_batch'").fetchone()[0]
+            if active >= 100:
+                raise ValueError("operation queue full")
+            retry_spec = {**original["spec"], "retry_of": key}
+            db.execute("INSERT INTO operations(id,kind,spec,status,created_at) VALUES(?,?,?,?,?)",
+                       (new_key, "repository_import_scan", json.dumps(retry_spec, sort_keys=True),
+                        "queued", stamp))
+            db.execute("INSERT INTO operation_events(operation_id,created_at,stage,message) VALUES(?,?,?,?)",
+                       (new_key, stamp, "retry_queued", "Explicit retry of failed repository import " + key))
+        return self.get(new_key)

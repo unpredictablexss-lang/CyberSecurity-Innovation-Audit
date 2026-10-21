@@ -1,0 +1,28 @@
+Script started on 2026-10-21 10:14:16+08:00 [COMMAND="source /tmp/ohscanner-ohos-build-venv/bin/activate && python3 build/hb/main.py set" <not executed on terminal>]
+
+[91m[OHOS ERROR][0m  Traceback (most recent call last):
+[91m[OHOS ERROR][0m    File "/home/kali/ohscanner-ark-native-20261021/build/hb/containers/status.py", line 47, in wrapper
+[91m[OHOS ERROR][0m      return func(*args, **kwargs)
+[91m[OHOS ERROR][0m             ^^^^^^^^^^^^^^^^^^^^^
+[91m[OHOS ERROR][0m    File "/home/kali/ohscanner-ark-native-20261021/build/hb/main.py", line 140, in main
+[91m[OHOS ERROR][0m      module = module_initializers[module_type]()
+[91m[OHOS ERROR][0m               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[91m[OHOS ERROR][0m    File "/home/kali/ohscanner-ark-native-20261021/build/hb/main.py", line 194, in _init_set_module
+[91m[OHOS ERROR][0m      from services.menu import Menu
+[91m[OHOS ERROR][0m    File "/home/kali/ohscanner-ark-native-20261021/build/hb/services/menu.py", line 25, in <module>
+[91m[OHOS ERROR][0m      from prompt_toolkit.shortcuts import run_application
+[91m[OHOS ERROR][0m  ImportError: cannot import name 'run_application' from 'prompt_toolkit.shortcuts' (/tmp/ohscanner-ohos-build-venv/lib/python3.12/site-packages/prompt_toolkit/shortcuts/__init__.py). Did you mean: 'application'?
+[91m[OHOS ERROR][0m  
+
+[91m[OHOS ERROR][0m  Code:        0000
+[91m[OHOS ERROR][0m  
+[91m[OHOS ERROR][0m  Reason:      cannot import name 'run_application' from 'prompt_toolkit.shortcuts' (/tmp/ohscanner-ohos-build-venv/lib/python3.12/site-packages/prompt_toolkit/shortcuts/__init__.py)
+[91m[OHOS ERROR][0m  
+[91m[OHOS ERROR][0m  Error Type:  UNKNOWN ERROR TYPE
+[91m[OHOS ERROR][0m  
+[91m[OHOS ERROR][0m  Description: NO DESCRIPTION
+[91m[OHOS ERROR][0m  
+[91m[OHOS ERROR][0m  Solution:    NO SOLUTION
+[91m[OHOS ERROR][0m  
+
+Script done on 2026-10-21 10:14:17+08:00 [COMMAND_EXIT_CODE="255"]
