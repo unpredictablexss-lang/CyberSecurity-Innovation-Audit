@@ -966,6 +966,9 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
                 <Descriptions.Item label="风险身份">
                   {detail.risk_assessment.identifier} · {(detail.risk_assessment.cwe || []).join(" / ")}
                 </Descriptions.Item>
+                {detail.risk_assessment.mapping_basis && <Descriptions.Item label="CVE 映射依据" span={2}>
+                  {detail.risk_assessment.mapping_basis}
+                </Descriptions.Item>}
                 <Descriptions.Item label="静态扫描严重度 / 置信度">
                   {detail.severity || "unassessed"} / {detail.confidence || "unassessed"}（候选仍未确认）
                 </Descriptions.Item>
@@ -983,6 +986,11 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
                   {job.spec?.repository} @ {job.spec?.commit}
                   <div><Text type="secondary">命中文件 SHA-256：{detail.source_sha256 || "unknown"}</Text></div>
                 </Descriptions.Item>
+                {detail.risk_assessment.source_location && <Descriptions.Item label="上游源码位置" span={2}>
+                  {detail.risk_assessment.source_location.file}:{detail.risk_assessment.source_location.lines} · {detail.risk_assessment.source_location.symbol}
+                  <div><Text type="secondary">易受影响提交：{detail.risk_assessment.source_location.vulnerable_commit}；修复提交：{detail.risk_assessment.source_location.fixed_commit}</Text></div>
+                  <a href={detail.risk_assessment.source_location.url} target="_blank" rel="noreferrer">固定版本源码锚点</a>
+                </Descriptions.Item>}
                 <Descriptions.Item label="扫描覆盖限制" span={2}>
                   <div>检测器状态：{detailCoverage?.status || "unknown"}；检查文件 {detailCoverage?.applicable_files ?? "unknown"}；完整 {detailCoverage?.analyzed_files?.length ?? "unknown"}；部分 {detailCoverage?.partially_inspected_files?.length ?? "unknown"}；未分析 {detailCoverage?.not_analyzed_files?.length ?? "unknown"}；失败 {detailCoverage?.failed_files?.length ?? "unknown"}。</div>
                   <ul>{(detailCoverage?.limitations || []).map((item: string, index: number) => <li key={index}>{item}</li>)}</ul>
@@ -1000,6 +1008,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
                   {detail.risk_assessment.poc?.entrypoint}
                   <div><Text type="secondary">PoC / 修复报告：{detail.risk_assessment.poc?.record}（SHA-256 {detail.risk_assessment.poc?.record_sha256}）</Text></div>
                   <div><Text type="secondary">重放程序：{detail.risk_assessment.poc?.replay}（SHA-256 {detail.risk_assessment.poc?.replay_sha256}）</Text></div>
+                  {detail.risk_assessment.poc?.raw_output && <div><Text type="secondary">ASan 原始 stderr：{detail.risk_assessment.poc.raw_output}（SHA-256 {detail.risk_assessment.poc.raw_output_sha256}；{detail.risk_assessment.poc.raw_output_encoding}）</Text></div>}
                 </Descriptions.Item>
                 <Descriptions.Item label="修复建议 / 上游补丁" span={2}>
                   {detail.risk_assessment.remediation} <a href={detail.risk_assessment.upstream_fix} target="_blank" rel="noreferrer">上游修复提交</a>
