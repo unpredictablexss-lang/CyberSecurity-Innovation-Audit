@@ -72,7 +72,6 @@ def audit_workflow_summary(audit_mode, auto_triage=False,
             "scan_stage": "fixed_static_scan",
             "triage_stage": "not_requested",
             "automatic_model_calls": False,
-            "candidate_limit_per_authorized_batch": 0,
             "source_consent_required": False,
         }
     raise ValueError("unsupported audit workflow mode")

@@ -193,6 +193,8 @@ def create_app(settings=None):
                 "detector_admission": True,
                 "operations_framework": True,
                 "source_sync": True,
+                "online_repository_catalog": True,
+                "repository_import_scan": True,
                 "revision_range": True,
                 "read_only_investigation": True,
                 "manual_review": True,
@@ -343,7 +345,7 @@ def create_app(settings=None):
             raise ValueError("Audit workflow changed since preview; refresh the plan before scanning")
         spec["audit_mode"] = body.audit_mode
         spec["max_r2_candidates"] = body.max_r2_candidates
-        spec["max_cost_usd"] = None
+        spec["max_cost_usd"] = body.max_cost_usd
         spec["workflow_sha256"] = workflow_sha256
         if body.auto_triage:
             if body.audit_mode != "standard_review":
@@ -358,7 +360,7 @@ def create_app(settings=None):
                 body.max_r2_candidates,
             )
             if preview["consent_sha256"] != body.expected_triage_consent_sha256:
-                raise ValueError("task-level source egress preview expired; provider, source, scope, policy or budget changed")
+                raise ValueError("task-level source egress preview expired; provider, source, scope, policy or provider changed")
             spec["triage_authorization"] = {
                 "authorized": True,
                 "consent_sha256": preview["consent_sha256"],

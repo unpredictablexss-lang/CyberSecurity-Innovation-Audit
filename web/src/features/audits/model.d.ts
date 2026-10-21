@@ -11,12 +11,6 @@ export function localDateTime(date: Date, timezone: string): string;
 export function requestGate(): { next(): number; invalidate(): void; current(id: number): boolean };
 
 export function planPayload(values: any, detectors: any[], explicitIds?: string[]): any;
-export function isValidTaskCostBudget(value: unknown): boolean;
-export function taskAuthorizationPayload(values: any): {
-  auto_triage: boolean;
-  max_triage_candidates: number;
-  max_r2_candidates: number;
-  max_cost_usd: string | null;
-};
+export function taskAuthorizationPayload(values: any): { auto_triage: boolean };
 export function auditErrorMessage(error: unknown): string;
 export function selectedAuditModeValues(values: any): any;

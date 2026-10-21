@@ -168,7 +168,7 @@ test("repository selection prefers only the server-verified default ref", () => 
 test("audit workflow label uses the task-level mode when an older nested plan omits it", () => {
   assert.equal(auditWorkflowLabel({}, "static_only"), "仅静态扫描");
   assert.equal(auditWorkflowLabel({ workflow: null }, "standard_review"),
-    "标准研判：静态扫描后，候选需逐批预览并授权模型调用");
+    "智能审计：静态扫描后，对本次扫描范围内满足证据条件的候选逐项预览并授权模型调查。");
   assert.equal(auditWorkflowLabel({}, undefined), "历史扫描任务：未记录审计方式");
 });
 

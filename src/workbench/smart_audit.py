@@ -504,7 +504,7 @@ def risk_snapshot(settings, store, ops, job, report):
         "limitations": [
             "A high-confidence tier is a human-review priority: either a bound AI investigation provides a supported source claim with a fixed-file line citation and no source-level contrary finding, or a complete quoted human R0 review supports investigation.",
             "AI citations prove source and quote presence only; they do not prove semantic support, product reachability, trigger conditions, or CIA impact. Every tier remains candidate until the human/runtime confirmation gate passes.",
-            "Unreviewed, skipped, budget-limited, partial, or unknown items are not safe and remain visible as untriaged or requiring validation.",
+            "Unreviewed, skipped, per-request-limited, partial, or unknown items are not safe and remain visible as untriaged or requiring validation.",
             "Validated vulnerabilities are counted only through the existing human assessment and passed runtime-reachability gate; this static risk view does not set that state.",
         ],
     }
@@ -914,7 +914,7 @@ def enqueue_authorized_triage(settings, store, ops, job):
         "candidate_count": len(candidates), "selected_count": len(selected),
         "candidate_manifest": candidate_manifest, "operation_ids": [],
         "created_at": now(), "error": None,
-        "r2_status": "awaiting_r1" if selected and snapshot.get("r2_candidate_limit", 0) else "not_requested",
+        "r2_status": "awaiting_r1" if selected else "not_needed",
     }
     if not selected:
         return ops.record_triage_batch(record)
@@ -1072,8 +1072,7 @@ def enqueue_authorized_r2_followups(settings, store, ops, batch_id):
         -len(item[3]), -_severity(item[0]), item[0].get("file", ""),
         int(item[0].get("line") or 0), item[0]["id"],
     ))
-    limit = int(authorization["snapshot"].get("r2_candidate_limit", 0))
-    selected = eligible[:limit] if not auth_error else []
+    selected = eligible if not auth_error else []
     selected_ids = {item[0]["id"] for item in selected}
     r2_preview_spec = {
         "mode": "tool_agent", "max_output_tokens": None,

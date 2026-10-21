@@ -1,3 +1,4 @@
+from datetime import datetime
 """Bounded operation planning and read-only evidence tools shared by API/Workers."""
 from collections import defaultdict
 from datetime import datetime, timedelta
@@ -10,7 +11,7 @@ import shutil
 import signal
 import subprocess
 import time
-from urllib.parse import urlsplit
+from urllib.parse import quote, unquote, urlsplit
 from zoneinfo import ZoneInfo
 from . import service
 from .store import TERMINAL
@@ -30,10 +31,24 @@ def git(repo, *args):
 
 def approved_url(value):
     url = urlsplit(value)
-    if (any(ord(ch) < 33 or ord(ch) == 127 for ch in value)
-            or url.scheme != "https" or url.hostname not in {"github.com", "gitee.com", "gitcode.com"}
-            or url.username or url.password or url.port or url.query or url.fragment
-            or not re.fullmatch(r"/openharmony/[A-Za-z0-9_-]+(?:\.git)?", url.path)):
+    valid = (isinstance(value, str)
+             and not any(ord(ch) < 33 or ord(ch) == 127 for ch in value)
+             and url.scheme == "https"
+             and url.hostname in {"github.com", "gitee.com", "gitcode.com"}
+             and not (url.username or url.password or url.port or url.query or url.fragment))
+    prefix = "/openharmony/"
+    path = url.path
+    suffix = path.endswith(".git")
+    encoded_slug = path[len(prefix):-4] if suffix and path.startswith(prefix) else (
+        path[len(prefix):] if path.startswith(prefix) else "")
+    try:
+        slug = unquote(encoded_slug, encoding="utf-8", errors="strict")
+        from .source_catalog import validate_repository_slug
+        validate_repository_slug(slug)
+    except (UnicodeDecodeError, ValueError):
+        valid = False
+        slug = ""
+    if not valid or encoded_slug != quote(slug, safe=""):
         raise ValueError("only explicit HTTPS OpenHarmony repositories on approved hosts are allowed")
     return value
 
@@ -98,7 +113,7 @@ def bind_multimode_triage(settings, scan_specs, body):
     enriched = []
     for spec, approval, preview in zip(scan_specs, approvals, previews):
         if approval.get("consent_sha256") != preview["consent_sha256"]:
-            raise ValueError("endpoint consent expired: source, model, policy or budget changed")
+            raise ValueError("endpoint consent expired: source, model, policy or provider changed")
         enriched.append({
             **spec, "audit_mode": "standard_review",
             "workflow_sha256": preview["workflow_sha256"],

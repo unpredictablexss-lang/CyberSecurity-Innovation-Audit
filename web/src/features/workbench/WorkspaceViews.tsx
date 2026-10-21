@@ -60,7 +60,7 @@ function riskDetailsAction(row: any) {
 }
 export function ScanTable({ jobs, compact = false }: { jobs: any[]; compact?: boolean }) {
   return <Table<any> rowKey="id" size={compact ? "small" : "middle"} dataSource={compact ? jobs.slice(0, 4) : jobs} pagination={compact ? false : { pageSize: 10 }} scroll={{ x: 650 }} columns={[
-    { title: "仓库 / 固定版本", render: (_, j) => <><a onClick={() => go("/tasks/" + j.id)}>{j.spec.repository}</a><div className="muted"><Hash value={j.spec.commit} /></div></> },
+    { title: "仓库 / 扫描版本", render: (_, j) => <><a onClick={() => go("/tasks/" + j.id)}>{j.spec.repository}</a><div className="muted"><Hash value={j.spec.commit} /></div></> },
     { title: "状态", dataIndex: "status", render: (v) => <State value={v} /> },
     { title: "实际耗时", render: (_, j) => j.elapsed_seconds == null ? "尚未结束" : Number(j.elapsed_seconds).toFixed(2) + " s" },
     { title: "创建时间", dataIndex: "created_at", render: (v) => new Date(v).toLocaleString() },
@@ -130,7 +130,7 @@ export function RiskCenter({ jobs, query = new URLSearchParams() }: { jobs: any[
           options={[
             { value: "high_confidence_candidate", label: "高可信候选（仍需确认）" },
             { value: "further_validation", label: "待进一步验证" },
-            { value: "unknown_source_binding", label: "来源绑定未知" },
+            { value: "unknown_source_binding", label: "源码版本未核对" },
             { value: "low_priority_manual", label: "低优先级人工标记" },
           ]} />
         <Select aria-label="模型研判状态筛选" style={{ width: 220 }} value={filters.triage_state || undefined}
@@ -205,7 +205,7 @@ export function RiskCenter({ jobs, query = new URLSearchParams() }: { jobs: any[
         total={summary.filtered_candidate_count} showSizeChanger={false} onChange={(value) => setPage(value)} />}
       {loading
         ? <Text type="secondary">正在读取最近报告的候选与研判状态。</Text>
-        : <Text type="secondary">当前范围：已检查 {summary?.evaluated_scan_count ?? 0} / 最多 {summary?.scan_limit ?? 20} 份报告；共 {summary?.candidate_observation_count ?? 0} 条候选观测、人工确认漏洞 {summary?.validated_vulnerability ?? 0} 条。点击候选查看固定源码和证据义务。</Text>}
+        : <Text type="secondary">当前范围：已检查 {summary?.evaluated_scan_count ?? 0} / 最多 {summary?.scan_limit ?? 20} 份报告；共 {summary?.candidate_observation_count ?? 0} 条候选观测、人工确认漏洞 {summary?.validated_vulnerability ?? 0} 条。点击候选查看本次扫描源码和证据义务。</Text>}
     </Card>
   </>;
 }
@@ -285,7 +285,7 @@ export function AuditRiskOverview() {
         { title: "查看", render: (_: unknown, row: any) => <Button size="small" onClick={(event) => { event.stopPropagation(); openCandidate(row); }}>查看证据 / 人工研判</Button> },
       ]}
       locale={{ emptyText: <Empty description={summary?.available_report_count ? "最近报告没有候选观测；这不代表仓库不存在漏洞。" : "完成一次扫描后，这里会显示近期风险优先队列。"} /> }} />
-    <Text type="secondary">统计范围：已检查 {summary?.evaluated_scan_count ?? 0} / 最多 {summary?.scan_limit ?? 10} 份报告；模型状态 {Object.entries(triage).map(([state, count]) => triageStateLabel(state) + " " + count).join(" · ") || "暂无记录"}。点击候选可打开固定源码和证据义务。</Text>
+    <Text type="secondary">统计范围：已检查 {summary?.evaluated_scan_count ?? 0} / 最多 {summary?.scan_limit ?? 10} 份报告；模型状态 {Object.entries(triage).map(([state, count]) => triageStateLabel(state) + " " + count).join(" · ") || "暂无记录"}。点击候选可打开本次扫描源码和证据义务。</Text>
   </Card>;
 }
 
@@ -300,7 +300,7 @@ export function Investigations({ context = {} }: { context?: SourceContext }) {
     {agentStatus ? <Alert className="section-gap" type={agentStatus.configured ? "info" : "warning"} showIcon
       message={agentStatus.configured ? (providerCheck ? "模型配置已保存，最近连通性探测通过" : "模型配置已保存，连通性尚未验证") : "真实模型未配置"}
       description={agentStatus.configured ? connectionSummary + " 服务地址：" + agentStatus.endpoint_host + "；模型：" + agentStatus.model + "。每次调查前都会显示外发预览并由你单独授权。" :
-        "人工案例与固定只读工具可用。配置模型后才能使用辅助研判；候选源码仅在你检查预览并明确同意后发送，模型不会自动确认漏洞。"} /> :
+        "人工案例与已登记的只读工具可用。配置模型后才能使用辅助研判；候选源码仅在你检查预览并明确同意后发送，模型不会自动确认漏洞。"} /> :
       <Alert className="section-gap" type="warning" showIcon message="模型配置状态暂不可用" description="可继续使用人工案例和确定性只读工具。" />}
     <Tabs className="section-gap" defaultActiveKey={context.candidate_id ? "tools" : "cases"} items={[
       { key: "cases", label: "调查案例", children: <Cases embedded /> },
@@ -321,17 +321,17 @@ export function ReportCenter({ jobs, cases }: { jobs: any[]; cases: any[] }) {
       document.body.appendChild(anchor); anchor.click(); anchor.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
     } catch (e) { setError(String(e)); }
   };
-  return <><Header title="报告中心" description="导出真实扫描与案例记录；报告与固定源码、规则版本和证据哈希绑定。" />
+  return <><Header title="报告中心" description="导出真实扫描与案例记录；报告与本次扫描源码、规则版本和证据哈希绑定。" />
     {error && <Alert type="error" showIcon message={error} />}
     <Alert type="info" message="当前提供 JSON、Markdown、manifest 与复核包" description="PoC、产品影响、补丁与性能评估需要各自的实测证据；没有把缺失项补成已完成赛题报告。" />
-    <Card className="section-gap" title="固定源码扫描报告"><Table<any> rowKey="id" dataSource={reports} scroll={{ x: 850 }} columns={[
+    <Card className="section-gap" title="源码扫描报告"><Table<any> rowKey="id" dataSource={reports} scroll={{ x: 850 }} columns={[
       { title: "仓库与版本", render: (_, j) => <><Text strong>{j.spec.repository}</Text><div><Hash value={j.spec.commit} /></div></> },
       { title: "状态", dataIndex: "status", render: (v) => <State value={v} /> },
       { title: "报告 SHA-256", dataIndex: "report_sha256", render: (v) => <Hash value={v} /> },
       { title: "导出", render: (_, j) => <Space wrap>{["report.json", "report.md", "manifest.json", "review.json", "review.md"].map((kind) => <Button key={kind} size="small" href={artifact(j.id, kind)}>{kind}</Button>)}
-        <Button size="small" onClick={() => go(jobDetailPath(j.id, "reports"))}>完整证据与局限</Button></Space> },
+        <Button size="small" onClick={() => go(jobDetailPath(j.id, "reports"))}>查看完整证据</Button></Space> },
     ]} locale={{ emptyText: "暂无已发布的扫描报告" }} /></Card>
-    <Card className="section-gap" title="调查案例报告"><Table<any> rowKey="id" dataSource={cases} columns={[
+    <Card className="section-gap" title="案例报告"><Table<any> rowKey="id" dataSource={cases} columns={[
       { title: "案例", dataIndex: "title" }, { title: "关联候选", render: (_, c) => c.links.length },
       { title: "导出", render: (_, c) => <Space><Button size="small" onClick={() => void downloadCase(c.id, "json")}>JSON</Button><Button size="small" onClick={() => void downloadCase(c.id, "md")}>Markdown</Button></Space> },
     ]} locale={{ emptyText: "从风险中心的候选建立案例后可导出" }} /></Card>
@@ -353,7 +353,7 @@ export function SettingsView({ repos, detectors, health, refresh, tab }: { repos
           { key: "agent", label: "真实模型", children: health?.capabilities?.agent ? "服务宣告可用，需专项验收" : "未连接；只读调查可单独使用" },
           { key: "validation", label: "产品运行时验证", children: health?.capabilities?.runtime_validation ? "服务宣告可用，需核对证据" : "未验收；组件 Harness 单独记录" },
         ]} /><Paragraph type="secondary">模型服务凭据和连接测试位于“Agent / LLM”设置页；此处仅展示 Worker 运行状态。</Paragraph>
-        <Button onClick={() => go("/operations")}>兼容高级操作入口</Button>
+        <Button onClick={() => go("/operations")}>更多操作</Button>
       </Card> },
     ]} />
   </>;

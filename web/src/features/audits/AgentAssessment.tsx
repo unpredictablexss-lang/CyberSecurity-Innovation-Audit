@@ -137,6 +137,9 @@ export default function AgentAssessment({ result, reviews = [], onSubmit }: { re
     result.structured_answer_validation, result.structured_answer_validation_error_code);
   const obligationReviews = Array.isArray(assessment.obligation_reviews) ? assessment.obligation_reviews : [];
   const toolIssues = agentToolIssues(result.tool_calls);
+  const rawEvidenceGraph = result.evidence_graph || {};
+  const evidenceGraphStages = Array.isArray(rawEvidenceGraph.nodes)
+    ? rawEvidenceGraph.nodes.filter((node: any) => node.kind === "workflow_stage") : [];
   const obligationByIndex = new Map(obligationReviews.map((item: any) => [item.obligation_index, item]));
   const renderReportedList = (value: any, emptyLabel: string) => {
     if (!Array.isArray(value)) return <Text type="secondary">结果未记录</Text>;
@@ -262,7 +265,7 @@ export default function AgentAssessment({ result, reviews = [], onSubmit }: { re
       <Descriptions.Item label="模型">{result.provider?.model || "—"}</Descriptions.Item>
       <Descriptions.Item label="外发目的地">{result.source_submission?.destination_host || "—"}</Descriptions.Item>
       <Descriptions.Item label="候选">{binding.candidate_id || "—"}</Descriptions.Item>
-      <Descriptions.Item label="固定提交">{binding.commit || "—"}</Descriptions.Item>
+      <Descriptions.Item label="扫描代码版本">{binding.commit || "—"}</Descriptions.Item>
       <Descriptions.Item label="源码位置" span={2}>{binding.file || "—"}</Descriptions.Item>
       <Descriptions.Item label="Token 用量">{result.model_usage ? (result.model_usage.total_tokens ?? "未知") + " tokens；" + (result.model_usage.local_cumulative_token_budget === "none" ? "平台累计上限：无" : "历史任务输入/输出预算 " + (result.model_usage.input_budget_tokens ?? "未知") + "/" + (result.model_usage.output_budget_tokens ?? "未知")) + "；" + (result.model_usage.per_request_output_limit_policy === "none_locally_provider_model_default_applies" ? "平台单次输出上限：无（模型或服务商限制仍适用）" : result.model_usage.per_request_output_limit_tokens == null ? "单次输出上限：未知" : "单次输出上限 " + result.model_usage.per_request_output_limit_tokens + " tokens") : "—"}</Descriptions.Item>
       <Descriptions.Item label="缓存命中输入（输入内）">{result.model_usage?.cached_input_tokens ?? "未知"} tokens</Descriptions.Item>
@@ -329,7 +332,7 @@ export default function AgentAssessment({ result, reviews = [], onSubmit }: { re
         <Form.Item name="claims_to_correct" label="需更正的模型陈述"><Input.TextArea rows={2} maxLength={1200} /></Form.Item>
         <Form.Item name="missed_evidence" label="遗漏证据或事实"><Input.TextArea rows={2} maxLength={1200} /></Form.Item>
         <Form.Item name="notes" label="备注"><Input.TextArea rows={2} maxLength={1000} /></Form.Item>
-        <Button type="primary" htmlType="submit" loading={saving}>追加人工评价</Button>
+        <Button type="primary" htmlType="submit" loading={saving}>提交复核结果</Button>
       </Form>
     </Card>
     <Collapse items={items} />

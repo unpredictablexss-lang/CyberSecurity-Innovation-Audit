@@ -104,7 +104,7 @@ const agentConfidenceLabels = Object.freeze({
   high: "高（模型自评）", medium: "中（模型自评）",
   low: "低（模型自评）", none: "无",
 });
-const agentScopeLabels = Object.freeze({ fixed_source_code: "固定提交源码", none: "未完成源码验证" });
+const agentScopeLabels = Object.freeze({ fixed_source_code: "本次扫描源码", none: "未完成源码验证" });
 const productStatusLabels = Object.freeze({
   unknown: "未知（待核实）", candidate: "待复核候选",
   confirmed: "已确认（请核对产品验证证据）",
@@ -115,7 +115,7 @@ const agentVerdictReasons = Object.freeze({
   "The model favors the vulnerability hypothesis, but source evidence is incomplete or mixed.": "模型倾向漏洞假设，但源码证据不完整或相互混合。",
   "All source-review obligations contain cited contrary evidence.": "所有源码复核义务均有带引用的相反证据；仍需人工复核。",
   "The model favors a false-positive explanation, but source evidence is incomplete or mixed.": "模型倾向误报解释，但源码证据不完整或相互混合。",
-  "The available fixed-source evidence does not support a stronger Agent verdict.": "当前固定源码证据不足以支持更强的模型分诊结论。",
+  "The available fixed-source evidence does not support a stronger Agent verdict.": "当前扫描源码证据不足以支持更强的模型分诊结论。",
 });
 
 const groupingBasisLabels = Object.freeze({
@@ -198,7 +198,7 @@ const reportLimitations = Object.freeze({
   "Zero diagnostics does NOT mean the component is free of vulnerabilities.":
     "零条候选不代表组件不存在漏洞。",
   "Git origin name is user declared; source is pinned local objects, not an OH product build.":
-    "Git 远端名称由用户声明；扫描绑定的是本地固定对象，不是 OpenHarmony 产品构建产物。",
+    "Git 远端名称由用户声明；扫描绑定的是本地 Git 对象版本，不是 OpenHarmony 产品构建产物。",
   "No compilation flags/macros, symbolic execution, hard plugin timeout or runtime validation.":
     "未纳入构建参数与宏定义，也未执行符号执行或运行时验证；检测器进程级硬超时隔离尚未实现。",
 });
@@ -208,11 +208,11 @@ export function reportLimitationLabel(value) {
 
 const riskReasons = Object.freeze({
   "candidate source identity does not match the immutable report inventory":
-    "候选来源与固定报告清单不一致，需要重新核对。",
+    "候选来源与扫描报告清单不一致，需要重新核对。",
   "a human marked this item as refuted or low-priority; this is not a safety verdict":
     "人工将此项标为驳回或低优先级；这不代表已证明安全。",
   "fixed source/report hashes match and every recorded obligation has a quoted R0 evidence_found review":
-    "固定源码与报告哈希一致，且已逐项完成 R0 引用复核；结论仍为候选。",
+    "本次扫描源码与报告哈希一致，且已逐项完成 R0 引用复核；结论仍为候选。",
   "candidate analysis is partial or unknown": "候选分析不完整或状态未知。",
   "no complete evidence-obligation set is available": "尚无完整的证据义务清单。",
   "no complete quoted static-human evidence review is recorded": "尚未完成带源码引用的静态人工复核。",
@@ -255,4 +255,13 @@ export function riskReasonsLabel(reasons) {
     .map(riskReasonLabel)
     .map((label) => label.replace(/[。；;，,\s]+$/u, ""));
   return labels.length ? labels.join("；") + "。" : "需要进一步核对本项证据。";
+}
+export function highConfidenceAiSummary(summary) {
+  if (typeof summary === "string" && summary.trim()) {
+    return { state: "available", text: summary.trim() };
+  }
+  return {
+    state: "unknown",
+    text: "AI 摘要不可用；页面不推测模型理由，请依据本次扫描源码证据人工复核。",
+  };
 }
