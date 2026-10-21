@@ -624,11 +624,11 @@ class WorkbenchTests(unittest.TestCase):
         report = service.read_report(self.settings, job)
         self.assertEqual(report["validated_vulnerability"], 0)
 
-    def test_case_confirmation_requires_bound_gate_and_latest_human_decision(self):
+    def test_case_confirmation_rejects_component_or_unregistered_product_validator(self):
         job = self.completed()
         candidate = service.findings(service.read_report(self.settings, job))[0]
         case = self.client.post("/api/v1/cases", headers=HEADERS, json={
-            "title": "human confirmation gate",
+            "title": "component harness cannot confirm product reachability",
             "links": [{"job_id": job["id"], "candidate_id": candidate["id"], "rationale": "test"}],
         }).json()
         evidence = self.client.post(
@@ -640,38 +640,107 @@ class WorkbenchTests(unittest.TestCase):
         self.assertEqual(evidence.status_code, 201, evidence.text)
 
         ops = self.app.state.operations
-        validation = ops.create("validation", {"case_id": case["id"]})
-        claimed = ops.claim(validation=True)
-        self.assertEqual(claimed["id"], validation["id"])
-        ops.finish(validation["id"], {
+        component = ops.create("validation", {
+            "case_id": case["id"], "harness_id": "auth01_descriptor_bypass",
+            "validation_scope": "component_harness", "target_repository": "fixture/sample",
+            "target_commit": self.commit,
+        })
+        self.assertEqual(ops.claim(validation=True)["id"], component["id"])
+        ops.finish(component["id"], {
             "status": "completed_with_limitations", "validation_gate": "passed",
             "case_id": case["id"], "reachability_status": "verified",
+            "validation_scope": "product_level", "harness_id": "auth01_descriptor_bypass",
+        }, state="completed_with_limitations")
+
+        unregistered = ops.create("validation", {
+            "case_id": case["id"], "harness_id": "future_product_validator",
+            "validation_scope": "product_level", "target_repository": "fixture/sample",
+            "target_commit": self.commit,
+        })
+        self.assertEqual(ops.claim(validation=True)["id"], unregistered["id"])
+        ops.finish(unregistered["id"], {
+            "status": "completed_with_limitations", "validation_gate": "passed",
+            "case_id": case["id"], "reachability_status": "verified",
+            "validation_scope": "product_level", "harness_id": "future_product_validator",
         }, state="completed_with_limitations")
 
         payload = {
             "outcome": "confirmed", "reviewer_kind": "human", "reviewer": "reviewer:test",
-            "notes": "Source and runtime evidence reviewed; residual scope documented.",
+            "notes": "Attempted to confirm using component-only or unregistered validation.",
             "evidence_ids": [evidence.json()["id"]],
-            "validation_operation_ids": [validation["id"]],
-            "remaining_unknowns": ["Other callers are outside this case."],
+            "validation_operation_ids": [component["id"], unregistered["id"]],
+            "remaining_unknowns": ["Product entry reachability is not established."],
         }
-        accepted = self.client.post(f"/api/v1/cases/{case['id']}/assessments",
+        rejected = self.client.post(f"/api/v1/cases/{case['id']}/assessments",
                                     headers=HEADERS, json=payload)
-        self.assertEqual(accepted.status_code, 201, accepted.text)
+        self.assertEqual(rejected.status_code, 409, rejected.text)
+        self.assertEqual(self.client.get(f"/api/v1/cases/{case['id']}/report.json").json()
+                         ["validated_vulnerability"], 0)
+
+        # A legacy or internally inserted human record still cannot bypass the live gate.
+        ops.assessment(case["id"], payload)
         report = self.client.get(f"/api/v1/cases/{case['id']}/report.json")
         self.assertEqual(report.status_code, 200, report.text)
-        self.assertEqual(report.json()["validated_vulnerability"], 1)
-        self.assertEqual(report.json()["validation_basis"]["validation_operation_id"], validation["id"])
-        validation_summary = next(x for x in report.json()["operations"] if x["id"] == validation["id"])
-        self.assertEqual(validation_summary["reachability_status"], "verified")
-        self.assertEqual(self.client.get(f"/api/v1/cases/{case['id']}/report.md").status_code, 200)
-        self.assertEqual(service.read_report(self.settings, job)["validated_vulnerability"], 0)
+        self.assertEqual(report.json()["validated_vulnerability"], 0)
+        latest = self.client.post(f"/api/v1/cases/{case['id']}/assessments", headers=HEADERS, json={
+            **payload, "outcome": "candidate", "validation_operation_ids": [],
+            "notes": "A later human decision reopens the case.",
+        })
+        self.assertEqual(latest.status_code, 201, latest.text)
+        self.assertEqual(self.client.get(f"/api/v1/cases/{case['id']}/report.json").json()
+                         ["validated_vulnerability"], 0)
 
-        payload.update(outcome="candidate", notes="New human review reopens the case.",
-                       validation_operation_ids=[])
-        reopened = self.client.post(f"/api/v1/cases/{case['id']}/assessments",
-                                    headers=HEADERS, json=payload)
-        self.assertEqual(reopened.status_code, 201, reopened.text)
+    def test_case_confirmation_rejects_mismatched_product_candidate_binding(self):
+        job = self.completed()
+        candidate = service.findings(service.read_report(self.settings, job))[0]
+        case = self.client.post("/api/v1/cases", headers=HEADERS, json={
+            "title": "product validation candidate binding",
+            "links": [{"job_id": job["id"], "candidate_id": candidate["id"], "rationale": "test"}],
+        }).json()
+        evidence = self.client.post(
+            f"/api/v1/scans/{job['id']}/findings/{candidate['id']}/evidence",
+            headers=HEADERS,
+            json={"file": candidate["file"], "start_line": candidate["line"],
+                  "end_line": candidate["line"], "note": "source evidence"},
+        )
+        self.assertEqual(evidence.status_code, 201, evidence.text)
+
+        ops = self.app.state.operations
+        operation = ops.create("validation", {
+            "case_id": case["id"], "harness_id": "test_product_validator",
+            "validation_scope": "product_level", "target_repository": "fixture/sample",
+            "target_commit": self.commit, "product_validation_binding": {"candidate_id": "wrong"},
+        })
+        self.assertEqual(ops.claim(validation=True)["id"], operation["id"])
+        manifest = {
+            "validation_scope": "product_level", "harness_id": "test_product_validator",
+            "target_repository": "fixture/sample", "target_commit": self.commit,
+            "product_validation_binding": {"candidate_id": "wrong"},
+        }
+        raw_manifest = json.dumps(manifest, sort_keys=True).encode()
+        manifest_path = ops.directory(operation["id"]) / "input-manifest.json"
+        manifest_path.parent.mkdir(parents=True, exist_ok=True)
+        manifest_path.write_bytes(raw_manifest)
+        ops.finish(operation["id"], {
+            "status": "completed_with_limitations", "validation_gate": "passed",
+            "case_id": case["id"], "reachability_status": "verified",
+            "validation_scope": "product_level", "harness_id": "test_product_validator",
+            "target_repository": "fixture/sample", "target_commit": self.commit,
+            "product_validation_binding": {"candidate_id": "wrong"},
+            "input_manifest_sha256": hashlib.sha256(raw_manifest).hexdigest(),
+        }, state="completed_with_limitations")
+
+        with patch("src.workbench.operations_api.PRODUCT_LEVEL_VALIDATOR_IDS",
+                   frozenset({"test_product_validator"})):
+            rejected = self.client.post(f"/api/v1/cases/{case['id']}/assessments",
+                headers=HEADERS, json={
+                    "outcome": "confirmed", "reviewer_kind": "human", "reviewer": "reviewer:test",
+                    "notes": "The product-validation manifest points to another candidate.",
+                    "evidence_ids": [evidence.json()["id"]],
+                    "validation_operation_ids": [operation["id"]],
+                    "remaining_unknowns": ["Product source and affected versions."],
+                })
+        self.assertEqual(rejected.status_code, 409, rejected.text)
         self.assertEqual(self.client.get(f"/api/v1/cases/{case['id']}/report.json").json()
                          ["validated_vulnerability"], 0)
 

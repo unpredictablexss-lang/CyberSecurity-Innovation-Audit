@@ -27,6 +27,11 @@ from .source_catalog import (CatalogUnavailable, repository_catalog as public_re
 
 _MARKDOWN_INLINE_SPECIAL_CHARS = frozenset(chr(92) + "*_{}[]()#+-.!|<>~" + chr(96))
 
+# Product-level confirmation stays disabled until a validator has a reviewed,
+# fixed-source evidence manifest and product-entry reachability checks. The
+# registered AUTH-01 harness is component-only and must never satisfy it.
+PRODUCT_LEVEL_VALIDATOR_IDS = frozenset()
+
 
 def _markdown_inline_untrusted(value):
     """Render model, source, and reviewer text as one safe Markdown inline value."""
@@ -809,7 +814,92 @@ def _case_links(store, case_id):
         return [dict(x) for x in db.execute("SELECT * FROM case_links WHERE case_id=? ORDER BY job_id,candidate_id", (case_id,))]
 
 
-def _case_review_status(store, ops, case_id):
+def _case_product_validation_binding(settings, store, case_id):
+    links = _case_links(store, case_id)
+    if len(links) != 1:
+        return None
+    link = links[0]
+    try:
+        job = store.job(link["job_id"])
+        repository = store.repository(job["repository_id"])
+        report = service.read_report(settings, job)
+        candidate = service.finding(report, link["candidate_id"])
+        source = service.source(settings, store, job, candidate["file"])
+    except (KeyError, TypeError, ValueError, OSError, UnicodeError,
+            subprocess.CalledProcessError, subprocess.TimeoutExpired):
+        return None
+    if candidate.get("source_sha256") and candidate["source_sha256"] != source["sha256"]:
+        return None
+    binding = {
+        "case_id": case_id,
+        "job_id": job["id"],
+        "candidate_id": link["candidate_id"],
+        "repository_id": job["repository_id"],
+        "target_repository": repository["name"],
+        "target_commit": job["spec"].get("commit"),
+        "git_tree": job["spec"].get("git_tree"),
+        "report_sha256": job.get("report_sha256"),
+        "snapshot_sha256": report.get("snapshot_sha256"),
+        "source_file": source["file"],
+        "source_sha256": source["sha256"],
+        "source_blob": source.get("blob"),
+        "archive_binding": source.get("archive_binding"),
+        "line": candidate.get("line"),
+        "symbol": candidate.get("symbol"),
+        "rule_id": candidate.get("rule_id"),
+    }
+    if not all(binding.get(key) for key in (
+        "target_repository", "target_commit", "git_tree", "report_sha256",
+        "snapshot_sha256", "source_file", "source_sha256", "rule_id",
+    )):
+        return None
+    return binding
+
+
+def _product_validation_is_bound(settings, store, ops, case_id, operation_id):
+    try:
+        task = ops.get(operation_id)
+        spec = task.get("spec") or {}
+        if (task.get("kind") != "validation"
+                or task.get("status") not in {"completed", "completed_with_limitations"}
+                or spec.get("case_id") != case_id
+                or spec.get("validation_scope") != "product_level"
+                or spec.get("harness_id") not in PRODUCT_LEVEL_VALIDATOR_IDS):
+            return False
+        result = ops.result(operation_id)
+        if (result.get("validation_gate") != "passed"
+                or result.get("case_id") != case_id
+                or result.get("validation_scope") != "product_level"
+                or result.get("reachability_status") != "verified"
+                or result.get("harness_id") != spec.get("harness_id")):
+            return False
+        binding = _case_product_validation_binding(settings, store, case_id)
+        if not binding:
+            return False
+        manifest_path = ops.directory(operation_id) / "input-manifest.json"
+        raw_manifest = manifest_path.read_bytes()
+        if len(raw_manifest) > 256 * 1024:
+            return False
+        if hashlib.sha256(raw_manifest).hexdigest() != result.get("input_manifest_sha256"):
+            return False
+        manifest = json.loads(raw_manifest)
+        if not isinstance(manifest, dict):
+            return False
+        for record in (spec, result, manifest):
+            if (record.get("validation_scope") != "product_level"
+                    or record.get("harness_id") != spec.get("harness_id")
+                    or record.get("product_validation_binding") != binding):
+                return False
+            if (record.get("target_repository") != binding["target_repository"]
+                    or record.get("target_commit") != binding["target_commit"]):
+                return False
+        return True
+    except (KeyError, TypeError, ValueError, OSError, UnicodeError,
+            subprocess.CalledProcessError, subprocess.TimeoutExpired):
+        return False
+
+
+def _case_review_status(settings, store, ops, case_id):
     assessments = ops.assessments(case_id)
     human_assessments = [item for item in assessments if item.get("reviewer_kind") == "human"]
     latest = human_assessments[-1] if human_assessments else None
@@ -826,17 +916,7 @@ def _case_review_status(store, ops, case_id):
             and assessment.get("remaining_unknowns")
             and set(assessment["evidence_ids"]).issubset(valid_evidence_ids)):
         for operation_id in assessment.get("validation_operation_ids", []):
-            try:
-                task = ops.get(operation_id)
-                if (task["kind"] != "validation" or task["spec"].get("case_id") != case_id
-                        or task["status"] not in {"completed", "completed_with_limitations"}):
-                    continue
-                result = ops.result(operation_id)
-            except (KeyError, ValueError):
-                continue
-            if (result.get("validation_gate") == "passed"
-                    and result.get("case_id") == case_id
-                    and result.get("reachability_status") == "verified"):
+            if _product_validation_is_bound(settings, store, ops, case_id, operation_id):
                 validated_by = {
                     "assessment_id": assessment.get("id"),
                     "validation_operation_id": operation_id,
@@ -851,13 +931,13 @@ def _case_review_status(store, ops, case_id):
     }
 
 
-def _validated_cases_for_audit(store, ops, audit_id):
+def _validated_cases_for_audit(settings, store, ops, audit_id):
     confirmed = []
     for case in store.cases():
         linked = [item for item in case.get("links", []) if item.get("job_id") == audit_id]
         if not linked:
             continue
-        status = _case_review_status(store, ops, case["id"])
+        status = _case_review_status(settings, store, ops, case["id"])
         if status["validated_vulnerability"]:
             confirmed.append({
                 "case_id": case["id"],
@@ -1183,7 +1263,7 @@ def install_routes(app: FastAPI, settings, store):
 
     @router.get("/cases/review-statuses")
     def case_review_statuses():
-        return {"items": [{"case_id": case["id"], **_case_review_status(store, ops, case["id"])}
+        return {"items": [{"case_id": case["id"], **_case_review_status(settings, store, ops, case["id"])}
                           for case in store.cases()]}
 
     @router.get("/agent/evaluation-summary")
@@ -2230,7 +2310,7 @@ def install_routes(app: FastAPI, settings, store):
         report = service.read_report(settings, job)
         from .smart_audit import risk_snapshot as build_risk_snapshot
         snapshot = build_risk_snapshot(settings, store, ops, job, report)
-        confirmed_cases = _validated_cases_for_audit(store, ops, key)
+        confirmed_cases = _validated_cases_for_audit(settings, store, ops, key)
         snapshot["validated_vulnerability"] = len(confirmed_cases)
         snapshot["confirmed_cases"] = confirmed_cases
         items = snapshot["items"]
@@ -2300,7 +2380,7 @@ def install_routes(app: FastAPI, settings, store):
             try:
                 report = service.read_report(settings, job)
                 risk = build_risk_snapshot(settings, store, ops, job, report)
-                confirmed_cases = _validated_cases_for_audit(store, ops, job["id"])
+                confirmed_cases = _validated_cases_for_audit(settings, store, ops, job["id"])
             except Exception as exc:
                 limitations.append({
                     "audit_id": job["id"],
@@ -2402,7 +2482,7 @@ def install_routes(app: FastAPI, settings, store):
         risk = build_risk_snapshot(settings, store, ops, job, report)
         coverage = coverage_snapshot(job, report)
         triage = scan_triage_summary(key)
-        confirmed_cases = _validated_cases_for_audit(store, ops, key)
+        confirmed_cases = _validated_cases_for_audit(settings, store, ops, key)
         validated_count = sum(1 for item in confirmed_cases)
         risk["validated_vulnerability"] = validated_count
         risk["confirmed_cases"] = confirmed_cases
@@ -2861,7 +2941,7 @@ def install_routes(app: FastAPI, settings, store):
                     "vulnerability_state": result.get("vulnerability_state", "candidate"),
                 }
             operation_summaries.append(summary)
-        review_status = _case_review_status(store, ops, case_id)
+        review_status = _case_review_status(settings, store, ops, case_id)
         validation_operations = [item for item in operation_summaries if item.get("kind") == "validation"]
         if not validation_operations:
             plans_ready = bool(records) and all(row.get("poc_plan", {}).get("state") == "plan_only"
@@ -3228,16 +3308,10 @@ def install_routes(app: FastAPI, settings, store):
         if body.outcome in {"confirmed", "reportable"}:
             if len({(item["job_id"], item["candidate_id"]) for item in links}) != 1:
                 raise ValueError("confirmed/reportable is disabled for multi-candidate cases; create one case per candidate and review each separately")
-            eligible = False
-            for oid in body.validation_operation_ids:
-                task = ops.get(oid)
-                if task["kind"] == "validation" and task["spec"].get("case_id") == case_id and task["status"] in {"completed", "completed_with_limitations"}:
-                    result = ops.result(oid)
-                    if (result.get("validation_gate") == "passed" and result.get("case_id") == case_id
-                            and result.get("reachability_status") == "verified"):
-                        eligible = True
+            eligible = any(_product_validation_is_bound(settings, store, ops, case_id, oid)
+                           for oid in body.validation_operation_ids)
             if not eligible or not body.evidence_ids or not body.remaining_unknowns:
-                raise ValueError("confirmed/reportable requires a passed bound runtime gate, verified product reachability, case evidence IDs, and explicit remaining unknowns")
+                raise ValueError("只有完成产品本身的验证、且验证记录与当前候选和扫描源码完全匹配，才能标记为已确认或可报告；请补充本案证据和仍需确认的问题。")
         return ops.assessment(case_id, record)
 
     app.include_router(router)
