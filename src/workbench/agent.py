@@ -784,14 +784,14 @@ def audit_task_consent_preview(plan, workflow_sha256, include_paths, max_candida
     r1_budget = {
         "mode": "single_shot",
         "requests_per_candidate": 1,
-        "max_output_tokens_per_request": 1200,
+        "max_output_tokens_per_request": None,
         "provider_request_timeout_seconds": MAX_PROVIDER_REQUEST_SECONDS,
         "max_provider_retries": 1,
     }
     r2_budget = {
         "mode": "tool_agent",
         "continuous_until_terminal_condition": True,
-        "max_output_tokens_per_request": 1000,
+        "max_output_tokens_per_request": None,
         "provider_request_timeout_seconds": MAX_PROVIDER_REQUEST_SECONDS,
         "max_provider_retries": 1,
         "max_validation_repairs": MAX_VALIDATION_REPAIRS,
@@ -800,7 +800,7 @@ def audit_task_consent_preview(plan, workflow_sha256, include_paths, max_candida
         "skeptic_uses_separate_stage_limit": True,
         "artifact_generation_stage_enabled": True,
         "max_artifact_generation_calls": MAX_ARTIFACT_GENERATION_CALLS,
-        "artifact_output_tokens_per_request": 1000,
+        "artifact_output_tokens_per_request": None,
     }
     budgets = {
         "r1_max_candidates": max_candidates,
@@ -900,12 +900,12 @@ def audit_task_consent_preview(plan, workflow_sha256, include_paths, max_candida
             "local_total_model_call_budget": "none",
             "local_total_tool_call_budget": "none",
             "local_total_wall_time_budget": "none",
-            "per_request_output_limit": "as listed in per_candidate_budgets",
+            "per_request_output_limit": "none_locally_provider_model_default_applies",
             "provider_request_timeout_seconds": MAX_PROVIDER_REQUEST_SECONDS,
             "termination": ["Provider final response", "user cancellation", "Provider/API error", "three consecutive tool turns without new source evidence"],
         },
         "source_disclosure": [
-            "Legacy max_steps, max_total_input_tokens, max_total_output_tokens, and timeout_seconds request fields, if sent by older clients, are accepted only for compatibility and ignored for continuous investigations; the effective limits are per-request output and 45-second request timeout.",
+            "Legacy max_steps, max_total_input_tokens, max_total_output_tokens, timeout_seconds, and max_output_tokens request fields, if sent by older clients, are accepted only for compatibility and ignored for continuous investigations; the platform sets no output-token cap, while Provider/model limits and the 45-second per-request timeout still apply.",
             "At most the user-authorized number of eligible finding metadata, bounded candidate-file excerpts, and recorded evidence obligations from this fixed scan will be sent.",
             "Candidate source is limited to the scanner report inventory and this audit include-path scope; model-selected paths and additional repository tools are not enabled for R1.",
             "If the deterministic R2 gate is met, bounded fixed-commit history, exact-symbol source excerpts, and syntax-only C/C++ callsite candidates from the immutable scan inventory and audit include-path scope may also be sent using read-only tools.",
@@ -915,7 +915,7 @@ def audit_task_consent_preview(plan, workflow_sha256, include_paths, max_candida
             "Credential-like values are redacted by the current fixed redaction policy before Provider transmission.",
             "Candidate selection is deterministic and limited by the explicitly authorized candidate count; after static scanning, exact total, selected, created, queued, running, and not-triaged counts are recorded. Candidates beyond the user-authorized count remain untriaged and are not considered safe; more than 10,000 report candidates per endpoint fails closed without model queueing and requires narrower or separately reviewed batches.",
             "An automatic operation can authorize at most eight fixed endpoints, with a dedicated queue ceiling of 80,000 Agent operations. If the queue cannot accept every selected candidate for an endpoint, none from that endpoint are enqueued; the endpoint status and full not-triaged count are retained for a fresh scoped authorization.",
-            "OHScanner does not impose cumulative investigation token, USD, model/tool-call, or total wall-clock caps. Provider account billing/quota still applies; per-request output limits, 45-second request timeouts, bounded read-only tool time/byte limits, user cancellation, Provider/API errors, and the no-progress guard remain active.",
+            "OHScanner does not impose per-request or cumulative investigation output-token caps, cumulative token/USD/model-call/tool-call limits, or a total wall-clock cap. Provider/model response limits, account billing/quota, 45-second request timeouts, bounded read-only tool time/byte limits, user cancellation, Provider/API errors, and the no-progress guard still apply.",
         ],
         "budgets": budgets,
         "per_candidate_budgets": {"r1": r1_budget,
@@ -3706,7 +3706,12 @@ def execute_agent(settings, store, ops, task, client=None):
     # limits from their persisted plan. Retain the legacy value only when the
     # task explicitly carries a bounded-policy spec.
     max_steps = spec.get("max_steps", 0 if spec.get("continuous_investigation") is True else 4)
-    per_call_tokens = spec["max_output_tokens"]
+    # Continuous investigations do not set a platform output-token cap.
+    # Legacy bounded tasks retain their recorded per-request and aggregate limits.
+    per_call_tokens = None if continuous else spec.get("max_output_tokens")
+    if not continuous and (not isinstance(per_call_tokens, int)
+                           or isinstance(per_call_tokens, bool) or per_call_tokens < 128):
+        raise ValueError("invalid bounded per-request output token budget")
     tool_trace, model_trace = [], []
     evidence_texts = {initial_evidence_id: [initial_context["source_excerpt"]]}
     initial_lines = _initial_source_lines(
@@ -3755,15 +3760,16 @@ def execute_agent(settings, store, ops, task, client=None):
             raise ValueError("agent model call budget exhausted")
         if ops.get(task["id"])["cancel_requested"]:
             raise InterruptedError("agent investigation cancelled")
-        remaining_tokens = (per_call_tokens if continuous else
-                            spec["max_total_output_tokens"] - output_reserved)
-        # Preserve a small response reserve for each bounded server-validated
-        # repair; measured Provider usage replaces reservations as calls finish.
-        if not continuous and mode == "tool_agent" and calls < max_model_calls:
-            remaining_tokens -= min(128 * MAX_VALIDATION_REPAIRS, spec["max_total_output_tokens"])
-        requested_tokens = min(per_call_tokens, remaining_tokens)
-        if requested_tokens < 128:
-            raise ValueError("agent total output token budget exhausted")
+        requested_tokens = None
+        if not continuous:
+            remaining_tokens = spec["max_total_output_tokens"] - output_reserved
+            # Preserve a small response reserve for each bounded server-validated
+            # repair; measured Provider usage replaces reservations as calls finish.
+            if mode == "tool_agent" and calls < max_model_calls:
+                remaining_tokens -= min(128 * MAX_VALIDATION_REPAIRS, spec["max_total_output_tokens"])
+            requested_tokens = min(per_call_tokens, remaining_tokens)
+            if requested_tokens < 128:
+                raise ValueError("agent total output token budget exhausted")
         if input_override is not None:
             request_input = input_override
         elif continuous:
@@ -3772,8 +3778,9 @@ def execute_agent(settings, store, ops, task, client=None):
             request_input = input_items
         payload = {"model": config.model,
                    "instructions": instruction_override or _INSTRUCTIONS,
-                   "input": request_input, "store": False,
-                   "max_output_tokens": requested_tokens}
+                   "input": request_input, "store": False}
+        if requested_tokens is not None:
+            payload["max_output_tokens"] = requested_tokens
         reasoning_effort = _reasoning_effort(config, tool_calls=with_tools)
         if reasoning_effort:
             payload["reasoning"] = {"effort": reasoning_effort}
@@ -3853,7 +3860,8 @@ def execute_agent(settings, store, ops, task, client=None):
                 or not 1 <= attempts_used <= effective_provider_retries + 1):
             raise ValueError("Provider transport attempt count exceeded the authorized budget")
         provider_http_attempts += attempts_used
-        retry_output_reserve += requested_tokens * (attempts_used - 1)
+        if requested_tokens is not None:
+            retry_output_reserve += requested_tokens * (attempts_used - 1)
         response_hash = _hash(response)
         try:
             usage = _usage(response)
@@ -3885,7 +3893,7 @@ def execute_agent(settings, store, ops, task, client=None):
         else:
             cached_input_usage_complete = False
         if isinstance(usage["output_tokens"], int):
-            if (usage["output_tokens"] > requested_tokens
+            if ((requested_tokens is not None and usage["output_tokens"] > requested_tokens)
                     or (not continuous and output_total + retry_output_reserve
                         + usage["output_tokens"] > spec["max_total_output_tokens"])):
                 ops.event(task["id"], "agent_output_budget_exceeded",
@@ -4545,6 +4553,8 @@ def execute_agent(settings, store, ops, task, client=None):
             "input_budget_tokens": None if continuous else spec.get("max_total_input_tokens"),
             "output_budget_tokens": None if continuous else spec.get("max_total_output_tokens"),
             "per_request_output_limit_tokens": per_call_tokens,
+            "per_request_output_limit_policy": (
+                "none_locally_provider_model_default_applies" if continuous else "bounded"),
             "local_cumulative_token_budget": "none" if continuous else "bounded",
             "total_tokens": input_total + output_total if input_usage_complete and output_usage_complete else None,
             "cost": "unknown",

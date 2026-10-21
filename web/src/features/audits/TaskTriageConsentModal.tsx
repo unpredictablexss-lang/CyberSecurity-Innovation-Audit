@@ -74,7 +74,7 @@ export default function TaskTriageConsentModal({ open, preview, loading = false,
           {consentExpiry || "服务端未提供固定到期时间；任务创建时会重验来源、模型和范围摘要，绑定项变化会拒绝创建。"}
         </Descriptions.Item>
       </Descriptions>}
-      <Alert type="info" showIcon message="调查费用与取消" description="平台没有整个调查累计 Token 或费用上限；模型服务按其账户费率和额度计费。任务运行期间可以随时取消。" />
+      <Alert type="info" showIcon message="调查费用与取消" description="平台不限制单次请求或整次调查的 Token 数量，也不设累计费用上限；模型服务自身的上下文、输出、账户额度和计费规则仍适用。任务运行期间可以随时取消。" />
       {!eligible && <Alert type="error" showIcon message={preview?.reason || "当前无法生成可用的授权预览；没有任务会被创建。"} />}
       <Collapse items={[{ key: "details", label: "查看将发送给模型的内容与技术详情", children: <>
         <Typography.Paragraph type="secondary">
@@ -99,8 +99,8 @@ export default function TaskTriageConsentModal({ open, preview, loading = false,
               <li key={lineIndex}>{line.replace(/\bR1\b/g, "初步调查").replace(/\bR2\b/g, "深入追查")}</li>)}</ul>
             <Descriptions size="small" column={1}>
               <Descriptions.Item label="候选超限处理">超过每个版本的授权上限时，未入选候选保持待研判，不会视为安全。</Descriptions.Item>
-              <Descriptions.Item label="单次模型请求上限">{manifest.per_candidate_budgets?.r1?.max_output_tokens_per_request || "未知"} tokens；单次超时 {manifest.per_candidate_budgets?.r1?.provider_request_timeout_seconds || "未知"} 秒</Descriptions.Item>
-              {manifest.per_candidate_budgets?.r2 && <Descriptions.Item label="深入追查单次请求上限">{manifest.per_candidate_budgets.r2.max_output_tokens_per_request} tokens；单次超时 {manifest.per_candidate_budgets.r2.provider_request_timeout_seconds} 秒</Descriptions.Item>}
+              <Descriptions.Item label="单次输出 Token 限制">{manifest.per_candidate_budgets?.r1?.max_output_tokens_per_request == null ? "平台不设上限；模型或服务商自身限制仍适用" : String(manifest.per_candidate_budgets.r1.max_output_tokens_per_request) + " tokens"}；单次超时 {manifest.per_candidate_budgets?.r1?.provider_request_timeout_seconds || "未知"} 秒</Descriptions.Item>
+              {manifest.per_candidate_budgets?.r2 && <Descriptions.Item label="深入追查输出 Token 限制">{manifest.per_candidate_budgets.r2.max_output_tokens_per_request == null ? "平台不设上限；模型或服务商自身限制仍适用" : String(manifest.per_candidate_budgets.r2.max_output_tokens_per_request) + " tokens"}；单次超时 {manifest.per_candidate_budgets.r2.provider_request_timeout_seconds} 秒</Descriptions.Item>}
               <Descriptions.Item label="扫描计划 SHA-256">{item.plan_sha256 || manifest.binding?.plan_sha256 || "未返回"}</Descriptions.Item>
               <Descriptions.Item label="工作流 SHA-256">{item.workflow_sha256 || manifest.binding?.workflow_sha256 || "未返回"}</Descriptions.Item>
               <Descriptions.Item label="授权摘要 SHA-256">{item.consent_sha256 || "未返回"}</Descriptions.Item>

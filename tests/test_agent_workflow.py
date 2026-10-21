@@ -673,6 +673,9 @@ class ProviderConfigTests(unittest.TestCase):
         self.assertFalse(preview["cost_budget"]["platform_enforced"])
         self.assertFalse(preview["platform_cost_budget_enforced"])
         self.assertEqual(preview["manifest"]["budgets"]["r1_max_candidates"], 2)
+        self.assertIsNone(preview["manifest"]["budgets"]["r1_max_output_tokens_per_request"])
+        self.assertEqual(preview["manifest"]["usage_policy"]["per_request_output_limit"],
+                         "none_locally_provider_model_default_applies")
         self.assertIsNone(preview["manifest"]["budgets"]["max_total_model_calls"])
         self.assertNotIn("aggregate_max_input_tokens", preview["manifest"]["budgets"])
         self.assertNotIn("aggregate_max_output_tokens", preview["manifest"]["budgets"])
@@ -1743,7 +1746,7 @@ class CandidateArtifactGenerationTests(unittest.TestCase):
             def response(value):
                 return {"status": "completed", "output": [{"type": "message", "content": [
                     {"type": "output_text", "text": json.dumps(value)}]}],
-                    "usage": {"input_tokens": 100, "output_tokens": 120, "total_tokens": 220}}
+                    "usage": {"input_tokens": 100, "output_tokens": 1501, "total_tokens": 1601}}
             def create(self, payload):
                 self.payloads.append(payload)
                 format_name = payload.get("text", {}).get("format", {}).get("name")
@@ -1786,7 +1789,7 @@ class CandidateArtifactGenerationTests(unittest.TestCase):
                     return {"status": "completed", "output": [{
                         "type": "function_call", "name": "read_candidate_source",
                         "arguments": "{}", "call_id": "artifact-read-source"}],
-                        "usage": {"input_tokens": 100, "output_tokens": 120, "total_tokens": 220}}
+                        "usage": {"input_tokens": 100, "output_tokens": 1501, "total_tokens": 1601}}
                 output = next(item for item in payload["input"]
                     if item.get("type") == "function_call_output")
                 evidence_id = json.loads(output["output"])["evidence_id"]
@@ -1812,7 +1815,7 @@ class CandidateArtifactGenerationTests(unittest.TestCase):
 
         task = {"id": "task-artifact", "spec": {"job_id": "job-artifact",
             "candidate_id": candidate["id"], "mode": "tool_agent",
-            "max_output_tokens": 1200, "continuous_investigation": True,
+            "max_output_tokens": None, "continuous_investigation": True,
             "source_submission_approved": True, "provider_fingerprint": "unused",
             "prompt_version": agent.PROMPT_VERSION, "tool_policy_version": agent.TOOL_POLICY_VERSION,
             "include_paths": ["src"]}}
@@ -1835,7 +1838,8 @@ class CandidateArtifactGenerationTests(unittest.TestCase):
         result, client, preview = self._run("likely_true_positive")
         self.assertEqual(preview["budgets"]["artifact_generation_stage_enabled"], True)
         self.assertEqual(preview["budgets"]["max_artifact_generation_calls"], 1)
-        self.assertEqual(preview["budgets"]["artifact_output_tokens_per_request"], 1200)
+        self.assertIsNone(preview["budgets"]["max_output_tokens"])
+        self.assertIsNone(preview["budgets"]["artifact_output_tokens_per_request"])
         self.assertIn(agent.ARTIFACT_GENERATION_DISCLOSURE, preview["stage_disclosure"])
         self.assertEqual(result["artifact_generation"]["status"], "completed")
         self.assertEqual(result["artifact_generation"]["calls_used"], 1)
@@ -1850,7 +1854,11 @@ class CandidateArtifactGenerationTests(unittest.TestCase):
         self.assertEqual(request_phases[-3:],
                          ["structured_output", "skeptic_review", "artifact_generation"])
         self.assertGreaterEqual(request_phases.count("tool_call"), 1)
-        self.assertEqual(result["model_usage"]["output_tokens"], len(request_phases) * 120)
+        self.assertGreater(max(row["usage"]["output_tokens"] for row in result["model_calls"]), 1200)
+        self.assertIsNone(result["model_usage"]["per_request_output_limit_tokens"])
+        self.assertEqual(result["model_usage"]["per_request_output_limit_policy"],
+                         "none_locally_provider_model_default_applies")
+        self.assertTrue(all("max_output_tokens" not in payload for payload in client.payloads))
         self.assertEqual(result["vulnerability_state"], "candidate")
         self.assertEqual(result["validated_vulnerability"], 0)
 
@@ -4202,6 +4210,48 @@ class AgentWorkerEnvironmentTests(unittest.TestCase):
         self.assertEqual(agent_child["OHSCANNER_LLM_MODEL"], "model-x")
         self.assertEqual(agent_child["OHSCANNER_LLM_PROXY_URL"], "http://proxy.example")
         self.assertNotIn("OHSCANNER_LLM_UNRECOGNIZED_SECRET", agent_child)
+
+    def test_scan_supervisor_retains_allowlisted_provider_identity_for_consent_queueing(self):
+        from src.workbench import worker
+        provider = {
+            "OHSCANNER_LLM_BASE_URL": "https://provider.example/v1",
+            "OHSCANNER_LLM_MODEL": "model-x",
+            "OHSCANNER_LLM_API_KEY": "secret-value",
+            "OHSCANNER_LLM_PROXY_URL": "",
+        }
+        with patch.dict(os.environ, provider, clear=True), \
+                patch.object(sys, "argv", ["worker"]), \
+                patch.object(worker.Settings, "from_env", return_value=object()), \
+                patch.object(worker, "Worker") as worker_class:
+            worker.main()
+            self.assertEqual(os.environ["OHSCANNER_LLM_API_KEY"], "secret-value")
+            worker_class.assert_called_once_with(worker.Settings.from_env.return_value)
+            worker_class.return_value.run.assert_called_once_with(False)
+            detector_child = worker.worker_child_environment(os.environ)
+            self.assertFalse(any(key.startswith("OHSCANNER_LLM_") for key in detector_child))
+
+    def test_launcher_forwards_provider_only_to_scan_supervisor_and_agent_worker(self):
+        from src.workbench import __main__ as launcher
+        provider = {
+            "OHSCANNER_LLM_BASE_URL": "https://provider.example/v1",
+            "OHSCANNER_LLM_MODEL": "model-x",
+            "OHSCANNER_LLM_API_KEY": "secret-value",
+            "OHSCANNER_LLM_PROXY_URL": "",
+            "OHSCANNER_LLM_UNRECOGNIZED_SECRET": "must-not-forward",
+        }
+        with patch.dict(os.environ, provider, clear=True), \
+                patch.object(sys, "argv", ["workbench", "serve", "--port", "18787"]), \
+                patch.object(launcher.subprocess, "Popen") as popen:
+            popen.return_value.poll.return_value = 1
+            with self.assertRaisesRegex(RuntimeError, "API or Worker stopped"):
+                launcher.main()
+        calls = popen.call_args_list
+        self.assertEqual(len(calls), 4)
+        scan_supervisor = calls[0].kwargs["env"]
+        validation_worker = calls[2].kwargs["env"]
+        self.assertEqual(scan_supervisor["OHSCANNER_LLM_API_KEY"], "secret-value")
+        self.assertNotIn("OHSCANNER_LLM_UNRECOGNIZED_SECRET", scan_supervisor)
+        self.assertFalse(any(key.startswith("OHSCANNER_LLM_") for key in validation_worker))
 
 
 class AgentBlindReviewTests(unittest.TestCase):

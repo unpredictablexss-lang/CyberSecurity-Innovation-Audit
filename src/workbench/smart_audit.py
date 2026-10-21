@@ -7,7 +7,7 @@ from .store import now
 from .triage_limits import (MAX_TRIAGE_CANDIDATES_PER_ENDPOINT,
                             R1_CANDIDATE_SELECTION_POLICY, R1_OVERFLOW_POLICY)
 
-RISK_POLICY_VERSION = "ohscanner-evidence-risk-tiers-0.2.0"
+RISK_POLICY_VERSION = "ohscanner-evidence-risk-tiers-0.2.1"
 
 
 def _digest(value):
@@ -374,7 +374,7 @@ def risk_snapshot(settings, store, ops, job, report):
         "validated_vulnerability": 0,
         "items": items,
         "limitations": [
-            "A high-confidence tier requires either a complete fixed-source binding and quoted human R0 review of every obligation, or a completed tool-Agent evidence graph with cross-file citations for every obligation, a completed independent skeptic with no unresolved counterevidence, and an accepted report-validation stage; either path remains candidate and does not prove semantic support or product impact.",
+            "A high-confidence tier requires a complete fixed-source binding and either a quoted human R0 review of every obligation or a completed tool-Agent evidence graph with a bound source citation for every obligation and at least one cross-file citation across the trace, plus a completed independent skeptic and accepted report-validation stage; either path remains candidate and does not prove semantic support or product impact.",
             "Agent assessment, confidence, or citation presence alone do not raise a risk tier.",
             "Unreviewed, skipped, budget-limited, partial, or unknown items are not safe and remain visible as untriaged or requiring validation.",
             "Validated vulnerabilities are counted only through the existing human assessment and passed runtime-reachability gate; this static risk view does not set that state.",
@@ -687,7 +687,7 @@ def enqueue_authorized_triage(settings, store, ops, job):
             "r2_status": "not_requested",
         })
     preview_spec = {
-        "mode": "single_shot", "max_output_tokens": 1200,
+        "mode": "single_shot", "max_output_tokens": None,
         "provider_request_timeout_seconds": 45, "max_provider_retries": 1,
         "continuous_investigation": True,
         "consent_nonce": snapshot.get("consent_nonce"),
@@ -915,7 +915,7 @@ def enqueue_authorized_r2_followups(settings, store, ops, batch_id):
     selected = eligible[:limit] if not auth_error else []
     selected_ids = {item[0]["id"] for item in selected}
     r2_preview_spec = {
-        "mode": "tool_agent", "max_output_tokens": 1000,
+        "mode": "tool_agent", "max_output_tokens": None,
         "provider_request_timeout_seconds": 45, "max_provider_retries": 1,
         "continuous_investigation": True,
         "include_paths": list(job.get("spec", {}).get("include_paths", [])),

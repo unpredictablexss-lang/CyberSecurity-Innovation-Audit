@@ -264,7 +264,7 @@ export default function AgentAssessment({ result, reviews = [], onSubmit }: { re
       <Descriptions.Item label="候选">{binding.candidate_id || "—"}</Descriptions.Item>
       <Descriptions.Item label="固定提交">{binding.commit || "—"}</Descriptions.Item>
       <Descriptions.Item label="源码位置" span={2}>{binding.file || "—"}</Descriptions.Item>
-      <Descriptions.Item label="Token 用量">{result.model_usage ? (result.model_usage.total_tokens ?? "未知") + " tokens；" + (result.model_usage.local_cumulative_token_budget === "none" ? "平台累计上限：无" : "历史任务输入/输出预算 " + (result.model_usage.input_budget_tokens ?? "未知") + "/" + (result.model_usage.output_budget_tokens ?? "未知")) + "；单次输出上限 " + (result.model_usage.per_request_output_limit_tokens ?? "未知") + " tokens" : "—"}</Descriptions.Item>
+      <Descriptions.Item label="Token 用量">{result.model_usage ? (result.model_usage.total_tokens ?? "未知") + " tokens；" + (result.model_usage.local_cumulative_token_budget === "none" ? "平台累计上限：无" : "历史任务输入/输出预算 " + (result.model_usage.input_budget_tokens ?? "未知") + "/" + (result.model_usage.output_budget_tokens ?? "未知")) + "；" + (result.model_usage.per_request_output_limit_policy === "none_locally_provider_model_default_applies" ? "平台单次输出上限：无（模型或服务商限制仍适用）" : result.model_usage.per_request_output_limit_tokens == null ? "单次输出上限：未知" : "单次输出上限 " + result.model_usage.per_request_output_limit_tokens + " tokens") : "—"}</Descriptions.Item>
       <Descriptions.Item label="缓存命中输入（输入内）">{result.model_usage?.cached_input_tokens ?? "未知"} tokens</Descriptions.Item>
       <Descriptions.Item label="推理 Token（输出内）">{result.model_usage?.reasoning_tokens ?? "未知"} tokens</Descriptions.Item>
       <Descriptions.Item label="结构化修复次数">{result.validation_repair_attempts ?? "旧结果未记录"}</Descriptions.Item>
