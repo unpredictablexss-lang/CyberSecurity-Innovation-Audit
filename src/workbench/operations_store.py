@@ -1042,8 +1042,8 @@ class Operations:
             self.store.cancel(job)
         for target_id in cancelled_ids:
             target_kind = self.get(target_id)["kind"]
-            message = ("Batch source sync cancellation requested; active Git transfer will stop safely"
-                       if target_kind == "source_sync_batch" else
+            message = ("Source sync cancellation requested; active Git transfer will stop safely"
+                       if target_kind in {"source_sync", "source_sync_batch"} else
                        "Cancellation propagated to the paired R1/R2 experiment" if pair_id else
                        "Cancellation requested")
             self.event(target_id, "cancel_requested", message)
@@ -1055,6 +1055,16 @@ class Operations:
                 "SELECT 1 FROM operation_cancellations WHERE operation_id=?", (key,)
             ).fetchone()
         return row is not None
+
+    def source_sync_cancel_requested(self, key):
+        """Read cancellation state for a running single or batch source sync."""
+        with self.store.connect() as db:
+            row = db.execute(
+                "SELECT o.cancel_requested, EXISTS("
+                "SELECT 1 FROM operation_cancellations c WHERE c.operation_id=o.id) "
+                "FROM operations o WHERE o.id=?", (key,)
+            ).fetchone()
+        return bool(row and (row[0] or row[1]))
 
     def finish(self, key, result=None, error=None, state=None):
         digest = None

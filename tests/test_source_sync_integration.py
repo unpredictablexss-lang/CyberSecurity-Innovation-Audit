@@ -3,14 +3,18 @@
 The production handler still validates the approved HTTPS URL. A narrow test
 transport shim maps only that already-approved URL to a temporary bare Git
 fixture and permits Git's local file transport for the clone/fetch command.
-These tests exercise handler, repository registration, immutable scan planning,
-and enqueue behavior; they do not test HTTPS, redirects, or network security.
+These tests exercise the shared production command builder through a narrow local
+transport seam. They verify clone/fetch orchestration, cleanup and cancellation;
+they do not test HTTPS, redirects, or network security.
 """
 
 import os
 from pathlib import Path
 import subprocess
+import sys
 import tempfile
+import threading
+import time
 import unittest
 from unittest.mock import patch
 
@@ -89,31 +93,30 @@ class SourceSyncHandlerIntegrationTests(unittest.TestCase):
         return git(self.work, "rev-parse", "HEAD")
 
     def _transport_shim(self, calls, commands):
-        real_run = subprocess.run
-
-        def run(command, *args, **kwargs):
+        def start(command, environment):
             command = list(command)
             operation = next((item for item in ("clone", "fetch") if item in command), None)
             if command and command[0] == "git" and operation and APPROVED_URL in command:
                 calls.append((operation, APPROVED_URL))
-                commands.append((operation, list(command), dict(kwargs.get("env") or {})))
+                commands.append((operation, list(command), dict(environment)))
                 command[command.index(APPROVED_URL)] = str(self.bare)
 
-                # The handler's production transport restrictions intentionally
-                # reject file URLs. Remove only that protocol setting in this test
-                # seam; the test is about handler orchestration, not transport policy.
+                # The handler rejects file URLs in production. This fixture seam
+                # maps the approved HTTPS URL to a local bare repository.
                 index = 0
                 while index < len(command) - 1:
                     if command[index:index + 2] == ["-c", "protocol.file.allow=never"]:
                         del command[index:index + 2]
                     else:
                         index += 1
-                environment = dict(kwargs.get("env") or os.environ)
+                environment = dict(environment)
                 environment["GIT_ALLOW_PROTOCOL"] = "file"
-                kwargs["env"] = environment
-            return real_run(command, *args, **kwargs)
+            return subprocess.Popen(
+                command, env=environment, start_new_session=True,
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+            )
 
-        return run
+        return start
 
     def _queue_scan_after_sync(self, *, expected_operation, pre_register=False):
         target = self.cache / "source-sync-fixture"
@@ -139,7 +142,7 @@ class SourceSyncHandlerIntegrationTests(unittest.TestCase):
             "url": APPROVED_URL,
             "timeout_seconds": 60,
             "scan_after_sync": True,
-            "revision": REVISION,
+            "revision": "HEAD" if pre_register else REVISION,
             "include_paths": ["."],
             "detector_ids": [DETECTOR_ID],
             "audit_mode": "static_only",
@@ -154,7 +157,7 @@ class SourceSyncHandlerIntegrationTests(unittest.TestCase):
         # execute() is the operation Worker's child handler. We invoke it directly
         # with a temporary local-Git transport shim; no HTTP server, port, or
         # outbound network request is created by this test.
-        with patch.object(operations.subprocess, "run",
+        with patch.object(operations, "_start_source_sync_process",
                           side_effect=self._transport_shim(calls, commands)):
             result = execute(self.settings, self.store, self.ops, claimed)
         self.ops.finish(task["id"], result)
@@ -191,6 +194,11 @@ class SourceSyncHandlerIntegrationTests(unittest.TestCase):
         self.assertEqual(scan["spec"]["commit"], expected_commit)
         expected_tree = git(self.bare, "rev-parse", expected_commit + "^{tree}")
         self.assertEqual(scan["spec"]["git_tree"], expected_tree)
+        local_head = git(target, "rev-parse", "HEAD")
+        local_tree = git(target, "rev-parse", local_head + "^{tree}")
+        self.assertEqual(result["local_head_after_sync"], local_head)
+        self.assertEqual(result["git_tree_after_sync"], local_tree)
+        self.assertEqual(result["scan_tree"], expected_tree)
         self.assertEqual(result["scan_commit"], expected_commit)
         self.assertEqual(result["scan_status"], "queued")
 
@@ -207,6 +215,69 @@ class SourceSyncHandlerIntegrationTests(unittest.TestCase):
 
     def test_source_sync_handler_local_transport_shim_fetches_existing_repo_before_queueing(self):
         self._queue_scan_after_sync(expected_operation="fetch", pre_register=True)
+
+    def _task(self):
+        task = self.ops.create("source_sync", {
+            "name": REPOSITORY_NAME, "url": APPROVED_URL, "timeout_seconds": 60,
+            "scan_after_sync": True, "revision": REVISION, "include_paths": ["."],
+            "detector_ids": [DETECTOR_ID], "audit_mode": "static_only",
+            "scan_timeout_seconds": 60, "memory_mb": 512,
+        })
+        claimed = self.ops.claim()
+        self.assertEqual(claimed["id"], task["id"])
+        return task, claimed
+
+    def test_single_sync_cancel_stops_git_and_removes_partial_clone(self):
+        task, claimed = self._task()
+        target = self.cache / "source-sync-fixture"
+        started = threading.Event()
+        processes = []
+
+        def start(_command, _environment):
+            target.mkdir(parents=True, exist_ok=True)
+            process = subprocess.Popen(
+                [sys.executable, "-c", "import time; time.sleep(30)"],
+                start_new_session=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+            )
+            processes.append(process)
+            started.set()
+            return process
+
+        cancel_thread = threading.Thread(target=lambda: (
+            started.wait(5), time.sleep(0.15), self.ops.cancel(task["id"])
+        ))
+        cancel_thread.start()
+        with patch.object(operations, "_start_source_sync_process", side_effect=start):
+            result = execute(self.settings, self.store, self.ops, claimed)
+        cancel_thread.join(timeout=5)
+        self.ops.finish(task["id"], result)
+        self.assertEqual(result["status"], "cancelled")
+        self.assertFalse(target.exists())
+        self.assertTrue(processes)
+        self.assertIsNotNone(processes[0].poll())
+        self.assertEqual(self.ops.get(task["id"])["status"], "cancelled")
+        self.assertIsNone(result["scan_job_id"])
+
+    def test_failed_single_sync_removes_partial_clone(self):
+        task, claimed = self._task()
+        target = self.cache / "source-sync-fixture"
+
+        def fail_after_partial_clone(_command, _environment):
+            target.mkdir(parents=True, exist_ok=True)
+            return subprocess.Popen(
+                [sys.executable, "-c", "raise SystemExit(7)"],
+                start_new_session=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+            )
+
+        with patch.object(operations, "_start_source_sync_process",
+                          side_effect=fail_after_partial_clone):
+            result = execute(self.settings, self.store, self.ops, claimed)
+        self.ops.finish(task["id"], result)
+        self.assertEqual(result["status"], "failed")
+        self.assertIn("exit status 7", result["error"])
+        self.assertFalse(target.exists())
+        self.assertEqual(self.store.repositories(), [])
+        self.assertEqual(self.ops.get(task["id"])["status"], "failed")
 
 
 if __name__ == "__main__":

@@ -64,3 +64,15 @@ test("source sync exposes scan-status read failures rather than presenting a sta
   assert.equal(summary.scanStatus, "unavailable");
   assert.equal(summary.scanError, "network unavailable");
 });
+
+
+test("source sync shows a sanitized failure reason from the operation result", () => {
+  const summary = sourceSyncSummary({
+    kind: "source_sync",
+    status: "failed",
+    result: { error: "Git clone failed with exit status 128" },
+  });
+
+  assert.equal(summary.syncError, "Git clone failed with exit status 128");
+  assert.equal(summary.scanStatus, "not_requested");
+});

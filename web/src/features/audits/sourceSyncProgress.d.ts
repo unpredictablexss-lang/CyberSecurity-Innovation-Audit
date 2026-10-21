@@ -38,6 +38,7 @@ export function sourceSyncSummary(
   scanCommit: string | null;
   scanReportAvailable: boolean;
   scanError: string;
+  syncError: string;
   limitations: string[];
 };
 export function sourceSyncBatchRows(

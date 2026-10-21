@@ -203,7 +203,18 @@ def enqueue_synced_scan(settings, store, ops, task, repo):
     spec = task["spec"]
     if not spec.get("scan_after_sync"):
         return None
-    scan_spec = service.make_spec(repo, spec.get("revision", "HEAD"),
+    requested_revision = spec.get("revision", "HEAD")
+    scan_revision = requested_revision
+    if requested_revision == "HEAD":
+        # Fetch updates remote-tracking refs but deliberately does not checkout
+        # or move the local branch. For the default UI value, pin the freshly
+        # fetched remote default branch instead of rescanning a stale local HEAD.
+        default_remote = next((row["ref"] for row in service.revisions(repo)
+                              if row.get("is_default")
+                              and row.get("ref", "").startswith("refs/remotes/origin/")), None)
+        if default_remote:
+            scan_revision = default_remote
+    scan_spec = service.make_spec(repo, scan_revision,
         spec.get("include_paths", ["."]), spec.get("detector_ids"),
         spec.get("scan_timeout_seconds", 600), spec.get("memory_mb", 2048))
     audit_mode = spec.get("audit_mode", "static_only")
@@ -325,7 +336,7 @@ class SourceSyncSafetyLimit(RuntimeError):
 
 
 def _source_sync_batch_cancelled(ops, operation_id):
-    return ops.batch_sync_cancel_requested(operation_id)
+    return ops.source_sync_cancel_requested(operation_id)
 
 
 def _ensure_source_sync_free_space(base):
@@ -462,6 +473,8 @@ def _sync_source_batch_item(settings, store, ops, task, entry, index, total):
                 "index": index, "total": total, "repository": name, "status": "running",
                 "action": action,
             })
+            if task.get("kind") == "source_sync":
+                ops.event(task["id"], "git_sync", "正在同步经批准的 Git HTTPS 源码")
             command = ["git", "-c", "core.hooksPath=/dev/null",
                        "-c", "http.followRedirects=false",
                        "-c", "fetch.recurseSubmodules=false",
@@ -501,6 +514,7 @@ def _sync_source_batch_item(settings, store, ops, task, entry, index, total):
                          if repo["path"] == str(checked_path)), None)
         repo = existing or store.add_repository(name, str(checked_path))
     head = service.revision(repo, "HEAD")
+    tree = git(checked_path, "rev-parse", head["commit"] + "^{tree}").decode().strip()
     remote_refs = [ref for ref in service.revisions(repo)
                    if ref["ref"].startswith("refs/remotes/origin/")]
     scan_job = None
@@ -518,7 +532,7 @@ def _sync_source_batch_item(settings, store, ops, task, entry, index, total):
         "status": "completed_with_limitations" if scan_error else "completed",
         "sync_action": action,
         "local_head_after_sync": head["commit"],
-        "git_tree_after_sync": head.get("tree"),
+        "git_tree_after_sync": tree,
         "remote_ref_count": len(remote_refs),
         "scan_job_id": scan_job["id"] if scan_job else None,
         "scan_commit": scan_job["spec"]["commit"] if scan_job else None,
@@ -656,50 +670,49 @@ def execute(settings, store, ops, task):
         return execute_source_sync_batch(settings, store, ops, task)
     if kind == "source_sync":
         url = approved_url(spec["url"])
-        base = (settings.data_dir / "repo-cache").resolve()
-        base.mkdir(parents=True, exist_ok=True)
-        target = base / spec["name"].split("/")[1]
-        if target.is_symlink() or target.resolve().parent != base:
-            raise ValueError("unsafe repository cache path")
-        lockdir = settings.data_dir / "sync-locks"
-        lockdir.mkdir(exist_ok=True)
-        import fcntl
-        with (lockdir / (target.name + ".lock")).open("a") as lock:
-            fcntl.flock(lock, fcntl.LOCK_EX)
-            command = ["git", "-c", "core.hooksPath=/dev/null",
-                       "-c", "http.followRedirects=false", "-c", "fetch.recurseSubmodules=false",
-                       "-c", "protocol.file.allow=never", "-c", "protocol.ext.allow=never",
-                       "-c", "credential.helper="]
-            if target.exists():
-                service.check_repository(settings, str(target))
-                command += ["-C", str(target), "fetch", "--no-recurse-submodules",
-                            "--prune", "--tags", url, "+refs/heads/*:refs/remotes/origin/*"]
-            else:
-                command += ["clone", "--no-checkout", "--no-recurse-submodules",
-                            "--", url, str(target)]
-            env = {**os.environ, "GIT_TERMINAL_PROMPT": "0", "GIT_CONFIG_NOSYSTEM": "1",
-                   "GIT_CONFIG_GLOBAL": "/dev/null", "GIT_CONFIG_SYSTEM": "/dev/null",
-                   "GIT_ALLOW_PROTOCOL": "https"}
-            ops.event(task["id"], "git_sync", "Explicit approved clone/fetch, no checkout/build")
-            subprocess.run(command, env=env, check=True, timeout=spec["timeout_seconds"])
-        with (lockdir / (target.name + ".lock")).open("a") as registration_lock:
-            fcntl.flock(registration_lock, fcntl.LOCK_EX)
-            checked_path = service.check_repository(settings, str(target))
-            existing = next((r for r in store.repositories()
-                             if r["path"] == str(checked_path)), None)
-            repo = existing or store.add_repository(spec["name"], str(checked_path))
-        remote_refs = [r for r in service.revisions(repo) if r["ref"].startswith("refs/remotes/origin/")]
-        scan_job = enqueue_synced_scan(settings, store, ops, task, repo)
-        return {"status": "completed", "repository": repo, "url": url,
-                "local_head_after_sync": service.revision(repo, "HEAD")["commit"],
-                "advertised_remote_refs": remote_refs, "command": command,
-                "scan_job_id": scan_job["id"] if scan_job else None,
-                "scan_commit": scan_job["spec"]["commit"] if scan_job else None,
-                "scan_status": scan_job["status"] if scan_job else None,
-                "limitations": (["Repository objects were synchronized without checkout or build."]
-                    if scan_job else ["No checkout or scan was performed; choose a returned immutable commit explicitly."]) +
-                    (["The queued scan is static only; standard review does not auto-send source to a model."]
-                     if scan_job and spec.get("audit_mode", "static_only") == "standard_review" else [])}
+        entry = {**spec, "url": url}
+        try:
+            row = _sync_source_batch_item(settings, store, ops, task, entry, 1, 1)
+        except Exception as exc:
+            return {
+                "status": "failed", "repository": None, "url": url,
+                "error": _safe_sync_error(exc, "transfer"),
+                "limitations": ["源码同步失败；请检查公开仓库 URL、网络连接和可用磁盘空间。"],
+            }
+        repository = None
+        remote_refs = []
+        if row.get("repository_id"):
+            try:
+                repository = store.repository(row["repository_id"])
+                remote_refs = [ref for ref in service.revisions(repository)
+                               if ref["ref"].startswith("refs/remotes/origin/")]
+            except (KeyError, OSError, ValueError):
+                repository = None
+        scan_job_id = row.get("scan_job_id")
+        if _source_sync_batch_cancelled(ops, task["id"]):
+            if scan_job_id:
+                try:
+                    scan = store.cancel(scan_job_id)
+                    row["scan_status"] = scan["status"]
+                except Exception as exc:
+                    row["scan_cancellation_error"] = type(exc).__name__
+            row["status"] = "cancelled"
+            row["cancellation_requested"] = True
+        return {
+            "status": row.get("status", "failed"),
+            "repository": repository,
+            "url": url,
+            "sync_action": row.get("sync_action"),
+            "local_head_after_sync": row.get("local_head_after_sync"),
+            "git_tree_after_sync": row.get("git_tree_after_sync"),
+            "advertised_remote_refs": remote_refs,
+            "scan_job_id": scan_job_id,
+            "scan_commit": row.get("scan_commit"),
+            "scan_tree": row.get("scan_tree"),
+            "scan_status": row.get("scan_status", "not_started"),
+            "error": row.get("error"),
+            "limitations": row.get("limitations", []),
+        }
     if kind == "investigation":
         return investigation(settings, store, spec)
     if kind == "agent_investigation":

@@ -39,6 +39,8 @@ export function sourceSyncSummary(operation, scanJob = null, scanState = {}) {
     scanCommit: scanJob?.spec?.commit || result.scan_commit || null,
     scanReportAvailable: Boolean(scanJob?.report_sha256),
     scanError: scanState.error || "",
+    syncError: (typeof result.error === "string" && result.error)
+      || (typeof operation?.error === "string" && operation.error) || "",
     limitations: Array.isArray(result.limitations) ? result.limitations : [],
   };
 }

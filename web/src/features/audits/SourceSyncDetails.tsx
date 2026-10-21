@@ -87,6 +87,8 @@ function SingleSourceSyncDetails({ operation }: { operation: OperationRecord }) 
             : <Space wrap><State value={summary.scanStatus} />{summary.scanReportAvailable && <Tag color="green">静态报告已生成</Tag>}</Space>}
       </Descriptions.Item>
     </Descriptions>
+    {summary.syncError && <Alert className="section-gap" type="error" showIcon
+      message="源码同步失败" description={summary.syncError} />}
     {summary.scanError && <Alert className="section-gap" type="warning" showIcon
       message="暂时无法读取静态扫描状态" description="同步结果仍已保存；可刷新页面或打开扫描任务查看最新状态。" />}
     {summary.scanId

@@ -212,7 +212,8 @@ class PlanningTests(unittest.TestCase):
                 "repository": repo["name"], "include_paths": ["."], "detector_ids": ["test-detector"],
                 "detector_versions": {}, "audit_plan": {"plan_sha256": "d" * 64},
                 "timeout_seconds": 60, "memory_mb": 512}
-            with patch.object(service, "make_spec", return_value=pinned):
+            with patch.object(service, "revisions", return_value=[]), \
+                    patch.object(service, "make_spec", return_value=pinned):
                 job = operations.enqueue_synced_scan(settings, store, ops, task, repo)
             self.assertEqual(job["status"], "queued")
             self.assertEqual(job["spec"]["commit"], "b" * 40)
