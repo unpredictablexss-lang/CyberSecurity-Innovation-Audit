@@ -230,7 +230,8 @@ class BudgetLedger:
 
     def reserve(self, audit_id: str, idempotency_key: str, endpoint_id: str,
                 group_id: str, stage: str, *, max_input_tokens: int,
-                max_output_tokens: int, phase: str | None = None) -> dict[str, Any]:
+                max_output_tokens: int, phase: str | None = None,
+                reauthorized_quick_screen: bool = False) -> dict[str, Any]:
         audit_id = self._id(audit_id, "audit ID")
         idempotency_key = self._id(idempotency_key, "idempotency key", 160)
         endpoint_id = self._id(endpoint_id, "endpoint ID")
@@ -277,6 +278,23 @@ class BudgetLedger:
                 "SELECT status FROM triage_dispatch WHERE audit_id=? AND group_id=? AND stage=? AND endpoint_id=?",
                 (audit_id, group_id, stage, endpoint_id),
             ).fetchone()
+            if reauthorized_quick_screen:
+                if stage != "quick_screen":
+                    db.rollback()
+                    raise BudgetError("fresh quick-screen consent cannot authorize another stage")
+                active = db.execute(
+                    "SELECT 1 FROM budget_reservation WHERE audit_id=? AND group_id=? AND stage='quick_screen' AND status='reserved'",
+                    (audit_id, group_id),
+                ).fetchone()
+                if active:
+                    db.rollback()
+                    raise BudgetError("quick-screen group already has an in-flight request")
+                # Only a new, revalidated consent may retry a finished failed call.
+                # Old reservations and their unknown/billed outcomes stay recorded.
+                if dispatch and dispatch["status"] in {"partial", "known_not_sent"}:
+                    db.execute("UPDATE triage_dispatch SET status='queued' WHERE audit_id=? AND group_id=? AND stage='quick_screen'",
+                               (audit_id, group_id))
+                    dispatch = {"status": "queued"}
             if not dispatch or dispatch["status"] not in {"queued", "running"}:
                 db.rollback()
                 raise BudgetError("group is not queued for this model stage")

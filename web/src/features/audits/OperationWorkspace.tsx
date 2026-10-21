@@ -10,6 +10,7 @@ import AgentBlindReview from "./AgentBlindReview";
 import SourceSyncDetails from "./SourceSyncDetails";
 import ProgressiveDeepInvestigationAction from "./ProgressiveDeepInvestigationAction";
 import ProgressiveDeepInvestigationBatchAction from "./ProgressiveDeepInvestigationBatchAction";
+import ProgressiveQuickScreenAction from "./ProgressiveQuickScreenAction";
 import ProgressiveQuickScreenBatchAction from "./ProgressiveQuickScreenBatchAction";
 import VersionCandidateComparison from "./VersionCandidateComparison";
 import { buildIntelligentReviewView } from "./operationProgressModel.js";
@@ -393,11 +394,45 @@ export default function OperationWorkspace({ view = "all", operationId, context 
             investigate: "建议进入深度调查", defer: "暂缓", possible_refutation: "发现待复核反证线索",
             insufficient_context: "上下文不足", quick_unknown: "研判未知",
           };
-          const listText = (value: unknown) => Array.isArray(value) && value.length ? value.join("、") : "无";
+          const diagnosed = [...(selected.events || [])].reverse().some((event: any) => {
+            if (event.stage !== "quick_screen_failure_diagnosed") return false;
+            try {
+              const note = JSON.parse(event.message);
+              return note.result_sha256 === selected.result_sha256 && note.reason_code === "provider_client_error"
+                && note.error_type === "AttributeError" && note.object_type === "ProviderConfig"
+                && note.missing_attribute === "create";
+            } catch { return false; }
+          });
+          const failure = result.failure || (diagnosed ? {
+            title: "模型客户端接线错误（已定位并修复）",
+            message: "此历史任务把 ProviderConfig 配置对象当作请求客户端，调用不存在的 create() 方法，导致 AttributeError；请求未发出。",
+            suggestion: "下方可重新预览并授权 L2 调用。本说明来自补充诊断事件，原始失败结果与哈希保持不变。",
+            error_type: "AttributeError", http_status: null, response_status: null, incomplete_reason: null,
+          } : null);
+          const failureCode = diagnosed ? "provider_client_error" : result.reason_code;
+          const listText = (value: unknown) => Array.isArray(value) && value.length ? value.join("、") : state === "completed" ? "无" : "未取得研判结果";
           return <>
-            <Alert type={state === "completed" ? "info" : "warning"} showIcon
-              message={`${assessmentLabels[result.quick_assessment] || assessmentLabels.quick_unknown} · ${result.review_status || "model_unverified"}`}
-              description={result.reason_code || result.rationale || "没有可复核的模型研判；候选仍保留为待复核状态。模型意见不确认漏洞或误报。"} />
+            <Alert type={state === "completed" ? "info" : "error"} showIcon
+              message={state === "completed"
+                ? `${assessmentLabels[result.quick_assessment] || assessmentLabels.quick_unknown} · ${result.review_status || "model_unverified"}`
+                : failure?.title || "L2 未形成有效研判"}
+              description={state === "completed" ? result.rationale : <>
+                <div>{failure?.message || (result.reason_code === "provider_error_unknown_outcome"
+                  ? "此历史记录未保存具体异常；原始候选仍待复核。"
+                  : `未形成有效研判，原因：${result.reason_code || state}。`)}</div>
+                {failure?.suggestion && <div style={{ marginTop: 6 }}>{failure.suggestion}</div>}
+                <Space wrap style={{ marginTop: 8 }}>
+                  <Tag color="red">{failureCode || state}</Tag>
+                  {failure?.error_type && <Tag color="orange">异常类型：{failure.error_type}</Tag>}
+                  {failure?.http_status && <Tag color="red">HTTP {failure.http_status}</Tag>}
+                  {failure?.response_status && <Tag color="orange">响应状态：{failure.response_status}</Tag>}
+                  {failure?.incomplete_reason && <Tag color="orange">{failure.incomplete_reason}</Tag>}
+                </Space>
+              </>} />
+            {state !== "completed" && selected.spec?.job_id && selected.spec?.candidate_id && <Space wrap className="section-gap">
+              <ProgressiveQuickScreenAction jobId={selected.spec.job_id} candidateId={selected.spec.candidate_id} enabled={true} />
+              <Text type="secondary">重新预览并授权后可创建一次新调用；原失败记录和未知用量保留，不会自动重试。</Text>
+            </Space>}
             <Descriptions className="section-gap" bordered size="small" column={{ xs: 1, md: 2 }}>
               <Descriptions.Item label="候选处置">candidate · validated_vulnerability={selected.result.validated_vulnerability ?? 0}</Descriptions.Item>
               <Descriptions.Item label="请求状态">{state}</Descriptions.Item>
