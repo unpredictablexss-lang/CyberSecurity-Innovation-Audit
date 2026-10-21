@@ -786,6 +786,94 @@ class WorkbenchTests(unittest.TestCase):
         self.assertEqual(validation_summary["status"], "queued")
         self.assertEqual(validation_summary["validation_gate"], None)
 
+    def test_experiment_evidence_summary_keeps_holdout_unknown_and_harness_separate(self):
+        empty = self.client.get("/api/v1/agent/evaluation-summary")
+        self.assertEqual(empty.status_code, 200, empty.text)
+        empty_evidence = empty.json()["evidence_evaluation"]
+        self.assertEqual(empty_evidence["agent"]["state"], "unknown")
+        self.assertEqual(empty_evidence["validation"]["state"], "unknown")
+        self.assertEqual(empty_evidence["holdout"]["state"], "unknown")
+
+        job = self.completed()
+        candidate = service.findings(service.read_report(self.settings, job))[0]
+        source = service.source(self.settings, self.store, job, candidate["file"])
+        ops = self.app.state.operations
+        spec = {
+            "job_id": job["id"], "candidate_id": candidate["id"], "case_id": None,
+            "experiment_id": "issue42-evaluation-fixture", "mode": "single_shot",
+            "provider_model": "fixture-model", "prompt_version": "p1", "tool_policy_version": "t1",
+            "report_sha256": job["report_sha256"], "source_commit": job["spec"]["commit"],
+            "candidate_source_sha256": source["sha256"],
+        }
+        agent = ops.create("agent_investigation", spec)
+        self.assertEqual(ops.claim()["id"], agent["id"])
+        binding = {"job_id": job["id"], "candidate_id": candidate["id"],
+                   "repository": service.read_report(self.settings, job)["repository"],
+                   "report_sha256": job["report_sha256"], "commit": job["spec"]["commit"],
+                   "source_sha256": source["sha256"]}
+        ops.finish(agent["id"], {
+            "status": "completed_with_limitations", "mode": "single_shot",
+            "experiment_id": spec["experiment_id"], "provider": {"model": spec["provider_model"]},
+            "prompt_version": spec["prompt_version"], "tool_policy_version": spec["tool_policy_version"],
+            "binding": binding, "vulnerability_state": "candidate", "validated_vulnerability": 0,
+        }, state="completed_with_limitations")
+
+        mismatched = ops.create("agent_investigation", {**spec, "candidate_source_sha256": "0" * 64})
+        self.assertEqual(ops.claim()["id"], mismatched["id"])
+        ops.finish(mismatched["id"], {
+            "status": "completed_with_limitations", "mode": "single_shot",
+            "experiment_id": spec["experiment_id"], "provider": {"model": spec["provider_model"]},
+            "prompt_version": spec["prompt_version"], "tool_policy_version": spec["tool_policy_version"],
+            "binding": binding, "vulnerability_state": "candidate", "validated_vulnerability": 0,
+        }, state="completed_with_limitations")
+
+        target_commit = "a" * 40
+        manifest = {"target_commit": target_commit,
+                    "target_repository": "openharmony/inputmethod_imf",
+                    "cutils_commit": "b" * 40,
+                    "harness_manifest_sha256": "c" * 64}
+        raw_manifest = (json.dumps(manifest, sort_keys=True, indent=2) + "\n").encode()
+        validation_spec = {"case_id": "case-not-linked-to-experiment",
+                           "harness_id": "auth01_descriptor_bypass",
+                           "target_repository": manifest["target_repository"],
+                           "target_commit": target_commit, "cutils_commit": manifest["cutils_commit"]}
+        validation = ops.create("validation", validation_spec)
+        self.assertEqual(ops.claim(validation=True)["id"], validation["id"])
+        manifest_path = ops.directory(validation["id"]) / "input-manifest.json"
+        manifest_path.parent.mkdir(parents=True, exist_ok=True)
+        manifest_path.write_bytes(raw_manifest)
+        validation_result = {"status": "completed_with_limitations",
+                             "input_manifest_sha256": hashlib.sha256(raw_manifest).hexdigest(),
+                             "validation_gate": "passed", "reachability_status": "unknown",
+                             "validated_vulnerability": 0}
+        ops.finish(validation["id"], validation_result, state="completed_with_limitations")
+
+        response = self.client.get("/api/v1/agent/evaluation-summary")
+        self.assertEqual(response.status_code, 200, response.text)
+        evidence = response.json()["evidence_evaluation"]
+        self.assertFalse(evidence["accuracy_claim"])
+        self.assertEqual(evidence["agent"]["fixed_source_bound_result_count"], 1)
+        self.assertEqual(evidence["agent"]["unknown_binding_count"], 1)
+        self.assertEqual(evidence["agent"]["groups"][0]["fixed_source_bound_result_count"], 1)
+        self.assertEqual(evidence["holdout"]["state"], "unknown")
+        self.assertEqual(evidence["validation"]["scope_counts"], {
+            "component_harness": 1, "product_level": 0, "unknown": 0,
+        })
+        harness_view = evidence["validation"]["runs"][0]
+        self.assertEqual(harness_view["scope"], "component_harness")
+        self.assertEqual(harness_view["input_manifest_state"], "verified_input_manifest")
+        self.assertEqual(harness_view["reachability_status"], "unknown")
+        self.assertEqual(harness_view["validated_vulnerability"], 0)
+
+        # A gate pass alone cannot turn a component harness into product validation.
+        manifest_path.write_text("{}\n", encoding="utf-8")
+        stale = self.client.get("/api/v1/agent/evaluation-summary").json()["evidence_evaluation"]
+        stale_run = stale["validation"]["runs"][0]
+        self.assertEqual(stale_run["scope"], "component_harness")
+        self.assertEqual(stale_run["input_manifest_state"], "unknown")
+        self.assertEqual(stale_run["validation_gate"], "passed")
+        self.assertEqual(stale_run["validated_vulnerability"], 0)
+
     def test_case_report_shows_unverified_ai_basis_only_for_fixed_source_citations(self):
         job = self.completed()
         candidate = service.findings(service.read_report(self.settings, job))[0]

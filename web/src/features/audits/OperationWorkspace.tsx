@@ -6,6 +6,7 @@ import { refreshSelectedOperation } from "../../pages/operationSelection";
 import { AgentInvestigationForm, ComparisonForm, InvestigationForm, SyncForm, ValidationForm, SourceContext } from "./OperationForms";
 import AgentAssessment from "./AgentAssessment";
 import AgentBlindReview from "./AgentBlindReview";
+import { experimentHoldoutPresentation, validationScopePresentation } from "./experimentEvidence.js";
 const { Text } = Typography;
 export type OperationView = "all" | "date" | "branches" | "matrix" | "validation" | "investigate" | "agent" | "agent_research" | "sync" | "queue";
 const kinds: Record<string, string> = { source_sync: "源码同步", repository_import_scan: "在线仓库导入并静态扫描", revision_range: "固定区间", branch_comparison: "跨版本比较", version_matrix: "版本矩阵", validation: "隔离验证", investigation: "只读调查", agent_investigation: "模型辅助调查", candidate_review_batch: "历史候选队列（已停用）" };
@@ -73,6 +74,7 @@ export default function OperationWorkspace({ view = "all", operationId, context 
     { key: "agent", label: "模型辅助调查", children: <AgentInvestigationForm busy={busy} submit={submit} context={context} cases={cases} agentStatus={agentStatus} /> },
   ];
   const filtered = view === "agent_research" ? [] : rows.filter((r) => r.kind !== "candidate_review_batch" && (view === "all" || view === "queue" || (view === "date" ? r.kind === "revision_range" : view === "branches" ? ["branch_comparison", "revision_range"].includes(r.kind) : r.kind === ({ matrix: "version_matrix", validation: "validation", investigate: "investigation", agent: "agent_investigation", sync: "source_sync" } as Record<string, string>)[view])));
+  const holdoutView = experimentHoldoutPresentation(agentEvaluation?.evidence_evaluation?.holdout);
   return <>
     <Header title={headings[view][0]} description={headings[view][1]} />
     {error && <Alert className="section-gap" type="error" showIcon message={error} />}
@@ -93,6 +95,42 @@ export default function OperationWorkspace({ view = "all", operationId, context 
           { title: "子进程耗时 median（秒）", render: (_, row) => <>{row.child_execution_time?.median_seconds ?? "未知"}<div className="muted">已测 {row.child_execution_time?.measured_operation_count ?? 0} 项</div></> },
           { title: "子进程峰值 RSS median / max（MiB）", render: (_, row) => { const rss = row.process_peak_rss; const mib = (value: number | null) => value == null ? "未知" : (value / 1048576).toFixed(1); return <>{mib(rss?.median_bytes)} / {mib(rss?.maximum_bytes)}<div className="muted">已测 {rss?.measured_operation_count ?? 0} 项</div></>; } },
         ]} locale={{ emptyText: "暂无 Agent 执行记录" }} />
+    </Card>}
+    {view === "agent_research" && agentEvaluation && <Card className="section-gap" size="small" title="固定来源运行与验证范围">
+      <Alert type="info" showIcon
+        message={holdoutView.label}
+        description={holdoutView.reason + " 不计算模型准确率、Precision 或 Recall。"} />
+      <Descriptions className="section-gap" size="small" bordered column={3}>
+        <Descriptions.Item label="固定源码绑定 Agent 结果">
+          {agentEvaluation.evidence_evaluation?.agent?.fixed_source_bound_result_count ?? "unknown"}
+        </Descriptions.Item>
+        <Descriptions.Item label="绑定未知的 Agent 结果">
+          {agentEvaluation.evidence_evaluation?.agent?.unknown_binding_count ?? "unknown"}
+        </Descriptions.Item>
+        <Descriptions.Item label="统计范围">
+          {agentEvaluation.evidence_evaluation?.operation_window || "unknown"}
+        </Descriptions.Item>
+      </Descriptions>
+      <Table<any> className="section-gap" size="small" rowKey={(row) => [row.experiment_id || "untagged", row.mode, row.model, row.prompt_version, row.tool_policy_version].join("|")}
+        dataSource={agentEvaluation.evidence_evaluation?.agent?.groups || []} pagination={false} scroll={{ x: 950 }}
+        columns={[
+          { title: "实验批次", dataIndex: "experiment_id", render: (value) => value || "未标记" },
+          { title: "模式 / 模型", render: (_, row) => <>{row.mode}<div className="muted">{row.model}</div></> },
+          { title: "提示 / 工具策略", render: (_, row) => <>{row.prompt_version}<div className="muted">{row.tool_policy_version}</div></> },
+          { title: "运行 / 固定源码结果 / unknown", render: (_, row) => `${row.operation_count} / ${row.fixed_source_bound_result_count} / ${row.unknown_binding_count}` },
+          { title: "任务状态", render: (_, row) => Object.entries(row.status_counts || {}).map(([name, count]) => `${name}: ${count}`).join("；") || "unknown" },
+        ]} locale={{ emptyText: "暂无可汇总的 Agent 运行 · unknown" }} />
+      <Alert className="section-gap" type="warning" showIcon
+        message="隔离验证按组件 Harness 与产品级验证分开展示"
+        description="当前注册的 AUTH-01 是组件 Harness：直接调用组件 stub，不能证明 OpenHarmony 产品入口可达。只有固定输入清单完整且产品验证明确报告 reachability=verified 才能归为产品级；验证结果不会在此页自动确认为漏洞，也不会自动关联进候选实验。" />
+      <Table<any> size="small" rowKey="operation_id" dataSource={agentEvaluation.evidence_evaluation?.validation?.runs || []}
+        pagination={{ pageSize: 5 }} scroll={{ x: 900 }} columns={[
+          { title: "案例 / 操作", render: (_, row) => <>{row.case_id || "unknown"}<div className="muted">{row.operation_id}</div></> },
+          { title: "验证范围", render: (_, row) => validationScopePresentation(row).label },
+          { title: "Harness / 仓库", render: (_, row) => <>{row.harness_id || "unknown"}<div className="muted">{row.target_repository}</div></> },
+          { title: "固定提交 / 输入清单", render: (_, row) => <><Hash value={row.target_commit} /><div className="muted">{row.input_manifest_state}</div></> },
+          { title: "状态 / 验证门 / 可达性", render: (_, row) => <>{row.status}<div className="muted">{row.validation_gate} / {row.reachability_status}</div></> },
+        ]} locale={{ emptyText: "没有持久化验证运行 · unknown" }} />
     </Card>}
     {view === "agent_research" && agentEvaluation && <Card className="section-gap" size="small" title="模型人工反馈评测">
       <Alert type="info" showIcon message="仅统计人工对 Agent 分诊的反馈，不代表漏洞准确率、Precision 或 Recall。" description={agentEvaluation.limitation + " 逐条主张支持度是人工语义评价；没有填写的主张显示为未复核。"} />

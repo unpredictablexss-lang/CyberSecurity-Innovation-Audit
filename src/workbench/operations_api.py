@@ -945,6 +945,165 @@ def _blind_packet(result):
     return packet
 
 
+def _experiment_evidence_summary(settings, store, ops):
+    """Summarize persisted, source-bound Agent and validation evidence without scoring truth."""
+    agent_groups = {}
+    validation_runs = []
+    agent_operation_count = 0
+    agent_bound_count = 0
+    agent_unknown_count = 0
+
+    # Keep this inventory explicitly bounded to the same recent operation window as
+    # the existing telemetry panel. It is not a complete experiment ledger.
+    for operation in ops.list():
+        spec = operation.get("spec") if isinstance(operation.get("spec"), dict) else {}
+        if operation.get("kind") == "agent_investigation":
+            agent_operation_count += 1
+            result = {}
+            source_state = "unknown"
+            if operation.get("result_sha256"):
+                try:
+                    result = ops.result(operation["id"])
+                    if not isinstance(result, dict):
+                        raise ValueError("agent result is not a JSON object")
+                    binding = result.get("binding") if isinstance(result.get("binding"), dict) else {}
+                    job = store.job(spec.get("job_id"))
+                    report = service.read_report(settings, job)
+                    candidate = service.finding(report, spec.get("candidate_id"))
+                    anchor = _fixed_case_source_anchor(settings, store, job, report, candidate)
+                    expected_binding = {
+                        "job_id": job["id"], "candidate_id": candidate["id"],
+                        "repository": report.get("repository"),
+                        "report_sha256": job.get("report_sha256"),
+                        "commit": job.get("spec", {}).get("commit"),
+                        "source_sha256": candidate.get("source_sha256"),
+                    }
+                    provider = result.get("provider") if isinstance(result.get("provider"), dict) else {}
+                    if all((
+                        spec.get("candidate_id") == candidate.get("id"),
+                        spec.get("report_sha256") == job.get("report_sha256"),
+                        spec.get("source_commit") == job.get("spec", {}).get("commit"),
+                        spec.get("candidate_source_sha256") == candidate.get("source_sha256"),
+                        result.get("mode") == spec.get("mode"),
+                        result.get("experiment_id") == spec.get("experiment_id"),
+                        provider.get("model") == spec.get("provider_model"),
+                        result.get("prompt_version") == spec.get("prompt_version"),
+                        result.get("tool_policy_version") == spec.get("tool_policy_version"),
+                        result.get("vulnerability_state") == "candidate",
+                        result.get("validated_vulnerability") == 0,
+                        anchor.get("verified") is True,
+                        all(binding.get(key) == value for key, value in expected_binding.items()),
+                    )):
+                        source_state = "verified_fixed_source"
+                except (KeyError, TypeError, ValueError, OSError, UnicodeError,
+                        subprocess.CalledProcessError, subprocess.TimeoutExpired):
+                    pass
+            if source_state == "verified_fixed_source":
+                agent_bound_count += 1
+            else:
+                agent_unknown_count += 1
+            provider = result.get("provider") if isinstance(result.get("provider"), dict) else {}
+            dimensions = (
+                spec.get("experiment_id") or None,
+                result.get("mode") or spec.get("mode") or "unknown",
+                provider.get("model") or spec.get("provider_model") or "unknown",
+                result.get("prompt_version") or spec.get("prompt_version") or "unknown",
+                result.get("tool_policy_version") or spec.get("tool_policy_version") or "unknown",
+            )
+            group = agent_groups.setdefault(dimensions, {
+                "experiment_id": dimensions[0], "mode": dimensions[1], "model": dimensions[2],
+                "prompt_version": dimensions[3], "tool_policy_version": dimensions[4],
+                "operation_count": 0, "status_counts": {},
+                "fixed_source_bound_result_count": 0, "unknown_binding_count": 0,
+            })
+            group["operation_count"] += 1
+            status = operation.get("status", "unknown")
+            group["status_counts"][status] = group["status_counts"].get(status, 0) + 1
+            group["fixed_source_bound_result_count"] += int(source_state == "verified_fixed_source")
+            group["unknown_binding_count"] += int(source_state != "verified_fixed_source")
+
+        elif operation.get("kind") == "validation":
+            result = {}
+            manifest_state = "unknown"
+            manifest_reason = "验证尚无可校验的结果清单。"
+            if operation.get("result_sha256"):
+                try:
+                    result = ops.result(operation["id"])
+                    if not isinstance(result, dict):
+                        raise ValueError("validation result is not a JSON object")
+                    manifest_path = ops.directory(operation["id"]) / "input-manifest.json"
+                    raw_manifest = manifest_path.read_bytes()
+                    if len(raw_manifest) > 256 * 1024:
+                        raise ValueError("validation input manifest exceeds limit")
+                    manifest_hash = hashlib.sha256(raw_manifest).hexdigest()
+                    manifest = json.loads(raw_manifest)
+                    if not isinstance(manifest, dict):
+                        raise ValueError("validation input manifest is not a JSON object")
+                    if (manifest_hash == result.get("input_manifest_sha256")
+                            and manifest.get("target_commit") == spec.get("target_commit")
+                            and manifest.get("target_repository") == spec.get("target_repository")
+                            and manifest.get("cutils_commit") == spec.get("cutils_commit")
+                            and isinstance(manifest.get("harness_manifest_sha256"), str)
+                            and re.fullmatch(r"[0-9a-f]{64}", manifest["harness_manifest_sha256"])):
+                        manifest_state = "verified_input_manifest"
+                        manifest_reason = None
+                    else:
+                        manifest_reason = "验证结果与持久化输入清单/固定提交不一致。"
+                except (KeyError, TypeError, ValueError, OSError, UnicodeError):
+                    manifest_reason = "验证输入清单缺失、损坏或与结果摘要不匹配。"
+
+            if spec.get("harness_id") == "auth01_descriptor_bypass":
+                scope = "component_harness"
+            elif (manifest_state == "verified_input_manifest"
+                  and spec.get("validation_scope") == "product_level"
+                  and result.get("validation_scope") == "product_level"
+                  and result.get("reachability_status") == "verified"):
+                scope = "product_level"
+            else:
+                scope = "unknown"
+            validation_runs.append({
+                "operation_id": operation["id"], "case_id": spec.get("case_id"),
+                "scope": scope, "harness_id": spec.get("harness_id"),
+                "status": operation.get("status", "unknown"),
+                "target_repository": spec.get("target_repository") or "unknown",
+                "target_commit": spec.get("target_commit") or "unknown",
+                "input_manifest_state": manifest_state,
+                "input_manifest_reason": manifest_reason,
+                "validation_gate": result.get("validation_gate", "unknown"),
+                "reachability_status": result.get("reachability_status", "unknown"),
+                "validated_vulnerability": 0,
+            })
+
+    return {
+        "schema_version": 1,
+        "operation_window": "recent_200_persisted_operations",
+        "accuracy_claim": False,
+        "agent": {
+            "state": "available" if agent_operation_count else "unknown",
+            "operation_count": agent_operation_count,
+            "fixed_source_bound_result_count": agent_bound_count,
+            "unknown_binding_count": agent_unknown_count,
+            "groups": [agent_groups[key] for key in sorted(
+                agent_groups, key=lambda value: tuple(str(item or "") for item in value))],
+            "limitation": "只汇总可重新校验固定扫描报告、候选源码 SHA 与 Agent 结果绑定的运行；不衡量模型正确性。",
+        },
+        "validation": {
+            "state": "available" if validation_runs else "unknown",
+            "run_count": len(validation_runs),
+            "scope_counts": {
+                scope: sum(item["scope"] == scope for item in validation_runs)
+                for scope in ("component_harness", "product_level", "unknown")
+            },
+            "runs": validation_runs,
+            "limitation": "验证操作只按显式 Harness 类型与持久化输入清单分类，不自动关联到候选实验；组件 Harness 结果不代表产品级可达性。",
+        },
+        "holdout": {
+            "state": "unknown",
+            "reason": "没有持久化的冻结独立 holdout 清单、样本成员身份与人工真值标签；不计算准确率、Precision 或 Recall。",
+        },
+    }
+
+
 def install_routes(app: FastAPI, settings, store):
     ops = Operations(store)
     router = APIRouter(prefix="/api/v1")
@@ -956,7 +1115,9 @@ def install_routes(app: FastAPI, settings, store):
 
     @router.get("/agent/evaluation-summary")
     def agent_evaluation_summary():
-        return ops.agent_evaluation_summary()
+        summary = ops.agent_evaluation_summary()
+        summary["evidence_evaluation"] = _experiment_evidence_summary(settings, store, ops)
+        return summary
 
     @router.get("/agent/static-review-preview")
     def agent_static_review_preview(job_id: str, candidate_id: str):
