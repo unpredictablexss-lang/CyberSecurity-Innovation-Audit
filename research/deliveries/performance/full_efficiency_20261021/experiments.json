@@ -274,8 +274,8 @@
         "command": "npm run build && npm test",
         "result": "build passed; 69 passed"
       },
-      "fixed_corpus_parent_available": true,
-      "fixed_corpus_incremental_equivalence": "completed_for_11_of_11_with_verified_base_objects; conservative_full_head_fallback_due_to_configuration_and_dependency_uncertainty; see E2_fixed_corpus/equivalence.json"
+      "fixed_corpus_incremental_equivalence": "completed_in_isolated_E2_harness_for_11_of_11; conservative_full_head_fallback_due_to_configuration_and_dependency_uncertainty; see E2_fixed_corpus/equivalence.json",
+      "fixed_corpus_base_objects_in_isolated_e2_harness": "11_of_11_reconstructed_and_SHA_verified"
     },
     "P3_current_provider_retest": {
       "status": "completed",
@@ -429,7 +429,7 @@
       "limitations": [
         "This is a component corpus execution of two narrow research detectors, not ABCD full vulnerability coverage or an accuracy evaluation.",
         "Performance depends on cache storage; the measured cache was WSL2 ext4. An earlier /mnt/d NTFS-backed cache trial was much slower and was stopped before completion; its partial logs are retained but excluded from the comparison.",
-        "This M2 AST+detector-cache comparison itself is not a dependency-closure benchmark. A separate E2 fixed-corpus base-to-head run completed with all 11 exact base objects reconstructed and SHA-verified; conservative dependency/configuration fallback kept full head inventory in scope. See E2_fixed_corpus/README.md and equivalence.json."
+        "This M2 AST+detector-cache comparison itself is not a dependency-closure benchmark. A separate E2 fixed-corpus base-to-head run completed with all 11 exact base objects reconstructed and SHA-verified; conservative dependency/configuration fallback kept full head inventory in scope. See ../README.md and E2_fixed_corpus/equivalence.json."
       ]
     }
   },
