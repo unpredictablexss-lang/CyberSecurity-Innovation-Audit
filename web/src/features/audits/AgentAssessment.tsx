@@ -1,5 +1,5 @@
 import React from "react";
-import { Alert, Button, Card, Collapse, Descriptions, Form, Input, InputNumber, List, Select, Space, Typography, message } from "antd";
+import { Alert, Button, Card, Collapse, Descriptions, Form, Input, InputNumber, List, Select, Space, Tag, Typography, message } from "antd";
 import { useState } from "react";
 import { go } from "../../components";
 import { evidenceLocation, evidenceSourceLocation } from "./agentEvidenceLocation.js";
@@ -23,6 +23,24 @@ const verdictLabels: Record<string, string> = {
 };
 const dispositionLabels: Record<string, string> = {
   investigate: "继续调查", likely_noise: "人工标记误报/噪声", unknown: "人工判为未知",
+};
+const evidenceGraphStageLabels: Record<string, string> = {
+  candidate_routing: "候选固定与范围",
+  root_cause_hypothesis: "根因假设",
+  bounded_cross_file_trace: "跨文件源码追查",
+  counterevidence_search: "主动反证与未决项",
+  official_patch_version_comparison: "官方公告、影响版本与补丁",
+  evidence_arbitration: "证据裁决",
+};
+const evidenceGraphStatusLabels: Record<string, string> = {
+  completed: "已绑定",
+  recorded: "已记录",
+  evidence_collected: "已收集源码",
+  not_performed: "未执行",
+  review_recorded: "已记录，待人工核对",
+  not_available: "本次未收集",
+  structure_validated_semantics_unverified: "结构通过，语义未确认",
+  incomplete: "未完成",
 };
 export default function AgentAssessment({ result, reviews = [], onSubmit }: { result: any; reviews?: any[]; onSubmit: (review: any) => Promise<void> }) {
   const [form] = Form.useForm();
@@ -59,6 +77,9 @@ export default function AgentAssessment({ result, reviews = [], onSubmit }: { re
     result.structured_answer_validation, result.structured_answer_validation_error_code);
   const obligationReviews = Array.isArray(assessment.obligation_reviews) ? assessment.obligation_reviews : [];
   const toolIssues = agentToolIssues(result.tool_calls);
+  const evidenceGraph = result.evidence_graph || {};
+  const evidenceGraphStages = Array.isArray(evidenceGraph.nodes)
+    ? evidenceGraph.nodes.filter((node: any) => node.kind === "workflow_stage") : [];
   const obligationByIndex = new Map(obligationReviews.map((item: any) => [item.obligation_index, item]));
   const claimObligationLabel = (indices: any) => Array.isArray(indices) && indices.length > 0
     ? indices.map((index: any) => {
@@ -93,6 +114,19 @@ export default function AgentAssessment({ result, reviews = [], onSubmit }: { re
     {(toolIssues.length > 0 || (result.model_tool_calls_skipped || 0) > 0) && <Alert type="warning" showIcon message={`只读工具有 ${toolIssues.length + (result.model_tool_calls_skipped || 0)} 项未完成，相关证据可能不完整`} description={<List size="small" dataSource={toolIssues} renderItem={(item: any) => <List.Item><Text><Text strong>{item.tool}</Text> · {item.status} · {item.errorCode}：{item.message}</Text></List.Item>} footer={(result.model_tool_calls_skipped || 0) > 0 ? `另有 ${result.model_tool_calls_skipped} 个模型请求因工具调用预算耗尽而未执行；对应证据保持未决。` : null} />} />}
     <Alert type="warning" showIcon message="源码引句存在 ≠ 陈述已证实" description={sourceCitationPolicy ? `支持性主张和已判定义务只能引用固定提交中的源码摘录；扫描器义务描述、提交历史只作检索上下文，不能当作源码证明。服务端核对了 ${result.citation_integrity?.citation_count ?? "未知"} 条引句的来源类型和逐字存在性，但仍未验证引句是否在语义上支持模型推理。摘要由服务端从结构化分诊字段生成；模型原始摘要、未支持陈述、未知项和下一步建议仍是未核验文本。` : "这是较早版本的结果，未记录“只能引用源码证据”的策略版本；请人工确认每条引句确实来自固定提交源码，并逐项判断它是否支持模型陈述。摘要和其他模型自由文本均不能当作已验证结论。"} />
     {binding.job_id && binding.candidate_id && <Button type="primary" onClick={() => go(`/tasks/${encodeURIComponent(binding.job_id)}?tab=findings&candidate_id=${encodeURIComponent(binding.candidate_id)}`)}>打开该候选人工复核</Button>}
+    {evidenceGraphStages.length > 0 && <Card size="small" title="AI 调查链路"
+      extra={<Text type="secondary">证据图 SHA-256：{String(evidenceGraph.graph_sha256 || "").slice(0, 12)}</Text>}>
+      <List size="small" dataSource={evidenceGraphStages} renderItem={(stage: any) => <List.Item>
+        <Space wrap>
+          <Text strong>{evidenceGraphStageLabels[stage.stage] || stage.stage}</Text>
+          <Tag color={stage.status === "not_available" || stage.status === "incomplete" || stage.status === "not_performed" ? "default" : "blue"}>
+            {evidenceGraphStatusLabels[stage.status] || stage.status}
+          </Tag>
+          <Text>{stage.summary}</Text>
+        </Space>
+      </List.Item>} />
+      <Text type="secondary">步骤绑定固定提交和源码范围。引文的语义支持、产品可达性仍需人工核对；缺少官方公告/补丁时，N-day/1-day 结论保持未知。</Text>
+    </Card>}
     <Descriptions bordered size="small" column={{ xs: 1, md: 2 }}>
       <Descriptions.Item label="分诊倾向">{labels[assessment.assessment] || assessment.assessment || "尚无结果"}</Descriptions.Item>
       <Descriptions.Item label="模式">{result.mode === "single_shot" ? "单轮模型研判" : "工具增强只读调查"}</Descriptions.Item>

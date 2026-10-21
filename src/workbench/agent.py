@@ -21,6 +21,7 @@ from urllib.request import HTTPRedirectHandler, ProxyHandler, Request, build_ope
 
 from . import service
 from .agent_guidance import recommend_investigation_route
+from .agent_evidence_graph import build_evidence_graph
 from src.ohscanner.git_source import _git_environment
 
 PROMPT_VERSION = "ohscanner-agent-investigation-0.7.0"
@@ -2426,6 +2427,27 @@ def execute_agent(settings, store, ops, task, client=None):
         "narrative_semantics": "unverified_by_machine",
         "note": "The summary is generated from structured triage labels. The original model summary, unsupported-claim labels, unknowns, and next steps remain unverified model text. Server validation proves each quote occurs verbatim in a bound fixed-source code excerpt; it does not prove the quote supports the model claim. Scanner metadata and history are not eligible citation evidence.",
     }
+    binding_record = {
+        "job_id": job["id"], "repository": report["repository"], "commit": report["commit"],
+        "tree": report.get("git_tree", report.get("tree")), "snapshot_sha256": report.get("snapshot_sha256"),
+        "report_sha256": job["report_sha256"], "candidate_id": candidate["id"],
+        "detector_id": candidate.get("detector_id"), "detector_version": candidate.get("detector_version"),
+        "rule_id": candidate.get("rule_id"), "file": candidate["file"],
+        "source_sha256": source["sha256"], "git_blob": source.get("blob"),
+    }
+    initial_evidence_record = {
+        "evidence_id": initial_evidence_id, "evidence_kind": "source_code",
+        "context_sha256": initial_context_sha256, "context": initial_context,
+        "context_text": context_text, "context_utf8_bytes": len(context_text.encode("utf-8")),
+        "file": candidate["file"], "line": line,
+        "source_excerpt_start_line": prepared["initial_context"]["source_excerpt_start_line"],
+        "source_excerpt_end_line": prepared["initial_context"]["source_excerpt_end_line"],
+        "source_sha256": source["sha256"],
+        "sensitive_redactions": prepared["redaction_categories"],
+    }
+    evidence_graph = build_evidence_graph(
+        binding_record, initial_evidence_record, tool_trace, model_trace, final,
+        final_validation_status)
     provider = config.public
     result = {
         "status": "completed_with_limitations",
@@ -2447,29 +2469,15 @@ def execute_agent(settings, store, ops, task, client=None):
         "workflow_id": WORKFLOW_ID, "workflow_version": WORKFLOW_VERSION,
         "tool_policy_version": TOOL_POLICY_VERSION,
         "case_id": spec.get("case_id"),
-        "binding": {"job_id": job["id"], "repository": report["repository"], "commit": report["commit"],
-                    "tree": report.get("git_tree", report.get("tree")), "snapshot_sha256": report.get("snapshot_sha256"),
-                    "report_sha256": job["report_sha256"], "candidate_id": candidate["id"],
-                    "detector_id": candidate.get("detector_id"), "detector_version": candidate.get("detector_version"),
-                    "rule_id": candidate.get("rule_id"), "file": candidate["file"],
-                    "source_sha256": source["sha256"], "git_blob": source.get("blob")},
+        "binding": binding_record,
         "source_submission": {"approved": True, "destination_host": config.endpoint_host,
                               "consent_sha256": spec.get("source_consent_sha256"),
                               "consent_preview_version": spec.get("consent_preview_version"),
                               "redaction_policy_version": spec.get("redaction_policy_version"),
                               "approved_at": spec.get("source_submission_approved_at")},
-        "initial_evidence": {"evidence_id": initial_evidence_id,
-                              "evidence_kind": "source_code",
-                              "context_sha256": initial_context_sha256,
-                              "context": initial_context,
-                              "context_text": context_text,
-                              "context_utf8_bytes": len(context_text.encode("utf-8")),
-                              "file": candidate["file"], "line": line,
-                              "source_excerpt_start_line": prepared["initial_context"]["source_excerpt_start_line"],
-                              "source_excerpt_end_line": prepared["initial_context"]["source_excerpt_end_line"],
-                              "source_sha256": source["sha256"],
-                              "sensitive_redactions": prepared["redaction_categories"]},
+        "initial_evidence": initial_evidence_record,
         "tool_calls": tool_trace,
+        "evidence_graph": evidence_graph,
         "model_tool_calls_skipped": model_tool_calls_skipped,
         "model_calls": model_trace,
         "provider_http_attempts": provider_http_attempts,

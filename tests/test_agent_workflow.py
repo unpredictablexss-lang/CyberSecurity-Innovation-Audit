@@ -20,6 +20,50 @@ from src.workbench.operations_api import _aggregate_agent_budget_cost_estimates
 from src.workbench.operation_worker import OperationWorker
 from src.workbench.store import Store
 from src.workbench import operations
+from src.workbench.agent_evidence_graph import build_evidence_graph
+
+
+class EvidenceGraphTests(unittest.TestCase):
+    def test_graph_binds_steps_and_does_not_infer_official_patch_or_vulnerability(self):
+        binding = {"repository": "openharmony/demo", "commit": "a" * 40,
+                   "tree": "b" * 40, "report_sha256": "c" * 64,
+                   "candidate_id": "candidate-1", "source_sha256": "d" * 64}
+        initial = {"evidence_id": "ev-initial-123", "context_sha256": "e" * 64,
+                   "source_sha256": "d" * 64, "file": "src/demo.cpp",
+                   "source_excerpt_start_line": 4, "source_excerpt_end_line": 8,
+                   "context": {"evidence_obligations": ["source path", "product reachability"],
+                               "evidence_routing": {"agent_source_review_indices": [0],
+                                                    "human_or_runtime_review_indices": [1]}}}
+        tools = [{"step": 1, "tool": "read_fixed_source_range", "status": "completed",
+                  "evidence_id": "ev-source-456", "evidence_kind": "source_code",
+                  "result_sha256": "f" * 64,
+                  "result": {"file": "src/helper.cpp", "start_line": 20, "end_line": 25}}]
+        models = [{"request_sha256": "1" * 64, "response_sha256": "2" * 64,
+                   "request_phase": "tool_call", "response_status": "completed",
+                   "usage": {"input_tokens": 20, "output_tokens": 10}}]
+        assessment = {"supported_claims": [{
+            "claim": "A source-bound hypothesis", "obligation_indices": [0],
+            "citations": [{"evidence_id": "ev-source-456"}]}],
+            "obligation_reviews": [
+                {"obligation_index": 0, "disposition": "evidence_found",
+                 "citations": [{"evidence_id": "ev-source-456"}]},
+                {"obligation_index": 1, "disposition": "unresolved", "citations": []}]}
+        graph = build_evidence_graph(binding, initial, tools, models, assessment, "accepted")
+        self.assertEqual(graph["summary"]["nday_1day_classification"], "unknown")
+        self.assertEqual(graph["summary"]["official_patch_evidence"], "not_collected")
+        self.assertEqual(graph["summary"]["semantic_support"], "unverified_by_machine")
+        evidence = next(node for node in graph["nodes"] if node.get("evidence_id") == "ev-source-456")
+        self.assertEqual(evidence["scope"]["commit"], binding["commit"])
+        self.assertEqual(evidence["scope"]["ranges"], [
+            {"file": "src/helper.cpp", "line_start": 20, "line_end": 25}])
+        claim = next(node for node in graph["nodes"] if node["kind"] == "model_claim")
+        self.assertEqual(claim["status"], "model_assertion_semantics_unverified")
+        stage = next(node for node in graph["nodes"]
+                     if node.get("stage") == "official_patch_version_comparison")
+        self.assertEqual(stage["status"], "not_available")
+        self.assertTrue(all(len(node["record_sha256"]) == 64 for node in graph["nodes"]))
+        self.assertEqual(graph, build_evidence_graph(binding, initial, tools, models,
+                                                     assessment, "accepted"))
 
 
 def bind_test_consent(task, store, report, candidate, source):
@@ -2382,6 +2426,14 @@ class AgentRouteTests(unittest.TestCase):
             result = ops.result(task["id"])
             self.assertEqual(result["mode"], "single_shot")
             self.assertEqual(result["binding"]["commit"], "c" * 40)
+            graph = result["evidence_graph"]
+            self.assertEqual(graph["binding"]["commit"], "c" * 40)
+            self.assertEqual(graph["summary"]["nday_1day_classification"], "unknown")
+            self.assertEqual(graph["summary"]["official_patch_evidence"], "not_collected")
+            self.assertEqual(next(node for node in graph["nodes"]
+                                  if node.get("stage") == "official_patch_version_comparison")["status"],
+                             "not_available")
+            self.assertTrue(all(len(node["record_sha256"]) == 64 for node in graph["nodes"]))
             self.assertEqual(result["model_usage"]["total_tokens"], 263)
             telemetry = result["execution_telemetry"]
             self.assertGreaterEqual(telemetry["wall_seconds"], 0)
