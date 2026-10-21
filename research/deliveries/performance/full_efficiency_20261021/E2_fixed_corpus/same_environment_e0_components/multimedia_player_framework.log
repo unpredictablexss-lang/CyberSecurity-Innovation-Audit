@@ -1,0 +1,7 @@
+[OK] M2 pinned-source candidate evidence run; NOT validated vulnerabilities
+[OK] source commit: 9f9a285ff489afa66861a85dcc4213336a463b36
+[OK] first-party detectors: 2
+[OK] unverified diagnostics: 9
+[OK] run coverage: completed_with_limitations
+[OK] JSON report: /mnt/d/openHarmonyScanner/worktrees/c-line-task-tree-20261020/research/deliveries/performance/full_efficiency_20261021/E2_fixed_corpus/same_environment_e0_components/multimedia_player_framework.json
+[OK] Markdown report: /mnt/d/openHarmonyScanner/worktrees/c-line-task-tree-20261020/research/deliveries/performance/full_efficiency_20261021/E2_fixed_corpus/same_environment_e0_components/multimedia_player_framework.md

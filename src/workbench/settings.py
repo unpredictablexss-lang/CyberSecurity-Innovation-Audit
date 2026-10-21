@@ -8,14 +8,25 @@ from pathlib import Path
 class Settings:
     data_dir: Path
     _configured_target_roots: tuple[Path, ...] = field(repr=False)
+    performance_mode: str
+    max_concurrent_scans: int
     repository_cache_roots: tuple[Path, ...] = field(repr=False)
     repository_cache_max_bytes: int
     repository_cache_min_free_bytes: int
 
-    def __init__(self, data_dir, target_roots, repository_cache_roots=None,
-                 repository_cache_max_bytes=0, repository_cache_min_free_bytes=1024 ** 3):
+    def __init__(self, data_dir, target_roots, performance_mode="balanced", max_concurrent_scans=None,
+                 repository_cache_roots=None, repository_cache_max_bytes=0,
+                 repository_cache_min_free_bytes=1024 ** 3):
         object.__setattr__(self, "data_dir", Path(data_dir))
         object.__setattr__(self, "_configured_target_roots", tuple(Path(root) for root in target_roots))
+        if performance_mode not in {"low", "balanced", "high"}:
+            raise ValueError("performance_mode must be low, balanced, or high")
+        defaults = {"low": 1, "balanced": 2, "high": 4}
+        limit = defaults[performance_mode] if max_concurrent_scans is None else max_concurrent_scans
+        if not isinstance(limit, int) or isinstance(limit, bool) or not 1 <= limit <= defaults[performance_mode]:
+            raise ValueError("max_concurrent_scans must be within the selected mode's safe limit")
+        object.__setattr__(self, "performance_mode", performance_mode)
+        object.__setattr__(self, "max_concurrent_scans", limit)
         cache_roots = repository_cache_roots or (Path(data_dir) / "repo-cache",)
         object.__setattr__(self, "repository_cache_roots", tuple(Path(root) for root in cache_roots))
         object.__setattr__(self, "repository_cache_max_bytes", int(repository_cache_max_bytes))
@@ -100,6 +111,12 @@ class Settings:
         if not isinstance(root_values, list) or not all(isinstance(value, str) for value in root_values):
             raise ValueError("OHSCANNER_CONFIG target_roots must be a list of path strings")
         configured = tuple(resolve(value, "OHSCANNER_TARGET_ROOTS/target_roots entry") for value in root_values)
+        mode = os.environ.get("OHSCANNER_PERFORMANCE_MODE", config.get("performance_mode", "balanced"))
+        defaults = {"low": 1, "balanced": 2, "high": 4}
+        if mode not in defaults:
+            raise ValueError("performance_mode must be low, balanced, or high")
+        requested = os.environ.get("OHSCANNER_MAX_CONCURRENT_SCANS", config.get("max_concurrent_scans"))
+        limit = defaults[mode] if requested is None else int(requested)
         cache_policy = config.get("repository_cache", {})
         if not isinstance(cache_policy, dict):
             raise ValueError("repository_cache must be a JSON object")
@@ -131,7 +148,7 @@ class Settings:
         cache_min_free_bytes = nonnegative_int(
             "OHSCANNER_REPOSITORY_CACHE_MIN_FREE_BYTES", "minimum_free_bytes", 1024 ** 3
         )
-        return cls(data, configured, cache_roots, cache_max_bytes, cache_min_free_bytes)
+        return cls(data, configured, mode, limit, cache_roots, cache_max_bytes, cache_min_free_bytes)
 
     def initialize(self):
         self.data_dir.mkdir(parents=True, exist_ok=True, mode=0o700)

@@ -1,0 +1,324 @@
+{
+  "schema_version": 1,
+  "experiment": "P2 verified single-Git-Blob detector-result reuse fixture",
+  "limits": [
+    "Two-file synthetic C++ fixture, not a product scan or ABCD vulnerability benchmark.",
+    "The source inventory and parsing still run at head; only opted-in per-file result reuse is measured.",
+    "The demonstration detector inventories memcpy call sites; no security precision/recall claim."
+  ],
+  "repository": "fixture/incremental-cache",
+  "base_commit": "9cff3eac63e7946329b1a1401a95e0f08e308309",
+  "head_commit": "eff6ef56d9161173dd3d43b72f4d727f9eb16ccb",
+  "cold_cache_stats": {
+    "hits": 0,
+    "misses": 2,
+    "bypassed": 0,
+    "invalid": 0,
+    "writes": 2,
+    "write_skipped": 0,
+    "read_errors": 0,
+    "hit_paths": []
+  },
+  "incremental_cache_stats": {
+    "hits": 1,
+    "misses": 1,
+    "bypassed": 0,
+    "invalid": 0,
+    "writes": 1,
+    "write_skipped": 0,
+    "read_errors": 0,
+    "hit_paths": [
+      "unchanged.cpp"
+    ]
+  },
+  "incremental": {
+    "schema_version": 1,
+    "mode": "incremental_requested",
+    "base_commit": "9cff3eac63e7946329b1a1401a95e0f08e308309",
+    "head_commit": "eff6ef56d9161173dd3d43b72f4d727f9eb16ccb",
+    "diff_status": "complete",
+    "diff_error": null,
+    "changed_paths": [
+      {
+        "status": "M",
+        "old_path": "changed.cpp",
+        "new_path": "changed.cpp"
+      }
+    ],
+    "changed_path_count": 1,
+    "config_changed_paths": [],
+    "impact_paths": [
+      "changed.cpp"
+    ],
+    "include_index": {
+      "status": "tracked_quoted_includes_indexed",
+      "base_inventory_error": null,
+      "base_dependency_edges": 0,
+      "head_dependency_edges": 0,
+      "unresolved_includes": [],
+      "unresolved_include_count": 0,
+      "external_angle_includes": 0,
+      "truncated": false
+    },
+    "call_symbol_index": {
+      "status": "not_implemented",
+      "reason": "lexical matches cannot prove call or symbol identity"
+    },
+    "dependency_index": {
+      "status": "incomplete",
+      "reason": "detectors do not declare validated cross-file dependency inputs"
+    },
+    "reused_files": 1,
+    "recomputed_files": null,
+    "fallback": true,
+    "fallback_reason": "cross_file_dependency_reuse_unproven; declared_source_blob_results_reused",
+    "execution": "full_source_index_with_verified_per_file_result_reuse",
+    "detector_result_cache": {
+      "hits": 1,
+      "misses": 1,
+      "bypassed": 0,
+      "invalid": 0,
+      "writes": 1,
+      "write_skipped": 0,
+      "read_errors": 0,
+      "hit_paths": [
+        "unchanged.cpp"
+      ]
+    },
+    "reused_detector_results": 1,
+    "recomputed_detector_results": 1
+  },
+  "equivalent_to_uncached": true,
+  "cached_result_signature": {
+    "status": "completed_with_limitations",
+    "source_parsing": {
+      "parsing_status": {
+        "complete": 2
+      },
+      "languages": {
+        "cpp": 2
+      }
+    },
+    "detector_coverage": {
+      "schema_version": 1,
+      "detectors": {
+        "ohscanner.example.cpp.copy-calls": {
+          "scope_mode": "per_file",
+          "status": "failed",
+          "applicable_files": 2,
+          "analyzed_files": [],
+          "partially_inspected_files": [],
+          "source_sha256": {
+            "changed.cpp": "a0ce8d0f34c273ee3792ec59893771d3ff8b0127c74231a3cfe5b76b6c66c24d",
+            "unchanged.cpp": "ed17507ad283681cf67dc2bdc77c17c94b5952e0cc271b1bbc9ee2d2e3561f85"
+          },
+          "unexamined": [
+            {
+              "file": "changed.cpp",
+              "parse_status": "complete",
+              "reason": "failed",
+              "analysis_status": "not_analyzed"
+            },
+            {
+              "file": "unchanged.cpp",
+              "parse_status": "complete",
+              "reason": "failed",
+              "analysis_status": "not_analyzed"
+            }
+          ],
+          "inspected_files": [],
+          "not_analyzed_files": [
+            "changed.cpp",
+            "unchanged.cpp"
+          ],
+          "coverage_counts": {
+            "complete": 0,
+            "partial": 0,
+            "not_analyzed": 2,
+            "failed": 0
+          },
+          "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+          "evidence_obligations": []
+        }
+      }
+    },
+    "detector_status": "failed",
+    "diagnostics": []
+  },
+  "uncached_result_signature": {
+    "status": "completed_with_limitations",
+    "source_parsing": {
+      "parsing_status": {
+        "complete": 2
+      },
+      "languages": {
+        "cpp": 2
+      }
+    },
+    "detector_coverage": {
+      "schema_version": 1,
+      "detectors": {
+        "ohscanner.example.cpp.copy-calls": {
+          "scope_mode": "per_file",
+          "status": "failed",
+          "applicable_files": 2,
+          "analyzed_files": [],
+          "partially_inspected_files": [],
+          "source_sha256": {
+            "changed.cpp": "a0ce8d0f34c273ee3792ec59893771d3ff8b0127c74231a3cfe5b76b6c66c24d",
+            "unchanged.cpp": "ed17507ad283681cf67dc2bdc77c17c94b5952e0cc271b1bbc9ee2d2e3561f85"
+          },
+          "unexamined": [
+            {
+              "file": "changed.cpp",
+              "parse_status": "complete",
+              "reason": "failed",
+              "analysis_status": "not_analyzed"
+            },
+            {
+              "file": "unchanged.cpp",
+              "parse_status": "complete",
+              "reason": "failed",
+              "analysis_status": "not_analyzed"
+            }
+          ],
+          "inspected_files": [],
+          "not_analyzed_files": [
+            "changed.cpp",
+            "unchanged.cpp"
+          ],
+          "coverage_counts": {
+            "complete": 0,
+            "partial": 0,
+            "not_analyzed": 2,
+            "failed": 0
+          },
+          "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+          "evidence_obligations": []
+        }
+      }
+    },
+    "detector_status": "failed",
+    "diagnostics": []
+  },
+  "timings": {
+    "head_cached": {
+      "ast_cache_setup_seconds": 5.00003807246685e-07,
+      "ast_cache_setup_cpu_seconds": 0.0,
+      "source_read_seconds": 0.26697409999906085,
+      "source_read_cpu_seconds": 0.03125,
+      "source_read_child_cpu_seconds": null,
+      "ast_parse_seconds": 0.00021500000730156898,
+      "ast_parse_cpu_seconds": 0.0,
+      "frontend_seconds": 0.00029919999360572547,
+      "frontend_cpu_seconds": 0.0,
+      "facts_build_seconds": 3.5500008380040526e-05,
+      "facts_build_cpu_seconds": 0.0,
+      "fact_providers": [
+        {
+          "id": "syntax_facts_v1",
+          "version": "1.0.0",
+          "output_fact": "facts_v1"
+        }
+      ],
+      "missing_facts": [],
+      "parse_files": 2,
+      "indexed_files": 2,
+      "ast_cache": {
+        "hits": 0,
+        "misses": 0,
+        "bypassed": 0,
+        "invalid": 0,
+        "writes": 0,
+        "evictions": 0,
+        "oversize_not_stored": 0,
+        "cleared_entries": 0,
+        "cleared_bytes": 0,
+        "cleanup_errors": 0,
+        "cache_bytes": 0,
+        "max_bytes": null,
+        "hit_rate": null
+      },
+      "detector_result_cache": {
+        "hits": 1,
+        "misses": 1,
+        "bypassed": 0,
+        "invalid": 0,
+        "writes": 1,
+        "write_skipped": 0,
+        "read_errors": 0,
+        "hit_paths": [
+          "unchanged.cpp"
+        ]
+      },
+      "detector_stage_wall_seconds": 0.004336099998909049,
+      "detector_stage_cpu_seconds": 0.0,
+      "detector_execution_seconds": 0.004089099995326251,
+      "report_build_seconds": 0.030430700004217215,
+      "report_build_cpu_seconds": 0.0,
+      "process_cpu_seconds": 0.09375,
+      "analysis_wall_seconds": 0.5755923999968218,
+      "peak_rss_bytes": null,
+      "peak_rss_status": "unknown; measured externally by perf_scale_scan.py when available",
+      "report_render_seconds": 2.580000727903098e-05,
+      "report_render_cpu_seconds": 0.0,
+      "report_json_serialization_seconds": 7.9e-05,
+      "report_file_write_seconds": 0.0004924000095,
+      "report_write_seconds": 0.0004924000095,
+      "report_write_status": "temporary write and atomic replace; timing-field patch excluded"
+    },
+    "head_uncached": {
+      "ast_cache_setup_seconds": 4.00003045797348e-07,
+      "ast_cache_setup_cpu_seconds": 0.0,
+      "source_read_seconds": 0.2713880999945104,
+      "source_read_cpu_seconds": 0.078125,
+      "source_read_child_cpu_seconds": null,
+      "ast_parse_seconds": 0.00020029999723192304,
+      "ast_parse_cpu_seconds": 0.0,
+      "frontend_seconds": 0.00028670000028796494,
+      "frontend_cpu_seconds": 0.0,
+      "facts_build_seconds": 3.360000846441835e-05,
+      "facts_build_cpu_seconds": 0.0,
+      "fact_providers": [
+        {
+          "id": "syntax_facts_v1",
+          "version": "1.0.0",
+          "output_fact": "facts_v1"
+        }
+      ],
+      "missing_facts": [],
+      "parse_files": 2,
+      "indexed_files": 2,
+      "ast_cache": {
+        "hits": 0,
+        "misses": 0,
+        "bypassed": 0,
+        "invalid": 0,
+        "writes": 0,
+        "evictions": 0,
+        "oversize_not_stored": 0,
+        "cleared_entries": 0,
+        "cleared_bytes": 0,
+        "cleanup_errors": 0,
+        "cache_bytes": 0,
+        "max_bytes": null,
+        "hit_rate": null
+      },
+      "detector_stage_wall_seconds": 0.00018139999883715063,
+      "detector_stage_cpu_seconds": 0.0,
+      "detector_execution_seconds": 0.00013970000145491213,
+      "report_build_seconds": 0.03221059999486897,
+      "report_build_cpu_seconds": 0.0,
+      "process_cpu_seconds": 0.078125,
+      "analysis_wall_seconds": 0.30493440000282135,
+      "peak_rss_bytes": null,
+      "peak_rss_status": "unknown; measured externally by perf_scale_scan.py when available",
+      "report_render_seconds": 2.2099993657320738e-05,
+      "report_render_cpu_seconds": 0.0,
+      "report_json_serialization_seconds": 6.68e-05,
+      "report_file_write_seconds": 0.0004281000001,
+      "report_write_seconds": 0.0004281000001,
+      "report_write_status": "temporary write and atomic replace; timing-field patch excluded"
+    }
+  }
+}

@@ -159,12 +159,22 @@ def main() -> None:
     m2_parser.add_argument("--repo-dir", required=True, help="Local Git repository with full pinned objects")
     m2_parser.add_argument("--repository", required=True, help="Owner/repository declaration")
     m2_parser.add_argument("--commit", required=True, help="Complete immutable Git commit SHA")
+    m2_parser.add_argument("--base-commit", default=None,
+                           help="Optional fixed ancestor commit; computes a conservative diff plan and still full-scans when dependency reuse is unproven")
     m2_parser.add_argument("--include", action="append", default=None,
                            help="Repository-relative path or prefix; repeatable")
     m2_parser.add_argument("--detector", action="append", required=True,
                            help="Explicit first-party detector ID (e.g. ohscanner.interface.ipc); repeatable. Not an import path.")
     m2_parser.add_argument("--allow-example-detectors", action="store_true",
                            help="Acknowledge that 'ohscanner.example.*' is a non-security demonstration")
+    m2_parser.add_argument("--ast-cache-dir", default=None,
+                           help="Optional directory for versioned, fixed-Git-Blob C/C++ light-AST summaries")
+    m2_parser.add_argument("--ast-cache-max-bytes", type=int, default=512 * 1024 * 1024,
+                           help="Maximum bytes for cache-owned AST entries (default: 536870912)")
+    m2_parser.add_argument("--clear-ast-cache", action="store_true",
+                           help="Remove cache-owned entries in --ast-cache-dir before scanning")
+    m2_parser.add_argument("--detector-result-cache-dir", default=None,
+                           help="Optional cache for explicitly opted-in single-Git-Blob detector results")
     m2_parser.add_argument("--json-out", default="outputs/reports/ohscanner_m2.json")
     m2_parser.add_argument("--md-out", default="outputs/reports/ohscanner_m2.md")
 
@@ -362,6 +372,10 @@ def main() -> None:
     if args.command == "ohscan-run":
         from src.ohscanner.execution import run_fixed_commit_scan
 
+        if args.clear_ast_cache and not args.ast_cache_dir:
+            m2_parser.error("--clear-ast-cache requires --ast-cache-dir")
+        if args.ast_cache_max_bytes < 0:
+            m2_parser.error("--ast-cache-max-bytes must be non-negative")
         try:
             report = run_fixed_commit_scan(
                 repo_dir=Path(args.repo_dir),
@@ -372,6 +386,12 @@ def main() -> None:
                 json_out=Path(args.json_out),
                 md_out=Path(args.md_out),
                 allow_examples=args.allow_example_detectors,
+                ast_cache_dir=Path(args.ast_cache_dir) if args.ast_cache_dir else None,
+                ast_cache_max_bytes=args.ast_cache_max_bytes,
+                clear_ast_cache=args.clear_ast_cache,
+                base_commit=args.base_commit,
+                detector_result_cache_dir=Path(args.detector_result_cache_dir)
+                if args.detector_result_cache_dir else None,
             )
         except (ValueError, OSError, UnicodeError, subprocess.TimeoutExpired) as error:
             m2_parser.error(str(error))

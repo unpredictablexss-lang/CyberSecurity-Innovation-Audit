@@ -17,6 +17,7 @@ export default function AuditPlanView({ plan, auditMode }: { plan: any; auditMod
     <Descriptions size="small" bordered column={1} items={[
       { key: "repository", label: "登记仓库名称", children: <>{source.repository || "未知"} <Typography.Text type="secondary">（本机登记标签，不代表官方身份核验）</Typography.Text></> },
       { key: "commit", label: "扫描代码版本", children: <Typography.Text code copyable>{source.commit || "unknown"}</Typography.Text> },
+      ...(plan.base_commit ? [{ key: "base", label: "比较基线 Commit", children: <><Typography.Text code copyable>{plan.base_commit}</Typography.Text><Typography.Text type="secondary">（依赖不完整时完整扫描 head）</Typography.Text></> }] : []),
       { key: "tree", label: "Git Tree", children: <Typography.Text code copyable>{source.git_tree || "unknown"}</Typography.Text> },
       { key: "scope", label: "纳入路径", children: (source.include_paths || []).join("、") || "未知" },
       { key: "workflow", label: "审计流程", children: auditWorkflowLabel(plan, auditMode) },
@@ -25,7 +26,7 @@ export default function AuditPlanView({ plan, auditMode }: { plan: any; auditMod
     ]} />
     <Alert className="section-gap" showIcon type={plan.suggested_detector_ids.length ? "info" : "warning"}
       message={`规则计划：${plan.suggested_detector_ids.length} 项计划尝试，${plan.detectors.filter((d: any) => d.admission).length} 项尚未准入，${plan.parse_limitations.length} 个文件解析不完整`}
-      description={`扫描版本 ${plan.source.commit.slice(0, 12)}；仅计划尝试，实际执行和覆盖以扫描报告为准。工作流 SHA-256 会绑定单轮与补充核查预算。`} />
+      description={`扫描版本 ${plan.source.commit.slice(0, 12)}${plan.base_commit ? "，比较基线 " + plan.base_commit.slice(0, 12) + "；不确定时执行完整扫描" : ""}；仅计划尝试，实际执行和覆盖以扫描报告为准。工作流 SHA-256 绑定扫描配置与授权范围。`} />
     <Collapse items={[{ key: "plan", label: "查看规则版本与跳过原因", children: <>
       <Table size="small" pagination={false}
         expandable={{

@@ -474,6 +474,11 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
               label: "Commit",
               children: <Hash value={job.spec.commit} />,
             },
+            ...(job.spec.base_commit ? [{
+              key: "base_commit",
+              label: "比较基线 Commit",
+              children: <Hash value={job.spec.base_commit} />,
+            }] : []),
             {
               key: "tree",
               label: "Git Tree",
@@ -505,7 +510,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
           ]}
         />
       </Card>
-      <AuditPlanView plan={job.spec.audit_plan} auditMode={job.spec.audit_mode} />
+      <AuditPlanView plan={{ ...job.spec.audit_plan, base_commit: job.spec.base_commit }} auditMode={job.spec.audit_mode} />
       {progressiveTriage && progressiveTriage.state !== "not_available" && <Card className="section-gap" title="渐进式审计 · L0-L3 计划与进度">
         <Alert className="section-gap" type="info" showIcon
           message={progressiveTriage.state === "planned_by_parent_operation" ? "候选排序由父审计统一计算" : progressiveTriage.state === "awaiting_static_report" ? "等待固定版本静态报告" : progressiveTriage.state === "ranked_static_only" ? "静态审计：仅本地归并和排序，不会调用模型" : "L0/L1 本地计划；所有原始候选继续保留"}

@@ -40,6 +40,7 @@ class RepositoryInput(StrictModel):
 class AuditPlanInput(StrictModel):
     repository_id: str
     revision: str = Field(min_length=1, max_length=200)
+    base_commit: str | None = Field(default=None, pattern=r"^(?:[a-f0-9]{40}|[a-f0-9]{64})$")
     include_paths: list[str] = Field(
         default_factory=lambda: ["."], min_length=1, max_length=100
     )
@@ -185,6 +186,11 @@ def create_app(settings=None):
     def health():
         from .agent import public_status
         agent = public_status(settings.data_dir)
+        from src.ohscanner.indexing import cpu_quota_info
+        cpu_quota = cpu_quota_info()
+        with store.connect() as db:
+            queue_counts = {row["status"]: row["n"] for row in db.execute(
+                "SELECT status,count(*) AS n FROM jobs WHERE status IN ('queued','running') GROUP BY status")}
         return {
             "status": "ok",
             "version": "0.1.0",
@@ -210,7 +216,14 @@ def create_app(settings=None):
                 "source_files": 2000,
                 "source_bytes": 32 * 1024 * 1024,
                 "blob_bytes": 1024 * 1024,
-                "concurrent_scans": 1,
+                "concurrent_scans": settings.max_concurrent_scans,
+                "queue_capacity": 100,
+                "queued_scans": queue_counts.get("queued", 0),
+                "running_scans": queue_counts.get("running", 0),
+                "performance_mode": settings.performance_mode,
+                "cpu_quota": cpu_quota,
+                "memory_limit": {"status": "per_job_rlimit_as", "enforced_mb": None,
+                                  "scope": "scan spec memory_mb", "measures": "virtual address space, not RSS"},
             },
             "worker_running": worker_running(),
         }
@@ -301,13 +314,15 @@ def create_app(settings=None):
         service.check_repository(settings, repo["path"])
         _, plan = service.audit_plan(
             repo, body.revision, body.include_paths, body.detector_ids,
-            body.timeout_seconds, body.memory_mb,
+            body.timeout_seconds, body.memory_mb, base_commit=body.base_commit,
         )
         progressive_policy = progressive_policy_snapshot()
         workflow_sha256 = service.audit_workflow_sha256(
             plan["plan_sha256"], body.audit_mode, body.auto_triage,
             body.max_triage_candidates, body.max_r2_candidates,
-            progressive_policy_sha256=progressive_policy["policy_sha256"])
+            body.max_cost_usd,
+            progressive_policy_sha256=progressive_policy["policy_sha256"],
+            base_commit=body.base_commit)
         triage_preview = None
         if body.auto_triage:
             if body.audit_mode != "standard_review":
@@ -329,6 +344,9 @@ def create_app(settings=None):
                 body.max_r2_candidates),
             "progressive_triage_policy": progressive_policy,
         }
+        if body.base_commit:
+            result["base_commit"] = body.base_commit
+            result["incremental_mode"] = "full_scan_fallback_if_dependency_reuse_unproven"
         if triage_preview is not None:
             result["triage_authorization_preview"] = triage_preview
         return result
@@ -348,6 +366,7 @@ def create_app(settings=None):
             body.detector_ids,
             body.timeout_seconds,
             body.memory_mb,
+            base_commit=body.base_commit,
         )
         if body.expected_plan_sha256 and body.expected_plan_sha256 != spec["plan_sha256"]:
             raise ValueError("Source or rule plan changed since preview; refresh the plan before scanning")
@@ -355,7 +374,9 @@ def create_app(settings=None):
         workflow_sha256 = service.audit_workflow_sha256(
             spec["plan_sha256"], body.audit_mode, body.auto_triage,
             body.max_triage_candidates, body.max_r2_candidates,
-            progressive_policy_sha256=progressive_policy["policy_sha256"])
+            body.max_cost_usd,
+            progressive_policy_sha256=progressive_policy["policy_sha256"],
+            base_commit=body.base_commit)
         if body.expected_workflow_sha256 and body.expected_workflow_sha256 != workflow_sha256:
             raise ValueError("Audit workflow changed since preview; refresh the plan before scanning")
         spec["audit_mode"] = body.audit_mode
@@ -475,6 +496,7 @@ def create_app(settings=None):
             old["detector_ids"],
             old["timeout_seconds"],
             old["memory_mb"],
+            base_commit=old.get("base_commit"),
         )
         spec["retry_of"] = key
         audit_mode = old.get("audit_mode", "static_only")
@@ -484,8 +506,10 @@ def create_app(settings=None):
             spec["progressive_triage_policy"] = old_policy
         spec["workflow_sha256"] = service.audit_workflow_sha256(
             spec["plan_sha256"], audit_mode,
+            old.get("max_cost_usd"),
             progressive_policy_sha256=(old_policy.get("policy_sha256")
-                                       if isinstance(old_policy, dict) else None))
+                                       if isinstance(old_policy, dict) else None),
+            base_commit=spec.get("base_commit"))
         return store.create_job(repo["id"], spec)
 
     @app.get("/api/v1/scans/{key}/events")

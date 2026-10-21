@@ -21,7 +21,8 @@ def sha(data):
 
 def audit_workflow_sha256(plan_sha256, audit_mode, auto_triage=False,
                           max_triage_candidates=3, max_r2_candidates=0,
-                          max_cost_usd=None, progressive_policy_sha256=None):
+                          max_cost_usd=None, progressive_policy_sha256=None,
+                          base_commit=None):
     if audit_mode not in {"standard_review", "static_only"}:
         raise ValueError("unsupported audit workflow mode")
     if (not isinstance(auto_triage, bool)
@@ -32,8 +33,12 @@ def audit_workflow_sha256(plan_sha256, audit_mode, auto_triage=False,
             or isinstance(max_r2_candidates, bool)
             or not 0 <= max_r2_candidates <= max_triage_candidates):
         raise ValueError("invalid triage workflow budget")
+    if base_commit is not None and (not isinstance(base_commit, str)
+                                    or not re.fullmatch(r"(?:[0-9a-f]{40}|[0-9a-f]{64})", base_commit)):
+        raise ValueError("incremental base must be a full lowercase Git commit SHA")
     payload = {
         "version": 6, "plan_sha256": plan_sha256, "audit_mode": audit_mode,
+        "base_commit": base_commit,
         "auto_triage": auto_triage if audit_mode == "standard_review" else False,
         "max_triage_candidates": max_triage_candidates if auto_triage and audit_mode == "standard_review" else 0,
         "max_r2_candidates": (max_r2_candidates
@@ -94,7 +99,10 @@ def engine_fingerprint():
         relative = file.relative_to(root / "src")
         if "workbench" in relative.parts and not (
             relative.parts[:2] in (("workbench", "planning"), ("workbench", "sources"))
-            or relative.as_posix() == "workbench/plan_child.py"
+            or relative.as_posix() in {
+                "workbench/plan_child.py", "workbench/child.py",
+                "workbench/service.py", "workbench/api.py",
+            }
         ):
             continue
         digest.update(str(file.relative_to(root)).encode())
@@ -287,7 +295,25 @@ def detector_metadata():
     return result
 
 
-def audit_plan(repo, requested, includes, detector_ids=None, timeout_seconds=300, memory_mb=2048):
+def resolve_incremental_base(repo_path, base_commit, head_commit):
+    if base_commit is None:
+        return None
+    if not isinstance(base_commit, str) or not re.fullmatch(r"(?:[0-9a-f]{40}|[0-9a-f]{64})", base_commit):
+        raise ValueError("incremental base must be a full lowercase Git commit SHA")
+    resolved, _ = resolve_commit(Path(repo_path), base_commit)
+    if len(resolved) != len(head_commit):
+        raise ValueError("incremental base and head must use the same Git object format")
+    from src.ohscanner.git_source import _git_environment
+    ancestor = subprocess.run(
+        ["git", "-C", str(repo_path), "merge-base", "--is-ancestor", resolved, head_commit],
+        capture_output=True, timeout=30, stdin=subprocess.DEVNULL, env=_git_environment())
+    if ancestor.returncode:
+        raise ValueError("incremental base must be an available ancestor of the head commit")
+    return resolved
+
+
+def audit_plan(repo, requested, includes, detector_ids=None, timeout_seconds=300,
+               memory_mb=2048, *, base_commit=None):
     if not includes or len(includes) > 100 or len(set(includes)) != len(includes):
         raise ValueError("select 1..100 distinct include paths")
     for path in includes:
@@ -296,6 +322,7 @@ def audit_plan(repo, requested, includes, detector_ids=None, timeout_seconds=300
     if detector_ids:
         build_registry(tuple(detector_ids))
     fixed = revision(repo, requested)
+    resolve_incremental_base(repo["path"], base_commit, fixed["commit"])
     request = {"repo_dir": repo["path"], "repository": repo["name"],
                "commit": fixed["commit"], "includes": includes,
                "selected_detector_ids": detector_ids,
@@ -319,8 +346,10 @@ def audit_plan(repo, requested, includes, detector_ids=None, timeout_seconds=300
     return fixed, plan
 
 
-def make_spec(repo, requested, includes, detector_ids, timeout_seconds, memory_mb):
-    fixed, plan = audit_plan(repo, requested, includes, detector_ids, timeout_seconds, memory_mb)
+def make_spec(repo, requested, includes, detector_ids, timeout_seconds, memory_mb,
+              *, base_commit=None):
+    fixed, plan = audit_plan(repo, requested, includes, detector_ids, timeout_seconds,
+                             memory_mb, base_commit=base_commit)
     ids = list(plan["suggested_detector_ids"]) if detector_ids is None else list(detector_ids)
     if not ids:
         raise ValueError("No applicable approved detector; analysis remains unknown, no scan queued")
@@ -328,6 +357,8 @@ def make_spec(repo, requested, includes, detector_ids, timeout_seconds, memory_m
     return {
         **fixed,
         "repository": repo["name"], "include_paths": includes,
+        **({"base_commit": resolve_incremental_base(repo["path"], base_commit, fixed["commit"])}
+           if base_commit else {}),
         "detector_ids": ids,
         "detector_versions": {d["id"]: d["version"] for d in detector_metadata() if d["id"] in ids},
         "audit_plan": plan, "plan_sha256": plan["plan_sha256"],

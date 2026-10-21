@@ -1,0 +1,73 @@
+{
+  "sha": "ffaa0d33bc4004544b180cd406f935a83803fb37",
+  "node_id": "C_kwDONHQ7kdoAKGZmYWEwZDMzYmM0MDA0NTQ0YjE4MGNkNDA2ZjkzNWE4MzgwM2ZiMzc",
+  "commit": {
+    "author": {
+      "name": "beauty-bag",
+      "email": "huwei169@huawei.com",
+      "date": "2026-09-28T12:18:14Z"
+    },
+    "committer": {
+      "name": "beauty-bag",
+      "email": "huwei169@huawei.com",
+      "date": "2026-09-28T12:18:14Z"
+    },
+    "message": "告警整改\n\nSigned-off-by: beauty-bag <huwei169@huawei.com>",
+    "tree": {
+      "sha": "0a18669abd454ae51f19adcf445eeb57888d2f3e",
+      "url": "https://api.github.com/repos/openharmony/resourceschedule_background_task_mgr/git/trees/0a18669abd454ae51f19adcf445eeb57888d2f3e"
+    },
+    "url": "https://api.github.com/repos/openharmony/resourceschedule_background_task_mgr/git/commits/ffaa0d33bc4004544b180cd406f935a83803fb37",
+    "comment_count": 0,
+    "verification": {
+      "verified": false,
+      "reason": "unsigned",
+      "signature": null,
+      "payload": null,
+      "verified_at": null
+    }
+  },
+  "url": "https://api.github.com/repos/openharmony/resourceschedule_background_task_mgr/commits/ffaa0d33bc4004544b180cd406f935a83803fb37",
+  "html_url": "https://github.com/openharmony/resourceschedule_background_task_mgr/commit/ffaa0d33bc4004544b180cd406f935a83803fb37",
+  "comments_url": "https://api.github.com/repos/openharmony/resourceschedule_background_task_mgr/commits/ffaa0d33bc4004544b180cd406f935a83803fb37/comments",
+  "author": null,
+  "committer": null,
+  "parents": [
+    {
+      "sha": "1fb1e759138c892208e4856b6a643aa5239f36ec",
+      "url": "https://api.github.com/repos/openharmony/resourceschedule_background_task_mgr/commits/1fb1e759138c892208e4856b6a643aa5239f36ec",
+      "html_url": "https://github.com/openharmony/resourceschedule_background_task_mgr/commit/1fb1e759138c892208e4856b6a643aa5239f36ec"
+    }
+  ],
+  "stats": {
+    "total": 7,
+    "additions": 6,
+    "deletions": 1
+  },
+  "files": [
+    {
+      "sha": "5123beb116f4d1a086e31830f52cfb7194b01394",
+      "filename": "interfaces/kits/common/include/ui_extension_helper.h",
+      "status": "modified",
+      "additions": 3,
+      "deletions": 0,
+      "changes": 3,
+      "blob_url": "https://github.com/openharmony/resourceschedule_background_task_mgr/blob/ffaa0d33bc4004544b180cd406f935a83803fb37/interfaces%2Fkits%2Fcommon%2Finclude%2Fui_extension_helper.h",
+      "raw_url": "https://github.com/openharmony/resourceschedule_background_task_mgr/raw/ffaa0d33bc4004544b180cd406f935a83803fb37/interfaces%2Fkits%2Fcommon%2Finclude%2Fui_extension_helper.h",
+      "contents_url": "https://api.github.com/repos/openharmony/resourceschedule_background_task_mgr/contents/interfaces%2Fkits%2Fcommon%2Finclude%2Fui_extension_helper.h?ref=ffaa0d33bc4004544b180cd406f935a83803fb37",
+      "patch": "@@ -16,6 +16,8 @@\n #ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_KITS_COMMON_INCLUDE_UI_EXTENSION_HELPER_H\r\n #define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_KITS_COMMON_INCLUDE_UI_EXTENSION_HELPER_H\r\n \r\n+#include <mutex>\r\n+\r\n #include \"singleton.h\"\r\n #include \"ui_content.h\"\r\n #include \"ability.h\"\r\n@@ -55,6 +57,7 @@ class UIExtensionHelper : public DelayedSingleton<UIExtensionHelper> {\n \r\n private:\r\n     std::shared_ptr<ModalExtensionCallback> modalExtCallback_ {nullptr};\r\n+    std::mutex modalExtCallbackLock_;\r\n };\r\n }  // namespace BackgroundTaskMgr\r\n }  // namespace OHOS\r"
+    },
+    {
+      "sha": "bd4fe6354152e552190ae7bdddaf03e4fb3b44cb",
+      "filename": "interfaces/kits/common/src/ui_extension_helper.cpp",
+      "status": "modified",
+      "additions": 3,
+      "deletions": 1,
+      "changes": 4,
+      "blob_url": "https://github.com/openharmony/resourceschedule_background_task_mgr/blob/ffaa0d33bc4004544b180cd406f935a83803fb37/interfaces%2Fkits%2Fcommon%2Fsrc%2Fui_extension_helper.cpp",
+      "raw_url": "https://github.com/openharmony/resourceschedule_background_task_mgr/raw/ffaa0d33bc4004544b180cd406f935a83803fb37/interfaces%2Fkits%2Fcommon%2Fsrc%2Fui_extension_helper.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/resourceschedule_background_task_mgr/contents/interfaces%2Fkits%2Fcommon%2Fsrc%2Fui_extension_helper.cpp?ref=ffaa0d33bc4004544b180cd406f935a83803fb37",
+      "patch": "@@ -61,7 +61,6 @@ bool UIExtensionHelper::CreateUIExtension(std::shared_ptr<OHOS::AbilityRuntime::\n     uiExtCallback->SetAbilityContext(abilityContext);\r\n     std::string bundleName = abilityContext->GetBundleName();\r\n     uiExtCallback->SetBundleName(bundleName);\r\n-    SetModalExtensionCallback(uiExtCallback);\r\n \r\n     Ace::ModalUIExtensionCallbacks uiExtensionCallbacks = {\r\n         .onRelease = std::bind(&ModalExtensionCallback::OnRelease, uiExtCallback, std::placeholders::_1),\r\n@@ -82,16 +81,19 @@ bool UIExtensionHelper::CreateUIExtension(std::shared_ptr<OHOS::AbilityRuntime::\n         return false;\r\n     }\r\n     uiExtCallback->SetSessionId(sessionId);\r\n+    SetModalExtensionCallback(uiExtCallback);\r\n     return true;\r\n }\r\n \r\n std::shared_ptr<ModalExtensionCallback> UIExtensionHelper::GetModalExtensionCallback()\r\n {\r\n+    std::lock_guard<std::mutex> lock(modalExtCallbackLock_);\r\n     return modalExtCallback_;\r\n }\r\n \r\n void UIExtensionHelper::SetModalExtensionCallback(std::shared_ptr<ModalExtensionCallback> modalExtCallback)\r\n {\r\n+    std::lock_guard<std::mutex> lock(modalExtCallbackLock_);\r\n     modalExtCallback_ = modalExtCallback;\r\n }\r\n \r"
+    }
+  ]
+}

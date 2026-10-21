@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "corpus": "OpenHarmony component corpus for the OHScanner scale/performance benchmark. Components are depth-1 clones over SSH pinned to a full commit SHA; blobs are complete locally so every scan runs offline.",
+  "generated": "2026-10-10",
+  "entries": [
+    {
+      "label": "communication_ipc",
+      "repo_dir": "openharmony-audit/perf-corpus/communication_ipc",
+      "repository": "openharmony/communication_ipc",
+      "ref": "depth=1 clone @ pinned commit",
+      "commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+      "commit_date": "2026-09-14T14:09:31+08:00",
+      "base_commit": "093c0af2c28815cf147d2d41208f7a857d4958cb"
+    },
+    {
+      "label": "inputmethod_imf",
+      "repo_dir": "openharmony-audit/perf-corpus/inputmethod_imf",
+      "repository": "openharmony/inputmethod_imf",
+      "ref": "depth=1 clone @ pinned commit",
+      "commit": "7777cba9eb19085af8e7b90088531028d2937460",
+      "commit_date": "2026-09-29T17:17:22+08:00",
+      "base_commit": "247be52329d29787ae839e1eb5ada45580b7db2c"
+    },
+    {
+      "label": "multimedia_camera_framework",
+      "repo_dir": "openharmony-audit/perf-corpus/multimedia_camera_framework",
+      "repository": "openharmony/multimedia_camera_framework",
+      "ref": "depth=1 clone @ pinned commit",
+      "commit": "085a5d0e2dc1c90a4b676bad55675a1cf12a6380",
+      "commit_date": "2026-09-28T19:34:26+08:00",
+      "base_commit": "bc3ab60ddb1b1b7bfe7e58a23fee9759c74b3a78"
+    },
+    {
+      "label": "multimedia_player_framework",
+      "repo_dir": "openharmony-audit/perf-corpus/multimedia_player_framework",
+      "repository": "openharmony/multimedia_player_framework",
+      "ref": "depth=1 clone @ pinned commit",
+      "commit": "9f9a285ff489afa66861a85dcc4213336a463b36",
+      "commit_date": "2026-09-30T14:40:39+08:00",
+      "base_commit": "122861d26b850c32f239a02b5d0c342f44431cbf"
+    },
+    {
+      "label": "notification_common_event_service",
+      "repo_dir": "openharmony-audit/perf-corpus/notification_common_event_service",
+      "repository": "openharmony/notification_common_event_service",
+      "ref": "depth=1 clone @ pinned commit",
+      "commit": "aaaaf6d10aa8e1f6bd28673f10d5791d7e9c9e3f",
+      "commit_date": "2026-09-30T17:08:50+08:00",
+      "base_commit": "1d87ffd38ae919be33c0b7651773baa2488931b4"
+    },
+    {
+      "label": "resourceschedule_background_task_mgr",
+      "repo_dir": "openharmony-audit/perf-corpus/resourceschedule_background_task_mgr",
+      "repository": "openharmony/resourceschedule_background_task_mgr",
+      "ref": "depth=1 clone @ pinned commit",
+      "commit": "cff2ff475e3885ee814651f6a13d7f8a5782efdd",
+      "commit_date": "2026-09-30T10:35:35+08:00",
+      "base_commit": "1fb1e759138c892208e4856b6a643aa5239f36ec"
+    },
+    {
+      "label": "security_access_token",
+      "repo_dir": "openharmony-audit/perf-corpus/security_access_token",
+      "repository": "openharmony/security_access_token",
+      "ref": "depth=1 clone @ pinned commit",
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "commit_date": "2026-10-07T11:16:35+08:00",
+      "base_commit": "3bf7ae4b564df84b9d06d5669e99464d479d59a9"
+    },
+    {
+      "label": "telephony_call_manager",
+      "repo_dir": "openharmony-audit/perf-corpus/telephony_call_manager",
+      "repository": "openharmony/telephony_call_manager",
+      "ref": "depth=1 clone @ pinned commit",
+      "commit": "6638d1b37f278d7ed380d907674820e7467cedf8",
+      "commit_date": "2026-09-29T20:48:55+08:00",
+      "base_commit": "7f4872fa310ad22f3b2d0bdf1f274b7ca8185724"
+    },
+    {
+      "label": "update_updateservice",
+      "repo_dir": "openharmony-audit/perf-corpus/update_updateservice",
+      "repository": "openharmony/update_updateservice",
+      "ref": "depth=1 clone @ pinned commit",
+      "commit": "e4942a33cc5ed29040e5c720bea3b2a8e4a79221",
+      "commit_date": "2023-09-07T10:31:00+08:00",
+      "base_commit": "327f3538c40374d129c172e2d1de2b5348630d6e"
+    },
+    {
+      "label": "window_window_manager",
+      "repo_dir": "openharmony-audit/perf-corpus/window_window_manager",
+      "repository": "openharmony/window_window_manager",
+      "ref": "depth=1 clone @ pinned commit",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "commit_date": "2026-10-08T11:45:03+08:00",
+      "include": [
+        [
+          "window_scene"
+        ],
+        [
+          "test"
+        ],
+        [
+          "interfaces"
+        ],
+        [
+          "wm"
+        ],
+        [
+          "utils"
+        ],
+        [
+          "wmserver"
+        ],
+        [
+          "dmserver",
+          "previewer",
+          "dm",
+          "extension",
+          "dm_lite",
+          "tools",
+          "snapshot",
+          "setresolution",
+          "edidparse"
+        ]
+      ],
+      "base_commit": "dee887d0a45ca2372338bdd033337809d3437b70"
+    },
+    {
+      "label": "c_utils_pinned_m2",
+      "repo_dir": "openharmony-targets/commonlibrary_c_utils",
+      "repository": "openharmony/commonlibrary_c_utils",
+      "ref": "explicit pinned commit",
+      "commit": "b807d3dadb7dbb7639fe85b3a5f72da18d318da2",
+      "commit_date": "2026-10-06T20:00:54+08:00",
+      "base_commit": "8044daa1040218b6b6b2088c3df334d5ae047c1b"
+    }
+  ]
+}

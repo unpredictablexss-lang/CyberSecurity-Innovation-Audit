@@ -1,0 +1,73 @@
+{
+  "sha": "cd8e060992ac82da0fd08cfadfd89a72df8552a3",
+  "node_id": "C_kwDONHdiQtoAKGNkOGUwNjA5OTJhYzgyZGEwZmQwOGNmYWRmZDg5YTcyZGY4NTUyYTM",
+  "commit": {
+    "author": {
+      "name": "CheerfulRicky",
+      "email": "yuegang7@h-partners.com",
+      "date": "2026-09-30T07:27:30Z"
+    },
+    "committer": {
+      "name": "CheerfulRicky",
+      "email": "yuegang7@h-partners.com",
+      "date": "2026-09-30T07:27:30Z"
+    },
+    "message": "fix(ces): fix duplicate symbol link failure in static_subscriber_manager_unit_test\n\nThe indep test gate failed to link static_subscriber_manager_unit_test:\nAccessTokenHelper::GetHapTokenID and three OsAccountManagerHelper methods\ncollide between the test mocks and libcesfwk_services_static.a.\n\nRoot cause: static_subscriber_manager.cpp now calls the free function\nIsUserAppSubscriberType() (defined in common_event_subscriber_manager.cpp),\nwhich pulls common_event_subscriber_manager.o and its transitive closure\n(subscriber_death_recipient.o -> common_event_manager_service.o ->\ninner_common_event_manager.o) from the static library into the test link.\nThose members reference VerifyShellToken/CheckUserExists and drag in\naccess_token_helper.o and os_account_manager_helper.o, whose strong\ndefinitions clash with the strong mocks.\n\nFix follows the existing convention introduced by 'use static library in\ntest' (1624ef4f): mark the mocked real implementations as\n__attribute__((weak)) so strong mocks override them at link time.\nProduction behaviour is unchanged.\n\nVerified with full indep test build (standard variant): 0 duplicate\nsymbol errors and all service unit test binaries linked successfully.\n\nCo-Authored-By: Agent\nSigned-off-by: CheerfulRicky <yuegang7@h-partners.com>\nChange-Id: I7f9df569d776ba9735ac1b47b47054451f8ccba8",
+    "tree": {
+      "sha": "bca5f636d88a314c82f52a564b7dbf3b5d4aa1cc",
+      "url": "https://api.github.com/repos/openharmony/notification_common_event_service/git/trees/bca5f636d88a314c82f52a564b7dbf3b5d4aa1cc"
+    },
+    "url": "https://api.github.com/repos/openharmony/notification_common_event_service/git/commits/cd8e060992ac82da0fd08cfadfd89a72df8552a3",
+    "comment_count": 0,
+    "verification": {
+      "verified": false,
+      "reason": "unsigned",
+      "signature": null,
+      "payload": null,
+      "verified_at": null
+    }
+  },
+  "url": "https://api.github.com/repos/openharmony/notification_common_event_service/commits/cd8e060992ac82da0fd08cfadfd89a72df8552a3",
+  "html_url": "https://github.com/openharmony/notification_common_event_service/commit/cd8e060992ac82da0fd08cfadfd89a72df8552a3",
+  "comments_url": "https://api.github.com/repos/openharmony/notification_common_event_service/commits/cd8e060992ac82da0fd08cfadfd89a72df8552a3/comments",
+  "author": null,
+  "committer": null,
+  "parents": [
+    {
+      "sha": "1d87ffd38ae919be33c0b7651773baa2488931b4",
+      "url": "https://api.github.com/repos/openharmony/notification_common_event_service/commits/1d87ffd38ae919be33c0b7651773baa2488931b4",
+      "html_url": "https://github.com/openharmony/notification_common_event_service/commit/1d87ffd38ae919be33c0b7651773baa2488931b4"
+    }
+  ],
+  "stats": {
+    "total": 8,
+    "additions": 4,
+    "deletions": 4
+  },
+  "files": [
+    {
+      "sha": "9dfb33b4a1bc158ab7a623198969a823d5b20406",
+      "filename": "services/src/access_token_helper.cpp",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "blob_url": "https://github.com/openharmony/notification_common_event_service/blob/cd8e060992ac82da0fd08cfadfd89a72df8552a3/services%2Fsrc%2Faccess_token_helper.cpp",
+      "raw_url": "https://github.com/openharmony/notification_common_event_service/raw/cd8e060992ac82da0fd08cfadfd89a72df8552a3/services%2Fsrc%2Faccess_token_helper.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/notification_common_event_service/contents/services%2Fsrc%2Faccess_token_helper.cpp?ref=cd8e060992ac82da0fd08cfadfd89a72df8552a3",
+      "patch": "@@ -66,7 +66,7 @@ bool __attribute__((weak)) AccessTokenHelper::IsDlpHap(const AccessTokenID &call\n     return false;\n }\n \n-AccessTokenID AccessTokenHelper::GetHapTokenID(int userID,\n+AccessTokenID __attribute__((weak)) AccessTokenHelper::GetHapTokenID(int userID,\n     const std::string& bundleName, int instIndex)\n {\n     return AccessTokenKit::GetHapTokenID(userID, bundleName, instIndex);"
+    },
+    {
+      "sha": "90a8587c6eb867751da78d4d0cfcb5cc0a154dbd",
+      "filename": "services/src/os_account_manager_helper.cpp",
+      "status": "modified",
+      "additions": 3,
+      "deletions": 3,
+      "changes": 6,
+      "blob_url": "https://github.com/openharmony/notification_common_event_service/blob/cd8e060992ac82da0fd08cfadfd89a72df8552a3/services%2Fsrc%2Fos_account_manager_helper.cpp",
+      "raw_url": "https://github.com/openharmony/notification_common_event_service/raw/cd8e060992ac82da0fd08cfadfd89a72df8552a3/services%2Fsrc%2Fos_account_manager_helper.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/notification_common_event_service/contents/services%2Fsrc%2Fos_account_manager_helper.cpp?ref=cd8e060992ac82da0fd08cfadfd89a72df8552a3",
+      "patch": "@@ -31,7 +31,7 @@ const int32_t UID_TRANSFORM_DIVISOR = 200000;\n }\n #endif // HAS_OS_ACCOUNT_PART\n \n-ErrCode OsAccountManagerHelper::QueryActiveOsAccountIds(std::vector<int32_t>& ids)\n+ErrCode __attribute__((weak)) OsAccountManagerHelper::QueryActiveOsAccountIds(std::vector<int32_t>& ids)\n {\n #ifndef HAS_OS_ACCOUNT_PART\n     ids.emplace_back(DEFAULT_OS_ACCOUNT_ID);\n@@ -41,7 +41,7 @@ ErrCode OsAccountManagerHelper::QueryActiveOsAccountIds(std::vector<int32_t>& id\n #endif // HAS_OS_ACCOUNT_PART\n }\n \n-ErrCode OsAccountManagerHelper::GetOsAccountLocalIdFromUid(const int32_t uid, int32_t &id)\n+ErrCode __attribute__((weak)) OsAccountManagerHelper::GetOsAccountLocalIdFromUid(const int32_t uid, int32_t &id)\n {\n #ifndef HAS_OS_ACCOUNT_PART\n     id = uid / UID_TRANSFORM_DIVISOR;\n@@ -66,7 +66,7 @@ bool OsAccountManagerHelper::IsSystemAccount(int32_t userId)\n     return userId >= AccountSA::Constants::START_USER_ID && userId <= AccountSA::Constants::MAX_USER_ID;\n }\n \n-bool OsAccountManagerHelper::IsInSystemUserSpace(const int32_t userId)\n+bool __attribute__((weak)) OsAccountManagerHelper::IsInSystemUserSpace(const int32_t userId)\n {\n     return userId >= SUBSCRIBE_USER_SYSTEM_BEGIN && userId <= SUBSCRIBE_USER_SYSTEM_END;\n }"
+    }
+  ]
+}

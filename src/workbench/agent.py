@@ -382,6 +382,24 @@ def _hash(value):
                                      separators=(",", ":")).encode()).hexdigest()
 
 
+def _tool_result_cache_key(commit, report_sha256, candidate_id, tool, arguments,
+                          tool_policy_version=TOOL_POLICY_VERSION):
+    """Stable investigation-local memo key, bound to immutable evidence and policy."""
+    return _hash({"commit": commit, "report_sha256": report_sha256,
+                  "candidate_id": candidate_id, "tool": tool,
+                  "tool_policy_version": tool_policy_version, "arguments": arguments})
+
+
+def _remember_tool_result(cache, key, result):
+    """Cache only successful, redacted, bounded result objects for this operation."""
+    if not isinstance(result, dict) or result.get("truncated"):
+        return False
+    if len(json.dumps(result, ensure_ascii=False).encode("utf-8")) > MAX_TOOL_RESULT_BYTES:
+        return False
+    cache[key] = result
+    return True
+
+
 def _continuous_evidence_catalog(tool_trace):
     """Keep compact server-authored provenance for every collected tool evidence item."""
     catalog = []
@@ -920,6 +938,7 @@ def audit_task_consent_preview(plan, workflow_sha256, include_paths, max_candida
             "redaction_policy_version": REDACTION_POLICY_VERSION,
         },
         "selection_policy": R1_CANDIDATE_SELECTION_POLICY,
+        "root_cause_grouping_policy": "exact_source_duplicate_only; original_candidate_ids_preserved",
         "candidate_selection": {
             "actual_candidate_count": None,
             "authorized_candidate_count": max_candidates,
@@ -1148,6 +1167,7 @@ The find_callsite_candidates tool is bounded to the fixed scan source_inventory 
 _INSTRUCTIONS += " For find_callsite_candidates, the callsite/caller/definition excerpts are fixed-source evidence, but relation status, argument/return edges, hashes, cross-file matches, and parse metadata are routing/provenance only: they do not prove semantic binding, type flow, reachability, execution, or vulnerability. Keep those conclusions unknown unless independent source evidence establishes them."
 
 
+
 _SENSITIVE_PATTERNS = (
     ("private_key", re.compile(r"-----BEGIN (?:RSA |EC |DSA |ENCRYPTED |OPENSSH )?PRIVATE KEY-----[\s\S]*?-----END (?:RSA |EC |DSA |ENCRYPTED |OPENSSH )?PRIVATE KEY-----")),
     ("private_key", re.compile(r"-----BEGIN PGP PRIVATE KEY BLOCK-----[\s\S]*?-----END PGP PRIVATE KEY BLOCK-----")),
@@ -1298,6 +1318,49 @@ def _restrict_source_lines_to_function(lines_by_file, function_span):
                    if start <= number <= end}}
 
 
+_SOURCE_ACTIONS = {
+    "guard_dominance": (0, "read_candidate_enclosing_function", "Inspect local control flow around the candidate."),
+    "permission_guard": (0, "read_candidate_enclosing_function", "Inspect the candidate function's authorization checks."),
+    "containment_dominance": (0, "read_candidate_enclosing_function", "Inspect local path checks and sink ordering."),
+    "source_control": (1, "lookup_symbol_in_fixed_commit", "Trace the modeled input accessor at its fixed-commit definition."),
+    "attacker_control": (1, "lookup_symbol_in_fixed_commit", "Inspect source-like definitions relevant to the input boundary."),
+    "cross_function_alias": (1, "lookup_symbol_in_fixed_commit", "Check fixed-commit definitions for alias or helper flow."),
+    "cross_function_and_indirect_flow": (1, "lookup_symbol_in_fixed_commit", "Check fixed-commit definitions for helper or indirect flow."),
+    "sensitive_operation_reachability": (2, "lookup_symbol_in_fixed_commit", "Inspect source definitions related to the reported sink."),
+    "entry_or_privilege_boundary": (2, "lookup_symbol_in_fixed_commit", "Inspect source definitions related to the candidate entry."),
+    "entry_privilege_and_impact": (2, "lookup_symbol_in_fixed_commit", "Inspect source definitions related to the entry and impact path."),
+    "attacker_path": (2, "lookup_symbol_in_fixed_commit", "Inspect source definitions related to the modeled attacker path."),
+}
+
+
+def _rank_source_actions(obligations, source_review_indices):
+    """Suggest bounded read-only actions for recognized source obligations only.
+
+    This is a deterministic prioritization hint, not evidence or a claim that a
+    source lookup can resolve a runtime/build obligation. Unknown kinds remain
+    unresolved without an invented tool recommendation.
+    """
+    if not isinstance(obligations, list) or not isinstance(source_review_indices, list):
+        return []
+    ranked = []
+    for index in source_review_indices:
+        if (not isinstance(index, int) or isinstance(index, bool)
+                or index < 0 or index >= len(obligations)):
+            continue
+        obligation = obligations[index]
+        if not isinstance(obligation, dict):
+            continue
+        kind = obligation.get("kind")
+        recommendation = _SOURCE_ACTIONS.get(kind)
+        if recommendation is None:
+            continue
+        priority, tool, rationale = recommendation
+        ranked.append((priority, index, {"obligation_index": index, "kind": kind,
+                                         "tool": tool, "rationale": rationale}))
+    ranked.sort(key=lambda item: (item[0], item[1]))
+    return [item[2] for item in ranked[:5]]
+
+
 def _prepare_candidate_context(settings, store, job, report, candidate):
     source = service.source(settings, store, job, candidate["file"])
     if source.get("sha256") != candidate.get("source_sha256"):
@@ -1312,6 +1375,10 @@ def _prepare_candidate_context(settings, store, job, report, candidate):
     obligation_data = tools["read_evidence_obligations"]({})
     evidence_routing = _candidate_evidence_routing(
         report, candidate, obligation_data["obligations"])
+    next_source_actions = _rank_source_actions(
+        obligation_data["obligations"],
+        evidence_routing.get("agent_source_review_indices", []),
+    )
     mandatory_unresolved = _mandatory_unresolved_obligation_indices(
         candidate, obligation_data["obligations"])
     initial_context = {
@@ -1331,6 +1398,7 @@ def _prepare_candidate_context(settings, store, job, report, candidate):
         "evidence_obligations": obligation_data["obligations"],
         "evidence_obligations_truncated": obligation_data["obligations_truncated"],
         "evidence_routing": evidence_routing,
+        "next_source_actions": next_source_actions,
         "decision_constraints": ([{
             "obligation_indices": mandatory_unresolved,
             "rule": "ipc.auth.missing requires a reviewed caller-authorization policy fact; a source guard alone cannot establish that its principal is trusted",
@@ -1414,6 +1482,7 @@ def _apply_conditional_r2_context(settings, store, spec, prepared):
         "unresolved_source_reviewable_obligation_indices": unresolved,
         "meaning": "Untrusted model-triage routing only. Recheck every item against newly retrieved fixed-source evidence; prior labels and citations are not proof.",
     }
+    target["next_source_actions"] = _rank_source_actions(obligations, unresolved)
     target.pop("evidence_id", None)
     identity = _hash(target)
     target["evidence_id"] = "ev-initial-" + identity[:16]
@@ -4015,6 +4084,9 @@ def execute_agent(settings, store, ops, task, client=None):
                            or isinstance(per_call_tokens, bool) or per_call_tokens < 128):
         raise ValueError("invalid bounded per-request output token budget")
     tool_trace, model_trace = [], []
+    # Investigation-local memoization only; the cache cannot cross a report,
+    # commit, candidate, policy or consent boundary.
+    tool_result_cache = {}
     evidence_texts = {initial_evidence_id: [initial_context["source_excerpt"]]}
     initial_lines = _initial_source_lines(
         initial_context["source_excerpt"], initial_context["source_excerpt_start_line"],
@@ -4376,8 +4448,12 @@ def execute_agent(settings, store, ops, task, client=None):
                 raise InterruptedError("agent investigation cancelled")
             started_tool = time.monotonic()
             tool_error_code = None
+            cache_key = _tool_result_cache_key(
+                report.get("commit"), task.get("report_sha256"),
+                spec.get("candidate_id"), name, args)
+            replayed = cache_key in tool_result_cache
             try:
-                result = tools[name](args)
+                result = tool_result_cache[cache_key] if replayed else tools[name](args)
             except ValueError as exc:
                 # Expose safe, actionable categories without persisting arbitrary
                 # exception text from the source lookup implementation.
@@ -4397,6 +4473,8 @@ def execute_agent(settings, store, ops, task, client=None):
             result, redaction_categories = _redact_sensitive_data(result)
             if redaction_categories:
                 result["sensitive_redactions"] = redaction_categories
+            if not replayed and not tool_error_code and isinstance(result, dict):
+                _remember_tool_result(tool_result_cache, cache_key, result)
             encoded = json.dumps(result, ensure_ascii=False, sort_keys=True).encode()
             clipped = len(encoded) > MAX_TOOL_RESULT_BYTES
             if clipped:
@@ -4438,6 +4516,7 @@ def execute_agent(settings, store, ops, task, client=None):
                                "result_sha256": digest,
                                "result": result, "duration_ms": int(1000 * (time.monotonic() - started_tool)),
                                "truncated": clipped, "argument_redactions": argument_redactions,
+                               "result_cache_replay": replayed,
                                "status": "rejected" if tool_error_code else "completed"})
             if tool_error_code == "tool_result_too_large":
                 ops.event(task["id"], "agent_tool_result_limited",

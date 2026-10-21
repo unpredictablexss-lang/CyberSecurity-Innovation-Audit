@@ -1,0 +1,133 @@
+{
+  "sha": "62d003341c784e0738d7f58e0d20b176d0c03d55",
+  "node_id": "C_kwDONHPKOdoAKDYyZDAwMzM0MWM3ODRlMDczOGQ3ZjU4ZTBkMjBiMTc2ZDBjMDNkNTU",
+  "commit": {
+    "author": {
+      "name": "wangchuan3",
+      "email": "wangchuan69@h-partners.com",
+      "date": "2026-09-28T07:43:01Z"
+    },
+    "committer": {
+      "name": "wangchuan3",
+      "email": "wangchuan69@h-partners.com",
+      "date": "2026-09-29T09:45:06Z"
+    },
+    "message": "fix: 依据当前屏幕是否处于自由多窗拦截maximize\n\nSigned-off-by: wangchuan3 <wangchuan69@h-partners.com>",
+    "tree": {
+      "sha": "d1fcd52a6783c37a921074cef2775fc4fd046974",
+      "url": "https://api.github.com/repos/openharmony/window_window_manager/git/trees/d1fcd52a6783c37a921074cef2775fc4fd046974"
+    },
+    "url": "https://api.github.com/repos/openharmony/window_window_manager/git/commits/62d003341c784e0738d7f58e0d20b176d0c03d55",
+    "comment_count": 0,
+    "verification": {
+      "verified": false,
+      "reason": "unsigned",
+      "signature": null,
+      "payload": null,
+      "verified_at": null
+    }
+  },
+  "url": "https://api.github.com/repos/openharmony/window_window_manager/commits/62d003341c784e0738d7f58e0d20b176d0c03d55",
+  "html_url": "https://github.com/openharmony/window_window_manager/commit/62d003341c784e0738d7f58e0d20b176d0c03d55",
+  "comments_url": "https://api.github.com/repos/openharmony/window_window_manager/commits/62d003341c784e0738d7f58e0d20b176d0c03d55/comments",
+  "author": null,
+  "committer": null,
+  "parents": [
+    {
+      "sha": "b615eadb781bd2aad966cfa510d8168dd751c9db",
+      "url": "https://api.github.com/repos/openharmony/window_window_manager/commits/b615eadb781bd2aad966cfa510d8168dd751c9db",
+      "html_url": "https://github.com/openharmony/window_window_manager/commit/b615eadb781bd2aad966cfa510d8168dd751c9db"
+    }
+  ],
+  "stats": {
+    "total": 115,
+    "additions": 114,
+    "deletions": 1
+  },
+  "files": [
+    {
+      "sha": "96876a3d53f59ad8d74948e1e204937727d7113e",
+      "filename": "test/systemtest/wms/window_status_change_test.cpp",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 0,
+      "changes": 1,
+      "blob_url": "https://github.com/openharmony/window_window_manager/blob/62d003341c784e0738d7f58e0d20b176d0c03d55/test%2Fsystemtest%2Fwms%2Fwindow_status_change_test.cpp",
+      "raw_url": "https://github.com/openharmony/window_window_manager/raw/62d003341c784e0738d7f58e0d20b176d0c03d55/test%2Fsystemtest%2Fwms%2Fwindow_status_change_test.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/window_window_manager/contents/test%2Fsystemtest%2Fwms%2Fwindow_status_change_test.cpp?ref=62d003341c784e0738d7f58e0d20b176d0c03d55",
+      "patch": "@@ -72,6 +72,7 @@ HWTEST_F(WindowStatusChangeTest, ChangeWindowStatus01, TestSize.Level1)\n     window->hostSession_ = session;\n     window->state_ = WindowState::STATE_CREATED;\n     window->windowSystemConfig_.windowUIType_ = WindowUIType::PC_WINDOW;\n+    window->windowSystemConfig_.supportMultiWindowScreenSet_.insert(window->property_->GetDisplayId());\n     ASSERT_EQ(WindowState::STATE_CREATED, window->GetWindowState());\n \n     ASSERT_EQ(WMError::WM_OK, window->Show());"
+    },
+    {
+      "sha": "3218454f075298e3af7088f2601692bcbaad6973",
+      "filename": "wm/include/window_session_impl.h",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 0,
+      "changes": 1,
+      "blob_url": "https://github.com/openharmony/window_window_manager/blob/62d003341c784e0738d7f58e0d20b176d0c03d55/wm%2Finclude%2Fwindow_session_impl.h",
+      "raw_url": "https://github.com/openharmony/window_window_manager/raw/62d003341c784e0738d7f58e0d20b176d0c03d55/wm%2Finclude%2Fwindow_session_impl.h",
+      "contents_url": "https://api.github.com/repos/openharmony/window_window_manager/contents/wm%2Finclude%2Fwindow_session_impl.h?ref=62d003341c784e0738d7f58e0d20b176d0c03d55",
+      "patch": "@@ -187,6 +187,7 @@ class WindowSessionImpl : public Window, public virtual SessionStageStub {\n     bool IsPhonePadOrPcWindow() const override;\n     bool IsPcOrFreeMultiWindowCapabilityEnabled() const override;\n     bool IsPcOrPadFreeMultiWindowMode() const override;\n+    bool IsDisplayInFreeMultiWindow() const;\n     bool IsPadAndNotFreeMultiWindowCompatibleMode() const override;\n     bool IsSceneBoardEnabled() const override;\n     bool GetCompatibleModeInPc() const override;"
+    },
+    {
+      "sha": "87f663a376a0434e8110f5a044a4bdc7029bb716",
+      "filename": "wm/src/window_scene_session_impl.cpp",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "blob_url": "https://github.com/openharmony/window_window_manager/blob/62d003341c784e0738d7f58e0d20b176d0c03d55/wm%2Fsrc%2Fwindow_scene_session_impl.cpp",
+      "raw_url": "https://github.com/openharmony/window_window_manager/raw/62d003341c784e0738d7f58e0d20b176d0c03d55/wm%2Fsrc%2Fwindow_scene_session_impl.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/window_window_manager/contents/wm%2Fsrc%2Fwindow_scene_session_impl.cpp?ref=62d003341c784e0738d7f58e0d20b176d0c03d55",
+      "patch": "@@ -4861,7 +4861,7 @@ WMError WindowSceneSessionImpl::MaximizeWithOptions(MaximizePresentation present\n         return checkRet;\n     }\n \n-    if (!IsPcOrPadFreeMultiWindowMode() || property_->IsFullScreenDisabled()) {\n+    if (!IsDisplayInFreeMultiWindow() || property_->IsFullScreenDisabled()) {\n         TLOGW(WmsLogTag::WMS_LAYOUT_PC, \"The device is not supported\");\n         RETURN_ERR(errMsg, \"Device not supported in compatible mode\", WMError::WM_OK);\n     }"
+    },
+    {
+      "sha": "a8eb58cd5fb81c5fff21c9b046d44b5a64ae34e5",
+      "filename": "wm/src/window_session_impl.cpp",
+      "status": "modified",
+      "additions": 5,
+      "deletions": 0,
+      "changes": 5,
+      "blob_url": "https://github.com/openharmony/window_window_manager/blob/62d003341c784e0738d7f58e0d20b176d0c03d55/wm%2Fsrc%2Fwindow_session_impl.cpp",
+      "raw_url": "https://github.com/openharmony/window_window_manager/raw/62d003341c784e0738d7f58e0d20b176d0c03d55/wm%2Fsrc%2Fwindow_session_impl.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/window_window_manager/contents/wm%2Fsrc%2Fwindow_session_impl.cpp?ref=62d003341c784e0738d7f58e0d20b176d0c03d55",
+      "patch": "@@ -493,6 +493,11 @@ bool WindowSessionImpl::IsPcOrPadFreeMultiWindowMode() const\n     return windowSystemConfig_.IsPcWindow() || IsFreeMultiWindowMode();\n }\n \n+bool WindowSessionImpl::IsDisplayInFreeMultiWindow() const\n+{\n+    return windowSystemConfig_.IsDisplayInFreeMultiWindow(property_->GetDisplayId());\n+}\n+\n bool WindowSessionImpl::IsPadAndNotFreeMultiWindowCompatibleMode() const\n {\n     return property_->GetPcAppInpadCompatibleMode() &&"
+    },
+    {
+      "sha": "8d8e4ddc85089e558184e19d235d2137239efe90",
+      "filename": "wm/test/unittest/window_scene_session_impl_test.cpp",
+      "status": "modified",
+      "additions": 103,
+      "deletions": 0,
+      "changes": 103,
+      "blob_url": "https://github.com/openharmony/window_window_manager/blob/62d003341c784e0738d7f58e0d20b176d0c03d55/wm%2Ftest%2Funittest%2Fwindow_scene_session_impl_test.cpp",
+      "raw_url": "https://github.com/openharmony/window_window_manager/raw/62d003341c784e0738d7f58e0d20b176d0c03d55/wm%2Ftest%2Funittest%2Fwindow_scene_session_impl_test.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/window_window_manager/contents/wm%2Ftest%2Funittest%2Fwindow_scene_session_impl_test.cpp?ref=62d003341c784e0738d7f58e0d20b176d0c03d55",
+      "patch": "@@ -3536,6 +3536,7 @@ HWTEST_F(WindowSceneSessionImplTest, MaximizeWithOptions01, TestSize.Level1)\n     window->property_->SetPersistentId(1);\n     window->property_->SetWindowType(WindowType::WINDOW_TYPE_APP_MAIN_WINDOW);\n     window->windowSystemConfig_.windowUIType_ = WindowUIType::PC_WINDOW;\n+    window->windowSystemConfig_.supportMultiWindowScreenSet_.insert(window->property_->GetDisplayId());\n     window->property_->SetWindowModeSupportType(\n         static_cast<uint32_t>(WindowModeSupport::WINDOW_MODE_SUPPORT_ALL));\n     SessionInfo sessionInfo = { \"CreateTestBundle\", \"CreateTestModule\", \"CreateTestAbility\" };\n@@ -3679,6 +3680,7 @@ HWTEST_F(WindowSceneSessionImplTest, MaximizeWithOptions07, TestSize.Level1)\n     window->property_->SetPersistentId(1);\n     window->property_->SetWindowType(WindowType::WINDOW_TYPE_APP_MAIN_WINDOW);\n     window->windowSystemConfig_.windowUIType_ = WindowUIType::PC_WINDOW;\n+    window->windowSystemConfig_.supportMultiWindowScreenSet_.insert(window->property_->GetDisplayId());\n     window->property_->SetWindowModeSupportType(\n         static_cast<uint32_t>(WindowModeSupport::WINDOW_MODE_SUPPORT_ALL));\n     SessionInfo sessionInfo = { \"CreateTestBundle\", \"CreateTestModule\", \"CreateTestAbility\" };\n@@ -3704,6 +3706,7 @@ HWTEST_F(WindowSceneSessionImplTest, MaximizeWithOptions08, TestSize.Level1)\n     window->property_->SetPersistentId(1);\n     window->property_->SetWindowType(WindowType::WINDOW_TYPE_APP_MAIN_WINDOW);\n     window->windowSystemConfig_.windowUIType_ = WindowUIType::PC_WINDOW;\n+    window->windowSystemConfig_.supportMultiWindowScreenSet_.insert(window->property_->GetDisplayId());\n     window->property_->SetWindowModeSupportType(\n         static_cast<uint32_t>(WindowModeSupport::WINDOW_MODE_SUPPORT_ALL));\n     SessionInfo sessionInfo = { \"CreateTestBundle\", \"CreateTestModule\", \"CreateTestAbility\" };\n@@ -3729,6 +3732,7 @@ HWTEST_F(WindowSceneSessionImplTest, MaximizeWithOptions09, TestSize.Level1)\n     window->property_->SetPersistentId(1);\n     window->property_->SetWindowType(WindowType::WINDOW_TYPE_APP_MAIN_WINDOW);\n     window->windowSystemConfig_.windowUIType_ = WindowUIType::PC_WINDOW;\n+    window->windowSystemConfig_.supportMultiWindowScreenSet_.insert(window->property_->GetDisplayId());\n     window->property_->SetWindowModeSupportType(\n         static_cast<uint32_t>(WindowModeSupport::WINDOW_MODE_SUPPORT_ALL));\n     SessionInfo sessionInfo = { \"CreateTestBundle\", \"CreateTestModule\", \"CreateTestAbility\" };\n@@ -3754,6 +3758,7 @@ HWTEST_F(WindowSceneSessionImplTest, MaximizeWithOptions10, TestSize.Level1)\n     window->property_->SetPersistentId(1);\n     window->property_->SetWindowType(WindowType::WINDOW_TYPE_APP_MAIN_WINDOW);\n     window->windowSystemConfig_.windowUIType_ = WindowUIType::PC_WINDOW;\n+    window->windowSystemConfig_.supportMultiWindowScreenSet_.insert(window->property_->GetDisplayId());\n     window->property_->SetWindowModeSupportType(\n         static_cast<uint32_t>(WindowModeSupport::WINDOW_MODE_SUPPORT_ALL));\n     SessionInfo sessionInfo = { \"CreateTestBundle\", \"CreateTestModule\", \"CreateTestAbility\" };\n@@ -4086,6 +4091,7 @@ HWTEST_F(WindowSceneSessionImplTest, MaximizeDelegatedPath01, TestSize.Level1)\n     window->property_->SetPersistentId(1);\n     window->property_->SetWindowType(WindowType::WINDOW_TYPE_APP_MAIN_WINDOW);\n     window->windowSystemConfig_.windowUIType_ = WindowUIType::PC_WINDOW;\n+    window->windowSystemConfig_.supportMultiWindowScreenSet_.insert(window->property_->GetDisplayId());\n     window->property_->SetWindowModeSupportType(\n         static_cast<uint32_t>(WindowModeSupport::WINDOW_MODE_SUPPORT_ALL));\n     SessionInfo sessionInfo = { \"CreateTestBundle\", \"CreateTestModule\", \"CreateTestAbility\" };\n@@ -4538,6 +4544,103 @@ HWTEST_F(WindowSceneSessionImplTest, MaximizeWithOptions_SubWindowMixedConfig02,\n     ASSERT_EQ(ret, WMError::WM_OK);\n }\n \n+// ==================== IsDisplayInFreeMultiWindow Branch Tests ====================\n+\n+/**\n+ * @tc.name: MaximizeWithOptions_DisplayNotInFreeMultiWindow01\n+ * @tc.desc: Display not in supportMultiWindowScreenSet should intercept maximize (returns WM_OK, not executed)\n+ * @tc.type: FUNC\n+ */\n+HWTEST_F(WindowSceneSessionImplTest, MaximizeWithOptions_DisplayNotInFreeMultiWindow01, TestSize.Level1)\n+{\n+    sptr<WindowOption> option = sptr<WindowOption>::MakeSptr();\n+    option->SetWindowName(\"DisplayNotInFreeMultiWin01\");\n+    sptr<WindowSceneSessionImpl> window = sptr<WindowSceneSessionImpl>::MakeSptr(option);\n+    window->property_->SetPersistentId(1);\n+    window->property_->SetWindowType(WindowType::WINDOW_TYPE_APP_MAIN_WINDOW);\n+    window->windowSystemConfig_.windowUIType_ = WindowUIType::PC_WINDOW;\n+    // supportMultiWindowScreenSet_ is empty, so IsDisplayInFreeMultiWindow() returns false\n+    window->property_->SetWindowModeSupportType(\n+        static_cast<uint32_t>(WindowModeSupport::WINDOW_MODE_SUPPORT_ALL));\n+    SessionInfo sessionInfo = { \"CreateTestBundle\", \"CreateTestModule\", \"CreateTestAbility\" };\n+    sptr<SessionMocker> session = sptr<SessionMocker>::MakeSptr(sessionInfo);\n+    window->hostSession_ = session;\n+\n+    SnapshotAnimationConfig config = { SnapshotAnimationConfig::UNSET, SnapshotAnimationConfig::UNSET };\n+    WMError ret = window->MaximizeWithOptions(\n+        MaximizePresentation::ENTER_IMMERSIVE, AcrossDisplayPresentation::FOLLOW_ACROSS_DISPLAY_SETTING, config);\n+    // Intercepted path returns WM_OK\n+    ASSERT_EQ(ret, WMError::WM_OK);\n+    // Maximize not executed: enableImmersiveMode_ and maximizeLayoutFullScreen_ stay at default false\n+    EXPECT_EQ(window->enableImmersiveMode_.load(), false);\n+    EXPECT_EQ(window->maximizeLayoutFullScreen_.load(), false);\n+}\n+\n+/**\n+ * @tc.name: MaximizeWithOptions_DisplayInFreeMultiWindow01\n+ * @tc.desc: Display in supportMultiWindowScreenSet and not fullscreen-disabled should execute maximize\n+ * @tc.type: FUNC\n+ */\n+HWTEST_F(WindowSceneSessionImplTest, MaximizeWithOptions_DisplayInFreeMultiWindow01, TestSize.Level1)\n+{\n+    sptr<WindowOption> option = sptr<WindowOption>::MakeSptr();\n+    option->SetWindowName(\"DisplayInFreeMultiWin01\");\n+    sptr<WindowSceneSessionImpl> window = sptr<WindowSceneSessionImpl>::MakeSptr(option);\n+    window->property_->SetPersistentId(1);\n+    window->property_->SetWindowType(WindowType::WINDOW_TYPE_APP_MAIN_WINDOW);\n+    window->windowSystemConfig_.windowUIType_ = WindowUIType::PC_WINDOW;\n+    // Add current display to supportMultiWindowScreenSet_ so IsDisplayInFreeMultiWindow() returns true\n+    window->windowSystemConfig_.supportMultiWindowScreenSet_.insert(window->property_->GetDisplayId());\n+    window->property_->SetWindowModeSupportType(\n+        static_cast<uint32_t>(WindowModeSupport::WINDOW_MODE_SUPPORT_ALL));\n+    SessionInfo sessionInfo = { \"CreateTestBundle\", \"CreateTestModule\", \"CreateTestAbility\" };\n+    sptr<SessionMocker> session = sptr<SessionMocker>::MakeSptr(sessionInfo);\n+    window->hostSession_ = session;\n+\n+    SnapshotAnimationConfig config = { SnapshotAnimationConfig::UNSET, SnapshotAnimationConfig::UNSET };\n+    WMError ret = window->MaximizeWithOptions(\n+        MaximizePresentation::ENTER_IMMERSIVE, AcrossDisplayPresentation::FOLLOW_ACROSS_DISPLAY_SETTING, config);\n+    ASSERT_EQ(ret, WMError::WM_OK);\n+    // Maximize executed: ENTER_IMMERSIVE sets enableImmersiveMode_ and maximizeLayoutFullScreen_ to true\n+    EXPECT_EQ(window->enableImmersiveMode_.load(), true);\n+    EXPECT_EQ(window->maximizeLayoutFullScreen_.load(), true);\n+}\n+\n+/**\n+ * @tc.name: MaximizeWithOptions_FullScreenDisabled01\n+ * @tc.desc: FullScreenDisabled should intercept maximize even when display is in free multi window\n+ * @tc.type: FUNC\n+ */\n+HWTEST_F(WindowSceneSessionImplTest, MaximizeWithOptions_FullScreenDisabled01, TestSize.Level1)\n+{\n+    sptr<WindowOption> option = sptr<WindowOption>::MakeSptr();\n+    option->SetWindowName(\"FullScreenDisabled01\");\n+    sptr<WindowSceneSessionImpl> window = sptr<WindowSceneSessionImpl>::MakeSptr(option);\n+    window->property_->SetPersistentId(1);\n+    window->property_->SetWindowType(WindowType::WINDOW_TYPE_APP_MAIN_WINDOW);\n+    window->windowSystemConfig_.windowUIType_ = WindowUIType::PC_WINDOW;\n+    // Display is in free multi window\n+    window->windowSystemConfig_.supportMultiWindowScreenSet_.insert(window->property_->GetDisplayId());\n+    // But fullscreen is disabled via CompatibleModeProperty\n+    sptr<CompatibleModeProperty> compatibleModeProperty = sptr<CompatibleModeProperty>::MakeSptr();\n+    compatibleModeProperty->SetDisableFullScreen(true);\n+    window->property_->SetCompatibleModeProperty(compatibleModeProperty);\n+    window->property_->SetWindowModeSupportType(\n+        static_cast<uint32_t>(WindowModeSupport::WINDOW_MODE_SUPPORT_ALL));\n+    SessionInfo sessionInfo = { \"CreateTestBundle\", \"CreateTestModule\", \"CreateTestAbility\" };\n+    sptr<SessionMocker> session = sptr<SessionMocker>::MakeSptr(sessionInfo);\n+    window->hostSession_ = session;\n+\n+    SnapshotAnimationConfig config = { SnapshotAnimationConfig::UNSET, SnapshotAnimationConfig::UNSET };\n+    WMError ret = window->MaximizeWithOptions(\n+        MaximizePresentation::ENTER_IMMERSIVE, AcrossDisplayPresentation::FOLLOW_ACROSS_DISPLAY_SETTING, config);\n+    // Intercepted path returns WM_OK\n+    ASSERT_EQ(ret, WMError::WM_OK);\n+    // Maximize not executed: enableImmersiveMode_ and maximizeLayoutFullScreen_ stay at default false\n+    EXPECT_EQ(window->enableImmersiveMode_.load(), false);\n+    EXPECT_EQ(window->maximizeLayoutFullScreen_.load(), false);\n+}\n+\n /**\n  * @tc.name: RecoverWithConfig_SubWindowCustomConfig01\n  * @tc.desc: Sub window Recover with custom animation config should be rejected"
+    },
+    {
+      "sha": "472d54458a837d289a534c6ed0b96d95988358ae",
+      "filename": "wm/test/unittest/window_scene_session_impl_test2.cpp",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 0,
+      "changes": 1,
+      "blob_url": "https://github.com/openharmony/window_window_manager/blob/62d003341c784e0738d7f58e0d20b176d0c03d55/wm%2Ftest%2Funittest%2Fwindow_scene_session_impl_test2.cpp",
+      "raw_url": "https://github.com/openharmony/window_window_manager/raw/62d003341c784e0738d7f58e0d20b176d0c03d55/wm%2Ftest%2Funittest%2Fwindow_scene_session_impl_test2.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/window_window_manager/contents/wm%2Ftest%2Funittest%2Fwindow_scene_session_impl_test2.cpp?ref=62d003341c784e0738d7f58e0d20b176d0c03d55",
+      "patch": "@@ -2235,6 +2235,7 @@ HWTEST_F(WindowSceneSessionImplTest2, Maximize03, TestSize.Level1)\n     SessionInfo sessionInfo = { \"CreateTestBundle\", \"CreateTestModule\", \"CreateTestAbility\" };\n     sptr<SessionMocker> session = sptr<SessionMocker>::MakeSptr(sessionInfo);\n     window->hostSession_ = session;\n+    window->windowSystemConfig_.supportMultiWindowScreenSet_.insert(window->property_->GetDisplayId());\n \n     // case1: only set maximize()\n     MaximizePresentation presentation = MaximizePresentation::ENTER_IMMERSIVE;"
+    },
+    {
+      "sha": "5ded23068c023eb424489de72cb097801451b64d",
+      "filename": "wm/test/unittest/window_scene_session_impl_test5.cpp",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 0,
+      "changes": 2,
+      "blob_url": "https://github.com/openharmony/window_window_manager/blob/62d003341c784e0738d7f58e0d20b176d0c03d55/wm%2Ftest%2Funittest%2Fwindow_scene_session_impl_test5.cpp",
+      "raw_url": "https://github.com/openharmony/window_window_manager/raw/62d003341c784e0738d7f58e0d20b176d0c03d55/wm%2Ftest%2Funittest%2Fwindow_scene_session_impl_test5.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/window_window_manager/contents/wm%2Ftest%2Funittest%2Fwindow_scene_session_impl_test5.cpp?ref=62d003341c784e0738d7f58e0d20b176d0c03d55",
+      "patch": "@@ -316,6 +316,7 @@ HWTEST_F(WindowSceneSessionImplTest5, Maximize02, TestSize.Level1)\n     window->property_->SetWindowType(WindowType::APP_MAIN_WINDOW_BASE);\n     window->property_->SetWindowModeSupportType(1);\n     window->windowSystemConfig_.windowUIType_ = WindowUIType::PC_WINDOW;\n+    window->windowSystemConfig_.supportMultiWindowScreenSet_.insert(window->property_->GetDisplayId());\n \n     presentation = MaximizePresentation::ENTER_IMMERSIVE;\n     auto ret = window->Maximize(presentation);\n@@ -1119,6 +1120,7 @@ HWTEST_F(WindowSceneSessionImplTest5, MobileAppInPadLayoutFullScreenChange, Test\n     window->windowSystemConfig_.windowUIType_ = WindowUIType::PAD_WINDOW;\n     window->windowSystemConfig_.freeMultiWindowEnable_ = true;\n     window->windowSystemConfig_.freeMultiWindowSupport_ = true;\n+    window->windowSystemConfig_.supportMultiWindowScreenSet_.insert(window->property_->GetDisplayId());\n \n     window->property_->SetMobileAppInPadLayoutFullScreen(true);\n     window->property_->SetWindowMode(WindowMode::WINDOW_MODE_FULLSCREEN);"
+    }
+  ]
+}

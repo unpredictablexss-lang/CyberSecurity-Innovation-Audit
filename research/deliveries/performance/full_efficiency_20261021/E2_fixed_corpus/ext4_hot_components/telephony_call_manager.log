@@ -1,0 +1,7 @@
+[OK] M2 pinned-source candidate evidence run; NOT validated vulnerabilities
+[OK] source commit: 6638d1b37f278d7ed380d907674820e7467cedf8
+[OK] first-party detectors: 2
+[OK] unverified diagnostics: 12
+[OK] run coverage: completed_with_limitations
+[OK] JSON report: /mnt/d/openHarmonyScanner/worktrees/c-line-task-tree-20261020/research/deliveries/performance/full_efficiency_20261021/E2_fixed_corpus/ext4_hot_components/telephony_call_manager.json
+[OK] Markdown report: /mnt/d/openHarmonyScanner/worktrees/c-line-task-tree-20261020/research/deliveries/performance/full_efficiency_20261021/E2_fixed_corpus/ext4_hot_components/telephony_call_manager.md

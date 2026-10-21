@@ -73,11 +73,14 @@ function common(values, detectors, explicitIds = []) {
 }
 export function snapshotPayload(values, detectors, explicitIds = []) {
   if (!values.revision?.trim()) throw new Error("请选择或填写分支、Tag 或完整 Commit。");
+  const baseCommit = String(values.base_commit || "").trim().toLowerCase();
+  if (baseCommit && !/^(?:[a-f0-9]{40}|[a-f0-9]{64})$/.test(baseCommit))
+    throw new Error("比较基线必须是完整 Git Commit SHA。");
   const { detector_ids, ...payload } = common(values, detectors, explicitIds);
   const auditMode = values.audit_mode || "standard_review";
   if (!["standard_review", "static_only"].includes(auditMode))
     throw new Error("审计方式无效，请重新选择。");
-  return { ...payload, audit_mode: auditMode,
+  return { ...payload, ...(baseCommit ? { base_commit: baseCommit } : {}), audit_mode: auditMode,
     ...(explicitIds.length || values.full_rules_research ? { detector_ids } : {}), revision: values.revision.trim() };
 }
 export function planPayload(values, detectors, explicitIds = []) {

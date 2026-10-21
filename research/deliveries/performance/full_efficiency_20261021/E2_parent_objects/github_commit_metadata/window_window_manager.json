@@ -1,0 +1,90 @@
+{
+  "sha": "dee887d0a45ca2372338bdd033337809d3437b70",
+  "node_id": "C_kwDONHPKOdoAKGRlZTg4N2QwYTQ1Y2EyMzcyMzM4YmRkMDMzMzM3ODA5ZDM0MzdiNzA",
+  "commit": {
+    "author": {
+      "name": "openharmony_ci",
+      "email": "openharmony_ci@noreply.gitcode.com",
+      "date": "2026-10-08T02:56:43Z"
+    },
+    "committer": {
+      "name": "openharmony_ci",
+      "email": "openharmony_ci@noreply.gitcode.com",
+      "date": "2026-10-08T02:56:43Z"
+    },
+    "message": "!20268 merge master_bak into master\n\n零层控件创建子窗打点\n\nCreated-by: nicholaszc\nCommit-by: 赵聪\nMerged-by: openharmony_ci\nDescription: **Description:**\n\n**Issue number:**\n\n**Test & Result:**\n\n**CodeCheck:**\n<table>\n    <tr>\n        <th>类型</th><th>自检项</th><th>自检结果</th>\n    </tr>\n    <tr>\n        <td rowspan=\"2\">多线程相关</td><td>在类的成员变量中定义了vector/map/list等容器类型，且在多个成员函数中有操作时，需要加锁保护</td><td>自检结果：PASS</td>\n    </tr>\n    <tr>\n        <td>定义全局变量，在多个函数中都有操作时，需要加锁保护</td><td>自检结果：PASS</td>\n    </tr>\n    <tr>\n        <td rowspan=\"4\">内存相关</td><td>调用外部接口时，确认是否对返回值做了判断，尤其外部接口返回了nullptr的情况，避免进程崩溃</td><td>自检结果：PASS</td>\n    </tr>\n    <tr>\n        <td>调用安全函数时，如memcpy_s等，是否检查其返回值</td><td>自检结果：PASS</td>\n    </tr>\n    <tr>\n        <td>检查函数中是否涉及了内存或资源申请（如文件句柄），注意每个异常退出流程，是否都已经将资源释放（推荐使用RAII）</td><td>自检结果：PASS</td>\n    </tr>\n    </tr>\n    <tr>\n        <td>隐式内存分配场景：realpath、ReadParcelable序列化、cJSON相关函数时等，需主动释放或使用智能指针</td><td>自检结果：PASS</td>\n    </tr>\n    <tr>\n        <td rowspan=\"4\">校验外部输入</td><td>使用nlohmann:json解析外部输入时，需判断参数类型是否符合预期</td><td>自检结果：PASS</td>\n    </tr>\n    <tr>\n        <td>所有外部输入均不可信，需判断外部输入是否直接作为内存分配的大小，数组下标、循环条件、SQL查询等</td><td>自检结果：PASS</td>\n    </tr>\n    <tr>\n        <td>外部输入的路径不可信，需使用realpath做标准化处理，并判断路径的合法性</td><td>自检结果：PASS</td>\n    </tr>\n    <tr>\n        <td>外部输入包括对外提供的接口，IPC的proxy/stub接口，序列化/反序列化接口等</td><td>自检结果：PASS</td>\n    </tr>\n    </tr>\n    <tr>\n        <td rowspan=\"3\">数学运算</td><td>代码中是否混合了加减乘除等运算，需检查是否可能导致整数溢出或符号翻转</td><td>自检结果：PASS</td>\n    </tr>\n    <tr>\n        <td>需检查代码是否有高精度数字转换为低精度的操作，如果必须，建议使用C++安全类型转换接口</td><td>自检结果：PASS</td>\n    </tr>\n    <tr>\n        <td>检查代码在计算时是否有除零操作（包括除数是计算出来的结果可能为0的情况）</td><td>自检结果：PASS</td>\n    </tr>\n    </tr>\n    <tr>\n        <td rowspan=\"2\">权限相关</td><td>作为系统服务对外提供了接口，是否做了权限保护和校验（如需要），只允许申请了权限的应用访问</td><td>自检结果：PASS</td>\n    </tr>\n    <tr>\n        <td>提供给其他系统服务的接口默认需要做SA服务校验</td><td>自检结果：PASS</td>\n    </tr>\n    <tr>\n        <td rowspan=\"2\">跨进程通信</td><td>优先使用异步IPC，若必须使用同步IPC需要考虑对端卡死或高延时影响</td><td>自检结果：PASS</td>\n    </tr>\n    <tr>\n        <td>序列化/反序列化中数据读写顺序要严格对齐</td><td>自检结果：PASS</td>\n    </tr>\n</table>\n\n\nSee merge request: openharmony/window_window_manager!20268",
+    "tree": {
+      "sha": "a6406ca488c86a32bbb45a4216433b3115736105",
+      "url": "https://api.github.com/repos/openharmony/window_window_manager/git/trees/a6406ca488c86a32bbb45a4216433b3115736105"
+    },
+    "url": "https://api.github.com/repos/openharmony/window_window_manager/git/commits/dee887d0a45ca2372338bdd033337809d3437b70",
+    "comment_count": 0,
+    "verification": {
+      "verified": false,
+      "reason": "unsigned",
+      "signature": null,
+      "payload": null,
+      "verified_at": null
+    }
+  },
+  "url": "https://api.github.com/repos/openharmony/window_window_manager/commits/dee887d0a45ca2372338bdd033337809d3437b70",
+  "html_url": "https://github.com/openharmony/window_window_manager/commit/dee887d0a45ca2372338bdd033337809d3437b70",
+  "comments_url": "https://api.github.com/repos/openharmony/window_window_manager/commits/dee887d0a45ca2372338bdd033337809d3437b70/comments",
+  "author": null,
+  "committer": null,
+  "parents": [
+    {
+      "sha": "92f4168e4c2f2666b9eae7b20e527f03a1626ca0",
+      "url": "https://api.github.com/repos/openharmony/window_window_manager/commits/92f4168e4c2f2666b9eae7b20e527f03a1626ca0",
+      "html_url": "https://github.com/openharmony/window_window_manager/commit/92f4168e4c2f2666b9eae7b20e527f03a1626ca0"
+    },
+    {
+      "sha": "82433a3611ead53f0f64f5ad37580a2f8cfce03b",
+      "url": "https://api.github.com/repos/openharmony/window_window_manager/commits/82433a3611ead53f0f64f5ad37580a2f8cfce03b",
+      "html_url": "https://github.com/openharmony/window_window_manager/commit/82433a3611ead53f0f64f5ad37580a2f8cfce03b"
+    }
+  ],
+  "stats": {
+    "total": 20,
+    "additions": 20,
+    "deletions": 0
+  },
+  "files": [
+    {
+      "sha": "bb3c254c8462e1988ed7c609a42df2551b5c479e",
+      "filename": "utils/include/perform_reporter.h",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 0,
+      "changes": 1,
+      "blob_url": "https://github.com/openharmony/window_window_manager/blob/dee887d0a45ca2372338bdd033337809d3437b70/utils%2Finclude%2Fperform_reporter.h",
+      "raw_url": "https://github.com/openharmony/window_window_manager/raw/dee887d0a45ca2372338bdd033337809d3437b70/utils%2Finclude%2Fperform_reporter.h",
+      "contents_url": "https://api.github.com/repos/openharmony/window_window_manager/contents/utils%2Finclude%2Fperform_reporter.h?ref=dee887d0a45ca2372338bdd033337809d3437b70",
+      "patch": "@@ -47,6 +47,7 @@ enum class WindowDFXHelperType : uint32_t {\n     WINDOW_WALLPAPER_ZORDER_CHECK,\n     WINDOW_PIP_CHECK,\n     WINDOW_MODAL_SYSTEM_USE_JSONSTRING,\n+    WINDOW_SCB_SYSTEM_SCENE_CREATE_SUBWINDOW,\n };\n \n struct WindowProfileInfo {"
+    },
+    {
+      "sha": "5ec60201b8640c0c1dcb3129540a655884cf36ff",
+      "filename": "window_scene/session_manager/include/scene_session_manager.h",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 0,
+      "changes": 1,
+      "blob_url": "https://github.com/openharmony/window_window_manager/blob/dee887d0a45ca2372338bdd033337809d3437b70/window_scene%2Fsession_manager%2Finclude%2Fscene_session_manager.h",
+      "raw_url": "https://github.com/openharmony/window_window_manager/raw/dee887d0a45ca2372338bdd033337809d3437b70/window_scene%2Fsession_manager%2Finclude%2Fscene_session_manager.h",
+      "contents_url": "https://api.github.com/repos/openharmony/window_window_manager/contents/window_scene%2Fsession_manager%2Finclude%2Fscene_session_manager.h?ref=dee887d0a45ca2372338bdd033337809d3437b70",
+      "patch": "@@ -1492,6 +1492,7 @@ WM_DECLARE_SINGLE_INSTANCE_BASE(SceneSessionManager)\n         const sptr<ISessionStage>& sessionStage);\n     void ReportSubWindowCreationFailure(int32_t pid, const std::string& abilityName,\n         const std::string& parentBundleName, const std::string& hostBundleName);\n+    void ReportScbSystemSceneSubWindowCreate(const std::string& bundleName, const std::string& abilityName);\n \n     /*\n      * Multi User"
+    },
+    {
+      "sha": "a8302de35899b1691e6f9523ef81a22ba763af38",
+      "filename": "window_scene/session_manager/src/scene_session_manager.cpp",
+      "status": "modified",
+      "additions": 18,
+      "deletions": 0,
+      "changes": 18,
+      "blob_url": "https://github.com/openharmony/window_window_manager/blob/dee887d0a45ca2372338bdd033337809d3437b70/window_scene%2Fsession_manager%2Fsrc%2Fscene_session_manager.cpp",
+      "raw_url": "https://github.com/openharmony/window_window_manager/raw/dee887d0a45ca2372338bdd033337809d3437b70/window_scene%2Fsession_manager%2Fsrc%2Fscene_session_manager.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/window_window_manager/contents/window_scene%2Fsession_manager%2Fsrc%2Fscene_session_manager.cpp?ref=dee887d0a45ca2372338bdd033337809d3437b70",
+      "patch": "@@ -5301,6 +5301,11 @@ WSErrorResult SceneSessionManager::CreateAndConnectSpecificSession(const sptr<IS\n         if (parentSession->GetSessionInfo().isSystem_ && property->GetIsUIExtFirstSubWindow() &&\n             systemConfig_.supportUIExtensionSubWindow_) {\n             property->SetWindowType(WindowType::WINDOW_TYPE_SCB_SUB_WINDOW);\n+            AAFwk::UIExtensionSessionInfo info;\n+            AAFwk::AbilityManagerClient::GetInstance()->GetUIExtensionSessionInfo(token, info);\n+            auto bundleName = info.elementName.GetBundleName();\n+            auto abilityName = info.elementName.GetAbilityName();\n+            ReportScbSystemSceneSubWindowCreate(bundleName, abilityName);\n         }\n     }\n     auto initClientDisplayId = UpdateSpecificSessionClientDisplayId(property);\n@@ -5511,6 +5516,19 @@ void SceneSessionManager::ReportSubWindowCreationFailure(int32_t pid, const std:\n     }, __func__);\n }\n \n+void SceneSessionManager::ReportScbSystemSceneSubWindowCreate(const std::string& bundleName,\n+    const std::string& abilityName)\n+{\n+    taskScheduler_->PostAsyncTask([bundleName, abilityName]() {\n+        std::ostringstream oss;\n+        oss << \"A subwindow is being created by a UIExtension, which is started by ScbSystemScene, \"\n+            \"UIExtension bundleName: \"<< bundleName;\n+        oss << \", abilityName: \" << abilityName;\n+        SingletonContainer::Get<WindowInfoReporter>().ReportWindowException(\n+            static_cast<int32_t>(WindowDFXHelperType::WINDOW_SCB_SYSTEM_SCENE_CREATE_SUBWINDOW), getpid(), oss.str());\n+    }, __func__);\n+}\n+\n void SceneSessionManager::CheckFloatWindowIsAnco(pid_t pid, const sptr<SceneSession>& newSession)\n {\n     std::map<int32_t, sptr<SceneSession>> sceneSessionMapCopy;"
+    }
+  ]
+}

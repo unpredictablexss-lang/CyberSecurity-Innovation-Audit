@@ -1,0 +1,162 @@
+{
+  "sha": "7f4872fa310ad22f3b2d0bdf1f274b7ca8185724",
+  "node_id": "C_kwDOF9jH3doAKDdmNDg3MmZhMzEwYWQyMmYzYjJkMGJkZjFmMjc0YjdjYTgxODU3MjQ",
+  "commit": {
+    "author": {
+      "name": "openharmony_ci",
+      "email": "openharmony_ci@noreply.gitcode.com",
+      "date": "2026-09-22T14:35:04Z"
+    },
+    "committer": {
+      "name": "openharmony_ci",
+      "email": "openharmony_ci@noreply.gitcode.com",
+      "date": "2026-09-22T14:35:04Z"
+    },
+    "message": "!2954 merge master into master\n\ncall not report in OOBE\n\nCreated-by: wanghongrui13\nCommit-by: wanghongrui13\nMerged-by: openharmony_ci\nDescription: ### 一、内容说明（相关的Issue）\n\n\n\n### 二、建议测试周期和提测地址  \n  建议测试完成时间：xxxx.xx.xx  \n  投产上线时间：xxxx.xx.xx  \n  提测地址：CI环境/压测环境  \n  测试账号：  \n\n### 三、变更内容\n  * 3.1 关联PR列表\n\n  * 3.2 数据库和部署说明  \n    1. 常规更新 \n    2. 重启unicorn\n    3. 重启sidekiq\n    4. 迁移任务：是否有迁移任务，没有写 \"无\"\n    5. rake脚本：`bundle exec xxx RAILS_ENV = production`；没有写 \"无\"\n\n  * 3.4 其他技术优化内容（做了什么，变更了什么）\n    - 重构了 xxxx 代码\n    - xxxx 算法优化\n\n\n  * 3.5 废弃通知（什么字段、方法弃用？）\n\n\n\n  * 3.6  后向不兼容变更（是否有无法向后兼容的变更？）\n\n\n  \n### 四、研发自测点（自测哪些？冒烟用例全部自测？）\n  自测测试结论：\n\n\n### 五、测试关注点（需要提醒QA重点关注的、可能会忽略的地方）\n  检查点：\n\n| 需求名称 | 是否影响xx公共模块 | 是否需要xx功能 | 需求升级是否依赖其他子产品 |\n|------|------------|----------|---------------|\n| xxx  | 否          | 需要       | 不需要           |\n|      |            |          |               |\n\n  接口测试：\n\n  性能测试：\n\n  并发测试：\n\n  其他：\n\n\n\nSee merge request: openharmony/telephony_call_manager!2954",
+    "tree": {
+      "sha": "ae21a9a7a62261bc9b7c38ff29f873c40e3d9bc9",
+      "url": "https://api.github.com/repos/openharmony/telephony_call_manager/git/trees/ae21a9a7a62261bc9b7c38ff29f873c40e3d9bc9"
+    },
+    "url": "https://api.github.com/repos/openharmony/telephony_call_manager/git/commits/7f4872fa310ad22f3b2d0bdf1f274b7ca8185724",
+    "comment_count": 0,
+    "verification": {
+      "verified": false,
+      "reason": "unsigned",
+      "signature": null,
+      "payload": null,
+      "verified_at": null
+    }
+  },
+  "url": "https://api.github.com/repos/openharmony/telephony_call_manager/commits/7f4872fa310ad22f3b2d0bdf1f274b7ca8185724",
+  "html_url": "https://github.com/openharmony/telephony_call_manager/commit/7f4872fa310ad22f3b2d0bdf1f274b7ca8185724",
+  "comments_url": "https://api.github.com/repos/openharmony/telephony_call_manager/commits/7f4872fa310ad22f3b2d0bdf1f274b7ca8185724/comments",
+  "author": null,
+  "committer": null,
+  "parents": [
+    {
+      "sha": "b4c2e90c0cf1a45e9195bb6dcad85cbe634dc2bc",
+      "url": "https://api.github.com/repos/openharmony/telephony_call_manager/commits/b4c2e90c0cf1a45e9195bb6dcad85cbe634dc2bc",
+      "html_url": "https://github.com/openharmony/telephony_call_manager/commit/b4c2e90c0cf1a45e9195bb6dcad85cbe634dc2bc"
+    },
+    {
+      "sha": "273bfe1bcd331300c9d92411a0724120b20b5318",
+      "url": "https://api.github.com/repos/openharmony/telephony_call_manager/commits/273bfe1bcd331300c9d92411a0724120b20b5318",
+      "html_url": "https://github.com/openharmony/telephony_call_manager/commit/273bfe1bcd331300c9d92411a0724120b20b5318"
+    }
+  ],
+  "stats": {
+    "total": 250,
+    "additions": 133,
+    "deletions": 117
+  },
+  "files": [
+    {
+      "sha": "ea543ab2a21b555d58ee4047e0f64f1f2d1fdfe6",
+      "filename": "services/call/call_state_observer/src/call_records_manager.cpp",
+      "status": "modified",
+      "additions": 0,
+      "deletions": 1,
+      "changes": 1,
+      "blob_url": "https://github.com/openharmony/telephony_call_manager/blob/7f4872fa310ad22f3b2d0bdf1f274b7ca8185724/services%2Fcall%2Fcall_state_observer%2Fsrc%2Fcall_records_manager.cpp",
+      "raw_url": "https://github.com/openharmony/telephony_call_manager/raw/7f4872fa310ad22f3b2d0bdf1f274b7ca8185724/services%2Fcall%2Fcall_state_observer%2Fsrc%2Fcall_records_manager.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/telephony_call_manager/contents/services%2Fcall%2Fcall_state_observer%2Fsrc%2Fcall_records_manager.cpp?ref=7f4872fa310ad22f3b2d0bdf1f274b7ca8185724",
+      "patch": "@@ -500,7 +500,6 @@ void DataShareReadyEventSubscriber::OnReceiveEvent(const CommonEventData &data)\n #ifdef SUPPORT_MUTE_BY_DATABASE\n         InteroperableSettingsHandler::RegisterObserver();\n #endif\n-        CallStatusManager::RegisterObserver();\n     }\n }\n "
+    },
+    {
+      "sha": "d104e4774a7fac60d4c0594eb5bcd5f3d3021483",
+      "filename": "services/call/include/call_broadcast_subscriber.h",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "blob_url": "https://github.com/openharmony/telephony_call_manager/blob/7f4872fa310ad22f3b2d0bdf1f274b7ca8185724/services%2Fcall%2Finclude%2Fcall_broadcast_subscriber.h",
+      "raw_url": "https://github.com/openharmony/telephony_call_manager/raw/7f4872fa310ad22f3b2d0bdf1f274b7ca8185724/services%2Fcall%2Finclude%2Fcall_broadcast_subscriber.h",
+      "contents_url": "https://api.github.com/repos/openharmony/telephony_call_manager/contents/services%2Fcall%2Finclude%2Fcall_broadcast_subscriber.h?ref=7f4872fa310ad22f3b2d0bdf1f274b7ca8185724",
+      "patch": "@@ -61,7 +61,7 @@ class CallBroadcastSubscriber : public EventFwk::CommonEventSubscriber {\n     void ConnectCallUiSuperPrivacyModeBroadcast(const EventFwk::CommonEventData &data);\n     void UpdateBluetoothDeviceName(const EventFwk::CommonEventData &data);\n     void UpdateNearlinkDeviceName(const EventFwk::CommonEventData &data);\n-    void ConnectCallUiUserSwitchedBroadcast(const EventFwk::CommonEventData &data);\n+    void HandleUserSwicth(const EventFwk::CommonEventData &data);\n     void ShutdownBroadcast(const EventFwk::CommonEventData &data);\n     void HsdrEventBroadcast(const EventFwk::CommonEventData &data);\n     void HfpConnectBroadcast(const EventFwk::CommonEventData &data);"
+    },
+    {
+      "sha": "46e01234e192401e43cd1cc57853ada4a9bd4dcd",
+      "filename": "services/call/include/call_status_manager.h",
+      "status": "modified",
+      "additions": 5,
+      "deletions": 10,
+      "changes": 15,
+      "blob_url": "https://github.com/openharmony/telephony_call_manager/blob/7f4872fa310ad22f3b2d0bdf1f274b7ca8185724/services%2Fcall%2Finclude%2Fcall_status_manager.h",
+      "raw_url": "https://github.com/openharmony/telephony_call_manager/raw/7f4872fa310ad22f3b2d0bdf1f274b7ca8185724/services%2Fcall%2Finclude%2Fcall_status_manager.h",
+      "contents_url": "https://api.github.com/repos/openharmony/telephony_call_manager/contents/services%2Fcall%2Finclude%2Fcall_status_manager.h?ref=7f4872fa310ad22f3b2d0bdf1f274b7ca8185724",
+      "patch": "@@ -47,13 +47,6 @@ constexpr int32_t DEVICE_PROVISION_UNDEF = -1;\n constexpr int32_t DEVICE_PROVISION_INVALID = 0;\n constexpr int32_t DEVICE_PROVISION_VALID = 1;\n \n-class OOBEStatusObserver : public AAFwk::DataAbilityObserverStub {\n-public:\n-    OOBEStatusObserver() = default;\n-    ~OOBEStatusObserver() = default;\n-    void OnChange() override;\n-};\n-\n class CallStatusManager : public CallStatusPolicy {\n public:\n     CallStatusManager();\n@@ -76,8 +69,10 @@ class CallStatusManager : public CallStatusPolicy {\n     int32_t GetAntiFraudSlotId();\n     int32_t GetAntiFraudIndex();\n     static int32_t GetDevProvisioned();\n-    static void RegisterObserver();\n+    static int32_t GetDevUserSetupCompleteValue();\n     static void UpdateDevProvisioned();\n+    static void UpdateUserSetupCompleteValue();\n+    static void ResetUserSetupCompleteValue();\n #ifdef SUPPORT_RTT_CALL\n     void HandleRttEventInfo(const ImsRTTEventType &eventType);\n #endif\n@@ -221,8 +216,8 @@ class CallStatusManager : public CallStatusPolicy {\n     int32_t antiFraudSlotId_ = -1;\n     int32_t antiFraudIndex_ = -1;\n     ffrt::mutex mutex_;\n-    static sptr<OOBEStatusObserver> oobeStatusObserver_;\n-    static int32_t deviceProvisioned_;\n+    static std::atomic<int32_t> deviceProvisioned_;\n+    static std::atomic<int32_t> userSetupComplete_;\n #ifdef CALL_MANAGER_WATCH_CALL_BLOCKING\n     void *watchSystemServiceHandler_{nullptr};\n     IWatchTelephonyNode *watchTelephonyNode_{nullptr};"
+    },
+    {
+      "sha": "8398506ef7b735591e7e5215e9849d6ca85fe75f",
+      "filename": "services/call/src/call_broadcast_subscriber.cpp",
+      "status": "modified",
+      "additions": 3,
+      "deletions": 2,
+      "changes": 5,
+      "blob_url": "https://github.com/openharmony/telephony_call_manager/blob/7f4872fa310ad22f3b2d0bdf1f274b7ca8185724/services%2Fcall%2Fsrc%2Fcall_broadcast_subscriber.cpp",
+      "raw_url": "https://github.com/openharmony/telephony_call_manager/raw/7f4872fa310ad22f3b2d0bdf1f274b7ca8185724/services%2Fcall%2Fsrc%2Fcall_broadcast_subscriber.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/telephony_call_manager/contents/services%2Fcall%2Fsrc%2Fcall_broadcast_subscriber.cpp?ref=7f4872fa310ad22f3b2d0bdf1f274b7ca8185724",
+      "patch": "@@ -52,7 +52,7 @@ CallBroadcastSubscriber::CallBroadcastSubscriber(const OHOS::EventFwk::CommonEve\n     memberFuncMap_[NEARLINK_REMOTEDEVICE_NAME_UPDATE] =\n         [this](const EventFwk::CommonEventData &data) { UpdateNearlinkDeviceName(data); };\n     memberFuncMap_[USER_SWITCHED] =\n-        [this](const EventFwk::CommonEventData &data) { ConnectCallUiUserSwitchedBroadcast(data); };\n+        [this](const EventFwk::CommonEventData &data) { HandleUserSwicth(data); };\n     memberFuncMap_[SHUTDOWN] =\n         [this](const EventFwk::CommonEventData &data) { ShutdownBroadcast(data); };\n     memberFuncMap_[HSDR_EVENT] =\n@@ -197,8 +197,9 @@ void CallBroadcastSubscriber::UpdateNearlinkDeviceName(const EventFwk::CommonEve\n     DelayedSingleton<AudioDeviceManager>::GetInstance()->UpdateNearlinkDeviceName(macAddress, deviceName);\n }\n \n-void CallBroadcastSubscriber::ConnectCallUiUserSwitchedBroadcast(const EventFwk::CommonEventData &data)\n+void CallBroadcastSubscriber::HandleUserSwicth(const EventFwk::CommonEventData &data)\n {\n+    CallStatusManager::ResetUserSetupCompleteValue();\n     if (!DelayedSingleton<CallConnectAbility>::GetInstance()->GetConnectFlag()) {\n         TELEPHONY_LOGE(\"is not connected\");\n         return;"
+    },
+    {
+      "sha": "0e17ed2a559e088abe8e038de392b9e8687a8f5e",
+      "filename": "services/call/src/call_status_manager.cpp",
+      "status": "modified",
+      "additions": 56,
+      "deletions": 54,
+      "changes": 110,
+      "blob_url": "https://github.com/openharmony/telephony_call_manager/blob/7f4872fa310ad22f3b2d0bdf1f274b7ca8185724/services%2Fcall%2Fsrc%2Fcall_status_manager.cpp",
+      "raw_url": "https://github.com/openharmony/telephony_call_manager/raw/7f4872fa310ad22f3b2d0bdf1f274b7ca8185724/services%2Fcall%2Fsrc%2Fcall_status_manager.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/telephony_call_manager/contents/services%2Fcall%2Fsrc%2Fcall_status_manager.cpp?ref=7f4872fa310ad22f3b2d0bdf1f274b7ca8185724",
+      "patch": "@@ -78,8 +78,8 @@ const std::string ADVSECMODE_STATE = \"ohos.boot.advsecmode.state\";\n const std::string ANTIFRAUD_FEATURE = \"const.telephony.antifraud.supported\";\n const std::string PRIMARY_CONTACT = \"primary_contact\";\n constexpr const char *SYSTEM_VIDEO_RING = \"system_video_ring\";\n-int32_t CallStatusManager::deviceProvisioned_ = DEVICE_PROVISION_UNDEF;\n-sptr<OOBEStatusObserver> CallStatusManager::oobeStatusObserver_ = nullptr;\n+std::atomic<int32_t> CallStatusManager::deviceProvisioned_ = DEVICE_PROVISION_UNDEF;\n+std::atomic<int32_t> CallStatusManager::userSetupComplete_ = DEVICE_PROVISION_UNDEF;\n \n CallStatusManager::CallStatusManager()\n {\n@@ -2175,39 +2175,7 @@ bool CallStatusManager::ShouldRejectIncomingCall(sptr<CallBase> &call)\n         return true;\n     }\n #endif\n-#ifdef CONFIG_FACTORY_VERSION\n-    TELEPHONY_LOGI(\"ShouldRejectIncomingCall: CONFIG_FACTORY_VERSION is true\");\n-    return false;\n-#else\n-\n-    if (CallStatusManager::GetDevProvisioned() != DEVICE_PROVISION_VALID) {\n-        CallManagerHisysevent::ReportCallDropChrEvent(call->GetSlotId(), call->GetCallIndex(),\n-            DROP_CALL_BY_INVALID_DEVICE_PROPERTY);\n-        call->SetApCauseReported(true);\n-        TELEPHONY_LOGW(\"ShouldRejectIncomingCall: device_provisioned = 0\");\n-        return true;\n-    }\n-    auto datashareHelper = SettingsDataShareHelper::GetInstance();\n-    std::string user_setup_complete {\"1\"};\n-    std::vector<int> activedOsAccountIds;\n-    OHOS::AccountSA::OsAccountManager::QueryActiveOsAccountIds(activedOsAccountIds);\n-    if (activedOsAccountIds.empty()) {\n-        TELEPHONY_LOGW(\"ShouldRejectIncomingCall: activedOsAccountIds is empty\");\n-        return false;\n-    }\n-    int userId = activedOsAccountIds[0];\n-    OHOS::Uri uri_setup(\n-        \"datashare:///com.ohos.settingsdata/entry/settingsdata/USER_SETTINGSDATA_SECURE_\"\n-        + std::to_string(userId) + \"?Proxy=true&key=user_setup_complete\");\n-    int resp_userSetup = datashareHelper->Query(uri_setup, \"user_setup_complete\", user_setup_complete);\n-    if (resp_userSetup == TELEPHONY_SUCCESS && (user_setup_complete == \"0\" || user_setup_complete.empty())) {\n-        CallManagerHisysevent::ReportCallDropChrEvent(call->GetSlotId(), call->GetCallIndex(), DROP_CALL_BY_OOBE);\n-        call->SetApCauseReported(true);\n-        TELEPHONY_LOGW(\"ShouldRejectIncomingCall: user_setup_complete = 0\");\n-        return true;\n-    }\n     return false;\n-#endif\n }\n \n bool CallStatusManager::ShouldBlockIncomingCall(const sptr<CallBase> &call, const CallDetailInfo &info)\n@@ -2936,35 +2904,21 @@ bool CallStatusManager::RefreshDialingStateByOtherState(sptr<CallBase> &call, co\n     return true;\n }\n \n-void OOBEStatusObserver::OnChange()\n-{\n-    TELEPHONY_LOGE(\"OOBEStatusObserver::OnChange enter\");\n-    CallStatusManager::UpdateDevProvisioned();\n-}\n-\n-void CallStatusManager::RegisterObserver()\n-{\n-    if (oobeStatusObserver_ != nullptr) {\n-        return;\n-    }\n-    oobeStatusObserver_ = new OOBEStatusObserver();\n-    OHOS::Uri OOBEStatusUri(SettingsDataShareHelper::SETTINGS_DATASHARE_URI + \"&key=device_provisioned\");\n-    auto helper = DelayedSingleton<SettingsDataShareHelper>().GetInstance();\n-    if (!helper->RegisterToDataShare(OOBEStatusUri, oobeStatusObserver_)) {\n-        TELEPHONY_LOGE(\"RegisterObserver failed\");\n-    }\n-}\n-\n int32_t CallStatusManager::GetDevProvisioned()\n {\n-    if (deviceProvisioned_ == DEVICE_PROVISION_UNDEF) {\n+    if (deviceProvisioned_ != DEVICE_PROVISION_VALID) {\n         UpdateDevProvisioned();\n     }\n     return deviceProvisioned_;\n }\n \n void CallStatusManager::UpdateDevProvisioned()\n {\n+#ifdef CONFIG_FACTORY_VERSION\n+    TELEPHONY_LOGI(\"UpdateDevProvisioned: CONFIG_FACTORY_VERSION is true\");\n+    deviceProvisioned_ = DEVICE_PROVISION_VALID;\n+    return;\n+#else\n     auto datashareHelper = SettingsDataShareHelper::GetInstance();\n     if (datashareHelper == nullptr) {\n         TELEPHONY_LOGE(\"datashareHelper is null\");\n@@ -2982,6 +2936,54 @@ void CallStatusManager::UpdateDevProvisioned()\n             deviceProvisioned_ = DEVICE_PROVISION_VALID;\n         }\n     }\n+#endif\n+}\n+\n+void CallStatusManager::ResetUserSetupCompleteValue()\n+{\n+    userSetupComplete_ = DEVICE_PROVISION_UNDEF;\n+}\n+ \n+int32_t CallStatusManager::GetDevUserSetupCompleteValue()\n+{\n+    if (userSetupComplete_ != DEVICE_PROVISION_VALID) {\n+        UpdateUserSetupCompleteValue();\n+    }\n+    return userSetupComplete_;\n+}\n+ \n+void CallStatusManager::UpdateUserSetupCompleteValue()\n+{\n+#ifdef CONFIG_FACTORY_VERSION\n+    userSetupComplete_ = DEVICE_PROVISION_VALID;\n+    return;\n+#else\n+    auto datashareHelper = SettingsDataShareHelper::GetInstance();\n+    if (datashareHelper == nullptr) {\n+        TELEPHONY_LOGE(\"datashareHelper is null\");\n+        return;\n+    }\n+ \n+    std::string userSetupComplete {\"1\"};\n+    std::vector<int> activedOsAccountIds;\n+    OHOS::AccountSA::OsAccountManager::QueryActiveOsAccountIds(activedOsAccountIds);\n+    if (activedOsAccountIds.empty()) {\n+        TELEPHONY_LOGW(\"UpdateUserSetupCompleteValue: activedOsAccountIds is empty\");\n+        userSetupComplete_ = DEVICE_PROVISION_VALID;\n+        return;\n+    }\n+    int userId = activedOsAccountIds[0];\n+    OHOS::Uri uri_setup(\n+        \"datashare:///com.ohos.settingsdata/entry/settingsdata/USER_SETTINGSDATA_SECURE_\"\n+        + std::to_string(userId) + \"?Proxy=true&key=user_setup_complete\");\n+    TELEPHONY_LOGI(\"UpdateUserSetupCompleteValue userSetupComplete = %{public}s\", userSetupComplete.c_str());\n+    int resp = datashareHelper->Query(uri_setup, \"user_setup_complete\", userSetupComplete);\n+    if (resp == TELEPHONY_SUCCESS && (userSetupComplete == \"0\" || userSetupComplete.empty())) {\n+        userSetupComplete_ = DEVICE_PROVISION_INVALID;\n+    } else {\n+        userSetupComplete_ = DEVICE_PROVISION_VALID;\n+    }\n+#endif\n }\n \n void CallStatusManager::PackVoipCallInfo(DialParaInfo &paraInfo, const CallDetailInfo &info)"
+    },
+    {
+      "sha": "d362ceab742381c80aed4b5d3146f1fcea9814dd",
+      "filename": "services/telephony_interaction/include/report_call_info_handler.h",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 0,
+      "changes": 2,
+      "blob_url": "https://github.com/openharmony/telephony_call_manager/blob/7f4872fa310ad22f3b2d0bdf1f274b7ca8185724/services%2Ftelephony_interaction%2Finclude%2Freport_call_info_handler.h",
+      "raw_url": "https://github.com/openharmony/telephony_call_manager/raw/7f4872fa310ad22f3b2d0bdf1f274b7ca8185724/services%2Ftelephony_interaction%2Finclude%2Freport_call_info_handler.h",
+      "contents_url": "https://api.github.com/repos/openharmony/telephony_call_manager/contents/services%2Ftelephony_interaction%2Finclude%2Freport_call_info_handler.h?ref=7f4872fa310ad22f3b2d0bdf1f274b7ca8185724",
+      "patch": "@@ -53,6 +53,8 @@ class ReportCallInfoHandler : public std::enable_shared_from_this<ReportCallInfo\n     bool IsHostAnswerTransferCall(const CallDetailInfo &info);\n     void DisconnectTransferCall(const CallDetailInfo &info);\n #endif\n+    void ReportIncomingCallsDropChrEvents(\n+        const CallDetailsInfo &info, bool isDevProvisioned, bool isOobeComplete);\n \n private:\n     std::shared_ptr<CallStatusManager> callStatusManagerPtr_;"
+    },
+    {
+      "sha": "ab0c3009273aca8cc079f52fc415dfe4c6a1faa2",
+      "filename": "services/telephony_interaction/src/report_call_info_handler.cpp",
+      "status": "modified",
+      "additions": 37,
+      "deletions": 26,
+      "changes": 63,
+      "blob_url": "https://github.com/openharmony/telephony_call_manager/blob/7f4872fa310ad22f3b2d0bdf1f274b7ca8185724/services%2Ftelephony_interaction%2Fsrc%2Freport_call_info_handler.cpp",
+      "raw_url": "https://github.com/openharmony/telephony_call_manager/raw/7f4872fa310ad22f3b2d0bdf1f274b7ca8185724/services%2Ftelephony_interaction%2Fsrc%2Freport_call_info_handler.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/telephony_call_manager/contents/services%2Ftelephony_interaction%2Fsrc%2Freport_call_info_handler.cpp?ref=7f4872fa310ad22f3b2d0bdf1f274b7ca8185724",
+      "patch": "@@ -254,6 +254,13 @@ void ReportCallInfoHandler::BuildCallDetailsInfo(CallDetailsInfo &info, CallDeta\n         callDetailInfo.rttChannelId = (*iter).rttChannelId;\n         callDetailInfo.imsDomain = (*iter).imsDomain;\n         callDetailsInfo.callVec.push_back(callDetailInfo);\n+#ifdef SUPPORT_RTT_CALL\n+        sptr<CallBase> call = CallObjectManager::GetOneCallObjectByIndex(callDetailInfo.index);\n+        if (call != nullptr && callDetailInfo.callType == CallType::TYPE_IMS) {\n+            sptr<IMSCall> imsCall = reinterpret_cast<IMSCall *>(call.GetRefPtr());\n+            imsCall->SetRttState(callDetailInfo.rttState);\n+        }\n+#endif\n     }\n }\n \n@@ -264,9 +271,20 @@ int32_t ReportCallInfoHandler::UpdateCallsReportInfo(CallDetailsInfo &info)\n         return TELEPHONY_ERR_LOCAL_PTR_NULL;\n     }\n \n+    bool isDevProvisioned = CallStatusManager::GetDevProvisioned() == DEVICE_PROVISION_VALID;\n+    bool isOobeComplete = CallStatusManager::GetDevUserSetupCompleteValue() == DEVICE_PROVISION_VALID;\n+    if (!isDevProvisioned || !isOobeComplete) {\n+        ReportIncomingCallsDropChrEvents(info, isDevProvisioned, isOobeComplete);\n+        TELEPHONY_LOGE(\"UpdateCallsReportInfo call not report in OOBE\");\n+        return TELEPHONY_SUCCESS;\n+    }\n+\n     CallDetailsInfo callDetailsInfo;\n     callDetailsInfo.slotId = info.slotId;\n-    (void)memcpy_s(callDetailsInfo.bundleName, kMaxBundleNameLen, info.bundleName, kMaxBundleNameLen);\n+    if (memcpy_s(callDetailsInfo.bundleName, kMaxBundleNameLen + 1, info.bundleName, kMaxBundleNameLen + 1) != EOK) {\n+        TELEPHONY_LOGE(\"memcpy_s bundleName failed\");\n+        return TELEPHONY_ERR_MEMCPY_FAIL;\n+    }\n     BuildCallDetailsInfo(info, callDetailsInfo);\n     std::weak_ptr<CallStatusManager> callStatusManagerPtr = callStatusManagerPtr_;\n     TELEPHONY_LOGW(\"UpdateCallsReportInfo submit task enter\");\n@@ -282,34 +300,27 @@ int32_t ReportCallInfoHandler::UpdateCallsReportInfo(CallDetailsInfo &info)\n         }\n     });\n \n-    CallDetailInfo detailInfo;\n-    detailInfo.state = TelCallState::CALL_STATUS_UNKNOWN;\n-    std::vector<CallDetailInfo>::iterator it = info.callVec.begin();\n-    for (; it != info.callVec.end(); ++it) {\n-        detailInfo.callType = (*it).callType;\n-        detailInfo.accountId = (*it).accountId;\n-        detailInfo.state = (*it).state;\n-        detailInfo.callMode = (*it).callMode;\n-#ifdef SUPPORT_RTT_CALL\n-        detailInfo.index = (*it).index;\n-        detailInfo.rttState = (*it).rttState;\n-#endif\n-    }\n-    if (detailInfo.state == TelCallState::CALL_STATUS_INCOMING) {\n-        CallManagerHisysevent::WriteIncomingCallFaultEvent(info.slotId, static_cast<int32_t>(detailInfo.callType),\n-            static_cast<int32_t>(detailInfo.callMode), CALL_ERR_SYSTEM_EVENT_HANDLE_FAILURE,\n-            \"ID HANDLER_UPDATE_CALL_INFO_LIST\");\n-    }\n-#ifdef SUPPORT_RTT_CALL\n-    sptr<CallBase> call = CallObjectManager::GetOneCallObjectByIndex(detailInfo.index);\n-    if (call != nullptr) {\n-        sptr<IMSCall> imsCall = reinterpret_cast<IMSCall *>(call.GetRefPtr());\n-        imsCall->SetRttState(detailInfo.rttState);\n-    }\n-#endif\n     return TELEPHONY_SUCCESS;\n }\n \n+void ReportCallInfoHandler::ReportIncomingCallsDropChrEvents(\n+    const CallDetailsInfo &info, bool isDevProvisioned, bool isOobeComplete)\n+{\n+    for (const auto &call : info.callVec) {\n+        if (call.state != TelCallState::CALL_STATUS_INCOMING) {\n+            continue;\n+        }\n+        if (!isDevProvisioned) {\n+            CallManagerHisysevent::ReportCallDropChrEvent(\n+                info.slotId, call.index, DROP_CALL_BY_INVALID_DEVICE_PROPERTY);\n+        }\n+        if (!isOobeComplete) {\n+            CallManagerHisysevent::ReportCallDropChrEvent(\n+                info.slotId, call.index, DROP_CALL_BY_OOBE);\n+        }\n+    }\n+}\n+\n int32_t ReportCallInfoHandler::UpdateDisconnectedCause(const DisconnectedDetails &details)\n {\n     if (callStatusManagerPtr_ == nullptr) {"
+    },
+    {
+      "sha": "b4164444cdd211d68f2bdcee5f12d5dcab3cf820",
+      "filename": "test/unittest/call_manager_zero_gtest/src/zero_branch6_test.cpp",
+      "status": "modified",
+      "additions": 28,
+      "deletions": 22,
+      "changes": 50,
+      "blob_url": "https://github.com/openharmony/telephony_call_manager/blob/7f4872fa310ad22f3b2d0bdf1f274b7ca8185724/test%2Funittest%2Fcall_manager_zero_gtest%2Fsrc%2Fzero_branch6_test.cpp",
+      "raw_url": "https://github.com/openharmony/telephony_call_manager/raw/7f4872fa310ad22f3b2d0bdf1f274b7ca8185724/test%2Funittest%2Fcall_manager_zero_gtest%2Fsrc%2Fzero_branch6_test.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/telephony_call_manager/contents/test%2Funittest%2Fcall_manager_zero_gtest%2Fsrc%2Fzero_branch6_test.cpp?ref=7f4872fa310ad22f3b2d0bdf1f274b7ca8185724",
+      "patch": "@@ -94,8 +94,6 @@ constexpr const char *TEST_STR = \"123\";\n constexpr const char *LONG_STR =\n     \"11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111\"\n     \"111111111\";\n-constexpr const char *DEVICE_PROVISIONED_URI =\n-    \"datashare:///com.ohos.settingsdata/entry/settingsdata/SETTINGSDATA?Proxy=true\";\n } // namespace\n \n class DemoHandler : public AppExecFwk::EventHandler {\n@@ -322,15 +320,14 @@ HWTEST_F(ZeroBranch5Test, Telephony_CallStatusManager_004, TestSize.Level0)\n     info.state = TelCallState::CALL_STATUS_DISCONNECTED;\n     callStatusManager->HandleCallReportInfo(info);\n }\n+\n /**\n  * @tc.number   Telephony_CallStatusManager_008\n  * @tc.name     test error branch\n  * @tc.desc     Function test\n  */\n  HWTEST_F(ZeroBranch5Test, Telephony_CallStatusManager_008, TestSize.Level0)\n {\n-    Uri uri(DEVICE_PROVISIONED_URI);\n-    sptr<OOBEStatusObserver> oobeStatusObserver_(new (std::nothrow) OOBEStatusObserver());\n     auto reportCallInfo = DelayedSingleton<ReportCallInfoHandler>::GetInstance();\n     reportCallInfo->callStatusManagerPtr_ = std::make_shared<CallStatusManager>();\n     CallDetailInfo info;\n@@ -339,29 +336,13 @@ HWTEST_F(ZeroBranch5Test, Telephony_CallStatusManager_004, TestSize.Level0)\n     info.index = 1;\n     info.state = TelCallState::CALL_STATUS_INCOMING;\n     info.callType = CallType::TYPE_BLUETOOTH;\n-    ASSERT_TRUE(oobeStatusObserver_ != nullptr);\n-    auto helper = DelayedSingleton<SettingsDataShareHelper>().GetInstance();\n     std::shared_ptr<CallStatusManager> callStatusManager = std::make_shared<CallStatusManager>();\n-    callStatusManager->RegisterObserver();\n-    ASSERT_EQ(helper->RegisterToDataShare(uri, oobeStatusObserver_), true);\n-    oobeStatusObserver_->OnChange();\n-    callStatusManager->deviceProvisioned_ = -1;\n-    callStatusManager->UpdateDevProvisioned();\n-    EXPECT_EQ(helper->Update(uri, \"device_provisioned\", \"0\"), 0);\n-    oobeStatusObserver_->OnChange();\n     callStatusManager->deviceProvisioned_ = -1;\n     callStatusManager->GetDevProvisioned();\n-    EXPECT_EQ(helper->UnRegisterToDataShare(uri, oobeStatusObserver_), true);\n-\n     callStatusManager->deviceProvisioned_ = 0;\n-    DialParaInfo dialParaInfo;\n-    sptr<CallBase> call = new IMSCall(dialParaInfo);\n-    EXPECT_TRUE(callStatusManager->ShouldRejectIncomingCall(call));\n-    reportCallInfo->UpdateCallReportInfo(info);\n-    callStatusManager->RegisterObserver();\n-    callStatusManager->oobeStatusObserver_ = nullptr;\n+    EXPECT_EQ(reportCallInfo->UpdateCallReportInfo(info), TELEPHONY_SUCCESS);\n }\n-\n+ \n /**\n  * @tc.number   Telephony_CallStatusManager_009\n  * @tc.name     test error branch\n@@ -386,6 +367,31 @@ HWTEST_F(ZeroBranch5Test, Telephony_CallStatusManager_004, TestSize.Level0)\n     EXPECT_NE(audioDeviceManager->GetCurrentAudioDevice(), AudioDeviceType::DEVICE_SPEAKER);\n }\n \n+/**\n+ * @tc.number   Telephony_CallStatusManager_010\n+ * @tc.name     test error branch\n+ * @tc.desc     Function test\n+ */\n+ HWTEST_F(ZeroBranch5Test, Telephony_CallStatusManager_010, TestSize.Level0)\n+{\n+    auto reportCallInfo = DelayedSingleton<ReportCallInfoHandler>::GetInstance();\n+    reportCallInfo->callStatusManagerPtr_ = std::make_shared<CallStatusManager>();\n+    CallDetailsInfo info;\n+    info.slotId = 0;\n+    CallDetailInfo detailInfo;\n+    std::string number = \"123456789\";\n+    memcpy_s(&detailInfo.phoneNum, kMaxNumberLen, number.c_str(), number.length());\n+    detailInfo.index = 1;\n+    detailInfo.state = TelCallState::CALL_STATUS_INCOMING;\n+    detailInfo.callType = CallType::TYPE_IMS;\n+    info.callVec.push_back(detailInfo);\n+    std::shared_ptr<CallStatusManager> callStatusManager = std::make_shared<CallStatusManager>();\n+    callStatusManager->userSetupComplete_ = -1;\n+    callStatusManager->GetDevUserSetupCompleteValue();\n+    callStatusManager->userSetupComplete_ = 0;\n+    EXPECT_EQ(reportCallInfo->UpdateCallsReportInfo(info), TELEPHONY_SUCCESS);\n+}\n+\n #ifdef CALL_MANAGER_WATCH_CALL_BLOCKING\n /**\n  * @tc.number   CallStatusManager_HandleWatchCallDispositionTest"
+    },
+    {
+      "sha": "de7dfdb1628f0043d818b6008b2050cb750c909f",
+      "filename": "test/unittest/call_manager_zero_gtest/src/zero_branch8_test.cpp",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "blob_url": "https://github.com/openharmony/telephony_call_manager/blob/7f4872fa310ad22f3b2d0bdf1f274b7ca8185724/test%2Funittest%2Fcall_manager_zero_gtest%2Fsrc%2Fzero_branch8_test.cpp",
+      "raw_url": "https://github.com/openharmony/telephony_call_manager/raw/7f4872fa310ad22f3b2d0bdf1f274b7ca8185724/test%2Funittest%2Fcall_manager_zero_gtest%2Fsrc%2Fzero_branch8_test.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/telephony_call_manager/contents/test%2Funittest%2Fcall_manager_zero_gtest%2Fsrc%2Fzero_branch8_test.cpp?ref=7f4872fa310ad22f3b2d0bdf1f274b7ca8185724",
+      "patch": "@@ -84,7 +84,7 @@ HWTEST_F(ZeroBranch7Test, Telephony_CallBroadcastSubscriber_001, TestSize.Level0\n     subscriber.ConnectCallUiSuperPrivacyModeBroadcast(eventData);\n     subscriber.UpdateBluetoothDeviceName(eventData);\n     subscriber.UpdateNearlinkDeviceName(eventData);\n-    subscriber.ConnectCallUiUserSwitchedBroadcast(eventData);\n+    subscriber.HandleUserSwicth(eventData);\n     ASSERT_NE(sizeof(eventData), 0);\n }\n "
+    }
+  ]
+}

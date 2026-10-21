@@ -201,7 +201,63 @@ def _normalized(context, detector, selected, run, elapsed, error=None,
     )
 
 
-def run_all_with_coverage(context: ScanContext, registry: DetectorRegistry):
+def _run_independent_files(context, detector, selected, result_cache):
+    """Run/cache only detector results whose contract is explicitly per-Blob."""
+    outcomes = []
+    for unit in selected:
+        try:
+            run = result_cache.load(detector, context, unit)
+        except Exception:
+            # A cache is only an optimization. Any cache implementation or
+            # filesystem error must reduce to ordinary detection.
+            result_cache.stats["read_errors"] += 1
+            result_cache.stats["misses"] += 1
+            run = None
+        if run is None:
+            run = detector.detect(context, (unit,))
+            if not isinstance(run, DetectorRun):
+                raise ValueError("detector must return DetectorRun")
+            if run.detector_id != detector.detector_id or run.version != detector.version:
+                raise ValueError("detector identity mismatch")
+            if (any(path != unit.path for path in run.analyzed_files)
+                    or any(item.file != unit.path for item in run.findings)
+                    or any(path != unit.path for path, _ in run.file_outcomes)):
+                raise ValueError("source-only detector returned data outside its one-file scope")
+            if run.status == "completed":
+                if (run.analyzed_files != (unit.path,)
+                        or (run.file_outcomes and run.file_outcomes != ((unit.path, "complete"),))):
+                    raise ValueError("source-only detector violated its one-file result contract")
+                try:
+                    result_cache.store(detector, context, unit, run)
+                except Exception:
+                    result_cache.stats["write_skipped"] += 1
+        outcomes.append((unit, run))
+    statuses = {run.status for _, run in outcomes}
+    status = "failed" if "failed" in statuses else "blocked" if "blocked" in statuses else "completed"
+    analyzed = set()
+    findings, limitations, per_file = [], set(), []
+    for unit, run in outcomes:
+        analyzed.update(run.analyzed_files)
+        findings.extend(run.findings)
+        limitations.update(run.limitations)
+        if run.status == "completed":
+            state = "complete"
+        elif unit.path in run.analyzed_files:
+            state = "partial"
+        elif run.status == "failed":
+            state = "failed"
+        else:
+            state = "not_analyzed"
+        per_file.append((unit.path, state))
+    return DetectorRun(
+        detector.detector_id, detector.version, status,
+        analyzed_files=tuple(sorted(analyzed)), findings=tuple(findings),
+        limitations=tuple(sorted(limitations)), file_outcomes=tuple(per_file),
+    )
+
+
+def run_all_with_coverage(context: ScanContext, registry: DetectorRegistry,
+                          per_file_result_cache=None, detector_checkpoints=None):
     """Return normalized reports plus per-detector coverage and obligations.
 
     First-party results emit v2; historical v1 results remain readable. In particular, 'completed'
@@ -220,6 +276,7 @@ def run_all_with_coverage(context: ScanContext, registry: DetectorRegistry):
         skipped = {}
         run = None
         error = None
+        cached_coverage = None
         start = perf_counter()
         if not applicable:
             run = DetectorRun(detector.detector_id, detector.version, "blocked",
@@ -256,9 +313,24 @@ def run_all_with_coverage(context: ScanContext, registry: DetectorRegistry):
                             detector.detector_id, detector.version, "blocked",
                             limitations=("No file has complete AST for this detector.",),
                         )
-        if run is None:
+        if run is None and detector_checkpoints is not None:
             try:
-                run = detector.detect(context, selected)
+                cached = detector_checkpoints.load(context, detector, applicable)
+            except Exception:
+                detector_checkpoints.stats["read_errors"] += 1
+                cached = None
+            if cached is not None:
+                report, cached_coverage = cached
+                report.run_id = context.request.request_id + ":" + detector.detector_id
+        if run is None and cached_coverage is None:
+            try:
+                if (per_file_result_cache is not None
+                        and getattr(detector, "incremental_cache_policy", None)
+                        == "git_blob_single_file_v1"):
+                    run = _run_independent_files(context, detector, selected,
+                                                 per_file_result_cache)
+                else:
+                    run = detector.detect(context, selected)
                 report = _normalized(context, detector, selected, run,
                                      perf_counter() - start, applicable=applicable,
                                      skipped=skipped)
@@ -268,11 +340,14 @@ def run_all_with_coverage(context: ScanContext, registry: DetectorRegistry):
                 report = _normalized(context, detector, selected, run,
                                      perf_counter() - start, error=error,
                                      applicable=applicable, skipped=skipped)
-        else:
+        elif cached_coverage is None:
             report = _normalized(context, detector, selected, run,
                                  perf_counter() - start, applicable=applicable,
                                  skipped=skipped)
         reports.append(report)
+        if cached_coverage is not None:
+            sidecar["detectors"][detector.detector_id] = cached_coverage
+            continue
         analyzed = {item["file"] for item in report.parsing
                     if item["analysis_status"] == "analyzed"}
         partial = {item["file"] for item in report.parsing
@@ -337,6 +412,13 @@ def run_all_with_coverage(context: ScanContext, registry: DetectorRegistry):
                 ] if run is not None and error is None else []
             ),
         }
+        if detector_checkpoints is not None and report.status == "completed":
+            try:
+                detector_checkpoints.store(
+                    context, detector, report, sidecar["detectors"][detector.detector_id]
+                )
+            except Exception:
+                detector_checkpoints.stats["write_errors"] += 1
     return reports, sidecar
 
 

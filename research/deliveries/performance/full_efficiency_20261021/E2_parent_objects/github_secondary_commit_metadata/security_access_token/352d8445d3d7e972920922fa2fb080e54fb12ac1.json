@@ -1,0 +1,245 @@
+{
+  "sha": "352d8445d3d7e972920922fa2fb080e54fb12ac1",
+  "node_id": "C_kwDONHO-ktoAKDM1MmQ4NDQ1ZDNkN2U5NzI5MjA5MjJmYTJmYjA4MGU1NGZiMTJhYzE",
+  "commit": {
+    "author": {
+      "name": "chennian",
+      "email": "chennian1@huawei.com",
+      "date": "2026-09-29T13:49:40Z"
+    },
+    "committer": {
+      "name": "chennian",
+      "email": "chennian1@huawei.com",
+      "date": "2026-09-29T13:49:40Z"
+    },
+    "message": "新增锁屏熄屏隐私管控产品配置及摄像头使用管控\n\nSigned-off-by: chennian <chennian1@huawei.com>\n\nAI[99%] Human Fixed[0%] Human[1%] AI Adopted[11%]\nCo-authored-by: opencode (glm-5.2) <ai@local>\nCo-authored-by: opencode (glm-5.3) <ai@local>\nCo-authored-by: codex (gpt-5.5) <ai@local>\nCo-authored-by: codex (gpt-5.6-sol) <ai@local>\nCo-authored-by: opencode (glm-5.2) <ai@local>\nCo-authored-by: opencode (glm-5.3) <ai@local>\nCo-authored-by: codex (gpt-5.5) <ai@local>\nCo-authored-by: codex (gpt-5.6-sol) <ai@local>\nCo-authored-by: opencode (glm-5.2) <ai@local>\nCo-authored-by: opencode (glm-5.3) <ai@local>\nCo-authored-by: codex (gpt-5.5) <ai@local>\nCo-authored-by: codex (gpt-5.6-sol) <ai@local>\nCo-authored-by: opencode (glm-5.2) <ai@local>\nCo-authored-by: opencode (glm-5.3) <ai@local>\nCo-authored-by: codex (gpt-5.5) <ai@local>\nCo-authored-by: codex (gpt-5.6-sol) <ai@local>\nCo-authored-by: opencode (glm-5.2) <ai@local>\nCo-authored-by: opencode (glm-5.3) <ai@local>\nCo-authored-by: codex (gpt-5.5) <ai@local>\nCo-authored-by: codex (gpt-5.6-sol) <ai@local>\nCo-authored-by: opencode (glm-5.2) <ai@local>\nCo-authored-by: opencode (glm-5.3) <ai@local>\n\nChange-Id: I0d13b9eb94ed9b4c3ae979cbccfd086ff2f2c0eb",
+    "tree": {
+      "sha": "165ddb84d7e68f19c558c73330dd8e2a8cf6ecd2",
+      "url": "https://api.github.com/repos/openharmony/security_access_token/git/trees/165ddb84d7e68f19c558c73330dd8e2a8cf6ecd2"
+    },
+    "url": "https://api.github.com/repos/openharmony/security_access_token/git/commits/352d8445d3d7e972920922fa2fb080e54fb12ac1",
+    "comment_count": 0,
+    "verification": {
+      "verified": false,
+      "reason": "unsigned",
+      "signature": null,
+      "payload": null,
+      "verified_at": null
+    }
+  },
+  "url": "https://api.github.com/repos/openharmony/security_access_token/commits/352d8445d3d7e972920922fa2fb080e54fb12ac1",
+  "html_url": "https://github.com/openharmony/security_access_token/commit/352d8445d3d7e972920922fa2fb080e54fb12ac1",
+  "comments_url": "https://api.github.com/repos/openharmony/security_access_token/commits/352d8445d3d7e972920922fa2fb080e54fb12ac1/comments",
+  "author": {
+    "login": "c00444721",
+    "id": 60093155,
+    "node_id": "MDQ6VXNlcjYwMDkzMTU1",
+    "avatar_url": "https://avatars.githubusercontent.com/u/60093155?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/c00444721",
+    "html_url": "https://github.com/c00444721",
+    "followers_url": "https://api.github.com/users/c00444721/followers",
+    "following_url": "https://api.github.com/users/c00444721/following{/other_user}",
+    "gists_url": "https://api.github.com/users/c00444721/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/c00444721/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/c00444721/subscriptions",
+    "organizations_url": "https://api.github.com/users/c00444721/orgs",
+    "repos_url": "https://api.github.com/users/c00444721/repos",
+    "events_url": "https://api.github.com/users/c00444721/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/c00444721/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false
+  },
+  "committer": {
+    "login": "c00444721",
+    "id": 60093155,
+    "node_id": "MDQ6VXNlcjYwMDkzMTU1",
+    "avatar_url": "https://avatars.githubusercontent.com/u/60093155?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/c00444721",
+    "html_url": "https://github.com/c00444721",
+    "followers_url": "https://api.github.com/users/c00444721/followers",
+    "following_url": "https://api.github.com/users/c00444721/following{/other_user}",
+    "gists_url": "https://api.github.com/users/c00444721/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/c00444721/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/c00444721/subscriptions",
+    "organizations_url": "https://api.github.com/users/c00444721/orgs",
+    "repos_url": "https://api.github.com/users/c00444721/repos",
+    "events_url": "https://api.github.com/users/c00444721/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/c00444721/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false
+  },
+  "parents": [
+    {
+      "sha": "0c4332cd096af3de7a127fce354931f7351a6d33",
+      "url": "https://api.github.com/repos/openharmony/security_access_token/commits/0c4332cd096af3de7a127fce354931f7351a6d33",
+      "html_url": "https://github.com/openharmony/security_access_token/commit/0c4332cd096af3de7a127fce354931f7351a6d33"
+    }
+  ],
+  "stats": {
+    "total": 520,
+    "additions": 516,
+    "deletions": 4
+  },
+  "files": [
+    {
+      "sha": "4cb5f071c58cc1bd8dedbcc15971c4a46058a9cb",
+      "filename": "access_token.gni",
+      "status": "modified",
+      "additions": 9,
+      "deletions": 0,
+      "changes": 9,
+      "blob_url": "https://github.com/openharmony/security_access_token/blob/352d8445d3d7e972920922fa2fb080e54fb12ac1/access_token.gni",
+      "raw_url": "https://github.com/openharmony/security_access_token/raw/352d8445d3d7e972920922fa2fb080e54fb12ac1/access_token.gni",
+      "contents_url": "https://api.github.com/repos/openharmony/security_access_token/contents/access_token.gni?ref=352d8445d3d7e972920922fa2fb080e54fb12ac1",
+      "patch": "@@ -174,6 +174,15 @@ if (!defined(global_parts_info) ||\n   theme_screenlock_mgr_enable = false\n }\n \n+if (!defined(global_parts_info) ||\n+    defined(global_parts_info.powermgr_power_manager)) {\n+  power_manager_client_enable = true\n+  access_token_cflags_cc += [ \"-DPOWER_MANAGER_CLIENT_ENABLE\" ]\n+  access_token_external_deps += [ \"power_manager:powermgr_client\" ]\n+} else {\n+  power_manager_client_enable = false\n+}\n+\n if (!defined(global_parts_info) ||\n     defined(global_parts_info.notification_common_event_service)) {\n   common_event_service_enable = true"
+    },
+    {
+      "sha": "d64ce9289c629649adc17e7110636a9bb73c6400",
+      "filename": "interfaces/innerkits/privacy/test/tool/BUILD.gn",
+      "status": "modified",
+      "additions": 31,
+      "deletions": 0,
+      "changes": 31,
+      "blob_url": "https://github.com/openharmony/security_access_token/blob/352d8445d3d7e972920922fa2fb080e54fb12ac1/interfaces%2Finnerkits%2Fprivacy%2Ftest%2Ftool%2FBUILD.gn",
+      "raw_url": "https://github.com/openharmony/security_access_token/raw/352d8445d3d7e972920922fa2fb080e54fb12ac1/interfaces%2Finnerkits%2Fprivacy%2Ftest%2Ftool%2FBUILD.gn",
+      "contents_url": "https://api.github.com/repos/openharmony/security_access_token/contents/interfaces%2Finnerkits%2Fprivacy%2Ftest%2Ftool%2FBUILD.gn?ref=352d8445d3d7e972920922fa2fb080e54fb12ac1",
+      "patch": "@@ -175,6 +175,36 @@ ohos_executable(\"PermissionUsedRecordToggleStatus\") {\n   ]\n }\n \n+ohos_executable(\"StartStopUsingPermission\") {\n+  subsystem_name = \"security\"\n+  part_name = \"access_token\"\n+  sanitize = {\n+    cfi = true\n+    cfi_cross_dso = true\n+    debug = false\n+  }\n+  branch_protector_ret = \"pac_ret\"\n+  sources = [ \"start_stop_using_permission.cpp\" ]\n+\n+  include_dirs = [\n+    \"${access_token_path}/interfaces/innerkits/nativetoken/include\",\n+    \"${access_token_path}/interfaces/innerkits/token_setproc/include\",\n+    \"${access_token_path}/interfaces/innerkits/privacy/include\",\n+  ]\n+\n+  deps = [\n+    \"${access_token_path}/interfaces/innerkits/accesstoken:libaccesstoken_sdk\",\n+    \"${access_token_path}/interfaces/innerkits/nativetoken:libnativetoken\",\n+    \"${access_token_path}/interfaces/innerkits/privacy:libprivacy_sdk\",\n+    \"${access_token_path}/interfaces/innerkits/token_setproc:libtoken_setproc\",\n+  ]\n+\n+  external_deps = [\n+    \"c_utils:utils\",\n+    \"ipc:ipc_single\",\n+  ]\n+}\n+\n group(\"tools\") {\n   testonly = true\n   deps = [\n@@ -183,5 +213,6 @@ group(\"tools\") {\n     \":GetPermissionUsedRecords\",\n     \":PermissionUsedRecordToggleStatus\",\n     \":RemotePrivacyTest\",\n+    \":StartStopUsingPermission\",\n   ]\n }"
+    },
+    {
+      "sha": "985433d02310ba24a503037cd6a688eb3298c5bd",
+      "filename": "interfaces/innerkits/privacy/test/tool/start_stop_using_permission.cpp",
+      "status": "added",
+      "additions": 149,
+      "deletions": 0,
+      "changes": 149,
+      "blob_url": "https://github.com/openharmony/security_access_token/blob/352d8445d3d7e972920922fa2fb080e54fb12ac1/interfaces%2Finnerkits%2Fprivacy%2Ftest%2Ftool%2Fstart_stop_using_permission.cpp",
+      "raw_url": "https://github.com/openharmony/security_access_token/raw/352d8445d3d7e972920922fa2fb080e54fb12ac1/interfaces%2Finnerkits%2Fprivacy%2Ftest%2Ftool%2Fstart_stop_using_permission.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/security_access_token/contents/interfaces%2Finnerkits%2Fprivacy%2Ftest%2Ftool%2Fstart_stop_using_permission.cpp?ref=352d8445d3d7e972920922fa2fb080e54fb12ac1",
+      "patch": "@@ -0,0 +1,149 @@\n+/*\n+ * Copyright (c) 2026 Huawei Device Co., Ltd.\n+ * Licensed under the Apache License, Version 2.0 (the \"License\");\n+ * you may not use this file except in compliance with the License.\n+ * You may obtain a copy of the License at\n+ *\n+ *     http://www.apache.org/licenses/LICENSE-2.0\n+ *\n+ * Unless required by applicable law or agreed to in writing, software\n+ * distributed under the License is distributed on an \"AS IS\" BASIS,\n+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n+ * See the License for the specific language governing permissions and\n+ * limitations under the License.\n+ */\n+#include <cstdio>\n+#include <cstdlib>\n+#include <iostream>\n+#include <memory>\n+#include <sstream>\n+#include <string>\n+#include \"accesstoken_kit.h\"\n+#include \"privacy_kit.h\"\n+#include \"token_setproc.h\"\n+\n+using namespace std;\n+using namespace OHOS::Security::AccessToken;\n+\n+namespace {\n+static constexpr uint32_t INDEX_ONE = 1;\n+static constexpr uint32_t INDEX_TWO = 2;\n+static constexpr uint32_t INDEX_THREE = 3;\n+static constexpr uint32_t INDEX_FOUR = 4;\n+static constexpr uint32_t INPUT_COUNT_FOUR = 4; // 4: prog + action + tokenid + permissionName\n+static constexpr uint32_t INPUT_COUNT_FIVE = 5; // 5: prog + action + tokenid + permissionName + pid\n+static constexpr int32_t DEFAULT_PID = -1;\n+static constexpr int32_t RET_NOT_ALLOWED = 1;\n+static const std::string ACTION_START = \"start\";\n+static const std::string ACTION_STOP = \"stop\";\n+static const std::string TAG_INIT = \"[Init]\";\n+static const std::string TAG_START = \"[Start]\";\n+static const std::string TAG_STOP = \"[Stop]\";\n+}\n+\n+void PrintHelp()\n+{\n+    std::cout << \"Usage:\\n\"\n+              << \"  StartStopUsingPermission start <tokenid> <permissionName> [pid]\\n\"\n+              << \"  StartStopUsingPermission stop <tokenid> <permissionName> [pid]\\n\"\n+              << \"Example:\\n\"\n+              << \"  ./StartStopUsingPermission start 537002041 ohos.permission.CAMERA\\n\"\n+              << \"Note:\\n\"\n+              << \"  start: check IsAllowedUsingPermission first, skip StartUsingPermission when denied.\\n\"\n+              << \"  pid is optional, default -1.\\n\"\n+              << \"  Exit code: 0 success, 1 not allowed, others API error code.\" << std::endl;\n+}\n+\n+AccessTokenID GetNativeTokenIdFromProcess(const std::string &process)\n+{\n+    std::string dumpInfo;\n+    AtmToolsParamInfo info;\n+    info.processName = process;\n+    AccessTokenKit::DumpTokenInfo(info, dumpInfo);\n+    size_t pos = dumpInfo.find(\"\\\"tokenID\\\": \");\n+    if (pos == std::string::npos) {\n+        return 0;\n+    }\n+    pos += std::string(\"\\\"tokenID\\\": \").length();\n+    std::string numStr;\n+    while (pos < dumpInfo.length() && isdigit(dumpInfo[pos])) {\n+        numStr += dumpInfo[pos];\n+        ++pos;\n+    }\n+\n+    std::istringstream iss(numStr);\n+    AccessTokenID tokenID;\n+    iss >> tokenID;\n+    return tokenID;\n+}\n+\n+void PrintInput(const std::string& tag, const AccessTokenID tokenId, const std::string& permissionName,\n+    int32_t pid)\n+{\n+    std::cout << tag << \" input: tokenId=\" << tokenId << \", permission=\" << permissionName\n+        << \", pid=\" << pid << std::endl;\n+}\n+\n+int32_t StartUsingPermission(const AccessTokenID tokenId, const std::string& permissionName, int32_t pid)\n+{\n+    PrintInput(TAG_START, tokenId, permissionName, pid);\n+\n+    bool isAllowed = PrivacyKit::IsAllowedUsingPermission(tokenId, permissionName, pid);\n+    std::cout << TAG_START << \" IsAllowedUsingPermission: \" << (isAllowed ? \"allowed\" : \"denied\") << std::endl;\n+    if (!isAllowed) {\n+        std::cout << TAG_START << \" StartUsingPermission skipped: not allowed\" << std::endl;\n+        return RET_NOT_ALLOWED;\n+    }\n+\n+    int32_t ret = PrivacyKit::StartUsingPermission(tokenId, permissionName, pid);\n+    if (ret == RET_SUCCESS) {\n+        std::cout << TAG_START << \" StartUsingPermission: success\" << std::endl;\n+    } else {\n+        std::cout << TAG_START << \" StartUsingPermission: failed, ret=\" << ret << std::endl;\n+    }\n+    return ret;\n+}\n+\n+int32_t StopUsingPermission(const AccessTokenID tokenId, const std::string& permissionName, int32_t pid)\n+{\n+    PrintInput(TAG_STOP, tokenId, permissionName, pid);\n+\n+    int32_t ret = PrivacyKit::StopUsingPermission(tokenId, permissionName, pid);\n+    if (ret == RET_SUCCESS) {\n+        std::cout << TAG_STOP << \" StopUsingPermission: success\" << std::endl;\n+    } else {\n+        std::cout << TAG_STOP << \" StopUsingPermission: failed, ret=\" << ret << std::endl;\n+    }\n+    return ret;\n+}\n+\n+int32_t main(int argc, char *argv[])\n+{\n+    if (argc < static_cast<int32_t>(INPUT_COUNT_FOUR)) {\n+        PrintHelp();\n+        return 0;\n+    }\n+\n+    std::string action = argv[INDEX_ONE];\n+    if ((action != ACTION_START) && (action != ACTION_STOP)) {\n+        PrintHelp();\n+        return 0;\n+    }\n+\n+    AccessTokenID mockTokenID = GetNativeTokenIdFromProcess(\"camera_service\");\n+    SetSelfTokenID(mockTokenID);\n+    std::cout << TAG_INIT << \" selfTokenId=\" << GetSelfTokenID() << \" (camera_service)\" << std::endl;\n+    if (mockTokenID == 0) {\n+        std::cout << TAG_INIT << \" warning: camera_service native token not found, calls may be denied\"\n+            << std::endl;\n+    }\n+\n+    AccessTokenID tokenId = static_cast<AccessTokenID>(strtoul(argv[INDEX_TWO], nullptr, 0));\n+    std::string permissionName = argv[INDEX_THREE];\n+    int32_t pid = (argc >= static_cast<int32_t>(INPUT_COUNT_FIVE)) ? atoi(argv[INDEX_FOUR]) : DEFAULT_PID;\n+\n+    if (action == ACTION_START) {\n+        return StartUsingPermission(tokenId, permissionName, pid);\n+    }\n+    return StopUsingPermission(tokenId, permissionName, pid);\n+}"
+    },
+    {
+      "sha": "fded428b510e0163387d080878d911671346449a",
+      "filename": "services/common/json_parse/include/json_parse_loader.h",
+      "status": "modified",
+      "additions": 10,
+      "deletions": 0,
+      "changes": 10,
+      "blob_url": "https://github.com/openharmony/security_access_token/blob/352d8445d3d7e972920922fa2fb080e54fb12ac1/services%2Fcommon%2Fjson_parse%2Finclude%2Fjson_parse_loader.h",
+      "raw_url": "https://github.com/openharmony/security_access_token/raw/352d8445d3d7e972920922fa2fb080e54fb12ac1/services%2Fcommon%2Fjson_parse%2Finclude%2Fjson_parse_loader.h",
+      "contents_url": "https://api.github.com/repos/openharmony/security_access_token/contents/services%2Fcommon%2Fjson_parse%2Finclude%2Fjson_parse_loader.h?ref=352d8445d3d7e972920922fa2fb080e54fb12ac1",
+      "patch": "@@ -54,10 +54,19 @@ struct TokenSyncServiceConfig final {\n     int32_t sendRequestRepeatTimes;\n };\n \n+struct PrivacyCustomizedConfig final {\n+    bool cameraPrivacyControlEnhanceEnable = false;\n+};\n+\n+struct CustomizedServiceConfig final {\n+    PrivacyCustomizedConfig pCustomConfig;\n+};\n+\n struct AccessTokenConfigValue {\n     AccessTokenServiceConfig atConfig;\n     PrivacyServiceConfig pConfig;\n     TokenSyncServiceConfig tsConfig;\n+    CustomizedServiceConfig customConfig;\n     std::unordered_set<std::string> permissionFeatures;\n };\n \n@@ -66,6 +75,7 @@ enum ConfigType {\n     PRIVACY_SERVICE,\n     TOKENSYNC_SERVICE,\n     PERMISSION_FEATURES,\n+    CUSTOMIZED_CONFIG,\n     // NOTE: Add new types above INVALID_AT_CONFIG_TYPE\n     INVALID_AT_CONFIG_TYPE,\n };"
+    },
+    {
+      "sha": "a19d705f546ca41c9495a3678c1fe2e5a0eca7f3",
+      "filename": "services/common/json_parse/src/json_parse_loader.cpp",
+      "status": "modified",
+      "additions": 22,
+      "deletions": 2,
+      "changes": 24,
+      "blob_url": "https://github.com/openharmony/security_access_token/blob/352d8445d3d7e972920922fa2fb080e54fb12ac1/services%2Fcommon%2Fjson_parse%2Fsrc%2Fjson_parse_loader.cpp",
+      "raw_url": "https://github.com/openharmony/security_access_token/raw/352d8445d3d7e972920922fa2fb080e54fb12ac1/services%2Fcommon%2Fjson_parse%2Fsrc%2Fjson_parse_loader.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/security_access_token/contents/services%2Fcommon%2Fjson_parse%2Fsrc%2Fjson_parse_loader.cpp?ref=352d8445d3d7e972920922fa2fb080e54fb12ac1",
+      "patch": "@@ -57,6 +57,9 @@ static constexpr const char* RECORD_AGING_TIME_KEY = \"permission_used_record_agi\n static constexpr const char* GLOBAL_DIALOG_BUNDLE_NAME_KEY = \"global_dialog_bundle_name\";\n static constexpr const char* GLOBAL_DIALOG_ABILITY_NAME_KEY = \"global_dialog_ability_name\";\n \n+static constexpr const char* CUSTOMIZED_CONFIG_FILE = \"/etc/access_token/accesstoken_customized_config.json\";\n+static constexpr const char* CAMERA_PRIVACY_CONTROL_ENHANCE_KEY = \"camera_privacy_control_enhance\";\n+\n static constexpr const char* SEND_REQUEST_REPEAT_TIMES_KEY = \"send_request_repeat_times\";\n \n static constexpr const char* PERMISSION_FEATURES_CONFIG_FILE = \"/etc/access_token/accesstoken_permission_features.json\";\n@@ -251,6 +254,19 @@ bool GetPrivacyCfgFromJson(const CJson* j, PrivacyServiceConfig& p)\n     return true;\n }\n \n+bool GetCustomizedCfgFromJson(const CJson* j, CustomizedServiceConfig& c)\n+{\n+    // section is required to count as a hit, keys inside are optional\n+    CJson* privacyJson = GetObjFromJson(j, \"privacy\");\n+    if (privacyJson == nullptr) {\n+        return false;\n+    }\n+    c.pCustomConfig.cameraPrivacyControlEnhanceEnable = false;\n+    GetBoolFromJson(privacyJson, CAMERA_PRIVACY_CONTROL_ENHANCE_KEY,\n+        c.pCustomConfig.cameraPrivacyControlEnhanceEnable);\n+    return true;\n+}\n+\n bool GetTokenSyncCfgFromJson(const CJson* j, TokenSyncServiceConfig& t)\n {\n     if (!GetIntFromJson(j, SEND_REQUEST_REPEAT_TIMES_KEY, t.sendRequestRepeatTimes)) {\n@@ -311,6 +327,8 @@ bool ConfigPolicLoader::GetConfigValueFromFile(const ConfigType& type, const std\n         return GetTokenSyncCfgFromJson(toSyncJson, config.tsConfig);\n     } else if (type == ConfigType::PERMISSION_FEATURES) {\n         return GetPermissionFeaturesFromJson(jsonRes, config.permissionFeatures);\n+    } else if (type == ConfigType::CUSTOMIZED_CONFIG) {\n+        return GetCustomizedCfgFromJson(jsonRes.get(), config.customConfig);\n     }\n     return false;\n }\n@@ -326,6 +344,8 @@ bool ConfigPolicLoader::GetConfigValue(const ConfigType& type, AccessTokenConfig\n     const char* configFile = nullptr;\n     if (type == ConfigType::PERMISSION_FEATURES) {\n         configFile = PERMISSION_FEATURES_CONFIG_FILE;\n+    } else if (type == ConfigType::CUSTOMIZED_CONFIG) {\n+        configFile = CUSTOMIZED_CONFIG_FILE;\n     } else {\n         configFile = ACCESSTOKEN_CONFIG_FILE;\n     }\n@@ -341,8 +361,8 @@ bool ConfigPolicLoader::GetConfigValue(const ConfigType& type, AccessTokenConfig\n         if (GetConfigValueFromFile(type, fileContent, config)) {\n             LOGI(ATM_DOMAIN, ATM_TAG, \"Get valid config value from file [%{public}s]!\", filePath.c_str());\n             successFlag = true;\n-            if (type != ConfigType::PERMISSION_FEATURES) {\n-                break; // once get the config value, break the loop, except feature\n+            if ((type != ConfigType::PERMISSION_FEATURES) && (type != ConfigType::CUSTOMIZED_CONFIG)) {\n+                break; // once get the config value, break the loop, except feature and customized\n             }\n         }\n     }"
+    },
+    {
+      "sha": "597dad987f9c6b89d17de17419dafe6cd0095746",
+      "filename": "services/common/json_parse/test/unittest/json_parse_loader_test.cpp",
+      "status": "modified",
+      "additions": 64,
+      "deletions": 0,
+      "changes": 64,
+      "blob_url": "https://github.com/openharmony/security_access_token/blob/352d8445d3d7e972920922fa2fb080e54fb12ac1/services%2Fcommon%2Fjson_parse%2Ftest%2Funittest%2Fjson_parse_loader_test.cpp",
+      "raw_url": "https://github.com/openharmony/security_access_token/raw/352d8445d3d7e972920922fa2fb080e54fb12ac1/services%2Fcommon%2Fjson_parse%2Ftest%2Funittest%2Fjson_parse_loader_test.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/security_access_token/contents/services%2Fcommon%2Fjson_parse%2Ftest%2Funittest%2Fjson_parse_loader_test.cpp?ref=352d8445d3d7e972920922fa2fb080e54fb12ac1",
+      "patch": "@@ -372,6 +372,70 @@ HWTEST_F(JsonParseLoaderTest, GetPrivacyCfgFromJsonTest004, TestSize.Level4)\n     EXPECT_FALSE(loader.GetConfigValueFromFile(ConfigType::PRIVACY_SERVICE, testJson, config));\n }\n \n+/*\n+ * @tc.name: GetCustomizedCfgFromJson\n+ * @tc.desc: GetCustomizedCfgFromJson with privacy camera_privacy_control_enhance true\n+ * @tc.type: FUNC\n+ * @tc.require: TDD coverage\n+ */\n+HWTEST_F(JsonParseLoaderTest, GetCustomizedCfgFromJsonTest001, TestSize.Level4)\n+{\n+    ConfigPolicLoader loader;\n+    AccessTokenConfigValue config;\n+    std::string testJson = \"{\\\"accesstoken\\\":{},\\\"privacy\\\":{\"\n+        \"\\\"camera_privacy_control_enhance\\\":true}}\";\n+    EXPECT_TRUE(loader.GetConfigValueFromFile(ConfigType::CUSTOMIZED_CONFIG, testJson, config));\n+    EXPECT_TRUE(config.customConfig.pCustomConfig.cameraPrivacyControlEnhanceEnable);\n+}\n+\n+/*\n+ * @tc.name: GetCustomizedCfgFromJson\n+ * @tc.desc: GetCustomizedCfgFromJson with privacy section but without the switch, default false\n+ * @tc.type: FUNC\n+ * @tc.require: TDD coverage\n+ */\n+HWTEST_F(JsonParseLoaderTest, GetCustomizedCfgFromJsonTest002, TestSize.Level4)\n+{\n+    ConfigPolicLoader loader;\n+    AccessTokenConfigValue config;\n+    config.customConfig.pCustomConfig.cameraPrivacyControlEnhanceEnable = true;\n+    std::string testJson = \"{\\\"accesstoken\\\":{},\\\"privacy\\\":{}}\";\n+    EXPECT_TRUE(loader.GetConfigValueFromFile(ConfigType::CUSTOMIZED_CONFIG, testJson, config));\n+    EXPECT_FALSE(config.customConfig.pCustomConfig.cameraPrivacyControlEnhanceEnable);\n+}\n+\n+/*\n+ * @tc.name: GetCustomizedCfgFromJson\n+ * @tc.desc: GetCustomizedCfgFromJson without privacy section, layer not hit\n+ * @tc.type: FUNC\n+ * @tc.require: TDD coverage\n+ */\n+HWTEST_F(JsonParseLoaderTest, GetCustomizedCfgFromJsonTest003, TestSize.Level4)\n+{\n+    ConfigPolicLoader loader;\n+    AccessTokenConfigValue config;\n+    config.customConfig.pCustomConfig.cameraPrivacyControlEnhanceEnable = true;\n+    std::string testJson = \"{\\\"accesstoken\\\":{}}\";\n+    EXPECT_FALSE(loader.GetConfigValueFromFile(ConfigType::CUSTOMIZED_CONFIG, testJson, config));\n+    EXPECT_TRUE(config.customConfig.pCustomConfig.cameraPrivacyControlEnhanceEnable);\n+}\n+\n+/*\n+ * @tc.name: GetCustomizedCfgFromJson\n+ * @tc.desc: GetCustomizedCfgFromJson with non-bool switch value, hit with default false\n+ * @tc.type: FUNC\n+ * @tc.require: TDD coverage\n+ */\n+HWTEST_F(JsonParseLoaderTest, GetCustomizedCfgFromJsonTest004, TestSize.Level4)\n+{\n+    ConfigPolicLoader loader;\n+    AccessTokenConfigValue config;\n+    config.customConfig.pCustomConfig.cameraPrivacyControlEnhanceEnable = true;\n+    std::string testJson = \"{\\\"privacy\\\":{\\\"camera_privacy_control_enhance\\\":\\\"true\\\"}}\";\n+    EXPECT_TRUE(loader.GetConfigValueFromFile(ConfigType::CUSTOMIZED_CONFIG, testJson, config));\n+    EXPECT_FALSE(config.customConfig.pCustomConfig.cameraPrivacyControlEnhanceEnable);\n+}\n+\n /*\n  * @tc.name: GetTokenSyncCfgFromJson\n  * @tc.desc: GetTokenSyncCfgFromJson without send_request_repeat_times"
+    },
+    {
+      "sha": "e46e87d51c4c2b7346d5c1fe2eae0bcc0222bc17",
+      "filename": "services/common/screenlock_manager/src/screenlock_manager_loader.cpp",
+      "status": "modified",
+      "additions": 6,
+      "deletions": 0,
+      "changes": 6,
+      "blob_url": "https://github.com/openharmony/security_access_token/blob/352d8445d3d7e972920922fa2fb080e54fb12ac1/services%2Fcommon%2Fscreenlock_manager%2Fsrc%2Fscreenlock_manager_loader.cpp",
+      "raw_url": "https://github.com/openharmony/security_access_token/raw/352d8445d3d7e972920922fa2fb080e54fb12ac1/services%2Fcommon%2Fscreenlock_manager%2Fsrc%2Fscreenlock_manager_loader.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/security_access_token/contents/services%2Fcommon%2Fscreenlock_manager%2Fsrc%2Fscreenlock_manager_loader.cpp?ref=352d8445d3d7e972920922fa2fb080e54fb12ac1",
+      "patch": "@@ -13,17 +13,22 @@\n  * limitations under the License.\n  */\n #include \"screenlock_manager_loader.h\"\n+#ifdef THEME_SCREENLOCK_MGR_ENABLE\n #include \"screenlock_manager.h\"\n+#endif\n \n namespace OHOS {\n namespace Security {\n namespace AccessToken {\n+#ifdef THEME_SCREENLOCK_MGR_ENABLE\n bool ScreenLockManagerAccessLoader::IsScreenLocked()\n {\n     return ScreenLock::ScreenLockManager::GetInstance()->IsScreenLocked();\n }\n+#endif\n \n extern \"C\" {\n+#ifdef THEME_SCREENLOCK_MGR_ENABLE\n void* CreateScreenLockManagerAccessLoader()\n {\n     return reinterpret_cast<void*>(new ScreenLockManagerAccessLoader);\n@@ -37,6 +42,7 @@ void DestroyScreenLockManagerAccessLoader(void* loaderPtr)\n         delete loader;\n     }\n }\n+#endif\n }\n } // namespace AccessToken\n } // namespace Security"
+    },
+    {
+      "sha": "33daf40706720604b7264e9a864198fa8003796e",
+      "filename": "services/privacymanager/include/record/permission_record_manager.h",
+      "status": "modified",
+      "additions": 8,
+      "deletions": 0,
+      "changes": 8,
+      "blob_url": "https://github.com/openharmony/security_access_token/blob/352d8445d3d7e972920922fa2fb080e54fb12ac1/services%2Fprivacymanager%2Finclude%2Frecord%2Fpermission_record_manager.h",
+      "raw_url": "https://github.com/openharmony/security_access_token/raw/352d8445d3d7e972920922fa2fb080e54fb12ac1/services%2Fprivacymanager%2Finclude%2Frecord%2Fpermission_record_manager.h",
+      "contents_url": "https://api.github.com/repos/openharmony/security_access_token/contents/services%2Fprivacymanager%2Finclude%2Frecord%2Fpermission_record_manager.h?ref=352d8445d3d7e972920922fa2fb080e54fb12ac1",
+      "patch": "@@ -131,6 +131,9 @@ class PermissionRecordManager final {\n     void NotifyAppStateChange(AccessTokenID tokenId, int32_t pid, ActiveChangeType status);\n     void SetLockScreenStatus(int32_t lockScreenStatus);\n     int32_t GetLockScreenStatus(bool isIpc = false);\n+    void SetScreenOn(bool isScreenOn);\n+    bool IsScreenOn(bool isIpc = false);\n+    bool IsCameraPrivacyControlEnhanceEnabled() const;\n \n     void OnAppMgrRemoteDiedHandle();\n     void OnAudioMgrRemoteDiedHandle();\n@@ -292,13 +295,18 @@ class PermissionRecordManager final {\n     std::mutex lockScreenStateMutex_;\n     int32_t lockScreenStatus_ = LockScreenStatusChangeType::PERM_ACTIVE_IN_UNLOCKED;\n \n+    // screenState\n+    std::mutex screenStateMutex_;\n+    bool isScreenOn_ = true;\n+\n     // foreground reminder\n     std::mutex foreReminderMutex_;\n     std::vector<uint32_t> foreTokenIdList_;\n \n     // record config\n     int32_t recordSizeMaximum_ = 0;\n     int32_t recordAgingTime_ = 0;\n+    bool cameraPrivacyControlEnhanceEnable_ = false;\n #ifndef APP_SECURITY_PRIVACY_SERVICE\n     std::string globalDialogBundleName_;\n     std::string globalDialogAbilityName_;"
+    },
+    {
+      "sha": "4c6ebd8bfa516779d9d7738f46b2335866803bfe",
+      "filename": "services/privacymanager/src/common/privacy_common_event_subscriber.cpp",
+      "status": "modified",
+      "additions": 8,
+      "deletions": 0,
+      "changes": 8,
+      "blob_url": "https://github.com/openharmony/security_access_token/blob/352d8445d3d7e972920922fa2fb080e54fb12ac1/services%2Fprivacymanager%2Fsrc%2Fcommon%2Fprivacy_common_event_subscriber.cpp",
+      "raw_url": "https://github.com/openharmony/security_access_token/raw/352d8445d3d7e972920922fa2fb080e54fb12ac1/services%2Fprivacymanager%2Fsrc%2Fcommon%2Fprivacy_common_event_subscriber.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/security_access_token/contents/services%2Fprivacymanager%2Fsrc%2Fcommon%2Fprivacy_common_event_subscriber.cpp?ref=352d8445d3d7e972920922fa2fb080e54fb12ac1",
+      "patch": "@@ -45,6 +45,7 @@ void PrivacyCommonEventSubscriber::RegisterEvent()\n     skill->AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_UNLOCKED);\n     skill->AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_LOCKED);\n     skill->AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_OFF);\n+    skill->AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_ON);\n     skill->AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_REMOVED);\n     skill->AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_FULLY_REMOVED);\n     skill->AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_SHUTDOWN);\n@@ -80,7 +81,14 @@ void PrivacyCommonEventSubscriber::OnReceiveEvent(const EventFwk::CommonEventDat\n         PermissionRecordManager::GetInstance().SetLockScreenStatus(LockScreenStatusChangeType::PERM_ACTIVE_IN_LOCKED);\n         PermissionRecordManager::GetInstance().ExecuteAllCameraExecuteCallback();\n     } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_OFF) {\n+        PermissionRecordManager::GetInstance().SetScreenOn(false);\n+        if (PermissionRecordManager::GetInstance().IsCameraPrivacyControlEnhanceEnabled()) {\n+            // camera privacy control enhancement enabled, notify camera to cut off stream\n+            PermissionRecordManager::GetInstance().ExecuteAllCameraExecuteCallback();\n+        }\n         PermissionRecordManager::GetInstance().ExecuteDeletePermissionRecordTask();\n+    } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_ON) {\n+        PermissionRecordManager::GetInstance().SetScreenOn(true);\n     } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_REMOVED ||\n         action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_FULLY_REMOVED) {\n         uint32_t tokenId = static_cast<uint32_t>(want.GetParams().GetIntParam(\"accessTokenId\", 0));"
+    },
+    {
+      "sha": "246efdfe3a219fce1f2c6c3a9c8cd52fb809b102",
+      "filename": "services/privacymanager/src/record/permission_record_manager.cpp",
+      "status": "modified",
+      "additions": 55,
+      "deletions": 2,
+      "changes": 57,
+      "blob_url": "https://github.com/openharmony/security_access_token/blob/352d8445d3d7e972920922fa2fb080e54fb12ac1/services%2Fprivacymanager%2Fsrc%2Frecord%2Fpermission_record_manager.cpp",
+      "raw_url": "https://github.com/openharmony/security_access_token/raw/352d8445d3d7e972920922fa2fb080e54fb12ac1/services%2Fprivacymanager%2Fsrc%2Frecord%2Fpermission_record_manager.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/security_access_token/contents/services%2Fprivacymanager%2Fsrc%2Frecord%2Fpermission_record_manager.cpp?ref=352d8445d3d7e972920922fa2fb080e54fb12ac1",
+      "patch": "@@ -47,6 +47,9 @@\n #include \"permission_map.h\"\n #include \"permission_record_set.h\"\n #include \"permission_used_record_db.h\"\n+#ifdef POWER_MANAGER_CLIENT_ENABLE\n+#include \"power_mgr_client.h\"\n+#endif\n #include \"privacy_error.h\"\n #include \"privacy_field_const.h\"\n #include \"refbase.h\"\n@@ -2098,6 +2101,35 @@ int32_t PermissionRecordManager::GetLockScreenStatus(bool isIpc)\n     return lockScreenStatus;\n }\n \n+void PermissionRecordManager::SetScreenOn(bool isScreenOn)\n+{\n+    LOGI(PRI_DOMAIN, PRI_TAG, \"SetScreenOn %{public}d\", isScreenOn);\n+    std::lock_guard<std::mutex> lock(screenStateMutex_);\n+    isScreenOn_ = isScreenOn;\n+}\n+\n+bool PermissionRecordManager::IsScreenOn(bool isIpc)\n+{\n+    // default screen on, deny is only taken when positively known screen off\n+    bool isScreenOn = true;\n+\n+    if (isIpc) {\n+#ifdef POWER_MANAGER_CLIENT_ENABLE\n+        isScreenOn = PowerMgr::PowerMgrClient::GetInstance().IsScreenOn();\n+#endif\n+    } else {\n+        std::lock_guard<std::mutex> lock(screenStateMutex_);\n+        isScreenOn = isScreenOn_;\n+    }\n+\n+    return isScreenOn;\n+}\n+\n+bool PermissionRecordManager::IsCameraPrivacyControlEnhanceEnabled() const\n+{\n+    return cameraPrivacyControlEnhanceEnable_;\n+}\n+\n int32_t PermissionRecordManager::RemoveRecordFromStartList(\n     AccessTokenID tokenId, int32_t pid, const std::string& permissionName, int32_t callerPid,\n     const std::string& enhancedIdentity)\n@@ -2722,6 +2754,20 @@ int32_t PermissionRecordManager::PermissionListFilter(\n \n bool PermissionRecordManager::IsAllowedUsingCamera(AccessTokenID tokenId, int32_t pid)\n {\n+    // camera privacy control enhancement: deny camera usage while the screen is locked or off\n+    if (IsCameraPrivacyControlEnhanceEnabled()) {\n+        if (GetLockScreenStatus() == LockScreenStatusChangeType::PERM_ACTIVE_IN_LOCKED) {\n+            LOGI(PRI_DOMAIN, PRI_TAG, \"Id %{public}d, pid %{public}d denied by screen lock control.\",\n+                tokenId, pid);\n+            return false;\n+        }\n+        if (!IsScreenOn()) {\n+            LOGI(PRI_DOMAIN, PRI_TAG, \"Id %{public}d, pid %{public}d denied by screen off control.\",\n+                tokenId, pid);\n+            return false;\n+        }\n+    }\n+\n     // allow foregound application or background application with CAMERA_BACKGROUND permission use camera\n     int32_t status = GetAppStatus(tokenId, pid);\n \n@@ -3369,8 +3415,15 @@ void PermissionRecordManager::GetConfigValue()\n         SetDefaultConfigValue();\n     }\n \n-    LOGI(PRI_DOMAIN, PRI_TAG, \"RecordSizeMaximum_ is %{public}d, recordAgingTime_ is %{public}d\",\n-        recordSizeMaximum_, recordAgingTime_);\n+    AccessTokenConfigValue config;\n+    if (policy->GetConfigValue(ConfigType::CUSTOMIZED_CONFIG, config)) {\n+        cameraPrivacyControlEnhanceEnable_ =\n+            config.customConfig.pCustomConfig.cameraPrivacyControlEnhanceEnable;\n+    }\n+\n+    LOGI(PRI_DOMAIN, PRI_TAG, \"RecordSizeMaximum_ is %{public}d, recordAgingTime_ is %{public}d, \"\n+        \"cameraPrivacyControlEnhanceEnable_ is %{public}d\",\n+        recordSizeMaximum_, recordAgingTime_, cameraPrivacyControlEnhanceEnable_);\n }\n \n uint64_t PermissionRecordManager::GetUniqueId(uint32_t tokenId, int32_t pid) const"
+    },
+    {
+      "sha": "47f248c18004837dc062d95c5eccf6db7b471734",
+      "filename": "services/privacymanager/src/service/privacy_manager_service.cpp",
+      "status": "modified",
+      "additions": 7,
+      "deletions": 0,
+      "changes": 7,
+      "blob_url": "https://github.com/openharmony/security_access_token/blob/352d8445d3d7e972920922fa2fb080e54fb12ac1/services%2Fprivacymanager%2Fsrc%2Fservice%2Fprivacy_manager_service.cpp",
+      "raw_url": "https://github.com/openharmony/security_access_token/raw/352d8445d3d7e972920922fa2fb080e54fb12ac1/services%2Fprivacymanager%2Fsrc%2Fservice%2Fprivacy_manager_service.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/security_access_token/contents/services%2Fprivacymanager%2Fsrc%2Fservice%2Fprivacy_manager_service.cpp?ref=352d8445d3d7e972920922fa2fb080e54fb12ac1",
+      "patch": "@@ -134,6 +134,7 @@ void PrivacyManagerService::OnStart()\n     AddSystemAbilityListener(ACCESS_TOKEN_MANAGER_SERVICE_ID);\n     AddSystemAbilityListener(COMMON_EVENT_SERVICE_ID);\n     AddSystemAbilityListener(SCREENLOCK_SERVICE_ID);\n+    AddSystemAbilityListener(POWER_MANAGER_SERVICE_ID);\n }\n \n void PrivacyManagerService::OnStop()\n@@ -821,6 +822,12 @@ void PrivacyManagerService::OnAddSystemAbility(int32_t systemAbilityId, const st\n         return;\n     }\n \n+    if (systemAbilityId == POWER_MANAGER_SERVICE_ID) {\n+        bool isScreenOn = PermissionRecordManager::GetInstance().IsScreenOn(true);\n+        PermissionRecordManager::GetInstance().SetScreenOn(isScreenOn);\n+        return;\n+    }\n+\n     std::lock_guard<std::mutex> lock(stateMutex_);\n     if (systemAbilityId == ACCESS_TOKEN_MANAGER_SERVICE_ID && state_ != ServiceRunningState::STATE_RUNNING) {\n         {"
+    },
+    {
+      "sha": "27c1b620442939d848d165d020d3b82d88895b04",
+      "filename": "services/privacymanager/test/unittest/record/permission_record_manager_test.cpp",
+      "status": "modified",
+      "additions": 145,
+      "deletions": 0,
+      "changes": 145,
+      "blob_url": "https://github.com/openharmony/security_access_token/blob/352d8445d3d7e972920922fa2fb080e54fb12ac1/services%2Fprivacymanager%2Ftest%2Funittest%2Frecord%2Fpermission_record_manager_test.cpp",
+      "raw_url": "https://github.com/openharmony/security_access_token/raw/352d8445d3d7e972920922fa2fb080e54fb12ac1/services%2Fprivacymanager%2Ftest%2Funittest%2Frecord%2Fpermission_record_manager_test.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/security_access_token/contents/services%2Fprivacymanager%2Ftest%2Funittest%2Frecord%2Fpermission_record_manager_test.cpp?ref=352d8445d3d7e972920922fa2fb080e54fb12ac1",
+      "patch": "@@ -48,6 +48,11 @@\n #include \"state_change_callback.h\"\n #include \"time_util.h\"\n #include \"token_setproc.h\"\n+#ifdef COMMON_EVENT_SERVICE_ENABLE\n+#include \"common_event_subscribe_info.h\"\n+#include \"privacy_common_event_subscriber.h\"\n+#include \"want.h\"\n+#endif\n #ifdef ACCESS_TOKEN_SUPPORT_SUBPROFILE\n #include \"account_error_no.h\"\n #include \"os_account_manager_lite.h\"\n@@ -3471,6 +3476,146 @@ HWTEST_F(PermissionRecordManagerTest, DvrBackgroundWithPermAllowed001, TestSize.\n     PermissionRecordManager::GetInstance().RemovePermissionUsedRecords(tokenId);\n }\n \n+/**\n+ * @tc.name: CameraPrivacyControlEnhance001\n+ * @tc.desc: camera usage is denied when lock/off-screen privacy control is enabled\n+ *           and screen is locked or off, allowed when switch off or screen unlocked/on.\n+ * @tc.type: FUNC\n+ * @tc.require: TDD coverage\n+ */\n+HWTEST_F(PermissionRecordManagerTest, CameraPrivacyControlEnhance001, TestSize.Level0)\n+{\n+    AccessTokenIDEx tokenIdEx = PrivacyTestCommon::AllocTestHapToken(\n+        g_InfoParmsCameraBackground, g_PolicyPramsCameraBackground);\n+    ASSERT_NE(INVALID_TOKENID, tokenIdEx.tokenIdExStruct.tokenID);\n+    AccessTokenID tokenId = tokenIdEx.tokenIdExStruct.tokenID;\n+    auto& recordManager = PermissionRecordManager::GetInstance();\n+\n+    // keep original lock/screen state to restore after test\n+    int32_t originLockStatus = recordManager.GetLockScreenStatus();\n+    bool originScreenOn = recordManager.IsScreenOn();\n+\n+    // switch off: camera allowed even when screen locked and off\n+    recordManager.cameraPrivacyControlEnhanceEnable_ = false;\n+    recordManager.SetLockScreenStatus(LockScreenStatusChangeType::PERM_ACTIVE_IN_LOCKED);\n+    recordManager.SetScreenOn(false);\n+    EXPECT_TRUE(recordManager.IsAllowedUsingPermission(tokenId, CAMERA_PERMISSION_NAME, TEST_PID_1));\n+\n+    // switch on, screen locked: denied\n+    recordManager.cameraPrivacyControlEnhanceEnable_ = true;\n+    EXPECT_FALSE(recordManager.IsAllowedUsingPermission(tokenId, CAMERA_PERMISSION_NAME, TEST_PID_1));\n+\n+    // switch on, screen off but unlocked: denied\n+    recordManager.SetLockScreenStatus(LockScreenStatusChangeType::PERM_ACTIVE_IN_UNLOCKED);\n+    EXPECT_FALSE(recordManager.IsAllowedUsingPermission(tokenId, CAMERA_PERMISSION_NAME, TEST_PID_1));\n+\n+    // switch on, screen unlocked and on: allowed\n+    recordManager.SetScreenOn(true);\n+    EXPECT_TRUE(recordManager.IsAllowedUsingPermission(tokenId, CAMERA_PERMISSION_NAME, TEST_PID_1));\n+\n+    // restore states\n+    recordManager.cameraPrivacyControlEnhanceEnable_ = false;\n+    recordManager.SetLockScreenStatus(originLockStatus);\n+    recordManager.SetScreenOn(originScreenOn);\n+\n+    PrivacyTestCommon::DeleteTestHapToken(tokenId);\n+    PermissionRecordManager::GetInstance().RemovePermissionUsedRecords(tokenId);\n+}\n+\n+/**\n+ * @tc.name: CameraPrivacyControlEnhance002\n+ * @tc.desc: SetScreenOn/IsScreenOn cache and direct query work as expected.\n+ * @tc.type: FUNC\n+ * @tc.require: TDD coverage\n+ */\n+HWTEST_F(PermissionRecordManagerTest, CameraPrivacyControlEnhance002, TestSize.Level0)\n+{\n+    auto& recordManager = PermissionRecordManager::GetInstance();\n+    bool originScreenOn = recordManager.IsScreenOn();\n+    bool originSwitch = recordManager.cameraPrivacyControlEnhanceEnable_;\n+\n+    recordManager.SetScreenOn(false);\n+    EXPECT_FALSE(recordManager.IsScreenOn());\n+    recordManager.SetScreenOn(true);\n+    EXPECT_TRUE(recordManager.IsScreenOn());\n+\n+    // direct query branch, power manager IPC on device\n+    bool ipcScreenOn = recordManager.IsScreenOn(true);\n+    GTEST_LOG_(INFO) << \"IsScreenOn(true) result: \" << ipcScreenOn;\n+\n+    // no customized config file deployed, reload keeps current switch value\n+    recordManager.cameraPrivacyControlEnhanceEnable_ = true;\n+    recordManager.GetConfigValue();\n+    EXPECT_TRUE(recordManager.cameraPrivacyControlEnhanceEnable_);\n+\n+    recordManager.cameraPrivacyControlEnhanceEnable_ = originSwitch;\n+    recordManager.SetScreenOn(originScreenOn);\n+}\n+\n+#ifdef COMMON_EVENT_SERVICE_ENABLE\n+/**\n+ * @tc.name: CameraPrivacyControlEnhance003\n+ * @tc.desc: SCREEN_OFF/SCREEN_ON events update screen cache, camera stream cut\n+ *           callback is executed only when enhancement switch is on.\n+ * @tc.type: FUNC\n+ * @tc.require: TDD coverage\n+ */\n+HWTEST_F(PermissionRecordManagerTest, CameraPrivacyControlEnhance003, TestSize.Level0)\n+{\n+    auto& recordManager = PermissionRecordManager::GetInstance();\n+    int32_t originLockStatus = recordManager.GetLockScreenStatus();\n+    bool originScreenOn = recordManager.IsScreenOn();\n+    bool originSwitch = recordManager.cameraPrivacyControlEnhanceEnable_;\n+\n+    EventFwk::MatchingSkills skills;\n+    skills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_OFF);\n+    skills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_ON);\n+    EventFwk::CommonEventSubscribeInfo info(skills);\n+    PrivacyCommonEventSubscriber subscriber(info);\n+\n+    EventFwk::CommonEventData dataOff;\n+    AAFwk::Want wantOff;\n+    wantOff.SetAction(EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_OFF);\n+    dataOff.SetWant(wantOff);\n+    EventFwk::CommonEventData dataOn;\n+    AAFwk::Want wantOn;\n+    wantOn.SetAction(EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_ON);\n+    dataOn.SetWant(wantOn);\n+\n+    // switch off: SCREEN_OFF only updates cache, no camera callback\n+    auto cameraCallbackMap = recordManager.cameraCallbackMap_; // backup\n+    auto callbackPtr = std::make_shared<PermissionRecordManagerTestCb1>();\n+    auto callbackWrap = new (std::nothrow) StateChangeCallback(callbackPtr);\n+    ASSERT_NE(nullptr, callbackPtr);\n+    ASSERT_NE(nullptr, callbackWrap);\n+    recordManager.cameraCallbackMap_.EnsureInsert(\n+        recordManager.GetUniqueId(RANDOM_TOKENID, -1), callbackWrap->AsObject());\n+\n+    recordManager.cameraPrivacyControlEnhanceEnable_ = false;\n+    recordManager.SetScreenOn(true);\n+    subscriber.OnReceiveEvent(dataOff);\n+    EXPECT_FALSE(recordManager.IsScreenOn());\n+    EXPECT_EQ(0, callbackPtr->notifyCount_);\n+\n+    // SCREEN_ON restores cache\n+    subscriber.OnReceiveEvent(dataOn);\n+    EXPECT_TRUE(recordManager.IsScreenOn());\n+\n+    // switch on: SCREEN_OFF cuts camera stream\n+    recordManager.cameraPrivacyControlEnhanceEnable_ = true;\n+    subscriber.OnReceiveEvent(dataOff);\n+    EXPECT_FALSE(recordManager.IsScreenOn());\n+    EXPECT_EQ(1, callbackPtr->notifyCount_);\n+    EXPECT_FALSE(callbackPtr->isShow_);\n+\n+    // restore\n+    recordManager.cameraCallbackMap_ = cameraCallbackMap; // recovery\n+    recordManager.cameraPrivacyControlEnhanceEnable_ = originSwitch;\n+    recordManager.SetLockScreenStatus(originLockStatus);\n+    recordManager.SetScreenOn(originScreenOn);\n+}\n+#endif\n+\n /**\n  * @tc.name: DvrNativeDenied001\n  * @tc.desc: native target is denied for dvr camera permission."
+    },
+    {
+      "sha": "b67a8245cca9fbe00fddfc54e93e8c4a7e901527",
+      "filename": "services/privacymanager/test/unittest/service/privacy_manager_service_test.cpp",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 0,
+      "changes": 2,
+      "blob_url": "https://github.com/openharmony/security_access_token/blob/352d8445d3d7e972920922fa2fb080e54fb12ac1/services%2Fprivacymanager%2Ftest%2Funittest%2Fservice%2Fprivacy_manager_service_test.cpp",
+      "raw_url": "https://github.com/openharmony/security_access_token/raw/352d8445d3d7e972920922fa2fb080e54fb12ac1/services%2Fprivacymanager%2Ftest%2Funittest%2Fservice%2Fprivacy_manager_service_test.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/security_access_token/contents/services%2Fprivacymanager%2Ftest%2Funittest%2Fservice%2Fprivacy_manager_service_test.cpp?ref=352d8445d3d7e972920922fa2fb080e54fb12ac1",
+      "patch": "@@ -71,6 +71,7 @@ constexpr const char* LOCATION_PERMISSION_NAME = \"ohos.permission.LOCATION\";\n static const uint32_t PERM_LIST_SIZE_MAX = 1024;\n static constexpr int32_t COMMON_EVENT_SERVICE_ID = 3299;\n static constexpr int32_t SCREENLOCK_SERVICE_ID = 3704;\n+static constexpr int32_t POWER_MANAGER_SERVICE_ID = 3010;\n static constexpr int32_t INVALID_CODE = 999;\n static PermissionStateFull g_testState = {\n     .permissionName = \"ohos.permission.CAMERA\",\n@@ -1765,6 +1766,7 @@ HWTEST_F(PrivacyManagerServiceTest, GetProxyDeathHandle001, TestSize.Level0)\n \n     privacyManagerService_->OnAddSystemAbility(COMMON_EVENT_SERVICE_ID, \"123\");\n     privacyManagerService_->OnAddSystemAbility(SCREENLOCK_SERVICE_ID, \"123\");\n+    privacyManagerService_->OnAddSystemAbility(POWER_MANAGER_SERVICE_ID, \"123\");\n     privacyManagerService_->OnAddSystemAbility(INVALID_CODE, \"123\");\n }\n "
+    }
+  ]
+}

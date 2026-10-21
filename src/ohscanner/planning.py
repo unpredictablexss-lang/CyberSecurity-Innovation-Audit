@@ -5,7 +5,7 @@ planning does not relax any detector's actual eligibility or evidence gate.
 """
 from pathlib import Path
 from .detectors.admission import pending_admissions
-from .detectors.catalog import build_registry, catalog_metadata
+from .detectors.catalog import build_registry, catalog_metadata, default_detector_ids
 from .indexing import prepare_git_context
 from .git_source import load_git_sources
 from src.workbench.sources import manifest_from_context
@@ -35,10 +35,14 @@ def plan_context(context, tree, inventory, sources, selected_detector_ids=None, 
 
 
 def preview_plan(repo_dir, repository, commit, includes, selected_detector_ids=None, execution_budget=None):
-    if selected_detector_ids:
-        build_registry(tuple(selected_detector_ids))
+    selected = (tuple(selected_detector_ids) if selected_detector_ids
+                else tuple(default_detector_ids()))
+    registry = build_registry(selected)
+    requested_facts = tuple(sorted({
+        fact for detector in registry.detectors() for fact in detector.required_facts
+    }))
     context, tree, inventory, _, sources = prepare_git_context(
-        Path(repo_dir), repository, commit, tuple(includes))
+        Path(repo_dir), repository, commit, tuple(includes), requested_facts=requested_facts)
     plan = plan_context(context, tree, inventory, sources, selected_detector_ids, execution_budget)
     pinned2, tree2, sources2, inventory2 = load_git_sources(Path(repo_dir), commit, tuple(includes))
     signature = lambda rows: tuple((s.path, s.language, s.oid, s.data) for s in rows)

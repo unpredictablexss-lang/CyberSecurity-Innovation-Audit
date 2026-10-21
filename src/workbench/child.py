@@ -59,6 +59,9 @@ def main():
         out / "report.json",
         out / "report.md",
         expected_plan=spec.get("audit_plan"),
+        base_commit=spec.get("base_commit"),
+        detector_checkpoint_dir=Path(data_dir) / "detector-checkpoints",
+        detector_checkpoint_engine_sha256=spec["engine_sha256"],
     )
     if engine_fingerprint() != spec["engine_sha256"]:
         raise ValueError("scanner implementation changed during task execution")

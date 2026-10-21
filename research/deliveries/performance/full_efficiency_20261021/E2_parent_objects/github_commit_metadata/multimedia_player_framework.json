@@ -1,0 +1,210 @@
+{
+  "sha": "122861d26b850c32f239a02b5d0c342f44431cbf",
+  "node_id": "C_kwDONHVi-doAKDEyMjg2MWQyNmI4NTBjMzJmMjM5YTAyYjVkMGMzNDJmNDQ0MzFjYmY",
+  "commit": {
+    "author": {
+      "name": "openharmony_ci",
+      "email": "openharmony_ci@noreply.gitcode.com",
+      "date": "2026-09-30T03:15:05Z"
+    },
+    "committer": {
+      "name": "openharmony_ci",
+      "email": "openharmony_ci@noreply.gitcode.com",
+      "date": "2026-09-30T03:15:05Z"
+    },
+    "message": "!8455 merge master into master\n\nfdsan整改\n\nCreated-by: duanwenchao\nCommit-by: 段文超\nMerged-by: openharmony_ci\nDescription: ### 一、内容说明（相关的Issue）\n\nhttps://gitcode.com/openharmony/multimedia_player_framework/issues/6500\n\n### 二、建议测试周期和提测地址  \n  建议测试完成时间：xxxx.xx.xx  \n  投产上线时间：xxxx.xx.xx  \n  提测地址：CI环境/压测环境  \n  测试账号：  \n\n### 三、变更内容\n  * 3.1 关联PR列表\n\n  * 3.2 数据库和部署说明  \n    1. 常规更新 \n    2. 重启unicorn\n    3. 重启sidekiq\n    4. 迁移任务：是否有迁移任务，没有写 \"无\"\n    5. rake脚本：`bundle exec xxx RAILS_ENV = production`；没有写 \"无\"\n\n  * 3.4 其他技术优化内容（做了什么，变更了什么）\n    - 重构了 xxxx 代码\n    - xxxx 算法优化\n\n\n  * 3.5 废弃通知（什么字段、方法弃用？）\n\n\n\n  * 3.6  后向不兼容变更（是否有无法向后兼容的变更？）\n\n\n  \n### 四、研发自测点（自测哪些？冒烟用例全部自测？）\n  自测测试结论：\n\n\n### 五、测试关注点（需要提醒QA重点关注的、可能会忽略的地方）\n  检查点：\n\n| 需求名称 | 是否影响xx公共模块 | 是否需要xx功能 | 需求升级是否依赖其他子产品 |\n|------|------------|----------|---------------|\n| xxx  | 否          | 需要       | 不需要           |\n|      |            |          |               |\n\n  接口测试：\n\n  性能测试：\n\n  并发测试：\n\n  其他：\n\n\n\nSee merge request: openharmony/multimedia_player_framework!8455",
+    "tree": {
+      "sha": "fa7a621c64bbe3d27fb2e6950d65bf41eb0a4d97",
+      "url": "https://api.github.com/repos/openharmony/multimedia_player_framework/git/trees/fa7a621c64bbe3d27fb2e6950d65bf41eb0a4d97"
+    },
+    "url": "https://api.github.com/repos/openharmony/multimedia_player_framework/git/commits/122861d26b850c32f239a02b5d0c342f44431cbf",
+    "comment_count": 0,
+    "verification": {
+      "verified": false,
+      "reason": "unsigned",
+      "signature": null,
+      "payload": null,
+      "verified_at": null
+    }
+  },
+  "url": "https://api.github.com/repos/openharmony/multimedia_player_framework/commits/122861d26b850c32f239a02b5d0c342f44431cbf",
+  "html_url": "https://github.com/openharmony/multimedia_player_framework/commit/122861d26b850c32f239a02b5d0c342f44431cbf",
+  "comments_url": "https://api.github.com/repos/openharmony/multimedia_player_framework/commits/122861d26b850c32f239a02b5d0c342f44431cbf/comments",
+  "author": null,
+  "committer": null,
+  "parents": [
+    {
+      "sha": "877bb9c9114c49a120f591c4262cdf577e18436e",
+      "url": "https://api.github.com/repos/openharmony/multimedia_player_framework/commits/877bb9c9114c49a120f591c4262cdf577e18436e",
+      "html_url": "https://github.com/openharmony/multimedia_player_framework/commit/877bb9c9114c49a120f591c4262cdf577e18436e"
+    },
+    {
+      "sha": "23d806f99e85b9c6af2ead4430bd309d1b68f5b4",
+      "url": "https://api.github.com/repos/openharmony/multimedia_player_framework/commits/23d806f99e85b9c6af2ead4430bd309d1b68f5b4",
+      "html_url": "https://github.com/openharmony/multimedia_player_framework/commit/23d806f99e85b9c6af2ead4430bd309d1b68f5b4"
+    }
+  ],
+  "stats": {
+    "total": 154,
+    "additions": 110,
+    "deletions": 44
+  },
+  "files": [
+    {
+      "sha": "ed06048e2d3ce1637d6ef0c9f4ea8cd6ffcf0ff8",
+      "filename": "frameworks/native/audio_haptic/audio_haptic_manager_impl.cpp",
+      "status": "modified",
+      "additions": 8,
+      "deletions": 5,
+      "changes": 13,
+      "blob_url": "https://github.com/openharmony/multimedia_player_framework/blob/122861d26b850c32f239a02b5d0c342f44431cbf/frameworks%2Fnative%2Faudio_haptic%2Faudio_haptic_manager_impl.cpp",
+      "raw_url": "https://github.com/openharmony/multimedia_player_framework/raw/122861d26b850c32f239a02b5d0c342f44431cbf/frameworks%2Fnative%2Faudio_haptic%2Faudio_haptic_manager_impl.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/multimedia_player_framework/contents/frameworks%2Fnative%2Faudio_haptic%2Faudio_haptic_manager_impl.cpp?ref=122861d26b850c32f239a02b5d0c342f44431cbf",
+      "patch": "@@ -72,6 +72,7 @@ static std::string DupFdFromUri(const std::string &uri)\n         MEDIA_LOGE(\"DupFdFromUri failed. uri: %{public}s\", uri.c_str());\n         return \"\";\n     }\n+    fdsan_exchange_owner_tag(dupFd, 0, FD_AUDIO_HAPTIC_REGISTER_SOURCE_TAG);\n     return FDHEAD + std::to_string(dupFd);\n }\n \n@@ -169,12 +170,14 @@ int32_t AudioHapticManagerImpl::RegisterSourceFromFd(const AudioHapticFileDescri\n         MEDIA_LOGE(\"RegisterSourceFromFd failed invalid audio fd\");\n         return INVALID_SOURCE_ID;\n     }\n+    fdsan_exchange_owner_tag(newAudioFd, 0, FD_AUDIO_HAPTIC_REGISTER_SOURCE_TAG);\n     int32_t newHapticFd = dup(hapticFd.fd);\n     if (newHapticFd == FILE_DESCRIPTOR_INVALID) {\n         MEDIA_LOGE(\"RegisterSourceFromFd failed invalid haptic fd\");\n-        close(newAudioFd);\n+        fdsan_close_with_tag(newAudioFd, FD_AUDIO_HAPTIC_REGISTER_SOURCE_TAG);\n         return INVALID_SOURCE_ID;\n     }\n+    fdsan_exchange_owner_tag(newHapticFd, 0, FD_AUDIO_HAPTIC_REGISTER_SOURCE_TAG);\n \n     curPlayerIndex_ = (curPlayerIndex_ + 1) % MAX_PLAYER_NUM;\n     while (audioHapticPlayerMap_[curPlayerIndex_] != nullptr) {\n@@ -330,24 +333,24 @@ void AudioHapticManagerImpl::ReleasePlayerInfo(const std::shared_ptr<AudioHaptic\n     if (!audioSrc.audioUri.empty()) {\n         int32_t fd = ExtractFd(audioSrc.audioUri);\n         if (fd > FILE_DESCRIPTOR_INVALID) {\n-            close(fd);\n+            fdsan_close_with_tag(fd, FD_AUDIO_HAPTIC_REGISTER_SOURCE_TAG);\n         }\n     }\n     int32_t audioFd = audioSrc.fd;\n     if (audioFd > FILE_DESCRIPTOR_INVALID) {\n-        close(audioFd);\n+        fdsan_close_with_tag(audioFd, FD_AUDIO_HAPTIC_REGISTER_SOURCE_TAG);\n     }\n \n     auto hapticSrc = info->hapticSource_;\n     if (!hapticSrc.hapticUri.empty()) {\n         int32_t fd = ExtractFd(hapticSrc.hapticUri);\n         if (fd > FILE_DESCRIPTOR_INVALID) {\n-            close(fd);\n+            fdsan_close_with_tag(fd, FD_AUDIO_HAPTIC_REGISTER_SOURCE_TAG);\n         }\n     }\n     int32_t hapticFd = hapticSrc.fd;\n     if (hapticFd > FILE_DESCRIPTOR_INVALID) {\n-        close(hapticFd);\n+        fdsan_close_with_tag(hapticFd, FD_AUDIO_HAPTIC_REGISTER_SOURCE_TAG);\n     }\n }\n } // namesapce AudioStandard"
+    },
+    {
+      "sha": "84b2b139848d80a689a839ef33cdd2e8faf03128",
+      "filename": "frameworks/native/audio_haptic/audio_haptic_sound_low_latency_impl.cpp",
+      "status": "modified",
+      "additions": 3,
+      "deletions": 2,
+      "changes": 5,
+      "blob_url": "https://github.com/openharmony/multimedia_player_framework/blob/122861d26b850c32f239a02b5d0c342f44431cbf/frameworks%2Fnative%2Faudio_haptic%2Faudio_haptic_sound_low_latency_impl.cpp",
+      "raw_url": "https://github.com/openharmony/multimedia_player_framework/raw/122861d26b850c32f239a02b5d0c342f44431cbf/frameworks%2Fnative%2Faudio_haptic%2Faudio_haptic_sound_low_latency_impl.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/multimedia_player_framework/contents/frameworks%2Fnative%2Faudio_haptic%2Faudio_haptic_sound_low_latency_impl.cpp?ref=122861d26b850c32f239a02b5d0c342f44431cbf",
+      "patch": "@@ -76,7 +76,7 @@ int32_t AudioHapticSoundLowLatencyImpl::LoadSoundPoolPlayer()\n int32_t AudioHapticSoundLowLatencyImpl::OpenAudioSource()\n {\n     if (fileDes_ != -1) {\n-        (void)close(fileDes_);\n+        (void)fdsan_close_with_tag(fileDes_, FD_AUDIO_HAPTIC_SOUNDPOOL_AUDIO_TAG);\n         fileDes_ = -1;\n     }\n \n@@ -108,6 +108,7 @@ int32_t AudioHapticSoundLowLatencyImpl::OpenAudioSource()\n     MEDIA_LOGI(\"AudioHapticSoundLowLatencyImpl::OpenAudioSource fileDes_: %{public}d\", fileDes_);\n     CHECK_AND_RETURN_RET_LOG(fileDes_ > FILE_DESCRIPTOR_INVALID, MSERR_OPEN_FILE_FAILED,\n         \"AudioHapticSoundLowLatencyImpl::OpenAudioSource: Failed to open the audio source for sound pool.\");\n+    fdsan_exchange_owner_tag(fileDes_, 0, FD_AUDIO_HAPTIC_SOUNDPOOL_AUDIO_TAG);\n     // If an audio player is created through a file descriptor (FD)\n     // the length information is required, otherwise SoundPool will return a failure\n     if (audioUri.empty() && audioSource_.length == 0) {\n@@ -235,7 +236,7 @@ void AudioHapticSoundLowLatencyImpl::ReleaseSoundPoolPlayer()\n     }\n     soundPoolCallback_ = nullptr;\n     if (fileDes_ != -1) {\n-        (void)close(fileDes_);\n+        (void)fdsan_close_with_tag(fileDes_, FD_AUDIO_HAPTIC_SOUNDPOOL_AUDIO_TAG);\n         fileDes_ = -1;\n     }\n }"
+    },
+    {
+      "sha": "0fe0f3b0b194750bb96dcb5a08f1874894c2a586",
+      "filename": "frameworks/native/audio_haptic/audio_haptic_sound_normal_impl.cpp",
+      "status": "modified",
+      "additions": 3,
+      "deletions": 2,
+      "changes": 5,
+      "blob_url": "https://github.com/openharmony/multimedia_player_framework/blob/122861d26b850c32f239a02b5d0c342f44431cbf/frameworks%2Fnative%2Faudio_haptic%2Faudio_haptic_sound_normal_impl.cpp",
+      "raw_url": "https://github.com/openharmony/multimedia_player_framework/raw/122861d26b850c32f239a02b5d0c342f44431cbf/frameworks%2Fnative%2Faudio_haptic%2Faudio_haptic_sound_normal_impl.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/multimedia_player_framework/contents/frameworks%2Fnative%2Faudio_haptic%2Faudio_haptic_sound_normal_impl.cpp?ref=122861d26b850c32f239a02b5d0c342f44431cbf",
+      "patch": "@@ -78,7 +78,7 @@ int32_t AudioHapticSoundNormalImpl::PrepareSound()\n int32_t AudioHapticSoundNormalImpl::OpenAudioSource()\n {\n     if (fileDes_ != -1) {\n-        (void)close(fileDes_);\n+        (void)fdsan_close_with_tag(fileDes_, FD_AUDIO_HAPTIC_AVPLAYER_AUDIO_TAG);\n         fileDes_ = -1;\n     }\n \n@@ -108,6 +108,7 @@ int32_t AudioHapticSoundNormalImpl::OpenAudioSource()\n     MEDIA_LOGI(\"fileDes_ == %{public}d\", fileDes_);\n     CHECK_AND_RETURN_RET_LOG(fileDes_ > FILE_DESCRIPTOR_INVALID, MSERR_OPEN_FILE_FAILED,\n         \"Prepare: Invalid fileDes for avplayer.\");\n+    fdsan_exchange_owner_tag(fileDes_, 0, FD_AUDIO_HAPTIC_AVPLAYER_AUDIO_TAG);\n     return MSERR_OK;\n }\n \n@@ -236,7 +237,7 @@ void AudioHapticSoundNormalImpl::ReleaseAVPlayer()\n     }\n     avPlayerCallback_ = nullptr;\n     if (fileDes_ != -1) {\n-        (void)close(fileDes_);\n+        (void)fdsan_close_with_tag(fileDes_, FD_AUDIO_HAPTIC_AVPLAYER_AUDIO_TAG);\n         fileDes_ = -1;\n     }\n }"
+    },
+    {
+      "sha": "3c48d619b0091f22848168157d50376a87d84a31",
+      "filename": "frameworks/native/audio_haptic/audio_haptic_vibrator_impl.cpp",
+      "status": "modified",
+      "additions": 4,
+      "deletions": 3,
+      "changes": 7,
+      "blob_url": "https://github.com/openharmony/multimedia_player_framework/blob/122861d26b850c32f239a02b5d0c342f44431cbf/frameworks%2Fnative%2Faudio_haptic%2Faudio_haptic_vibrator_impl.cpp",
+      "raw_url": "https://github.com/openharmony/multimedia_player_framework/raw/122861d26b850c32f239a02b5d0c342f44431cbf/frameworks%2Fnative%2Faudio_haptic%2Faudio_haptic_vibrator_impl.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/multimedia_player_framework/contents/frameworks%2Fnative%2Faudio_haptic%2Faudio_haptic_vibrator_impl.cpp?ref=122861d26b850c32f239a02b5d0c342f44431cbf",
+      "patch": "@@ -241,6 +241,7 @@ int32_t AudioHapticVibratorImpl::OpenHapticSource(const HapticSource& hapticSour\n \n     CHECK_AND_RETURN_RET_LOG(fd > FILE_DESCRIPTOR_INVALID, MSERR_OPEN_FILE_FAILED,\n         \"OpenHapticSource: open source failed, file path: %{public}s, fd: %{public}d\", hapticUri.c_str(), hapticFd);\n+    fdsan_exchange_owner_tag(fd, 0, FD_AUDIO_HAPTIC_OPEN_HAPTIC_SOURCE_TAG);\n #endif\n     return MSERR_OK;\n }\n@@ -264,7 +265,7 @@ int32_t AudioHapticVibratorImpl::OpenHapticFile(const HapticSource& hapticSource\n         vibratorFD_->length = hapticSource.length > 0 ? hapticSource.length : statbuf.st_size;\n         return MSERR_OK;\n     } else {\n-        close(newFd);\n+        fdsan_close_with_tag(newFd, FD_AUDIO_HAPTIC_OPEN_HAPTIC_SOURCE_TAG);\n         return MSERR_OPEN_FILE_FAILED;\n     }\n #endif\n@@ -311,10 +312,10 @@ int32_t AudioHapticVibratorImpl::PreLoad(const HapticSource &hapticSource,\n     int32_t fd = vibratorFD_->fd;\n     int32_t result = Sensors::PreProcess(*vibratorFD_, *vibratorPkg_);\n     if (result != 0) {\n-        close(fd);\n+        fdsan_close_with_tag(fd, FD_AUDIO_HAPTIC_OPEN_HAPTIC_SOURCE_TAG);\n         return MSERR_UNSUPPORT_FILE;\n     }\n-    close(fd);\n+    fdsan_close_with_tag(fd, FD_AUDIO_HAPTIC_OPEN_HAPTIC_SOURCE_TAG);\n #endif\n     return MSERR_OK;\n }"
+    },
+    {
+      "sha": "b43e10a5afa6e99be710fc5997af98911381ef5a",
+      "filename": "frameworks/native/system_sound_manager/ringtone_player/ringtone_player_impl.cpp",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 2,
+      "changes": 4,
+      "blob_url": "https://github.com/openharmony/multimedia_player_framework/blob/122861d26b850c32f239a02b5d0c342f44431cbf/frameworks%2Fnative%2Fsystem_sound_manager%2Fringtone_player%2Fringtone_player_impl.cpp",
+      "raw_url": "https://github.com/openharmony/multimedia_player_framework/raw/122861d26b850c32f239a02b5d0c342f44431cbf/frameworks%2Fnative%2Fsystem_sound_manager%2Fringtone_player%2Fringtone_player_impl.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/multimedia_player_framework/contents/frameworks%2Fnative%2Fsystem_sound_manager%2Fringtone_player%2Fringtone_player_impl.cpp?ref=122861d26b850c32f239a02b5d0c342f44431cbf",
+      "patch": "@@ -304,13 +304,13 @@ int32_t RingtonePlayerImpl::RegisterSource(const std::string &audioUri, const st\n     if (newAudioUri.find(FDHEAD) != std::string::npos) {\n         int32_t fd = atoi(newAudioUri.substr(FDHEAD.size()).c_str());\n         if (fd > 0) {\n-            close(fd);\n+            fdsan_close_with_tag(fd, FD_SYSTEM_SOUND_AUDIO_URI_TAG);\n         }\n     }\n     if (newHapticUri.find(FDHEAD) != std::string::npos) {\n         int32_t fd = atoi(newHapticUri.substr(FDHEAD.size()).c_str());\n         if (fd > 0) {\n-            close(fd);\n+            fdsan_close_with_tag(fd, FD_SYSTEM_SOUND_HAPTICS_URI_TAG);\n         }\n     }\n "
+    },
+    {
+      "sha": "3a30ae0311ce9582ad61ae06f22d8a785637a577",
+      "filename": "frameworks/native/system_sound_manager/system_sound_manager_impl.cpp",
+      "status": "modified",
+      "additions": 20,
+      "deletions": 7,
+      "changes": 27,
+      "blob_url": "https://github.com/openharmony/multimedia_player_framework/blob/122861d26b850c32f239a02b5d0c342f44431cbf/frameworks%2Fnative%2Fsystem_sound_manager%2Fsystem_sound_manager_impl.cpp",
+      "raw_url": "https://github.com/openharmony/multimedia_player_framework/raw/122861d26b850c32f239a02b5d0c342f44431cbf/frameworks%2Fnative%2Fsystem_sound_manager%2Fsystem_sound_manager_impl.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/multimedia_player_framework/contents/frameworks%2Fnative%2Fsystem_sound_manager%2Fsystem_sound_manager_impl.cpp?ref=122861d26b850c32f239a02b5d0c342f44431cbf",
+      "patch": "@@ -1173,6 +1173,7 @@ int32_t SystemSoundManagerImpl::OpenToneFile(const DatabaseTool &databaseTool,\n         MEDIA_LOGE(\"OpenToneFile: open file failed, ringtone library error.\");\n         return ERROR;\n     }\n+    fdsan_exchange_owner_tag(fd, 0, FD_SYSTEM_SOUND_TONE_OPEN_TAG);\n     return fd;\n }\n \n@@ -1211,6 +1212,7 @@ int32_t SystemSoundManagerImpl::OpenCustomToneUri(const std::string &customAudio\n             SendPlaybackFailedEvent(OPEN_FAILED);\n             return ERROR;\n         }\n+        fdsan_exchange_owner_tag(fd, 0, FD_SYSTEM_SOUND_TONE_OPEN_TAG);\n         return fd;\n     }\n     MEDIA_LOGE(\"Open custom audio uri failed!\");\n@@ -1273,6 +1275,7 @@ void SystemSoundManagerImpl::OpenOneFile(std::shared_ptr<DataShare::DataShareHel\n             results->Close();\n         }\n         if (fd > 0) {\n+            fdsan_exchange_owner_tag(fd, 0, FD_SYSTEM_SOUND_TONE_OPEN_TAG);\n             std::get<PARAM1>(resultOfOpen) = fd;\n             std::get<PARAM2>(resultOfOpen) = ERROR_OK;\n         } else {\n@@ -1289,7 +1292,7 @@ void SystemSoundManagerImpl::OpenOneFile(std::shared_ptr<DataShare::DataShareHel\n int32_t SystemSoundManagerImpl::Close(const int32_t &fd)\n {\n     std::lock_guard<std::mutex> lock(uriMutex_);\n-    return close(fd);\n+    return fdsan_close_with_tag(fd, FD_SYSTEM_SOUND_TONE_OPEN_TAG);\n }\n \n std::string SystemSoundManagerImpl::AddCustomizedToneByExternalUri(\n@@ -1300,11 +1303,13 @@ std::string SystemSoundManagerImpl::AddCustomizedToneByExternalUri(\n     std::string fdHead = \"fd://\";\n     std::string srcPath = externalUri;\n     int32_t srcFd = -1;\n+    FILE *fp = nullptr;\n     bool needToCloseSrcFd = false;\n     if (srcPath.find(fdHead) != std::string::npos) {\n         StrToInt(srcPath.substr(fdHead.size()), srcFd);\n     } else {\n-        srcFd = open(srcPath.c_str(), O_RDONLY);\n+        fp = fopen(srcPath.c_str(), \"r\");\n+        srcFd = (fp != nullptr) ? fileno(fp) : -1;\n         needToCloseSrcFd = (srcFd != -1);\n     }\n     if (srcFd < 0) {\n@@ -1315,7 +1320,7 @@ std::string SystemSoundManagerImpl::AddCustomizedToneByExternalUri(\n     std::string result = AddCustomizedToneByFd(context, toneAttrs, srcFd);\n     if (needToCloseSrcFd) {\n         MEDIA_LOGI(\"AddCustomizedToneByFd: close srcFd %{public}d\", srcFd);\n-        close(srcFd);\n+        fclose(fp);\n     }\n     return result;\n }\n@@ -1588,6 +1593,7 @@ std::string SystemSoundManagerImpl::CustomizedToneWriteFile(\n         return \"\";\n     }\n     MEDIA_LOGI(\"CustomizedToneWriteFile: OpenFile success, begin write file.\");\n+    fdsan_exchange_owner_tag(dstFd, 0, FD_SYSTEM_SOUND_CUSTOMIZED_TONE_WRITE_TAG);\n     char buffer[4096];\n     int32_t len = paramsForAddCustomizedTone.length;\n     memset_s(buffer, sizeof(buffer), 0, sizeof(buffer));\n@@ -1601,7 +1607,7 @@ std::string SystemSoundManagerImpl::CustomizedToneWriteFile(\n         len -= bytesWritten;\n     }\n     MEDIA_LOGI(\"CustomizedToneWriteFile: Write file end.\");\n-    close(dstFd);\n+    fdsan_close_with_tag(dstFd, FD_SYSTEM_SOUND_CUSTOMIZED_TONE_WRITE_TAG);\n     dataShareHelper->Release();\n     SendCustomizedToneEvent(true, toneAttrs, paramsForAddCustomizedTone.length, mimeType_, SUCCESS);\n     MediaTrace::TraceEnd(\"SystemSoundManagerImpl::AddCustomizedToneByFdAndOffset\", FAKE_POINTER(this));\n@@ -1625,7 +1631,7 @@ int32_t SystemSoundManagerImpl::RemoveCustomizedTone(\n         MEDIA_LOGE(\"RemoveCustomizedTone: fd open error is %{public}s\", strerror(errno));\n     } else {\n         fileSize = lseek(srcFd, 0, SEEK_END);\n-        close(srcFd);\n+        fdsan_close_with_tag(srcFd, FD_SYSTEM_SOUND_TONE_OPEN_TAG);\n     }\n     return DoRemove(dataShareHelper, uri, fileSize);\n }\n@@ -2338,6 +2344,9 @@ int32_t SystemSoundManagerImpl::OpenToneHaptics(const std::shared_ptr<AbilityRun\n     Uri ofUri(uriStr);\n     int32_t fd = dataShareHelper->OpenFile(ofUri, \"r\");\n     dataShareHelper->Release();\n+    if (fd > 0) {\n+        fdsan_exchange_owner_tag(fd, 0, FD_SYSTEM_SOUND_TONE_OPEN_TAG);\n+    }\n     return fd > 0 ? fd : IO_ERROR;\n #endif\n     return UNSUPPORTED_ERROR;\n@@ -2593,7 +2602,8 @@ std::string SystemSoundManagerImpl::OpenAudioFile(const DatabaseTool &databaseTo\n         fd = databaseTool.dataShareHelper->OpenFile(ofUri, \"r\");\n     }\n \n-    if (fd > 0) {\n+    if (fd >= 0) {\n+        fdsan_exchange_owner_tag(fd, 0, FD_SYSTEM_SOUND_AUDIO_URI_TAG);\n         newAudioUri = FDHEAD + to_string(fd);\n     } else {\n         SendPlaybackFailedEvent(OPEN_FAILED);\n@@ -2607,7 +2617,8 @@ std::string SystemSoundManagerImpl::OpenMockAudioUri(const std::string &uri)\n {\n     std::string newAudioUri = uri;\n     int32_t fd = open(uri.c_str(), O_RDONLY);\n-    if (fd > 0) {\n+    if (fd >= 0) {\n+        fdsan_exchange_owner_tag(fd, 0, FD_SYSTEM_SOUND_AUDIO_URI_TAG);\n         newAudioUri = FDHEAD + to_string(fd);\n     } else {\n         SendPlaybackFailedEvent(OPEN_FAILED);\n@@ -2653,6 +2664,7 @@ std::string SystemSoundManagerImpl::OpenCustomAudioUri(const std::string &custom\n         }\n     }\n     if (fd > 0) {\n+        fdsan_exchange_owner_tag(fd, 0, FD_SYSTEM_SOUND_AUDIO_URI_TAG);\n         newAudioUri = FDHEAD + to_string(fd);\n     } else {\n         SendPlaybackFailedEvent(OPEN_FAILED);\n@@ -2718,6 +2730,7 @@ std::string SystemSoundManagerImpl::OpenHapticsFile(\n     }\n \n     if (fd > 0) {\n+        fdsan_exchange_owner_tag(fd, 0, FD_SYSTEM_SOUND_HAPTICS_URI_TAG);\n         newHapticsUri = FDHEAD + to_string(fd);\n     } else {\n         SendPlaybackFailedEvent(OPEN_FAILED);"
+    },
+    {
+      "sha": "63c4117285a9ccf5d498e7fa337376772c04284e",
+      "filename": "frameworks/native/system_sound_manager/system_sound_player/system_sound_player_impl.cpp",
+      "status": "modified",
+      "additions": 6,
+      "deletions": 5,
+      "changes": 11,
+      "blob_url": "https://github.com/openharmony/multimedia_player_framework/blob/122861d26b850c32f239a02b5d0c342f44431cbf/frameworks%2Fnative%2Fsystem_sound_manager%2Fsystem_sound_player%2Fsystem_sound_player_impl.cpp",
+      "raw_url": "https://github.com/openharmony/multimedia_player_framework/raw/122861d26b850c32f239a02b5d0c342f44431cbf/frameworks%2Fnative%2Fsystem_sound_manager%2Fsystem_sound_player%2Fsystem_sound_player_impl.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/multimedia_player_framework/contents/frameworks%2Fnative%2Fsystem_sound_manager%2Fsystem_sound_player%2Fsystem_sound_player_impl.cpp?ref=122861d26b850c32f239a02b5d0c342f44431cbf",
+      "patch": "@@ -126,7 +126,7 @@ int32_t SystemSoundPlayerImpl::LoadInternal(SystemSoundType systemSoundType)\n     int32_t soundId = soundPool_->Load(FDHEAD + std::to_string(fileFd));\n     if (soundId < 0) {\n         MEDIA_LOGE(\"Load: Failed to load soundPool uri.\");\n-        close(fileFd);\n+        fdsan_close_with_tag(fileFd, FD_SYSTEM_SOUND_LOAD_TAG);\n         return ERRCODE_IO_ERROR;\n     }\n     std::unique_lock<std::mutex> loadLock(loadMutex_);\n@@ -135,12 +135,12 @@ int32_t SystemSoundPlayerImpl::LoadInternal(SystemSoundType systemSoundType)\n         [this]() { return isLoadCompleted_ || isReleased_; });\n     if (isReleased_) {\n         MEDIA_LOGE(\"The sound pool is released when it is preparing.\");\n-        close(fileFd);\n+        fdsan_close_with_tag(fileFd, FD_SYSTEM_SOUND_LOAD_TAG);\n         return ERRCODE_SYSTEM_ERROR;\n     }\n     if (!isLoadCompleted_) {\n         MEDIA_LOGE(\"Failed to load audio uri: time out.\");\n-        close(fileFd);\n+        fdsan_close_with_tag(fileFd, FD_SYSTEM_SOUND_LOAD_TAG);\n         return ERRCODE_IO_ERROR;\n     }\n \n@@ -164,6 +164,7 @@ int32_t SystemSoundPlayerImpl::OpenSystemSoundFile(const std::string &filePath)\n         MEDIA_LOGE(\"Failed to OpenSystemSoundFile!\");\n         return -1;\n     }\n+    fdsan_exchange_owner_tag(fd, 0, FD_SYSTEM_SOUND_LOAD_TAG);\n     return fd;\n }\n \n@@ -229,7 +230,7 @@ int32_t SystemSoundPlayerImpl::Unload(SystemSoundType systemSoundType)\n     soundIds_.erase(systemSoundType);\n     if (soundFds_.count(systemSoundType) != 0) {\n         if (soundFds_[systemSoundType] >= 0) {\n-            close(soundFds_[systemSoundType]);\n+            fdsan_close_with_tag(soundFds_[systemSoundType], FD_SYSTEM_SOUND_LOAD_TAG);\n         }\n         soundFds_.erase(systemSoundType);\n     }\n@@ -263,7 +264,7 @@ int32_t SystemSoundPlayerImpl::ReleaseInternal()\n     soundIds_.clear();\n     for (auto &[systemSoundType, fd] : soundFds_) {\n         if (fd >= 0) {\n-            close(fd);\n+            fdsan_close_with_tag(fd, FD_SYSTEM_SOUND_LOAD_TAG);\n         }\n     }\n     return SSP_SUCCESS;"
+    },
+    {
+      "sha": "fc8ad39bede7dbedf1f048b9da44ac66fae721c2",
+      "filename": "frameworks/native/system_sound_manager/system_sound_vibrator/system_sound_vibrator.cpp",
+      "status": "modified",
+      "additions": 10,
+      "deletions": 7,
+      "changes": 17,
+      "blob_url": "https://github.com/openharmony/multimedia_player_framework/blob/122861d26b850c32f239a02b5d0c342f44431cbf/frameworks%2Fnative%2Fsystem_sound_manager%2Fsystem_sound_vibrator%2Fsystem_sound_vibrator.cpp",
+      "raw_url": "https://github.com/openharmony/multimedia_player_framework/raw/122861d26b850c32f239a02b5d0c342f44431cbf/frameworks%2Fnative%2Fsystem_sound_manager%2Fsystem_sound_vibrator%2Fsystem_sound_vibrator.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/multimedia_player_framework/contents/frameworks%2Fnative%2Fsystem_sound_manager%2Fsystem_sound_vibrator%2Fsystem_sound_vibrator.cpp?ref=122861d26b850c32f239a02b5d0c342f44431cbf",
+      "patch": "@@ -98,20 +98,21 @@ int32_t SystemSoundVibrator::StartVibratorForSystemTone(const std::string &hapti\n             MEDIA_LOGE(\"Failed to open hapticUri!\");\n             return MSERR_OPEN_FILE_FAILED;\n         }\n+        fdsan_exchange_owner_tag(fd, 0, FD_SYSTEM_SOUND_HAPTICS_URI_TAG);\n     }\n \n     struct stat64 statbuf = { 0 };\n     if (fstat64(fd, &statbuf) != 0) {\n         MEDIA_LOGE(\"Failed to open fd and get size.\");\n-        close(fd);\n+        fdsan_close_with_tag(fd, FD_SYSTEM_SOUND_HAPTICS_URI_TAG);\n         return MSERR_OPEN_FILE_FAILED;\n     }\n     Sensors::SetUsage(USAGE_NOTIFICATION);\n     Sensors::SetLoopCount(1);\n     result = Sensors::PlayVibratorCustom(fd, 0, statbuf.st_size);\n     MEDIA_LOGI(\"PlayVibratorCustom result: %{public}d, fd %{public}d, size %{public}lld\",\n         result, fd, static_cast<long long>(statbuf.st_size));\n-    close(fd);\n+    fdsan_close_with_tag(fd, FD_SYSTEM_SOUND_HAPTICS_URI_TAG);\n #endif\n \n     return result;\n@@ -192,15 +193,16 @@ int32_t SystemSoundVibrator::VibrateForRingtone(const std::string hapticUri)\n             MEDIA_LOGE(\"Failed to open hapticUri!\");\n             return MSERR_OPEN_FILE_FAILED;\n         }\n+        fdsan_exchange_owner_tag(fd, 0, FD_SYSTEM_SOUND_HAPTICS_URI_TAG);\n     }\n \n     int32_t result = VibrateLoopFunc(lock, fd);\n     if (result != MSERR_OK) {\n-        close(fd);\n+        fdsan_close_with_tag(fd, FD_SYSTEM_SOUND_HAPTICS_URI_TAG);\n         MEDIA_LOGE(\"Failed to start vibrator!\");\n         return MSERR_INVALID_OPERATION;\n     }\n-    close(fd);\n+    fdsan_close_with_tag(fd, FD_SYSTEM_SOUND_HAPTICS_URI_TAG);\n     return result;\n }\n \n@@ -287,6 +289,7 @@ int32_t SystemSoundVibrator::GetVibratorDuration(const std::string &hapticUri)\n             MEDIA_LOGE(\"Failed to open hapticUri!\");\n             return ret;\n         }\n+        fdsan_exchange_owner_tag(fd, 0, FD_SYSTEM_SOUND_HAPTICS_URI_TAG);\n     }\n \n     VibratorFileDescription vibratorFD{};\n@@ -297,14 +300,14 @@ int32_t SystemSoundVibrator::GetVibratorDuration(const std::string &hapticUri)\n         vibratorFD.offset = 0;\n         vibratorFD.length = statbuf.st_size;\n     } else {\n-        close(fd);\n+        fdsan_close_with_tag(fd, FD_SYSTEM_SOUND_HAPTICS_URI_TAG);\n         MEDIA_LOGE(\"Failed to get file size!\");\n         return ret;\n     }\n \n     int32_t result = Sensors::PreProcess(vibratorFD, vibratorPkg);\n     if (result != 0) {\n-        close(fd);\n+        fdsan_close_with_tag(fd, FD_SYSTEM_SOUND_HAPTICS_URI_TAG);\n         MEDIA_LOGE(\"Failed to pre-process hapticUri!\");\n         return ret;\n     }\n@@ -316,7 +319,7 @@ int32_t SystemSoundVibrator::GetVibratorDuration(const std::string &hapticUri)\n         vibratorPkg.patterns[patternMaxIndex].events[eventMaxIndex].time +\n         vibratorPkg.patterns[patternMaxIndex].events[eventMaxIndex].duration;\n     Sensors::FreeVibratorPackage(vibratorPkg);\n-    close(fd);\n+    fdsan_close_with_tag(fd, FD_SYSTEM_SOUND_HAPTICS_URI_TAG);\n #endif\n     return ret;\n }"
+    },
+    {
+      "sha": "5051dc32c94b5c97c74f58c5b7e5b2df922f21f7",
+      "filename": "frameworks/native/system_sound_manager/system_tone_player/system_tone_player_impl.cpp",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 2,
+      "changes": 4,
+      "blob_url": "https://github.com/openharmony/multimedia_player_framework/blob/122861d26b850c32f239a02b5d0c342f44431cbf/frameworks%2Fnative%2Fsystem_sound_manager%2Fsystem_tone_player%2Fsystem_tone_player_impl.cpp",
+      "raw_url": "https://github.com/openharmony/multimedia_player_framework/raw/122861d26b850c32f239a02b5d0c342f44431cbf/frameworks%2Fnative%2Fsystem_sound_manager%2Fsystem_tone_player%2Fsystem_tone_player_impl.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/multimedia_player_framework/contents/frameworks%2Fnative%2Fsystem_sound_manager%2Fsystem_tone_player%2Fsystem_tone_player_impl.cpp?ref=122861d26b850c32f239a02b5d0c342f44431cbf",
+      "patch": "@@ -745,13 +745,13 @@ int32_t SystemTonePlayerImpl::RegisterSource(const std::string &audioUri, const\n     if (newAudioUri.find(FDHEAD) != std::string::npos) {\n         int32_t fd = atoi(newAudioUri.substr(FDHEAD.size()).c_str());\n         if (fd > 0) {\n-            close(fd);\n+            fdsan_close_with_tag(fd, FD_SYSTEM_SOUND_AUDIO_URI_TAG);\n         }\n     }\n     if (newHapticUri.find(FDHEAD) != std::string::npos) {\n         int32_t fd = atoi(newHapticUri.substr(FDHEAD.size()).c_str());\n         if (fd > 0) {\n-            close(fd);\n+            fdsan_close_with_tag(fd, FD_SYSTEM_SOUND_HAPTICS_URI_TAG);\n         }\n     }\n "
+    },
+    {
+      "sha": "ad0892657c89ea0df6a6cadd250d600caa17ea21",
+      "filename": "frameworks/native/system_sound_manager/unittest/sound_manager_test/src/system_sound_manager_unit_test.cpp",
+      "status": "modified",
+      "additions": 9,
+      "deletions": 9,
+      "changes": 18,
+      "blob_url": "https://github.com/openharmony/multimedia_player_framework/blob/122861d26b850c32f239a02b5d0c342f44431cbf/frameworks%2Fnative%2Fsystem_sound_manager%2Funittest%2Fsound_manager_test%2Fsrc%2Fsystem_sound_manager_unit_test.cpp",
+      "raw_url": "https://github.com/openharmony/multimedia_player_framework/raw/122861d26b850c32f239a02b5d0c342f44431cbf/frameworks%2Fnative%2Fsystem_sound_manager%2Funittest%2Fsound_manager_test%2Fsrc%2Fsystem_sound_manager_unit_test.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/multimedia_player_framework/contents/frameworks%2Fnative%2Fsystem_sound_manager%2Funittest%2Fsound_manager_test%2Fsrc%2Fsystem_sound_manager_unit_test.cpp?ref=122861d26b850c32f239a02b5d0c342f44431cbf",
+      "patch": "@@ -1578,7 +1578,7 @@ HWTEST(SystemSoundManagerUnitTest, Media_SoundManager_OpenToneUri_002, TestSize.\n         std::string uri = vec[0]->GetUri();\n         fd = systemSoundManager_->OpenToneUri(context_, uri, ToneType::TONE_TYPE_ALARM);\n     }\n-    close(fd);\n+    systemSoundManager_->Close(fd);\n     EXPECT_NE(systemSoundManager_, nullptr);\n }\n \n@@ -1596,13 +1596,13 @@ HWTEST(SystemSoundManagerUnitTest, Media_SoundManager_OpenToneUri_003, TestSize.\n     DatabaseTool databaseTool = {true, isProxy, nullptr};\n     int fd = systemSoundManager_->OpenToneUri(databaseTool, \"test\", ToneType::TONE_TYPE_ALARM);\n     EXPECT_LT(fd, 0);\n-    close(fd);\n+    systemSoundManager_->Close(fd);\n     std::shared_ptr<DataShare::DataShareHelper> dataShareHelper =\n         SystemSoundManagerUtils::CreateDataShareHelper(STORAGE_MANAGER_MANAGER_ID);\n     databaseTool = {true, isProxy, dataShareHelper};\n     fd = systemSoundManager_->OpenToneUri(databaseTool, \"test\", ToneType::TONE_TYPE_ALARM);\n     EXPECT_LT(fd, 0);\n-    close(fd);\n+    systemSoundManager_->Close(fd);\n     bool isProxy2 = false;\n     std::shared_ptr<DataShare::DataShareHelper> helper2 =\n         SystemSoundManagerUtils::CreateDataShareHelper(STORAGE_MANAGER_MANAGER_ID);\n@@ -1612,26 +1612,26 @@ HWTEST(SystemSoundManagerUnitTest, Media_SoundManager_OpenToneUri_003, TestSize.\n     std::string uri = toneAttrs_.GetUri();\n     fd = systemSoundManager_->OpenToneUri(context_, uri, ToneType::TONE_TYPE_ALARM);\n     EXPECT_GE(fd, 0);\n-    close(fd);\n+    systemSoundManager_->Close(fd);\n     isProxy = true;\n     dataShareHelper = SystemSoundManagerUtils::CreateDataShareHelperUri(STORAGE_MANAGER_MANAGER_ID);\n     databaseTool = {true, isProxy, dataShareHelper};\n     fd = systemSoundManager_->OpenToneUri(databaseTool, uri, ToneType::TONE_TYPE_ALARM);\n     EXPECT_LT(fd, 0);\n-    close(fd);\n+    systemSoundManager_->Close(fd);\n     fd = systemSoundManager_->OpenCustomToneUri(uri, ToneType::TONE_TYPE_ALARM);\n     EXPECT_GE(fd, 0);\n-    close(fd);\n+    systemSoundManager_->Close(fd);\n     uri = \"/data/storage/el2/base/files/ringtone.ogg\";\n     fd = systemSoundManager_->OpenToneUri(databaseTool, uri, ToneType::TONE_TYPE_ALARM);\n     EXPECT_LT(fd, 0);\n-    close(fd);\n+    systemSoundManager_->Close(fd);\n     fd = systemSoundManager_->OpenToneUri(databaseTool, uri, ToneType::TONE_TYPE_INVALID);\n     EXPECT_LT(fd, 0);\n-    close(fd);\n+    systemSoundManager_->Close(fd);\n     fd = systemSoundManager_->OpenCustomToneUri(uri, ToneType::TONE_TYPE_INVALID);\n     EXPECT_LT(fd, 0);\n-    close(fd);\n+    systemSoundManager_->Close(fd);\n }\n \n "
+    },
+    {
+      "sha": "3bdf0a11265c8da10ff338a6d953c87e3f08f5ab",
+      "filename": "services/utils/include/audio_fdsan_tag.h",
+      "status": "added",
+      "additions": 41,
+      "deletions": 0,
+      "changes": 41,
+      "blob_url": "https://github.com/openharmony/multimedia_player_framework/blob/122861d26b850c32f239a02b5d0c342f44431cbf/services%2Futils%2Finclude%2Faudio_fdsan_tag.h",
+      "raw_url": "https://github.com/openharmony/multimedia_player_framework/raw/122861d26b850c32f239a02b5d0c342f44431cbf/services%2Futils%2Finclude%2Faudio_fdsan_tag.h",
+      "contents_url": "https://api.github.com/repos/openharmony/multimedia_player_framework/contents/services%2Futils%2Finclude%2Faudio_fdsan_tag.h?ref=122861d26b850c32f239a02b5d0c342f44431cbf",
+      "patch": "@@ -0,0 +1,41 @@\n+/*\n+ * Copyright (c) 2026 Huawei Device Co., Ltd.\n+ * Licensed under the Apache License, Version 2.0 (the \"License\");\n+ * you may not use this file except in compliance with the License.\n+ * You may obtain a copy of the License at\n+ *\n+ *     http://www.apache.org/licenses/LICENSE-2.0\n+ *\n+ * Unless required by applicable law or agreed to in writing, software\n+ * distributed under the License is distributed on an \"AS IS\" BASIS,\n+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n+ * See the License for the specific language governing permissions and\n+ * limitations under the License.\n+ */\n+\n+#ifndef OHOS_AUDIO_FDSAN_TAG_H\n+#define OHOS_AUDIO_FDSAN_TAG_H\n+\n+#include <cstdint>\n+\n+constexpr uint64_t FD_SYSTEM_SOUND_AUDIO_URI_TAG =\n+    (static_cast<uint64_t>(0xD002B80 & 0xFFFFFF) << 32) | 1;\n+constexpr uint64_t FD_SYSTEM_SOUND_HAPTICS_URI_TAG =\n+    (static_cast<uint64_t>(0xD002B80 & 0xFFFFFF) << 32) | 2;\n+constexpr uint64_t FD_SYSTEM_SOUND_CUSTOMIZED_TONE_WRITE_TAG =\n+    (static_cast<uint64_t>(0xD002B80 & 0xFFFFFF) << 32) | 3;\n+constexpr uint64_t FD_SYSTEM_SOUND_TONE_OPEN_TAG =\n+    (static_cast<uint64_t>(0xD002B80 & 0xFFFFFF) << 32) | 4;\n+constexpr uint64_t FD_SYSTEM_SOUND_LOAD_TAG =\n+    (static_cast<uint64_t>(0xD002B80 & 0xFFFFFF) << 32) | 5;\n+\n+constexpr uint64_t FD_AUDIO_HAPTIC_REGISTER_SOURCE_TAG =\n+    (static_cast<uint64_t>(0xD002B81 & 0xFFFFFF) << 32) | 6;\n+constexpr uint64_t FD_AUDIO_HAPTIC_AVPLAYER_AUDIO_TAG =\n+    (static_cast<uint64_t>(0xD002B81 & 0xFFFFFF) << 32) | 7;\n+constexpr uint64_t FD_AUDIO_HAPTIC_SOUNDPOOL_AUDIO_TAG =\n+    (static_cast<uint64_t>(0xD002B81 & 0xFFFFFF) << 32) | 8;\n+constexpr uint64_t FD_AUDIO_HAPTIC_OPEN_HAPTIC_SOURCE_TAG =\n+    (static_cast<uint64_t>(0xD002B81 & 0xFFFFFF) << 32) | 9;\n+\n+#endif // OHOS_AUDIO_FDSAN_TAG_H"
+    },
+    {
+      "sha": "d90ab989623dd05058223dd39669e3c7c0e9c2dd",
+      "filename": "services/utils/include/audio_haptic_log.h",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 0,
+      "changes": 1,
+      "blob_url": "https://github.com/openharmony/multimedia_player_framework/blob/122861d26b850c32f239a02b5d0c342f44431cbf/services%2Futils%2Finclude%2Faudio_haptic_log.h",
+      "raw_url": "https://github.com/openharmony/multimedia_player_framework/raw/122861d26b850c32f239a02b5d0c342f44431cbf/services%2Futils%2Finclude%2Faudio_haptic_log.h",
+      "contents_url": "https://api.github.com/repos/openharmony/multimedia_player_framework/contents/services%2Futils%2Finclude%2Faudio_haptic_log.h?ref=122861d26b850c32f239a02b5d0c342f44431cbf",
+      "patch": "@@ -17,6 +17,7 @@\n #define OHOS_AUDIO_HAPTIC_LOG_H\n \n #include \"media_log.h\"\n+#include \"audio_fdsan_tag.h\"\n \n #undef LOG_DOMAIN\n #define LOG_DOMAIN 0xD002B81"
+    },
+    {
+      "sha": "e831bc4e5941e9615bdcd9d0e6a02dfded2b2fbc",
+      "filename": "services/utils/include/system_sound_log.h",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 0,
+      "changes": 1,
+      "blob_url": "https://github.com/openharmony/multimedia_player_framework/blob/122861d26b850c32f239a02b5d0c342f44431cbf/services%2Futils%2Finclude%2Fsystem_sound_log.h",
+      "raw_url": "https://github.com/openharmony/multimedia_player_framework/raw/122861d26b850c32f239a02b5d0c342f44431cbf/services%2Futils%2Finclude%2Fsystem_sound_log.h",
+      "contents_url": "https://api.github.com/repos/openharmony/multimedia_player_framework/contents/services%2Futils%2Finclude%2Fsystem_sound_log.h?ref=122861d26b850c32f239a02b5d0c342f44431cbf",
+      "patch": "@@ -17,6 +17,7 @@\n #define OHOS_SYSTEM_SOUND_LOG_H\n \n #include \"media_log.h\"\n+#include \"audio_fdsan_tag.h\"\n \n #undef LOG_DOMAIN\n #define LOG_DOMAIN 0xD002B80"
+    }
+  ]
+}

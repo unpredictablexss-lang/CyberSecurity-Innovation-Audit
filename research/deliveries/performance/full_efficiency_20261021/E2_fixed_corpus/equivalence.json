@@ -1,0 +1,636 @@
+{
+  "schema_version": 1,
+  "comparison_fields": [
+    "result_signature",
+    "status",
+    "detector_status",
+    "diagnostic_count",
+    "parse_complete",
+    "parse_partial",
+    "analyzed_files",
+    "unexamined_files",
+    "scanned_files",
+    "detector_ids",
+    "validated_vulnerability"
+  ],
+  "components": [
+    {
+      "label": "communication_ipc",
+      "commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+      "same_environment_e0": {
+        "result_signature": "38bf282742e855f3f6f0e1f79f53d65feffc5c97cc4f48a80715f629dc35d911",
+        "status": "completed_with_limitations",
+        "detector_status": "partial",
+        "diagnostic_count": 5,
+        "parse_complete": 453,
+        "parse_partial": 244,
+        "analyzed_files": 405,
+        "unexamined_files": 419,
+        "scanned_files": 697,
+        "detector_ids": [
+          "ohscanner.cpp.lifetime",
+          "ohscanner.cpp.shared_ptr_race"
+        ],
+        "validated_vulnerability": 0
+      },
+      "ext4_cold": {
+        "result_signature": "38bf282742e855f3f6f0e1f79f53d65feffc5c97cc4f48a80715f629dc35d911",
+        "status": "completed_with_limitations",
+        "detector_status": "partial",
+        "diagnostic_count": 5,
+        "parse_complete": 453,
+        "parse_partial": 244,
+        "analyzed_files": 405,
+        "unexamined_files": 419,
+        "scanned_files": 697,
+        "detector_ids": [
+          "ohscanner.cpp.lifetime",
+          "ohscanner.cpp.shared_ptr_race"
+        ],
+        "validated_vulnerability": 0
+      },
+      "ext4_hot": {
+        "result_signature": "38bf282742e855f3f6f0e1f79f53d65feffc5c97cc4f48a80715f629dc35d911",
+        "status": "completed_with_limitations",
+        "detector_status": "partial",
+        "diagnostic_count": 5,
+        "parse_complete": 453,
+        "parse_partial": 244,
+        "analyzed_files": 405,
+        "unexamined_files": 419,
+        "scanned_files": 697,
+        "detector_ids": [
+          "ohscanner.cpp.lifetime",
+          "ohscanner.cpp.shared_ptr_race"
+        ],
+        "validated_vulnerability": 0
+      },
+      "e0_vs_e2_cold_equal": true,
+      "e0_vs_e2_hot_equal": true,
+      "e2_cold_vs_hot_equal": true
+    },
+    {
+      "label": "inputmethod_imf",
+      "commit": "7777cba9eb19085af8e7b90088531028d2937460",
+      "same_environment_e0": {
+        "result_signature": "d250f500631828ae0aabdda1d35badfef2cd165f41e568345d54d0aae42ae253",
+        "status": "completed_with_limitations",
+        "detector_status": "partial",
+        "diagnostic_count": 4,
+        "parse_complete": 539,
+        "parse_partial": 159,
+        "analyzed_files": 522,
+        "unexamined_files": 310,
+        "scanned_files": 698,
+        "detector_ids": [
+          "ohscanner.cpp.lifetime",
+          "ohscanner.cpp.shared_ptr_race"
+        ],
+        "validated_vulnerability": 0
+      },
+      "ext4_cold": {
+        "result_signature": "d250f500631828ae0aabdda1d35badfef2cd165f41e568345d54d0aae42ae253",
+        "status": "completed_with_limitations",
+        "detector_status": "partial",
+        "diagnostic_count": 4,
+        "parse_complete": 539,
+        "parse_partial": 159,
+        "analyzed_files": 522,
+        "unexamined_files": 310,
+        "scanned_files": 698,
+        "detector_ids": [
+          "ohscanner.cpp.lifetime",
+          "ohscanner.cpp.shared_ptr_race"
+        ],
+        "validated_vulnerability": 0
+      },
+      "ext4_hot": {
+        "result_signature": "d250f500631828ae0aabdda1d35badfef2cd165f41e568345d54d0aae42ae253",
+        "status": "completed_with_limitations",
+        "detector_status": "partial",
+        "diagnostic_count": 4,
+        "parse_complete": 539,
+        "parse_partial": 159,
+        "analyzed_files": 522,
+        "unexamined_files": 310,
+        "scanned_files": 698,
+        "detector_ids": [
+          "ohscanner.cpp.lifetime",
+          "ohscanner.cpp.shared_ptr_race"
+        ],
+        "validated_vulnerability": 0
+      },
+      "e0_vs_e2_cold_equal": true,
+      "e0_vs_e2_hot_equal": true,
+      "e2_cold_vs_hot_equal": true
+    },
+    {
+      "label": "multimedia_camera_framework",
+      "commit": "085a5d0e2dc1c90a4b676bad55675a1cf12a6380",
+      "same_environment_e0": {
+        "result_signature": "094d445e153391fbf5003c0606e3baa6ae46c0371c1adf3782432b89be081657",
+        "status": "completed_with_limitations",
+        "detector_status": "partial",
+        "diagnostic_count": 14,
+        "parse_complete": 1335,
+        "parse_partial": 361,
+        "analyzed_files": 1291,
+        "unexamined_files": 668,
+        "scanned_files": 1696,
+        "detector_ids": [
+          "ohscanner.cpp.lifetime",
+          "ohscanner.cpp.shared_ptr_race"
+        ],
+        "validated_vulnerability": 0
+      },
+      "ext4_cold": {
+        "result_signature": "094d445e153391fbf5003c0606e3baa6ae46c0371c1adf3782432b89be081657",
+        "status": "completed_with_limitations",
+        "detector_status": "partial",
+        "diagnostic_count": 14,
+        "parse_complete": 1335,
+        "parse_partial": 361,
+        "analyzed_files": 1291,
+        "unexamined_files": 668,
+        "scanned_files": 1696,
+        "detector_ids": [
+          "ohscanner.cpp.lifetime",
+          "ohscanner.cpp.shared_ptr_race"
+        ],
+        "validated_vulnerability": 0
+      },
+      "ext4_hot": {
+        "result_signature": "094d445e153391fbf5003c0606e3baa6ae46c0371c1adf3782432b89be081657",
+        "status": "completed_with_limitations",
+        "detector_status": "partial",
+        "diagnostic_count": 14,
+        "parse_complete": 1335,
+        "parse_partial": 361,
+        "analyzed_files": 1291,
+        "unexamined_files": 668,
+        "scanned_files": 1696,
+        "detector_ids": [
+          "ohscanner.cpp.lifetime",
+          "ohscanner.cpp.shared_ptr_race"
+        ],
+        "validated_vulnerability": 0
+      },
+      "e0_vs_e2_cold_equal": true,
+      "e0_vs_e2_hot_equal": true,
+      "e2_cold_vs_hot_equal": true
+    },
+    {
+      "label": "multimedia_player_framework",
+      "commit": "9f9a285ff489afa66861a85dcc4213336a463b36",
+      "same_environment_e0": {
+        "result_signature": "975bff7b9299088522addb0169ae6f817815dbf4b14318f453d6a9b2fec27eba",
+        "status": "completed_with_limitations",
+        "detector_status": "partial",
+        "diagnostic_count": 9,
+        "parse_complete": 1087,
+        "parse_partial": 686,
+        "analyzed_files": 1087,
+        "unexamined_files": 1394,
+        "scanned_files": 1773,
+        "detector_ids": [
+          "ohscanner.cpp.lifetime",
+          "ohscanner.cpp.shared_ptr_race"
+        ],
+        "validated_vulnerability": 0
+      },
+      "ext4_cold": {
+        "result_signature": "975bff7b9299088522addb0169ae6f817815dbf4b14318f453d6a9b2fec27eba",
+        "status": "completed_with_limitations",
+        "detector_status": "partial",
+        "diagnostic_count": 9,
+        "parse_complete": 1087,
+        "parse_partial": 686,
+        "analyzed_files": 1087,
+        "unexamined_files": 1394,
+        "scanned_files": 1773,
+        "detector_ids": [
+          "ohscanner.cpp.lifetime",
+          "ohscanner.cpp.shared_ptr_race"
+        ],
+        "validated_vulnerability": 0
+      },
+      "ext4_hot": {
+        "result_signature": "975bff7b9299088522addb0169ae6f817815dbf4b14318f453d6a9b2fec27eba",
+        "status": "completed_with_limitations",
+        "detector_status": "partial",
+        "diagnostic_count": 9,
+        "parse_complete": 1087,
+        "parse_partial": 686,
+        "analyzed_files": 1087,
+        "unexamined_files": 1394,
+        "scanned_files": 1773,
+        "detector_ids": [
+          "ohscanner.cpp.lifetime",
+          "ohscanner.cpp.shared_ptr_race"
+        ],
+        "validated_vulnerability": 0
+      },
+      "e0_vs_e2_cold_equal": true,
+      "e0_vs_e2_hot_equal": true,
+      "e2_cold_vs_hot_equal": true
+    },
+    {
+      "label": "notification_common_event_service",
+      "commit": "aaaaf6d10aa8e1f6bd28673f10d5791d7e9c9e3f",
+      "same_environment_e0": {
+        "result_signature": "9a5cb48c1d55a1c476bf6615392173c4012082719381c9779b61fbb55cdc07bc",
+        "status": "completed_with_limitations",
+        "detector_status": "partial",
+        "diagnostic_count": 1,
+        "parse_complete": 221,
+        "parse_partial": 72,
+        "analyzed_files": 215,
+        "unexamined_files": 143,
+        "scanned_files": 293,
+        "detector_ids": [
+          "ohscanner.cpp.lifetime",
+          "ohscanner.cpp.shared_ptr_race"
+        ],
+        "validated_vulnerability": 0
+      },
+      "ext4_cold": {
+        "result_signature": "9a5cb48c1d55a1c476bf6615392173c4012082719381c9779b61fbb55cdc07bc",
+        "status": "completed_with_limitations",
+        "detector_status": "partial",
+        "diagnostic_count": 1,
+        "parse_complete": 221,
+        "parse_partial": 72,
+        "analyzed_files": 215,
+        "unexamined_files": 143,
+        "scanned_files": 293,
+        "detector_ids": [
+          "ohscanner.cpp.lifetime",
+          "ohscanner.cpp.shared_ptr_race"
+        ],
+        "validated_vulnerability": 0
+      },
+      "ext4_hot": {
+        "result_signature": "9a5cb48c1d55a1c476bf6615392173c4012082719381c9779b61fbb55cdc07bc",
+        "status": "completed_with_limitations",
+        "detector_status": "partial",
+        "diagnostic_count": 1,
+        "parse_complete": 221,
+        "parse_partial": 72,
+        "analyzed_files": 215,
+        "unexamined_files": 143,
+        "scanned_files": 293,
+        "detector_ids": [
+          "ohscanner.cpp.lifetime",
+          "ohscanner.cpp.shared_ptr_race"
+        ],
+        "validated_vulnerability": 0
+      },
+      "e0_vs_e2_cold_equal": true,
+      "e0_vs_e2_hot_equal": true,
+      "e2_cold_vs_hot_equal": true
+    },
+    {
+      "label": "resourceschedule_background_task_mgr",
+      "commit": "cff2ff475e3885ee814651f6a13d7f8a5782efdd",
+      "same_environment_e0": {
+        "result_signature": "43a6730aa7066a1db8f329c066a83fe79be042c68fc1d53a791a2d2bf229e830",
+        "status": "completed_with_limitations",
+        "detector_status": "partial",
+        "diagnostic_count": 0,
+        "parse_complete": 237,
+        "parse_partial": 47,
+        "analyzed_files": 229,
+        "unexamined_files": 95,
+        "scanned_files": 284,
+        "detector_ids": [
+          "ohscanner.cpp.lifetime",
+          "ohscanner.cpp.shared_ptr_race"
+        ],
+        "validated_vulnerability": 0
+      },
+      "ext4_cold": {
+        "result_signature": "43a6730aa7066a1db8f329c066a83fe79be042c68fc1d53a791a2d2bf229e830",
+        "status": "completed_with_limitations",
+        "detector_status": "partial",
+        "diagnostic_count": 0,
+        "parse_complete": 237,
+        "parse_partial": 47,
+        "analyzed_files": 229,
+        "unexamined_files": 95,
+        "scanned_files": 284,
+        "detector_ids": [
+          "ohscanner.cpp.lifetime",
+          "ohscanner.cpp.shared_ptr_race"
+        ],
+        "validated_vulnerability": 0
+      },
+      "ext4_hot": {
+        "result_signature": "43a6730aa7066a1db8f329c066a83fe79be042c68fc1d53a791a2d2bf229e830",
+        "status": "completed_with_limitations",
+        "detector_status": "partial",
+        "diagnostic_count": 0,
+        "parse_complete": 237,
+        "parse_partial": 47,
+        "analyzed_files": 229,
+        "unexamined_files": 95,
+        "scanned_files": 284,
+        "detector_ids": [
+          "ohscanner.cpp.lifetime",
+          "ohscanner.cpp.shared_ptr_race"
+        ],
+        "validated_vulnerability": 0
+      },
+      "e0_vs_e2_cold_equal": true,
+      "e0_vs_e2_hot_equal": true,
+      "e2_cold_vs_hot_equal": true
+    },
+    {
+      "label": "security_access_token",
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "same_environment_e0": {
+        "result_signature": "13db299ddbbc07455240894d7f225f3b77588c0f43630861de9956334cc929f8",
+        "status": "completed_with_limitations",
+        "detector_status": "partial",
+        "diagnostic_count": 8,
+        "parse_complete": 1048,
+        "parse_partial": 201,
+        "analyzed_files": 1037,
+        "unexamined_files": 403,
+        "scanned_files": 1249,
+        "detector_ids": [
+          "ohscanner.cpp.lifetime",
+          "ohscanner.cpp.shared_ptr_race"
+        ],
+        "validated_vulnerability": 0
+      },
+      "ext4_cold": {
+        "result_signature": "13db299ddbbc07455240894d7f225f3b77588c0f43630861de9956334cc929f8",
+        "status": "completed_with_limitations",
+        "detector_status": "partial",
+        "diagnostic_count": 8,
+        "parse_complete": 1048,
+        "parse_partial": 201,
+        "analyzed_files": 1037,
+        "unexamined_files": 403,
+        "scanned_files": 1249,
+        "detector_ids": [
+          "ohscanner.cpp.lifetime",
+          "ohscanner.cpp.shared_ptr_race"
+        ],
+        "validated_vulnerability": 0
+      },
+      "ext4_hot": {
+        "result_signature": "13db299ddbbc07455240894d7f225f3b77588c0f43630861de9956334cc929f8",
+        "status": "completed_with_limitations",
+        "detector_status": "partial",
+        "diagnostic_count": 8,
+        "parse_complete": 1048,
+        "parse_partial": 201,
+        "analyzed_files": 1037,
+        "unexamined_files": 403,
+        "scanned_files": 1249,
+        "detector_ids": [
+          "ohscanner.cpp.lifetime",
+          "ohscanner.cpp.shared_ptr_race"
+        ],
+        "validated_vulnerability": 0
+      },
+      "e0_vs_e2_cold_equal": true,
+      "e0_vs_e2_hot_equal": true,
+      "e2_cold_vs_hot_equal": true
+    },
+    {
+      "label": "telephony_call_manager",
+      "commit": "6638d1b37f278d7ed380d907674820e7467cedf8",
+      "same_environment_e0": {
+        "result_signature": "a07605398ea3c6fcc348cae166e0459cb0c3ba5cb9bd90273f17b5219b32fa8b",
+        "status": "completed_with_limitations",
+        "detector_status": "partial",
+        "diagnostic_count": 12,
+        "parse_complete": 383,
+        "parse_partial": 130,
+        "analyzed_files": 381,
+        "unexamined_files": 270,
+        "scanned_files": 513,
+        "detector_ids": [
+          "ohscanner.cpp.lifetime",
+          "ohscanner.cpp.shared_ptr_race"
+        ],
+        "validated_vulnerability": 0
+      },
+      "ext4_cold": {
+        "result_signature": "a07605398ea3c6fcc348cae166e0459cb0c3ba5cb9bd90273f17b5219b32fa8b",
+        "status": "completed_with_limitations",
+        "detector_status": "partial",
+        "diagnostic_count": 12,
+        "parse_complete": 383,
+        "parse_partial": 130,
+        "analyzed_files": 381,
+        "unexamined_files": 270,
+        "scanned_files": 513,
+        "detector_ids": [
+          "ohscanner.cpp.lifetime",
+          "ohscanner.cpp.shared_ptr_race"
+        ],
+        "validated_vulnerability": 0
+      },
+      "ext4_hot": {
+        "result_signature": "a07605398ea3c6fcc348cae166e0459cb0c3ba5cb9bd90273f17b5219b32fa8b",
+        "status": "completed_with_limitations",
+        "detector_status": "partial",
+        "diagnostic_count": 12,
+        "parse_complete": 383,
+        "parse_partial": 130,
+        "analyzed_files": 381,
+        "unexamined_files": 270,
+        "scanned_files": 513,
+        "detector_ids": [
+          "ohscanner.cpp.lifetime",
+          "ohscanner.cpp.shared_ptr_race"
+        ],
+        "validated_vulnerability": 0
+      },
+      "e0_vs_e2_cold_equal": true,
+      "e0_vs_e2_hot_equal": true,
+      "e2_cold_vs_hot_equal": true
+    },
+    {
+      "label": "update_updateservice",
+      "commit": "e4942a33cc5ed29040e5c720bea3b2a8e4a79221",
+      "same_environment_e0": {
+        "result_signature": "ce7ceb4445623a29c632b17e335eebf37b37d15e8fde220c3136b1d1f292a533",
+        "status": "completed_with_limitations",
+        "detector_status": "partial",
+        "diagnostic_count": 0,
+        "parse_complete": 206,
+        "parse_partial": 32,
+        "analyzed_files": 204,
+        "unexamined_files": 64,
+        "scanned_files": 238,
+        "detector_ids": [
+          "ohscanner.cpp.lifetime",
+          "ohscanner.cpp.shared_ptr_race"
+        ],
+        "validated_vulnerability": 0
+      },
+      "ext4_cold": {
+        "result_signature": "ce7ceb4445623a29c632b17e335eebf37b37d15e8fde220c3136b1d1f292a533",
+        "status": "completed_with_limitations",
+        "detector_status": "partial",
+        "diagnostic_count": 0,
+        "parse_complete": 206,
+        "parse_partial": 32,
+        "analyzed_files": 204,
+        "unexamined_files": 64,
+        "scanned_files": 238,
+        "detector_ids": [
+          "ohscanner.cpp.lifetime",
+          "ohscanner.cpp.shared_ptr_race"
+        ],
+        "validated_vulnerability": 0
+      },
+      "ext4_hot": {
+        "result_signature": "ce7ceb4445623a29c632b17e335eebf37b37d15e8fde220c3136b1d1f292a533",
+        "status": "completed_with_limitations",
+        "detector_status": "partial",
+        "diagnostic_count": 0,
+        "parse_complete": 206,
+        "parse_partial": 32,
+        "analyzed_files": 204,
+        "unexamined_files": 64,
+        "scanned_files": 238,
+        "detector_ids": [
+          "ohscanner.cpp.lifetime",
+          "ohscanner.cpp.shared_ptr_race"
+        ],
+        "validated_vulnerability": 0
+      },
+      "e0_vs_e2_cold_equal": true,
+      "e0_vs_e2_hot_equal": true,
+      "e2_cold_vs_hot_equal": true
+    },
+    {
+      "label": "window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "same_environment_e0": {
+        "result_signature": "e03df8217f53931827bac750342a5c5ea9673bb2b362d57605ab6b96555973e1",
+        "status": "completed_with_limitations",
+        "detector_status": "partial",
+        "diagnostic_count": 10,
+        "parse_complete": 1122,
+        "parse_partial": 822,
+        "analyzed_files": 1106,
+        "unexamined_files": 1639,
+        "scanned_files": 1944,
+        "detector_ids": [
+          "ohscanner.cpp.lifetime",
+          "ohscanner.cpp.shared_ptr_race"
+        ],
+        "validated_vulnerability": 0
+      },
+      "ext4_cold": {
+        "result_signature": "e03df8217f53931827bac750342a5c5ea9673bb2b362d57605ab6b96555973e1",
+        "status": "completed_with_limitations",
+        "detector_status": "partial",
+        "diagnostic_count": 10,
+        "parse_complete": 1122,
+        "parse_partial": 822,
+        "analyzed_files": 1106,
+        "unexamined_files": 1639,
+        "scanned_files": 1944,
+        "detector_ids": [
+          "ohscanner.cpp.lifetime",
+          "ohscanner.cpp.shared_ptr_race"
+        ],
+        "validated_vulnerability": 0
+      },
+      "ext4_hot": {
+        "result_signature": "e03df8217f53931827bac750342a5c5ea9673bb2b362d57605ab6b96555973e1",
+        "status": "completed_with_limitations",
+        "detector_status": "partial",
+        "diagnostic_count": 10,
+        "parse_complete": 1122,
+        "parse_partial": 822,
+        "analyzed_files": 1106,
+        "unexamined_files": 1639,
+        "scanned_files": 1944,
+        "detector_ids": [
+          "ohscanner.cpp.lifetime",
+          "ohscanner.cpp.shared_ptr_race"
+        ],
+        "validated_vulnerability": 0
+      },
+      "e0_vs_e2_cold_equal": true,
+      "e0_vs_e2_hot_equal": true,
+      "e2_cold_vs_hot_equal": true
+    },
+    {
+      "label": "c_utils_pinned_m2",
+      "commit": "b807d3dadb7dbb7639fe85b3a5f72da18d318da2",
+      "same_environment_e0": {
+        "result_signature": "4f5f3c811b2a7dc764bbeeef5df23ccac94863308b4cf87942f8b7519c0c3697",
+        "status": "completed_with_limitations",
+        "detector_status": "partial",
+        "diagnostic_count": 0,
+        "parse_complete": 94,
+        "parse_partial": 29,
+        "analyzed_files": 94,
+        "unexamined_files": 60,
+        "scanned_files": 123,
+        "detector_ids": [
+          "ohscanner.cpp.lifetime",
+          "ohscanner.cpp.shared_ptr_race"
+        ],
+        "validated_vulnerability": 0
+      },
+      "ext4_cold": {
+        "result_signature": "4f5f3c811b2a7dc764bbeeef5df23ccac94863308b4cf87942f8b7519c0c3697",
+        "status": "completed_with_limitations",
+        "detector_status": "partial",
+        "diagnostic_count": 0,
+        "parse_complete": 94,
+        "parse_partial": 29,
+        "analyzed_files": 94,
+        "unexamined_files": 60,
+        "scanned_files": 123,
+        "detector_ids": [
+          "ohscanner.cpp.lifetime",
+          "ohscanner.cpp.shared_ptr_race"
+        ],
+        "validated_vulnerability": 0
+      },
+      "ext4_hot": {
+        "result_signature": "4f5f3c811b2a7dc764bbeeef5df23ccac94863308b4cf87942f8b7519c0c3697",
+        "status": "completed_with_limitations",
+        "detector_status": "partial",
+        "diagnostic_count": 0,
+        "parse_complete": 94,
+        "parse_partial": 29,
+        "analyzed_files": 94,
+        "unexamined_files": 60,
+        "scanned_files": 123,
+        "detector_ids": [
+          "ohscanner.cpp.lifetime",
+          "ohscanner.cpp.shared_ptr_race"
+        ],
+        "validated_vulnerability": 0
+      },
+      "e0_vs_e2_cold_equal": true,
+      "e0_vs_e2_hot_equal": true,
+      "e2_cold_vs_hot_equal": true
+    }
+  ],
+  "summary": {
+    "components": 11,
+    "e0_vs_e2_cold_equal": true,
+    "e0_vs_e2_hot_equal": true,
+    "e2_cold_vs_hot_equal": true,
+    "overall_status": {
+      "E0": "completed_with_limitations 11/11",
+      "E2 cold": "completed_with_limitations 11/11",
+      "E2 hot": "completed_with_limitations 11/11"
+    },
+    "diagnostics": 63,
+    "validated_vulnerabilities": 0
+  }
+}

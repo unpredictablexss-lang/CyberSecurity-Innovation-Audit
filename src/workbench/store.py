@@ -2,9 +2,11 @@
 
 from contextlib import contextmanager
 from datetime import datetime, timezone
+import hashlib
 import fcntl
 import json
 from pathlib import Path
+import re
 import sqlite3
 import uuid
 
@@ -314,15 +316,102 @@ class Store:
             )
 
     def recover(self):
-        # Only call after acquiring the exclusive Worker lock.
+        """Recover interrupted tasks, promoting only a verified final checkpoint.
+
+        The scanner currently has one atomic report unit, not resumable shards.
+        A report is recoverable only after the Worker has written its final
+        manifest. Source-loaded/core-running outputs are never treated as done.
+        """
+        recovered = {"published": 0, "interrupted": 0, "cancelled": 0}
         with self.connect() as db:
-            db.execute(
-                "UPDATE jobs SET status='interrupted',stage='interrupted',finished_at=?,error=? WHERE status='running'",
-                (
-                    now(),
-                    "Worker stopped before committing a complete result; retry explicitly",
-                ),
-            )
+            db.execute("BEGIN IMMEDIATE")
+            rows = db.execute("SELECT * FROM jobs WHERE status='running'").fetchall()
+            for raw in rows:
+                job = self.job_row(raw)
+                stamp = now()
+                if job["cancel_requested"]:
+                    status, digest = "cancelled", None
+                    error = "Cancellation was pending when Worker stopped; result was not published"
+                    stage, event = "cancelled", "cancelled"
+                    recovered["cancelled"] += 1
+                else:
+                    checkpoint = self._verified_artifact_checkpoint(job)
+                    if checkpoint is not None:
+                        status, digest = checkpoint
+                        error = None
+                        stage, event = "result_recovered", "result_recovered"
+                        recovered["published"] += 1
+                    else:
+                        status, digest = "interrupted", None
+                        error = (
+                            "Worker stopped before a verified final report checkpoint; "
+                            "incomplete analysis remains unknown and must be retried"
+                        )
+                        stage, event = "interrupted", "interrupted"
+                        recovered["interrupted"] += 1
+                db.execute(
+                    "UPDATE jobs SET status=?,stage=?,finished_at=?,error=?,report_sha256=?,worker_pid=NULL "
+                    "WHERE id=? AND status='running'",
+                    (status, stage, stamp, error, digest, job["id"]),
+                )
+                message = (
+                    "Recovered a fully verified atomic report checkpoint; no partial scan work was resumed"
+                    if status in {"completed", "completed_with_limitations"}
+                    else error
+                )
+                db.execute(
+                    "INSERT INTO events(job_id,created_at,stage,message) VALUES(?,?,?,?)",
+                    (job["id"], stamp, event, message[:4000]),
+                )
+        return recovered
+
+    def _verified_artifact_checkpoint(self, job):
+        """Return (report status, report digest) only for a complete bound manifest."""
+        key = job["id"]
+        if not isinstance(key, str) or re.fullmatch(r"[a-f0-9]{32}", key) is None:
+            return None
+        artifacts_root = self.root / "artifacts"
+        job_dir = artifacts_root / key
+        try:
+            root_resolved = artifacts_root.resolve(strict=True)
+            directory = job_dir.resolve(strict=True)
+            if directory.parent != root_resolved or not directory.is_dir():
+                return None
+            manifest_path = directory / "manifest.json"
+            report_path = directory / "report.json"
+            markdown_path = directory / "report.md"
+            if any(path.is_symlink() or not path.is_file() for path in
+                   (manifest_path, report_path, markdown_path)):
+                return None
+            if (manifest_path.stat().st_size > 1024 * 1024
+                    or report_path.stat().st_size > 64 * 1024 * 1024
+                    or markdown_path.stat().st_size > 64 * 1024 * 1024):
+                return None
+            manifest = json.loads(manifest_path.read_bytes())
+            report_bytes = report_path.read_bytes()
+            markdown_bytes = markdown_path.read_bytes()
+            report = json.loads(report_bytes)
+        except (OSError, ValueError, UnicodeError, json.JSONDecodeError):
+            return None
+        report_hash = hashlib.sha256(report_bytes).hexdigest()
+        markdown_hash = hashlib.sha256(markdown_bytes).hexdigest()
+        if (not isinstance(manifest, dict) or manifest.get("schema_version") != 1
+                or manifest.get("job_id") != key or manifest.get("spec") != job["spec"]):
+            return None
+        hashes = manifest.get("artifacts")
+        if (not isinstance(hashes, dict) or hashes.get("report.json") != report_hash
+                or hashes.get("report.md") != markdown_hash):
+            return None
+        status = report.get("status") if isinstance(report, dict) else None
+        spec = job["spec"]
+        if (status not in {"completed", "completed_with_limitations"}
+                or report.get("commit") != spec.get("commit")
+                or report.get("git_tree") != spec.get("git_tree")
+                or report.get("repository") != spec.get("repository")):
+            return None
+        if spec.get("audit_plan") is not None and report.get("audit_plan") != spec.get("audit_plan"):
+            return None
+        return status, report_hash
 
     def add_review(self, job_id, candidate_id, status, reviewer, notes, expected_id):
         with self.connect() as db:
