@@ -322,6 +322,7 @@ def execute_quick_screen(settings, task: dict[str, Any], provider=None, ops=None
             or provider.model != spec.get("authorization", {}).get("model")
             or not isinstance(manifest, dict)
             or content_sha256(manifest) != spec.get("consent_sha256")
+            or manifest.get("prompt_version") != PROMPT_VERSION
             or manifest.get("group") != spec.get("group")
             or manifest.get("evidence") != spec.get("evidence")
             or manifest.get("consent_expires_at") != expires_at

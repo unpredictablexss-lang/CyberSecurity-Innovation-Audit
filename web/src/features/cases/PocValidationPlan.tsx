@@ -1,6 +1,7 @@
 import React from "react";
 import { Alert, Card, Collapse, Descriptions, Empty, List, Space, Tag, Typography } from "antd";
 import { buildPocValidationPlan } from "./pocPlanModel.js";
+import ChineseNarrative from "./ChineseNarrative";
 
 const { Paragraph, Text } = Typography;
 
@@ -12,36 +13,36 @@ export default function PocValidationPlan({ candidateRow, operations = [] }: { c
       message={plan.sourceBindingComplete ? "来源字段齐全，但未重新核验 Git 对象" : "来源记录不完整"}
       description={plan.sourceBindingComplete
         ? "以下身份值来自扫描报告；本页面没有重新从目标 Git 仓库校验 tree、blob 或内容哈希。"
-        : "缺项：" + (plan.bindingMissingLabels.join("、") || "来源记录不完整") + "。计划仍保持 candidate / unknown。"} />
+        : "缺项：" + (plan.bindingMissingLabels.join("、") || "来源记录不完整") + "。计划仍保持候选 / 未知状态。"} />
     <Descriptions className="section-gap" bordered size="small" column={{ xs: 1, md: 2 }}>
-      <Descriptions.Item label="候选 ID"><Text code>{binding.candidateId || "unknown"}</Text></Descriptions.Item>
-      <Descriptions.Item label="完整固定提交"><Text code>{binding.commit || "unknown"}</Text></Descriptions.Item>
-      <Descriptions.Item label="报告 SHA-256"><Text style={{ wordBreak: "break-all" }}>{binding.reportSha256 || "unknown"}</Text></Descriptions.Item>
-      <Descriptions.Item label="源码 SHA-256"><Text style={{ wordBreak: "break-all" }}>{binding.sourceSha256 || "unknown"}</Text></Descriptions.Item>
-      <Descriptions.Item label="源码快照 SHA-256"><Text style={{ wordBreak: "break-all" }}>{binding.snapshotSha256 || "unknown"}</Text></Descriptions.Item>
-      <Descriptions.Item label="Git tree OID"><Text code>{binding.treeOid || "unknown"}</Text></Descriptions.Item>
-      <Descriptions.Item label="Git blob OID"><Text code>{binding.sourceBlobOid || "unknown"}</Text></Descriptions.Item>
-      <Descriptions.Item label="扫描配置">{binding.profileId || "unknown"}</Descriptions.Item>
-      <Descriptions.Item label="检测器 / 版本">{binding.detectorId || "unknown"} / {binding.detectorVersion || "unknown"}</Descriptions.Item>
-      <Descriptions.Item label="规则 / 版本">{binding.ruleId || "unknown"} / {binding.ruleVersion || "unknown"}</Descriptions.Item>
+      <Descriptions.Item label="候选 ID"><Text code>{binding.candidateId || "未知"}</Text></Descriptions.Item>
+      <Descriptions.Item label="完整固定提交"><Text code>{binding.commit || "未知"}</Text></Descriptions.Item>
+      <Descriptions.Item label="报告 SHA-256"><Text style={{ wordBreak: "break-all" }}>{binding.reportSha256 || "未知"}</Text></Descriptions.Item>
+      <Descriptions.Item label="源码 SHA-256"><Text style={{ wordBreak: "break-all" }}>{binding.sourceSha256 || "未知"}</Text></Descriptions.Item>
+      <Descriptions.Item label="源码快照 SHA-256"><Text style={{ wordBreak: "break-all" }}>{binding.snapshotSha256 || "未知"}</Text></Descriptions.Item>
+      <Descriptions.Item label="Git tree OID"><Text code>{binding.treeOid || "未知"}</Text></Descriptions.Item>
+      <Descriptions.Item label="Git blob OID"><Text code>{binding.sourceBlobOid || "未知"}</Text></Descriptions.Item>
+      <Descriptions.Item label="扫描配置">{binding.profileId || "未知"}</Descriptions.Item>
+      <Descriptions.Item label="检测器 / 版本">{binding.detectorId || "未知"} / {binding.detectorVersion || "未知"}</Descriptions.Item>
+      <Descriptions.Item label="规则 / 版本">{binding.ruleId || "未知"} / {binding.ruleVersion || "未知"}</Descriptions.Item>
       <Descriptions.Item label="来源状态">{binding.identityStatusLabel}</Descriptions.Item>
-      <Descriptions.Item label="原始校验说明">{binding.verification}</Descriptions.Item>
-      <Descriptions.Item label="源码字节范围">{binding.byteStart ?? "unknown"}–{binding.byteEnd ?? "unknown"}</Descriptions.Item>
+      <Descriptions.Item label="原始校验说明"><ChineseNarrative value={binding.verification} /></Descriptions.Item>
+      <Descriptions.Item label="源码字节范围">{binding.byteStart ?? "未知"}–{binding.byteEnd ?? "未知"}</Descriptions.Item>
     </Descriptions>
     <Card className="section-gap" size="small" title="人工登记的源码位置">
       {plan.sourceEvidence.length
         ? <List size="small" dataSource={plan.sourceEvidence} renderItem={(item: any) =>
           <List.Item><Space direction="vertical">
-            <Text strong>{item.file}:{item.startLine ?? "?"}{item.endLine ? "–" + item.endLine : ""} · {item.kind}</Text>
-            <Text>{item.note}</Text><Text type="secondary">证据 ID：{item.id}</Text>
+            <Text strong>{item.file}:{item.startLine ?? "?"}{item.endLine ? "–" + item.endLine : ""} · <ChineseNarrative value={item.kind || "人工证据"} /></Text>
+            <ChineseNarrative value={item.note} /><Text type="secondary">证据 ID：{item.id}</Text>
           </Space></List.Item>} />
         : <Text type="secondary">暂无与候选文件匹配的人工位置记录。</Text>}
     </Card>
-    <Card className="section-gap" size="small" title="与本候选绑定的 Agent 调查">
+    <Card className="section-gap" size="small" title="与本候选绑定的智能调查">
       {plan.matchingAgentOperationIds.length
         ? <List size="small" dataSource={plan.matchingAgentOperationIds} renderItem={(id: string) =>
-          <List.Item><Space><Text>匹配的 Agent 调查记录</Text><Text code>{id}</Text></Space></List.Item>} />
-        : <Text type="secondary">没有找到来源绑定与本候选一致的 Agent 调查记录。</Text>}
+          <List.Item><Space><Text>匹配的智能调查记录</Text><Text code>{id}</Text></Space></List.Item>} />
+        : <Text type="secondary">没有找到来源绑定与本候选一致的智能调查记录。</Text>}
     </Card>
     <Card className="section-gap" size="small" title="同仓库、同提交的其他验证记录">
       {plan.validationContext.length
@@ -59,10 +60,10 @@ export default function PocValidationPlan({ candidateRow, operations = [] }: { c
     </Card>
   </>;
 
-  return <Card className="section-gap" size="small" title="PoC 计划草案（未执行）">
+  return <Card className="section-gap" size="small" title="验证计划草案（未执行）">
     <Alert type="warning" showIcon
-      message="当前结论：候选（candidate）/ 待确认（unknown）"
-      description="这是待人工审查的验证计划，不是执行结果；没有生成可执行 PoC，也不表示漏洞已经确认。" />
+      message="当前结论：候选 / 待确认"
+      description="这是待人工审查的验证计划，不是执行结果；没有生成可执行验证用例，也不表示漏洞已经确认。" />
     <Descriptions className="section-gap" bordered size="small" column={{ xs: 1, md: 3 }}>
       <Descriptions.Item label="仓库">{binding.repository || "待确认"}</Descriptions.Item>
       <Descriptions.Item label="固定版本">{binding.commit ? String(binding.commit || "").slice(0, 12) : "待确认"}</Descriptions.Item>
@@ -76,16 +77,16 @@ export default function PocValidationPlan({ candidateRow, operations = [] }: { c
             <Tag color={item.status === "satisfied" ? "blue" : "orange"}>{item.statusLabel}</Tag>
             <Text type="secondary">来源：{item.sourceLabel}</Text>
           </Space>
-          <Text>{item.description}</Text>
+          <ChineseNarrative value={item.description} />
         </Space></List.Item>} />}
       <List size="small" dataSource={plan.unknowns} renderItem={(item: string) =>
-        <List.Item><Space><Tag color="orange">待确认</Tag><Text>{item}</Text></Space></List.Item>} />
+        <List.Item><Space><Tag color="orange">待确认</Tag><ChineseNarrative value={item} /></Space></List.Item>} />
     </Card>
     <Card className="section-gap" size="small" title="验证步骤">
       <List size="small" dataSource={plan.sections} renderItem={(item: any, index: number) =>
         <List.Item><Space direction="vertical" style={{ width: "100%" }}>
-          <Text strong>{index + 1}. {item.title}</Text>
-          <Paragraph style={{ marginBottom: 0 }}>{item.detail}</Paragraph>
+          <Text strong>{index + 1}. <ChineseNarrative value={item.title} /></Text>
+          <Paragraph style={{ marginBottom: 0 }}><ChineseNarrative value={item.detail} /></Paragraph>
         </Space></List.Item>} />
     </Card>
     <Collapse className="section-gap" items={[{

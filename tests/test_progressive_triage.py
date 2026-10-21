@@ -725,6 +725,9 @@ class QuickScreenTests(unittest.TestCase):
         self.assertEqual(len(provider.calls), 1)
         payload, kwargs = provider.calls[0]
         self.assertNotIn("tools", payload)
+        self.assertIn("所有自然语言字段", payload["instructions"])
+        self.assertIn("简体中文", payload["instructions"])
+        self.assertIn("quick_assessment 必须严格返回", payload["instructions"])
         self.assertEqual(payload["max_output_tokens"], 512)
         self.assertEqual(kwargs, {"timeout": 90, "max_retries": 0})
         self.assertEqual(result["consent_sha256"], self.authorization["consent_sha256"])
@@ -1064,6 +1067,37 @@ class QuickScreenOperationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             result = execute_quick_screen(SimpleNamespace(data_dir=Path(directory)), task, provider)
         self.assertEqual(result["state"], "quick_unknown")
+        self.assertEqual(provider.calls, 0)
+
+    def test_old_prompt_consent_never_runs_after_chinese_prompt_update(self):
+        from src.workbench.progressive_triage.contracts import content_sha256
+        from src.workbench.progressive_triage.quick_screen_operation import execute_quick_screen
+        from types import SimpleNamespace
+
+        fixture, task = self._task()
+        spec = task["spec"]
+        spec["consent_manifest"]["prompt_version"] = "quick-screen-evidence-only-v1"
+        digest = content_sha256(spec["consent_manifest"])
+        spec["consent_sha256"] = digest
+        spec["authorization"]["consent_sha256"] = digest
+
+        class Provider:
+            configured = True
+            fingerprint = fixture.provider_fingerprint
+            model = fixture.model
+
+            def __init__(self):
+                self.calls = 0
+
+            def create(self, *args, **kwargs):
+                self.calls += 1
+                raise AssertionError("an older consent must not authorize the new prompt")
+
+        provider = Provider()
+        with tempfile.TemporaryDirectory() as directory:
+            result = execute_quick_screen(SimpleNamespace(data_dir=Path(directory)), task, provider)
+        self.assertEqual(result["state"], "quick_unknown")
+        self.assertEqual(result["reason_code"], "authorization_binding_changed")
         self.assertEqual(provider.calls, 0)
 
 

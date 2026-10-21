@@ -31,7 +31,7 @@ test("bound Agent vulnerability report fields remain readable and source citatio
   assert.equal(report.citations[0].evidenceId, "ev-1");
   assert.equal(report.citations[1].location, "src/auth.cpp:31–33");
   assert.equal(report.citations[1].quote, "callSensitive();");
-  assert.match(report.boundary, /candidate \/ unknown/);
+  assert.match(report.boundary, /候选 \/ 未知/);
 });
 
 test("PoC draft is always identified as unexecuted, unverified, and candidate-only", () => {
@@ -56,7 +56,7 @@ test("PoC draft is always identified as unexecuted, unverified, and candidate-on
   assert.deepEqual(draft.prerequisites, ["Use an isolated disposable build."]);
   assert.deepEqual(draft.runSteps, ["Build in the reviewed test environment."]);
   assert.equal(draft.citations[0].location, "src/auth.cpp:8");
-  assert.match(draft.boundary, /AI 草案 · 未执行 · 未验证 · candidate \/ unknown/);
+  assert.match(draft.boundary, /智能调查草案 · 未执行 · 未验证 · 候选 \/ 未知/);
 });
 
 test("insufficient evidence remains explicit and malformed states never imply execution", () => {
@@ -64,7 +64,7 @@ test("insufficient evidence remains explicit and malformed states never imply ex
     poc_draft: { status: "insufficient_evidence", expected_observation: "Not established." },
   }).pocDraft;
   assert.equal(insufficient.statusLabel, "证据不足");
-  assert.match(insufficient.boundary, /未执行 · 未验证 · candidate \/ unknown/);
+  assert.match(insufficient.boundary, /未执行 · 未验证 · 候选 \/ 未知/);
 
   const unknownStatus = buildAgentReportView({
     poc_draft: { status: "unexpected_status", code: "untrusted model text" },
@@ -188,9 +188,9 @@ test("unknown stage states and invalid call counters stay unknown instead of bei
       status: "future_status", calls_used: "1", maximum_model_calls: -2,
     },
   }).artifactGeneration;
-  assert.equal(view.statusLabel, "未知 / 未记录");
-  assert.equal(view.reportStatusLabel, "未知 / 未记录");
-  assert.equal(view.pocStatusLabel, "未知 / 未记录");
+  assert.equal(view.statusLabel, "未知或未记录");
+  assert.equal(view.reportStatusLabel, "未知或未记录");
+  assert.equal(view.pocStatusLabel, "未知或未记录");
   assert.equal(view.callsUsed, null);
   assert.equal(view.maximumModelCalls, null);
 });
@@ -217,8 +217,8 @@ test("real Agent operation result path exposes bound report, repair suggestion, 
   assert.equal(view.vulnerabilityReport.remediation,
     "Review and add a permission check before the sensitive call.");
   assert.equal(view.vulnerabilityReport.citations[0].location, "src/auth.cpp:42");
-  assert.match(view.vulnerabilityReport.boundary, /candidate \/ unknown/);
+  assert.match(view.vulnerabilityReport.boundary, /候选 \/ 未知/);
   assert.equal(view.pocDraft.statusLabel, "待人工审查的草案");
-  assert.match(view.pocDraft.boundary, /AI 草案 · 未执行 · 未验证 · candidate \/ unknown/);
+  assert.match(view.pocDraft.boundary, /智能调查草案 · 未执行 · 未验证 · 候选 \/ 未知/);
   assert.equal(view.pocDraft.code, "// displayed as text only");
 });

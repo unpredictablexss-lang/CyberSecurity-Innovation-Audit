@@ -38,13 +38,13 @@ test("plan binds to exact candidate source and imports obligations only from mat
   assert.equal(plan.sourceBinding.treeOid, commit("e"));
   assert.equal(plan.sourceBinding.sourceBlobOid, commit("f"));
   assert.equal(plan.sourceBindingComplete, true);
-  assert.equal(plan.findingState, "candidate / unknown");
+  assert.equal(plan.findingState, "候选 / 未知");
   assert.equal(plan.executionStatus, "not_executed");
-  assert.equal(plan.title, "PoC 计划草案（未执行）");
+  assert.equal(plan.title, "验证计划草案（未执行）");
   assert.deepEqual(plan.matchingAgentOperationIds, ["op-agent-1"]);
   assert.deepEqual(plan.obligations.map((item) => item.kind), ["reachability", "impact"]);
   assert.deepEqual(plan.obligations.map((item) => item.sourceLabel), [
-    "静态扫描候选", "绑定到本候选的 Agent 调查",
+    "静态扫描候选", "绑定到本候选的智能调查",
   ]);
   assert.equal(plan.obligations[0].statusLabel, "待确认");
   assert.equal(plan.obligations[0].kindLabel, "入口与调用链");
@@ -80,7 +80,7 @@ test("missing source identity stays unknown and plan contains no executable comm
   const plan = buildPocValidationPlan(incomplete, []);
   assert.equal(plan.sourceBindingComplete, false);
   assert.equal(plan.executionStatus, "not_executed");
-  assert.equal(plan.findingState, "candidate / unknown");
+  assert.equal(plan.findingState, "候选 / 未知");
   assert.ok(plan.bindingMissing.includes("full commit SHA"));
   assert.ok(plan.bindingMissing.includes("source snapshot SHA-256"));
   assert.ok(plan.bindingMissing.includes("Git tree OID"));

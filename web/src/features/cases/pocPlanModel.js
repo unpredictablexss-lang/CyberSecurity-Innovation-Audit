@@ -67,7 +67,7 @@ function statusLabel(status) {
 function sourceLabel(source) {
   const value = text(source);
   if (value === "scanner candidate") return "静态扫描候选";
-  if (value.startsWith("matching Agent operation ")) return "绑定到本候选的 Agent 调查";
+  if (value.startsWith("matching intelligent investigation operation ")) return "绑定到本候选的智能调查";
   return "来源待确认";
 }
 
@@ -102,7 +102,7 @@ function sourceBinding(row = {}) {
     byteEnd: Number.isInteger(identity.byte_end) ? identity.byte_end : null,
     identityStatus: text(identity.status) || "unknown",
     identityStatusLabel: identityStatusLabel(text(identity.status)),
-    verification: text(identity.verification) || "not recorded",
+    verification: text(identity.verification) || "未记录",
   };
   const missing = [];
   if (!binding.repository) missing.push("repository");
@@ -190,7 +190,7 @@ export function buildPocValidationPlan(candidateRow = {}, operations = []) {
   for (const operation of matchingAgents) {
     const agentObligations = list(operation.agent_triage?.initial_evidence?.context?.evidence_obligations);
     agentObligations.forEach((item, index) => {
-      const normalized = normalizeObligation(item, `matching Agent operation ${operation.id || "unknown"}`, index);
+      const normalized = normalizeObligation(item, `matching intelligent investigation operation ${operation.id || "unknown"}`, index);
       if (normalized) obligations.push(normalized);
     });
   }
@@ -198,12 +198,12 @@ export function buildPocValidationPlan(candidateRow = {}, operations = []) {
   const sourceEvidence = list(candidateRow.source_evidence)
     .filter((item) => item && typeof item === "object" && Boolean(binding.file) && item.file === binding.file)
     .map((item) => ({
-      id: text(item.id) || "unrecorded evidence ID",
+      id: text(item.id) || "未记录证据 ID",
       file: text(item.file) || binding.file,
       startLine: Number.isInteger(item.start_line) ? item.start_line : null,
       endLine: Number.isInteger(item.end_line) ? item.end_line : null,
-      note: text(item.note) || text(item.observation) || "No observation recorded",
-      kind: text(item.kind) || "reviewer-recorded source note",
+      note: text(item.note) || text(item.observation) || "未记录观察说明",
+      kind: text(item.kind) || "人工登记的源码说明",
     }));
 
   const unknowns = [];
@@ -216,9 +216,9 @@ export function buildPocValidationPlan(candidateRow = {}, operations = []) {
   unknowns.push("产品入口是否可达、谁能触发及可能影响，仍需独立核实和人工复核。");
 
   return {
-    title: "PoC 计划草案（未执行）",
+    title: "验证计划草案（未执行）",
     executionStatus: "not_executed",
-    findingState: "candidate / unknown",
+    findingState: "候选 / 未知",
     sourceBinding: binding,
     sourceBindingComplete: missing.length === 0,
     bindingMissing: missing,
@@ -244,7 +244,7 @@ export function buildPocValidationPlan(candidateRow = {}, operations = []) {
       },
       {
         title: "输入与安全控制",
-        detail: "输入规格仍未知；由人工依据上述证据义务和固定 Harness 的已审查清单确定，不在此生成 payload。使用一次性离线环境、无生产凭据和外部副作用、资源限额，并记录基线/产物哈希。",
+        detail: "输入规格仍未知；由人工依据上述证据义务和固定隔离测试环境的已审查清单确定，不在此生成测试输入。使用一次性离线环境、无生产凭据和外部副作用、资源限额，并记录基线/产物哈希。",
       },
       {
         title: "触发与观测",
