@@ -15,6 +15,12 @@ test("automatic rule IDs come from approved service metadata and exclude example
 test("snapshot delegates automatic rule selection to the server and drops UI-only controls", () => {
   assert.deepEqual(snapshotPayload(values, detectors), { repository_id: "repo", revision: "refs/tags/a", include_paths: ["src", "include"], audit_mode: "standard_review", timeout_seconds: 60, memory_mb: 512 });
 });
+test("incremental base is optional, normalized, and restricted to a complete commit SHA", () => {
+  const base = "A".repeat(40);
+  assert.equal(snapshotPayload({ ...values, base_commit: base }, detectors).base_commit, base.toLowerCase());
+  assert.equal("base_commit" in snapshotPayload(values, detectors), false);
+  assert.throws(() => snapshotPayload({ ...values, base_commit: "main" }, detectors), /完整 Git Commit SHA/);
+});
 test("invalid include scopes and budgets fail before submission", () => {
   for (const value of ["../escape", "/absolute", "a/../b", "a\\b", "src,src", ""]) assert.throws(() => includePaths(value));
   assert.throws(() => snapshotPayload({ ...values, memory_mb: 1 }, detectors), /预算/);

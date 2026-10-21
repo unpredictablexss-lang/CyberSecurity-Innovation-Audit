@@ -8,10 +8,20 @@ from pathlib import Path
 class Settings:
     data_dir: Path
     _configured_target_roots: tuple[Path, ...] = field(repr=False)
+    performance_mode: str
+    max_concurrent_scans: int
 
-    def __init__(self, data_dir, target_roots):
+    def __init__(self, data_dir, target_roots, performance_mode="balanced", max_concurrent_scans=None):
         object.__setattr__(self, "data_dir", Path(data_dir))
         object.__setattr__(self, "_configured_target_roots", tuple(Path(root) for root in target_roots))
+        if performance_mode not in {"low", "balanced", "high"}:
+            raise ValueError("performance_mode must be low, balanced, or high")
+        defaults = {"low": 1, "balanced": 2, "high": 4}
+        limit = defaults[performance_mode] if max_concurrent_scans is None else max_concurrent_scans
+        if not isinstance(limit, int) or isinstance(limit, bool) or not 1 <= limit <= defaults[performance_mode]:
+            raise ValueError("max_concurrent_scans must be within the selected mode's safe limit")
+        object.__setattr__(self, "performance_mode", performance_mode)
+        object.__setattr__(self, "max_concurrent_scans", limit)
 
     @property
     def target_roots(self):
@@ -81,7 +91,13 @@ class Settings:
             raise ValueError("OHSCANNER_CONFIG target_roots must be a list of path strings")
         configured = tuple(resolve(value, "OHSCANNER_TARGET_ROOTS/target_roots entry") for value in root_values)
         managed_cache = data / "repo-cache"
-        return cls(data, configured + (managed_cache,))
+        mode = os.environ.get("OHSCANNER_PERFORMANCE_MODE", config.get("performance_mode", "balanced"))
+        defaults = {"low": 1, "balanced": 2, "high": 4}
+        if mode not in defaults:
+            raise ValueError("performance_mode must be low, balanced, or high")
+        requested = os.environ.get("OHSCANNER_MAX_CONCURRENT_SCANS", config.get("max_concurrent_scans"))
+        limit = defaults[mode] if requested is None else int(requested)
+        return cls(data, configured + (managed_cache,), mode, limit)
 
     def initialize(self):
         self.data_dir.mkdir(parents=True, exist_ok=True, mode=0o700)

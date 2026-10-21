@@ -1,0 +1,78 @@
+{
+  "sha": "8044daa1040218b6b6b2088c3df334d5ae047c1b",
+  "node_id": "C_kwDONHSHNtoAKDgwNDRkYWExMDQwMjE4YjZiNmIyMDg4YzNkZjMzNGQ1YWUwNDdjMWI",
+  "commit": {
+    "author": {
+      "name": "openharmony_ci",
+      "email": "openharmony_ci@noreply.gitcode.com",
+      "date": "2026-10-06T09:09:14Z"
+    },
+    "committer": {
+      "name": "openharmony_ci",
+      "email": "openharmony_ci@noreply.gitcode.com",
+      "date": "2026-10-06T09:09:14Z"
+    },
+    "message": "!659 merge fix_fdsan2 into master\n\nfdsan2\n\nCreated-by: zhangmingqi\nCommit-by: weixin_57688977\nMerged-by: openharmony_ci\nDescription: ### 一、内容说明（相关的Issue）\nhttps://gitcode.com/openharmony/commonlibrary_c_utils/issues/807\n\n\n### 二、建议测试周期和提测地址  \n  建议测试完成时间：xxxx.xx.xx  \n  投产上线时间：xxxx.xx.xx  \n  提测地址：CI环境/压测环境  \n  测试账号：  \n\n### 三、变更内容\n  * 3.1 关联PR列表\n\n  * 3.2 数据库和部署说明  \n    1. 常规更新 \n    2. 重启unicorn\n    3. 重启sidekiq\n    4. 迁移任务：是否有迁移任务，没有写 \"无\"\n    5. rake脚本：`bundle exec xxx RAILS_ENV = production`；没有写 \"无\"\n\n  * 3.4 其他技术优化内容（做了什么，变更了什么）\n    - 重构了 xxxx 代码\n    - xxxx 算法优化\n\n\n  * 3.5 废弃通知（什么字段、方法弃用？）\n\n\n\n  * 3.6  后向不兼容变更（是否有无法向后兼容的变更？）\n\n\n  \n### 四、研发自测点（自测哪些？冒烟用例全部自测？）\n  自测测试结论：\n\n\n### 五、测试关注点（需要提醒QA重点关注的、可能会忽略的地方）\n  检查点：\n\n| 需求名称 | 是否影响xx公共模块 | 是否需要xx功能 | 需求升级是否依赖其他子产品 |\n|------|------------|----------|---------------|\n| xxx  | 否          | 需要       | 不需要           |\n|      |            |          |               |\n\n  接口测试：\n\n  性能测试：\n\n  并发测试：\n\n  其他：\n\n\n\nSee merge request: openharmony/commonlibrary_c_utils!659",
+    "tree": {
+      "sha": "df1f614b9bff8bac53686a1b8a4c324884a2473b",
+      "url": "https://api.github.com/repos/openharmony/commonlibrary_c_utils/git/trees/df1f614b9bff8bac53686a1b8a4c324884a2473b"
+    },
+    "url": "https://api.github.com/repos/openharmony/commonlibrary_c_utils/git/commits/8044daa1040218b6b6b2088c3df334d5ae047c1b",
+    "comment_count": 0,
+    "verification": {
+      "verified": false,
+      "reason": "unsigned",
+      "signature": null,
+      "payload": null,
+      "verified_at": null
+    }
+  },
+  "url": "https://api.github.com/repos/openharmony/commonlibrary_c_utils/commits/8044daa1040218b6b6b2088c3df334d5ae047c1b",
+  "html_url": "https://github.com/openharmony/commonlibrary_c_utils/commit/8044daa1040218b6b6b2088c3df334d5ae047c1b",
+  "comments_url": "https://api.github.com/repos/openharmony/commonlibrary_c_utils/commits/8044daa1040218b6b6b2088c3df334d5ae047c1b/comments",
+  "author": null,
+  "committer": null,
+  "parents": [
+    {
+      "sha": "17fd98d4189f27738b0656988d4d59611926a4f4",
+      "url": "https://api.github.com/repos/openharmony/commonlibrary_c_utils/commits/17fd98d4189f27738b0656988d4d59611926a4f4",
+      "html_url": "https://github.com/openharmony/commonlibrary_c_utils/commit/17fd98d4189f27738b0656988d4d59611926a4f4"
+    },
+    {
+      "sha": "4a82bea28594c639160f226b6811dc50a3de54de",
+      "url": "https://api.github.com/repos/openharmony/commonlibrary_c_utils/commits/4a82bea28594c639160f226b6811dc50a3de54de",
+      "html_url": "https://github.com/openharmony/commonlibrary_c_utils/commit/4a82bea28594c639160f226b6811dc50a3de54de"
+    }
+  ],
+  "stats": {
+    "total": 38,
+    "additions": 37,
+    "deletions": 1
+  },
+  "files": [
+    {
+      "sha": "79e1503f998a5d7c7cf41d3400843a010c6daf30",
+      "filename": "base/src/event_demultiplexer.cpp",
+      "status": "modified",
+      "additions": 19,
+      "deletions": 0,
+      "changes": 19,
+      "blob_url": "https://github.com/openharmony/commonlibrary_c_utils/blob/8044daa1040218b6b6b2088c3df334d5ae047c1b/base%2Fsrc%2Fevent_demultiplexer.cpp",
+      "raw_url": "https://github.com/openharmony/commonlibrary_c_utils/raw/8044daa1040218b6b6b2088c3df334d5ae047c1b/base%2Fsrc%2Fevent_demultiplexer.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/commonlibrary_c_utils/contents/base%2Fsrc%2Fevent_demultiplexer.cpp?ref=8044daa1040218b6b6b2088c3df334d5ae047c1b",
+      "patch": "@@ -19,9 +19,16 @@\n #include \"event_handler.h\"\n #include \"common_timer_errors.h\"\n #include \"utils_log.h\"\n+#ifdef UTILS_FDSAN\n+#include <stdio.h>\n+#endif\n+\n \n namespace OHOS {\n namespace Utils {\n+#ifdef UTILS_FDSAN\n+static constexpr uint64_t EVENT_DEMULTIPLEXER_FDSAN_TAG = 0xD003D00;\n+#endif\n \n static const int EPOLL_MAX_EVENS_INIT = 8;\n static const int HALF_OF_MAX_EVENT = 2;\n@@ -35,6 +42,11 @@ EventDemultiplexer::EventDemultiplexer()\n     : epollFd_(epoll_create1(EPOLL_CLOEXEC)), maxEvents_(EPOLL_MAX_EVENS_INIT), mutex_(), eventHandlers_(),\n     epollCtlErrQueue_()\n {\n+#ifdef UTILS_FDSAN\n+    if (epollFd_ >= 0) {\n+        fdsan_exchange_owner_tag(epollFd_, 0, EVENT_DEMULTIPLEXER_FDSAN_TAG);\n+    }\n+#endif\n }\n \n EventDemultiplexer::~EventDemultiplexer()\n@@ -49,14 +61,21 @@ uint32_t EventDemultiplexer::StartUp()\n         if (epollFd_ < 0) {\n             return TIMER_ERR_BADF;\n         }\n+#ifdef UTILS_FDSAN\n+        fdsan_exchange_owner_tag(epollFd_, 0, EVENT_DEMULTIPLEXER_FDSAN_TAG);\n+#endif\n     }\n     return TIMER_ERR_OK;\n }\n \n void EventDemultiplexer::CleanUp()\n {\n     if (epollFd_ != EPOLL_INVALID_FD) {\n+#ifdef UTILS_FDSAN\n+        fdsan_close_with_tag(epollFd_, EVENT_DEMULTIPLEXER_FDSAN_TAG);\n+#else\n         close(epollFd_);\n+#endif\n         epollFd_ = EPOLL_INVALID_FD;\n     }\n }"
+    },
+    {
+      "sha": "500c281c0dbb856194552d0aa3636a46e966bc17",
+      "filename": "base/src/timer_event_handler.cpp",
+      "status": "modified",
+      "additions": 18,
+      "deletions": 1,
+      "changes": 19,
+      "blob_url": "https://github.com/openharmony/commonlibrary_c_utils/blob/8044daa1040218b6b6b2088c3df334d5ae047c1b/base%2Fsrc%2Ftimer_event_handler.cpp",
+      "raw_url": "https://github.com/openharmony/commonlibrary_c_utils/raw/8044daa1040218b6b6b2088c3df334d5ae047c1b/base%2Fsrc%2Ftimer_event_handler.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/commonlibrary_c_utils/contents/base%2Fsrc%2Ftimer_event_handler.cpp?ref=8044daa1040218b6b6b2088c3df334d5ae047c1b",
+      "patch": "@@ -20,9 +20,15 @@\n \n #include <sys/timerfd.h>\n #include <unistd.h>\n+#ifdef UTILS_FDSAN\n+#include <stdio.h>\n+#endif\n \n namespace OHOS {\n namespace Utils {\n+#ifdef UTILS_FDSAN\n+static constexpr uint64_t TIMER_EVENT_HANDLER_FDSAN_TAG = 0xD003D00;\n+#endif\n \n // Unit of measure conversion\n static const int MILLI_TO_BASE = 1000;\n@@ -36,11 +42,22 @@ TimerEventHandler::TimerEventHandler(EventReactor* p, uint32_t timeout /* ms */,\n       callback_(),\n       initInfo_()\n {\n+#ifdef UTILS_FDSAN\n+    if (GetHandle() >= 0) {\n+        fdsan_exchange_owner_tag(GetHandle(), 0, TIMER_EVENT_HANDLER_FDSAN_TAG);\n+    }\n+#endif\n }\n \n TimerEventHandler::~TimerEventHandler()\n {\n-    close(GetHandle());\n+    if (GetHandle() != INVALID_TIMER_FD) {\n+#ifdef UTILS_FDSAN\n+        fdsan_close_with_tag(GetHandle(), TIMER_EVENT_HANDLER_FDSAN_TAG);\n+#else\n+        close(GetHandle());\n+#endif\n+    }\n     SetHandle(INVALID_TIMER_FD);\n }\n "
+    }
+  ]
+}

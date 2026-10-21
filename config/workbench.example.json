@@ -4,5 +4,7 @@
     "~/openharmony-targets",
     "~/oh-audit-targets",
     "~/openharmony-audit/perf-corpus"
-  ]
+  ],
+  "performance_mode": "balanced",
+  "max_concurrent_scans": 2
 }

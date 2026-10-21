@@ -1,0 +1,162 @@
+{
+  "sha": "1d87ffd38ae919be33c0b7651773baa2488931b4",
+  "node_id": "C_kwDONHdiQtoAKDFkODdmZmQzOGFlOTE5YmUzM2MwYjc2NTE3NzNiYWEyNDg4OTMxYjQ",
+  "commit": {
+    "author": {
+      "name": "openharmony_ci",
+      "email": "openharmony_ci@noreply.gitcode.com",
+      "date": "2026-09-29T13:01:59Z"
+    },
+    "committer": {
+      "name": "openharmony_ci",
+      "email": "openharmony_ci@noreply.gitcode.com",
+      "date": "2026-09-29T13:01:59Z"
+    },
+    "message": "!1711 merge master into master\n\n收到有序事件后退出进程，未立即出现第二个订阅者回调结果\n\nCreated-by: lx180327070811\nCommit-by: lx180327070811\nMerged-by: openharmony_ci\nDescription: **IssueNo**:\r\n**Description**:\r\n**Sig**: SIG_BscSoftSrv\r\n**Feature or Bugfix**:\r\n**Binary Source**:\r\n**TDD Result**:\r\n**XTS Result**:\n\nSee merge request: openharmony/notification_common_event_service!1711",
+    "tree": {
+      "sha": "ce97a80fcef0387dc6f4fd7d578a036cf8cb267c",
+      "url": "https://api.github.com/repos/openharmony/notification_common_event_service/git/trees/ce97a80fcef0387dc6f4fd7d578a036cf8cb267c"
+    },
+    "url": "https://api.github.com/repos/openharmony/notification_common_event_service/git/commits/1d87ffd38ae919be33c0b7651773baa2488931b4",
+    "comment_count": 0,
+    "verification": {
+      "verified": false,
+      "reason": "unsigned",
+      "signature": null,
+      "payload": null,
+      "verified_at": null
+    }
+  },
+  "url": "https://api.github.com/repos/openharmony/notification_common_event_service/commits/1d87ffd38ae919be33c0b7651773baa2488931b4",
+  "html_url": "https://github.com/openharmony/notification_common_event_service/commit/1d87ffd38ae919be33c0b7651773baa2488931b4",
+  "comments_url": "https://api.github.com/repos/openharmony/notification_common_event_service/commits/1d87ffd38ae919be33c0b7651773baa2488931b4/comments",
+  "author": null,
+  "committer": null,
+  "parents": [
+    {
+      "sha": "1a18cc4fd3fbfe848b61e0c840c5a7b8748a5fcd",
+      "url": "https://api.github.com/repos/openharmony/notification_common_event_service/commits/1a18cc4fd3fbfe848b61e0c840c5a7b8748a5fcd",
+      "html_url": "https://github.com/openharmony/notification_common_event_service/commit/1a18cc4fd3fbfe848b61e0c840c5a7b8748a5fcd"
+    },
+    {
+      "sha": "8b794c29135efee1487fdfac42ed364418103831",
+      "url": "https://api.github.com/repos/openharmony/notification_common_event_service/commits/8b794c29135efee1487fdfac42ed364418103831",
+      "html_url": "https://github.com/openharmony/notification_common_event_service/commit/8b794c29135efee1487fdfac42ed364418103831"
+    }
+  ],
+  "stats": {
+    "total": 465,
+    "additions": 458,
+    "deletions": 7
+  },
+  "files": [
+    {
+      "sha": "3ee927b02118f9d17d611c0a17b6a38423b676a2",
+      "filename": "services/include/common_event_control_manager.h",
+      "status": "modified",
+      "additions": 8,
+      "deletions": 0,
+      "changes": 8,
+      "blob_url": "https://github.com/openharmony/notification_common_event_service/blob/1d87ffd38ae919be33c0b7651773baa2488931b4/services%2Finclude%2Fcommon_event_control_manager.h",
+      "raw_url": "https://github.com/openharmony/notification_common_event_service/raw/1d87ffd38ae919be33c0b7651773baa2488931b4/services%2Finclude%2Fcommon_event_control_manager.h",
+      "contents_url": "https://api.github.com/repos/openharmony/notification_common_event_service/contents/services%2Finclude%2Fcommon_event_control_manager.h?ref=1d87ffd38ae919be33c0b7651773baa2488931b4",
+      "patch": "@@ -59,6 +59,14 @@ class CommonEventControlManager : public std::enable_shared_from_this<CommonEven\n      */\n     std::shared_ptr<OrderedEventRecord> GetMatchingOrderedReceiver(const sptr<IRemoteObject> &proxy);\n \n+    /**\n+     * Finishes the ordered receiver whose proxy matches, so the ordered event\n+     * can continue when the receiver is unsubscribed or dies.\n+     *\n+     * @param proxy Indicates the current ordered receiver.\n+     */\n+    void FinishMatchingOrderedReceiver(const sptr<IRemoteObject> &proxy);\n+\n     /**\n      * Finishes the action of the current receiver.\n      *"
+    },
+    {
+      "sha": "75b488e52c697af6d99d574770c382a2628cfd00",
+      "filename": "services/include/common_event_manager_service.h",
+      "status": "modified",
+      "additions": 7,
+      "deletions": 0,
+      "changes": 7,
+      "blob_url": "https://github.com/openharmony/notification_common_event_service/blob/1d87ffd38ae919be33c0b7651773baa2488931b4/services%2Finclude%2Fcommon_event_manager_service.h",
+      "raw_url": "https://github.com/openharmony/notification_common_event_service/raw/1d87ffd38ae919be33c0b7651773baa2488931b4/services%2Finclude%2Fcommon_event_manager_service.h",
+      "contents_url": "https://api.github.com/repos/openharmony/notification_common_event_service/contents/services%2Finclude%2Fcommon_event_manager_service.h?ref=1d87ffd38ae919be33c0b7651773baa2488931b4",
+      "patch": "@@ -187,6 +187,13 @@ class CommonEventManagerService : public CommonEventStub {\n #endif\n     ErrCode Init();\n \n+    /**\n+     * Gets the common event control manager.\n+     *\n+     * @return Returns the common event control manager.\n+     */\n+    std::shared_ptr<CommonEventControlManager> GetControlManager() const;\n+\n private:\n     bool IsReady() const;\n "
+    },
+    {
+      "sha": "9741cfb7653ad13147e75a8a1cc98ca8dc9a7028",
+      "filename": "services/include/inner_common_event_manager.h",
+      "status": "modified",
+      "additions": 10,
+      "deletions": 0,
+      "changes": 10,
+      "blob_url": "https://github.com/openharmony/notification_common_event_service/blob/1d87ffd38ae919be33c0b7651773baa2488931b4/services%2Finclude%2Finner_common_event_manager.h",
+      "raw_url": "https://github.com/openharmony/notification_common_event_service/raw/1d87ffd38ae919be33c0b7651773baa2488931b4/services%2Finclude%2Finner_common_event_manager.h",
+      "contents_url": "https://api.github.com/repos/openharmony/notification_common_event_service/contents/services%2Finclude%2Finner_common_event_manager.h?ref=1d87ffd38ae919be33c0b7651773baa2488931b4",
+      "patch": "@@ -113,6 +113,16 @@ class InnerCommonEventManager {\n     void FinishReceiver(\n         const sptr<IRemoteObject> &proxy, const int32_t &code, const std::string &receiverData, const bool &abortEvent);\n \n+    /**\n+     * Gets the common event control manager.\n+     *\n+     * @return Returns the common event control manager.\n+     */\n+    std::shared_ptr<CommonEventControlManager> GetControlManager() const\n+    {\n+        return controlPtr_;\n+    }\n+\n     /**\n      * Freezes application.\n      *"
+    },
+    {
+      "sha": "a9400b3a56f498624c58b0408ebc3fd3836829e5",
+      "filename": "services/src/common_event_control_manager.cpp",
+      "status": "modified",
+      "additions": 12,
+      "deletions": 0,
+      "changes": 12,
+      "blob_url": "https://github.com/openharmony/notification_common_event_service/blob/1d87ffd38ae919be33c0b7651773baa2488931b4/services%2Fsrc%2Fcommon_event_control_manager.cpp",
+      "raw_url": "https://github.com/openharmony/notification_common_event_service/raw/1d87ffd38ae919be33c0b7651773baa2488931b4/services%2Fsrc%2Fcommon_event_control_manager.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/notification_common_event_service/contents/services%2Fsrc%2Fcommon_event_control_manager.cpp?ref=1d87ffd38ae919be33c0b7651773baa2488931b4",
+      "patch": "@@ -422,6 +422,18 @@ std::shared_ptr<OrderedEventRecord> CommonEventControlManager::GetMatchingOrdere\n     return nullptr;\n }\n \n+void CommonEventControlManager::FinishMatchingOrderedReceiver(const sptr<IRemoteObject> &proxy)\n+{\n+    EVENT_LOGD(LOG_TAG_CES, \"enter\");\n+    std::shared_ptr<OrderedEventRecord> sp = GetMatchingOrderedReceiver(proxy);\n+    if (sp) {\n+        EVENT_LOGD(LOG_TAG_CES, \"Unsubscribe the subscriber who is waiting to receive finish feedback\");\n+        int32_t code = sp->commonEventData->GetCode();\n+        std::string data = sp->commonEventData->GetData();\n+        FinishReceiverAction(sp, code, data, sp->resultAbort);\n+    }\n+}\n+\n bool CommonEventControlManager::GetOrderedEventHandler()\n {\n     if (!orderedQueue_) {"
+    },
+    {
+      "sha": "bc3ed31569bef08c45618a5fae55ba3b596b0820",
+      "filename": "services/src/common_event_manager_service.cpp",
+      "status": "modified",
+      "additions": 9,
+      "deletions": 0,
+      "changes": 9,
+      "blob_url": "https://github.com/openharmony/notification_common_event_service/blob/1d87ffd38ae919be33c0b7651773baa2488931b4/services%2Fsrc%2Fcommon_event_manager_service.cpp",
+      "raw_url": "https://github.com/openharmony/notification_common_event_service/raw/1d87ffd38ae919be33c0b7651773baa2488931b4/services%2Fsrc%2Fcommon_event_manager_service.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/notification_common_event_service/contents/services%2Fsrc%2Fcommon_event_manager_service.cpp?ref=1d87ffd38ae919be33c0b7651773baa2488931b4",
+      "patch": "@@ -100,6 +100,15 @@ bool CommonEventManagerService::IsReady() const\n     return true;\n }\n \n+std::shared_ptr<CommonEventControlManager> CommonEventManagerService::GetControlManager() const\n+{\n+    if (!innerCommonEventManager_) {\n+        EVENT_LOGE(LOG_TAG_CES, \"innerCommonEventManager is null\");\n+        return nullptr;\n+    }\n+    return innerCommonEventManager_->GetControlManager();\n+}\n+\n ErrCode CommonEventManagerService::PublishCommonEvent(\n     const CommonEventData& event, const CommonEventPublishInfo& publishinfo, int32_t userId, int32_t& funcResult)\n {"
+    },
+    {
+      "sha": "1a84af7b7aae0d0fecc3f3a61dadb776fce259d6",
+      "filename": "services/src/inner_common_event_manager.cpp",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 7,
+      "changes": 8,
+      "blob_url": "https://github.com/openharmony/notification_common_event_service/blob/1d87ffd38ae919be33c0b7651773baa2488931b4/services%2Fsrc%2Finner_common_event_manager.cpp",
+      "raw_url": "https://github.com/openharmony/notification_common_event_service/raw/1d87ffd38ae919be33c0b7651773baa2488931b4/services%2Fsrc%2Finner_common_event_manager.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/notification_common_event_service/contents/services%2Fsrc%2Finner_common_event_manager.cpp?ref=1d87ffd38ae919be33c0b7651773baa2488931b4",
+      "patch": "@@ -388,13 +388,7 @@ bool InnerCommonEventManager::UnsubscribeCommonEvent(const sptr<IRemoteObject> &\n         return false;\n     }\n \n-    std::shared_ptr<OrderedEventRecord> sp = controlPtr_->GetMatchingOrderedReceiver(commonEventListener);\n-    if (sp) {\n-        EVENT_LOGD(LOG_TAG_CES, \"Unsubscribe the subscriber who is waiting to receive finish feedback\");\n-        int32_t code = sp->commonEventData->GetCode();\n-        std::string data = sp->commonEventData->GetData();\n-        controlPtr_->FinishReceiverAction(sp, code, data, sp->resultAbort);\n-    }\n+    controlPtr_->FinishMatchingOrderedReceiver(commonEventListener);\n     DelayedSingleton<CommonEventSubscriberManager>::GetInstance()->RemoveSubscriber(commonEventListener);\n     return true;\n }"
+    },
+    {
+      "sha": "7bd6f435d74cbbcd00842f30ddbaa8482918e0b8",
+      "filename": "services/src/subscriber_death_recipient.cpp",
+      "status": "modified",
+      "additions": 8,
+      "deletions": 0,
+      "changes": 8,
+      "blob_url": "https://github.com/openharmony/notification_common_event_service/blob/1d87ffd38ae919be33c0b7651773baa2488931b4/services%2Fsrc%2Fsubscriber_death_recipient.cpp",
+      "raw_url": "https://github.com/openharmony/notification_common_event_service/raw/1d87ffd38ae919be33c0b7651773baa2488931b4/services%2Fsrc%2Fsubscriber_death_recipient.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/notification_common_event_service/contents/services%2Fsrc%2Fsubscriber_death_recipient.cpp?ref=1d87ffd38ae919be33c0b7651773baa2488931b4",
+      "patch": "@@ -14,6 +14,7 @@\n  */\n \n #include \"subscriber_death_recipient.h\"\n+#include \"common_event_manager_service.h\"\n #include \"common_event_subscriber_manager.h\"\n #include \"event_log_wrapper.h\"\n \n@@ -34,6 +35,13 @@ void SubscriberDeathRecipient::OnRemoteDied(const wptr<IRemoteObject> &remote)\n         return;\n     }\n \n+    auto controlManager = CommonEventManagerService::GetInstance()->GetControlManager();\n+    if (controlManager) {\n+        controlManager->FinishMatchingOrderedReceiver(object);\n+    } else {\n+        EVENT_LOGE(LOG_TAG_SUBSCRIBER, \"CommonEventControlManager ptr is nullptr\");\n+    }\n+\n     DelayedSingleton<CommonEventSubscriberManager>::GetInstance()->RemoveSubscriber(object);\n \n     EVENT_LOGD(LOG_TAG_SUBSCRIBER, \"OnRemoteDied end\");"
+    },
+    {
+      "sha": "d0410647b59d431b18980a8ecc37613123b52c70",
+      "filename": "services/test/unittest/BUILD.gn",
+      "status": "modified",
+      "additions": 32,
+      "deletions": 0,
+      "changes": 32,
+      "blob_url": "https://github.com/openharmony/notification_common_event_service/blob/1d87ffd38ae919be33c0b7651773baa2488931b4/services%2Ftest%2Funittest%2FBUILD.gn",
+      "raw_url": "https://github.com/openharmony/notification_common_event_service/raw/1d87ffd38ae919be33c0b7651773baa2488931b4/services%2Ftest%2Funittest%2FBUILD.gn",
+      "contents_url": "https://api.github.com/repos/openharmony/notification_common_event_service/contents/services%2Ftest%2Funittest%2FBUILD.gn?ref=1d87ffd38ae919be33c0b7651773baa2488931b4",
+      "patch": "@@ -794,6 +794,37 @@ ohos_unittest(\"common_event_control_manager_test\") {\n   ]\n }\n \n+ohos_unittest(\"common_event_finish_ordered_receiver_test\") {\n+  module_out_path = module_output_path\n+\n+  sources = [ \"common_event_finish_ordered_receiver_test.cpp\" ]\n+\n+  configs = [ \":cesfwk_services_config\" ]\n+\n+  deps = [\n+    \"${ces_core_path}:cesfwk_core\",\n+    \"${ces_extension_path}:static_subscriber_ipc\",\n+    \"${ces_native_path}:cesfwk_innerkits\",\n+    \"${services_path}:cesfwk_services_static\",\n+  ]\n+\n+  external_deps = [\n+    \"ability_base:want\",\n+    \"ability_runtime:ability_manager\",\n+    \"access_token:libaccesstoken_sdk\",\n+    \"access_token:libtokenid_sdk\",\n+    \"bundle_framework:appexecfwk_base\",\n+    \"bundle_framework:appexecfwk_core\",\n+    \"c_utils:utils\",\n+    \"eventhandler:libeventhandler\",\n+    \"ffrt:libffrt\",\n+    \"googletest:gtest_main\",\n+    \"hilog:libhilog\",\n+    \"init:libbegetutil\",\n+    \"ipc:ipc_core\",\n+  ]\n+}\n+\n ohos_unittest(\"common_event_subscriber_manager_test\") {\n   module_out_path = module_output_path\n \n@@ -983,6 +1014,7 @@ group(\"unittest\") {\n     \":common_event_access_token_helper_test\",\n     \":common_event_control_manager_branch_test\",\n     \":common_event_control_manager_test\",\n+    \":common_event_finish_ordered_receiver_test\",\n     \":common_event_freeze_test\",\n     \":common_event_freeze_unit_test\",\n     \":common_event_hisysevent_test\","
+    },
+    {
+      "sha": "8e721f9f5b14638cf2cfea60a5f23d085f540b63",
+      "filename": "services/test/unittest/common_event_finish_ordered_receiver_test.cpp",
+      "status": "added",
+      "additions": 371,
+      "deletions": 0,
+      "changes": 371,
+      "blob_url": "https://github.com/openharmony/notification_common_event_service/blob/1d87ffd38ae919be33c0b7651773baa2488931b4/services%2Ftest%2Funittest%2Fcommon_event_finish_ordered_receiver_test.cpp",
+      "raw_url": "https://github.com/openharmony/notification_common_event_service/raw/1d87ffd38ae919be33c0b7651773baa2488931b4/services%2Ftest%2Funittest%2Fcommon_event_finish_ordered_receiver_test.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/notification_common_event_service/contents/services%2Ftest%2Funittest%2Fcommon_event_finish_ordered_receiver_test.cpp?ref=1d87ffd38ae919be33c0b7651773baa2488931b4",
+      "patch": "@@ -0,0 +1,371 @@\n+/*\n+ * Copyright (c) 2026 Huawei Device Co., Ltd.\n+ * Licensed under the Apache License, Version 2.0 (the \"License\");\n+ * you may not use this file except in compliance with the License.\n+ * You may obtain a copy of the License at\n+ *\n+ *     http://www.apache.org/licenses/LICENSE-2.0\n+ *\n+ * Unless required by applicable law or agreed to in writing, software\n+ * distributed under the License is distributed on an \"AS IS\" BASIS,\n+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n+ * See the License for the specific language governing permissions and\n+ * limitations under the License.\n+ */\n+\n+#include <gtest/gtest.h>\n+#include <chrono>\n+#include <thread>\n+#include \"iremote_broker.h\"\n+\n+#define private public\n+#define protected public\n+#include \"common_event_control_manager.h\"\n+#include \"common_event_manager_service.h\"\n+#include \"inner_common_event_manager.h\"\n+#undef private\n+#undef protected\n+\n+#include \"subscriber_death_recipient.h\"\n+\n+using namespace testing::ext;\n+using namespace OHOS;\n+\n+namespace OHOS {\n+namespace EventFwk {\n+namespace {\n+constexpr int32_t WAIT_QUEUE_TIME_MS = 50;\n+constexpr int32_t MAX_WAIT_QUEUE_RETRY = 40;  // 2s in total\n+}  // namespace\n+\n+class CommonEventFinishOrderedReceiverTest : public testing::Test {\n+public:\n+    CommonEventFinishOrderedReceiverTest()\n+    {}\n+\n+    ~CommonEventFinishOrderedReceiverTest()\n+    {}\n+\n+    static void SetUpTestCase(void);\n+    static void TearDownTestCase(void);\n+    void SetUp();\n+    void TearDown();\n+};\n+\n+void CommonEventFinishOrderedReceiverTest::SetUpTestCase(void)\n+{}\n+\n+void CommonEventFinishOrderedReceiverTest::TearDownTestCase(void)\n+{}\n+\n+void CommonEventFinishOrderedReceiverTest::SetUp(void)\n+{}\n+\n+void CommonEventFinishOrderedReceiverTest::TearDown(void)\n+{}\n+\n+class MockRemoteObject : public IRemoteObject {\n+public:\n+    MockRemoteObject() : IRemoteObject(u\"mock_remote_object\")\n+    {}\n+\n+    ~MockRemoteObject()\n+    {}\n+\n+    int32_t GetObjectRefCount() override\n+    {\n+        return 0;\n+    }\n+\n+    int SendRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option) override\n+    {\n+        return 0;\n+    }\n+\n+    bool IsProxyObject() const override\n+    {\n+        return true;\n+    }\n+\n+    bool CheckObjectLegality() const override\n+    {\n+        return true;\n+    }\n+\n+    bool AddDeathRecipient(const sptr<DeathRecipient> &recipient) override\n+    {\n+        return true;\n+    }\n+\n+    bool RemoveDeathRecipient(const sptr<DeathRecipient> &recipient) override\n+    {\n+        return true;\n+    }\n+\n+    bool Marshalling(Parcel &parcel) const override\n+    {\n+        return true;\n+    }\n+\n+    sptr<IRemoteBroker> AsInterface() override\n+    {\n+        return nullptr;\n+    }\n+\n+    int Dump(int fd, const std::vector<std::u16string> &args) override\n+    {\n+        return 0;\n+    }\n+};\n+\n+static std::shared_ptr<OrderedEventRecord> MakeOrderedRecord(const sptr<IRemoteObject> &curReceiver,\n+    int8_t state)\n+{\n+    std::shared_ptr<OrderedEventRecord> record = std::make_shared<OrderedEventRecord>();\n+    record->commonEventData = std::make_shared<CommonEventData>();\n+    record->curReceiver = curReceiver;\n+    record->state = state;\n+    return record;\n+}\n+\n+/**\n+ * @tc.name: CommonEventFinishOrderedReceiver_0100\n+ * @tc.desc: test FinishMatchingOrderedReceiver function with empty ordered queue.\n+ * @tc.type: FUNC\n+ */\n+HWTEST_F(CommonEventFinishOrderedReceiverTest, CommonEventFinishOrderedReceiver_0100, Level2)\n+{\n+    GTEST_LOG_(INFO) << \"CommonEventFinishOrderedReceiver_0100 start\";\n+    CommonEventControlManager commonEventControlManager;\n+    sptr<MockRemoteObject> proxy = new (std::nothrow) MockRemoteObject();\n+    ASSERT_NE(nullptr, proxy);\n+    EXPECT_EQ(nullptr, commonEventControlManager.GetMatchingOrderedReceiver(proxy));\n+    commonEventControlManager.FinishMatchingOrderedReceiver(proxy);\n+    EXPECT_TRUE(commonEventControlManager.orderedEventQueue_.empty());\n+    GTEST_LOG_(INFO) << \"CommonEventFinishOrderedReceiver_0100 end\";\n+}\n+\n+/**\n+ * @tc.name: CommonEventFinishOrderedReceiver_0200\n+ * @tc.desc: test FinishMatchingOrderedReceiver function with nullptr front record.\n+ * @tc.type: FUNC\n+ */\n+HWTEST_F(CommonEventFinishOrderedReceiverTest, CommonEventFinishOrderedReceiver_0200, Level2)\n+{\n+    GTEST_LOG_(INFO) << \"CommonEventFinishOrderedReceiver_0200 start\";\n+    CommonEventControlManager commonEventControlManager;\n+    sptr<MockRemoteObject> proxy = new (std::nothrow) MockRemoteObject();\n+    ASSERT_NE(nullptr, proxy);\n+    commonEventControlManager.orderedEventQueue_.emplace_back(nullptr);\n+    EXPECT_EQ(nullptr, commonEventControlManager.GetMatchingOrderedReceiver(proxy));\n+    commonEventControlManager.FinishMatchingOrderedReceiver(proxy);\n+    EXPECT_EQ(1, static_cast<int>(commonEventControlManager.orderedEventQueue_.size()));\n+    GTEST_LOG_(INFO) << \"CommonEventFinishOrderedReceiver_0200 end\";\n+}\n+\n+/**\n+ * @tc.name: CommonEventFinishOrderedReceiver_0300\n+ * @tc.desc: test FinishMatchingOrderedReceiver function when front record does not match proxy.\n+ * @tc.type: FUNC\n+ */\n+HWTEST_F(CommonEventFinishOrderedReceiverTest, CommonEventFinishOrderedReceiver_0300, Level2)\n+{\n+    GTEST_LOG_(INFO) << \"CommonEventFinishOrderedReceiver_0300 start\";\n+    CommonEventControlManager commonEventControlManager;\n+    sptr<MockRemoteObject> proxy = new (std::nothrow) MockRemoteObject();\n+    ASSERT_NE(nullptr, proxy);\n+    sptr<IRemoteObject> otherProxy = new (std::nothrow) MockRemoteObject();\n+    ASSERT_NE(nullptr, otherProxy);\n+    // front record does not match, only the front record is checked\n+    std::shared_ptr<OrderedEventRecord> frontRecord = MakeOrderedRecord(otherProxy,\n+        OrderedEventRecord::RECEIVING);\n+    std::shared_ptr<OrderedEventRecord> secondRecord = MakeOrderedRecord(proxy,\n+        OrderedEventRecord::RECEIVING);\n+    commonEventControlManager.orderedEventQueue_.emplace_back(frontRecord);\n+    commonEventControlManager.orderedEventQueue_.emplace_back(secondRecord);\n+    EXPECT_EQ(nullptr, commonEventControlManager.GetMatchingOrderedReceiver(proxy));\n+    commonEventControlManager.FinishMatchingOrderedReceiver(proxy);\n+    EXPECT_EQ(otherProxy, frontRecord->curReceiver);\n+    EXPECT_EQ(OrderedEventRecord::RECEIVING, frontRecord->state.load());\n+    EXPECT_EQ(2, static_cast<int>(commonEventControlManager.orderedEventQueue_.size()));\n+    GTEST_LOG_(INFO) << \"CommonEventFinishOrderedReceiver_0300 end\";\n+}\n+\n+/**\n+ * @tc.name: CommonEventFinishOrderedReceiver_0400\n+ * @tc.desc: test FinishMatchingOrderedReceiver function when receiver is matched and state is not RECEIVED.\n+ * @tc.type: FUNC\n+ */\n+HWTEST_F(CommonEventFinishOrderedReceiverTest, CommonEventFinishOrderedReceiver_0400, Level1)\n+{\n+    GTEST_LOG_(INFO) << \"CommonEventFinishOrderedReceiver_0400 start\";\n+    CommonEventControlManager commonEventControlManager;\n+    sptr<MockRemoteObject> proxy = new (std::nothrow) MockRemoteObject();\n+    ASSERT_NE(nullptr, proxy);\n+    std::shared_ptr<OrderedEventRecord> record = MakeOrderedRecord(proxy, OrderedEventRecord::RECEIVING);\n+    record->commonEventData->SetCode(100);\n+    record->commonEventData->SetData(\"finish receiver\");\n+    commonEventControlManager.orderedEventQueue_.emplace_back(record);\n+    EXPECT_EQ(record, commonEventControlManager.GetMatchingOrderedReceiver(proxy));\n+    commonEventControlManager.FinishMatchingOrderedReceiver(proxy);\n+    // receiver is finished, but doNext is false, the record is still in the queue\n+    EXPECT_EQ(nullptr, record->curReceiver);\n+    EXPECT_EQ(OrderedEventRecord::IDLE, record->state.load());\n+    EXPECT_EQ(100, record->commonEventData->GetCode());\n+    EXPECT_EQ(\"finish receiver\", record->commonEventData->GetData());\n+    EXPECT_EQ(1, static_cast<int>(commonEventControlManager.orderedEventQueue_.size()));\n+    GTEST_LOG_(INFO) << \"CommonEventFinishOrderedReceiver_0400 end\";\n+}\n+\n+/**\n+ * @tc.name: CommonEventFinishOrderedReceiver_0500\n+ * @tc.desc: test FinishMatchingOrderedReceiver function when receiver is matched and state is RECEIVED.\n+ * @tc.type: FUNC\n+ */\n+HWTEST_F(CommonEventFinishOrderedReceiverTest, CommonEventFinishOrderedReceiver_0500, Level1)\n+{\n+    GTEST_LOG_(INFO) << \"CommonEventFinishOrderedReceiver_0500 start\";\n+    std::shared_ptr<CommonEventControlManager> commonEventControlManager =\n+        std::make_shared<CommonEventControlManager>();\n+    ASSERT_NE(nullptr, commonEventControlManager);\n+    // init ordered queue for the async ProcessNextOrderedEvent task\n+    ASSERT_TRUE(commonEventControlManager->GetOrderedEventHandler());\n+    sptr<MockRemoteObject> proxy = new (std::nothrow) MockRemoteObject();\n+    ASSERT_NE(nullptr, proxy);\n+    std::shared_ptr<OrderedEventRecord> record = MakeOrderedRecord(proxy, OrderedEventRecord::RECEIVED);\n+    commonEventControlManager->orderedEventQueue_.emplace_back(record);\n+    EXPECT_EQ(record, commonEventControlManager->GetMatchingOrderedReceiver(proxy));\n+    commonEventControlManager->FinishMatchingOrderedReceiver(proxy);\n+    EXPECT_EQ(nullptr, record->curReceiver);\n+    EXPECT_EQ(OrderedEventRecord::IDLE, record->state.load());\n+    // doNext is true, the record should be removed by async ProcessNextOrderedEvent\n+    bool queueEmpty = false;\n+    for (int i = 0; i < MAX_WAIT_QUEUE_RETRY; i++) {\n+        {\n+            std::lock_guard<ffrt::mutex> lock(commonEventControlManager->orderedMutex_);\n+            if (commonEventControlManager->orderedEventQueue_.empty()) {\n+                queueEmpty = true;\n+                break;\n+            }\n+        }\n+        std::this_thread::sleep_for(std::chrono::milliseconds(WAIT_QUEUE_TIME_MS));\n+    }\n+    EXPECT_TRUE(queueEmpty);\n+    GTEST_LOG_(INFO) << \"CommonEventFinishOrderedReceiver_0500 end\";\n+}\n+\n+/**\n+ * @tc.name: CommonEventFinishOrderedReceiver_0600\n+ * @tc.desc: test GetControlManager function when innerCommonEventManager is not initialized.\n+ * @tc.type: FUNC\n+ */\n+HWTEST_F(CommonEventFinishOrderedReceiverTest, CommonEventFinishOrderedReceiver_0600, Level2)\n+{\n+    GTEST_LOG_(INFO) << \"CommonEventFinishOrderedReceiver_0600 start\";\n+    CommonEventManagerService commonEventManagerService;\n+    EXPECT_EQ(nullptr, commonEventManagerService.GetControlManager());\n+    GTEST_LOG_(INFO) << \"CommonEventFinishOrderedReceiver_0600 end\";\n+}\n+\n+/**\n+ * @tc.name: CommonEventFinishOrderedReceiver_0700\n+ * @tc.desc: test GetControlManager function after Init and InnerCommonEventManager GetControlManager.\n+ * @tc.type: FUNC\n+ */\n+HWTEST_F(CommonEventFinishOrderedReceiverTest, CommonEventFinishOrderedReceiver_0700, Level1)\n+{\n+    GTEST_LOG_(INFO) << \"CommonEventFinishOrderedReceiver_0700 start\";\n+    CommonEventManagerService commonEventManagerService;\n+    EXPECT_EQ(ERR_OK, commonEventManagerService.Init());\n+    std::shared_ptr<CommonEventControlManager> controlManager =\n+        commonEventManagerService.GetControlManager();\n+    EXPECT_NE(nullptr, controlManager);\n+    EXPECT_NE(nullptr, commonEventManagerService.innerCommonEventManager_);\n+    EXPECT_EQ(controlManager, commonEventManagerService.innerCommonEventManager_->GetControlManager());\n+    InnerCommonEventManager innerCommonEventManager;\n+    EXPECT_NE(nullptr, innerCommonEventManager.GetControlManager());\n+    GTEST_LOG_(INFO) << \"CommonEventFinishOrderedReceiver_0700 end\";\n+}\n+\n+/**\n+ * @tc.name: CommonEventFinishOrderedReceiver_0800\n+ * @tc.desc: test UnsubscribeCommonEvent function finishes the matched ordered receiver.\n+ * @tc.type: FUNC\n+ */\n+HWTEST_F(CommonEventFinishOrderedReceiverTest, CommonEventFinishOrderedReceiver_0800, Level1)\n+{\n+    GTEST_LOG_(INFO) << \"CommonEventFinishOrderedReceiver_0800 start\";\n+    InnerCommonEventManager innerCommonEventManager;\n+    ASSERT_NE(nullptr, innerCommonEventManager.controlPtr_);\n+    sptr<MockRemoteObject> proxy = new (std::nothrow) MockRemoteObject();\n+    ASSERT_NE(nullptr, proxy);\n+    std::shared_ptr<OrderedEventRecord> record = MakeOrderedRecord(proxy, OrderedEventRecord::RECEIVING);\n+    innerCommonEventManager.controlPtr_->orderedEventQueue_.emplace_back(record);\n+    EXPECT_TRUE(innerCommonEventManager.UnsubscribeCommonEvent(proxy));\n+    EXPECT_EQ(nullptr, record->curReceiver);\n+    EXPECT_EQ(OrderedEventRecord::IDLE, record->state.load());\n+    GTEST_LOG_(INFO) << \"CommonEventFinishOrderedReceiver_0800 end\";\n+}\n+\n+/**\n+ * @tc.name: CommonEventFinishOrderedReceiver_0900\n+ * @tc.desc: test OnRemoteDied function when control manager is nullptr.\n+ * @tc.type: FUNC\n+ */\n+HWTEST_F(CommonEventFinishOrderedReceiverTest, CommonEventFinishOrderedReceiver_0900, Level2)\n+{\n+    GTEST_LOG_(INFO) << \"CommonEventFinishOrderedReceiver_0900 start\";\n+    SubscriberDeathRecipient subscriberDeathRecipient;\n+    sptr<MockRemoteObject> proxy = new (std::nothrow) MockRemoteObject();\n+    ASSERT_NE(nullptr, proxy);\n+    const wptr<MockRemoteObject> remote = proxy;\n+    // make sure the singleton is not initialized\n+    CommonEventManagerService::GetInstance()->innerCommonEventManager_ = nullptr;\n+    EXPECT_EQ(nullptr, CommonEventManagerService::GetInstance()->GetControlManager());\n+    subscriberDeathRecipient.OnRemoteDied(remote);\n+    GTEST_LOG_(INFO) << \"CommonEventFinishOrderedReceiver_0900 end\";\n+}\n+\n+/**\n+ * @tc.name: CommonEventFinishOrderedReceiver_1000\n+ * @tc.desc: test OnRemoteDied function finishes the matched ordered receiver.\n+ * @tc.type: FUNC\n+ */\n+HWTEST_F(CommonEventFinishOrderedReceiverTest, CommonEventFinishOrderedReceiver_1000, Level1)\n+{\n+    GTEST_LOG_(INFO) << \"CommonEventFinishOrderedReceiver_1000 start\";\n+    SubscriberDeathRecipient subscriberDeathRecipient;\n+    sptr<MockRemoteObject> proxy = new (std::nothrow) MockRemoteObject();\n+    ASSERT_NE(nullptr, proxy);\n+    const wptr<MockRemoteObject> remote = proxy;\n+    ASSERT_EQ(ERR_OK, CommonEventManagerService::GetInstance()->Init());\n+    std::shared_ptr<CommonEventControlManager> controlManager =\n+        CommonEventManagerService::GetInstance()->GetControlManager();\n+    ASSERT_NE(nullptr, controlManager);\n+    std::shared_ptr<OrderedEventRecord> record = MakeOrderedRecord(proxy, OrderedEventRecord::RECEIVING);\n+    controlManager->orderedEventQueue_.emplace_back(record);\n+    subscriberDeathRecipient.OnRemoteDied(remote);\n+    EXPECT_EQ(nullptr, record->curReceiver);\n+    EXPECT_EQ(OrderedEventRecord::IDLE, record->state.load());\n+    GTEST_LOG_(INFO) << \"CommonEventFinishOrderedReceiver_1000 end\";\n+}\n+\n+/**\n+ * @tc.name: CommonEventFinishOrderedReceiver_1100\n+ * @tc.desc: test OnRemoteDied function when promote remote object failed.\n+ * @tc.type: FUNC\n+ */\n+HWTEST_F(CommonEventFinishOrderedReceiverTest, CommonEventFinishOrderedReceiver_1100, Level2)\n+{\n+    GTEST_LOG_(INFO) << \"CommonEventFinishOrderedReceiver_1100 start\";\n+    SubscriberDeathRecipient subscriberDeathRecipient;\n+    sptr<MockRemoteObject> proxy = new (std::nothrow) MockRemoteObject();\n+    ASSERT_NE(nullptr, proxy);\n+    wptr<MockRemoteObject> remote = proxy;\n+    // drop the strong reference to make promote fail\n+    proxy = nullptr;\n+    subscriberDeathRecipient.OnRemoteDied(remote);\n+    GTEST_LOG_(INFO) << \"CommonEventFinishOrderedReceiver_1100 end\";\n+}\n+}  // namespace EventFwk\n+}  // namespace OHOS"
+    }
+  ]
+}

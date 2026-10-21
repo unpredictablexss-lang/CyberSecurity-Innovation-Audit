@@ -1,0 +1,61 @@
+{
+  "sha": "268a08edc1e3829211190c626a92706392de2945",
+  "node_id": "C_kwDONHVi-doAKDI2OGEwOGVkYzFlMzgyOTIxMTE5MGM2MjZhOTI3MDYzOTJkZTI5NDU",
+  "commit": {
+    "author": {
+      "name": "heshaopeng5",
+      "email": "heshaopeng5@huawei.com",
+      "date": "2026-09-30T01:34:25Z"
+    },
+    "committer": {
+      "name": "heshaopeng5",
+      "email": "heshaopeng5@huawei.com",
+      "date": "2026-09-30T01:34:25Z"
+    },
+    "message": "update: 更新文件 transcoder_server.h\n\n\nSigned-off-by: heshaopeng5 <heshaopeng5@huawei.com>",
+    "tree": {
+      "sha": "e4162b63bf7cefbdeec8a85980831c7660e54d89",
+      "url": "https://api.github.com/repos/openharmony/multimedia_player_framework/git/trees/e4162b63bf7cefbdeec8a85980831c7660e54d89"
+    },
+    "url": "https://api.github.com/repos/openharmony/multimedia_player_framework/git/commits/268a08edc1e3829211190c626a92706392de2945",
+    "comment_count": 0,
+    "verification": {
+      "verified": false,
+      "reason": "unsigned",
+      "signature": null,
+      "payload": null,
+      "verified_at": null
+    }
+  },
+  "url": "https://api.github.com/repos/openharmony/multimedia_player_framework/commits/268a08edc1e3829211190c626a92706392de2945",
+  "html_url": "https://github.com/openharmony/multimedia_player_framework/commit/268a08edc1e3829211190c626a92706392de2945",
+  "comments_url": "https://api.github.com/repos/openharmony/multimedia_player_framework/commits/268a08edc1e3829211190c626a92706392de2945/comments",
+  "author": null,
+  "committer": null,
+  "parents": [
+    {
+      "sha": "749e0e2d209f06bd8d4ef6a17bb24d5b804bf1ad",
+      "url": "https://api.github.com/repos/openharmony/multimedia_player_framework/commits/749e0e2d209f06bd8d4ef6a17bb24d5b804bf1ad",
+      "html_url": "https://github.com/openharmony/multimedia_player_framework/commit/749e0e2d209f06bd8d4ef6a17bb24d5b804bf1ad"
+    }
+  ],
+  "stats": {
+    "total": 3,
+    "additions": 2,
+    "deletions": 1
+  },
+  "files": [
+    {
+      "sha": "7c56728042f38d0b0f1015e23d742f3be1dcb6e9",
+      "filename": "services/services/transcoder/server/transcoder_server.h",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 1,
+      "changes": 3,
+      "blob_url": "https://github.com/openharmony/multimedia_player_framework/blob/268a08edc1e3829211190c626a92706392de2945/services%2Fservices%2Ftranscoder%2Fserver%2Ftranscoder_server.h",
+      "raw_url": "https://github.com/openharmony/multimedia_player_framework/raw/268a08edc1e3829211190c626a92706392de2945/services%2Fservices%2Ftranscoder%2Fserver%2Ftranscoder_server.h",
+      "contents_url": "https://api.github.com/repos/openharmony/multimedia_player_framework/contents/services%2Fservices%2Ftranscoder%2Fserver%2Ftranscoder_server.h?ref=268a08edc1e3829211190c626a92706392de2945",
+      "patch": "@@ -19,6 +19,7 @@\n #include \"i_transcoder_service.h\"\r\n #include \"i_transcoder_engine.h\"\r\n #include \"nocopyable.h\"\r\n+#include <atomic>\r\n #include \"task_queue.h\"\r\n #include \"watchdog.h\"\r\n #include \"uri_helper.h\"\r\n@@ -81,7 +82,7 @@ class TransCoderServer : public ITransCoderService, public ITransCoderEngineObs,\n \r\n     std::unique_ptr<ITransCoderEngine> transCoderEngine_ = nullptr;\r\n     std::shared_ptr<TransCoderCallback> transCoderCb_ = nullptr;\r\n-    RecStatus status_ = REC_INITIALIZED;\r\n+    std::atomic<RecStatus> status_ = REC_INITIALIZED;\r\n     std::mutex mutex_;\r\n     std::mutex cbMutex_;\r\n     TaskQueue taskQue_;\r"
+    }
+  ]
+}

@@ -1,0 +1,125 @@
+{
+  "sha": "99f7275d72ec68149b1883b5533ae2a60d316794",
+  "node_id": "C_kwDONHV5K9oAKDk5ZjcyNzVkNzJlYzY4MTQ5YjE4ODNiNTUzM2FlMmE2MGQzMTY3OTQ",
+  "commit": {
+    "author": {
+      "name": "ningyuanfeng",
+      "email": "Nyuanfeng@163.com",
+      "date": "2026-09-28T07:14:35Z"
+    },
+    "committer": {
+      "name": "ningyuanfeng",
+      "email": "Nyuanfeng@163.com",
+      "date": "2026-09-28T07:14:35Z"
+    },
+    "message": "fix fuzz/ut\n\nSigned-off-by: ningyuanfeng <Nyuanfeng@163.com>",
+    "tree": {
+      "sha": "25e50b2332ba422e2cd601adcb2311a59c695edf",
+      "url": "https://api.github.com/repos/openharmony/multimedia_camera_framework/git/trees/25e50b2332ba422e2cd601adcb2311a59c695edf"
+    },
+    "url": "https://api.github.com/repos/openharmony/multimedia_camera_framework/git/commits/99f7275d72ec68149b1883b5533ae2a60d316794",
+    "comment_count": 0,
+    "verification": {
+      "verified": false,
+      "reason": "unsigned",
+      "signature": null,
+      "payload": null,
+      "verified_at": null
+    }
+  },
+  "url": "https://api.github.com/repos/openharmony/multimedia_camera_framework/commits/99f7275d72ec68149b1883b5533ae2a60d316794",
+  "html_url": "https://github.com/openharmony/multimedia_camera_framework/commit/99f7275d72ec68149b1883b5533ae2a60d316794",
+  "comments_url": "https://api.github.com/repos/openharmony/multimedia_camera_framework/commits/99f7275d72ec68149b1883b5533ae2a60d316794/comments",
+  "author": {
+    "login": "YFdev",
+    "id": 35911169,
+    "node_id": "MDQ6VXNlcjM1OTExMTY5",
+    "avatar_url": "https://avatars.githubusercontent.com/u/35911169?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/YFdev",
+    "html_url": "https://github.com/YFdev",
+    "followers_url": "https://api.github.com/users/YFdev/followers",
+    "following_url": "https://api.github.com/users/YFdev/following{/other_user}",
+    "gists_url": "https://api.github.com/users/YFdev/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/YFdev/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/YFdev/subscriptions",
+    "organizations_url": "https://api.github.com/users/YFdev/orgs",
+    "repos_url": "https://api.github.com/users/YFdev/repos",
+    "events_url": "https://api.github.com/users/YFdev/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/YFdev/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false
+  },
+  "committer": {
+    "login": "YFdev",
+    "id": 35911169,
+    "node_id": "MDQ6VXNlcjM1OTExMTY5",
+    "avatar_url": "https://avatars.githubusercontent.com/u/35911169?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/YFdev",
+    "html_url": "https://github.com/YFdev",
+    "followers_url": "https://api.github.com/users/YFdev/followers",
+    "following_url": "https://api.github.com/users/YFdev/following{/other_user}",
+    "gists_url": "https://api.github.com/users/YFdev/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/YFdev/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/YFdev/subscriptions",
+    "organizations_url": "https://api.github.com/users/YFdev/orgs",
+    "repos_url": "https://api.github.com/users/YFdev/repos",
+    "events_url": "https://api.github.com/users/YFdev/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/YFdev/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false
+  },
+  "parents": [
+    {
+      "sha": "ca6c1a70a8ca30d00c19bc7272daf150aa2d4b71",
+      "url": "https://api.github.com/repos/openharmony/multimedia_camera_framework/commits/ca6c1a70a8ca30d00c19bc7272daf150aa2d4b71",
+      "html_url": "https://github.com/openharmony/multimedia_camera_framework/commit/ca6c1a70a8ca30d00c19bc7272daf150aa2d4b71"
+    }
+  ],
+  "stats": {
+    "total": 9,
+    "additions": 9,
+    "deletions": 0
+  },
+  "files": [
+    {
+      "sha": "f6383ae59043eb252629d976d4f8f7a1ed122bde",
+      "filename": "frameworks/native/camera/test/unittest/camera_service/camera_buffer_manager/src/photo_buffer_consumer_unittest.cpp",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 0,
+      "changes": 2,
+      "blob_url": "https://github.com/openharmony/multimedia_camera_framework/blob/99f7275d72ec68149b1883b5533ae2a60d316794/frameworks%2Fnative%2Fcamera%2Ftest%2Funittest%2Fcamera_service%2Fcamera_buffer_manager%2Fsrc%2Fphoto_buffer_consumer_unittest.cpp",
+      "raw_url": "https://github.com/openharmony/multimedia_camera_framework/raw/99f7275d72ec68149b1883b5533ae2a60d316794/frameworks%2Fnative%2Fcamera%2Ftest%2Funittest%2Fcamera_service%2Fcamera_buffer_manager%2Fsrc%2Fphoto_buffer_consumer_unittest.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/multimedia_camera_framework/contents/frameworks%2Fnative%2Fcamera%2Ftest%2Funittest%2Fcamera_service%2Fcamera_buffer_manager%2Fsrc%2Fphoto_buffer_consumer_unittest.cpp?ref=99f7275d72ec68149b1883b5533ae2a60d316794",
+      "patch": "@@ -31,6 +31,8 @@ class MockStreamCapturePhotoCallback : public IStreamCapturePhotoCallback {\n public:\n     MOCK_METHOD3(OnPhotoAvailable, int32_t(sptr<SurfaceBuffer> surfaceBuffer, int64_t timestamp, bool isRaw));\n     MOCK_METHOD1(OnPhotoAvailable, int32_t(std::shared_ptr<PictureIntf> picture));\n+    MOCK_METHOD5(OnPhotoAvailable, int32_t(sptr<SurfaceBuffer> mainBuffer, sptr<SurfaceBuffer> oxygenBuffer,\n+        sptr<SurfaceBuffer> pigmentationBuffer, int64_t timestamp, bool isRaw));\n     sptr<IRemoteObject> AsObject() override\n     {\n         return nullptr;"
+    },
+    {
+      "sha": "a318137925c9248e08bf44c87ea7725091b02c77",
+      "filename": "frameworks/native/camera/test/unittest/camera_service/hdi_stream_test/src/hstream_capture_unittest.cpp",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 0,
+      "changes": 2,
+      "blob_url": "https://github.com/openharmony/multimedia_camera_framework/blob/99f7275d72ec68149b1883b5533ae2a60d316794/frameworks%2Fnative%2Fcamera%2Ftest%2Funittest%2Fcamera_service%2Fhdi_stream_test%2Fsrc%2Fhstream_capture_unittest.cpp",
+      "raw_url": "https://github.com/openharmony/multimedia_camera_framework/raw/99f7275d72ec68149b1883b5533ae2a60d316794/frameworks%2Fnative%2Fcamera%2Ftest%2Funittest%2Fcamera_service%2Fhdi_stream_test%2Fsrc%2Fhstream_capture_unittest.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/multimedia_camera_framework/contents/frameworks%2Fnative%2Fcamera%2Ftest%2Funittest%2Fcamera_service%2Fhdi_stream_test%2Fsrc%2Fhstream_capture_unittest.cpp?ref=99f7275d72ec68149b1883b5533ae2a60d316794",
+      "patch": "@@ -140,6 +140,8 @@ class MockStreamCapturePhotoCallback : public IStreamCapturePhotoCallback {\n public:\n     MOCK_METHOD3(OnPhotoAvailable, int32_t(sptr<SurfaceBuffer> surfaceBuffer, int64_t timestamp, bool isRaw));\n     MOCK_METHOD1(OnPhotoAvailable, int32_t(std::shared_ptr<PictureIntf> picture));\n+    MOCK_METHOD5(OnPhotoAvailable, int32_t(sptr<SurfaceBuffer> mainBuffer, sptr<SurfaceBuffer> oxygenBuffer,\n+        sptr<SurfaceBuffer> pigmentationBuffer, int64_t timestamp, bool isRaw));\n     sptr<IRemoteObject> AsObject() override\n     {\n         return nullptr;"
+    },
+    {
+      "sha": "4d23864fd66eb00f4abe2aded707cfe42a8769e9",
+      "filename": "test/fuzztest/hstreamcapturestub_fuzzer/hstream_capture_stub_fuzzer.h",
+      "status": "modified",
+      "additions": 5,
+      "deletions": 0,
+      "changes": 5,
+      "blob_url": "https://github.com/openharmony/multimedia_camera_framework/blob/99f7275d72ec68149b1883b5533ae2a60d316794/test%2Ffuzztest%2Fhstreamcapturestub_fuzzer%2Fhstream_capture_stub_fuzzer.h",
+      "raw_url": "https://github.com/openharmony/multimedia_camera_framework/raw/99f7275d72ec68149b1883b5533ae2a60d316794/test%2Ffuzztest%2Fhstreamcapturestub_fuzzer%2Fhstream_capture_stub_fuzzer.h",
+      "contents_url": "https://api.github.com/repos/openharmony/multimedia_camera_framework/contents/test%2Ffuzztest%2Fhstreamcapturestub_fuzzer%2Fhstream_capture_stub_fuzzer.h?ref=99f7275d72ec68149b1883b5533ae2a60d316794",
+      "patch": "@@ -138,6 +138,11 @@ class HStreamCaptureStubFuzz : public StreamCaptureStub {\n     {\n         return 0;\n     }\n+\n+    ErrCode SetAutoAuxiliaryPhotosDeliveryEnabled(const std::vector<int32_t>& auxPhotoTypes, bool enabled) override\n+    {\n+        return 0;\n+    }\n };\n }  // namespace CameraStandard\n }  // namespace OHOS"
+    }
+  ]
+}

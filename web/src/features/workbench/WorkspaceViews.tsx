@@ -283,9 +283,13 @@ export function SettingsView({ repos, detectors, health, refresh, tab }: { repos
           { key: "health", label: "API", children: health?.status || "未知" },
           { key: "worker", label: "扫描 Worker", children: health ? health.worker_running ? "运行中" : "未运行" : "未知" },
           { key: "concurrency", label: "扫描并发上限", children: health?.limits?.concurrent_scans ?? "未知" },
+          { key: "queue", label: "任务队列", children: health?.limits ? `${health.limits.queued_scans ?? 0} 排队 / ${health.limits.running_scans ?? 0} 运行；容量 ${health.limits.queue_capacity ?? "未知"}` : "未知" },
+          { key: "profile", label: "资源模式", children: health?.limits?.performance_mode ?? "未知" },
+          { key: "cpu", label: "CPU 配额", children: health?.limits?.cpu_quota?.status === "limited" ? `${health.limits.cpu_quota.cores} 核（${health.limits.cpu_quota.source}）` : health?.limits?.cpu_quota?.status === "unlimited" ? "操作系统未设配额" : "未知 / 无法验证" },
+          { key: "memory", label: "内存限制", children: health?.limits?.memory_limit?.status === "per_job_rlimit_as" ? "每任务 RLIMIT_AS（按任务 memory_mb；限制虚拟地址空间，不等同 RSS）" : "未知 / 不支持" },
           { key: "agent", label: "真实模型", children: health?.capabilities?.agent ? "服务宣告可用，需专项验收" : "未连接；只读调查可单独使用" },
           { key: "validation", label: "产品运行时验证", children: health?.capabilities?.runtime_validation ? "服务宣告可用，需核对证据" : "未验收；组件 Harness 单独记录" },
-        ]} /><Paragraph type="secondary">模型服务凭据和连接测试位于“Agent / LLM”设置页；此处仅展示 Worker 运行状态。</Paragraph>
+        ]} /><Paragraph type="secondary">资源模式通过 OHSCANNER_PERFORMANCE_MODE（low / balanced / high）配置。CPU 配额只报告操作系统可验证值；扫描任务的 memory_mb 使用 RLIMIT_AS 限制虚拟地址空间，不能解读为 RSS 硬上限。模型服务凭据和连接测试位于“Agent / LLM”设置页。</Paragraph>
         <Button onClick={() => go("/operations")}>兼容高级操作入口</Button>
       </Card> },
     ]} />

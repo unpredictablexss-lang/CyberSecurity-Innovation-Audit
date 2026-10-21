@@ -70,6 +70,8 @@ class M2ExecutionTests(unittest.TestCase):
         self.assertEqual(result["validated_vulnerability"], 0)
         self.assertEqual(result["status"], "completed_with_limitations")
         self.assertEqual(result["source_parsing"]["languages"], {"arkts": 1, "cpp": 3})
+        self.assertIn({"id": "syntax_facts_v1", "version": "1.0.0",
+                       "output_fact": "facts_v1"}, result["analysis_fact_providers"])
         run = result["detector_runs"][0]
         self.assertEqual(run["tool"], ID)
         self.assertEqual(run["status"], "completed")

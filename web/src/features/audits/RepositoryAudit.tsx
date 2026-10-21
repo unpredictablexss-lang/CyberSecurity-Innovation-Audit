@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Alert, Button, Card, Checkbox, Col, Form, InputNumber, Radio, Row, Space, Typography } from "antd";
+import { Alert, Button, Card, Checkbox, Col, Form, Input, InputNumber, Radio, Row, Space, Typography } from "antd";
 import { api } from "../../api";
 import { go, Header } from "../../components";
 import { approvedDetectorIds, auditErrorMessage, defaultRepositoryRevision, isValidTaskCostBudget, snapshotPayload, planPayload, requestGate, taskAuthorizationPayload } from "./model";
@@ -137,6 +137,10 @@ export default function RepositoryAudit({ repos, detectors, refresh, health }: A
         </Form.Item>
         <RepositoryField repos={repos} refresh={refresh} onChange={() => { defaultedRepository.current = null; form.setFieldValue("revision", undefined); setError(""); invalidate(); }} />
         <RefField name="revision" label={loading ? "正在加载当前仓库版本…" : "审计版本"} refs={refs} />
+        <Form.Item name="base_commit" label="可选：比较基线 Commit"
+          extra="填写完整祖先 Commit SHA 后，报告会列出 Git 变更和依赖影响；依赖复用无法证明时仍执行完整 head 扫描。">
+          <Input allowClear placeholder="40 或 64 位完整 Commit SHA" />
+        </Form.Item>
         <ScopeBudget />
         {(detectors.some((d) => d.id === sensitiveExposureId) || detectors.some((d) => d.id === knownCvesId) || detectors.some((d) => d.id === arkRuntimeId)) && <Form.Item label="实验研究规则">
           <Space direction="vertical">

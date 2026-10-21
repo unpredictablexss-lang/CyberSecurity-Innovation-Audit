@@ -16,11 +16,16 @@ class CppCopyCallExampleDetector:
     detector_id = "ohscanner.example.cpp.copy-calls"
     version = "0.1.0-example"
     supported_languages = ("c", "cpp")
-    required_facts = ("ast",)
+    required_facts = ("ast", "facts_v1")
     ast_scope = "per_file"
+    # This example inventories syntax from one fixed source Blob. It does not
+    # consume include resolution, build flags, macros, symbols or other files.
+    incremental_cache_policy = "git_blob_single_file_v1"
+    incremental_cache_version = "1"
+    incremental_cache_facts = ("ast", "facts_v1")
 
     def detect(self, context: ScanContext, units: Tuple[SourceUnit, ...]) -> DetectorRun:
-        ast = context.shared_facts["ast"]
+        syntax_facts = context.shared_facts["facts_v1"]
         findings = []
         for unit in units:
             # Runner must not give us partial AST, and the detector enforces
@@ -30,14 +35,14 @@ class CppCopyCallExampleDetector:
                     self.detector_id, self.version, "blocked",
                     limitations=("Incomplete AST: cannot evaluate requested source scope.",),
                 )
-            outline = ast.get(unit.path)
+            outline = syntax_facts.get(unit.path)
             if outline is None or outline.get("parse_status") != "complete":
                 return DetectorRun(
                     self.detector_id, self.version, "blocked",
                     limitations=("Missing complete AST outline for: " + unit.path,),
                 )
             for call in outline.get("calls", ()):
-                name = str(call.get("name", ""))
+                name = str(call.get("expression", ""))
                 if name not in _COPY_APIS:
                     continue
                 line = call.get("line")

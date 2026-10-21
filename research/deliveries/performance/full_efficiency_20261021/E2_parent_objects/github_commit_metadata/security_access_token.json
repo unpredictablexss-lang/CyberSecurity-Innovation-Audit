@@ -1,0 +1,66 @@
+{
+  "sha": "3bf7ae4b564df84b9d06d5669e99464d479d59a9",
+  "node_id": "C_kwDONHO-ktoAKDNiZjdhZTRiNTY0ZGY4NGI5ZDA2ZDU2NjllOTk0NjRkNDc5ZDU5YTk",
+  "commit": {
+    "author": {
+      "name": "openharmony_ci",
+      "email": "openharmony_ci@noreply.gitcode.com",
+      "date": "2026-09-30T09:15:38Z"
+    },
+    "committer": {
+      "name": "openharmony_ci",
+      "email": "openharmony_ci@noreply.gitcode.com",
+      "date": "2026-09-30T09:15:38Z"
+    },
+    "message": "!5016 merge add-sync-root-manager into master\n\n新增云盘同步根管理权限\n\nCreated-by: HeEthan\nCommit-by: l00906358;chennian\nMerged-by: openharmony_ci\nDescription: ### 关联的issue：\nhttps://gitcode.com/openharmony/security_access_token/issues/3699\n### 修改描述（修改功能描述，规格变更说明）：\n新增 ohos.permission.SYNC_ROOT_MANAGER，允许应用对云盘同步根进行管理，包括添加同步根到侧边栏以及自定义同步根文件夹图标。\n授权方式 system_grant，权限等级 system_basic，开放范围 NORMAL，支持证书授权；非扩展权限，不支持内核态权限校验和分布式场景；设备范围 2in1、tablet，起始版本 26.0.1。\n配套 global_system_resources 和 docs 修改关联同一 issue。\n### 测试用例(附上截图，不涉及不需要说明不涉及原因)：\n1、TDD：\n不涉及，新增权限\n2、XTS:\n不涉及，新增权限\n3、手工用例（自验证步骤/预期结果/实际结果）:\n不涉及，新增权限\n### 兼容性上库自检：\n- [x] 不涉及API功能发生变化\n- [x] 不涉及改变回调函数或生命周期的触发时机或时序，或删除生命周期和回调函数\n- [x] 不涉及参数的规格发生了变化，例如取值范围缩小等\n- [x] 不涉及对外接口新增权限校验\n- [x] 不涉及接口的使用约束规格收紧，例如权限开放范围变化\n- [x] 不涉及系统可创建的实例数量收紧\n- [x] 不涉及修改了接口返回的数据\n- [x] 未新增错误抛出，包括新增错误码、对已有的场景从不会抛错误码变成会抛出错误\n- [x] 未修改已有的错误码，对于相同的输入原本抛出A错误码变成了抛出B错误码\n- [x] 接口性能未出现明显劣化\n### 权限合入自检：\n#### 权限自检\n- [x] 仅向系统服务开放的权限（availableType为SERVICE的权限）不允许合入global_system_resources仓和docs仓\n- [x] 非SERVICE的权限与global_system_resources联合构建，即两笔pr关联同一个issue：https://gitcode.com/openharmony/global_system_resources/pull/3449\n- [x] 填入必要参数name/grantMode/availableLevel/since/provisionEnable/distributedSceneEnable， 且与global_system_resources中声明（如果有）一致\n- [x] 声明权限生效的设备平台范围deviceTypes，以列表方式声明(\"deviceTypes\" : [ \"xxx\", \"xxx\"])，非全平台生效按需填写，包括但不限于\"phone\"、\"wearable\"、\"tablet\"、\"2in1\"、\"tv\"、\"car\"，不允许填写\"general\"，\n#### 资料自检（提供docs仓PR链接）\n- [x] 是，已刷新权限文档，PR链接（必填）：https://gitcode.com/openharmony/docs/pull/165050\n- [ ] 否，不涉及权限文档\n### 安全编码自检：\n本次仅新增 JSON 权限定义，不涉及 C/C++ 代码、内存、IPC 或日志逻辑。\n- [x] 裸指针避免通过隐式转换构造为sptr\n- [x] json对象在取值之前必须先判断类型，避免类型不匹配\n- [x] 序列化时必须对传入的数组大小进行校验，避免出现超大数组\n- [x] 避免使用未明确位宽的整型，选择使用int8_t、uint8_t等类型\n- [x] 外部传入的路径要做规范化校验，对路径中的.、..、../等特殊字符严格校验\n- [x] 指针变量、表示资源描述符的变量、bool变量必须赋初值\n- [x] readParcelable获取的对象使用前需要判空\n- [x] 分配和释放内存的函数需要成对出现\n- [x] 申请内存后异常退出前需要及时进行内存释放\n- [x] 内存申请前必须对内存大小进行合法性校验\n- [x] 内存分配后必须判断是否成功\n- [x] 禁止打印文件路径、口令等敏感信息，如有需要，使用private修饰\n- [x] 禁止打印内存地址\n- [x] 整数之间运算时必须严格检查，确保不会出现溢出、反转、除0\n- [x] 禁止对有符号整数进行位操作符运算\n- [x] 循环次数如果收外部数据控制，需要检验其合法性\n- [x] 必须检查安全函数的返回值，并进行正确处理\n### 日志规范自检：\n- [x] 【规则】高频代码的正常流程中禁止打印日志\n- [x] 【规则】在基本不可能发生的点必须要打印日志\n- [x] 【规则】事件记录的日志使用who do what 主谓宾的形式打印\n- [x] 【规则】状态变化的日志打印使用state_name:s1->s2, reason:msg的形式打印\n- [x] 【规则】参数值的日志打印使用name1=value1, name2=value2…的形式打印\n\nSee merge request: openharmony/security_access_token!5016",
+    "tree": {
+      "sha": "f674518b86f2a998941cfa69f7c7cee239648174",
+      "url": "https://api.github.com/repos/openharmony/security_access_token/git/trees/f674518b86f2a998941cfa69f7c7cee239648174"
+    },
+    "url": "https://api.github.com/repos/openharmony/security_access_token/git/commits/3bf7ae4b564df84b9d06d5669e99464d479d59a9",
+    "comment_count": 0,
+    "verification": {
+      "verified": false,
+      "reason": "unsigned",
+      "signature": null,
+      "payload": null,
+      "verified_at": null
+    }
+  },
+  "url": "https://api.github.com/repos/openharmony/security_access_token/commits/3bf7ae4b564df84b9d06d5669e99464d479d59a9",
+  "html_url": "https://github.com/openharmony/security_access_token/commit/3bf7ae4b564df84b9d06d5669e99464d479d59a9",
+  "comments_url": "https://api.github.com/repos/openharmony/security_access_token/commits/3bf7ae4b564df84b9d06d5669e99464d479d59a9/comments",
+  "author": null,
+  "committer": null,
+  "parents": [
+    {
+      "sha": "2b1ae765e2c3caf7db743715c6c2c4111741836e",
+      "url": "https://api.github.com/repos/openharmony/security_access_token/commits/2b1ae765e2c3caf7db743715c6c2c4111741836e",
+      "html_url": "https://github.com/openharmony/security_access_token/commit/2b1ae765e2c3caf7db743715c6c2c4111741836e"
+    },
+    {
+      "sha": "ed428ab9fd3e6b02a746a3edb185b8fa91731e22",
+      "url": "https://api.github.com/repos/openharmony/security_access_token/commits/ed428ab9fd3e6b02a746a3edb185b8fa91731e22",
+      "html_url": "https://github.com/openharmony/security_access_token/commit/ed428ab9fd3e6b02a746a3edb185b8fa91731e22"
+    }
+  ],
+  "stats": {
+    "total": 11,
+    "additions": 11,
+    "deletions": 0
+  },
+  "files": [
+    {
+      "sha": "1afacfa79a149af80ccdc44f167ddff090aabb87",
+      "filename": "services/accesstokenmanager/permission_definitions.json",
+      "status": "modified",
+      "additions": 11,
+      "deletions": 0,
+      "changes": 11,
+      "blob_url": "https://github.com/openharmony/security_access_token/blob/3bf7ae4b564df84b9d06d5669e99464d479d59a9/services%2Faccesstokenmanager%2Fpermission_definitions.json",
+      "raw_url": "https://github.com/openharmony/security_access_token/raw/3bf7ae4b564df84b9d06d5669e99464d479d59a9/services%2Faccesstokenmanager%2Fpermission_definitions.json",
+      "contents_url": "https://api.github.com/repos/openharmony/security_access_token/contents/services%2Faccesstokenmanager%2Fpermission_definitions.json?ref=3bf7ae4b564df84b9d06d5669e99464d479d59a9",
+      "patch": "@@ -12517,6 +12517,17 @@\n             \"distributedSceneEnable\": false,\n             \"deviceTypes\": [\"phone\", \"2in1\", \"tablet\"]\n         },\n+        {\n+            \"name\": \"ohos.permission.SYNC_ROOT_MANAGER\",\n+            \"grantMode\": \"system_grant\",\n+            \"availableLevel\": \"system_basic\",\n+            \"availableType\": \"NORMAL\",\n+            \"since\": \"26.0.1\",\n+            \"deprecated\": \"\",\n+            \"provisionEnable\": true,\n+            \"distributedSceneEnable\": false,\n+            \"deviceTypes\": [\"2in1\", \"tablet\"]\n+        },\n         {\n             \"name\": \"ohos.permission.INSTALL_DEVELOPER_ID_BUNDLE\",\n             \"grantMode\": \"system_grant\","
+    }
+  ]
+}

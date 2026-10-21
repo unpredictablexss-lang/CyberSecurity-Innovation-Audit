@@ -9,6 +9,7 @@ import signal
 import subprocess
 import sys
 import time
+from concurrent.futures import ThreadPoolExecutor, wait, FIRST_COMPLETED
 from .settings import Settings
 from .store import Store
 from .service import artifact_dir, sha, check_repository
@@ -35,6 +36,27 @@ class Worker:
             except ProcessLookupError:
                 pass
             process.wait(timeout=5)
+
+    @staticmethod
+    def write_final_checkpoint(path, manifest):
+        """Publish the final artifact manifest only after a durable temp write."""
+        temporary = path.with_suffix(path.suffix + ".tmp")
+        payload = (json.dumps(manifest, indent=2, sort_keys=True) + "\n").encode("utf-8")
+        with temporary.open("wb") as stream:
+            stream.write(payload)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temporary, path)
+        try:
+            directory_fd = os.open(path.parent, os.O_RDONLY)
+            try:
+                os.fsync(directory_fd)
+            finally:
+                os.close(directory_fd)
+        except OSError:
+            # A filesystem without directory fsync still gets atomic replace;
+            # restart recovery will require the manifest to verify in full.
+            pass
 
     def execute(self, job):
         key = job["id"]
@@ -125,9 +147,7 @@ class Worker:
                                 "report.md": sha((out / "report.md").read_bytes()),
                             },
                         }
-                        (out / "manifest.json").write_text(
-                            json.dumps(manifest, indent=2) + "\n"
-                        )
+                        self.write_final_checkpoint(out / "manifest.json", manifest)
         except Exception as exc:
             error = type(exc).__name__ + ": " + str(exc)[:1000]
         finally:
@@ -181,14 +201,27 @@ class Worker:
             # before writing its idempotent triage batch. Old tasks have no consent row.
             for completed in self.store.authorized_completed_jobs_missing_batch():
                 self._enqueue_authorized_triage(completed)
-            while True:
-                job = self.store.claim()
-                if job:
-                    self.execute(job)
-                elif once:
-                    return
-                else:
-                    time.sleep(0.3)
+            # Claims remain serialized by SQLite BEGIN IMMEDIATE. Only the bounded
+            # number of active scan subprocesses varies with the selected profile.
+            with ThreadPoolExecutor(max_workers=self.settings.max_concurrent_scans,
+                                    thread_name_prefix="ohscanner-job") as pool:
+                active = set()
+                while True:
+                    while len(active) < self.settings.max_concurrent_scans:
+                        job = self.store.claim()
+                        if not job:
+                            break
+                        active.add(pool.submit(self.execute, job))
+                    if active:
+                        done, active = wait(active, timeout=0.3, return_when=FIRST_COMPLETED)
+                        # Surface unexpected worker-thread failures; execute normally
+                        # records task failures itself and should never raise.
+                        for future in done:
+                            future.result()
+                    elif once:
+                        return
+                    else:
+                        time.sleep(0.3)
 
 
 def main():

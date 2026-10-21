@@ -1,0 +1,226 @@
+{
+  "schema_version": 1,
+  "source_manifest": "research/deliveries/performance/full_efficiency_20261021/E2_parent_objects/perf_scale_corpus_with_base_20261010.json",
+  "rows": [
+    {
+      "label": "communication_ipc",
+      "repository": "openharmony/communication_ipc",
+      "base_commit": "093c0af2c28815cf147d2d41208f7a857d4958cb",
+      "head_commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+      "base_tree": "f9411316ef66cddf57f978746266184c23f1ed96",
+      "archive_sha256": "fe4755f67c018771e1d965e8891bc415d734b027d52cd4bf64f4deb7d876ee9a",
+      "blobs": 1388,
+      "top_level_entries": 24,
+      "base_commit_object_sha_verified": true,
+      "base_tree_sha_verified": true,
+      "head_first_parent_verified": true,
+      "secondary_parent_objects_verified": [
+        "6435478d22658623b4d9d7220eb179f01bcac9cb"
+      ],
+      "secondary_histories_marked_shallow": true,
+      "git_ancestor_check": true,
+      "changed_path_count": 2,
+      "repository_path": "/tmp/ohscanner-e2-targets-20261021-v6/openharmony-audit/perf-corpus/communication_ipc"
+    },
+    {
+      "label": "inputmethod_imf",
+      "repository": "openharmony/inputmethod_imf",
+      "base_commit": "247be52329d29787ae839e1eb5ada45580b7db2c",
+      "head_commit": "7777cba9eb19085af8e7b90088531028d2937460",
+      "base_tree": "31b96d7dfe6cfbeeda73b6fba3c3a2573b349fe5",
+      "archive_sha256": "e19528bd44a72c06881ea129d734ed885f940805871a46183f0930e30d5d10e0",
+      "blobs": 1032,
+      "top_level_entries": 24,
+      "base_commit_object_sha_verified": true,
+      "base_tree_sha_verified": true,
+      "head_first_parent_verified": true,
+      "secondary_parent_objects_verified": [
+        "2adf4c96dfc71a5216f7a110a6a7a3f9219bce4b"
+      ],
+      "secondary_histories_marked_shallow": true,
+      "git_ancestor_check": true,
+      "changed_path_count": 14,
+      "repository_path": "/tmp/ohscanner-e2-targets-20261021-v6/openharmony-audit/perf-corpus/inputmethod_imf"
+    },
+    {
+      "label": "multimedia_camera_framework",
+      "repository": "openharmony/multimedia_camera_framework",
+      "base_commit": "bc3ab60ddb1b1b7bfe7e58a23fee9759c74b3a78",
+      "head_commit": "085a5d0e2dc1c90a4b676bad55675a1cf12a6380",
+      "base_tree": "53edf2536f9e9b8603599cf55122edbb84274b24",
+      "archive_sha256": "1f927a5282ce5fd3b68d2bde7054180be0aa75a06c24c16df10a588a51c21392",
+      "blobs": 2262,
+      "top_level_entries": 23,
+      "base_commit_object_sha_verified": true,
+      "base_tree_sha_verified": true,
+      "head_first_parent_verified": true,
+      "secondary_parent_objects_verified": [
+        "99f7275d72ec68149b1883b5533ae2a60d316794"
+      ],
+      "secondary_histories_marked_shallow": true,
+      "git_ancestor_check": true,
+      "changed_path_count": 3,
+      "repository_path": "/tmp/ohscanner-e2-targets-20261021-v6/openharmony-audit/perf-corpus/multimedia_camera_framework"
+    },
+    {
+      "label": "multimedia_player_framework",
+      "repository": "openharmony/multimedia_player_framework",
+      "base_commit": "122861d26b850c32f239a02b5d0c342f44431cbf",
+      "head_commit": "9f9a285ff489afa66861a85dcc4213336a463b36",
+      "base_tree": "fa7a621c64bbe3d27fb2e6950d65bf41eb0a4d97",
+      "archive_sha256": "00640a11b8225eb84beb5a21c63ca5b8ef66e9d74b0d4ee7aa670ef4ebb5341d",
+      "blobs": 2902,
+      "top_level_entries": 20,
+      "base_commit_object_sha_verified": true,
+      "base_tree_sha_verified": true,
+      "head_first_parent_verified": true,
+      "secondary_parent_objects_verified": [
+        "268a08edc1e3829211190c626a92706392de2945"
+      ],
+      "secondary_histories_marked_shallow": true,
+      "git_ancestor_check": true,
+      "changed_path_count": 27,
+      "repository_path": "/tmp/ohscanner-e2-targets-20261021-v6/openharmony-audit/perf-corpus/multimedia_player_framework"
+    },
+    {
+      "label": "notification_common_event_service",
+      "repository": "openharmony/notification_common_event_service",
+      "base_commit": "1d87ffd38ae919be33c0b7651773baa2488931b4",
+      "head_commit": "aaaaf6d10aa8e1f6bd28673f10d5791d7e9c9e3f",
+      "base_tree": "ce97a80fcef0387dc6f4fd7d578a036cf8cb267c",
+      "archive_sha256": "9b2d5c0d8d827f98b8a0a0288721bdebdb7a03261871daa33e3e13e9c92fcba1",
+      "blobs": 432,
+      "top_level_entries": 18,
+      "base_commit_object_sha_verified": true,
+      "base_tree_sha_verified": true,
+      "head_first_parent_verified": true,
+      "secondary_parent_objects_verified": [
+        "cd8e060992ac82da0fd08cfadfd89a72df8552a3"
+      ],
+      "secondary_histories_marked_shallow": true,
+      "git_ancestor_check": true,
+      "changed_path_count": 2,
+      "repository_path": "/tmp/ohscanner-e2-targets-20261021-v6/openharmony-audit/perf-corpus/notification_common_event_service"
+    },
+    {
+      "label": "resourceschedule_background_task_mgr",
+      "repository": "openharmony/resourceschedule_background_task_mgr",
+      "base_commit": "1fb1e759138c892208e4856b6a643aa5239f36ec",
+      "head_commit": "cff2ff475e3885ee814651f6a13d7f8a5782efdd",
+      "base_tree": "8516357b17583a6f16f5483c28868bbf0c9e759f",
+      "archive_sha256": "245a19767f46ef0f7d3890095e6edcb01a77ee6fed31766c27222661efca4389",
+      "blobs": 490,
+      "top_level_entries": 19,
+      "base_commit_object_sha_verified": true,
+      "base_tree_sha_verified": true,
+      "head_first_parent_verified": true,
+      "secondary_parent_objects_verified": [
+        "ffaa0d33bc4004544b180cd406f935a83803fb37"
+      ],
+      "secondary_histories_marked_shallow": true,
+      "git_ancestor_check": true,
+      "changed_path_count": 2,
+      "repository_path": "/tmp/ohscanner-e2-targets-20261021-v6/openharmony-audit/perf-corpus/resourceschedule_background_task_mgr"
+    },
+    {
+      "label": "security_access_token",
+      "repository": "openharmony/security_access_token",
+      "base_commit": "3bf7ae4b564df84b9d06d5669e99464d479d59a9",
+      "head_commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "base_tree": "f674518b86f2a998941cfa69f7c7cee239648174",
+      "archive_sha256": "4fe497254f6cb8b99c94ae384768d68387eba0679d32b18347f9435cfac2dcd4",
+      "blobs": 1988,
+      "top_level_entries": 20,
+      "base_commit_object_sha_verified": true,
+      "base_tree_sha_verified": true,
+      "head_first_parent_verified": true,
+      "secondary_parent_objects_verified": [
+        "352d8445d3d7e972920922fa2fb080e54fb12ac1"
+      ],
+      "secondary_histories_marked_shallow": true,
+      "git_ancestor_check": true,
+      "changed_path_count": 13,
+      "repository_path": "/tmp/ohscanner-e2-targets-20261021-v6/openharmony-audit/perf-corpus/security_access_token"
+    },
+    {
+      "label": "telephony_call_manager",
+      "repository": "openharmony/telephony_call_manager",
+      "base_commit": "7f4872fa310ad22f3b2d0bdf1f274b7ca8185724",
+      "head_commit": "6638d1b37f278d7ed380d907674820e7467cedf8",
+      "base_tree": "ae21a9a7a62261bc9b7c38ff29f873c40e3d9bc9",
+      "archive_sha256": "b8c0f567d79db62f7228e31151138d59a4b771608cae7ae620a1d09ade1449f2",
+      "blobs": 627,
+      "top_level_entries": 16,
+      "base_commit_object_sha_verified": true,
+      "base_tree_sha_verified": true,
+      "head_first_parent_verified": true,
+      "secondary_parent_objects_verified": [
+        "d545e8b12585d79a8de38909106299fb5a91e42b"
+      ],
+      "secondary_histories_marked_shallow": true,
+      "git_ancestor_check": true,
+      "changed_path_count": 17,
+      "repository_path": "/tmp/ohscanner-e2-targets-20261021-v6/openharmony-audit/perf-corpus/telephony_call_manager"
+    },
+    {
+      "label": "update_updateservice",
+      "repository": "openharmony/update_updateservice",
+      "base_commit": "327f3538c40374d129c172e2d1de2b5348630d6e",
+      "head_commit": "e4942a33cc5ed29040e5c720bea3b2a8e4a79221",
+      "base_tree": "57d578925e4b00541a542d54d120961f6654c04c",
+      "archive_sha256": "4ed8069d7538d022a85a07971d368fdb9790a426413e393de90f55d2bef36e4d",
+      "blobs": 289,
+      "top_level_entries": 16,
+      "base_commit_object_sha_verified": true,
+      "base_tree_sha_verified": true,
+      "head_first_parent_verified": true,
+      "secondary_parent_objects_verified": [
+        "8394e16a46fdcf7f0b9b13e45746c624ff9e545d"
+      ],
+      "secondary_histories_marked_shallow": true,
+      "git_ancestor_check": true,
+      "changed_path_count": 10,
+      "repository_path": "/tmp/ohscanner-e2-targets-20261021-v6/openharmony-audit/perf-corpus/update_updateservice"
+    },
+    {
+      "label": "window_window_manager",
+      "repository": "openharmony/window_window_manager",
+      "base_commit": "dee887d0a45ca2372338bdd033337809d3437b70",
+      "head_commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "base_tree": "a6406ca488c86a32bbb45a4216433b3115736105",
+      "archive_sha256": "876d6c931b5ea04f2b5651d5ba159996f1014723456d9f13c441df6d8c493cea",
+      "blobs": 2450,
+      "top_level_entries": 33,
+      "base_commit_object_sha_verified": true,
+      "base_tree_sha_verified": true,
+      "head_first_parent_verified": true,
+      "secondary_parent_objects_verified": [
+        "62d003341c784e0738d7f58e0d20b176d0c03d55"
+      ],
+      "secondary_histories_marked_shallow": true,
+      "git_ancestor_check": true,
+      "changed_path_count": 7,
+      "repository_path": "/tmp/ohscanner-e2-targets-20261021-v6/openharmony-audit/perf-corpus/window_window_manager"
+    },
+    {
+      "label": "c_utils_pinned_m2",
+      "repository": "openharmony/commonlibrary_c_utils",
+      "base_commit": "8044daa1040218b6b6b2088c3df334d5ae047c1b",
+      "head_commit": "b807d3dadb7dbb7639fe85b3a5f72da18d318da2",
+      "base_tree": "df1f614b9bff8bac53686a1b8a4c324884a2473b",
+      "archive_sha256": "f636b2374736f733d1fa469f3c7f319f400fd18124569adadb638611f37a2215",
+      "blobs": 228,
+      "top_level_entries": 12,
+      "base_commit_object_sha_verified": true,
+      "base_tree_sha_verified": true,
+      "head_first_parent_verified": true,
+      "secondary_parent_objects_verified": [
+        "a04c8eb2546067377499aa7456794e71a009f894"
+      ],
+      "secondary_histories_marked_shallow": true,
+      "git_ancestor_check": true,
+      "changed_path_count": 3,
+      "repository_path": "/tmp/ohscanner-e2-targets-20261021-v6/openharmony-targets/commonlibrary_c_utils"
+    }
+  ]
+}

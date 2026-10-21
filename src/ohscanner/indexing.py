@@ -5,12 +5,103 @@ from importlib import metadata
 from pathlib import Path
 import platform
 import subprocess
+from time import perf_counter, process_time
 
 from .contracts import ScanContext, ScanRequest
 from .fixture import snapshot_digest
-from .facts import build_syntax_facts
+from .fact_providers import DEFAULT_FACT_PROVIDERS
 from .frontend import index_sources
 from .git_source import load_git_sources
+
+
+def child_cpu_seconds():
+    """Cumulative reaped-child CPU seconds, or None where resource is unavailable."""
+    try:
+        import resource
+        usage = resource.getrusage(resource.RUSAGE_CHILDREN)
+        return usage.ru_utime + usage.ru_stime
+    except (ImportError, AttributeError, OSError):
+        return None
+
+
+def _parse_cpu_max(value: str):
+    """Parse cgroup v2 cpu.max without guessing from host logical CPUs."""
+    fields = value.split()
+    if len(fields) != 2:
+        return None
+    quota, period = fields
+    if period.isdecimal() and int(period) > 0 and quota == "max":
+        return {"cores": None, "status": "unlimited"}
+    if not quota.isdecimal() or not period.isdecimal() or int(period) <= 0:
+        return None
+    return {"cores": int(quota) / int(period), "status": "limited"}
+
+
+def _parse_cpu_v1(quota: str, period: str):
+    """Parse cgroup v1 CFS quota files."""
+    try:
+        quota_value, period_value = int(quota.strip()), int(period.strip())
+    except (TypeError, ValueError):
+        return None
+    if quota_value == -1 and period_value > 0:
+        return {"cores": None, "status": "unlimited"}
+    if quota_value <= 0 or period_value <= 0:
+        return None
+    return {"cores": quota_value / period_value, "status": "limited"}
+
+
+def _effective_cpu_quota(values, source):
+    limited = [item["cores"] for item in values
+               if item is not None and item["status"] == "limited"]
+    if limited:
+        return {"cores": min(limited), "status": "limited", "source": source}
+    if any(item is not None and item["status"] == "unlimited" for item in values):
+        return {"cores": None, "status": "unlimited", "source": source}
+    return None
+
+
+def cpu_quota_info():
+    """Return an enforced cgroup CPU quota, or explicit unknown/unlimited status."""
+    try:
+        memberships = Path("/proc/self/cgroup").read_text(encoding="ascii").splitlines()
+    except OSError:
+        memberships = []
+
+    for line in memberships:
+        fields = line.split(":", 2)
+        if len(fields) != 3:
+            continue
+        _, controllers, group = fields
+        relative = Path(group.lstrip("/"))
+        directories = [Path("/sys/fs/cgroup") / Path(*relative.parts[:depth])
+                       for depth in range(len(relative.parts), -1, -1)]
+        if not controllers:
+            parsed_values = []
+            for directory in directories:
+                try:
+                    parsed_values.append(_parse_cpu_max(
+                        (directory / "cpu.max").read_text(encoding="ascii")))
+                except OSError:
+                    continue
+            effective = _effective_cpu_quota(parsed_values, "cgroup v2 cpu.max hierarchy")
+            if effective is not None:
+                return effective
+        elif "cpu" in controllers.split(","):
+            parsed_values = []
+            directories = [Path("/sys/fs/cgroup/cpu") / Path(*relative.parts[:depth])
+                           for depth in range(len(relative.parts), -1, -1)]
+            for base in directories:
+                try:
+                    parsed_values.append(_parse_cpu_v1(
+                        (base / "cpu.cfs_quota_us").read_text(encoding="ascii"),
+                        (base / "cpu.cfs_period_us").read_text(encoding="ascii"),
+                    ))
+                except OSError:
+                    continue
+            effective = _effective_cpu_quota(parsed_values, "cgroup v1 CFS quota hierarchy")
+            if effective is not None:
+                return effective
+    return {"cores": None, "status": "unknown", "source": None}
 
 
 def environment_fingerprint():
@@ -26,6 +117,7 @@ def environment_fingerprint():
             versions[package] = metadata.version(package)
         except metadata.PackageNotFoundError:
             versions[package] = "unavailable"
+    quota = cpu_quota_info()
     return {
         "python": platform.python_version(),
         "git": git,
@@ -34,13 +126,45 @@ def environment_fingerprint():
         "build_profile": "none",
         "macro_expansion": False,
         "product_manifest_locked": False,
+        "cpu_quota_cores": quota["cores"],
+        "cpu_quota_status": quota["status"],
+        "cpu_quota_source": quota["source"],
     }
 
 
 def prepare_git_context(repo_dir: Path, repository: str, commit: str,
-                        includes: tuple[str, ...] = (".",)):
+                        includes: tuple[str, ...] = (".",), *, ast_cache=None,
+                        phase_metrics=None, requested_facts=("facts_v1",)):
+    source_started = perf_counter()
+    source_cpu_started = process_time()
+    child_cpu_before = child_cpu_seconds()
     pinned, tree, sources, inventory = load_git_sources(repo_dir, commit, includes)
-    units, ast, coverage = index_sources(sources)
+    source_seconds = perf_counter() - source_started
+    source_cpu_seconds = process_time() - source_cpu_started
+    child_cpu_after = child_cpu_seconds()
+    parse_metrics = {}
+    units, ast, coverage = index_sources(sources, ast_cache=ast_cache, metrics=parse_metrics)
+    fact_values, missing_facts, fact_metrics = DEFAULT_FACT_PROVIDERS.build(
+        ast, requested_facts, (unit.language for unit in units))
+    if phase_metrics is not None:
+        phase_metrics["source_read_seconds"] = phase_metrics.get("source_read_seconds", 0.0) + source_seconds
+        phase_metrics["source_read_cpu_seconds"] = phase_metrics.get("source_read_cpu_seconds", 0.0) + source_cpu_seconds
+        phase_metrics["source_read_child_cpu_seconds"] = (
+            phase_metrics.get("source_read_child_cpu_seconds", 0.0)
+            + (child_cpu_after - child_cpu_before)
+            if child_cpu_before is not None and child_cpu_after is not None else None
+        )
+        phase_metrics["ast_parse_seconds"] = parse_metrics["parse_seconds"]
+        phase_metrics["ast_parse_cpu_seconds"] = parse_metrics["parse_cpu_seconds"]
+        phase_metrics["frontend_seconds"] = parse_metrics["frontend_seconds"]
+        phase_metrics["frontend_cpu_seconds"] = parse_metrics["frontend_cpu_seconds"]
+        phase_metrics["facts_build_seconds"] = fact_metrics["provider_wall_seconds"]
+        phase_metrics["facts_build_cpu_seconds"] = fact_metrics["provider_cpu_seconds"]
+        phase_metrics["fact_providers"] = fact_metrics["providers"]
+        phase_metrics["missing_facts"] = list(missing_facts)
+        phase_metrics["parse_files"] = parse_metrics["parse_files"]
+        phase_metrics["indexed_files"] = parse_metrics["indexed_files"]
+        phase_metrics["ast_cache"] = parse_metrics["cache"]
     digest = snapshot_digest(units)
     context = ScanContext(
         request=ScanRequest(
@@ -54,7 +178,7 @@ def prepare_git_context(repo_dir: Path, repository: str, commit: str,
             "ast": ast,
             "source_blob_oid": {item.path: item.oid for item in sources if item.archive_binding is None},
             "source_archive_binding": {item.path: item.archive_binding for item in sources if item.archive_binding is not None},
-            "facts_v1": build_syntax_facts(ast),
+            **fact_values,
             "coverage": coverage,
         },
     )

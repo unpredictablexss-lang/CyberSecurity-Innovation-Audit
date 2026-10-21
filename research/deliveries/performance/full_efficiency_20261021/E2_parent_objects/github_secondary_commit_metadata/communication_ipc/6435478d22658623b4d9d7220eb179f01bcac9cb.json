@@ -1,0 +1,73 @@
+{
+  "sha": "6435478d22658623b4d9d7220eb179f01bcac9cb",
+  "node_id": "C_kwDOF9jLidoAKDY0MzU0NzhkMjI2NTg2MjNiNGQ5ZDcyMjBlYjE3OWYwMWJjYWM5Y2I",
+  "commit": {
+    "author": {
+      "name": "fangwusheng",
+      "email": "fangwusheng@h-partners.com",
+      "date": "2026-09-12T01:16:52Z"
+    },
+    "committer": {
+      "name": "fangwusheng",
+      "email": "fangwusheng@h-partners.com",
+      "date": "2026-09-14T02:23:56Z"
+    },
+    "message": "为 cj_ipc_ffi 添加 version script 限制符号导出\n\n通过 libcj_ipc_ffi.map 控制符号可见性：\n- 导出 Ffi* 和 OHOS_Call* 前缀的 extern C 符号（FFI 接口函数）\n- 导出 CJ_rpc_CreateRemoteObject 等 C++ 符号供跨编译单元调用\n- 隐藏其余内部实现符号\n\nCo-Authored-By: Agent\nSigned-off-by: fangwusheng <fangwusheng@h-partners.com>",
+    "tree": {
+      "sha": "125ecbfa21f430f2f977f0026ab97b70cd27a726",
+      "url": "https://api.github.com/repos/openharmony/communication_ipc/git/trees/125ecbfa21f430f2f977f0026ab97b70cd27a726"
+    },
+    "url": "https://api.github.com/repos/openharmony/communication_ipc/git/commits/6435478d22658623b4d9d7220eb179f01bcac9cb",
+    "comment_count": 0,
+    "verification": {
+      "verified": false,
+      "reason": "unsigned",
+      "signature": null,
+      "payload": null,
+      "verified_at": null
+    }
+  },
+  "url": "https://api.github.com/repos/openharmony/communication_ipc/commits/6435478d22658623b4d9d7220eb179f01bcac9cb",
+  "html_url": "https://github.com/openharmony/communication_ipc/commit/6435478d22658623b4d9d7220eb179f01bcac9cb",
+  "comments_url": "https://api.github.com/repos/openharmony/communication_ipc/commits/6435478d22658623b4d9d7220eb179f01bcac9cb/comments",
+  "author": null,
+  "committer": null,
+  "parents": [
+    {
+      "sha": "093c0af2c28815cf147d2d41208f7a857d4958cb",
+      "url": "https://api.github.com/repos/openharmony/communication_ipc/commits/093c0af2c28815cf147d2d41208f7a857d4958cb",
+      "html_url": "https://github.com/openharmony/communication_ipc/commit/093c0af2c28815cf147d2d41208f7a857d4958cb"
+    }
+  ],
+  "stats": {
+    "total": 28,
+    "additions": 28,
+    "deletions": 0
+  },
+  "files": [
+    {
+      "sha": "f18e8640b8b584ddbade5b8aadd51639b2c80981",
+      "filename": "interfaces/innerkits/cj/BUILD.gn",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 0,
+      "changes": 2,
+      "blob_url": "https://github.com/openharmony/communication_ipc/blob/6435478d22658623b4d9d7220eb179f01bcac9cb/interfaces%2Finnerkits%2Fcj%2FBUILD.gn",
+      "raw_url": "https://github.com/openharmony/communication_ipc/raw/6435478d22658623b4d9d7220eb179f01bcac9cb/interfaces%2Finnerkits%2Fcj%2FBUILD.gn",
+      "contents_url": "https://api.github.com/repos/openharmony/communication_ipc/contents/interfaces%2Finnerkits%2Fcj%2FBUILD.gn?ref=6435478d22658623b4d9d7220eb179f01bcac9cb",
+      "patch": "@@ -63,6 +63,8 @@ if (support_jsapi) {\n       \"src/remote_proxy_impl.cpp\",\n     ]\n \n+    version_script = \"libcj_ipc_ffi.map\"\n+\n     innerapi_tags = [ \"platformsdk\" ]\n \n     subsystem_name = \"communication\""
+    },
+    {
+      "sha": "29a237a44ff9fe5b3957af810b0f96520ad80809",
+      "filename": "interfaces/innerkits/cj/libcj_ipc_ffi.map",
+      "status": "added",
+      "additions": 26,
+      "deletions": 0,
+      "changes": 26,
+      "blob_url": "https://github.com/openharmony/communication_ipc/blob/6435478d22658623b4d9d7220eb179f01bcac9cb/interfaces%2Finnerkits%2Fcj%2Flibcj_ipc_ffi.map",
+      "raw_url": "https://github.com/openharmony/communication_ipc/raw/6435478d22658623b4d9d7220eb179f01bcac9cb/interfaces%2Finnerkits%2Fcj%2Flibcj_ipc_ffi.map",
+      "contents_url": "https://api.github.com/repos/openharmony/communication_ipc/contents/interfaces%2Finnerkits%2Fcj%2Flibcj_ipc_ffi.map?ref=6435478d22658623b4d9d7220eb179f01bcac9cb",
+      "patch": "@@ -0,0 +1,26 @@\n+# Copyright (c) 2026 Huawei Device Co., Ltd.\n+# Licensed under the Apache License, Version 2.0 (the \"License\");\n+# you may not use this file except in compliance with the License.\n+# You may obtain a copy of the License at\n+#\n+# http://www.apache.org/licenses/LICENSE-2.0\n+#\n+# Unless required by applicable law or agreed to in writing, software\n+# distributed under the License is distributed on an \"AS IS\" BASIS,\n+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n+# See the License for the specific language governing permissions and\n+# limitations under the License.\n+\n+{\n+  global:\n+    extern \"C\" {\n+      Ffi*;\n+      OHOS_Call*;\n+    };\n+    extern \"C++\" {\n+      \"OHOS::CJ_rpc_CreateRemoteObject(OHOS::sptr<OHOS::IRemoteObject>)\";\n+      \"OHOS::MessageSequenceImpl::GetMessageParcel()\";\n+    };\n+  local:\n+    *;\n+};"
+    }
+  ]
+}

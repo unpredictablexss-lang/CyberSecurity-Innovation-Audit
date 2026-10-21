@@ -198,6 +198,41 @@ class WorkbenchTests(unittest.TestCase):
         self.assertEqual(job["spec"]["commit"], self.commit)
         self.assertNotEqual(git(self.repo, "rev-parse", "HEAD"), job["spec"]["commit"])
 
+    def test_incremental_base_is_previewed_bound_and_reported_with_full_fallback(self):
+        source = self.repo / "lifetime.cpp"
+        source.write_text(source.read_text() + "\n// incremental API fixture change\n")
+        git(self.repo, "add", "lifetime.cpp")
+        git(self.repo, "commit", "-qm", "head source change")
+        head = git(self.repo, "rev-parse", "HEAD")
+        request = {
+            "repository_id": self.repo_id,
+            "revision": head,
+            "base_commit": self.commit,
+            "include_paths": ["."],
+            "detector_ids": IDS,
+            "audit_mode": "static_only",
+        }
+        preview = self.client.post("/api/v1/audit-plans", json=request, headers=HEADERS)
+        self.assertEqual(preview.status_code, 200, preview.text)
+        plan = preview.json()
+        self.assertEqual(plan["base_commit"], self.commit)
+        self.assertEqual(plan["incremental_mode"], "full_scan_fallback_if_dependency_reuse_unproven")
+
+        job = self.queue(revision=head, base_commit=self.commit, audit_mode="static_only")
+        self.assertEqual(job["spec"]["base_commit"], self.commit)
+        self.assertNotEqual(
+            job["spec"]["workflow_sha256"],
+            service.audit_workflow_sha256(job["spec"]["plan_sha256"], "static_only"),
+        )
+        Worker(self.settings).run(once=True)
+        completed = self.store.job(job["id"])
+        self.assertIn(completed["status"], {"completed", "completed_with_limitations"})
+        report = self.client.get(f"/api/v1/scans/{job['id']}/report").json()
+        self.assertEqual(report["incremental"]["base_commit"], self.commit)
+        self.assertEqual(report["incremental"]["head_commit"], head)
+        self.assertTrue(report["incremental"]["fallback"])
+        self.assertEqual(report["incremental"]["execution"], "full_scan_required")
+
     def test_scope_escape_rejected(self):
         r = self.client.post(
             "/api/v1/scans",

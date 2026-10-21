@@ -1,0 +1,46 @@
+{
+  "budget_policy": "unchanged; no provider authorization or budget was created",
+  "candidate_grouping": {
+    "changed_source_gets_new_group": true,
+    "exact_duplicate_same_group": true,
+    "scope": "root-cause identity helper only; full candidate queue not materialized"
+  },
+  "experiment": "E4_offline_scheduler_fixture",
+  "interpretation": "Deterministic local scheduling helper check only; not real Agent investigation performance.",
+  "obligation_scheduling": {
+    "ranked_source_action_indices": [
+      1,
+      0,
+      3
+    ],
+    "requested_indices": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected_tools": [
+      "read_candidate_enclosing_function",
+      "lookup_symbol_in_fixed_commit",
+      "lookup_symbol_in_fixed_commit"
+    ],
+    "unknown_or_non_source_obligations_left_unrouted": [
+      2
+    ]
+  },
+  "process_cpu_seconds": 0.00021269099999998708,
+  "provider_calls": 0,
+  "provider_cost": "unknown",
+  "quality": "not_measured_no_model_or_ground_truth",
+  "schema_version": 1,
+  "status": "completed_offline_fixture_provider_not_run",
+  "token_usage": "unknown",
+  "tool_result_memo": {
+    "cache_write_succeeded": true,
+    "changed_commit_key_differs": true,
+    "identical_request_reused": true,
+    "operation_scope": "fixture only; production memo remains one authorized operation",
+    "same_tool_invocations_required": 1
+  },
+  "wall_seconds": 0.0005359779999993819
+}

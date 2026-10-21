@@ -1818,6 +1818,7 @@ class AgentRouteTests(unittest.TestCase):
                 self.assertEqual(baseline_response.json()["vulnerability_state"], "candidate")
                 self.assertEqual(len(client.get("/api/v1/agent/evaluation-summary").json()["r0_baseline_reviews"]), 1)
                 self.assertEqual(preview["initial_context"]["source_excerpt"], "int check() {}")
+                self.assertEqual(preview["initial_context"]["next_source_actions"], [])
                 self.assertEqual(preview["binding"]["commit"], "c" * 40)
                 self.assertNotIn("test-secret", json.dumps(preview))
                 stale = client.post("/api/v1/operations/agent-investigations", headers={

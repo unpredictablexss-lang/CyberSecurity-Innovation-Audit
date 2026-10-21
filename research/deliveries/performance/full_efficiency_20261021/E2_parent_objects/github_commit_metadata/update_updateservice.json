@@ -1,0 +1,362 @@
+{
+  "sha": "327f3538c40374d129c172e2d1de2b5348630d6e",
+  "node_id": "C_kwDOF9jJJdoAKDMyN2YzNTM4YzQwMzc0ZDEyOWMxNzJlMmQxZGUyYjUzNDg2MzBkNmU",
+  "commit": {
+    "author": {
+      "name": "openharmony_ci",
+      "email": "120357966@qq.com",
+      "date": "2023-08-09T06:09:18Z"
+    },
+    "committer": {
+      "name": "Gitee",
+      "email": "noreply@gitee.com",
+      "date": "2023-08-09T06:09:18Z"
+    },
+    "message": "!300 mini系统宏定义隔离\nMerge pull request !300 from 邹友松/master",
+    "tree": {
+      "sha": "57d578925e4b00541a542d54d120961f6654c04c",
+      "url": "https://api.github.com/repos/openharmony/update_updateservice/git/trees/57d578925e4b00541a542d54d120961f6654c04c"
+    },
+    "url": "https://api.github.com/repos/openharmony/update_updateservice/git/commits/327f3538c40374d129c172e2d1de2b5348630d6e",
+    "comment_count": 0,
+    "verification": {
+      "verified": true,
+      "reason": "valid",
+      "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFzBAABCgAnBQJk0y2OCZAXPpucqS7vjxahBGOnHqWQ5uVeWt7ZJBc+m5ypLu+P\nAABkGA/+IX7aonhQCYw9l5iLHy+KF3Mxi009ITwhJzYX7mAHNFsSUqCq8VNUHCEx\n7BY5yL1GqxY2KVcT+UsuX89SUe3T61L8ZFPWPY1l7p/NuWSWjRu5O5mrpcVCHWNW\nGayN6TGqqJQ+qz+RYfP5tZ3P6DCYAjIDT9eAxSVaQ1lGfRs7gJFvWgmGMk8SgN8/\nbusKuoEKln2azqHeFI4SixnvTdZHCr8vIgvxous1Sj5fqzUO3OuS1AYiws4qR7Mg\nbEZdw+OvjS+MNLyAObfm1UFO4gHdC2srEeFHNEPEuV6vsxw02em3YVaf3wPAO56/\nT+6A3+WAWP7kTBPm2o1DYoHPiA5h4I0uhrd1mUkpQwzVy4OBWXKKSHG9aMAC+kca\nm4iu3O0ywD2kturn1OFJW8OtNuMaUebo/wmt5PlVDr3fl6OwK27YxIzB3kofV8v0\nB4Ull3xBiGl2YgMX6m76SF+o/HvhFG3mqkBr3/gcgYMki4l2B+qKHbGajeVm7Rhw\nGwdbPiTsyWRgVwBVtJXzJ8jPR/r347Lm5Llzz2F6Gm+cxJtOcW9NMBz4FHCFKDQz\nUTbcb7VBi21Cc2h0AEOoEmH64RFkL4OKptDQcbfU9HipuIRL+o9Q7BzbDvzIWIxD\nWvxjNVLV7r1dy2SPck1/qcC9T6+u7d/2Wxu7GjWNTPPS5rpsx8E=\n=tl85\n-----END PGP SIGNATURE-----",
+      "payload": "tree 57d578925e4b00541a542d54d120961f6654c04c\nparent 1cc793eaefaae4cc2be42529e98064a1dc2fb14d\nparent 00efe99f3a19c44250a22005b280691347c18dbe\nauthor openharmony_ci <120357966@qq.com> 1691561358 +0000\ncommitter Gitee <noreply@gitee.com> 1691561358 +0000\n\n!300 mini系统宏定义隔离\nMerge pull request !300 from 邹友松/master",
+      "verified_at": "2025-04-15T16:00:16Z"
+    }
+  },
+  "url": "https://api.github.com/repos/openharmony/update_updateservice/commits/327f3538c40374d129c172e2d1de2b5348630d6e",
+  "html_url": "https://github.com/openharmony/update_updateservice/commit/327f3538c40374d129c172e2d1de2b5348630d6e",
+  "comments_url": "https://api.github.com/repos/openharmony/update_updateservice/commits/327f3538c40374d129c172e2d1de2b5348630d6e/comments",
+  "author": null,
+  "committer": {
+    "login": "gitee-org",
+    "id": 95162452,
+    "node_id": "U_kgDOBawQVA",
+    "avatar_url": "https://avatars.githubusercontent.com/u/95162452?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/gitee-org",
+    "html_url": "https://github.com/gitee-org",
+    "followers_url": "https://api.github.com/users/gitee-org/followers",
+    "following_url": "https://api.github.com/users/gitee-org/following{/other_user}",
+    "gists_url": "https://api.github.com/users/gitee-org/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/gitee-org/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/gitee-org/subscriptions",
+    "organizations_url": "https://api.github.com/users/gitee-org/orgs",
+    "repos_url": "https://api.github.com/users/gitee-org/repos",
+    "events_url": "https://api.github.com/users/gitee-org/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/gitee-org/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false
+  },
+  "parents": [
+    {
+      "sha": "1cc793eaefaae4cc2be42529e98064a1dc2fb14d",
+      "url": "https://api.github.com/repos/openharmony/update_updateservice/commits/1cc793eaefaae4cc2be42529e98064a1dc2fb14d",
+      "html_url": "https://github.com/openharmony/update_updateservice/commit/1cc793eaefaae4cc2be42529e98064a1dc2fb14d"
+    },
+    {
+      "sha": "00efe99f3a19c44250a22005b280691347c18dbe",
+      "url": "https://api.github.com/repos/openharmony/update_updateservice/commits/00efe99f3a19c44250a22005b280691347c18dbe",
+      "html_url": "https://github.com/openharmony/update_updateservice/commit/00efe99f3a19c44250a22005b280691347c18dbe"
+    }
+  ],
+  "stats": {
+    "total": 759,
+    "additions": 575,
+    "deletions": 184
+  },
+  "files": [
+    {
+      "sha": "ff40ec297271dad2dfa963065a9b56e7d0fed86b",
+      "filename": "interfaces/inner_api/engine/BUILD.gn",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "blob_url": "https://github.com/openharmony/update_updateservice/blob/327f3538c40374d129c172e2d1de2b5348630d6e/interfaces%2Finner_api%2Fengine%2FBUILD.gn",
+      "raw_url": "https://github.com/openharmony/update_updateservice/raw/327f3538c40374d129c172e2d1de2b5348630d6e/interfaces%2Finner_api%2Fengine%2FBUILD.gn",
+      "contents_url": "https://api.github.com/repos/openharmony/update_updateservice/contents/interfaces%2Finner_api%2Fengine%2FBUILD.gn?ref=327f3538c40374d129c172e2d1de2b5348630d6e",
+      "patch": "@@ -30,7 +30,7 @@ config(\"updateengine_inner_library_native_config\") {\n   ]\n }\n \n-ohos_static_library(\"$updateengine_inner_library_name\") {\n+ohos_shared_library(\"$updateengine_inner_library_name\") {\n   defines = [ \"DUAL_ADAPTER\" ]\n   sources = [\n     \"$updateengine_root_path/interfaces/inner_api/engine/update_service_kits_impl.cpp\","
+    },
+    {
+      "sha": "d079f465064505c85341c04ae925a004090012d1",
+      "filename": "services/core/ability/callback/src/base_callback_utils.cpp",
+      "status": "modified",
+      "additions": 0,
+      "deletions": 4,
+      "changes": 4,
+      "blob_url": "https://github.com/openharmony/update_updateservice/blob/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Fcore%2Fability%2Fcallback%2Fsrc%2Fbase_callback_utils.cpp",
+      "raw_url": "https://github.com/openharmony/update_updateservice/raw/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Fcore%2Fability%2Fcallback%2Fsrc%2Fbase_callback_utils.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/update_updateservice/contents/services%2Fcore%2Fability%2Fcallback%2Fsrc%2Fbase_callback_utils.cpp?ref=327f3538c40374d129c172e2d1de2b5348630d6e",
+      "patch": "@@ -19,9 +19,7 @@\n #include \"update_define.h\"\n #include \"update_helper.h\"\n #include \"update_log.h\"\n-#ifdef ABILITY_BASE_ENABLE\n #include \"update_notify.h\"\n-#endif\n #include \"update_service.h\"\n #include \"update_service_cache.h\"\n #include \"update_service_util.h\"\n@@ -102,9 +100,7 @@ void BaseCallbackUtils::NotifyToHap(EventInfo &info)\n     ENGINE_LOGI(\"Notify eventInfoStr %{public}s\", eventInfoStr.c_str());\n     if (!eventInfoStr.empty()) {\n         SubscribeInfo subscribeInfo{GetBusinessSubType()};\n-#ifdef ABILITY_BASE_ENABLE\n         OHOS::UpdateEngine::UpdateNotify::NotifyToAppService(eventInfoStr, subscribeInfo.ToJson());\n-#endif\n     }\n }\n } // namespace UpdateEngine"
+    },
+    {
+      "sha": "059dfe987d70b74732cd072707d7f838c5ac7f94",
+      "filename": "services/core/ability/callback/src/base_callback_utils_empty.cpp",
+      "status": "added",
+      "additions": 54,
+      "deletions": 0,
+      "changes": 54,
+      "blob_url": "https://github.com/openharmony/update_updateservice/blob/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Fcore%2Fability%2Fcallback%2Fsrc%2Fbase_callback_utils_empty.cpp",
+      "raw_url": "https://github.com/openharmony/update_updateservice/raw/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Fcore%2Fability%2Fcallback%2Fsrc%2Fbase_callback_utils_empty.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/update_updateservice/contents/services%2Fcore%2Fability%2Fcallback%2Fsrc%2Fbase_callback_utils_empty.cpp?ref=327f3538c40374d129c172e2d1de2b5348630d6e",
+      "patch": "@@ -0,0 +1,54 @@\n+/*\n+ * Copyright (c) 2023 Huawei Device Co., Ltd.\n+ * Licensed under the Apache License, Version 2.0 (the \"License\");\n+ * you may not use this file except in compliance with the License.\n+ * You may obtain a copy of the License at\n+ *\n+ *     http://www.apache.org/licenses/LICENSE-2.0\n+ *\n+ * Unless required by applicable law or agreed to in writing, software\n+ * distributed under the License is distributed on an \"AS IS\" BASIS,\n+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n+ * See the License for the specific language governing permissions and\n+ * limitations under the License.\n+ */\n+\n+#include \"base_callback_utils.h\"\n+\n+#include \"iupdate_callback.h\"\n+#include \"update_define.h\"\n+#include \"update_helper.h\"\n+#include \"update_log.h\"\n+#include \"update_service.h\"\n+#include \"update_service_cache.h\"\n+#include \"update_service_util.h\"\n+\n+namespace OHOS {\n+namespace UpdateEngine {\n+void BaseCallbackUtils::NotifyEvent(const std::string &versionDigestInfo, EventId eventId, UpgradeStatus status,\n+    const ErrorMessage &errorMessage, const std::vector<VersionComponent> &versionComponents)\n+{\n+    ENGINE_LOGI(\"BaseCallbackUtils NotifyEvent\");\n+}\n+\n+void BaseCallbackUtils::ProgressCallback(const std::string &versionDigestInfo, const Progress &progress)\n+{\n+    ENGINE_LOGI(\"BaseCallbackUtils ProgressCallback\");\n+}\n+\n+void BaseCallbackUtils::CallbackToHap(EventInfo &eventInfo)\n+{\n+    ENGINE_LOGI(\"BaseCallbackUtils CallbackToHap\");\n+}\n+\n+sptr<IUpdateCallback> BaseCallbackUtils::GetUpgradeCallback(const UpgradeInfo &upgradeInfo)\n+{\n+    return nullptr;\n+}\n+\n+void BaseCallbackUtils::NotifyToHap(EventInfo &info)\n+{\n+    ENGINE_LOGI(\"BaseCallbackUtils NotifyToHap\");\n+}\n+} // namespace UpdateEngine\n+} // namespace OHOS"
+    },
+    {
+      "sha": "afe8a01cef8948b8afa5e166a906334aa29c7955",
+      "filename": "services/core/ability/preference/src/preference_utils.cpp",
+      "status": "modified",
+      "additions": 0,
+      "deletions": 37,
+      "changes": 37,
+      "blob_url": "https://github.com/openharmony/update_updateservice/blob/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Fcore%2Fability%2Fpreference%2Fsrc%2Fpreference_utils.cpp",
+      "raw_url": "https://github.com/openharmony/update_updateservice/raw/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Fcore%2Fability%2Fpreference%2Fsrc%2Fpreference_utils.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/update_updateservice/contents/services%2Fcore%2Fability%2Fpreference%2Fsrc%2Fpreference_utils.cpp?ref=327f3538c40374d129c172e2d1de2b5348630d6e",
+      "patch": "@@ -17,15 +17,11 @@\n \n #include <ohos_types.h>\n \n-#ifdef NATIVE_PREFERENCES_ENABLE\n #include \"preferences_helper.h\"\n-#endif\n-\n #include \"update_log.h\"\n \n namespace OHOS {\n namespace UpdateEngine {\n-#ifdef NATIVE_PREFERENCES_ENABLE\n std::shared_ptr<NativePreferences::Preferences> PreferencesUtil::GetPreference()\n {\n     std::string path = GetPath();\n@@ -40,19 +36,14 @@ std::shared_ptr<NativePreferences::Preferences> PreferencesUtil::GetPreference()\n     }\n     return ptr;\n }\n-#endif\n \n bool PreferencesUtil::DeletePreference()\n {\n-#ifdef NATIVE_PREFERENCES_ENABLE\n     std::string path = GetPath();\n     if (path.empty()) {\n         return false;\n     }\n     return NativePreferences::PreferencesHelper::DeletePreferences(path) == NativePreferences::E_OK;\n-#else\n-    return true;\n-#endif\n }\n \n bool PreferencesUtil::SaveString(const std::string &key, const std::string &value)\n@@ -83,7 +74,6 @@ bool PreferencesUtil::SaveFloat(const std::string &key, float value)\n template <typename T>\n bool PreferencesUtil::Save(const std::string &key, const T &value)\n {\n-#ifdef NATIVE_PREFERENCES_ENABLE\n     std::shared_ptr<NativePreferences::Preferences> ptr = GetPreference();\n     if (ptr == nullptr) {\n         return false;\n@@ -93,12 +83,8 @@ bool PreferencesUtil::Save(const std::string &key, const T &value)\n         return false;\n     }\n     return RefreshSync();\n-#else\n-    return true;\n-#endif\n }\n \n-#ifdef NATIVE_PREFERENCES_ENABLE\n bool PreferencesUtil::SaveInner(\n     std::shared_ptr<NativePreferences::Preferences> ptr, const std::string &key, const std::string &value)\n {\n@@ -128,7 +114,6 @@ bool PreferencesUtil::SaveInner(\n {\n     return ptr->PutFloat(key, value) == NativePreferences::E_OK;\n }\n-#endif\n \n std::string PreferencesUtil::ObtainString(const std::string &key, const std::string &defValue)\n {\n@@ -158,20 +143,15 @@ float PreferencesUtil::ObtainFloat(const std::string &key, float defValue)\n template <typename T>\n T PreferencesUtil::Obtain(const std::string &key, const T &defValue)\n {\n-#ifdef NATIVE_PREFERENCES_ENABLE\n     int errCode = OHOS_FAILURE;\n     std::shared_ptr<NativePreferences::Preferences> ptr = GetPreference();\n     if (ptr == nullptr) {\n         ENGINE_LOGI(\"GetPreferences error code is %{public}d\", errCode);\n         return defValue;\n     }\n     return ObtainInner(ptr, key, defValue);\n-#else\n-    return defValue;\n-#endif\n }\n \n-#ifdef NATIVE_PREFERENCES_ENABLE\n std::string PreferencesUtil::ObtainInner(\n     std::shared_ptr<NativePreferences::Preferences> ptr, const std::string &key, const std::string &defValue)\n {\n@@ -201,24 +181,18 @@ float PreferencesUtil::ObtainInner(\n {\n     return ptr->GetFloat(key, defValue);\n }\n-#endif\n \n bool PreferencesUtil::IsExist(const std::string &key)\n {\n-#ifdef NATIVE_PREFERENCES_ENABLE\n     std::shared_ptr<NativePreferences::Preferences> ptr = GetPreference();\n     if (ptr == nullptr) {\n         return false;\n     }\n     return ptr->HasKey(key);\n-#else\n-    return true;\n-#endif\n }\n \n bool PreferencesUtil::Remove(const std::string &key)\n {\n-#ifdef NATIVE_PREFERENCES_ENABLE\n     std::shared_ptr<NativePreferences::Preferences> ptr = GetPreference();\n     if (ptr == nullptr) {\n         return false;\n@@ -227,14 +201,10 @@ bool PreferencesUtil::Remove(const std::string &key)\n         return false;\n     }\n     return RefreshSync();\n-#else\n-    return true;\n-#endif\n }\n \n bool PreferencesUtil::RemoveAll()\n {\n-#ifdef NATIVE_PREFERENCES_ENABLE\n     std::shared_ptr<NativePreferences::Preferences> ptr = GetPreference();\n     if (ptr == nullptr) {\n         return false;\n@@ -243,14 +213,10 @@ bool PreferencesUtil::RemoveAll()\n         return false;\n     }\n     return RefreshSync();\n-#else\n-    return true;\n-#endif\n }\n \n bool PreferencesUtil::RefreshSync()\n {\n-#ifdef NATIVE_PREFERENCES_ENABLE\n     std::shared_ptr<NativePreferences::Preferences> ptr = GetPreference();\n     if (ptr == nullptr) {\n         ENGINE_LOGE(\"RefreshSync error ptr is null\");\n@@ -261,9 +227,6 @@ bool PreferencesUtil::RefreshSync()\n         return false;\n     }\n     return true;\n-#else\n-    return true;\n-#endif\n }\n } // namespace UpdateEngine\n } // namespace OHOS"
+    },
+    {
+      "sha": "23a97144475e2badd7af216db79d5b477739685e",
+      "filename": "services/core/ability/preference/src/preference_utils_empty.cpp",
+      "status": "added",
+      "additions": 110,
+      "deletions": 0,
+      "changes": 110,
+      "blob_url": "https://github.com/openharmony/update_updateservice/blob/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Fcore%2Fability%2Fpreference%2Fsrc%2Fpreference_utils_empty.cpp",
+      "raw_url": "https://github.com/openharmony/update_updateservice/raw/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Fcore%2Fability%2Fpreference%2Fsrc%2Fpreference_utils_empty.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/update_updateservice/contents/services%2Fcore%2Fability%2Fpreference%2Fsrc%2Fpreference_utils_empty.cpp?ref=327f3538c40374d129c172e2d1de2b5348630d6e",
+      "patch": "@@ -0,0 +1,110 @@\n+/*\n+ * Copyright (c) 2023 Huawei Device Co., Ltd.\n+ * Licensed under the Apache License, Version 2.0 (the \"License\");\n+ * you may not use this file except in compliance with the License.\n+ * You may obtain a copy of the License at\n+ *\n+ *     http://www.apache.org/licenses/LICENSE-2.0\n+ *\n+ * Unless required by applicable law or agreed to in writing, software\n+ * distributed under the License is distributed on an \"AS IS\" BASIS,\n+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n+ * See the License for the specific language governing permissions and\n+ * limitations under the License.\n+ */\n+\n+#include \"preferences_utils.h\"\n+\n+#include <ohos_types.h>\n+#include \"update_log.h\"\n+\n+namespace OHOS {\n+namespace UpdateEngine {\n+bool PreferencesUtil::DeletePreference()\n+{\n+    return true;\n+}\n+\n+bool PreferencesUtil::SaveString(const std::string &key, const std::string &value)\n+{\n+    return true;\n+}\n+\n+bool PreferencesUtil::SaveInt(const std::string &key, int value)\n+{\n+    return true;\n+}\n+\n+bool PreferencesUtil::SaveBool(const std::string &key, bool value)\n+{\n+    return true;\n+}\n+\n+bool PreferencesUtil::SaveLong(const std::string &key, int64_t value)\n+{\n+    return true;\n+}\n+\n+bool PreferencesUtil::SaveFloat(const std::string &key, float value)\n+{\n+    return true;\n+}\n+\n+template <typename T>\n+bool PreferencesUtil::Save(const std::string &key, const T &value)\n+{\n+    return true;\n+}\n+\n+std::string PreferencesUtil::ObtainString(const std::string &key, const std::string &defValue)\n+{\n+    return defValue;\n+}\n+\n+int PreferencesUtil::ObtainInt(const std::string &key, int defValue)\n+{\n+    return defValue;\n+}\n+\n+bool PreferencesUtil::ObtainBool(const std::string &key, bool defValue)\n+{\n+    return defValue;\n+}\n+\n+int64_t PreferencesUtil::ObtainLong(const std::string &key, int64_t defValue)\n+{\n+    return defValue;\n+}\n+\n+float PreferencesUtil::ObtainFloat(const std::string &key, float defValue)\n+{\n+    return defValue;\n+}\n+\n+template <typename T>\n+T PreferencesUtil::Obtain(const std::string &key, const T &defValue)\n+{\n+    return defValue;\n+}\n+\n+bool PreferencesUtil::IsExist(const std::string &key)\n+{\n+    return true;\n+}\n+\n+bool PreferencesUtil::Remove(const std::string &key)\n+{\n+    return true;\n+}\n+\n+bool PreferencesUtil::RemoveAll()\n+{\n+    return true;\n+}\n+\n+bool PreferencesUtil::RefreshSync()\n+{\n+    return true;\n+}\n+} // namespace UpdateEngine\n+} // namespace OHOS\n\\ No newline at end of file"
+    },
+    {
+      "sha": "df87f476bf635242c549ad70707ef348a5af70c6",
+      "filename": "services/engine/engine_sa.gni",
+      "status": "modified",
+      "additions": 57,
+      "deletions": 8,
+      "changes": 65,
+      "blob_url": "https://github.com/openharmony/update_updateservice/blob/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Fengine%2Fengine_sa.gni",
+      "raw_url": "https://github.com/openharmony/update_updateservice/raw/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Fengine%2Fengine_sa.gni",
+      "contents_url": "https://api.github.com/repos/openharmony/update_updateservice/contents/services%2Fengine%2Fengine_sa.gni?ref=327f3538c40374d129c172e2d1de2b5348630d6e",
+      "patch": "@@ -45,8 +45,6 @@ sa_sources = [\n   \"$updateengine_root_path/services/core/ability/adapter/src/device_adapter.cpp\",\n   \"$updateengine_root_path/services/core/ability/alarm/src/alarm_manager.cpp\",\n   \"$updateengine_root_path/services/core/ability/alarm/src/timer_manager.cpp\",\n-  \"$updateengine_root_path/services/core/ability/callback/src/base_callback_utils.cpp\",\n-  \"$updateengine_root_path/services/core/ability/preference/src/preference_utils.cpp\",\n   \"$updateengine_root_path/services/core/ability/status_cache/src/status_cache.cpp\",\n   \"$updateengine_root_path/services/core/ability/utils/src/file_utils.cpp\",\n   \"$updateengine_root_path/services/core/ability/utils/src/sha256_utils.cpp\",\n@@ -62,18 +60,35 @@ sa_sources = [\n   \"$updateengine_root_path/services/engine/src/update_service_restorer.cpp\",\n   \"$updateengine_root_path/services/engine/src/update_service_stub.cpp\",\n   \"$updateengine_root_path/services/engine/src/update_service_util_hmos.cpp\",\n-  \"$updateengine_root_path/services/utils/src/dupdate_net_manager.cpp\",\n   \"$updateengine_root_path/services/utils/src/dupdate_timer.c\",\n ]\n \n if (ability_ability_base_enable || ability_ability_runtime_enable) {\n-  sa_sources +=\n-      [ \"$updateengine_root_path/services/engine/src/update_notify.cpp\" ]\n+  sa_sources += [\n+    \"$updateengine_root_path/services/core/ability/callback/src/base_callback_utils.cpp\",\n+    \"$updateengine_root_path/services/engine/src/update_notify.cpp\",\n+  ]\n+} else {\n+  sa_sources += [ \"$updateengine_root_path/services/core/ability/callback/src/base_callback_utils_empty.cpp\" ]\n }\n+\n if (communication_netmanager_base_enable) {\n-  sa_sources +=\n-      [ \"$updateengine_root_path/services/utils/src/dupdate_net_observer.cpp\" ]\n+  sa_sources += [\n+    \"$updateengine_root_path/services/utils/src/dupdate_net_manager.cpp\",\n+    \"$updateengine_root_path/services/utils/src/dupdate_net_observer.cpp\",\n+  ]\n+} else {\n+  sa_sources += [\n+    \"$updateengine_root_path/services/utils/src/dupdate_net_manager_empty.cpp\",\n+  ]\n+}\n+\n+if (preference_native_preferences_enable) {\n+  sa_sources += [ \"$updateengine_root_path/services/core/ability/preference/src/preference_utils.cpp\" ]\n+} else {\n+  sa_sources += [ \"$updateengine_root_path/services/core/ability/preference/src/preference_utils_empty.cpp\" ]\n }\n+\n sa_sources += firmware_src\n sa_sources += sqlite_src\n sa_sources += update_log_src\n@@ -108,9 +123,43 @@ sa_include_dirs = [\n   \"//third_party/glib/glib\",\n   \"//third_party/glib\",\n   \"//third_party/openssl/include\",\n-  \"third_party/cJSON/\",\n+  \"//third_party/cJSON/\",\n ]\n \n+if (!ability_ability_base_enable || !ability_ability_runtime_enable) {\n+  sa_include_dirs += [\n+    \"//foundation/ability/ability_base/interfaces/inner_api/base/include\",\n+    \"//foundation/ability/ability_base/interfaces/kits/native/uri/include\",\n+    \"//foundation/ability/ability_base/interfaces/kits/native/want/include\",\n+    \"//foundation/ability/ability_runtime/frameworks/simulator/common/include\",\n+    \"//foundation/ability/ability_runtime/interfaces/inner_api/ability_manager/include\",\n+    \"//foundation/ability/ability_runtime/interfaces/inner_api/app_manager/include/appmgr\",\n+    \"//foundation/ability/ability_runtime/interfaces/kits/native/ability/native\",\n+    \"//foundation/bundlemanager/bundle_framework/interfaces/inner_api/appexecfwk_base/include\",\n+  ]\n+}\n+\n+if (!preference_native_preferences_enable) {\n+  sa_include_dirs += [\n+    \"//foundation/distributeddatamgr/preferences/interfaces/inner_api/include\",\n+  ]\n+}\n+\n+if (!communication_netmanager_base_enable) {\n+  sa_include_dirs += [\n+    \"//foundation/communication/netmanager_base/interfaces/innerkits/include\",\n+    \"//foundation/communication/netmanager_base/interfaces/innerkits/netconnclient/include\",\n+    \"//foundation/communication/netmanager_base/interfaces/innerkits/netconnclient/include/proxy\",\n+  ]\n+}\n+\n+if (!relational_store_native_rdb_enable) {\n+  sa_include_dirs += [\n+    \"//base/update/updateservice/services/core/ability/sqlite/core/include\",\n+    \"//foundation/distributeddatamgr/relational_store/interfaces/inner_api/rdb/include\",\n+  ]\n+}\n+\n sa_include_dirs += firmware_include\n sa_include_dirs += sqlite_include\n sa_include_dirs += update_log_include"
+    },
+    {
+      "sha": "7866eae46d6a8ceed2193908da71ff56889f293a",
+      "filename": "services/engine/include/update_notify.h",
+      "status": "modified",
+      "additions": 0,
+      "deletions": 2,
+      "changes": 2,
+      "blob_url": "https://github.com/openharmony/update_updateservice/blob/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Fengine%2Finclude%2Fupdate_notify.h",
+      "raw_url": "https://github.com/openharmony/update_updateservice/raw/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Fengine%2Finclude%2Fupdate_notify.h",
+      "contents_url": "https://api.github.com/repos/openharmony/update_updateservice/contents/services%2Fengine%2Finclude%2Fupdate_notify.h?ref=327f3538c40374d129c172e2d1de2b5348630d6e",
+      "patch": "@@ -16,7 +16,6 @@\n #ifndef UPDATE_NOTIFY_H\n #define UPDATE_NOTIFY_H\n \n-#if defined(ABILITY_BASE_ENABLE) || defined(ABILITY_RUNTIME_ENABLE)\n #include <string>\n #include \"ability_connect_callback_stub.h\"\n #include \"ability_connect_callback_interface.h\"\n@@ -55,5 +54,4 @@ class NotifyConnection : public AAFwk::AbilityConnectionStub {\n };\n } // namespace UpdateEngine\n } // namespace OHOS\n-#endif // ABILITY_BASE_ENABLE || ABILITY_RUNTIME_ENABLE\n #endif // UPDATE_NOTIFY_H\n\\ No newline at end of file"
+    },
+    {
+      "sha": "551f795dc3237aa5beb82d418c9fce8b2467ac06",
+      "filename": "services/firmware/data/db/src/firmware_component_operator.cpp",
+      "status": "modified",
+      "additions": 0,
+      "deletions": 33,
+      "changes": 33,
+      "blob_url": "https://github.com/openharmony/update_updateservice/blob/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Ffirmware%2Fdata%2Fdb%2Fsrc%2Ffirmware_component_operator.cpp",
+      "raw_url": "https://github.com/openharmony/update_updateservice/raw/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Ffirmware%2Fdata%2Fdb%2Fsrc%2Ffirmware_component_operator.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/update_updateservice/contents/services%2Ffirmware%2Fdata%2Fdb%2Fsrc%2Ffirmware_component_operator.cpp?ref=327f3538c40374d129c172e2d1de2b5348630d6e",
+      "patch": "@@ -19,55 +19,29 @@\n \n namespace OHOS {\n namespace UpdateEngine {\n-#ifndef RELATIONAL_STORE_NATIVE_RDB_ENABLE\n-bool FirmwareComponentOperator::QueryAll(const std::vector<FirmwareComponent> &results)\n-{\n-    return true;\n-}\n-\n-bool FirmwareComponentOperator::Insert(const std::vector<FirmwareComponent> &values)\n-{\n-    return true;\n-}\n-\n-bool FirmwareComponentOperator::DeleteAll()\n-{\n-    return true;\n-}\n-#endif\n-\n bool FirmwareComponentOperator::UpdateProgressByUrl(const std::string &url, UpgradeStatus status, int32_t progress)\n {\n-#ifdef RELATIONAL_STORE_NATIVE_RDB_ENABLE\n     NativeRdb::ValuesBucket values;\n     values.PutInt(COLUMN_COMPONENT_STATUS, CAST_INT(status));\n     values.PutInt(COLUMN_COMPONENT_PROGRESS, progress);\n \n     OHOS::NativeRdb::RdbPredicates predicates(GetTableName());\n     predicates.EqualTo(COLUMN_COMPONENT_DOWNLOAD_URL, url);\n     return TableBaseOperator::Update(values, predicates);\n-#else\n-    return true;\n-#endif\n }\n \n bool FirmwareComponentOperator::UpdateUrlByVersionId(const std::string &versionId, const std::string &url)\n {\n-#ifdef RELATIONAL_STORE_NATIVE_RDB_ENABLE\n     NativeRdb::ValuesBucket values;\n     values.PutString(COLUMN_COMPONENT_DOWNLOAD_URL, url);\n \n     OHOS::NativeRdb::RdbPredicates predicates(GetTableName());\n     predicates.EqualTo(COLUMN_COMPONENT_VERSION_ID, versionId);\n     return TableBaseOperator::Update(values, predicates);\n-#else\n-    return true;\n-#endif\n }\n \n bool FirmwareComponentOperator::QueryByVersionId(const std::string &versionId, FirmwareComponent &component)\n {\n-#ifdef RELATIONAL_STORE_NATIVE_RDB_ENABLE\n     std::vector<FirmwareComponent> components;\n     OHOS::NativeRdb::RdbPredicates predicates(GetTableName());\n     predicates.EqualTo(COLUMN_COMPONENT_VERSION_ID, versionId);\n@@ -76,14 +50,10 @@ bool FirmwareComponentOperator::QueryByVersionId(const std::string &versionId, F\n         return true;\n     }\n     return false;\n-#else\n-    return true;\n-#endif\n }\n \n bool FirmwareComponentOperator::QueryByUrl(const std::string &url, FirmwareComponent &component)\n {\n-#ifdef RELATIONAL_STORE_NATIVE_RDB_ENABLE\n     std::vector<FirmwareComponent> components;\n     OHOS::NativeRdb::RdbPredicates predicates(GetTableName());\n     predicates.EqualTo(COLUMN_COMPONENT_DOWNLOAD_URL, url);\n@@ -92,9 +62,6 @@ bool FirmwareComponentOperator::QueryByUrl(const std::string &url, FirmwareCompo\n         return true;\n     }\n     return false;\n-#else\n-    return true;\n-#endif\n }\n } // namespace UpdateEngine\n } // namespace OHOS"
+    },
+    {
+      "sha": "6f4779ac7265cd6f7d491b247142b0fb74ce1050",
+      "filename": "services/firmware/data/db/src/firmware_component_operator_empty.cpp",
+      "status": "added",
+      "additions": 57,
+      "deletions": 0,
+      "changes": 57,
+      "blob_url": "https://github.com/openharmony/update_updateservice/blob/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Ffirmware%2Fdata%2Fdb%2Fsrc%2Ffirmware_component_operator_empty.cpp",
+      "raw_url": "https://github.com/openharmony/update_updateservice/raw/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Ffirmware%2Fdata%2Fdb%2Fsrc%2Ffirmware_component_operator_empty.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/update_updateservice/contents/services%2Ffirmware%2Fdata%2Fdb%2Fsrc%2Ffirmware_component_operator_empty.cpp?ref=327f3538c40374d129c172e2d1de2b5348630d6e",
+      "patch": "@@ -0,0 +1,57 @@\n+/*\n+ * Copyright (c) 2023 Huawei Device Co., Ltd.\n+ * Licensed under the Apache License, Version 2.0 (the \"License\");\n+ * you may not use this file except in compliance with the License.\n+ * You may obtain a copy of the License at\n+ *\n+ *     http://www.apache.org/licenses/LICENSE-2.0\n+ *\n+ * Unless required by applicable law or agreed to in writing, software\n+ * distributed under the License is distributed on an \"AS IS\" BASIS,\n+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n+ * See the License for the specific language governing permissions and\n+ * limitations under the License.\n+ */\n+\n+#include \"firmware_component_operator.h\"\n+\n+#include <memory>\n+\n+namespace OHOS {\n+namespace UpdateEngine {\n+bool FirmwareComponentOperator::QueryAll(const std::vector<FirmwareComponent> &results)\n+{\n+    return true;\n+}\n+\n+bool FirmwareComponentOperator::Insert(const std::vector<FirmwareComponent> &values)\n+{\n+    return true;\n+}\n+\n+bool FirmwareComponentOperator::DeleteAll()\n+{\n+    return true;\n+}\n+\n+bool FirmwareComponentOperator::UpdateProgressByUrl(const std::string &url, UpgradeStatus status, int32_t progress)\n+{\n+    return true;\n+}\n+\n+bool FirmwareComponentOperator::UpdateUrlByVersionId(const std::string &versionId, const std::string &url)\n+{\n+    return true;\n+}\n+\n+bool FirmwareComponentOperator::QueryByVersionId(const std::string &versionId, FirmwareComponent &component)\n+{\n+    return true;\n+}\n+\n+bool FirmwareComponentOperator::QueryByUrl(const std::string &url, FirmwareComponent &component)\n+{\n+    return true;\n+}\n+} // namespace UpdateEngine\n+} // namespace OHOS\n\\ No newline at end of file"
+    },
+    {
+      "sha": "022da2d9cd3ddf32c3cd261dc065523cc3213ff0",
+      "filename": "services/firmware/data/db/src/firmware_component_table.cpp",
+      "status": "modified",
+      "additions": 0,
+      "deletions": 5,
+      "changes": 5,
+      "blob_url": "https://github.com/openharmony/update_updateservice/blob/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Ffirmware%2Fdata%2Fdb%2Fsrc%2Ffirmware_component_table.cpp",
+      "raw_url": "https://github.com/openharmony/update_updateservice/raw/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Ffirmware%2Fdata%2Fdb%2Fsrc%2Ffirmware_component_table.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/update_updateservice/contents/services%2Ffirmware%2Fdata%2Fdb%2Fsrc%2Ffirmware_component_table.cpp?ref=327f3538c40374d129c172e2d1de2b5348630d6e",
+      "patch": "@@ -17,9 +17,6 @@\n \n namespace OHOS {\n namespace UpdateEngine {\n-#ifndef RELATIONAL_STORE_NATIVE_RDB_ENABLE\n-const std::string COLUMN_ID = \"id\";\n-#endif\n std::string FirmwareComponentTable::GetTableName()\n {\n     return FIRMWARE_TABLE_COMPONENT;\n@@ -61,7 +58,6 @@ std::string FirmwareComponentTable::GetTableCreateSql()\n         .append(\")\");\n }\n \n-#ifdef RELATIONAL_STORE_NATIVE_RDB_ENABLE\n void FirmwareComponentTable::ParseDbValue(ResultSet *resultSet, FirmwareComponent &value)\n {\n     GetColumnValue(resultSet, COLUMN_ID, value.id);\n@@ -118,6 +114,5 @@ void FirmwareComponentTable::BuildDbValue(const FirmwareComponent &value, Native\n     PutColumnValue(dbValue, COLUMN_COMPONENT_STATUS, CAST_INT(value.status));\n     PutColumnValue(dbValue, COLUMN_COMPONENT_PROGRESS, value.progress);\n }\n-#endif\n } // namespace UpdateEngine\n } // namespace OHOS\n\\ No newline at end of file"
+    },
+    {
+      "sha": "aba59f86c996acdceb00d4ba26030a7ea47b6d8e",
+      "filename": "services/firmware/data/db/src/firmware_component_table_empty.cpp",
+      "status": "added",
+      "additions": 31,
+      "deletions": 0,
+      "changes": 31,
+      "blob_url": "https://github.com/openharmony/update_updateservice/blob/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Ffirmware%2Fdata%2Fdb%2Fsrc%2Ffirmware_component_table_empty.cpp",
+      "raw_url": "https://github.com/openharmony/update_updateservice/raw/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Ffirmware%2Fdata%2Fdb%2Fsrc%2Ffirmware_component_table_empty.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/update_updateservice/contents/services%2Ffirmware%2Fdata%2Fdb%2Fsrc%2Ffirmware_component_table_empty.cpp?ref=327f3538c40374d129c172e2d1de2b5348630d6e",
+      "patch": "@@ -0,0 +1,31 @@\n+/*\n+ * Copyright (c) 2023 Huawei Device Co., Ltd.\n+ * Licensed under the Apache License, Version 2.0 (the \"License\");\n+ * you may not use this file except in compliance with the License.\n+ * You may obtain a copy of the License at\n+ *\n+ *     http://www.apache.org/licenses/LICENSE-2.0\n+ *\n+ * Unless required by applicable law or agreed to in writing, software\n+ * distributed under the License is distributed on an \"AS IS\" BASIS,\n+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n+ * See the License for the specific language governing permissions and\n+ * limitations under the License.\n+ */\n+\n+#include \"firmware_component_table.h\"\n+\n+namespace OHOS {\n+namespace UpdateEngine {\n+const std::string COLUMN_ID = \"id\";\n+std::string FirmwareComponentTable::GetTableName()\n+{\n+    return FIRMWARE_TABLE_COMPONENT;\n+}\n+\n+std::string FirmwareComponentTable::GetTableCreateSql()\n+{\n+    return \"\";\n+}\n+} // namespace UpdateEngine\n+} // namespace OHOS\n\\ No newline at end of file"
+    },
+    {
+      "sha": "304609dadd1a2fd3e2466190d4410850762886eb",
+      "filename": "services/firmware/data/db/src/firmware_database.cpp",
+      "status": "modified",
+      "additions": 0,
+      "deletions": 9,
+      "changes": 9,
+      "blob_url": "https://github.com/openharmony/update_updateservice/blob/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Ffirmware%2Fdata%2Fdb%2Fsrc%2Ffirmware_database.cpp",
+      "raw_url": "https://github.com/openharmony/update_updateservice/raw/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Ffirmware%2Fdata%2Fdb%2Fsrc%2Ffirmware_database.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/update_updateservice/contents/services%2Ffirmware%2Fdata%2Fdb%2Fsrc%2Ffirmware_database.cpp?ref=327f3538c40374d129c172e2d1de2b5348630d6e",
+      "patch": "@@ -48,18 +48,9 @@ std::string FirmwareDatabase::GetDbStoreDir()\n     return dbStoreDir_;\n }\n \n-#ifdef RELATIONAL_STORE_NATIVE_RDB_ENABLE\n NativeRdb::RdbOpenCallback &FirmwareDatabase::GetDbOpenCallback()\n {\n     return dbOpenCallback_;\n }\n-#endif\n-\n-#ifndef RELATIONAL_STORE_NATIVE_RDB_ENABLE\n-bool FirmwareDatabase::DeleteDbStore()\n-{\n-    return true;\n-}\n-#endif\n } // namespace UpdateEngine\n } // namespace OHOS"
+    },
+    {
+      "sha": "d10b6163a3c7e2abfb8efa2c9133dee8b5bd814a",
+      "filename": "services/firmware/data/db/src/firmware_database_empty.cpp",
+      "status": "added",
+      "additions": 56,
+      "deletions": 0,
+      "changes": 56,
+      "blob_url": "https://github.com/openharmony/update_updateservice/blob/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Ffirmware%2Fdata%2Fdb%2Fsrc%2Ffirmware_database_empty.cpp",
+      "raw_url": "https://github.com/openharmony/update_updateservice/raw/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Ffirmware%2Fdata%2Fdb%2Fsrc%2Ffirmware_database_empty.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/update_updateservice/contents/services%2Ffirmware%2Fdata%2Fdb%2Fsrc%2Ffirmware_database_empty.cpp?ref=327f3538c40374d129c172e2d1de2b5348630d6e",
+      "patch": "@@ -0,0 +1,56 @@\n+/*\n+ * Copyright (c) 2023 Huawei Device Co., Ltd.\n+ * Licensed under the Apache License, Version 2.0 (the \"License\");\n+ * you may not use this file except in compliance with the License.\n+ * You may obtain a copy of the License at\n+ *\n+ *     http://www.apache.org/licenses/LICENSE-2.0\n+ *\n+ * Unless required by applicable law or agreed to in writing, software\n+ * distributed under the License is distributed on an \"AS IS\" BASIS,\n+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n+ * See the License for the specific language governing permissions and\n+ * limitations under the License.\n+ */\n+\n+#include \"firmware_database.h\"\n+\n+#include \"constant.h\"\n+\n+namespace OHOS {\n+namespace UpdateEngine {\n+const std::string FIRMWARE_DB_NAME = \"/firmware_sqlite.db\";\n+constexpr int32_t FIRMWARE_DB_VERSION = 1;\n+FirmwareDatabase::FirmwareDatabase()\n+{\n+    ENGINE_LOGI(\"FirmwareDatabase Constructor\");\n+}\n+\n+FirmwareDatabase::~FirmwareDatabase() {}\n+\n+std::string FirmwareDatabase::GetDbName()\n+{\n+    return FIRMWARE_DB_NAME;\n+}\n+\n+int32_t FirmwareDatabase::GetDbVersion()\n+{\n+    return FIRMWARE_DB_VERSION;\n+}\n+\n+void FirmwareDatabase::InitDbStoreDir()\n+{\n+    ENGINE_LOGI(\"FirmwareDatabase InitDbStoreDir\");\n+}\n+\n+std::string FirmwareDatabase::GetDbStoreDir()\n+{\n+    return \"\";\n+}\n+\n+bool FirmwareDatabase::DeleteDbStore()\n+{\n+    return true;\n+}\n+} // namespace UpdateEngine\n+} // namespace OHOS"
+    },
+    {
+      "sha": "a4811a809f2b512c9c5e4999ae9dbba046d832fb",
+      "filename": "services/firmware/data/db/src/firmware_task_operator.cpp",
+      "status": "modified",
+      "additions": 0,
+      "deletions": 56,
+      "changes": 56,
+      "blob_url": "https://github.com/openharmony/update_updateservice/blob/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Ffirmware%2Fdata%2Fdb%2Fsrc%2Ffirmware_task_operator.cpp",
+      "raw_url": "https://github.com/openharmony/update_updateservice/raw/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Ffirmware%2Fdata%2Fdb%2Fsrc%2Ffirmware_task_operator.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/update_updateservice/contents/services%2Ffirmware%2Fdata%2Fdb%2Fsrc%2Ffirmware_task_operator.cpp?ref=327f3538c40374d129c172e2d1de2b5348630d6e",
+      "patch": "@@ -22,21 +22,8 @@\n \n namespace OHOS {\n namespace UpdateEngine {\n-#ifndef RELATIONAL_STORE_NATIVE_RDB_ENABLE\n-bool FirmwareTaskOperator::Insert(const FirmwareTask &values)\n-{\n-    return true;\n-}\n-\n-bool FirmwareTaskOperator::DeleteAll()\n-{\n-    return true;\n-}\n-#endif\n-\n void FirmwareTaskOperator::QueryTask(FirmwareTask &task)\n {\n-#ifdef RELATIONAL_STORE_NATIVE_RDB_ENABLE\n     std::vector<FirmwareTask> taskList;\n     QueryAll(taskList);\n     if (taskList.empty()) {\n@@ -46,132 +33,89 @@ void FirmwareTaskOperator::QueryTask(FirmwareTask &task)\n     }\n     task = taskList[0];\n     task.isExistTask = true;\n-#endif\n }\n \n bool FirmwareTaskOperator::UpdateProgressByTaskId(const std::string &taskId, UpgradeStatus status, int32_t progress)\n {\n-#ifdef RELATIONAL_STORE_NATIVE_RDB_ENABLE\n     NativeRdb::ValuesBucket values;\n     values.PutInt(COLUMN_TASK_STATUS, CAST_INT(status));\n     values.PutInt(COLUMN_TASK_PROGRESS, progress);\n     return UpdateByTaskId(taskId, values);\n-#else\n-    return true;\n-#endif\n }\n \n bool FirmwareTaskOperator::UpdateErrMsgByTaskId(const std::string &taskId, int errorCode, const std::string &errorMsg)\n {\n-#ifdef RELATIONAL_STORE_NATIVE_RDB_ENABLE\n     NativeRdb::ValuesBucket values;\n     values.PutInt(COLUMN_TASK_ERROR_CODE, errorCode);\n     values.PutString(COLUMN_TASK_ERROR_MSG, errorMsg);\n     return UpdateByTaskId(taskId, values);\n-#else\n-    return true;\n-#endif\n }\n \n bool FirmwareTaskOperator::UpdateDownloadTaskIdByTaskId(const std::string &taskId, const std::string &downloadTaskId)\n {\n-#ifdef RELATIONAL_STORE_NATIVE_RDB_ENABLE\n     NativeRdb::ValuesBucket values;\n     values.PutString(COLUMN_TASK_DOWNLOAD_TASK_ID, downloadTaskId);\n     return UpdateByTaskId(taskId, values);\n-#else\n-    return true;\n-#endif\n }\n \n bool FirmwareTaskOperator::UpdateCombinationTypeByTaskId(const std::string &taskId,\n     const CombinationType &combinationType)\n {\n-#ifdef RELATIONAL_STORE_NATIVE_RDB_ENABLE\n     NativeRdb::ValuesBucket values;\n     values.PutInt(COLUMN_TASK_COMBINATION_TYPE, CAST_INT(combinationType));\n     return UpdateByTaskId(taskId, values);\n-#else\n-    return true;\n-#endif\n }\n \n bool FirmwareTaskOperator::UpdateDownloadModeByTaskId(const std::string &taskId, DownloadMode downloadMode)\n {\n-#ifdef RELATIONAL_STORE_NATIVE_RDB_ENABLE\n     NativeRdb::ValuesBucket values;\n     values.PutInt(COLUMN_TASK_DOWNLOAD_MODE, CAST_INT(downloadMode));\n     return UpdateByTaskId(taskId, values);\n-#else\n-    return true;\n-#endif\n }\n \n bool FirmwareTaskOperator::UpdateDownloadAllowNetworkByTaskId(const std::string &taskId, NetType downloadAllowNetwork)\n {\n-#ifdef RELATIONAL_STORE_NATIVE_RDB_ENABLE\n     NativeRdb::ValuesBucket values;\n     values.PutInt(COLUMN_TASK_DOWNLOAD_ALLOW_NETWORK, CAST_INT(downloadAllowNetwork));\n     return UpdateByTaskId(taskId, values);\n-#else\n-    return true;\n-#endif\n }\n \n bool FirmwareTaskOperator::UpdateDownloadOrderByTaskId(const std::string &taskId, Order downloadOrder)\n {\n-#ifdef RELATIONAL_STORE_NATIVE_RDB_ENABLE\n     NativeRdb::ValuesBucket values;\n     values.PutInt(COLUMN_TASK_DOWNLOAD_ORDER, CAST_INT(downloadOrder));\n     return UpdateByTaskId(taskId, values);\n-#else\n-    return true;\n-#endif\n }\n \n bool FirmwareTaskOperator::UpdateDownloadOptionByTaskId(\n     const std::string &taskId, DownloadMode downloadMode, NetType downloadAllowNetwork, Order downloadOrder)\n {\n-#ifdef RELATIONAL_STORE_NATIVE_RDB_ENABLE\n     NativeRdb::ValuesBucket values;\n     values.PutInt(COLUMN_TASK_DOWNLOAD_MODE, CAST_INT(downloadMode));\n     values.PutInt(COLUMN_TASK_DOWNLOAD_ALLOW_NETWORK, CAST_INT(downloadAllowNetwork));\n     values.PutInt(COLUMN_TASK_DOWNLOAD_ORDER, CAST_INT(downloadOrder));\n     return UpdateByTaskId(taskId, values);\n-#else\n-    return true;\n-#endif\n }\n \n bool FirmwareTaskOperator::UpdateUpgradeModeByTaskId(const std::string &taskId, UpgradeMode upgradeMode)\n {\n-#ifdef RELATIONAL_STORE_NATIVE_RDB_ENABLE\n     NativeRdb::ValuesBucket values;\n     values.PutInt(COLUMN_TASK_UPGRADE_MODE, CAST_INT(upgradeMode));\n     return UpdateByTaskId(taskId, values);\n-#else\n-    return true;\n-#endif\n }\n \n bool FirmwareTaskOperator::UpdateUpgradeOrderByTaskId(const std::string &taskId, Order upgradeOrder)\n {\n-#ifdef RELATIONAL_STORE_NATIVE_RDB_ENABLE\n     NativeRdb::ValuesBucket values;\n     values.PutInt(COLUMN_TASK_UPGRADE_ORDER, CAST_INT(upgradeOrder));\n     return UpdateByTaskId(taskId, values);\n-#else\n-    return true;\n-#endif\n }\n \n-#ifdef RELATIONAL_STORE_NATIVE_RDB_ENABLE\n bool FirmwareTaskOperator::UpdateByTaskId(const std::string &taskId, const NativeRdb::ValuesBucket &values)\n {\n     OHOS::NativeRdb::RdbPredicates predicates(GetTableName());\n     predicates.EqualTo(COLUMN_TASK_TASK_ID, taskId);\n     return TableBaseOperator::Update(values, predicates);\n }\n-#endif\n } // namespace UpdateEngine\n } // namespace OHOS"
+    },
+    {
+      "sha": "f7ce5f37de464f3f201e7ebad4349c1a64ad2352",
+      "filename": "services/firmware/data/db/src/firmware_task_operator_empty.cpp",
+      "status": "added",
+      "additions": 92,
+      "deletions": 0,
+      "changes": 92,
+      "blob_url": "https://github.com/openharmony/update_updateservice/blob/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Ffirmware%2Fdata%2Fdb%2Fsrc%2Ffirmware_task_operator_empty.cpp",
+      "raw_url": "https://github.com/openharmony/update_updateservice/raw/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Ffirmware%2Fdata%2Fdb%2Fsrc%2Ffirmware_task_operator_empty.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/update_updateservice/contents/services%2Ffirmware%2Fdata%2Fdb%2Fsrc%2Ffirmware_task_operator_empty.cpp?ref=327f3538c40374d129c172e2d1de2b5348630d6e",
+      "patch": "@@ -0,0 +1,92 @@\n+/*\n+ * Copyright (c) 2023 Huawei Device Co., Ltd.\n+ * Licensed under the Apache License, Version 2.0 (the \"License\");\n+ * you may not use this file except in compliance with the License.\n+ * You may obtain a copy of the License at\n+ *\n+ *     http://www.apache.org/licenses/LICENSE-2.0\n+ *\n+ * Unless required by applicable law or agreed to in writing, software\n+ * distributed under the License is distributed on an \"AS IS\" BASIS,\n+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n+ * See the License for the specific language governing permissions and\n+ * limitations under the License.\n+ */\n+\n+#include \"firmware_task_operator.h\"\n+\n+#include <memory>\n+\n+#include \"time_utils.h\"\n+#include \"update_helper.h\"\n+\n+namespace OHOS {\n+namespace UpdateEngine {\n+bool FirmwareTaskOperator::Insert(const FirmwareTask &values)\n+{\n+    return true;\n+}\n+\n+bool FirmwareTaskOperator::DeleteAll()\n+{\n+    return true;\n+}\n+\n+void FirmwareTaskOperator::QueryTask(FirmwareTask &task)\n+{\n+    FIRMWARE_LOGI(\"FirmwareTaskOperator QueryTask\");\n+}\n+\n+bool FirmwareTaskOperator::UpdateProgressByTaskId(const std::string &taskId, UpgradeStatus status, int32_t progress)\n+{\n+    return true;\n+}\n+\n+bool FirmwareTaskOperator::UpdateErrMsgByTaskId(const std::string &taskId, int errorCode, const std::string &errorMsg)\n+{\n+    return true;\n+}\n+\n+bool FirmwareTaskOperator::UpdateDownloadTaskIdByTaskId(const std::string &taskId, const std::string &downloadTaskId)\n+{\n+    return true;\n+}\n+\n+bool FirmwareTaskOperator::UpdateCombinationTypeByTaskId(const std::string &taskId,\n+    const CombinationType &combinationType)\n+{\n+    return true;\n+}\n+\n+bool FirmwareTaskOperator::UpdateDownloadModeByTaskId(const std::string &taskId, DownloadMode downloadMode)\n+{\n+    return true;\n+}\n+\n+bool FirmwareTaskOperator::UpdateDownloadAllowNetworkByTaskId(const std::string &taskId, NetType downloadAllowNetwork)\n+{\n+    return true;\n+}\n+\n+bool FirmwareTaskOperator::UpdateDownloadOrderByTaskId(const std::string &taskId, Order downloadOrder)\n+{\n+    return true;\n+}\n+\n+bool FirmwareTaskOperator::UpdateDownloadOptionByTaskId(\n+    const std::string &taskId, DownloadMode downloadMode, NetType downloadAllowNetwork, Order downloadOrder)\n+{\n+    return true;\n+}\n+\n+bool FirmwareTaskOperator::UpdateUpgradeModeByTaskId(const std::string &taskId, UpgradeMode upgradeMode)\n+{\n+    return true;\n+}\n+\n+bool FirmwareTaskOperator::UpdateUpgradeOrderByTaskId(const std::string &taskId, Order upgradeOrder)\n+{\n+    return true;\n+}\n+} // namespace UpdateEngine\n+} // namespace OHOS"
+    },
+    {
+      "sha": "d14701f64aceb1ba2a0ff1e2b899a95189a2aab7",
+      "filename": "services/firmware/data/db/src/firmware_task_table_empty.cpp",
+      "status": "added",
+      "additions": 33,
+      "deletions": 0,
+      "changes": 33,
+      "blob_url": "https://github.com/openharmony/update_updateservice/blob/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Ffirmware%2Fdata%2Fdb%2Fsrc%2Ffirmware_task_table_empty.cpp",
+      "raw_url": "https://github.com/openharmony/update_updateservice/raw/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Ffirmware%2Fdata%2Fdb%2Fsrc%2Ffirmware_task_table_empty.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/update_updateservice/contents/services%2Ffirmware%2Fdata%2Fdb%2Fsrc%2Ffirmware_task_table_empty.cpp?ref=327f3538c40374d129c172e2d1de2b5348630d6e",
+      "patch": "@@ -0,0 +1,33 @@\n+/*\n+ * Copyright (c) 2023 Huawei Device Co., Ltd.\n+ * Licensed under the Apache License, Version 2.0 (the \"License\");\n+ * you may not use this file except in compliance with the License.\n+ * You may obtain a copy of the License at\n+ *\n+ *     http://www.apache.org/licenses/LICENSE-2.0\n+ *\n+ * Unless required by applicable law or agreed to in writing, software\n+ * distributed under the License is distributed on an \"AS IS\" BASIS,\n+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n+ * See the License for the specific language governing permissions and\n+ * limitations under the License.\n+ */\n+\n+#include \"firmware_task_table.h\"\n+\n+#include \"itable.h\"\n+#include \"update_define.h\"\n+\n+namespace OHOS {\n+namespace UpdateEngine {\n+std::string FirmwareTaskTable::GetTableName()\n+{\n+    return \"\";\n+}\n+\n+std::string FirmwareTaskTable::GetTableCreateSql()\n+{\n+    return \"\";\n+}\n+} // namespace UpdateEngine\n+} // namespace OHOS\n\\ No newline at end of file"
+    },
+    {
+      "sha": "2e5054d3614376868b8cf89a6cba9ff011cc1f95",
+      "filename": "services/firmware/firmware.gni",
+      "status": "modified",
+      "additions": 13,
+      "deletions": 4,
+      "changes": 17,
+      "blob_url": "https://github.com/openharmony/update_updateservice/blob/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Ffirmware%2Ffirmware.gni",
+      "raw_url": "https://github.com/openharmony/update_updateservice/raw/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Ffirmware%2Ffirmware.gni",
+      "contents_url": "https://api.github.com/repos/openharmony/update_updateservice/contents/services%2Ffirmware%2Ffirmware.gni?ref=327f3538c40374d129c172e2d1de2b5348630d6e",
+      "patch": "@@ -55,10 +55,6 @@ ab_update_src = [\n firmware_src = [\n   \"$firmware_root_path/callback/src/firmware_callback_utils.cpp\",\n   \"$firmware_root_path/common/src/firmware_update_helper.cpp\",\n-  \"$firmware_root_path/data/db/src/firmware_component_operator.cpp\",\n-  \"$firmware_root_path/data/db/src/firmware_component_table.cpp\",\n-  \"$firmware_root_path/data/db/src/firmware_database.cpp\",\n-  \"$firmware_root_path/data/db/src/firmware_task_operator.cpp\",\n   \"$firmware_root_path/data/manager/src/firmware_preferences_utils.cpp\",\n   \"$firmware_root_path/event/src/firmware_event_listener.cpp\",\n   \"$firmware_root_path/upgrade/data_processor/src/firmware_check_data_processor.cpp\",\n@@ -82,11 +78,24 @@ firmware_src = [\n   \"$firmware_root_path/utils/src/firmware_changelog_utils.cpp\",\n   \"$firmware_root_path/utils/src/firmware_combine_version_utils.cpp\",\n ]\n+\n if (relational_store_native_rdb_enable) {\n   firmware_src += [\n+    \"$firmware_root_path/data/db/src/firmware_component_operator.cpp\",\n+    \"$firmware_root_path/data/db/src/firmware_component_table.cpp\",\n+    \"$firmware_root_path/data/db/src/firmware_database.cpp\",\n     \"$firmware_root_path/data/db/src/firmware_database_callback.cpp\",\n+    \"$firmware_root_path/data/db/src/firmware_task_operator.cpp\",\n     \"$firmware_root_path/data/db/src/firmware_task_table.cpp\",\n   ]\n+} else {\n+  firmware_src += [\n+    \"$firmware_root_path/data/db/src/firmware_component_operator_empty.cpp\",\n+    \"$firmware_root_path/data/db/src/firmware_component_table_empty.cpp\",\n+    \"$firmware_root_path/data/db/src/firmware_database_empty.cpp\",\n+    \"$firmware_root_path/data/db/src/firmware_task_operator_empty.cpp\",\n+    \"$firmware_root_path/data/db/src/firmware_task_table_empty.cpp\",\n+  ]\n }\n firmware_src += ab_update_src\n "
+    },
+    {
+      "sha": "62de4e82e46bc4544b2e13a9b16680403ecbef8a",
+      "filename": "services/firmware/upgrade/data_processor/src/firmware_check_data_processor.cpp",
+      "status": "modified",
+      "additions": 0,
+      "deletions": 2,
+      "changes": 2,
+      "blob_url": "https://github.com/openharmony/update_updateservice/blob/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Ffirmware%2Fupgrade%2Fdata_processor%2Fsrc%2Ffirmware_check_data_processor.cpp",
+      "raw_url": "https://github.com/openharmony/update_updateservice/raw/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Ffirmware%2Fupgrade%2Fdata_processor%2Fsrc%2Ffirmware_check_data_processor.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/update_updateservice/contents/services%2Ffirmware%2Fupgrade%2Fdata_processor%2Fsrc%2Ffirmware_check_data_processor.cpp?ref=327f3538c40374d129c172e2d1de2b5348630d6e",
+      "patch": "@@ -18,9 +18,7 @@\n #include \"config_parse.h\"\n #include \"constant.h\"\n #include \"dupdate_inet_observer.h\"\n-#ifdef NETMANAGER_BASE_ENABLE\n #include \"dupdate_net_observer.h\"\n-#endif\n #include \"firmware_changelog_utils.h\"\n #include \"firmware_combine_version_utils.h\"\n #include \"firmware_common.h\""
+    },
+    {
+      "sha": "6113454f177b63985adfa46ad3d599ba71bd653f",
+      "filename": "services/firmware/upgrade/executor/src/firmware_apply_executor.cpp",
+      "status": "modified",
+      "additions": 0,
+      "deletions": 2,
+      "changes": 2,
+      "blob_url": "https://github.com/openharmony/update_updateservice/blob/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Ffirmware%2Fupgrade%2Fexecutor%2Fsrc%2Ffirmware_apply_executor.cpp",
+      "raw_url": "https://github.com/openharmony/update_updateservice/raw/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Ffirmware%2Fupgrade%2Fexecutor%2Fsrc%2Ffirmware_apply_executor.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/update_updateservice/contents/services%2Ffirmware%2Fupgrade%2Fexecutor%2Fsrc%2Ffirmware_apply_executor.cpp?ref=327f3538c40374d129c172e2d1de2b5348630d6e",
+      "patch": "@@ -16,9 +16,7 @@\n #include \"firmware_apply_executor.h\"\n \n #include <unistd.h>\n-#ifndef RELATIONAL_STORE_NATIVE_RDB_ENABLE\n #include <thread>\n-#endif\n \n #include \"init_reboot.h\"\n "
+    },
+    {
+      "sha": "c5d33ec45819b328d5ddfbda527ab885ca33522a",
+      "filename": "services/utils/include/dupdate_inet_observer.h",
+      "status": "modified",
+      "additions": 0,
+      "deletions": 9,
+      "changes": 9,
+      "blob_url": "https://github.com/openharmony/update_updateservice/blob/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Futils%2Finclude%2Fdupdate_inet_observer.h",
+      "raw_url": "https://github.com/openharmony/update_updateservice/raw/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Futils%2Finclude%2Fdupdate_inet_observer.h",
+      "contents_url": "https://api.github.com/repos/openharmony/update_updateservice/contents/services%2Futils%2Finclude%2Fdupdate_inet_observer.h?ref=327f3538c40374d129c172e2d1de2b5348630d6e",
+      "patch": "@@ -33,22 +33,13 @@ using NetObserverCallback = std::function<void(NetType)>;\n \n class INetObserverCallback {\n public:\n-#ifdef NETMANAGER_BASE_ENABLE\n     virtual bool OnNetChange(NetType netType) = 0;\n-#else\n-    bool OnNetChange(NetType netType);\n-#endif\n };\n \n class DupdateINetObserver {\n public:\n-#ifdef NETMANAGER_BASE_ENABLE\n     virtual void SetCallback(const std::weak_ptr<INetObserverCallback> &callback) = 0;\n     virtual void StartObserver() = 0;\n-#else\n-    void SetCallback(const std::weak_ptr<INetObserverCallback> &callback);\n-    void StartObserver();\n-#endif\n };\n } // namespace UpdateEngine\n } // namespace OHOS"
+    },
+    {
+      "sha": "43a462a9ad0faf20a8b269769c74862ba7aef59e",
+      "filename": "services/utils/include/dupdate_net_manager.h",
+      "status": "modified",
+      "additions": 0,
+      "deletions": 6,
+      "changes": 6,
+      "blob_url": "https://github.com/openharmony/update_updateservice/blob/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Futils%2Finclude%2Fdupdate_net_manager.h",
+      "raw_url": "https://github.com/openharmony/update_updateservice/raw/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Futils%2Finclude%2Fdupdate_net_manager.h",
+      "contents_url": "https://api.github.com/repos/openharmony/update_updateservice/contents/services%2Futils%2Finclude%2Fdupdate_net_manager.h?ref=327f3538c40374d129c172e2d1de2b5348630d6e",
+      "patch": "@@ -44,18 +44,12 @@ class NetManager final : public INetObserverCallback,\n         NetChangeCallbackType callbackType, const std::set<NetType> &netTypes, NetObserverCallback cb);\n     void UnregisterCallback(NetChangeCallbackType callbackType);\n \n-#ifdef NETMANAGER_BASE_ENABLE\n     bool OnNetChange(NetType netType) final;\n-#else\n-    bool OnNetChange(NetType netType);\n-#endif\n \n private:\n     bool IsBaseNetType(NetType netType);\n \n-#ifdef NETMANAGER_BASE_ENABLE\n     sptr<NetObserver> observer_ = nullptr;\n-#endif\n     std::mutex netChangeMutex_;\n     NetType netType_ = NetType::NO_NET;\n     std::map<NetChangeCallbackType, NetChangeCallback> netChangeCallbackMap_;"
+    },
+    {
+      "sha": "61363ec442ca323bc64daadd5d650ddbaf8301f6",
+      "filename": "services/utils/include/dupdate_net_observer.h",
+      "status": "modified",
+      "additions": 0,
+      "deletions": 2,
+      "changes": 2,
+      "blob_url": "https://github.com/openharmony/update_updateservice/blob/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Futils%2Finclude%2Fdupdate_net_observer.h",
+      "raw_url": "https://github.com/openharmony/update_updateservice/raw/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Futils%2Finclude%2Fdupdate_net_observer.h",
+      "contents_url": "https://api.github.com/repos/openharmony/update_updateservice/contents/services%2Futils%2Finclude%2Fdupdate_net_observer.h?ref=327f3538c40374d129c172e2d1de2b5348630d6e",
+      "patch": "@@ -16,7 +16,6 @@\n #ifndef DUPDATE_NET_OBSERVER_H\n #define DUPDATE_NET_OBSERVER_H\n \n-#ifdef NETMANAGER_BASE_ENABLE\n #include \"net_all_capabilities.h\"\n #include \"net_conn_callback_stub.h\"\n #include \"net_specifier.h\"\n@@ -40,5 +39,4 @@ class NetObserver final : public DupdateINetObserver, public NetManagerStandard:\n };\n } // namespace UpdateEngine\n } // namespace OHOS\n-#endif // NETMANAGER_BASE_ENABLE\n #endif // DUPDATE_NET_OBSERVER_H\n\\ No newline at end of file"
+    },
+    {
+      "sha": "80b74b0a0b662491f951f5868fd3cb2c10bae029",
+      "filename": "services/utils/src/dupdate_net_manager.cpp",
+      "status": "modified",
+      "additions": 0,
+      "deletions": 4,
+      "changes": 4,
+      "blob_url": "https://github.com/openharmony/update_updateservice/blob/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Futils%2Fsrc%2Fdupdate_net_manager.cpp",
+      "raw_url": "https://github.com/openharmony/update_updateservice/raw/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Futils%2Fsrc%2Fdupdate_net_manager.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/update_updateservice/contents/services%2Futils%2Fsrc%2Fdupdate_net_manager.cpp?ref=327f3538c40374d129c172e2d1de2b5348630d6e",
+      "patch": "@@ -25,24 +25,20 @@ namespace OHOS {\n namespace UpdateEngine {\n NetManager::NetManager()\n {\n-#ifdef NETMANAGER_BASE_ENABLE\n     observer_ = new NetObserver();\n-#endif\n }\n \n NetManager::~NetManager() {}\n \n void NetManager::Init()\n {\n-#ifdef NETMANAGER_BASE_ENABLE\n     ENGINE_LOGI(\"NetManager init\");\n     if (observer_ == nullptr) {\n         ENGINE_LOGE(\"net ovserver is nullptr\");\n         return;\n     }\n     observer_->SetCallback(weak_from_this());\n     observer_->StartObserver();\n-#endif\n }\n \n bool NetManager::RegisterCallback("
+    },
+    {
+      "sha": "c87b803e78a689c35b5d0a7a6aef2a2ec1e6d44f",
+      "filename": "services/utils/src/dupdate_net_manager_empty.cpp",
+      "status": "added",
+      "additions": 71,
+      "deletions": 0,
+      "changes": 71,
+      "blob_url": "https://github.com/openharmony/update_updateservice/blob/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Futils%2Fsrc%2Fdupdate_net_manager_empty.cpp",
+      "raw_url": "https://github.com/openharmony/update_updateservice/raw/327f3538c40374d129c172e2d1de2b5348630d6e/services%2Futils%2Fsrc%2Fdupdate_net_manager_empty.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/update_updateservice/contents/services%2Futils%2Fsrc%2Fdupdate_net_manager_empty.cpp?ref=327f3538c40374d129c172e2d1de2b5348630d6e",
+      "patch": "@@ -0,0 +1,71 @@\n+/*\n+ * Copyright (c) 2023 Huawei Device Co., Ltd.\n+ * Licensed under the Apache License, Version 2.0 (the \"License\");\n+ * you may not use this file except in compliance with the License.\n+ * You may obtain a copy of the License at\n+ *\n+ *     http://www.apache.org/licenses/LICENSE-2.0\n+ *\n+ * Unless required by applicable law or agreed to in writing, software\n+ * distributed under the License is distributed on an \"AS IS\" BASIS,\n+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n+ * See the License for the specific language governing permissions and\n+ * limitations under the License.\n+ */\n+\n+#include \"dupdate_net_manager.h\"\n+\n+#include <thread>\n+#include <unistd.h>\n+\n+#include \"update_define.h\"\n+#include \"update_log.h\"\n+\n+namespace OHOS {\n+namespace UpdateEngine {\n+NetManager::NetManager()\n+{\n+    ENGINE_LOGI(\"NetManager NetManager\");\n+}\n+\n+NetManager::~NetManager() {}\n+\n+void NetManager::Init()\n+{\n+    ENGINE_LOGI(\"NetManager init\");\n+}\n+\n+bool NetManager::RegisterCallback(\n+    NetChangeCallbackType callbackType, const std::set<NetType> &netTypes, NetObserverCallback cb)\n+{\n+    ENGINE_LOGI(\"NetManager RegisterCallback\");\n+    return true;\n+}\n+\n+void NetManager::UnregisterCallback(NetChangeCallbackType callbackType)\n+{\n+    ENGINE_LOGI(\"NetManager UnregisterCallback\");\n+}\n+\n+NetType NetManager::GetNetType()\n+{\n+    return netType_;\n+}\n+\n+bool NetManager::IsNetAvailable(NetType netType)\n+{\n+    return true;\n+}\n+\n+bool NetManager::OnNetChange(NetType netType)\n+{\n+    ENGINE_LOGI(\"NetManager OnNetChange\");\n+    return true;\n+}\n+\n+bool NetManager::IsBaseNetType(NetType netType)\n+{\n+    return true;\n+}\n+} // namespace UpdateEngine\n+} // namespace OHOS\n\\ No newline at end of file"
+    }
+  ]
+}

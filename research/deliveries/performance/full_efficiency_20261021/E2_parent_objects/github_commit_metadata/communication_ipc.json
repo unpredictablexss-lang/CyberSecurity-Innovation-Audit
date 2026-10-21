@@ -1,0 +1,66 @@
+{
+  "sha": "093c0af2c28815cf147d2d41208f7a857d4958cb",
+  "node_id": "C_kwDOF9jLidoAKDA5M2MwYWYyYzI4ODE1Y2YxNDdkMmQ0MTIwOGY3YTg1N2Q0OTU4Y2I",
+  "commit": {
+    "author": {
+      "name": "openharmony_ci",
+      "email": "openharmony_ci@noreply.gitcode.com",
+      "date": "2026-09-09T01:11:38Z"
+    },
+    "committer": {
+      "name": "openharmony_ci",
+      "email": "openharmony_ci@noreply.gitcode.com",
+      "date": "2026-09-09T01:11:38Z"
+    },
+    "message": "!2568 merge build/taihe-bti-branch-protection into master\n\nbuild: 为 rpc_taihe 新增 BTI 前向分支目标管控\n\nCreated-by: x601760700\nCommit-by: x601760700\nMerged-by: openharmony_ci\nDescription: ### 相关的Issue\n#2021\n\n### 原因（目的、解决的问题等）\n为 `rpc_taihe` 共享库新增 BTI（Branch Target Identification）前向分支目标管控，配合已有的 `branch_protector_ret = \"pac_ret\"`（PAC 返回地址保护），完善控制流完整性保护策略，与 OpenHarmony 分支保护规范对齐。\n\n### 描述（做了什么，变更了什么）\n在 `ipc/native/src/taihe/BUILD.gn` 中以下两个 `rpc_taihe` 构建目标上新增 `branch_protector_frt = \"bti\"` 配置：\n- `taihe_shared_library(\"rpc_taihe\")`\n- `ohos_shared_library(\"rpc_taihe\")`\n\n共修改 1 个文件，新增 2 行。仅变更 BUILD.gn 构建配置，不涉及 IPC/RPC 运行时逻辑。\n\n### 验证结果（新增、改动、可能影响的功能）\n仅变更 BUILD.gn 构建配置，不涉及 IPC/RPC 运行时逻辑。建议构建 `ipc_components` 验证编译通过：\n```\n./build.sh --product-name rk3568 --ccache --build-target ipc_components\n```\n\n### IPC 上库必备 checklist：\n- [x] 【线程安全】string、vector、map、unordered_map 类型全局变量并发读写的保护;\n- [x] 【序列化】修改序列化反序列化代码时，需要完整的检查整个流程中（包含内核binder、parcel代码）的对象偏移逻辑及对象有效性;\n\n### 日志规范自检：\n- [x] 【规则】高频代码的正常流程中禁止打印日志;\n- [x] 【规则】在基本不可能发生的点必须要打印日志;\n- [x] 【规则】事件记录的日志使用 who do what 主谓宾的形式打印;\n- [x] 【规则】状态变化的日志打印使用 state_name:s1->s2, reason:msg 的形式打印;\n- [x] 【规则】参数值的日志打印使用 name1=value1, name2=value2… 的形式打印;\n- [x] 【规则】代码运行成功的日志使用 xxx successful 的形式打印;\n- [x] 【规则】代码运行失败的日志使用 xxx failed, please xxx 的形式打印;\n\n### 安全编码自检：\n- [x] 【指针】禁止对指针进行逻辑或位运算，对指针求 sizeof 需确认，指针解引用时需确认是否存在空指针解引用问题;\n- [x] 【临时变量】指针变量、表示资源描述符的变量、bool 变量初始化必须赋初值;\n- [x] 【数组下标】数组下标需要确认是否越界，如果下标来自外部输入，必须校验合法性;\n- [x] 【内存管理】内存申请前必须对内存大小进行合法性校验;\n- [x] 【内存管理】内存申请后必须释放;\n- [x] 【内存管理】内存申请后必须判空，判断内存申请是否成功;\n- [x] 【内存管理】全局变量释放内存后必须置空，循环体中释放变量内存后确认是否需要置空;\n- [x] 【整数运算】整数之间运算时必须严格检查，确保不会出现溢出、反转、除 0;\n- [x] 【整数运算】禁止对有符号整数进行位操作符运算;\n- [x] 【循环变量】无符号数作为循环变量需确认是否存在死循环问题;\n- [x] 【循环变量】循环次数如果受外部数据控制，需要检验其合法性;\n- [x] 【安全函数】安全函数必须检查返回值，并进行正确处理;\n- [x] 【安全函数】安全函数目标缓冲区大小入参与目标缓冲区实际大小必须一致;\n- [x] 【外部输入校验】解析数据后拷贝时需校验源buffer实际缓冲区大小，避免越界读写;\n- [x] 【外部输入校验】新增外部输入处理需考虑完整校验方案，方案需经过 MDEG 评审，并有相应 fuzz、UT 用例;\n- [x] 【常见问题】修改单个函数时，如果涉及新增异常返回分支，必须排查是否需要释放内存、fd 等资源;\n- [x] 【常见问题】CHECK_INSTANCE_EXIT_WITH_RETVAL、CHECK_INSTANCE_EXIT_WITH 等宏确认无资源漏释放;\n- [x] 【常见问题】函数返回值需与函数签名相同，参数定义需在同一范畴，或同一枚举类型;\n- [x] 【常见问题】格式化打印类型需匹配，例如：int32_t %d; uint32_t %u; long %ld; unsigned long %lu; long long PRId64(%lld); unsigned long long PRIu64(%llu); int16_t(short) %hd; uint16_t(unsigned short) %hu; int8_t %hhd; uint8_t %hhu;\n\n### 是否已执行L0用例\n- [ ] 已验证\n- [x] 不涉及。如不涉及，请写明理由\n\nSee merge request: openharmony/communication_ipc!2568",
+    "tree": {
+      "sha": "f9411316ef66cddf57f978746266184c23f1ed96",
+      "url": "https://api.github.com/repos/openharmony/communication_ipc/git/trees/f9411316ef66cddf57f978746266184c23f1ed96"
+    },
+    "url": "https://api.github.com/repos/openharmony/communication_ipc/git/commits/093c0af2c28815cf147d2d41208f7a857d4958cb",
+    "comment_count": 0,
+    "verification": {
+      "verified": false,
+      "reason": "unsigned",
+      "signature": null,
+      "payload": null,
+      "verified_at": null
+    }
+  },
+  "url": "https://api.github.com/repos/openharmony/communication_ipc/commits/093c0af2c28815cf147d2d41208f7a857d4958cb",
+  "html_url": "https://github.com/openharmony/communication_ipc/commit/093c0af2c28815cf147d2d41208f7a857d4958cb",
+  "comments_url": "https://api.github.com/repos/openharmony/communication_ipc/commits/093c0af2c28815cf147d2d41208f7a857d4958cb/comments",
+  "author": null,
+  "committer": null,
+  "parents": [
+    {
+      "sha": "7c1fe1dc010eda5b963e81bbddc154f904ee2d78",
+      "url": "https://api.github.com/repos/openharmony/communication_ipc/commits/7c1fe1dc010eda5b963e81bbddc154f904ee2d78",
+      "html_url": "https://github.com/openharmony/communication_ipc/commit/7c1fe1dc010eda5b963e81bbddc154f904ee2d78"
+    },
+    {
+      "sha": "88297ff4349ea08a46c1eaec28c5ddfc42dc8d98",
+      "url": "https://api.github.com/repos/openharmony/communication_ipc/commits/88297ff4349ea08a46c1eaec28c5ddfc42dc8d98",
+      "html_url": "https://github.com/openharmony/communication_ipc/commit/88297ff4349ea08a46c1eaec28c5ddfc42dc8d98"
+    }
+  ],
+  "stats": {
+    "total": 2,
+    "additions": 2,
+    "deletions": 0
+  },
+  "files": [
+    {
+      "sha": "fe01a1ecf21cbe323ae7852555ad92dc42bd3014",
+      "filename": "ipc/native/src/taihe/BUILD.gn",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 0,
+      "changes": 2,
+      "blob_url": "https://github.com/openharmony/communication_ipc/blob/093c0af2c28815cf147d2d41208f7a857d4958cb/ipc%2Fnative%2Fsrc%2Ftaihe%2FBUILD.gn",
+      "raw_url": "https://github.com/openharmony/communication_ipc/raw/093c0af2c28815cf147d2d41208f7a857d4958cb/ipc%2Fnative%2Fsrc%2Ftaihe%2FBUILD.gn",
+      "contents_url": "https://api.github.com/repos/openharmony/communication_ipc/contents/ipc%2Fnative%2Fsrc%2Ftaihe%2FBUILD.gn?ref=093c0af2c28815cf147d2d41208f7a857d4958cb",
+      "patch": "@@ -45,6 +45,7 @@ if (support_jsapi) {\n \n   taihe_shared_library(\"rpc_taihe\") {\n     branch_protector_ret = \"pac_ret\"\n+    branch_protector_frt = \"bti\"\n     taihe_generated_file_path = \"$TAIHE_FILE_PATH\"\n     part_name = \"$PART_NAME\"\n     subsystem_name = \"$SUBSYSTEM_NAME\"\n@@ -96,6 +97,7 @@ if (support_jsapi) {\n   SUBSYSTEM_DIR = \"//foundation/communication/ipc\"\n   ohos_shared_library(\"rpc_taihe\") {\n     branch_protector_ret = \"pac_ret\"\n+    branch_protector_frt = \"bti\"\n     include_dirs = [\n       \"$SUBSYSTEM_DIR/interfaces/innerkits/ipc_core/include\",\n       \"$SUBSYSTEM_DIR/ipc/native/src/taihe/inc\","
+    }
+  ]
+}

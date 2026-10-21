@@ -1,0 +1,205 @@
+{
+  "sha": "8394e16a46fdcf7f0b9b13e45746c624ff9e545d",
+  "node_id": "C_kwDOF9jJJdoAKDgzOTRlMTZhNDZmZGNmN2YwYjliMTNlNDU3NDZjNjI0ZmY5ZTU0NWQ",
+  "commit": {
+    "author": {
+      "name": "邹友松",
+      "email": "zouyousong1@h-partners.com",
+      "date": "2023-09-06T02:37:02Z"
+    },
+    "committer": {
+      "name": "邹友松",
+      "email": "zouyousong1@h-partners.com",
+      "date": "2023-09-06T02:37:02Z"
+    },
+    "message": "修改变量初始化\nSigned-off-by: 邹友松 <zouyousong1@h-partners.com>",
+    "tree": {
+      "sha": "b367991eed0272f54fe5ae712d18e24377d57949",
+      "url": "https://api.github.com/repos/openharmony/update_updateservice/git/trees/b367991eed0272f54fe5ae712d18e24377d57949"
+    },
+    "url": "https://api.github.com/repos/openharmony/update_updateservice/git/commits/8394e16a46fdcf7f0b9b13e45746c624ff9e545d",
+    "comment_count": 0,
+    "verification": {
+      "verified": false,
+      "reason": "unsigned",
+      "signature": null,
+      "payload": null,
+      "verified_at": null
+    }
+  },
+  "url": "https://api.github.com/repos/openharmony/update_updateservice/commits/8394e16a46fdcf7f0b9b13e45746c624ff9e545d",
+  "html_url": "https://github.com/openharmony/update_updateservice/commit/8394e16a46fdcf7f0b9b13e45746c624ff9e545d",
+  "comments_url": "https://api.github.com/repos/openharmony/update_updateservice/commits/8394e16a46fdcf7f0b9b13e45746c624ff9e545d/comments",
+  "author": null,
+  "committer": null,
+  "parents": [
+    {
+      "sha": "64736f3d0802132489bd3bde35d2baf9b1c9583a",
+      "url": "https://api.github.com/repos/openharmony/update_updateservice/commits/64736f3d0802132489bd3bde35d2baf9b1c9583a",
+      "html_url": "https://github.com/openharmony/update_updateservice/commit/64736f3d0802132489bd3bde35d2baf9b1c9583a"
+    }
+  ],
+  "stats": {
+    "total": 43,
+    "additions": 20,
+    "deletions": 23
+  },
+  "files": [
+    {
+      "sha": "def394f0616a98f12bfb0803fb44950ef4c5961a",
+      "filename": "services/firmware/check/include/firmware_icheck.h",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 2,
+      "changes": 4,
+      "blob_url": "https://github.com/openharmony/update_updateservice/blob/8394e16a46fdcf7f0b9b13e45746c624ff9e545d/services%2Ffirmware%2Fcheck%2Finclude%2Ffirmware_icheck.h",
+      "raw_url": "https://github.com/openharmony/update_updateservice/raw/8394e16a46fdcf7f0b9b13e45746c624ff9e545d/services%2Ffirmware%2Fcheck%2Finclude%2Ffirmware_icheck.h",
+      "contents_url": "https://api.github.com/repos/openharmony/update_updateservice/contents/services%2Ffirmware%2Fcheck%2Finclude%2Ffirmware_icheck.h?ref=8394e16a46fdcf7f0b9b13e45746c624ff9e545d",
+      "patch": "@@ -165,8 +165,8 @@ class FirmwareICheck {\n     }\n \n     RequestType requestType_ = RequestType::CHECK;\n-    Duration duration_ {};\n-    CheckAndAuthInfo checkAndAuthInfo_ {};\n+    Duration duration_;\n+    CheckAndAuthInfo checkAndAuthInfo_;\n     std::vector<FirmwareComponent> checkResultList_;\n };\n } // namespace UpdateEngine"
+    },
+    {
+      "sha": "bdc43c4b7cd89211b2786f8991cc49e1131ccfba",
+      "filename": "services/firmware/upgrade/data_processor/include/firmware_check_data_processor.h",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "blob_url": "https://github.com/openharmony/update_updateservice/blob/8394e16a46fdcf7f0b9b13e45746c624ff9e545d/services%2Ffirmware%2Fupgrade%2Fdata_processor%2Finclude%2Ffirmware_check_data_processor.h",
+      "raw_url": "https://github.com/openharmony/update_updateservice/raw/8394e16a46fdcf7f0b9b13e45746c624ff9e545d/services%2Ffirmware%2Fupgrade%2Fdata_processor%2Finclude%2Ffirmware_check_data_processor.h",
+      "contents_url": "https://api.github.com/repos/openharmony/update_updateservice/contents/services%2Ffirmware%2Fupgrade%2Fdata_processor%2Finclude%2Ffirmware_check_data_processor.h?ref=8394e16a46fdcf7f0b9b13e45746c624ff9e545d",
+      "patch": "@@ -57,7 +57,7 @@ class FirmwareCheckDataProcessor {\n \n private:\n     std::vector<FirmwareComponent> componentList_;\n-    Duration duration_ {};\n+    Duration duration_;\n     bool isSameWithDb_ = true;\n     CheckStatus status_ = CheckStatus::CHECK_FAIL;\n };"
+    },
+    {
+      "sha": "189bfafe386abeb91b1505cfeb3a314b0b010204",
+      "filename": "services/firmware/upgrade/data_processor/include/firmware_download_data_processor.h",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 2,
+      "changes": 4,
+      "blob_url": "https://github.com/openharmony/update_updateservice/blob/8394e16a46fdcf7f0b9b13e45746c624ff9e545d/services%2Ffirmware%2Fupgrade%2Fdata_processor%2Finclude%2Ffirmware_download_data_processor.h",
+      "raw_url": "https://github.com/openharmony/update_updateservice/raw/8394e16a46fdcf7f0b9b13e45746c624ff9e545d/services%2Ffirmware%2Fupgrade%2Fdata_processor%2Finclude%2Ffirmware_download_data_processor.h",
+      "contents_url": "https://api.github.com/repos/openharmony/update_updateservice/contents/services%2Ffirmware%2Fupgrade%2Fdata_processor%2Finclude%2Ffirmware_download_data_processor.h?ref=8394e16a46fdcf7f0b9b13e45746c624ff9e545d",
+      "patch": "@@ -37,8 +37,8 @@ class FirmwareDownloadDataProcessor {\n     void GetTask();\n \n private:\n-    FirmwareTask tasks_ {};\n-    Progress downloadProgress_ {};\n+    FirmwareTask tasks_;\n+    Progress downloadProgress_;\n };\n } // namespace UpdateEngine\n } // namespace OHOS"
+    },
+    {
+      "sha": "a02c066c25f7b55b15c893dab1a5375a214c80e2",
+      "filename": "services/firmware/upgrade/data_processor/include/firmware_install_data_processor.h",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "blob_url": "https://github.com/openharmony/update_updateservice/blob/8394e16a46fdcf7f0b9b13e45746c624ff9e545d/services%2Ffirmware%2Fupgrade%2Fdata_processor%2Finclude%2Ffirmware_install_data_processor.h",
+      "raw_url": "https://github.com/openharmony/update_updateservice/raw/8394e16a46fdcf7f0b9b13e45746c624ff9e545d/services%2Ffirmware%2Fupgrade%2Fdata_processor%2Finclude%2Ffirmware_install_data_processor.h",
+      "contents_url": "https://api.github.com/repos/openharmony/update_updateservice/contents/services%2Ffirmware%2Fupgrade%2Fdata_processor%2Finclude%2Ffirmware_install_data_processor.h?ref=8394e16a46fdcf7f0b9b13e45746c624ff9e545d",
+      "patch": "@@ -36,7 +36,7 @@ class FirmwareInstallDataProcessor {\n     void GetTask();\n \n private:\n-    FirmwareTask tasks_ {};\n+    FirmwareTask tasks_;\n };\n } // namespace UpdateEngine\n } // namespace OHOS"
+    },
+    {
+      "sha": "c341eb9fe20955173ebda5fe254099fb4f05df26",
+      "filename": "services/firmware/upgrade/executor/include/firmware_check_executor.h",
+      "status": "modified",
+      "additions": 3,
+      "deletions": 3,
+      "changes": 6,
+      "blob_url": "https://github.com/openharmony/update_updateservice/blob/8394e16a46fdcf7f0b9b13e45746c624ff9e545d/services%2Ffirmware%2Fupgrade%2Fexecutor%2Finclude%2Ffirmware_check_executor.h",
+      "raw_url": "https://github.com/openharmony/update_updateservice/raw/8394e16a46fdcf7f0b9b13e45746c624ff9e545d/services%2Ffirmware%2Fupgrade%2Fexecutor%2Finclude%2Ffirmware_check_executor.h",
+      "contents_url": "https://api.github.com/repos/openharmony/update_updateservice/contents/services%2Ffirmware%2Fupgrade%2Fexecutor%2Finclude%2Ffirmware_check_executor.h?ref=8394e16a46fdcf7f0b9b13e45746c624ff9e545d",
+      "patch": "@@ -36,9 +36,9 @@ class FirmwareCheckExecutor : public FirmwareIExecutor {\n     void Complete();\n \n private:\n-    FirmwareCheckComponentCallback checkComponentCallback_ {};\n-    Duration duration_ {};\n-    CheckAndAuthInfo checkAndAuthInfo_ {};\n+    FirmwareCheckComponentCallback checkComponentCallback_;\n+    Duration duration_;\n+    CheckAndAuthInfo checkAndAuthInfo_;\n     std::vector<FirmwareComponent> componentList_;\n     CheckStatus status_ = CheckStatus::CHECK_SUCCESS;\n };"
+    },
+    {
+      "sha": "809affbb137bba907e9b035b4d09e9b6166ca2be",
+      "filename": "services/firmware/upgrade/executor/include/firmware_download_executor.h",
+      "status": "modified",
+      "additions": 3,
+      "deletions": 3,
+      "changes": 6,
+      "blob_url": "https://github.com/openharmony/update_updateservice/blob/8394e16a46fdcf7f0b9b13e45746c624ff9e545d/services%2Ffirmware%2Fupgrade%2Fexecutor%2Finclude%2Ffirmware_download_executor.h",
+      "raw_url": "https://github.com/openharmony/update_updateservice/raw/8394e16a46fdcf7f0b9b13e45746c624ff9e545d/services%2Ffirmware%2Fupgrade%2Fexecutor%2Finclude%2Ffirmware_download_executor.h",
+      "contents_url": "https://api.github.com/repos/openharmony/update_updateservice/contents/services%2Ffirmware%2Fupgrade%2Fexecutor%2Finclude%2Ffirmware_download_executor.h?ref=8394e16a46fdcf7f0b9b13e45746c624ff9e545d",
+      "patch": "@@ -39,10 +39,10 @@ class FirmwareDownloadExecutor : public FirmwareIExecutor {\n     bool VerifyDownloadPkg(const std::string &pkgName, Progress &progress);\n \n private:\n-    DownloadOptions downloadOptions_ {};\n+    DownloadOptions downloadOptions_;\n     std::vector<FirmwareComponent> components_;\n-    FirmwareProgressCallback firmwareProgressCallback_ {};\n-    FirmwareTask tasks_ {};\n+    FirmwareProgressCallback firmwareProgressCallback_;\n+    FirmwareTask tasks_;\n     UpgradeStatus upgradeStatus_;\n     std::shared_ptr<DownloadThread> downloadThread_ = nullptr;\n };"
+    },
+    {
+      "sha": "de2fb9b804406d6c36c4dcc98abb136d119d8a0a",
+      "filename": "services/firmware/upgrade/executor/include/firmware_install_executor.h",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 2,
+      "changes": 4,
+      "blob_url": "https://github.com/openharmony/update_updateservice/blob/8394e16a46fdcf7f0b9b13e45746c624ff9e545d/services%2Ffirmware%2Fupgrade%2Fexecutor%2Finclude%2Ffirmware_install_executor.h",
+      "raw_url": "https://github.com/openharmony/update_updateservice/raw/8394e16a46fdcf7f0b9b13e45746c624ff9e545d/services%2Ffirmware%2Fupgrade%2Fexecutor%2Finclude%2Ffirmware_install_executor.h",
+      "contents_url": "https://api.github.com/repos/openharmony/update_updateservice/contents/services%2Ffirmware%2Fupgrade%2Fexecutor%2Finclude%2Ffirmware_install_executor.h?ref=8394e16a46fdcf7f0b9b13e45746c624ff9e545d",
+      "patch": "@@ -43,8 +43,8 @@ class FirmwareInstallExecutor : public FirmwareIExecutor {\n     FirmwareInstallExecutorCallback installCallback_;\n     InstallCallbackInfo installCallbackInfo_;\n     std::vector<FirmwareComponent> components_;\n-    FirmwareTask tasks_ {};\n-    Progress taskProgress_ {};\n+    FirmwareTask tasks_;\n+    Progress taskProgress_;\n     std::shared_ptr<FirmwarePreferencesUtil> preferencesUtil_ =\n         DelayedSingleton<FirmwarePreferencesUtil>::GetInstance();\n };"
+    },
+    {
+      "sha": "65954ee77d48360ece157a668e1b5eb09161d4a4",
+      "filename": "services/firmware/upgrade/install/include/firmware_sys_installer_install.h",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "blob_url": "https://github.com/openharmony/update_updateservice/blob/8394e16a46fdcf7f0b9b13e45746c624ff9e545d/services%2Ffirmware%2Fupgrade%2Finstall%2Finclude%2Ffirmware_sys_installer_install.h",
+      "raw_url": "https://github.com/openharmony/update_updateservice/raw/8394e16a46fdcf7f0b9b13e45746c624ff9e545d/services%2Ffirmware%2Fupgrade%2Finstall%2Finclude%2Ffirmware_sys_installer_install.h",
+      "contents_url": "https://api.github.com/repos/openharmony/update_updateservice/contents/services%2Ffirmware%2Fupgrade%2Finstall%2Finclude%2Ffirmware_sys_installer_install.h?ref=8394e16a46fdcf7f0b9b13e45746c624ff9e545d",
+      "patch": "@@ -40,7 +40,7 @@ class SysInstallerInstall final : public FirmwareInstall {\n     int32_t WaitInstallResult();\n \n private:\n-    Progress sysInstallProgress_ {};\n+    Progress sysInstallProgress_;\n };\n } // namespace UpdateEngine\n } // namespace OHOS"
+    },
+    {
+      "sha": "ca2499cba74dfed94b4715d7b7aa747117bc8da6",
+      "filename": "services/firmware/upgrade/mode/include/firmware_download_mode.h",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 2,
+      "changes": 4,
+      "blob_url": "https://github.com/openharmony/update_updateservice/blob/8394e16a46fdcf7f0b9b13e45746c624ff9e545d/services%2Ffirmware%2Fupgrade%2Fmode%2Finclude%2Ffirmware_download_mode.h",
+      "raw_url": "https://github.com/openharmony/update_updateservice/raw/8394e16a46fdcf7f0b9b13e45746c624ff9e545d/services%2Ffirmware%2Fupgrade%2Fmode%2Finclude%2Ffirmware_download_mode.h",
+      "contents_url": "https://api.github.com/repos/openharmony/update_updateservice/contents/services%2Ffirmware%2Fupgrade%2Fmode%2Finclude%2Ffirmware_download_mode.h?ref=8394e16a46fdcf7f0b9b13e45746c624ff9e545d",
+      "patch": "@@ -52,10 +52,10 @@ class FirmwareDownloadMode final : public FirmwareIExecuteMode {\n \n private:\n     FirmwareDownloadDataProcessor downloadDataProcessor_;\n-    DownloadOptions downloadOptions_ {};\n+    DownloadOptions downloadOptions_;\n     BusinessError &businessError_;\n     OnExecuteFinishCallback onExecuteFinishCallback_;\n-    FirmwareTask tasks_ {};\n+    FirmwareTask tasks_;\n };\n } // namespace UpdateEngine\n } // namespace OHOS"
+    },
+    {
+      "sha": "e102de466207f274a99ceb468eeeae07eb55be01",
+      "filename": "services/firmware/upgrade/mode/include/firmware_install_apply_mode.h",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "blob_url": "https://github.com/openharmony/update_updateservice/blob/8394e16a46fdcf7f0b9b13e45746c624ff9e545d/services%2Ffirmware%2Fupgrade%2Fmode%2Finclude%2Ffirmware_install_apply_mode.h",
+      "raw_url": "https://github.com/openharmony/update_updateservice/raw/8394e16a46fdcf7f0b9b13e45746c624ff9e545d/services%2Ffirmware%2Fupgrade%2Fmode%2Finclude%2Ffirmware_install_apply_mode.h",
+      "contents_url": "https://api.github.com/repos/openharmony/update_updateservice/contents/services%2Ffirmware%2Fupgrade%2Fmode%2Finclude%2Ffirmware_install_apply_mode.h?ref=8394e16a46fdcf7f0b9b13e45746c624ff9e545d",
+      "patch": "@@ -60,7 +60,7 @@ class FirmwareInstallApplyMode final : public FirmwareIExecuteMode {\n     BusinessError &businessError_;\n     InstallType installType_;\n     OnExecuteFinishCallback onExecuteFinishCallback_;\n-    FirmwareTask tasks_ {};\n+    FirmwareTask tasks_;\n     std::shared_ptr<FirmwarePreferencesUtil> preferencesUtil_ =\n         DelayedSingleton<FirmwarePreferencesUtil>::GetInstance();\n };"
+    },
+    {
+      "sha": "89d278937195179e8d1256e2e2465c4aa2bc8ad8",
+      "filename": "services/firmware/upgrade/mode/include/firmware_manual_check_mode.h",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "blob_url": "https://github.com/openharmony/update_updateservice/blob/8394e16a46fdcf7f0b9b13e45746c624ff9e545d/services%2Ffirmware%2Fupgrade%2Fmode%2Finclude%2Ffirmware_manual_check_mode.h",
+      "raw_url": "https://github.com/openharmony/update_updateservice/raw/8394e16a46fdcf7f0b9b13e45746c624ff9e545d/services%2Ffirmware%2Fupgrade%2Fmode%2Finclude%2Ffirmware_manual_check_mode.h",
+      "contents_url": "https://api.github.com/repos/openharmony/update_updateservice/contents/services%2Ffirmware%2Fupgrade%2Fmode%2Finclude%2Ffirmware_manual_check_mode.h?ref=8394e16a46fdcf7f0b9b13e45746c624ff9e545d",
+      "patch": "@@ -40,7 +40,7 @@ class FirmwareManualCheckMode final : public FirmwareIExecuteMode {\n private:\n     OnCheckComplete onCheckComplete_;\n     FirmwareCheckDataProcessor checkDataProcessor_;\n-    BusinessError businessError_ {};\n+    BusinessError businessError_;\n };\n } // namespace UpdateEngine\n } // namespace OHOS"
+    },
+    {
+      "sha": "418946b0673106576ebe909975accf0c7cf6e9e6",
+      "filename": "services/startup/manage/include/schedule_manager.h",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "blob_url": "https://github.com/openharmony/update_updateservice/blob/8394e16a46fdcf7f0b9b13e45746c624ff9e545d/services%2Fstartup%2Fmanage%2Finclude%2Fschedule_manager.h",
+      "raw_url": "https://github.com/openharmony/update_updateservice/raw/8394e16a46fdcf7f0b9b13e45746c624ff9e545d/services%2Fstartup%2Fmanage%2Finclude%2Fschedule_manager.h",
+      "contents_url": "https://api.github.com/repos/openharmony/update_updateservice/contents/services%2Fstartup%2Fmanage%2Finclude%2Fschedule_manager.h?ref=8394e16a46fdcf7f0b9b13e45746c624ff9e545d",
+      "patch": "@@ -39,7 +39,7 @@ class ScheduleManager final {\n private:\n     std::shared_ptr<IAccessManager> accessManager_ = nullptr;\n     std::shared_ptr<IStartupSchedule> startupSchedule_ = nullptr;\n-    ScheduleTask scheduleTask_ {};\n+    ScheduleTask scheduleTask_;\n };\n } // namespace UpdateEngine\n } // namespace OHOS"
+    },
+    {
+      "sha": "3e245d844fd93cb7a7931335c5800c57e8fa5009",
+      "filename": "services/utils/src/dupdate_net_observer.cpp",
+      "status": "modified",
+      "additions": 0,
+      "deletions": 3,
+      "changes": 3,
+      "blob_url": "https://github.com/openharmony/update_updateservice/blob/8394e16a46fdcf7f0b9b13e45746c624ff9e545d/services%2Futils%2Fsrc%2Fdupdate_net_observer.cpp",
+      "raw_url": "https://github.com/openharmony/update_updateservice/raw/8394e16a46fdcf7f0b9b13e45746c624ff9e545d/services%2Futils%2Fsrc%2Fdupdate_net_observer.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/update_updateservice/contents/services%2Futils%2Fsrc%2Fdupdate_net_observer.cpp?ref=8394e16a46fdcf7f0b9b13e45746c624ff9e545d",
+      "patch": "@@ -44,9 +44,6 @@ void NetObserver::StartObserver()\n         netSpecifier.ident_ = \"\";\n         netSpecifier.netCapabilities_ = netAllCapabilities;\n         sptr<NetSpecifier> specifier = new NetSpecifier(netSpecifier);\n-        if (specifier == nullptr) {\n-            return;\n-        }\n         constexpr int32_t RETRY_MAX_TIMES = 10;\n         int32_t retryCount = 0;\n         int32_t ret = NetConnResultCode::NET_CONN_SUCCESS;"
+    }
+  ]
+}

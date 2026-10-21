@@ -32,6 +32,13 @@ class _AFileScopedAdapter:
     required_facts = ("ast",)  # Shared AST eligibility, not a claim to consume CFG/IR.
     ast_scope = "per_file"
     supported_languages = ("cpp",)
+    # Each inner call receives exactly one SourceUnit and its result is then
+    # normalized for that same file. The cache's engine digest binds this
+    # adapter and the complete ohscanner package source. Keep this opt-in only
+    # while the adapter preserves the one-file boundary.
+    incremental_cache_policy = "git_blob_single_file_v1"
+    incremental_cache_version = "m2-file-adapter-v1"
+    incremental_cache_facts = ("ast",)
     implementation = None
 
     def __init__(self):

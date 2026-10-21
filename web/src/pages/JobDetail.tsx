@@ -385,6 +385,11 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
               label: "Commit",
               children: <Hash value={job.spec.commit} />,
             },
+            ...(job.spec.base_commit ? [{
+              key: "base_commit",
+              label: "比较基线 Commit",
+              children: <Hash value={job.spec.base_commit} />,
+            }] : []),
             {
               key: "tree",
               label: "Git Tree",
@@ -416,7 +421,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
           ]}
         />
       </Card>
-      <AuditPlanView plan={job.spec.audit_plan} auditMode={job.spec.audit_mode} />
+      <AuditPlanView plan={{ ...job.spec.audit_plan, base_commit: job.spec.base_commit }} auditMode={job.spec.audit_mode} />
       {job && <Card className="section-gap" title="审计阶段进度">
         <Row gutter={18}>
           <Col xs={24} md={8}><Descriptions size="small" column={1} title="静态扫描">

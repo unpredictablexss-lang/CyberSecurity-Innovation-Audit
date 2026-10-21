@@ -20,6 +20,15 @@ def _severity(candidate):
     )
 
 
+def _root_cause_group_id(candidate, report_sha256):
+    """Group only exact same-source duplicates; nearby/similar findings stay separate."""
+    material = "\0".join(str(value or "") for value in (
+        report_sha256, candidate.get("detector_id"), candidate.get("detector_version"),
+        candidate.get("rule_id"), candidate.get("file"), candidate.get("line"),
+        candidate.get("symbol"), candidate.get("source_sha256")))
+    return "rc-" + hashlib.sha256(material.encode()).hexdigest()[:20]
+
+
 def coverage_snapshot(job, report):
     """Return scanner coverage facts without turning missing coverage into safety."""
     parsing = report.get("source_parsing", {})
@@ -236,8 +245,10 @@ def risk_snapshot(settings, store, ops, job, report):
                 1 for row in obligations
                 if not isinstance(row, dict) or row.get("status") != "satisfied"
             )
+        root_group = _root_cause_group_id(original, job.get("report_sha256"))
         items.append({
-            "candidate_id": original["id"], "file": original.get("file"),
+            "candidate_id": original["id"], "root_cause_group_id": root_group,
+            "file": original.get("file"),
             "line": original.get("line"), "symbol": original.get("symbol"),
             "rule_id": original.get("rule_id"), "detector_id": original.get("detector_id"),
             "detector_version": original.get("detector_version"),
@@ -255,6 +266,7 @@ def risk_snapshot(settings, store, ops, job, report):
     tier_order = {"high_confidence_candidate": 0, "further_validation": 1,
                   "unknown_source_binding": 2, "low_priority_manual": 3}
     items.sort(key=lambda item: (tier_order[item["risk_tier"]],
+                                 -item["obligations_open"],
                                  -_severity(candidate_by_id[item["candidate_id"]]),
                                  item.get("file") or "", int(item.get("line") or 0),
                                  item["candidate_id"]))
@@ -367,7 +379,9 @@ def enqueue_authorized_triage(settings, store, ops, job):
         return ops.record_triage_batch(record)
     includes = spec.get("include_paths", [])
     for candidate in candidates:
-        row = {"candidate_id": candidate["id"], "file": candidate.get("file"),
+        row = {"candidate_id": candidate["id"],
+               "root_cause_group_id": _root_cause_group_id(candidate, job.get("report_sha256")),
+               "file": candidate.get("file"),
                "line": candidate.get("line"), "source_sha256": candidate.get("source_sha256")}
         if not isinstance(candidate.get("file"), str) or not _path_in_scope(candidate["file"], includes):
             row.update({"state": "not_triaged", "reason": "outside fixed audit scope"})
@@ -393,6 +407,20 @@ def enqueue_authorized_triage(settings, store, ops, job):
         -item[2], -_severity(item[0]), item[0].get("file", ""),
         int(item[0].get("line") or 0), item[0]["id"],
     ))
+    # Schedule one representative per exact-source root cause while retaining
+    # every original candidate row and its explicit representative link.
+    representatives = {}
+    deduplicated = []
+    for item in eligible:
+        group_id = item[3]["root_cause_group_id"]
+        if group_id not in representatives:
+            representatives[group_id] = item
+            deduplicated.append(item)
+        else:
+            representative = representatives[group_id][0]["id"]
+            item[3].update({"state": "grouped_duplicate", "grouped_into_candidate_id": representative,
+                            "reason": "exact source-bound duplicate grouped; original candidate remains unassessed"})
+    eligible = deduplicated
     limit = int(snapshot["candidate_limit"])
     selected = eligible[:limit]
     selected_ids = {item[0]["id"] for item in selected}

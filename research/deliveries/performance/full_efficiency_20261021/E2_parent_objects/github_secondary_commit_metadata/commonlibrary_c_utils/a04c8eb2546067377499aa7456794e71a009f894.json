@@ -1,0 +1,85 @@
+{
+  "sha": "a04c8eb2546067377499aa7456794e71a009f894",
+  "node_id": "C_kwDONHSHNtoAKGEwNGM4ZWIyNTQ2MDY3Mzc3NDk5YWE3NDU2Nzk0ZTcxYTAwOWY4OTQ",
+  "commit": {
+    "author": {
+      "name": "weixin_57688977",
+      "email": "zhangmingqi9@huawei.com",
+      "date": "2026-09-29T12:21:32Z"
+    },
+    "committer": {
+      "name": "weixin_57688977",
+      "email": "zhangmingqi9@huawei.com",
+      "date": "2026-09-29T12:21:32Z"
+    },
+    "message": "fix fdsan\n\nIssue: https://gitcode.com/openharmony/commonlibrary_c_utils/issues/810\n\nCo-Authored-By: Agent\n\nSigned-off-by: zhangmingqi <zhangmingqi9@huawei.com>\n\nAI[100%] Human Fixed[0%] Human[0%] AI Adopted[69%]\nCo-authored-by: opencode (glm-5.3) <ai@local>",
+    "tree": {
+      "sha": "c01574dfa59a143a4bc3903927d14aa369e9c13c",
+      "url": "https://api.github.com/repos/openharmony/commonlibrary_c_utils/git/trees/c01574dfa59a143a4bc3903927d14aa369e9c13c"
+    },
+    "url": "https://api.github.com/repos/openharmony/commonlibrary_c_utils/git/commits/a04c8eb2546067377499aa7456794e71a009f894",
+    "comment_count": 0,
+    "verification": {
+      "verified": false,
+      "reason": "unsigned",
+      "signature": null,
+      "payload": null,
+      "verified_at": null
+    }
+  },
+  "url": "https://api.github.com/repos/openharmony/commonlibrary_c_utils/commits/a04c8eb2546067377499aa7456794e71a009f894",
+  "html_url": "https://github.com/openharmony/commonlibrary_c_utils/commit/a04c8eb2546067377499aa7456794e71a009f894",
+  "comments_url": "https://api.github.com/repos/openharmony/commonlibrary_c_utils/commits/a04c8eb2546067377499aa7456794e71a009f894/comments",
+  "author": null,
+  "committer": null,
+  "parents": [
+    {
+      "sha": "17fd98d4189f27738b0656988d4d59611926a4f4",
+      "url": "https://api.github.com/repos/openharmony/commonlibrary_c_utils/commits/17fd98d4189f27738b0656988d4d59611926a4f4",
+      "html_url": "https://github.com/openharmony/commonlibrary_c_utils/commit/17fd98d4189f27738b0656988d4d59611926a4f4"
+    }
+  ],
+  "stats": {
+    "total": 31,
+    "additions": 19,
+    "deletions": 12
+  },
+  "files": [
+    {
+      "sha": "94618d59b0789ab6d61d47e8f3da49acaf375c28",
+      "filename": "base/BUILD.gn",
+      "status": "modified",
+      "additions": 10,
+      "deletions": 3,
+      "changes": 13,
+      "blob_url": "https://github.com/openharmony/commonlibrary_c_utils/blob/a04c8eb2546067377499aa7456794e71a009f894/base%2FBUILD.gn",
+      "raw_url": "https://github.com/openharmony/commonlibrary_c_utils/raw/a04c8eb2546067377499aa7456794e71a009f894/base%2FBUILD.gn",
+      "contents_url": "https://api.github.com/repos/openharmony/commonlibrary_c_utils/contents/base%2FBUILD.gn?ref=a04c8eb2546067377499aa7456794e71a009f894",
+      "patch": "@@ -31,9 +31,6 @@ config(\"utils_config\") {\n   if (current_os == \"ios\") {\n     defines += [ \"IOS_PLATFORM\" ]\n   }\n-  if (is_ohos) {\n-    defines += [ \"OHOS_PLATFORM\" ]\n-  }\n   if (current_os == \"win\" || current_os == \"mingw\") {\n     defines += [ \"WINDOWS_PLATFORM\" ]\n   }\n@@ -48,6 +45,13 @@ config(\"utils_config\") {\n   }\n }\n \n+config(\"utils_fdsan_config\") {\n+  visibility = [ \":*\" ]\n+  if (is_ohos) {\n+    defines = [ \"UTILS_FDSAN\" ]\n+  }\n+}\n+\n config(\"utils_coverage_config\") {\n   visibility = [ \":*\" ]\n   if (c_utils_feature_coverage) {\n@@ -172,6 +176,7 @@ ohos_static_library(\"utilsbase\") {\n   } else {\n     sources = sources_utils\n     configs = [ \":utils_coverage_config\" ]\n+    configs += [ \":utils_fdsan_config\" ]\n     public_configs = [ \":utils_config\" ]\n     if (current_os != \"android\" && current_os != \"ios\" && !is_host_product) {\n       defines = [ \"CONFIG_HILOG\" ]\n@@ -189,6 +194,7 @@ ohos_static_library(\"utilsbase\") {\n ohos_static_library(\"utilsbase_rtti\") {\n   visibility = [ \"//foundation/multimedia/media_foundation/engine/plugin/plugins/source/video_capture:std_video_capture\" ]\n   sources = sources_utils\n+  configs = [ \":utils_fdsan_config\" ]\n   public_configs = [ \":utils_config\" ]\n   if (current_os != \"android\" && current_os != \"ios\" && !is_host_product) {\n     defines = [ \"CONFIG_HILOG\" ]\n@@ -225,6 +231,7 @@ ohos_shared_library(\"utils\") {\n   } else {\n     sources = sources_utils\n     configs = [ \":utils_coverage_config\" ]\n+    configs += [ \":utils_fdsan_config\" ]\n \n     if (!is_arkui_x && !is_host_product) {\n       if (c_utils_feature_intsan) {"
+    },
+    {
+      "sha": "0ac4cae120dd9aa396b97c33e43ea646fdd3041f",
+      "filename": "base/src/io_event_epoll.cpp",
+      "status": "modified",
+      "additions": 5,
+      "deletions": 5,
+      "changes": 10,
+      "blob_url": "https://github.com/openharmony/commonlibrary_c_utils/blob/a04c8eb2546067377499aa7456794e71a009f894/base%2Fsrc%2Fio_event_epoll.cpp",
+      "raw_url": "https://github.com/openharmony/commonlibrary_c_utils/raw/a04c8eb2546067377499aa7456794e71a009f894/base%2Fsrc%2Fio_event_epoll.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/commonlibrary_c_utils/contents/base%2Fsrc%2Fio_event_epoll.cpp?ref=a04c8eb2546067377499aa7456794e71a009f894",
+      "patch": "@@ -19,20 +19,20 @@\n #include \"common_event_sys_errors.h\"\n #include \"io_event_epoll.h\"\n #include <strings.h>\n-#ifdef OHOS_PLATFORM\n+#ifdef UTILS_FDSAN\n #include <stdio.h>\n #endif\n \n namespace OHOS {\n namespace Utils {\n-#ifdef OHOS_PLATFORM\n+#ifdef UTILS_FDSAN\n static constexpr uint64_t IO_EVENT_EPOLL_FDSAN_TAG = 0xD003D00;\n #endif\n \n IOEventEpoll::IOEventEpoll()\n     : epollFd_(epoll_create1(EPOLL_CLOEXEC)), maxEvents_(EPOLL_MAX_EVENTS_INIT)\n {\n-#ifdef OHOS_PLATFORM\n+#ifdef UTILS_FDSAN\n     if (epollFd_ >= 0) {\n         fdsan_exchange_owner_tag(epollFd_, 0, IO_EVENT_EPOLL_FDSAN_TAG);\n     }\n@@ -51,7 +51,7 @@ ErrCode IOEventEpoll::SetUp()\n         if (epollFd_ < 0) {\n             return EVENT_SYS_ERR_BADF;\n         }\n-#ifdef OHOS_PLATFORM\n+#ifdef UTILS_FDSAN\n         fdsan_exchange_owner_tag(epollFd_, 0, IO_EVENT_EPOLL_FDSAN_TAG);\n #endif\n     }\n@@ -61,7 +61,7 @@ ErrCode IOEventEpoll::SetUp()\n void IOEventEpoll::CleanUp()\n {\n     if (epollFd_ != IO_EVENT_INVALID_FD) {\n-#ifdef OHOS_PLATFORM\n+#ifdef UTILS_FDSAN\n         if (fdsan_close_with_tag(epollFd_, IO_EVENT_EPOLL_FDSAN_TAG) != 0) {\n #else\n         if (close(epollFd_) != 0) {"
+    },
+    {
+      "sha": "9793b97a144fc9281bfd226f2b86dc64e696e40f",
+      "filename": "base/src/mapped_file.cpp",
+      "status": "modified",
+      "additions": 4,
+      "deletions": 4,
+      "changes": 8,
+      "blob_url": "https://github.com/openharmony/commonlibrary_c_utils/blob/a04c8eb2546067377499aa7456794e71a009f894/base%2Fsrc%2Fmapped_file.cpp",
+      "raw_url": "https://github.com/openharmony/commonlibrary_c_utils/raw/a04c8eb2546067377499aa7456794e71a009f894/base%2Fsrc%2Fmapped_file.cpp",
+      "contents_url": "https://api.github.com/repos/openharmony/commonlibrary_c_utils/contents/base%2Fsrc%2Fmapped_file.cpp?ref=a04c8eb2546067377499aa7456794e71a009f894",
+      "patch": "@@ -19,13 +19,13 @@\n #include \"common_mapped_file_errors.h\"\n #include \"file_ex.h\"\n #include \"utils_log.h\"\n-#ifdef OHOS_PLATFORM\n+#ifdef UTILS_FDSAN\n #include <stdio.h>\n #endif\n \n namespace OHOS {\n namespace Utils {\n-#ifdef OHOS_PLATFORM\n+#ifdef UTILS_FDSAN\n static constexpr uint64_t MAPPED_FILE_FDSAN_TAG = 0xD003D00;\n #endif\n \n@@ -37,7 +37,7 @@ static bool CloseFd(int& fd)\n \n     int fdToClose = fd;\n     fd = -1;\n-#ifdef OHOS_PLATFORM\n+#ifdef UTILS_FDSAN\n     return fdsan_close_with_tag(fdToClose, MAPPED_FILE_FDSAN_TAG) != -1;\n #else\n     return close(fdToClose) != -1;\n@@ -188,7 +188,7 @@ bool MappedFile::OpenFile()\n         return false;\n     }\n \n-#ifdef OHOS_PLATFORM\n+#ifdef UTILS_FDSAN\n     fdsan_exchange_owner_tag(fd, 0, MAPPED_FILE_FDSAN_TAG);\n #endif\n "
+    }
+  ]
+}
