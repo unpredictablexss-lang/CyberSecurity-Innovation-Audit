@@ -3,6 +3,7 @@ import hashlib
 from decimal import Decimal, InvalidOperation
 import json
 import re
+import subprocess
 import uuid
 from pathlib import Path
 from typing import Literal
@@ -30,6 +31,301 @@ def _markdown_inline_untrusted(value):
     return "".join(chr(92) + char if char in _MARKDOWN_INLINE_SPECIAL_CHARS else char
                    for char in normalized)
 
+
+
+_SOURCE_NOT_SUPPLIED = object()
+
+
+def _fixed_case_source_anchor(settings, store, job, report, candidate,
+                              fixed_source=_SOURCE_NOT_SUPPLIED):
+    """Resolve a candidate location against the exact saved report and Git source."""
+    expected_commit = job.get("spec", {}).get("commit")
+    report_sha256 = job.get("report_sha256")
+    candidate_sha256 = candidate.get("source_sha256")
+    line_number = candidate.get("line")
+    if (not expected_commit or report.get("commit") != expected_commit
+            or not isinstance(report_sha256, str) or not re.fullmatch(r"[0-9a-f]{64}", report_sha256)):
+        return {"state": "unknown", "reason": "扫描报告或固定提交绑定缺失。"}
+    if not isinstance(candidate_sha256, str) or not re.fullmatch(r"[0-9a-f]{64}", candidate_sha256):
+        return {"state": "unknown", "reason": "候选没有可核验的源码 SHA-256。"}
+    if (not isinstance(line_number, int) or isinstance(line_number, bool) or line_number < 1
+            or not isinstance(candidate.get("file"), str) or not candidate["file"]):
+        return {"state": "unknown", "reason": "候选缺少有效的仓库相对路径或行号。"}
+    try:
+        source = (service.source(settings, store, job, candidate["file"])
+                  if fixed_source is _SOURCE_NOT_SUPPLIED else fixed_source)
+        if not isinstance(source, dict):
+            raise ValueError("fixed source is unavailable")
+        source_text = source.get("text")
+        observed_sha256 = (hashlib.sha256(source_text.encode("utf-8")).hexdigest()
+                           if isinstance(source_text, str) else None)
+        if (source.get("commit") != expected_commit or source.get("sha256") != candidate_sha256
+                or observed_sha256 != candidate_sha256):
+            return {"state": "unknown", "reason": "候选源码与扫描提交/源码哈希不匹配。"}
+        lines = source_text.splitlines()
+        if line_number > len(lines):
+            return {"state": "unknown", "reason": "候选行号不存在于固定源码中。"}
+    except (KeyError, TypeError, ValueError, OSError, UnicodeError,
+            subprocess.CalledProcessError, subprocess.TimeoutExpired):
+        # A report remains readable when the Git object is unavailable, but no generated
+        # advice may claim a source anchor that could not be independently re-opened.
+        return {"state": "unknown", "reason": "固定源码材料暂不可用，未生成引用或建议。"}
+    start = max(1, line_number - 2)
+    end = min(len(lines), line_number + 2)
+    identity = ["case-source-anchor-v1", report.get("repository"), expected_commit,
+                report_sha256, candidate["file"], line_number, candidate_sha256]
+    return {
+        "state": "verified_fixed_source",
+        "verified": True,
+        "anchor_id": "src-" + hashlib.sha256(json.dumps(identity, ensure_ascii=False,
+            separators=(",", ":")).encode()).hexdigest()[:20],
+        "repository": report.get("repository"),
+        "commit": expected_commit,
+        "git_tree": report.get("git_tree"),
+        "snapshot_sha256": report.get("snapshot_sha256"),
+        "report_sha256": report_sha256,
+        "file": candidate["file"],
+        "line": line_number,
+        "source_sha256": candidate_sha256,
+        "git_blob": source.get("blob"),
+        "excerpt_start_line": start,
+        "excerpt_end_line": end,
+        "excerpt": "\n".join(f"{number}: {lines[number - 1]}" for number in range(start, end + 1)),
+        "_source_lines": lines,
+    }
+
+
+def _source_anchor_reference(source_anchor):
+    if not source_anchor.get("verified"):
+        return None
+    return {key: source_anchor.get(key) for key in (
+        "state", "verified", "anchor_id", "repository", "commit", "git_tree",
+        "snapshot_sha256", "report_sha256", "file", "line", "source_sha256", "git_blob")}
+
+
+_REMEDIATION_DRAFTS = {
+    "CWE-20": "在输入边界显式校验类型、范围、编码与长度，并在进入敏感操作前拒绝不满足约束的值；约束应来自接口契约。",
+    "CWE-22": "在访问前规范化并解析目标路径，确认最终路径仍位于授权根目录内；同时明确处理符号链接、路径分隔符和编码差异。",
+    "CWE-119": "以实际缓冲区容量校验每次读写，使用溢出安全的长度计算；拒绝越界输入并保留边界值控制测试。",
+    "CWE-125": "读取前验证索引及长度不超过实际对象边界，采用溢出安全的范围计算，并覆盖空、末端及超界输入。",
+    "CWE-131": "按实际元素宽度和溢出安全的乘加计算分配容量，再验证后续索引/长度与该容量一致。",
+    "CWE-362": "统一保护共享状态的所有读写：让每条访问路径使用一致的同步协议，或采用满足全部访问方约束的原子/不可变替换方案；复核锁顺序和对象生命周期。",
+    "CWE-416": "让借用指针在最后一次解引用前始终由有效所有权保护；优先使用 RAII 所有权并缩短借用期，若有并发访问则统一生命周期与同步协议。",
+    "CWE-441": "在分发远程请求前校验接口身份/描述符及适用的调用权限，并确认每条敏感分支都受同一授权边界约束。",
+    "CWE-476": "在解引用前处理空值并定义安全失败路径；如果空值表示无效状态，应在进入敏感操作前终止流程。",
+    "CWE-787": "写入前根据目标对象的真实容量验证偏移和长度，并采用溢出安全的边界运算；覆盖恰好边界与越界控制。",
+    "CWE-862": "在敏感操作入口执行服务端授权检查，核验调用身份、权限和对象范围，并确保绕过其他调用路径不能直达该操作。",
+    "CWE-863": "让授权决策使用正确的主体、动作和资源属性，并对允许/拒绝两侧及边界身份执行控制验证。",
+}
+
+
+def _candidate_remediation_draft(candidate, source_anchor):
+    cwe = candidate.get("candidate_cwe")
+    draft = _REMEDIATION_DRAFTS.get(cwe) if isinstance(cwe, str) else None
+    if not source_anchor.get("verified") or not draft:
+        reason = source_anchor.get("reason") or "当前候选 CWE 没有对应的受控修复草案模板。"
+        return {"state": "unknown", "label": "修复建议待复核", "draft": None,
+                "unverified": True, "reason": reason,
+                "source_anchor": _source_anchor_reference(source_anchor)}
+    return {
+        "state": "draft_unverified",
+        "label": "修复建议草案 · 未验证",
+        "draft": draft,
+        "unverified": True,
+        "provenance": "确定性 CWE 草案模板；不是模型结论、已确认根因或补丁",
+        "basis": {"candidate_cwe": cwe, "rule_id": candidate.get("rule_id"),
+                  "note": "CWE 和规则信息是候选元数据，不单独证明此处存在漏洞。"},
+        "review_checks": ["结合固定源码上下文和调用路径核对根因与接口契约。",
+                          "修改后补充正例、修复版/安全控制及边界测试，并复核实际补丁。"],
+        "ai_basis": {"state": "unknown", "citations": [],
+                     "note": "没有引用校验通过且绑定到本候选的 Agent 材料；草案只来自通用 CWE 模板。"},
+        "source_anchor": _source_anchor_reference(source_anchor),
+    }
+
+
+def _candidate_poc_plan(candidate, source_anchor):
+    if not source_anchor.get("verified"):
+        return {"state": "unknown", "label": "验证计划材料不足", "execution": {
+                    "requested": False, "queued": False, "executed": False},
+                "steps": [], "reason": source_anchor.get("reason"), "source_anchor": None}
+    steps = [
+        ("review_entry", "从固定源码和调用方核对可达入口、调用身份、前置状态及敏感操作；未由源码证明的条件保持 unknown。"),
+        ("define_oracle", "由人工先写明可观察结果和失败条件；预期值只能来自接口契约、受审查的对照版本或明确的测试规范。"),
+        ("prepare_isolated_harness", "如需复现，在临时本地目录构造最小隔离 Harness；禁用网络和生产服务，不执行破坏性操作。"),
+        ("compare_controls", "对候选输入与安全/修复控制运行同一测试，保存源码 SHA、命令、日志和结果；组件 Harness 结果与产品可达性分别记录。"),
+        ("human_interpretation", "由复核者解释结果、影响边界和未决项；测试未运行、控制不完整或产品入口未知时保持 candidate/unknown。"),
+    ]
+    return {
+        "state": "plan_only",
+        "label": "安全验证 / PoC 计划 · 未执行",
+        "execution": {"requested": False, "queued": False, "executed": False},
+        "authorization": "运行需要用户明确提出执行请求，并通过现有固定版本、隔离环境和验证门控；本报告不会自动创建或启动验证操作。",
+        "expected_result": "unknown_until_reviewer_defines_contract_and_oracle",
+        "harness_selection": "未选择 Harness；只有与固定仓库、提交、路径和来源哈希完全匹配的已登记适配器才可执行。",
+        "steps": [{"id": step_id, "action": action, "status": "not_started",
+                   "source_anchor": _source_anchor_reference(source_anchor)}
+                  for step_id, action in steps],
+        "candidate_cwe": candidate.get("candidate_cwe"),
+        "source_anchor": _source_anchor_reference(source_anchor),
+    }
+
+
+def _agent_citation_state(settings, store, result, job, candidate, source_anchor):
+    """Recheck persisted Agent citations against evidence payloads bound to the fixed commit."""
+    binding = result.get("binding") if isinstance(result, dict) else None
+    if not isinstance(binding, dict) or any((
+            binding.get("job_id") != job.get("id"),
+            binding.get("candidate_id") != candidate.get("id"),
+            binding.get("report_sha256") != job.get("report_sha256"),
+            binding.get("commit") != job.get("spec", {}).get("commit"),
+            binding.get("source_sha256") != candidate.get("source_sha256"),
+    )):
+        return {"state": "unknown", "reason": "Agent 结果与本案例的固定候选绑定不匹配。"}
+    assessment = result.get("agent_assessment")
+    integrity = result.get("citation_integrity")
+    if not isinstance(assessment, dict) or not isinstance(integrity, dict):
+        return {"state": "unknown", "reason": "Agent 结果缺少可核验的引用材料。"}
+    citations = []
+    for field in ("supported_claims", "obligation_reviews"):
+        rows = assessment.get(field, [])
+        if not isinstance(rows, list):
+            return {"state": "unknown", "reason": "Agent 引用结构无效。"}
+        for row in rows:
+            if not isinstance(row, dict):
+                return {"state": "unknown", "reason": "Agent 引用结构无效。"}
+            refs = row.get("citations", [])
+            if not isinstance(refs, list):
+                return {"state": "unknown", "reason": "Agent 引用结构无效。"}
+            citations.extend(refs)
+    if (integrity.get("quote_presence") != "verified_for_all_citations"
+            or not citations or integrity.get("citation_count") != len(citations)):
+        return {"state": "unknown", "reason": "Agent 引文缺失或未通过完整性校验。"}
+
+    evidence = {}
+    initial = result.get("initial_evidence")
+    if isinstance(initial, dict):
+        context = initial.get("context")
+        if (initial.get("evidence_kind") == "source_code"
+                and initial.get("file") == candidate.get("file")
+                and initial.get("source_sha256") == candidate.get("source_sha256")
+                and initial.get("source_commit", binding.get("commit")) == binding.get("commit")
+                and isinstance(initial.get("evidence_id"), str)
+                and isinstance(context, dict) and isinstance(context.get("source_excerpt"), str)):
+            text = context["source_excerpt"]
+            start = initial.get("source_excerpt_start_line", context.get("source_excerpt_start_line", 1))
+            source_lines = source_anchor.get("_source_lines", [])
+            excerpt_lines = text.splitlines()
+            excerpt_matches_fixed_source = (
+                isinstance(start, int) and not isinstance(start, bool) and start >= 1
+                and isinstance(source_lines, list)
+                and start + len(excerpt_lines) - 1 <= len(source_lines)
+                and excerpt_lines == source_lines[start - 1:start - 1 + len(excerpt_lines)])
+            if excerpt_matches_fixed_source:
+                evidence[initial["evidence_id"]] = [{"file": initial["file"], "text": text,
+                    "lines": {start + index: line for index, line in enumerate(excerpt_lines)},
+                    "commit": initial.get("source_commit", binding.get("commit")),
+                    "source_sha256": initial.get("source_sha256"),
+                    "git_blob": initial.get("git_blob")}]
+
+    for call in result.get("tool_calls", []) if isinstance(result.get("tool_calls"), list) else []:
+        if not isinstance(call, dict) or call.get("evidence_kind") != "source_code":
+            continue
+        evidence_id = call.get("evidence_id")
+        payload = call.get("result")
+        if not isinstance(evidence_id, str) or not isinstance(payload, dict):
+            continue
+        entries = payload.get("matches") if isinstance(payload.get("matches"), list) else [payload]
+        for entry in entries:
+            if not isinstance(entry, dict) or entry.get("commit", payload.get("commit")) != binding.get("commit"):
+                continue
+            file = entry.get("file") or payload.get("file")
+            text = entry.get("text")
+            if not isinstance(file, str) or not isinstance(text, str):
+                continue
+            raw_lines = text.splitlines()
+            numbered = [re.match(r"^(\d+): ?(.*)$", line) for line in raw_lines]
+            if raw_lines and all(numbered):
+                lines = {int(match.group(1)): match.group(2) for match in numbered}
+            else:
+                start = entry.get("start_line", payload.get("start_line", 1))
+                if not isinstance(start, int) or isinstance(start, bool) or start < 1:
+                    continue
+                lines = {start + index: line for index, line in enumerate(raw_lines)}
+            evidence.setdefault(evidence_id, []).append({
+                "file": file, "text": text, "lines": lines,
+                "commit": entry.get("commit", payload.get("commit")),
+                "source_sha256": entry.get("source_sha256", payload.get("source_sha256")),
+                "git_blob": entry.get("git_blob", payload.get("git_blob")),
+            })
+
+    fixed_sources = {candidate.get("file"): {
+        "commit": source_anchor.get("commit"),
+        "sha256": source_anchor.get("source_sha256"),
+        "blob": source_anchor.get("git_blob"),
+        "text": "\n".join(source_anchor.get("_source_lines", [])),
+    }}
+    for citation in citations:
+        if (not isinstance(citation, dict) or not isinstance(citation.get("evidence_id"), str)
+                or not isinstance(citation.get("file"), str)):
+            return {"state": "unknown", "reason": "Agent 引文没有固定源码证据 ID。"}
+        entries = evidence.get(citation["evidence_id"], [])
+        quote = citation.get("quote")
+        cited_file = citation["file"]
+        if (not cited_file or cited_file.startswith("/") or "\\" in cited_file
+                or ".." in Path(cited_file).parts):
+            return {"state": "unknown", "reason": "Agent 引文路径不是安全的仓库相对路径。"}
+        if cited_file not in fixed_sources:
+            try:
+                fixed = service.source(settings, store, job, cited_file)
+            except (KeyError, TypeError, ValueError, OSError, UnicodeError,
+                    subprocess.CalledProcessError, subprocess.TimeoutExpired):
+                return {"state": "unknown", "reason": "Agent 引文对应的固定提交源码不可用。"}
+            if not isinstance(fixed, dict) or fixed.get("commit") != binding.get("commit"):
+                return {"state": "unknown", "reason": "Agent 引文源码未绑定到固定提交。"}
+            fixed_sources[cited_file] = fixed
+        fixed = fixed_sources[cited_file]
+        fixed_lines = fixed.get("text", "").splitlines()
+        matched = False
+        for entry in entries:
+            if cited_file != entry["file"]:
+                continue
+            if (entry.get("commit") is not None
+                    and entry["commit"] != binding.get("commit")):
+                continue
+            if (entry.get("source_sha256") is not None
+                    and entry["source_sha256"] != fixed.get("sha256")):
+                continue
+            if entry.get("git_blob") is not None and entry["git_blob"] != fixed.get("blob"):
+                continue
+            if (entry.get("commit") is None and entry.get("source_sha256") is None
+                    and entry.get("git_blob") is None):
+                continue
+            if not isinstance(quote, str):
+                continue
+            start, end = citation.get("line_start"), citation.get("line_end")
+            if start is not None or end is not None:
+                if (not isinstance(start, int) or isinstance(start, bool)
+                        or not isinstance(end, int) or isinstance(end, bool)
+                        or start < 1 or end < start
+                        or any(line not in entry["lines"] for line in range(start, end + 1))
+                        or end > len(fixed_lines)
+                        or "\n".join(entry["lines"][line] for line in range(start, end + 1)) != quote
+                        or "\n".join(fixed_lines[line - 1] for line in range(start, end + 1)) != quote):
+                    continue
+            else:
+                if quote not in entry["text"] and quote not in "\n".join(entry["lines"].values()):
+                    continue
+                if quote not in fixed.get("text", ""):
+                    continue
+            matched = True
+            break
+        if not matched:
+            return {"state": "unknown", "reason": "Agent 引文与其固定提交源码材料不匹配。"}
+    cited_sources = [{key: citation.get(key) for key in ("evidence_id", "file", "line_start", "line_end", "quote")
+                      if citation.get(key) is not None} for citation in citations]
+    return {"state": "unverified_model_advice",
+            "reason": "引文逐字匹配固定提交；语义支持和其与修复建议的相关性仍需人工复核。",
+            "citations": cited_sources}
 
 def _aggregate_agent_budget_cost_estimates(estimates):
     items = list(estimates)
@@ -2162,6 +2458,7 @@ def install_routes(app: FastAPI, settings, store):
         records_by_candidate = {}
         risk_by_job = {}
         risk_snapshot_unavailable = set()
+        fixed_source_cache = {}
         for link in links:
             job = store.job(link["job_id"])
             report = service.read_report(settings, job)
@@ -2193,6 +2490,17 @@ def install_routes(app: FastAPI, settings, store):
                          "vulnerability_state": "candidate"},
                 "reviews": store.reviews(job["id"], item["id"]),
                 "source_evidence": store.source_evidence(job["id"], item["id"])}
+            source_key = (job["id"], item.get("file"))
+            if source_key not in fixed_source_cache:
+                try:
+                    fixed_source_cache[source_key] = service.source(settings, store, job, item.get("file"))
+                except (KeyError, TypeError, ValueError, OSError, UnicodeError, subprocess.CalledProcessError):
+                    fixed_source_cache[source_key] = None
+            source_anchor = _fixed_case_source_anchor(settings, store, job, report, item,
+                                                      fixed_source_cache[source_key])
+            record["source_anchor"] = source_anchor
+            record["remediation_draft"] = _candidate_remediation_draft(item, source_anchor)
+            record["poc_plan"] = _candidate_poc_plan(item, source_anchor)
             records.append(record)
             records_by_candidate[(job["id"], item["id"])] = record
 
@@ -2233,6 +2541,8 @@ def install_routes(app: FastAPI, settings, store):
         operations = operations[:20]
         operation_summaries = []
         for x in operations:
+            linked = records_by_candidate.get((x.get("spec", {}).get("job_id"),
+                                               x.get("spec", {}).get("candidate_id")))
             result = ops.result(x["id"]) if x["result_sha256"] else {}
             summary = {"id": x["id"], "kind": x["kind"], "status": x["status"],
                 "result_sha256": x["result_sha256"], "validation_gate": result.get("validation_gate"),
@@ -2244,22 +2554,44 @@ def install_routes(app: FastAPI, settings, store):
                 "candidate_id": x["spec"].get("candidate_id")}
             if x["kind"] == "agent_investigation":
                 assessment = result.get("agent_assessment", {})
+                linked_job = store.job(linked["job_id"]) if linked else None
+                citation_state = (_agent_citation_state(settings, store, result, linked_job, linked["candidate"],
+                                                        linked.get("source_anchor", {}))
+                                  if linked_job else {"state": "unknown", "reason": "候选固定绑定不可用。"})
+                advice_verified_for_display = citation_state["state"] == "unverified_model_advice"
+                if linked and isinstance(linked.get("remediation_draft"), dict):
+                    linked["remediation_draft"]["ai_basis"] = {
+                        "state": "source_bound_unverified" if advice_verified_for_display else "unknown",
+                        "citations": citation_state.get("citations", []),
+                        "note": ("这些是 Agent 在同一固定提交中引用的源码上下文；引用与修复草案没有机器验证的因果映射，需人工判断。"
+                                 if advice_verified_for_display else citation_state.get("reason")),
+                    }
+                model_suggestions = [{
+                    "text": step,
+                    "state": "unverified_model_suggestion",
+                    "source_anchor": linked.get("source_anchor"),
+                    "semantic_support": "unverified_by_machine",
+                } for step in assessment.get("next_steps", [])
+                    if advice_verified_for_display and isinstance(step, str) and step.strip()]
                 summary["agent_triage"] = {
-                    "triage_only": True, "assessment": assessment.get("assessment", "unknown"),
-                    "summary": assessment.get("summary", ""),
+                    "triage_only": True,
+                    "assessment": assessment.get("assessment", "unknown") if advice_verified_for_display else "unknown",
+                    "summary": assessment.get("summary", "") if advice_verified_for_display else "",
                     "summary_provenance": result.get("summary_provenance", "legacy_model_generated_unverified"),
                     "model_summary_unverified": assessment.get("model_summary_unverified",
-                        assessment.get("summary", "")),
+                        assessment.get("summary", "")) if advice_verified_for_display else "",
                     "experiment_id": result.get("experiment_id"),
-                    "supported_claims": assessment.get("supported_claims", []),
-                    "obligation_reviews": assessment.get("obligation_reviews", []),
+                    "supported_claims": assessment.get("supported_claims", []) if advice_verified_for_display else [],
+                    "obligation_reviews": assessment.get("obligation_reviews", []) if advice_verified_for_display else [],
                     "citation_integrity": result.get("citation_integrity"),
+                    "citation_review": citation_state,
+                    "model_suggestions": model_suggestions,
                     "narrative_integrity": result.get("narrative_integrity", {
                         "unverified_narrative_fields": ["model_summary_unverified", "unsupported_claims", "unknowns", "next_steps"],
                         "narrative_semantics": "unverified_by_machine"}),
-                    "unsupported_claims": assessment.get("unsupported_claims", []),
-                    "unknowns": assessment.get("unknowns", []),
-                    "next_steps": assessment.get("next_steps", []),
+                    "unsupported_claims": assessment.get("unsupported_claims", []) if advice_verified_for_display else [],
+                    "unknowns": assessment.get("unknowns", []) if advice_verified_for_display else [],
+                    "next_steps": [item["text"] for item in model_suggestions],
                     "mode": result.get("mode"),
                     "model": (result.get("provider") or {}).get("model"),
                     "model_usage": result.get("model_usage"),
@@ -2278,8 +2610,12 @@ def install_routes(app: FastAPI, settings, store):
         review_status = _case_review_status(store, ops, case_id)
         validation_operations = [item for item in operation_summaries if item.get("kind") == "validation"]
         if not validation_operations:
-            poc_status = {"state": "not_run", "label": "计划未运行",
-                          "detail": "案例没有已登记的受控验证操作；静态或模型分析不等同于 PoC 执行。"}
+            plans_ready = bool(records) and all(row.get("poc_plan", {}).get("state") == "plan_only"
+                                                for row in records)
+            poc_status = {"state": "not_run" if plans_ready else "unknown",
+                          "label": "计划已生成 · 未执行" if plans_ready else "材料不足 · 未生成可审查计划",
+                          "detail": ("已生成绑定固定源码的安全验证计划；本操作不会创建任务或执行 PoC。"
+                                     if plans_ready else "固定源码或候选位置材料缺失，保持 unknown；没有虚构验证步骤。")}
         elif any(item.get("status") == "running" for item in validation_operations):
             poc_status = {"state": "running", "label": "验证执行中",
                           "detail": "请等待受控验证操作完成；运行中不代表漏洞已确认。"}
@@ -2289,7 +2625,9 @@ def install_routes(app: FastAPI, settings, store):
         else:
             poc_status = {"state": "completed", "label": "验证操作已结束，需查看门控结果",
                           "detail": "组件 Harness 结果不能单独证明产品可达性；确认状态仍以人工结论和验证门控为准。"}
-        return {"schema_version": 1, "case_id": case_id, "candidates": records,
+        for record in records:
+            record.get("source_anchor", {}).pop("_source_lines", None)
+        return {"schema_version": 2, "case_id": case_id, "candidates": records,
                 "operations": operation_summaries,
                 "assessments": ops.assessments(case_id),
                 "latest_human_assessment": review_status["latest_human_assessment"],
@@ -2327,6 +2665,23 @@ def install_routes(app: FastAPI, settings, store):
                      "- 观测状态：candidate（单条观测保持候选；案例人工结论单独记录）",
                      "- 来源证据 SHA-256：" + md(c.get("source_sha256", "unknown")),
                      "- 建立案例的理由：" + md(row.get("rationale", "未填写"))]
+            anchor = row.get("source_anchor") or {}
+            if anchor.get("verified"):
+                rows += ["- 固定源码锚点：" + md(anchor.get("anchor_id")) + "；" +
+                         md(anchor.get("repository")) + " @ " + md(anchor.get("commit")) + "；" +
+                         md(anchor.get("file")) + ":" + md(anchor.get("line")) +
+                         "；源码 SHA-256 " + md(anchor.get("source_sha256"))]
+            else:
+                rows += ["- 固定源码锚点：unknown（" + md(anchor.get("reason", "来源材料不可用")) + "）"]
+            remediation_draft = row.get("remediation_draft") or {}
+            if remediation_draft.get("draft"):
+                rows += ["- 修复建议草案（未验证，非补丁/非确认结论）：" + md(remediation_draft["draft"]),
+                         "- 草案依据：" + md(remediation_draft.get("provenance")) +
+                         "；固定源码锚点 " + md((remediation_draft.get("source_anchor") or {}).get("anchor_id", "unknown"))]
+                for check in remediation_draft.get("review_checks", []):
+                    rows += ["  - 人工复核：" + md(check)]
+            else:
+                rows += ["- 修复建议：unknown（" + md(remediation_draft.get("reason", "尚无可审查的 CWE 修复草案")) + "）"]
             evidence = c.get("evidence") if isinstance(c.get("evidence"), dict) else {}
             obligations = evidence.get("obligations") if isinstance(evidence.get("obligations"), list) else []
             if obligations:
@@ -2338,10 +2693,30 @@ def install_routes(app: FastAPI, settings, store):
                         rows += ["  - " + md(description) + "（" + md(state) + "）"]
                     else:
                         rows += ["  - " + md(obligation)]
-            remediation = next((c.get(key) for key in ("remediation", "fix_suggestion", "recommendation")
-                                if isinstance(c.get(key), str) and c.get(key).strip()), None)
-            rows += ["- 修复建议：" + (md(remediation) + "（候选/规则建议，尚需人工复核）" if remediation
-                                      else "尚无经复核的修复建议；不要从调查步骤推断补丁")]
+            ai_basis = remediation_draft.get("ai_basis") or {"state": "unknown", "citations": [],
+                "note": "没有绑定到本候选的已核验 Agent 引用。"}
+            rows += ["- AI 源码依据状态：" + md(ai_basis.get("state", "unknown")) + "；" +
+                     md(ai_basis.get("note", "语义支持未知"))]
+            for citation in ai_basis.get("citations", []):
+                rows += ["  - 固定源码引文：" + md(citation.get("evidence_id")) + "；" +
+                         md(citation.get("file", "unknown")) + ":" +
+                         md(citation.get("line_start", "?")) + "-" + md(citation.get("line_end", "?")) +
+                         "；“" + md(citation.get("quote", "")) + "”"]
+            rows += ["- 已人工复核的修复补丁：未提供；以上草案需人工检查并经补丁测试。"]
+            plan = row.get("poc_plan") or {}
+            rows += ["", "#### 安全验证计划 · " + md(plan.get("label", "unknown"))]
+            if plan.get("state") == "plan_only":
+                rows += ["- 执行状态：未请求、未排队、未执行；预期结果：unknown，需人工先定义测试 oracle。",
+                         "- 计划依据：固定源码锚点 " + md((plan.get("source_anchor") or {}).get("anchor_id", "unknown"))]
+                for step in plan.get("steps", []):
+                    step_anchor = step.get("source_anchor") or {}
+                    rows += ["- " + md(step.get("id")) + "（" + md(step.get("status")) + "）：" +
+                             md(step.get("action")) + "；源码 " + md(step_anchor.get("file", "unknown")) +
+                             ":" + md(step_anchor.get("line", "unknown")) + " @ " +
+                             md(step_anchor.get("commit", "unknown")) + " SHA-256 " +
+                             md(step_anchor.get("source_sha256", "unknown"))]
+            else:
+                rows += ["- 验证计划状态：unknown；" + md(plan.get("reason", "固定源码证据不可用；没有生成伪造步骤。"))]
         agent_ops = [item for item in data["operations"] if item.get("kind") == "agent_investigation"
                      and item.get("agent_triage")]
         if agent_ops:
@@ -2426,6 +2801,16 @@ def install_routes(app: FastAPI, settings, store):
                     rows += ["- 建议复核步骤：" + md("；".join(triage["next_steps"]))]
                 if triage["limitations"]:
                     rows += ["- 调查限制：" + md("；".join(triage["limitations"]))]
+                if triage.get("model_suggestions"):
+                    rows += ["- AI 建议（未验证；仅作为待复核方向，不构成修复或漏洞事实）："]
+                    for suggestion in triage["model_suggestions"]:
+                        anchor = suggestion.get("source_anchor") or {}
+                        rows += ["  - " + md(suggestion.get("text")) + "；上下文锚点 " +
+                                 md(anchor.get("file", "unknown")) + ":" + md(anchor.get("line", "unknown")) +
+                                 " @ " + md(anchor.get("commit", "unknown")) +
+                                 "；语义支持仍为 unknown"]
+                elif triage.get("citation_review", {}).get("state") == "unknown":
+                    rows += ["- AI 建议：unknown（" + md(triage["citation_review"].get("reason")) + "）；未展示未绑定建议"]
                 if triage["source_submission"]:
                     consent = triage["source_submission"]
                     rows += ["- 源码外发目的地：" + md(consent.get("destination_host") or "unknown") +

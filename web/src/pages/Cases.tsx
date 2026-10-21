@@ -42,6 +42,7 @@ import {
 import "antd/dist/reset.css";
 import { api, artifact, terminal } from "../api";
 import { State, Hash, go, CodeView, Header, labels } from "../components";
+import { caseAgentEvidencePresentation, casePocPlanPresentation, caseRemediationDraftPresentation } from "../features/workbench/caseReport.js";
 const { Text, Title, Paragraph } = Typography;
 const caseOutcomeLabels: Record<string, string> = {
   candidate: "候选，继续调查",
@@ -70,8 +71,12 @@ function CaseReportOverview({ report, caseId }: { report: any; caseId: string })
         item.kind === "agent_investigation" && item.candidate_id === candidate.id && item.agent_triage);
       const triage = triageRows[0]?.agent_triage;
       const obligations = candidate.evidence?.obligations || [];
-      const remediation = [candidate.remediation, candidate.fix_suggestion, candidate.recommendation]
-        .find((item: any) => typeof item === "string" && item.trim());
+      const remediationDraft = row.remediation_draft || {};
+      const sourceAnchor = row.source_anchor || {};
+      const pocPlan = row.poc_plan || {};
+      const triageView = caseAgentEvidencePresentation(triage, sourceAnchor);
+      const remediationView = caseRemediationDraftPresentation(remediationDraft, sourceAnchor);
+      const pocPlanView = casePocPlanPresentation(pocPlan, sourceAnchor);
       return <Card key={row.job_id + candidate.id} size="small" className="section-gap"
         title={(candidate.detector_id || "静态检测") + " · " + (candidate.rule_id || "候选")}
         extra={<Button type="link" onClick={() => go("/tasks/" + row.job_id)}>查看源码与原始证据</Button>}>
@@ -92,28 +97,62 @@ function CaseReportOverview({ report, caseId }: { report: any; caseId: string })
             {item.description || item.kind || String(item)} <Text type="secondary">（{item.status || "unknown"}）</Text>
           </li>)}</ul>
         </div>}
+        {sourceAnchor.verified ? <div className="obligation">
+          <Text strong>固定源码证据锚点</Text>
+          <Paragraph><Text code>{sourceAnchor.file}:{sourceAnchor.line}</Text> · commit <Hash value={sourceAnchor.commit} /> · SHA-256 <Hash value={sourceAnchor.source_sha256} /></Paragraph>
+          <pre style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere", maxHeight: 240, overflow: "auto" }}>
+            {sourceAnchor.excerpt}
+          </pre>
+        </div> : <Alert className="section-gap" type="warning" showIcon
+          message="固定源码材料不可用，相关报告建议保持 unknown" description={sourceAnchor.reason || "没有可核验的来源锚点。"} />}
         {triage ? <div className="obligation">
           <Text strong>AI 调查摘要（{triage.assessment || "unknown"} · 仍为候选）</Text>
-          <Paragraph>{triage.summary || "模型未提供可读摘要"}</Paragraph>
-          {!!triage.supported_claims?.length && <>
+          {triageView.available
+            ? <Paragraph>{triageView.summary || "模型未提供可读摘要"}</Paragraph>
+            : <Alert type="warning" showIcon message="AI 结论与建议保持 unknown"
+                description={triage.citation_review?.reason || "固定源码引文材料不足；未展示未经绑定的模型文本。"} />}
+          {!!triageView.supportedClaims.length && <>
             <Text strong>引用到的证据</Text>
-            <ul>{triage.supported_claims.slice(0, 8).map((claim: any, index: number) => <li key={index}>
+            <ul>{triageView.supportedClaims.slice(0, 8).map((claim: any, index: number) => <li key={index}>
               {claim.claim || "未命名陈述"}
               {(claim.citations || []).map((citation: any, citationIndex: number) => <div key={citationIndex}>
                 <Text type="secondary">{citation.evidence_id || "evidence"}：“{citation.quote || ""}”</Text>
               </div>)}
             </li>)}</ul>
           </>}
-          {!!triage.unknowns?.length && <Paragraph><Text strong>仍未知：</Text> {triage.unknowns.join("；")}</Paragraph>}
-          {!!triage.next_steps?.length && <>
-            <Text strong>AI 建议的下一步（未经语义核验，不等于修复方案）</Text>
-            <ul>{triage.next_steps.slice(0, 8).map((step: string, index: number) => <li key={index}>{step}</li>)}</ul>
+          {!!triageView.unknowns.length && <Paragraph><Text strong>仍未知：</Text> {triageView.unknowns.join("；")}</Paragraph>}
+          {!!triageView.modelSuggestions.length && <>
+            <Text strong>AI 建议的下一步（未验证，不等于修复方案）</Text>
+            <ul>{triageView.modelSuggestions.slice(0, 8).map((suggestion: any, index: number) => <li key={index}>
+              <Tag color="gold">AI 建议 · 未验证</Tag> {suggestion.text}
+              <div><Text type="secondary">固定源码上下文：{suggestion.source_anchor?.file || "unknown"}:{suggestion.source_anchor?.line || "?"} @ {suggestion.source_anchor?.commit || "unknown"}；语义支持仍未验证。</Text></div>
+            </li>)}</ul>
           </>}
-          <Text type="secondary">AI 摘要和引文语义尚需人工复核；引文匹配不自动证明结论。</Text>
+          <Text type="secondary">引用逐字匹配不证明语义结论；AI 摘要和建议均需人工复核。</Text>
         </div> : <Alert className="section-gap" type="info" showIcon message="暂无绑定到该固定候选的 AI 调查结果" />}
-        <Paragraph className="section-gap"><Text strong>修复建议：</Text> {remediation
-          ? <>{remediation} <Text type="secondary">（候选建议，需人工复核）</Text></>
-          : <Text type="secondary">尚无经复核的修复建议；不会根据 AI 调查步骤虚构补丁。</Text>}</Paragraph>
+        <div className="obligation">
+          <Text strong>修复建议草案</Text>
+          {remediationView.available
+            ? <><Paragraph>{remediationView.draft} <Tag color="gold">未验证 · 非补丁</Tag></Paragraph>
+              <Text type="secondary">依据：{remediationView.provenance}；固定源码锚点 {remediationDraft.source_anchor?.file}:{remediationDraft.source_anchor?.line} @ {remediationDraft.source_anchor?.commit}</Text>
+              <Paragraph><Text strong>AI 源码依据：</Text> {remediationView.aiBasis.state} · {remediationView.aiBasis.note}</Paragraph>
+              {!!remediationView.aiBasis.citations?.length && <ul>{remediationView.aiBasis.citations.slice(0, 8).map((citation: any, index: number) => <li key={index}>
+                {citation.file || "unknown"}:{citation.line_start || "?"}-{citation.line_end || "?"} · {citation.evidence_id || "evidence"}：“{citation.quote || ""}”
+                <Text type="secondary">（引文语义及其与修复草案的相关性仍需人工复核）</Text>
+              </li>)}</ul>}
+              <ul>{remediationView.reviewChecks.map((check: string, index: number) => <li key={index}>{check}</li>)}</ul></>
+            : <Paragraph type="secondary">unknown：{remediationView.reason || "没有足够的固定源码或 CWE 材料生成草案。"}</Paragraph>}
+        </div>
+        <div className="obligation">
+          <Text strong>安全验证 / PoC 计划</Text>
+          {pocPlanView.available
+            ? <><Paragraph><Tag color="blue">只生成计划 · 未执行</Tag> {pocPlanView.authorization}</Paragraph>
+              <Text type="secondary">预期结果保持 unknown，直到人工定义接口契约或测试 oracle。计划绑定 {pocPlan.source_anchor?.file}:{pocPlan.source_anchor?.line} @ {pocPlan.source_anchor?.commit}。</Text>
+              <ol>{pocPlanView.steps.map((step: any) => <li key={step.id}>
+                <Text strong>{step.id}</Text> · {step.action} <Text type="secondary">（{step.status}；锚点 {step.source_anchor?.anchor_id}）</Text>
+              </li>)}</ol></>
+            : <Paragraph type="secondary">unknown：{pocPlanView.reason || "固定源码材料不足；未生成伪造证据或可执行步骤。"}</Paragraph>}
+        </div>
       </Card>;
     })}
     <Alert className="section-gap" type={pocAlert as any} showIcon message={"PoC / 受控验证：" + (poc.label || "计划未运行")} description={poc.detail || "没有已登记的受控验证操作。"} />

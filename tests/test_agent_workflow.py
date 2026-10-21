@@ -2139,16 +2139,16 @@ class AgentRouteTests(unittest.TestCase):
             case_id = store.create_case("synthetic candidate", [{
                 "job_id": "job-1", "candidate_id": "candidate-1", "rationale": "fixture"}])
             job = {"id": "job-1", "repository_id": repo["id"], "status": "completed",
-                   "report_sha256": "b" * 64}
+                   "report_sha256": "b" * 64, "spec": {"commit": "c" * 40}}
             report = {"repository": "openharmony/sample", "commit": "c" * 40,
                       "tree": "d" * 40, "snapshot_sha256": "e" * 64}
             candidate = {"id": "candidate-1", "file": "src/sample.cpp", "line": 2,
-                         "source_sha256": "a" * 64, "symbol": "check",
+                         "source_sha256": hashlib.sha256(b"void check() {\n  guarded_call();\n}\n").hexdigest(), "symbol": "check",
                          "detector_id": "test.rule", "detector_version": "1",
                          "rule_id": "R1", "evidence": {"analysis_status": "partial",
                                                        "obligations": [{"kind": "callee_and_policy",
                                                            "description": "source binding", "status": "unknown"}]}}
-            source = {"sha256": "a" * 64, "blob": "f" * 40,
+            source = {"commit": report["commit"], "sha256": candidate["source_sha256"], "blob": "f" * 40,
                       "text": "void check() {\n  guarded_call();\n}\n"}
             malicious_model_summary = "Needs review\n\n## CONFIRMED [exploit](https://attacker.invalid)"
             class FakeClient:
@@ -2163,7 +2163,8 @@ class AgentRouteTests(unittest.TestCase):
                     final = {"summary": malicious_model_summary,
                         "assessment": "needs_more_evidence",
                         "supported_claims": [{"claim": "The source is bound to this candidate.\n\n![evidence](https://attacker.invalid/pixel)",
-                                              "obligation_indices": [0], "citations": [{"evidence_id": context["evidence_id"], "quote": "guarded_call();"}]}],
+                                              "obligation_indices": [0], "citations": [{"evidence_id": context["evidence_id"],
+                                                  "file": context["file"], "line_start": 2, "line_end": 2}]}],
                         "obligation_reviews": [{"obligation_index": 0, "disposition": "unresolved", "citations": []}],
                         "unsupported_claims": [], "unknowns": ["Product reachability\n\n## ALSO CONFIRMED"],
                         "next_steps": ["Human review\n\n![next](https://attacker.invalid/next)"]}
@@ -2216,7 +2217,7 @@ class AgentRouteTests(unittest.TestCase):
                 self.assertEqual(body["result"]["model_usage"]["total_tokens"], 376)
                 self.assertEqual(body["result"]["case_id"], case_id)
                 self.assertEqual(body["result"]["source_submission"]["consent_sha256"], consent_sha256)
-                self.assertEqual(body["result"]["agent_assessment"]["assessment"], "needs_more_evidence")
+                self.assertEqual(body["result"]["agent_assessment"]["assessment"], "needs_more_evidence", body["result"])
                 self.assertEqual(body["result"]["citation_integrity"]["citation_count"], 1)
                 self.assertEqual(body["result"]["citation_integrity"]["semantic_support"], "unverified_by_machine")
                 self.assertEqual(body["result"]["citation_integrity"]["narrative_semantics"], "unverified_by_machine")
@@ -2284,13 +2285,13 @@ class AgentRouteTests(unittest.TestCase):
                 self.assertEqual(len(summaries), 1)
                 self.assertTrue(summaries[0]["agent_triage"]["triage_only"])
                 triage = summaries[0]["agent_triage"]
-                self.assertEqual(triage["assessment"], "needs_more_evidence")
+                self.assertEqual(triage["assessment"], "needs_more_evidence", triage["citation_review"])
                 self.assertEqual(triage["vulnerability_state"], "candidate")
                 self.assertEqual(triage["summary_provenance"], "server_generated_from_structured_triage")
                 self.assertEqual(triage["model_summary_unverified"], malicious_model_summary)
                 cited = [citation["evidence_id"] for claim in triage["supported_claims"] for citation in claim["citations"]]
                 self.assertIn(triage["initial_evidence"]["evidence_id"], cited)
-                self.assertEqual(triage["supported_claims"][0]["citations"][0]["quote"], "guarded_call();")
+                self.assertEqual(triage["supported_claims"][0]["citations"][0]["quote"], "  guarded_call();")
                 self.assertEqual(triage["citation_integrity"]["semantic_support"], "unverified_by_machine")
                 self.assertEqual(triage["narrative_integrity"]["narrative_semantics"], "unverified_by_machine")
                 self.assertEqual(triage["binding"]["commit"], "c" * 40)

@@ -740,19 +740,42 @@ class WorkbenchTests(unittest.TestCase):
         report = self.client.get(f"/api/v1/cases/{case_id}/report.json")
         self.assertEqual(report.status_code, 200, report.text)
         body = report.json()
+        self.assertEqual(body["schema_version"], 2)
         self.assertEqual(len(body["candidates"]), 1)
-        self.assertEqual(body["candidates"][0]["risk"]["vulnerability_state"], "candidate")
-        self.assertEqual(body["candidates"][0]["risk"]["risk_tier"], "further_validation")
+        candidate_report = body["candidates"][0]
+        self.assertEqual(candidate_report["risk"]["vulnerability_state"], "candidate")
+        self.assertEqual(candidate_report["risk"]["risk_tier"], "further_validation")
+        self.assertTrue(candidate_report["source_anchor"]["verified"])
+        self.assertEqual(candidate_report["source_anchor"]["commit"], job["spec"]["commit"])
+        self.assertEqual(candidate_report["source_anchor"]["source_sha256"], candidate["source_sha256"])
+        self.assertEqual(candidate_report["remediation_draft"]["state"], "draft_unverified")
+        self.assertIn("source_anchor", candidate_report["remediation_draft"])
+        self.assertEqual(candidate_report["poc_plan"]["state"], "plan_only")
+        self.assertFalse(candidate_report["poc_plan"]["execution"]["requested"])
+        self.assertFalse(candidate_report["poc_plan"]["execution"]["queued"])
+        self.assertFalse(candidate_report["poc_plan"]["execution"]["executed"])
+        self.assertTrue(all(step["source_anchor"]["anchor_id"] == candidate_report["source_anchor"]["anchor_id"]
+                            and step["source_anchor"]["commit"] == candidate_report["source_anchor"]["commit"]
+                            and step["source_anchor"]["source_sha256"] == candidate_report["source_anchor"]["source_sha256"]
+                            for step in candidate_report["poc_plan"]["steps"]))
         self.assertEqual(body["poc_status"]["state"], "not_run")
+        self.assertIn("未执行", body["poc_status"]["label"])
         self.assertEqual([item["id"] for item in body["operations"]], [good["id"]])
-        self.assertEqual(body["operations"][0]["agent_triage"]["summary"], "Synthetic hypothesis only")
+        triage = body["operations"][0]["agent_triage"]
+        self.assertEqual(triage["summary"], "")
+        self.assertEqual(triage["citation_review"]["state"], "unknown")
+        self.assertEqual(triage["supported_claims"], [])
+        self.assertEqual(triage["next_steps"], [])
         self.assertEqual(body["validated_vulnerability"], 0)
         markdown = self.client.get(f"/api/v1/cases/{case_id}/report.md")
         self.assertEqual(markdown.status_code, 200, markdown.text)
         self.assertIn("PoC / 受控验证", markdown.text)
-        self.assertIn("计划未运行", markdown.text)
+        self.assertIn("安全验证计划", markdown.text)
+        self.assertIn("计划已生成", markdown.text)
+        self.assertIn("修复建议草案（未验证", markdown.text)
         self.assertIn("观测状态：candidate（单条观测保持候选；案例人工结论单独记录）", markdown.text)
-        self.assertIn("尚无经复核的修复建议", markdown.text)
+        self.assertIn("AI 建议：unknown", markdown.text)
+        self.assertIn("AI 源码依据状态：unknown", markdown.text)
 
         queued_validation = ops.create("validation", {"case_id": case_id})
         queued_report = self.client.get(f"/api/v1/cases/{case_id}/report.json")
@@ -762,6 +785,235 @@ class WorkbenchTests(unittest.TestCase):
                                   if item["id"] == queued_validation["id"])
         self.assertEqual(validation_summary["status"], "queued")
         self.assertEqual(validation_summary["validation_gate"], None)
+
+    def test_case_report_shows_unverified_ai_basis_only_for_fixed_source_citations(self):
+        job = self.completed()
+        candidate = service.findings(service.read_report(self.settings, job))[0]
+        source = service.source(self.settings, self.store, job, candidate["file"])
+        source_line = source["text"].splitlines()[candidate["line"] - 1]
+        ops = self.app.state.operations
+        spec = {"job_id": job["id"], "candidate_id": candidate["id"], "case_id": None,
+                "report_sha256": job["report_sha256"], "source_commit": job["spec"]["commit"],
+                "candidate_source_sha256": source["sha256"], "mode": "single_shot"}
+        operation = ops.create("agent_investigation", spec)
+        self.assertEqual(ops.claim()["id"], operation["id"])
+        binding = {"job_id": job["id"], "candidate_id": candidate["id"],
+                   "report_sha256": job["report_sha256"], "commit": job["spec"]["commit"],
+                   "source_sha256": source["sha256"]}
+        result = {"status": "completed", "binding": binding,
+                  "summary_provenance": "server_generated_from_structured_triage",
+                  "vulnerability_state": "candidate", "validated_vulnerability": 0,
+                  "citation_integrity": {"quote_presence": "verified_for_all_citations",
+                                          "citation_count": 1,
+                                          "semantic_support": "unverified_by_machine"},
+                  "initial_evidence": {"evidence_id": "ev-source-fixed-valid",
+                      "evidence_kind": "source_code", "file": candidate["file"],
+                      "source_sha256": source["sha256"], "source_commit": job["spec"]["commit"],
+                      "line": candidate["line"], "source_excerpt_start_line": 1,
+                      "context": {"source_excerpt": source["text"]}},
+                  "agent_assessment": {"assessment": "needs_more_evidence",
+                      "summary": "A source-bound hypothesis requiring human review",
+                      "supported_claims": [{"claim": "A source-local observation",
+                          "citations": [{"evidence_id": "ev-source-fixed-valid",
+                              "file": candidate["file"], "line_start": candidate["line"],
+                              "line_end": candidate["line"], "quote": source_line}]}],
+                      "obligation_reviews": [], "unsupported_claims": [], "unknowns": [],
+                      "next_steps": ["Review the caller and define a safe observable"]}}
+        ops.finish(operation["id"], result, state="completed_with_limitations")
+        case = self.client.post("/api/v1/cases", headers=HEADERS, json={
+            "title": "fixed source AI citation", "links": [{"job_id": job["id"],
+                "candidate_id": candidate["id"], "rationale": "citation binding positive control"}],
+        })
+        self.assertEqual(case.status_code, 201, case.text)
+        report = self.client.get(f"/api/v1/cases/{case.json()['id']}/report.json")
+        self.assertEqual(report.status_code, 200, report.text)
+        body = report.json()
+        triage = body["operations"][0]["agent_triage"]
+        self.assertEqual(triage["citation_review"]["state"], "unverified_model_advice")
+        self.assertEqual(len(triage["model_suggestions"]), 1)
+        suggestion = triage["model_suggestions"][0]
+        self.assertEqual(suggestion["state"], "unverified_model_suggestion")
+        self.assertEqual(suggestion["semantic_support"], "unverified_by_machine")
+        self.assertEqual(suggestion["source_anchor"]["source_sha256"], source["sha256"])
+        draft = body["candidates"][0]["remediation_draft"]
+        self.assertEqual(draft["ai_basis"]["state"], "source_bound_unverified")
+        self.assertEqual(draft["ai_basis"]["citations"][0]["quote"], source_line)
+        self.assertEqual(body["candidates"][0]["risk"]["vulnerability_state"], "candidate")
+        self.assertEqual(body["validated_vulnerability"], 0)
+
+    def test_case_report_missing_or_mismatched_source_stays_unknown(self):
+        job = self.completed()
+        candidate = service.findings(service.read_report(self.settings, job))[0]
+        case = self.client.post("/api/v1/cases", headers=HEADERS, json={
+            "title": "source integrity gate", "links": [{"job_id": job["id"],
+                "candidate_id": candidate["id"], "rationale": "fixed source check"}],
+        })
+        self.assertEqual(case.status_code, 201, case.text)
+        case_id = case.json()["id"]
+        with patch("src.workbench.operations_api.service.source", side_effect=ValueError("source missing")):
+            missing = self.client.get(f"/api/v1/cases/{case_id}/report.json").json()
+            missing_markdown = self.client.get(f"/api/v1/cases/{case_id}/report.md")
+        row = missing["candidates"][0]
+        self.assertEqual(row["source_anchor"]["state"], "unknown")
+        self.assertFalse(row["source_anchor"].get("verified", False))
+        self.assertEqual(row["remediation_draft"]["state"], "unknown")
+        self.assertIsNone(row["remediation_draft"]["draft"])
+        self.assertIsNone(row["remediation_draft"]["source_anchor"])
+        self.assertEqual(row["poc_plan"]["state"], "unknown")
+        self.assertEqual(row["poc_plan"]["steps"], [])
+        self.assertFalse(row["poc_plan"]["execution"]["executed"])
+        self.assertEqual(row["risk"]["vulnerability_state"], "candidate")
+        self.assertEqual(missing["poc_status"]["state"], "unknown")
+        self.assertEqual(missing["validated_vulnerability"], 0)
+        self.assertEqual(missing_markdown.status_code, 200, missing_markdown.text)
+        self.assertIn("固定源码锚点：unknown", missing_markdown.text)
+        self.assertIn("验证计划状态：unknown", missing_markdown.text)
+
+        mismatched_source = {"file": candidate["file"], "commit": job["spec"]["commit"],
+                             "sha256": "0" * 64, "text": "int forged_evidence;"}
+        with patch("src.workbench.operations_api.service.source", return_value=mismatched_source):
+            mismatch = self.client.get(f"/api/v1/cases/{case_id}/report.json").json()
+            mismatch_markdown = self.client.get(f"/api/v1/cases/{case_id}/report.md")
+        row = mismatch["candidates"][0]
+        self.assertEqual(row["source_anchor"]["state"], "unknown")
+        self.assertIn("不匹配", row["source_anchor"]["reason"])
+        self.assertEqual(row["remediation_draft"]["state"], "unknown")
+        self.assertEqual(row["poc_plan"]["state"], "unknown")
+        self.assertEqual(row["poc_plan"]["steps"], [])
+        self.assertEqual(row["risk"]["vulnerability_state"], "candidate")
+        self.assertEqual(mismatch["validated_vulnerability"], 0)
+        self.assertEqual(mismatch_markdown.status_code, 200, mismatch_markdown.text)
+        self.assertNotIn("forged_evidence", mismatch_markdown.text)
+        self.assertIn("固定源码锚点：unknown", mismatch_markdown.text)
+        self.assertIn("验证计划状态：unknown", mismatch_markdown.text)
+
+        forged_content_source = {"file": candidate["file"], "commit": job["spec"]["commit"],
+                                 "sha256": candidate["source_sha256"],
+                                 "text": "int content_hash_does_not_match_metadata;"}
+        with patch("src.workbench.operations_api.service.source", return_value=forged_content_source):
+            content_mismatch = self.client.get(f"/api/v1/cases/{case_id}/report.json").json()
+            content_mismatch_markdown = self.client.get(f"/api/v1/cases/{case_id}/report.md")
+        row = content_mismatch["candidates"][0]
+        self.assertEqual(row["source_anchor"]["state"], "unknown")
+        self.assertIn("哈希不匹配", row["source_anchor"]["reason"])
+        self.assertEqual(row["remediation_draft"]["state"], "unknown")
+        self.assertEqual(row["poc_plan"]["steps"], [])
+        self.assertNotIn("content_hash_does_not_match_metadata", content_mismatch_markdown.text)
+
+    def test_case_report_rejects_agent_citation_not_in_fixed_source(self):
+        job = self.completed()
+        candidate = service.findings(service.read_report(self.settings, job))[0]
+        source = service.source(self.settings, self.store, job, candidate["file"])
+        ops = self.app.state.operations
+        spec = {"job_id": job["id"], "candidate_id": candidate["id"], "case_id": None,
+                "report_sha256": job["report_sha256"], "source_commit": job["spec"]["commit"],
+                "candidate_source_sha256": source["sha256"], "mode": "single_shot"}
+        operation = ops.create("agent_investigation", spec)
+        self.assertEqual(ops.claim()["id"], operation["id"])
+        binding = {"job_id": job["id"], "candidate_id": candidate["id"],
+                   "report_sha256": job["report_sha256"], "commit": job["spec"]["commit"],
+                   "source_sha256": source["sha256"]}
+        result = {"status": "completed", "binding": binding,
+                  "vulnerability_state": "candidate", "validated_vulnerability": 0,
+                  "citation_integrity": {"quote_presence": "verified_for_all_citations",
+                                          "citation_count": 1,
+                                          "semantic_support": "unverified_by_machine"},
+                  "initial_evidence": {"evidence_id": "ev-source-fixed-test",
+                      "evidence_kind": "source_code", "file": candidate["file"],
+                      "source_sha256": source["sha256"], "line": candidate["line"],
+                      "source_excerpt_start_line": 1,
+                      "context": {"source_excerpt": "int this_text_is_not_in_the_candidate_source;"}},
+                  "agent_assessment": {"assessment": "likely_true_positive",
+                      "summary": "forged summary must not be displayed",
+                      "supported_claims": [{"claim": "forged claim",
+                          "citations": [{"evidence_id": "ev-source-fixed-test",
+                              "file": candidate["file"], "line_start": 1, "line_end": 1,
+                              "quote": "int this_text_is_not_in_the_candidate_source;"}]}],
+                      "obligation_reviews": [], "unsupported_claims": [], "unknowns": [],
+                      "next_steps": ["forged remediation advice"]}}
+        ops.finish(operation["id"], result, state="completed_with_limitations")
+        case = self.client.post("/api/v1/cases", headers=HEADERS, json={
+            "title": "reject forged citation", "links": [{"job_id": job["id"],
+                "candidate_id": candidate["id"], "rationale": "fixed source mismatch"}],
+        })
+        self.assertEqual(case.status_code, 201, case.text)
+        case_id = case.json()["id"]
+        report = self.client.get(f"/api/v1/cases/{case_id}/report.json")
+        self.assertEqual(report.status_code, 200, report.text)
+        body = report.json()
+        triage = body["operations"][0]["agent_triage"]
+        self.assertEqual(triage["citation_review"]["state"], "unknown")
+        self.assertIn("不匹配", triage["citation_review"]["reason"])
+        self.assertEqual(triage["assessment"], "unknown")
+        self.assertEqual(triage["summary"], "")
+        self.assertEqual(triage["supported_claims"], [])
+        self.assertEqual(triage["model_suggestions"], [])
+        self.assertEqual(body["candidates"][0]["risk"]["vulnerability_state"], "candidate")
+        self.assertEqual(body["validated_vulnerability"], 0)
+        markdown = self.client.get(f"/api/v1/cases/{case_id}/report.md")
+        self.assertNotIn("forged summary", markdown.text)
+        self.assertNotIn("forged remediation advice", markdown.text)
+        self.assertIn("AI 建议：unknown", markdown.text)
+
+    def test_case_report_rejects_forged_supplemental_tool_excerpt(self):
+        job = self.completed()
+        candidate = service.findings(service.read_report(self.settings, job))[0]
+        source = service.source(self.settings, self.store, job, candidate["file"])
+        ops = self.app.state.operations
+        spec = {"job_id": job["id"], "candidate_id": candidate["id"], "case_id": None,
+                "report_sha256": job["report_sha256"], "source_commit": job["spec"]["commit"],
+                "candidate_source_sha256": source["sha256"], "mode": "tool_agent"}
+        operation = ops.create("agent_investigation", spec)
+        self.assertEqual(ops.claim()["id"], operation["id"])
+        binding = {"job_id": job["id"], "candidate_id": candidate["id"],
+                   "report_sha256": job["report_sha256"], "commit": job["spec"]["commit"],
+                   "source_sha256": source["sha256"]}
+        forged_line = "1: int forged_supplemental_evidence_not_in_git;"
+        result = {"status": "completed", "binding": binding,
+                  "vulnerability_state": "candidate", "validated_vulnerability": 0,
+                  "citation_integrity": {"quote_presence": "verified_for_all_citations",
+                                          "citation_count": 1,
+                                          "semantic_support": "unverified_by_machine"},
+                  "initial_evidence": {"evidence_id": "ev-source-initial-valid",
+                      "evidence_kind": "source_code", "file": candidate["file"],
+                      "source_sha256": source["sha256"], "source_commit": job["spec"]["commit"],
+                      "line": candidate["line"], "source_excerpt_start_line": 1,
+                      "context": {"source_excerpt": source["text"]}},
+                  "tool_calls": [{"tool": "read_fixed_source_range",
+                      "evidence_id": "ev-source-forged-tool-result", "evidence_kind": "source_code",
+                      "result": {"commit": job["spec"]["commit"], "file": candidate["file"],
+                          "source_sha256": source["sha256"], "git_blob": source.get("blob"),
+                          "start_line": 1, "text": forged_line}}],
+                  "agent_assessment": {"assessment": "likely_true_positive",
+                      "summary": "forged supplemental quote must not be displayed",
+                      "supported_claims": [{"claim": "forged supplemental source claim",
+                          "citations": [{"evidence_id": "ev-source-forged-tool-result",
+                              "file": candidate["file"], "line_start": 1, "line_end": 1,
+                              "quote": forged_line.split(": ", 1)[1]}]}],
+                      "obligation_reviews": [], "unsupported_claims": [], "unknowns": [],
+                      "next_steps": ["forged tool-based advice"]}}
+        ops.finish(operation["id"], result, state="completed_with_limitations")
+        case = self.client.post("/api/v1/cases", headers=HEADERS, json={
+            "title": "reject forged tool evidence", "links": [{"job_id": job["id"],
+                "candidate_id": candidate["id"], "rationale": "supplemental source must match Git"}],
+        })
+        self.assertEqual(case.status_code, 201, case.text)
+        case_id = case.json()["id"]
+        report = self.client.get(f"/api/v1/cases/{case_id}/report.json")
+        self.assertEqual(report.status_code, 200, report.text)
+        body = report.json()
+        triage = body["operations"][0]["agent_triage"]
+        self.assertEqual(triage["citation_review"]["state"], "unknown")
+        self.assertIn("不匹配", triage["citation_review"]["reason"])
+        self.assertEqual(triage["summary"], "")
+        self.assertEqual(triage["model_suggestions"], [])
+        self.assertEqual(body["candidates"][0]["remediation_draft"]["ai_basis"]["state"], "unknown")
+        self.assertEqual(body["candidates"][0]["risk"]["vulnerability_state"], "candidate")
+        self.assertEqual(body["validated_vulnerability"], 0)
+        markdown = self.client.get(f"/api/v1/cases/{case_id}/report.md")
+        self.assertNotIn("forged supplemental quote", markdown.text)
+        self.assertNotIn("forged tool-based advice", markdown.text)
+        self.assertIn("AI 建议：unknown", markdown.text)
 
     def test_case_links_require_existing_run_candidates(self):
         job = self.completed()
