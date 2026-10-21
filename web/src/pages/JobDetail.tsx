@@ -954,6 +954,43 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
                 </div>
               </div>}
             />
+            <Descriptions
+              className="section-gap"
+              size="small"
+              bordered
+              column={{ xs: 1, sm: 2, lg: 3 }}
+              title="候选来源与评估状态"
+            >
+              <Descriptions.Item label="严重度">
+                {detail.severity || "unassessed"}
+              </Descriptions.Item>
+              <Descriptions.Item label="CVE 关联">
+                {detail.cve || "未关联"}
+              </Descriptions.Item>
+              <Descriptions.Item label="置信度">
+                {detail.confidence || "unassessed"}
+              </Descriptions.Item>
+              <Descriptions.Item label="仓库 / 提交">
+                <Text code copyable>{detail.binding?.repository || report?.repository || "unknown"}</Text>
+                <br />
+                <Text code copyable>{detail.binding?.commit || report?.commit || "unknown"}</Text>
+              </Descriptions.Item>
+              <Descriptions.Item label="源码 SHA-256">
+                <Text code copyable>{detail.source?.sha256 || detail.source_sha256 || "unavailable"}</Text>
+              </Descriptions.Item>
+              <Descriptions.Item label="Git blob">
+                <Text code copyable>{detail.source?.blob || detail.source_blob_oid || "unavailable"}</Text>
+              </Descriptions.Item>
+              <Descriptions.Item label="Detector / 版本">
+                <Text code>{detail.detector_id || "unknown"}</Text> · {detail.detector_version || "unknown"}
+              </Descriptions.Item>
+              <Descriptions.Item label="规则版本">
+                <Text code>{detail.rule_id || "unknown"}</Text> · {detail.rule_version || "unknown"}
+              </Descriptions.Item>
+              <Descriptions.Item label="扫描快照 SHA-256">
+                <Text code copyable>{detail.binding?.snapshot_sha256 || report?.snapshot_sha256 || "unavailable"}</Text>
+              </Descriptions.Item>
+            </Descriptions>
             {detail.source ? <>
               <CandidateActions job={job} candidate={detail} />
               <CodeView source={detail.source} line={detail.line} />
