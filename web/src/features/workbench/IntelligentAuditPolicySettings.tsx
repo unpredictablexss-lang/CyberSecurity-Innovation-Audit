@@ -5,7 +5,7 @@ const { Paragraph, Text } = Typography;
 const API_PATH = "/api/v1/agent/triage-policy";
 const LIMIT_FIELDS: Array<{ key: string; label: string; min: number; max: number; unit?: string }> = [
   { key: "quick_screen_groups_per_audit", label: "自动快筛候选组数", min: 1, max: 10_000, unit: "组" },
-  { key: "deep_groups_per_audit", label: "可进入深度调查的候选组数", min: 0, max: 1_000, unit: "组" },
+  { key: "deep_groups_per_audit", label: "可进入深度调查的候选组数 / 手动批量条数", min: 0, max: 1_000, unit: "组" },
   { key: "max_model_concurrency", label: "模型请求并发", min: 1, max: 8, unit: "路" },
 ];
 

@@ -1,3 +1,4 @@
+import CandidateScope from "./CandidateScope";
 import React, { useEffect, useRef, useState } from "react";
 import { Alert, Button, Card, Checkbox, Collapse, Col, Form, InputNumber, Row, Space, Typography } from "antd";
 import { api } from "../../api";
@@ -12,9 +13,6 @@ export default function RepositoryAudit({ repos, detectors, refresh, health }: A
   const repository = Form.useWatch("repository_id", form);
   const selectedRevision = Form.useWatch("revision", form);
   const auditMode = Form.useWatch("audit_mode", form) || "static_only";
-  const autoR2 = Form.useWatch("auto_r2", form) !== false;
-  const maxTriageCandidates = Number(Form.useWatch("max_triage_candidates", form) || 5);
-  const maxR2Candidates = Number(Form.useWatch("max_r2_candidates", form) ?? 3);
   const { refs, error: refsError, loading, loadedFor: refsLoadedFor } = useRepositoryRefs(repository);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -128,7 +126,7 @@ export default function RepositoryAudit({ repos, detectors, refresh, health }: A
       {refsError && <Alert className="section-gap" type="warning" message={refsError} />}
       <Form name="repository-audit" form={form}
         layout="vertical"
-        initialValues={{ ...auditDefaults, audit_mode: "static_only", auto_triage: false, max_triage_candidates: 5, auto_r2: true, max_r2_candidates: 3 }}
+        initialValues={{ ...auditDefaults, audit_mode: "static_only", auto_triage: false, auto_r2: true }}
         onValuesChange={invalidate}
         onFinish={onFinish}>
         <AuditModeSelector />
@@ -142,17 +140,11 @@ export default function RepositoryAudit({ repos, detectors, refresh, health }: A
         <Collapse className="audit-options" items={[{ key: "advanced", label: "高级范围与规则设置", children: <>
           <ScopeBudget />
           {auditMode === "standard_review" && provider?.configured && <>
-            <Form.Item name="max_triage_candidates" label="最多自动调查候选数"
-              extra="每个固定版本可设置 1–10,000 条。实际候选数扫描后统计；超过上限或未入选的候选保持待研判。">
-              <InputNumber min={1} max={10000} precision={0} />
-            </Form.Item>
+            <CandidateScope />
             <Form.Item name="auto_r2" valuePropName="checked"
               extra="符合证据条件时，允许模型在固定源码范围内继续只读跨文件追查。">
               <Checkbox>允许深入追查</Checkbox>
             </Form.Item>
-            {autoR2 && <Form.Item name="max_r2_candidates" label="最多深入追查候选数">
-              <InputNumber min={0} max={maxTriageCandidates} precision={0} />
-            </Form.Item>}
           </>}
           <RuleNotice detectors={detectors} />
         </> }]} />

@@ -48,7 +48,7 @@ from .operation_limits import MAX_DETECTOR_IDS
 from .store import now
 from . import service
 from .agent_guidance import recommend_investigation_route
-from .triage_limits import (DEFAULT_AGENT_OUTPUT_TOKENS, MAX_TRIAGE_CANDIDATES_PER_ENDPOINT,
+from .triage_limits import (MAX_MANUAL_CANDIDATES_PER_BATCH, DEFAULT_AGENT_OUTPUT_TOKENS, MAX_TRIAGE_CANDIDATES_PER_ENDPOINT,
                             MAX_AUTOMATIC_TRIAGE_ENDPOINTS)
 
 
@@ -505,12 +505,13 @@ class TaskTriageOptions(Strict):
     @model_validator(mode="after")
     def default_r2_for_opted_in_triage(self):
         # Keep static-only/default requests free of conditional R2 authorization.
-        # When a user opts into automatic triage but omits R2 explicitly, suggest
-        # up to three deep-review candidates, bounded by their R1 authorization.
+        # Keep the legacy parsed value for compatibility. Route handlers resolve
+        # omitted fields from the current policy before hashing source consent.
+        # Preserve model_fields_set so an explicit zero remains distinguishable.
         if "max_r2_candidates" not in self.model_fields_set:
-            self.max_r2_candidates = (
+            object.__setattr__(self, "max_r2_candidates", (
                 min(3, self.max_triage_candidates) if self.auto_triage else 0
-            )
+            ))
         return self
 
     @field_validator("max_cost_usd")
@@ -741,7 +742,7 @@ class ProgressiveDeepInvestigationBatchRequest(Strict):
 
 class AgentBatchInvestigationRequest(Strict):
     job_id: str
-    candidate_ids: list[str] = Field(min_length=1, max_length=5)
+    candidate_ids: list[str] = Field(min_length=1, max_length=MAX_MANUAL_CANDIDATES_PER_BATCH)
     mode: Literal["single_shot", "tool_agent"] = "tool_agent"
     max_steps: int = Field(default=4, ge=1, le=6)
     max_output_tokens: int | None = Field(default=DEFAULT_AGENT_OUTPUT_TOKENS, ge=128, le=65536)
@@ -1074,6 +1075,8 @@ def _prepare_operation_triage(settings, body, scan_specs, *, authorization_input
     def with_policy(scan):
         return {**scan, "progressive_triage_policy": policy_snapshot}
 
+    from .progressive_triage.policy import apply_task_candidate_scope
+    apply_task_candidate_scope(body, policy_snapshot["policy"])
     mode = body.audit_mode
     enabled = body.auto_triage
     if body.max_r2_candidates > body.max_triage_candidates:
@@ -1158,6 +1161,8 @@ def _preview_operation_triage(settings, body, scan_specs, *, consent_nonces=None
     policy_snapshot = {"revision": policy_state["revision"],
                        "policy": policy_state["policy"],
                        "policy_sha256": policy_state["policy_sha256"]}
+    from .progressive_triage.policy import apply_task_candidate_scope
+    apply_task_candidate_scope(body, policy_snapshot["policy"])
     if not body.auto_triage:
         return {"eligible": False, "model_calls": 0,
                 "progressive_policy": policy_snapshot,
@@ -2827,6 +2832,12 @@ def install_routes(app: FastAPI, settings, store):
         return ops.get(item["id"])
 
     def _agent_batch_preview(body, provider):
+        from .progressive_triage.policy import PolicyStore, manual_candidate_batch_limit
+        scope_state = PolicyStore(settings.data_dir).read()
+        scope_limit = manual_candidate_batch_limit(scope_state["policy"], body.mode)
+        if len(body.candidate_ids) > scope_limit:
+            raise HTTPException(status_code=409, detail=(
+                f"本次最多选择 {scope_limit} 条候选，范围来自系统设置的智能审计策略；请调整选择或修改设置后重新预览"))
         _apply_request_output_policy(body, provider)
         if len(set(body.candidate_ids)) != len(body.candidate_ids):
             raise ValueError("候选列表包含重复 ID")
@@ -2846,6 +2857,8 @@ def install_routes(app: FastAPI, settings, store):
                              "line": candidate.get("line"), "preview": preview})
         tool_agent = body.mode == "tool_agent"
         manifest = {"version": 2, "job_id": body.job_id, "report_sha256": job["report_sha256"],
+                    "candidate_scope_policy_sha256": scope_state["policy_sha256"],
+                    "candidate_scope_limit": scope_limit,
                     "consent_nonce": body.consent_nonce,
                     "provider_fingerprint": provider.fingerprint,
                     "candidates": [{"candidate_id": item["candidate_id"],
@@ -2880,6 +2893,7 @@ def install_routes(app: FastAPI, settings, store):
             None if any(limit is None for limit in model_call_limits) else sum(model_call_limits))
         aggregate_budget = {
             "authorized_candidate_count": len(children),
+            "candidate_scope_limit": scope_limit,
             "max_total_model_calls": aggregate_model_call_limit,
             "single_shot_candidate_request_count": len(children) if body.mode == "single_shot" else 0,
             "requests_per_candidate": 1 if body.mode == "single_shot" else None,

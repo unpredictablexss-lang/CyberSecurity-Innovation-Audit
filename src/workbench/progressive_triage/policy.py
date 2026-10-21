@@ -329,3 +329,24 @@ class PolicyStore:
             raise PolicyStoreError("policy settings could not be replaced atomically") from error
         finally:
             os.close(lock_fd)
+
+
+def apply_task_candidate_scope(body, policy):
+    """Resolve omitted new-task scope from policy; preserve explicit legacy consent."""
+    if not body.auto_triage:
+        return
+    limits = policy["limits"]
+    supplied = body.model_fields_set
+    if "max_triage_candidates" not in supplied:
+        if limits["quick_screen_groups_per_audit"] == 0:
+            raise PolicyError("系统设置的初步分析范围为 0；请先调整候选范围或使用静态审计")
+        object.__setattr__(body, "max_triage_candidates", limits["quick_screen_groups_per_audit"])
+    if "max_r2_candidates" not in supplied:
+        object.__setattr__(body, "max_r2_candidates", min(
+            limits["deep_groups_per_audit"], body.max_triage_candidates))
+
+
+def manual_candidate_batch_limit(policy, mode):
+    """Manual candidate items share the configured stage scope, not a fixed five."""
+    key = "deep_groups_per_audit" if mode == "tool_agent" else "quick_screen_groups_per_audit"
+    return policy["limits"][key]

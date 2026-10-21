@@ -57,9 +57,9 @@ class AuditPlanInput(StrictModel):
     @model_validator(mode="after")
     def default_r2_for_opted_in_triage(self):
         if "max_r2_candidates" not in self.model_fields_set:
-            self.max_r2_candidates = (
+            object.__setattr__(self, "max_r2_candidates", (
                 min(3, self.max_triage_candidates) if self.auto_triage else 0
-            )
+            ))
         return self
 
 
@@ -306,6 +306,9 @@ def create_app(settings=None):
 
     @app.post("/api/v1/audit-plans")
     def audit_plan(body: AuditPlanInput):
+        from .progressive_triage.policy import apply_task_candidate_scope
+        progressive_policy = progressive_policy_snapshot()
+        apply_task_candidate_scope(body, progressive_policy["policy"])
         if body.max_r2_candidates > body.max_triage_candidates:
             raise ValueError("conditional R2 candidate budget cannot exceed the R1 candidate budget")
         if body.max_r2_candidates and not body.auto_triage:
@@ -316,7 +319,6 @@ def create_app(settings=None):
             repo, body.revision, body.include_paths, body.detector_ids,
             body.timeout_seconds, body.memory_mb, base_commit=body.base_commit,
         )
-        progressive_policy = progressive_policy_snapshot()
         workflow_sha256 = service.audit_workflow_sha256(
             plan["plan_sha256"], body.audit_mode, body.auto_triage,
             body.max_triage_candidates, body.max_r2_candidates,
@@ -353,6 +355,9 @@ def create_app(settings=None):
 
     @app.post("/api/v1/scans", status_code=201)
     def scan(body: ScanInput):
+        from .progressive_triage.policy import apply_task_candidate_scope
+        progressive_policy = progressive_policy_snapshot()
+        apply_task_candidate_scope(body, progressive_policy["policy"])
         if body.max_r2_candidates > body.max_triage_candidates:
             raise ValueError("conditional R2 candidate budget cannot exceed the R1 candidate budget")
         if body.max_r2_candidates and not body.auto_triage:
@@ -370,7 +375,6 @@ def create_app(settings=None):
         )
         if body.expected_plan_sha256 and body.expected_plan_sha256 != spec["plan_sha256"]:
             raise ValueError("Source or rule plan changed since preview; refresh the plan before scanning")
-        progressive_policy = progressive_policy_snapshot()
         workflow_sha256 = service.audit_workflow_sha256(
             spec["plan_sha256"], body.audit_mode, body.auto_triage,
             body.max_triage_candidates, body.max_r2_candidates,

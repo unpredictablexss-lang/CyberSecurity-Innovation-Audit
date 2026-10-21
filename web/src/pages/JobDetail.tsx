@@ -1,3 +1,5 @@
+import { useCandidateScope } from "../features/audits/CandidateScope";
+import { candidateBatchLimit } from "../features/audits/model";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Alert,
@@ -135,6 +137,8 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
   const [batchSubmissionApproved, setBatchSubmissionApproved] = useState(false);
   const [batchCandidateIds, setBatchCandidateIds] = useState<string[]>([]);
   const [batchMode, setBatchMode] = useState<"single_shot" | "tool_agent">("single_shot");
+  const candidateScope = useCandidateScope();
+  const batchLimit = candidateBatchLimit(candidateScope.policy, batchMode);
   const batchPreviewCandidateIds = (batchPreview?.candidates || []).map((item: any) => String(item.candidate_id));
   const batchPreviewMatchesSelection = disclosureSelectionMatches(batchCandidateIds, batchPreviewCandidateIds);
   const batchDisclosureReviewed = batchPreviewMatchesSelection && disclosureReviewed(batchDisclosureOpened, batchCandidateIds);
@@ -322,7 +326,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
   }, [job?.id, candidateId]);
   async function previewAgentBatch() {
     const candidateIds = selected.map(String);
-    if (!candidateIds.length || candidateIds.length > 5) return;
+    if (batchLimit === null || !candidateIds.length || candidateIds.length > batchLimit) return;
     setBatchCandidateIds(candidateIds);
     setBatchPreview(null);
     setBatchDisclosureOpened([]);
@@ -750,12 +754,15 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
                       ]} />
                     <Button
                       type="primary"
-                      disabled={!selected.length || selected.length > 5 || !job?.report_sha256 || !agentProvider?.configured}
+                      disabled={batchLimit === null || !selected.length || selected.length > batchLimit || !job?.report_sha256 || !agentProvider?.configured}
                       onClick={() => void previewAgentBatch()}
                     >
-                      查看发送内容（{selected.length}/5）
+                      查看发送内容（{selected.length}/{batchLimit ?? "读取中"}）
                     </Button>
                   </Space>
+                  <Typography.Paragraph type="secondary">本次批量范围：{batchLimit === null ? "正在读取设置" : `最多 ${batchLimit} 条候选`}，与系统设置一致。
+                    <a href="#/settings/policy"> 修改候选范围</a>{candidateScope.error && `；读取失败：${candidateScope.error}`}
+                  </Typography.Paragraph>
                   <Table<any>
                     rowKey="id"
                     scroll={{ x: 1600 }}
