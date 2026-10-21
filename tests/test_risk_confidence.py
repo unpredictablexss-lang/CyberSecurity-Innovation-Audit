@@ -25,9 +25,7 @@ def build_valid_agent_result(binding=None, candidate_file="src/guard.cpp", oblig
     count = max(1, obligation_count)
     obligation_reviews = []
     for index in range(count):
-        citations = [local_citation] if index == 0 else [helper_citation]
-        if count == 1:
-            citations = [local_citation, helper_citation]
+        citations = [local_citation, helper_citation]
         obligation_reviews.append({
             "obligation_index": index, "disposition": "evidence_found",
             "citations": copy.deepcopy(citations),
@@ -128,6 +126,7 @@ class AgentEvidenceChainGateTests(unittest.TestCase):
             "binding_mismatch": lambda result: result["evidence_graph"]["binding"].update(
                 commit="0" * 40),
             "no_cross_file_citation": self._remove_cross_file_reviews,
+            "cross_file_missing_for_one_obligation": self._remove_one_obligation_cross_file_review,
             "non_integer_zero": lambda result: result.update(validated_vulnerability=False),
         }
         for label, mutate in mutations.items():
@@ -136,6 +135,13 @@ class AgentEvidenceChainGateTests(unittest.TestCase):
                 mutate(result)
                 accepted, _ = _agent_evidence_chain_gate(result, self.expected, self.candidate)
                 self.assertFalse(accepted)
+
+    @staticmethod
+    def _remove_one_obligation_cross_file_review(result):
+        result["agent_assessment"]["obligation_reviews"][0]["citations"] = [{
+            "evidence_id": "ev-candidate-source", "file": "src/guard.cpp",
+            "line_start": 10, "line_end": 10,
+        }]
 
     @staticmethod
     def _remove_cross_file_reviews(result):

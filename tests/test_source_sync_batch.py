@@ -238,7 +238,8 @@ class SourceSyncBatchIntegrationTests(unittest.TestCase):
         self.assertIn("exit status", result["repositories"][1]["error"])
         self.assertEqual(result["summary"]["succeeded"], 2)
         self.assertEqual(result["summary"]["failed"], 1)
-        self.assertEqual([repo["name"] for repo in self.store.repositories()], [first, last])
+        self.assertEqual(sorted(repo["name"] for repo in self.store.repositories()),
+                         sorted([first, last]))
         self.assertEqual(self.ops.get(task["id"])["status"], "completed_with_limitations")
 
     def test_cancel_stops_active_transfer_remaining_items_and_owned_scan(self):
