@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { auditLinks, detailTab, jobDetailPath, resolveRoute, retainRiskSource, riskQueuePath } from "../src/features/workbench/navigation.js";
+import { auditLinks, detailTab, jobDetailPath, resolveRoute, retainRiskSource, riskQueuePath, settingsTab } from "../src/features/workbench/navigation.js";
 test("three audit entries are distinct forms, with no intermediate new-audit page", () => {
   assert.equal(auditLinks.length, 3);
   assert.equal(auditLinks[0].title, "仓库审计");
@@ -18,6 +18,12 @@ test("source report and operation deep links select the right navigation section
   assert.equal(resolveRoute("/tasks/operations/operation-id").section, "/tasks");
   assert.equal(resolveRoute("/settings/capabilities").section, "/settings");
   assert.equal(detailTab("untrusted-tab"), "findings");
+});
+
+test("settings deep links keep the selected tab, including progressive triage policy", () => {
+  assert.equal(settingsTab("policy"), "policy");
+  assert.equal(settingsTab("agent"), "agent");
+  assert.equal(settingsTab("untrusted"), "sources");
 });
 
 test("candidate context survives route normalization without becoming an execution request", () => {

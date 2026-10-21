@@ -21,6 +21,10 @@ export function detailTab(value) {
   return ["findings", "clusters", "coverage", "source", "events", "reports"].includes(value) ? value : "findings";
 }
 
+export function settingsTab(value) {
+  return ["sources", "capabilities", "policy", "agent", "runtime"].includes(value) ? value : "sources";
+}
+
 export function riskQueuePath(filters) {
   const params = new URLSearchParams();
   if (filters.scan_limit && filters.scan_limit !== "20") params.set("scan_limit", filters.scan_limit);

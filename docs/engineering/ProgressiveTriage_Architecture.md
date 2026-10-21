@@ -1,6 +1,14 @@
 # OHScanner 渐进式智能审计架构与实施状态
 
-更新：2026-10-21。本文记录本分支已实现项与仍未完成的任务书验收。验收代码基线为 `main@fe9d11c237d0edac9e93144d7d75a84b1df27895`。任务书参考分支 `work/pr38-44-e2e-followup-20261020` 当前为 `b469f623b34ca5fd752ab72de66e53927b9dcd9c`，比较结果为 main 在其上前进 52 个提交、无落后；PR #44 的多端点授权改动已由 PR #52 带入 main。本实现位于独立分支 `feat/progressive-ai-triage-phase1-20261021`。
+更新：2026-10-22。当前复核基线为 `main@3069f49a29f31c76aa88de0e9d26f81d9c6fe262`；开发分支 `feat/progressive-ai-triage-phase5-20261022` 从该基线创建，尚未推送。旧的 L0-L3 policy、multi-endpoint runtime、L2/L3 operation 与账本已随 PR #56 等集成进入 main。本轮验证和缺口以文档前部更新记录为准；下方原 2026-10-21 能力矩阵保留为历史快照。
+
+## 2026-10-22 主线复核与 Phase 5 验收进度
+
+单仓快照仍通过 `api.py` 的旧 `auto_triage` 路径运行 R1/条件 R2；它没有冻结 `progressive_triage_policy`，也没有把 L0/L1 计划接到单扫描详情/授权门。四类多端点 Operation 才有 policy snapshot、L0/L1 计划和单独授权的 L2/L3。故“快照、时间、版本 × 静态/智能”不能仅凭已有多端点测试称为四级渐进流程全部打通。
+
+浏览器路径 `/settings/policy` 曾因 `SettingsView` 的 tab allowlist 漏掉 `policy` 而落回“仓库与源码管理”。当前分支修复为共用 `settingsTab()` 并新增回归用例。隔离服务 `18788` 的策略读取 API 与静态页面 HTTP 状态已核实；Windows 浏览器窗口采集两次超时，真实浏览器点击/保存仍未验证。
+
+截至本记录：前端 127 项通过，TypeScript 检查与生产构建通过。渐进式专项、四模式 worker E2E 与 Python 全量回归仍在运行，最终数量需在交付记录中补全。没有真实 Provider 调用，也未执行冻结 vulnerable/fixed/safe 对照；`triage_benchmark.json` 和比赛对照结论仍未交付。美元预算保持 advisory，候选状态不因此变化。
 
 ## 当前能力矩阵
 
