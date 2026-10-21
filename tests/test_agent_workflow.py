@@ -3176,7 +3176,7 @@ class AgentRouteTests(unittest.TestCase):
                 self.assertEqual(tool_preview_response.status_code, 200, tool_preview_response.text)
                 tool_preview = tool_preview_response.json()
                 self.assertEqual(tool_preview["aggregate_budget"]["max_validation_repair_attempts_per_candidate"], 2)
-                self.assertIsNone(tool_preview["aggregate_budget"]["max_total_model_calls"])
+                self.assertEqual(tool_preview["aggregate_budget"]["max_total_model_calls"], 18)
                 self.assertEqual(tool_preview["aggregate_budget"]["max_skeptic_requests_per_candidate"], 1)
                 self.assertEqual(tool_preview["aggregate_budget"]["local_cumulative_cost_budget"], "bounded")
                 self.assertTrue(any("Skeptic" in item

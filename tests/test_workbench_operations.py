@@ -692,7 +692,7 @@ class OperationLifecycleTests(unittest.TestCase):
         self.store = Store(self.settings.data_dir)
         self.ops = Operations(self.store)
 
-    def test_continuous_agent_has_no_outer_deadline_and_quota_is_explicit_failure(self):
+    def test_legacy_continuous_agent_is_bounded_and_quota_is_explicit_failure(self):
         from src.workbench.agent import ProviderQuotaError
         from src.workbench.operation_worker import (
             _commit_provider_quota_failure, _hard_deadline_seconds, _provider_quota_failure,
@@ -706,9 +706,9 @@ class OperationLifecycleTests(unittest.TestCase):
                             "timeout_seconds": 90}}
         single_shot = {"kind": "agent_investigation",
                        "spec": {"mode": "single_shot", "continuous_investigation": True}}
-        self.assertIsNone(_hard_deadline_seconds(continuous))
-        self.assertEqual(_hard_deadline_seconds(bounded), 90)
-        self.assertIsNone(_hard_deadline_seconds(single_shot))
+        self.assertEqual(_hard_deadline_seconds(continuous), 100)
+        self.assertEqual(_hard_deadline_seconds(bounded), 100)
+        self.assertEqual(_hard_deadline_seconds(single_shot), 310)
 
         result = _provider_quota_failure(
             ProviderQuotaError("Provider quota or billing limit exhausted (HTTP 429; code=insufficient_quota)"))

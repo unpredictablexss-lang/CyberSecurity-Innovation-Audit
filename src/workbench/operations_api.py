@@ -3711,6 +3711,7 @@ def install_routes(app: FastAPI, settings, store):
         })
 
 
+    @router.get("/cases/{case_id}/manifest.json")
     @router.get("/cases/{case_id}/report.manifest.json")
     def case_report_manifest(case_id: str):
         return _case_report_exports(case_id)["manifest"]
