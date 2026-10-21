@@ -66,7 +66,7 @@ class BudgetedAgentClient:
     supports_per_request_retry_budget = True
 
     def __init__(self, client, ledger: BudgetLedger, *, audit_id: str,
-                 operation_id: str, endpoint_id: str, group_id: str):
+                 operation_id: str, endpoint_id: str, group_id: str, before_request=None):
         self.client = client
         self.ledger = ledger
         self.audit_id = audit_id
@@ -75,10 +75,13 @@ class BudgetedAgentClient:
         self.group_id = group_id
         self.timeout = getattr(client, "timeout", 45)
         self._call_index = 0
+        self.before_request = before_request
 
     def create_with_timeout(self, payload, timeout, max_retries=None):
         from ..agent import _usage
 
+        if self.before_request is not None:
+            self.before_request()
         encoded = json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
         output_cap = payload.get("max_output_tokens")
         if not isinstance(output_cap, int) or isinstance(output_cap, bool) or output_cap <= 0:
@@ -95,7 +98,17 @@ class BudgetedAgentClient:
         if reservation.get("idempotent_replay"):
             raise BudgetError("prior deep Agent request outcome is unknown; request was not replayed")
         try:
-            response = self.client.create_with_timeout(payload, timeout, max_retries=0)
+            if self.before_request is not None:
+                self.before_request()
+            remaining = self.ledger.get(self.audit_id)["usage"]["wall_seconds_remaining"] - 1
+            if remaining <= 0:
+                raise BudgetError("deep Agent wall-time budget exhausted before Provider dispatch")
+            request_timeout = min(timeout, remaining)
+        except Exception:
+            self.ledger.settle(reservation["reservation_id"], outcome="known_not_sent")
+            raise
+        try:
+            response = self.client.create_with_timeout(payload, request_timeout, max_retries=0)
         except Exception:
             self.ledger.settle(reservation["reservation_id"], outcome="unknown_outcome")
             raise
@@ -119,19 +132,39 @@ def execute_progressive_deep_agent(settings, store, ops, task):
     audit_id = spec["progressive_audit_operation_id"]
     group_id = spec["progressive_group_id"]
     endpoint_id = spec["job_id"]
-    policy = spec["progressive_policy"]["policy"]
-    ledger.dispatch_group(audit_id, group_id, endpoint_id, "deep_agent",
-                          evidence_gate="quick_screen_investigate")
     from ..agent import ProviderConfig, ResponsesClient, execute_agent
     provider = ProviderConfig.from_env(settings.data_dir)
     if not provider.configured or provider.fingerprint != spec.get("provider_fingerprint"):
         raise ValueError("Provider changed after progressive deep-investigation consent")
+    ledger.dispatch_group(audit_id, group_id, endpoint_id, "deep_agent",
+                          evidence_gate="quick_screen_investigate")
+    ledger.claim_deep_operation(audit_id, group_id, endpoint_id, task["id"])
     # Opaque retries would spend unreserved Provider calls inside one ledger slot.
     base = ResponsesClient(provider, max_retries=0)
+    def check_cancellation():
+        for operation_id in {task["id"], audit_id} - {endpoint_id}:
+            current = ops.get(operation_id)
+            if (current.get("cancel_requested")
+                    or current.get("status") in {"cancelled", "failed", "timed_out", "interrupted"}):
+                raise InterruptedError("progressive investigation or parent audit was cancelled")
+
     client = BudgetedAgentClient(base, ledger, audit_id=audit_id,
                                  operation_id=task["id"], endpoint_id=endpoint_id,
-                                 group_id=group_id)
-    result = execute_agent(settings, store, ops, task, client=client)
+                                 group_id=group_id, before_request=check_cancellation)
+    try:
+        result = execute_agent(settings, store, ops, task, client=client)
+        if result.get("status") not in {"completed", "completed_with_limitations"}:
+            raise ValueError("deep Agent did not return a completed result")
+        if ops.get(task["id"]).get("cancel_requested"):
+            raise InterruptedError("deep Agent cancelled before final completion")
+        ledger.finish_deep_group(audit_id, group_id, endpoint_id, task["id"], success=True)
+    except Exception:
+        # Retain prior Provider settlements, and never re-open ambiguous work.
+        try:
+            ledger.finish_deep_group(audit_id, group_id, endpoint_id, task["id"], success=False)
+        except BudgetError:
+            pass  # Already partial, stopped or terminal: preserve the original failure.
+        raise
     result["progressive_triage"] = {
         "stage": "L3_deep_agent",
         "audit_operation_id": audit_id,

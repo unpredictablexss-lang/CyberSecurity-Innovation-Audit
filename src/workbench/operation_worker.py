@@ -56,11 +56,18 @@ def _is_continuous_tool_agent(task):
 
 
 def _hard_deadline_seconds(task):
-    """Bound Agent runtime, allowing ten seconds for child cleanup."""
+    """Keep bounded task deadlines while uncapped Agents use request timeouts."""
     spec = task.get("spec") if isinstance(task.get("spec"), dict) else {}
     if task.get("kind") == "agent_investigation":
         from .agent import bounded_agent_spec
-        return bounded_agent_spec(spec)["timeout_seconds"] + 10
+        bounded = bounded_agent_spec(spec)
+        # Uncapped, separately consented ordinary Agent uses per-request
+        # timeouts and cancellation/no-progress guards, not the old total cap.
+        # Progressive L3 remains bounded and is NOT exempt from this deadline.
+        if (bounded["no_cumulative_token_ceiling"]
+                and not spec.get("progressive_quick_screen_operation_id")):
+            return None
+        return bounded["timeout_seconds"] + 10
     if task.get("kind") == "progressive_quick_screen":
         return 100
     return spec.get("timeout_seconds", 600)
