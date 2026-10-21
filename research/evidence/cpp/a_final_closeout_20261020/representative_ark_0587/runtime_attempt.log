@@ -1,0 +1,2 @@
+bash: line 1: ./build.sh: No such file or directory
+exit_code=127
