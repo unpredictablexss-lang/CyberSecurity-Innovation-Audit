@@ -48,6 +48,7 @@ from .operation_limits import MAX_DETECTOR_IDS
 from .store import now
 from . import service
 from .agent_guidance import recommend_investigation_route
+from .validation_catalog import AUTH_ID, CPP_IDS, catalog as validation_catalog, manifest_path
 from .triage_limits import (MAX_MANUAL_CANDIDATES_PER_BATCH, DEFAULT_AGENT_OUTPUT_TOKENS, MAX_TRIAGE_CANDIDATES_PER_ENDPOINT,
                             MAX_AUTOMATIC_TRIAGE_ENDPOINTS)
 
@@ -653,11 +654,11 @@ class IntelligentOperationPreviewRequest(Strict):
 
 class ValidationRequest(Strict):
     case_id: str
-    harness_id: Literal["auth01_descriptor_bypass"]
-    target_repository_id: str
-    target_commit: str = Field(min_length=40, max_length=64)
-    cutils_repository_id: str
-    cutils_commit: str = Field(min_length=40, max_length=64)
+    harness_id: Literal["auth01_descriptor_bypass", "cpp_lifetime_unique_ptr_alias", "cpp_shared_ptr_delayed_singleton"]
+    target_repository_id: str | None = None
+    target_commit: str | None = Field(default=None, min_length=40, max_length=64)
+    cutils_repository_id: str | None = None
+    cutils_commit: str | None = Field(default=None, min_length=40, max_length=64)
     repeats: int = Field(default=3, ge=3, le=3)
     timeout_seconds: int = Field(default=900, ge=60, le=1800)
 
@@ -1516,12 +1517,18 @@ def _experiment_evidence_summary(settings, store, ops):
                     manifest = json.loads(raw_manifest)
                     if not isinstance(manifest, dict):
                         raise ValueError("validation input manifest is not a JSON object")
-                    if (manifest_hash == result.get("input_manifest_sha256")
-                            and manifest.get("target_commit") == spec.get("target_commit")
-                            and manifest.get("target_repository") == spec.get("target_repository")
-                            and manifest.get("cutils_commit") == spec.get("cutils_commit")
-                            and isinstance(manifest.get("harness_manifest_sha256"), str)
-                            and re.fullmatch(r"[0-9a-f]{64}", manifest["harness_manifest_sha256"])):
+                    cpp_harness = spec.get("harness_id") in CPP_IDS
+                    cpp_binding = (cpp_harness
+                        and manifest.get("harness_id") == spec.get("harness_id")
+                        and manifest.get("validation_scope") == spec.get("validation_scope")
+                        and manifest.get("harness_manifest_sha256") == spec.get("manifest_sha256"))
+                    auth_binding = (not cpp_harness
+                        and manifest.get("target_commit") == spec.get("target_commit")
+                        and manifest.get("target_repository") == spec.get("target_repository")
+                        and manifest.get("cutils_commit") == spec.get("cutils_commit")
+                        and isinstance(manifest.get("harness_manifest_sha256"), str)
+                        and re.fullmatch(r"[0-9a-f]{64}", manifest["harness_manifest_sha256"]))
+                    if manifest_hash == result.get("input_manifest_sha256") and (cpp_binding or auth_binding):
                         manifest_state = "verified_input_manifest"
                         manifest_reason = None
                     else:
@@ -1529,8 +1536,10 @@ def _experiment_evidence_summary(settings, store, ops):
                 except (KeyError, TypeError, ValueError, OSError, UnicodeError):
                     manifest_reason = "验证输入清单缺失、损坏或与结果摘要不匹配。"
 
-            if spec.get("harness_id") == "auth01_descriptor_bypass":
+            if spec.get("harness_id") in {AUTH_ID, "cpp_shared_ptr_delayed_singleton"}:
                 scope = "component_harness"
+            elif spec.get("harness_id") == "cpp_lifetime_unique_ptr_alias":
+                scope = "synthetic_harness"
             elif (manifest_state == "verified_input_manifest"
                   and spec.get("validation_scope") == "product_level"
                   and result.get("validation_scope") == "product_level"
@@ -3111,6 +3120,22 @@ def install_routes(app: FastAPI, settings, store):
         case = store.cases()
         if not any(c["id"] == body.case_id for c in case):
             raise KeyError("case not found")
+        if body.harness_id in CPP_IDS:
+            if any((body.target_repository_id, body.target_commit,
+                    body.cutils_repository_id, body.cutils_commit)):
+                raise ValueError("C++ component tests do not accept target repository or commit overrides")
+            test = next(item for item in validation_catalog() if item["id"] == body.harness_id)
+            if test["source_status"] != "available":
+                raise ValueError(test["source_reason"] or "fixed harness inputs are unavailable")
+            manifest_file = manifest_path(body.harness_id)
+            return ops.create("validation", {
+                **body.model_dump(), "validation_scope": test["scope"],
+                "manifest_sha256": hashlib.sha256(manifest_file.read_bytes()).hexdigest(),
+                "timeout_seconds": body.timeout_seconds, "memory_mb": 2048,
+            })
+        if not all((body.target_repository_id, body.target_commit,
+                    body.cutils_repository_id, body.cutils_commit)):
+            raise ValueError("AUTH-01 requires a target revision and commonlibrary_c_utils support revision")
         target = store.repository(body.target_repository_id)
         cutils = store.repository(body.cutils_repository_id)
         service.check_repository(settings, target["path"])
@@ -3122,8 +3147,8 @@ def install_routes(app: FastAPI, settings, store):
         if target_commit not in pinned_target:
             raise ValueError("AUTH-01 only accepts its two fixed source revisions")
         links = _case_links(store, body.case_id)
-        manifest_path = Path(__file__).resolve().parents[2] / "src/ohscanner/poc/harnesses/auth01_descriptor_bypass/manifest.json"
-        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        manifest_file = manifest_path(AUTH_ID)
+        manifest = json.loads(manifest_file.read_text(encoding="utf-8"))
         expected_source = manifest["sources"][0]["path"]
         linked = False
         for link in links:
@@ -3140,8 +3165,13 @@ def install_routes(app: FastAPI, settings, store):
         cutils_commit = service.revision(cutils, body.cutils_commit)["commit"]
         return ops.create("validation", {**body.model_dump(), "target_commit": target_commit,
             "target_repository": target["name"], "target_path": target["path"], "cutils_path": cutils["path"],
-            "cutils_commit": cutils_commit, "timeout_seconds": body.timeout_seconds,
-            "memory_mb": 2048})
+            "cutils_commit": cutils_commit, "validation_scope": "component_harness",
+            "manifest_sha256": hashlib.sha256(manifest_file.read_bytes()).hexdigest(),
+            "timeout_seconds": body.timeout_seconds, "memory_mb": 2048})
+
+    @router.get("/validation-tests")
+    def validation_tests():
+        return {"tests": validation_catalog()}
 
     @router.post("/operations/investigations", status_code=201)
     def investigation(body: InvestigationRequest):
@@ -4128,6 +4158,17 @@ def install_routes(app: FastAPI, settings, store):
                     "docker_log_sha256": result.get("docker_log_sha256"),
                     "revisions": revisions,
                     "patched_revision": result.get("patched_revision"),
+                    "validation_scope": result.get("validation_scope") or x.get("spec", {}).get("validation_scope"),
+                    "outcome": result.get("outcome"),
+                    "source_binding_status": result.get("source_binding_status"),
+                    "source_provenance": result.get("source_provenance"),
+                    "environment": result.get("environment"),
+                    "builds": result.get("builds"),
+                    "runs": result.get("runs"),
+                    "result_file": result.get("result_file"),
+                    "report_file": result.get("report_file"),
+                    "report_markdown": result.get("report_markdown"),
+                    "scope_explanation": result.get("scope_explanation"),
                     "limitations": result.get("limitations", harness_result.get("limitations", [])),
                 }
             if x["kind"] == "agent_investigation":

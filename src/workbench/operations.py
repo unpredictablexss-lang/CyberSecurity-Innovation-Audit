@@ -852,6 +852,9 @@ def execute(settings, store, ops, task):
         from .joint_candidate_comparison_runtime import execute_joint_comparison
         return execute_joint_comparison(settings, store, ops, task)
     if kind == "validation":
+        if spec.get("harness_id") in {"cpp_lifetime_unique_ptr_alias", "cpp_shared_ptr_delayed_singleton"}:
+            from .validation_cpp import execute as execute_cpp_validation
+            return execute_cpp_validation(settings, ops, task)
         from .validation import execute_validation
         return execute_validation(settings, store, ops, task)
     reports = wait_reports(settings, store, spec["scan_ids"])
