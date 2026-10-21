@@ -1977,11 +1977,11 @@ def install_routes(app: FastAPI, settings, store):
         report = service.read_report(settings, job)
         candidate = service.finding(report, body.candidate_id)
         preview_spec = body.model_dump()
-        # Keep the user-selected R1/R2 mode, but disable local cumulative
-        # budgets for every explicitly authorized investigation. A single-shot
-        # still makes exactly one request by its mode; a tool-agent continues
-        # through bounded read-only tools until its terminal condition.
+        # Keep the user-selected mode. Explicitly consented tool-agent runs
+        # have no local cumulative usage ceiling; single-shot still performs
+        # one Provider request. Per-request controls and fixed read-only scope remain.
         preview_spec["continuous_investigation"] = False
+        preview_spec["no_cumulative_token_ceiling"] = body.mode == "tool_agent"
         preview_spec["provider_request_timeout_seconds"] = 45
         preview_spec["max_provider_retries"] = 1
         preview = consent_preview(settings, store, job, report, candidate, preview_spec, provider)
@@ -2058,6 +2058,7 @@ def install_routes(app: FastAPI, settings, store):
             "max_total_output_tokens": body.max_total_output_tokens, "timeout_seconds": body.timeout_seconds,
             "provider_request_timeout_seconds": 45, "max_provider_retries": 1,
             "continuous_investigation": False,
+            "no_cumulative_token_ceiling": body.mode == "tool_agent",
             "source_submission_approved": True, "source_submission_approved_at": now(),
             "source_consent_sha256": preview["consent_sha256"], "consent_nonce": body.consent_nonce,
             "consent_preview_version": CONSENT_PREVIEW_VERSION,
@@ -2101,11 +2102,12 @@ def install_routes(app: FastAPI, settings, store):
                                     "consent_sha256": item["preview"]["consent_sha256"]} for item in children],
                     "mode": body.mode,
                     "continuous_investigation": False,
-                    "local_cumulative_token_budget": "bounded",
-                    "local_cumulative_usd_budget": "bounded",
-                    "local_total_model_call_budget": "bounded",
-                    "local_total_tool_call_budget": "bounded",
-                    "local_total_wall_time_budget": "bounded",
+                    "no_cumulative_token_ceiling": tool_agent,
+                    "local_cumulative_token_budget": "none" if tool_agent else "bounded",
+                    "local_cumulative_usd_budget": "none" if tool_agent else "bounded",
+                    "local_total_model_call_budget": "none" if tool_agent else "bounded",
+                    "local_total_tool_call_budget": "none" if tool_agent else "bounded",
+                    "local_total_wall_time_budget": "until_terminal_condition" if tool_agent else "bounded",
                     "max_output_tokens_per_request": body.max_output_tokens,
                     "provider_request_timeout_seconds": 45,
                     "max_validation_repairs_per_tool_agent": 2 if tool_agent else 0,
@@ -2113,30 +2115,35 @@ def install_routes(app: FastAPI, settings, store):
         consent = hashlib.sha256(json.dumps(manifest, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
         blocked_candidate_ids = [item["candidate_id"] for item in children
                                  if not item["preview"]["agent_execution"]["eligible"]]
-        max_repairs_per_candidate = max(
-            (item["preview"].get("budgets", {}).get("max_validation_repairs", 0)
-             for item in children), default=0)
+        repair_limits = [item["preview"].get("budgets", {}).get("max_validation_repairs", 0)
+                         for item in children]
+        max_repairs_per_candidate = (
+            None if any(limit is None for limit in repair_limits)
+            else max(repair_limits, default=0))
         max_skeptic_per_candidate = max(
             (item["preview"].get("budgets", {}).get("max_skeptic_calls", 0)
              for item in children), default=0)
         aggregate_cost_estimate = _aggregate_agent_budget_cost_estimates(
             item["preview"].get("budget_cost_estimate") for item in children)
+        model_call_limits = [item["preview"]["budgets"]["max_total_model_calls"] for item in children]
+        aggregate_model_call_limit = (
+            None if any(limit is None for limit in model_call_limits) else sum(model_call_limits))
         aggregate_budget = {
             "authorized_candidate_count": len(children),
-            "max_total_model_calls": sum(item["preview"]["budgets"]["max_total_model_calls"] for item in children),
+            "max_total_model_calls": aggregate_model_call_limit,
             "single_shot_candidate_request_count": len(children) if body.mode == "single_shot" else 0,
             "requests_per_candidate": 1 if body.mode == "single_shot" else None,
-            "continuous_until_terminal_condition": False,
+            "continuous_until_terminal_condition": tool_agent,
             "max_output_tokens_per_provider_request": body.max_output_tokens,
             "provider_request_timeout_seconds": 45,
-            "local_cumulative_token_budget": "bounded",
-            "local_cumulative_cost_budget": "bounded",
-            "local_total_model_call_budget": "bounded",
-            "local_total_tool_call_budget": "bounded",
-            "local_total_wall_time_budget": "bounded",
+            "local_cumulative_token_budget": "none" if tool_agent else "bounded",
+            "local_cumulative_cost_budget": "none" if tool_agent else "bounded",
+            "local_total_model_call_budget": "none" if tool_agent else "bounded",
+            "local_total_tool_call_budget": "none" if tool_agent else "bounded",
+            "local_total_wall_time_budget": "until_terminal_condition" if tool_agent else "bounded",
             "max_validation_repair_attempts_per_candidate": max_repairs_per_candidate,
             "max_skeptic_requests_per_candidate": max_skeptic_per_candidate,
-            "tool_agent_continuous": False,
+            "tool_agent_continuous": tool_agent,
         }
         return {"schema_version": 1, "consent_sha256": consent,
                 "consent_nonce": body.consent_nonce, "provider": provider.public,
@@ -2195,6 +2202,7 @@ def install_routes(app: FastAPI, settings, store):
                 "max_total_output_tokens": body.max_total_output_tokens, "timeout_seconds": body.timeout_seconds,
                 "provider_request_timeout_seconds": 45, "max_provider_retries": 1,
                 "continuous_investigation": False,
+                "no_cumulative_token_ceiling": body.mode == "tool_agent",
                 "source_submission_approved": True, "source_submission_approved_at": now(),
                 "source_consent_sha256": child_preview["consent_sha256"], "consent_nonce": body.consent_nonce,
                 "consent_preview_version": CONSENT_PREVIEW_VERSION,
@@ -2234,7 +2242,8 @@ def install_routes(app: FastAPI, settings, store):
                     "arms": [{"mode": item["mode"],
                               "consent_sha256": item["preview"]["consent_sha256"]} for item in previews],
                     "single_shot_request_count": 1,
-                    "tool_agent_continuous": False,
+                    "tool_agent_continuous": True,
+                    "tool_agent_no_cumulative_token_ceiling": True,
                     "tool_agent_max_output_tokens_per_request": body.max_output_tokens,
                     "provider_request_timeout_seconds": 45}
         consent = hashlib.sha256(json.dumps(manifest, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
@@ -2247,9 +2256,9 @@ def install_routes(app: FastAPI, settings, store):
             "tool_agent_max_total_model_calls": previews[1]["preview"]["budgets"]["max_total_model_calls"],
             "tool_agent_max_output_tokens_per_request": body.max_output_tokens,
             "provider_request_timeout_seconds": 45,
-            "tool_agent_local_cumulative_token_budget": "bounded",
-            "tool_agent_local_cumulative_cost_budget": "bounded",
-            "tool_agent_local_total_wall_time_budget": "bounded",
+            "tool_agent_local_cumulative_token_budget": "none",
+            "tool_agent_local_cumulative_cost_budget": "none",
+            "tool_agent_local_total_wall_time_budget": "until_terminal_condition",
             "tool_agent_max_validation_repair_attempts": r2_repair_limit,
             "tool_agent_max_skeptic_requests": r2_skeptic_limit,
         }
@@ -2313,6 +2322,7 @@ def install_routes(app: FastAPI, settings, store):
                 "max_total_output_tokens": body.max_total_output_tokens, "timeout_seconds": body.timeout_seconds,
                 "provider_request_timeout_seconds": 45, "max_provider_retries": 1,
                 "continuous_investigation": False,
+                "no_cumulative_token_ceiling": arm["mode"] == "tool_agent",
                 "source_submission_approved": True, "source_submission_approved_at": now(),
                 "source_consent_sha256": arm_preview["consent_sha256"], "consent_nonce": body.consent_nonce,
                 "consent_preview_version": CONSENT_PREVIEW_VERSION,

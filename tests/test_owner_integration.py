@@ -494,14 +494,17 @@ if os.environ.get("OHSCANNER_TEST_TOOL_TRACE"):
             preview = no_budget.json()["triage_authorization_preview"]
             self.assertTrue(preview["eligible"])
             manifest = preview["manifest"]
-            for key in ("max_total_model_calls", "max_total_tool_calls"):
-                self.assertGreater(manifest["budgets"][key], 0, key)
-            self.assertEqual(manifest["budgets"]["local_cumulative_token_budget"], "bounded_per_investigation")
-            self.assertEqual(manifest["budgets"]["local_cumulative_usd_budget"], "token_bound")
-            self.assertEqual(manifest["budgets"]["local_total_wall_time_budget"], "bounded_per_investigation")
-            self.assertEqual(manifest["usage_policy"]["local_cumulative_token_budget"], "bounded")
-            self.assertEqual(manifest["usage_policy"]["local_cumulative_usd_budget"], "token_bound")
-            self.assertEqual(manifest["usage_policy"]["local_total_wall_time_budget"], "bounded")
+            for key in ("max_total_model_calls", "max_total_tool_calls",
+                        "cumulative_token_ceiling", "cumulative_request_ceiling",
+                        "cumulative_spend_ceiling"):
+                self.assertIsNone(manifest["budgets"][key], key)
+            self.assertEqual(manifest["budgets"]["local_cumulative_token_budget"], "none")
+            self.assertEqual(manifest["budgets"]["local_cumulative_usd_budget"], "none")
+            self.assertEqual(manifest["budgets"]["local_total_wall_time_budget"],
+                             "until terminal response, provider/API error, cancellation, or repeated validation failure")
+            self.assertEqual(manifest["usage_policy"]["local_cumulative_token_budget"], "none")
+            self.assertEqual(manifest["usage_policy"]["local_cumulative_usd_budget"], "none")
+            self.assertEqual(manifest["usage_policy"]["local_total_wall_time_budget"], "until_terminal_condition")
 
             plan = self.plan(auto_triage=True, max_triage_candidates=2)
             changed_plan = self.plan(auto_triage=True, max_triage_candidates=1)
@@ -1087,11 +1090,14 @@ if os.environ.get("OHSCANNER_TEST_TOOL_TRACE"):
             self.assertEqual(consent["manifest"]["conditional_r2"]["mode"], "tool_agent")
             self.assertEqual(consent["manifest"]["r2_candidate_limit"], 1)
             budgets = consent["manifest"]["budgets"]
-            for key in ("max_total_model_calls", "max_total_tool_calls"):
-                self.assertGreater(budgets[key], 0, key)
-            self.assertEqual(budgets["local_cumulative_token_budget"], "bounded_per_investigation")
-            self.assertEqual(budgets["local_cumulative_usd_budget"], "token_bound")
-            self.assertEqual(budgets["local_total_wall_time_budget"], "bounded_per_investigation")
+            for key in ("max_total_model_calls", "max_total_tool_calls",
+                        "cumulative_token_ceiling", "cumulative_request_ceiling",
+                        "cumulative_spend_ceiling"):
+                self.assertIsNone(budgets[key], key)
+            self.assertEqual(budgets["local_cumulative_token_budget"], "none")
+            self.assertEqual(budgets["local_cumulative_usd_budget"], "none")
+            self.assertEqual(budgets["local_total_wall_time_budget"],
+                             "until terminal response, provider/API error, cancellation, or repeated validation failure")
             job = self.scan(
                 auto_triage=True, max_triage_candidates=2, max_r2_candidates=1,
                 expected_plan_sha256=plan["plan_sha256"],
@@ -1110,7 +1116,7 @@ if os.environ.get("OHSCANNER_TEST_TOOL_TRACE"):
                 self.assertEqual(batch["r2_status"], "awaiting_r1")
                 r1_operations = ops.smart_triage_operations(batch["id"])
                 self.assertGreater(len(r1_operations), 0)
-                self.assertTrue(all(not item["spec"].get("no_cumulative_token_ceiling")
+                self.assertTrue(all(item["spec"].get("no_cumulative_token_ceiling") is True
                                     for item in r1_operations))
                 report = service.read_report(self.settings, self.store.job(job["id"]))
                 candidates = []
@@ -1570,7 +1576,11 @@ if os.environ.get("OHSCANNER_TEST_TOOL_TRACE"):
                 headers=fixtures.HEADERS,
             )
             self.assertEqual(no_budget.status_code, 200, no_budget.text)
-            self.assertEqual(no_budget.json()["triage_authorization_preview"]["cost_budget"]["local_cumulative_usd_budget"], "token_bound")
+            cost_budget = no_budget.json()["triage_authorization_preview"]["cost_budget"]
+            self.assertEqual(cost_budget["status"], "unbounded_local_usage")
+            self.assertFalse(cost_budget["hard_spend_cap"])
+            self.assertEqual(cost_budget["local_cumulative_usd_budget"], "none")
+            self.assertFalse(no_budget.json()["triage_authorization_preview"]["platform_cost_budget_enforced"])
 
             plan = self.plan(auto_triage=True, max_triage_candidates=1,
                              max_r2_candidates=0, max_cost_usd="10.00")

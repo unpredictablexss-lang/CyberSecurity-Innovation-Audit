@@ -37,10 +37,10 @@ MAX_SKEPTIC_CALLS = 1
 MAX_ARTIFACT_GENERATION_CALLS = 1
 MAX_PROVIDER_REQUEST_SECONDS = 45
 SKEPTIC_CONSENT_DISCLOSURE = (
-    "每个工具型 Agent 调查会在主结构化分诊后，另行发送最多 1 次只读 Skeptic 请求；"
-    "它仅复核本次已收集的固定提交源码片段，不调用工具，输出反证候选/未发现/未知及源码行引用。"
-    "它与最多 2 次结构化修复分别计数。每次工具型 Agent 调查按授权预览中的累计 Token、调用次数和时间预算执行；费用估计依据记录的费率卡。"
-    "每次请求仍有单次输出上限和 45 秒 Provider 请求超时，工具只读且固定于本次提交。"
+    "主研判后最多追加 1 次只读 Skeptic 请求；"
+    "它只复核本次已收集的固定提交源码片段，不调用工具，输出反证线索/未发现/未知及源码行引用。"
+    "该阶段次数上限与主调查累计 Token、模型/工具调用和总时长无关；OHScanner 不设调查累计 Token、调用次数、时间或费用上限。"
+    "单次请求仍受上下文/输出上限和 45 秒 Provider 请求超时约束，工具只读且固定于本次提交。"
     "Skeptic 输出本身不确认漏洞或语义关系。"
 )
 ARTIFACT_GENERATION_DISCLOSURE = (
@@ -51,13 +51,13 @@ ARTIFACT_GENERATION_DISCLOSURE = (
     "报告与 PoC 均为 AI 未验证草案，不构成漏洞确认，不会执行或应用。"
 )
 SINGLE_SHOT_SKEPTIC_DISCLOSURE = (
-    "单轮模型研判只发送一次结构化请求，不运行独立 Skeptic 阶段；本地累计 Token 预算生效，实际账单由服务商计费。"
-    "单次输出上限和 45 秒 Provider 请求超时仍适用。"
+    "单轮模型研判发送一次结构化请求，不运行独立 Skeptic 阶段；该模式由一次请求完成，不设任务累计 Token/费用预算。"
+    "单次上下文/输出上限和 45 秒 Provider 请求超时仍适用，实际账单与账户额度由服务商决定。"
 )
 CONTINUOUS_INVESTIGATION_DISCLOSURE = (
-    "该授权内的工具型 Agent 调查执行有限的累计 Token、模型/工具调用次数和墙钟预算；实际费用仍取决于服务商账户。"
-    "Provider 单次请求超时为 45 秒、每次输出 Token 有上限；工具增强模式持续运行直到模型完成、用户取消、Provider/API 明确失败或 no-progress guard 触发，"
-    "最多进行 2 次结构化修复和 1 次独立 Skeptic 请求（这是各阶段上限，不是调查总调用上限）。用户可随时取消；取消或 Worker 重启不会自动重放已发出的模型请求。"
+    "工具型 Agent 调查不设累计 Token、模型/工具调用、总时长或费用上限；实际账单和账户配额由服务商决定。"
+    "每次 Provider 请求仍受单次上下文/输出限制、45 秒超时和一次显式 429/5xx 重试约束；工具增强模式持续到模型完成、用户取消、Provider/API 明确失败或无新增证据保护条件触发。"
+    "结构化修复、独立 Skeptic 和报告草案各自保留阶段范围，不构成调查总量上限。用户可随时取消；取消或 Worker 重启不会自动重放已发出的模型请求。"
 )
 TARGETED_REPAIR_CODES = frozenset({
     "unresolved_authorization_policy_claim",
@@ -208,6 +208,11 @@ def _safe_tool_rejection(error):
 
 
 def _reasoning_effort(config, *, tool_calls=False):
+    # MiMo charges reasoning against max_output_tokens. Keep R1 structured
+    # answers available for the validated result; retain low reasoning for R2
+    # tool selection. Its API documents all non-none effort levels as enabled.
+    if config.endpoint_host == "api.xiaomimimo.com":
+        return "low" if tool_calls else "none"
     # DeepSeek V4 defaults to high-effort thinking, which consumes the same
     # output-token budget as the structured answer. Keep the default bounded
     # for this evidence-first workflow; other Responses providers are unchanged.
@@ -219,6 +224,33 @@ def _reasoning_effort(config, *, tool_calls=False):
 class _NoRedirect(HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
         raise URLError("provider redirects are disabled")
+
+
+def _provider_compat_payload(config, payload):
+    """Adapt strict JSON Schema responses for providers that expose JSON mode only."""
+    if config.endpoint_host != "api.xiaomimimo.com":
+        return payload
+    text = payload.get("text")
+    if not isinstance(text, dict):
+        return payload
+    format_spec = text.get("format")
+    if not isinstance(format_spec, dict) or format_spec.get("type") != "json_schema":
+        return payload
+    schema = format_spec.get("schema")
+    if not isinstance(schema, dict):
+        return payload
+    adapted = dict(payload)
+    adapted_text = dict(text)
+    adapted_text["format"] = {"type": "json_object"}
+    adapted["text"] = adapted_text
+    schema_text = json.dumps(schema, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    instructions = adapted.get("instructions", "")
+    adapted["instructions"] = (
+        str(instructions) + chr(10) + chr(10)
+        + "Return only a JSON object that follows this output contract exactly. "
+        "The server will validate it against this schema:" + chr(10) + schema_text
+    )
+    return adapted
 
 
 class ProviderQuotaError(ValueError):
@@ -270,6 +302,7 @@ class ResponsesClient:
         if (not isinstance(retry_limit, int) or isinstance(retry_limit, bool)
                 or not 0 <= retry_limit <= self.max_retries):
             raise ValueError("provider retry budget exceeds its authorized maximum")
+        payload = _provider_compat_payload(self.config, payload)
         data = json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode()
         request = Request(self.config.base_url + "/responses", data=data, method="POST", headers={
             "Authorization": "Bearer " + self.config.api_key,
@@ -543,17 +576,22 @@ def _response_text(response):
     return "\n".join(chunks)
 
 
-def _usage(response):
+def _usage(response, *, allow_partial=False):
+    """Normalize Provider telemetry; uncapped investigations can retain output when telemetry is malformed."""
     usage = response.get("usage") if isinstance(response, dict) else None
     if usage is None:
         usage = {}
     if not isinstance(usage, dict):
-        raise ValueError("LLM provider returned invalid token usage")
+        if not allow_partial:
+            raise ValueError("LLM provider returned invalid token usage")
+        usage = {}
     normalized = {}
     for key in ("input_tokens", "output_tokens", "total_tokens"):
         value = usage.get(key)
         if value is not None and (not isinstance(value, int) or isinstance(value, bool) or value < 0):
-            raise ValueError("LLM provider returned invalid token usage")
+            if not allow_partial:
+                raise ValueError("LLM provider returned invalid token usage")
+            value = None
         normalized[key] = value
     for field, child, bound_key in (
             ("input_tokens_details", "cached_tokens", "input_tokens"),
@@ -563,12 +601,17 @@ def _usage(response):
             normalized[field] = None
             continue
         if not isinstance(details, dict):
-            raise ValueError("LLM provider returned invalid token usage")
+            if not allow_partial:
+                raise ValueError("LLM provider returned invalid token usage")
+            normalized[field] = None
+            continue
         value = details.get(child)
         if value is not None and (
                 not isinstance(value, int) or isinstance(value, bool) or value < 0
                 or normalized[bound_key] is None or value > normalized[bound_key]):
-            raise ValueError("LLM provider returned invalid token usage")
+            if not allow_partial:
+                raise ValueError("LLM provider returned invalid token usage")
+            value = None
         normalized[field] = {child: value} if value is not None else None
     return normalized
 
@@ -787,23 +830,36 @@ def audit_task_consent_preview(plan, workflow_sha256, include_paths, max_candida
     r1_budget = {
         "mode": "single_shot",
         "requests_per_candidate": 1,
-        "max_output_tokens_per_request": 1200,
+        "max_output_tokens_per_request": 3000,
+        "max_request_context_tokens": 65536,
+        "max_request_context_bytes": MAX_SMART_REQUEST_CONTEXT_BYTES,
+        "request_timeout_seconds": 45,
         "provider_request_timeout_seconds": MAX_PROVIDER_REQUEST_SECONDS,
+        "max_provider_retries_per_request": 1,
         "max_provider_retries": 1,
+        "max_validation_repairs": None,
+        "validation_repair_policy": "continue_until_accepted_or_a_validation_error_repeats",
+        "no_cumulative_token_ceiling": True,
     }
     r2_budget = {
         "mode": "tool_agent",
-        "continuous_until_terminal_condition": False,
-        "max_output_tokens_per_request": 1200,
+        "continuous_until_terminal_condition": True,
+        "max_output_tokens_per_request": 3000,
+        "max_request_context_tokens": 65536,
+        "max_request_context_bytes": MAX_SMART_REQUEST_CONTEXT_BYTES,
+        "request_timeout_seconds": 45,
         "provider_request_timeout_seconds": MAX_PROVIDER_REQUEST_SECONDS,
+        "max_provider_retries_per_request": 1,
         "max_provider_retries": 1,
-        "max_validation_repairs": MAX_VALIDATION_REPAIRS,
+        "max_validation_repairs": None,
+        "validation_repair_policy": "continue_until_accepted_or_a_validation_error_repeats",
+        "no_cumulative_token_ceiling": True,
         "max_skeptic_calls": MAX_SKEPTIC_CALLS,
         "skeptic_stage_enabled": True,
         "skeptic_uses_separate_stage_limit": True,
         "artifact_generation_stage_enabled": True,
         "max_artifact_generation_calls": MAX_ARTIFACT_GENERATION_CALLS,
-        "artifact_output_tokens_per_request": 1200,
+        "artifact_output_tokens_per_request": 3000,
     }
     budgets = {
         "r1_max_candidates": max_candidates,
@@ -813,54 +869,35 @@ def audit_task_consent_preview(plan, workflow_sha256, include_paths, max_candida
         "r2_max_output_tokens_per_request": r2_budget["max_output_tokens_per_request"] if max_r2_candidates else None,
         "provider_request_timeout_seconds": MAX_PROVIDER_REQUEST_SECONDS,
         "max_provider_retries_per_request": 1,
+        "max_validation_repairs": None,
+        "validation_repair_policy": "continue_until_accepted_or_a_validation_error_repeats",
+        "retry_policy": "one bounded retry for explicit HTTP 429/5xx; no retry after timeout or connection loss because provider outcome may be unknown",
+        "cumulative_token_ceiling": None,
+        "cumulative_request_ceiling": None,
+        "cumulative_spend_ceiling": None,
         "max_total_model_calls": None,
         "max_total_tool_calls": None,
-        "local_cumulative_token_budget": "bounded",
-        "local_cumulative_usd_budget": "token_bound",
-        "local_total_wall_time_budget": "bounded",
-        "max_validation_repairs_per_r2_candidate": MAX_VALIDATION_REPAIRS if max_r2_candidates else 0,
+        "local_cumulative_token_budget": "none",
+        "local_cumulative_usd_budget": "none",
+        "local_total_wall_time_budget": "until terminal response, provider/API error, cancellation, or repeated validation failure",
+        "max_validation_repairs_per_r2_candidate": None if max_r2_candidates else 0,
         "max_skeptic_requests_per_r2_candidate": MAX_SKEPTIC_CALLS if max_r2_candidates else 0,
         "candidate_selection_is_bounded": True,
         "max_candidates_per_endpoint": MAX_TRIAGE_CANDIDATES_PER_ENDPOINT,
         "candidate_overflow_policy": R1_OVERFLOW_POLICY,
-        "retry_policy": "one bounded retry for HTTP 429/5xx; no retry after timeout or connection loss because provider outcome may be unknown",
     }
-    r1_limits = bounded_agent_spec({"mode": "single_shot"})
-    r2_limits = bounded_agent_spec({"mode": "tool_agent"})
-    budgets.update({"per_investigation": dict(DEFAULT_INVESTIGATION_BUDGET),
-                    "local_cumulative_token_budget": "bounded_per_investigation",
-                    "local_cumulative_usd_budget": "rate_card_bound" if max_cost_usd else "token_bound",
-                    "max_total_model_calls": max_candidates + max_r2_candidates * 13,
-                    "max_total_tool_calls": max_r2_candidates * 8,
-                    "local_total_wall_time_budget": "bounded_per_investigation"})
-    r1_cost = _budget_cost_estimate(provider, r1_limits, "single_shot")
-    r2_cost = _budget_cost_estimate(provider, r2_limits, "tool_agent")
     aggregate_cost = None
-    if r1_cost is not None and r2_cost is not None:
-        aggregate_cost = dict(r1_cost)
-        amount = (Decimal(r1_cost["maximum_usd"]) * max_candidates
-                  + Decimal(r2_cost["maximum_usd"]) * max_r2_candidates)
-        aggregate_cost["maximum_usd"] = format(amount, "f")
-    if max_cost_usd is not None:
-        cap = Decimal(max_cost_usd)
-        if not cap.is_finite() or cap <= 0:
-            raise ValueError("max_cost_usd must be positive")
-        if aggregate_cost is None:
-            raise ValueError("a supported rate card is required to enforce a USD budget")
-        if Decimal(aggregate_cost["maximum_usd"]) > cap:
-            raise ValueError("authorized token budgets exceed max_cost_usd; reduce candidate limits")
     cost_budget = {
-        "maximum_usd": max_cost_usd,
-        "local_cumulative_usd_budget": "bounded" if max_cost_usd else "token_bound",
-        "platform_enforced": max_cost_usd is not None,
-        "provider_invoice_hard_cap": False,
-        "per_investigation": dict(DEFAULT_INVESTIGATION_BUDGET),
-        "note": "Finite token budgets are enforced before each request; USD limits require the recorded rate card. Provider invoices are not verified.",
+        "status": "unbounded_local_usage",
+        "hard_spend_cap": False,
+        "local_cumulative_usd_budget": "none",
+        "note": "OHScanner does not enforce a cumulative USD limit; Provider account billing and quota apply.",
+        "actual_charge_verified": False,
     }
     manifest = {
         "schema_version": 2,
         "consent_nonce": consent_nonce,
-        "policy_id": "ohscanner-task-triage-r1-conditional-r2-v5-bounded",
+        "policy_id": "ohscanner-task-triage-r1-conditional-r2-v6-uncapped",
         "binding": {
             "plan_sha256": plan.get("plan_sha256"),
             "workflow_sha256": workflow_sha256,
@@ -903,10 +940,10 @@ def audit_task_consent_preview(plan, workflow_sha256, include_paths, max_candida
             "only_if": "R1 is complete, the finding is critical/high severity, and one or more source-reviewable obligations remain unresolved",
             "mode": "tool_agent",
             "allowed_tools": [item["name"] for item in _TOOLS] if max_r2_candidates else [],
-            "continuous_until_terminal_condition": False,
+            "continuous_until_terminal_condition": True,
             "max_output_tokens_per_request": r2_budget["max_output_tokens_per_request"] if max_r2_candidates else None,
             "provider_request_timeout_seconds": MAX_PROVIDER_REQUEST_SECONDS,
-            "max_validation_repairs_per_candidate": MAX_VALIDATION_REPAIRS if max_r2_candidates else 0,
+            "max_validation_repairs_per_candidate": None if max_r2_candidates else 0,
             "max_skeptic_requests_per_candidate": MAX_SKEPTIC_CALLS if max_r2_candidates else 0,
             "artifact_generation_stage_enabled": bool(max_r2_candidates),
             "max_artifact_generation_calls_per_candidate": (
@@ -918,17 +955,17 @@ def audit_task_consent_preview(plan, workflow_sha256, include_paths, max_candida
         },
         "mode": "single_shot",
         "usage_policy": {
-            "local_cumulative_token_budget": "bounded",
-            "local_cumulative_usd_budget": "token_bound",
-            "local_total_model_call_budget": "bounded",
-            "local_total_tool_call_budget": "bounded",
-            "local_total_wall_time_budget": "bounded",
-            "per_request_output_limit": "none_locally_provider_model_default_applies",
+            "local_cumulative_token_budget": "none",
+            "local_cumulative_usd_budget": "none",
+            "local_total_model_call_budget": "none",
+            "local_total_tool_call_budget": "none",
+            "local_total_wall_time_budget": "until_terminal_condition",
+            "per_request_output_limit": 3000,
             "provider_request_timeout_seconds": MAX_PROVIDER_REQUEST_SECONDS,
             "termination": ["Provider final response", "user cancellation", "Provider/API error", "three consecutive tool turns without new source evidence"],
         },
         "source_disclosure": [
-            "The authorization binds finite per-investigation token, request, tool and time limits. Older continuous requests are normalized to the same bounded policy.",
+            "The authorization has no cumulative investigation token, request-count, tool-call, wall-time or spend ceiling enforced by OHScanner. Provider account quota, billing state, network and API availability still apply.",
             "At most the user-authorized number of eligible finding metadata, bounded candidate-file excerpts, and recorded evidence obligations from this fixed scan will be sent.",
             "Candidate source is limited to the scanner report inventory and this audit include-path scope; model-selected paths and additional repository tools are not enabled for R1.",
             "If the deterministic R2 gate is met, bounded fixed-commit history, exact-symbol source excerpts, and syntax-only C/C++ callsite candidates from the immutable scan inventory and audit include-path scope may also be sent using read-only tools.",
@@ -936,16 +973,18 @@ def audit_task_consent_preview(plan, workflow_sha256, include_paths, max_candida
               if max_r2_candidates else []),
             "One retry is allowed only after an explicit HTTP 429 or 5xx response; retry responses can incur a separate Provider charge. Timeouts and connection failures are not retried because their outcome may be unknown.",
             "Credential-like values are redacted by the current fixed redaction policy before Provider transmission.",
-            "Candidate selection is deterministic and limited by the explicitly authorized candidate count; after static scanning, exact total, selected, created, queued, running, and not-triaged counts are recorded. Candidates beyond the user-authorized count remain untriaged and are not considered safe; more than 10,000 report candidates per endpoint fails closed without model queueing and requires narrower or separately reviewed batches.",
-            "An automatic operation can authorize at most eight fixed endpoints, with a dedicated queue ceiling of 80,000 Agent operations. If the queue cannot accept every selected candidate for an endpoint, none from that endpoint are enqueued; the endpoint status and full not-triaged count are retained for a fresh scoped authorization.",
-            "Each investigation enforces finite token, model/tool-call and time budgets. USD caps require a supported recorded rate card. Provider invoices remain unverified; cancellation and request timeouts remain active.",
+            "This authorization imposes no cumulative Token, request-count, tool-call, investigation-time, or spend ceiling in OHScanner. The provider account quota, billing state, network and API availability still apply; the user can cancel at any time.",
+            "A structured-answer correction may resend the already disclosed bounded context until validation succeeds or the same validation error repeats. It does not add files unless a read-only R2 tool call is made.",
+            "Per-request context/output limits, read-only tools, fixed source binding and cancellation remain enforced; candidate and queue admission limits remain separate from model token usage.",
+            "Candidate selection is deterministic and limited by the explicitly authorized candidate count. Exact total, selected, created, queued, running and not-triaged counts are recorded; candidates beyond that count remain untriaged, not safe.",
+            "At most eight fixed endpoints and 80,000 queued Agent operations are admitted per automatic operation; queue overflow fails closed for that endpoint without partial enqueue and requires a fresh scoped authorization."
         ],
         "budgets": budgets,
         "per_candidate_budgets": {"r1": r1_budget,
                                   "r2": r2_budget if max_r2_candidates else None},
         "estimated_cost": aggregate_cost,
         "cost_budget": cost_budget,
-        "cost_limit_semantics": "Finite token budgets are enforced; an optional USD cap is checked against the recorded rate-card upper estimate.",
+        "cost_limit_semantics": "No local cumulative token or USD ceiling is enforced; optional legacy USD fields do not stop an authorized investigation.",
     }
     return {
         "eligible": True,
@@ -956,7 +995,7 @@ def audit_task_consent_preview(plan, workflow_sha256, include_paths, max_candida
         "manifest": manifest,
         "estimated_cost": aggregate_cost,
         "cost_budget": cost_budget,
-        "platform_cost_budget_enforced": max_cost_usd is not None,
+        "platform_cost_budget_enforced": False,
         "hard_spend_cap": False,
     }
 
@@ -1396,10 +1435,11 @@ DEFAULT_INVESTIGATION_BUDGET = {
 
 
 def bounded_agent_spec(spec):
-    """Bind finite, user-configurable limits even for legacy continuous requests."""
+    """Normalize per-request settings while preserving an explicitly authorized uncapped investigation."""
     result = dict(spec)
+    uncapped = result.get("no_cumulative_token_ceiling") is True
     result["continuous_investigation"] = False
-    result["no_cumulative_token_ceiling"] = False
+    result["no_cumulative_token_ceiling"] = uncapped
     for key, default in DEFAULT_INVESTIGATION_BUDGET.items():
         value = result.get(key)
         if value is None:
@@ -1412,10 +1452,12 @@ def bounded_agent_spec(spec):
 
 def consent_preview(settings, store, job, report, candidate, spec, provider, prepared=None):
     spec = bounded_agent_spec(spec)
+    no_cumulative_ceiling = spec.get("no_cumulative_token_ceiling") is True
     prepared = prepared or _prepare_candidate_context(settings, store, job, report, candidate)
     prepared = _apply_conditional_r2_context(settings, store, spec, prepared)
     mode = spec.get("mode", "tool_agent")
-    continuous = spec.get("continuous_investigation") is True
+    continuous = (spec.get("continuous_investigation") is True
+                  or no_cumulative_ceiling)
     tool_names = [item["name"] for item in _TOOLS] if mode == "tool_agent" else []
     inventory = report.get("_workbench", {}).get("source_inventory", [])
     inventory_files = sorted({item["file"] for item in inventory if isinstance(item, dict)
@@ -1437,30 +1479,52 @@ def consent_preview(settings, store, job, report, candidate, spec, provider, pre
         "implementation_sha256": implementation_fingerprint(),
         "source_sha256": prepared["source"]["sha256"],
     }
-    # No local cumulative token/cost/model-call/wall-clock budget applies to an
-    # explicitly authorized Agent operation. The selected mode still decides
-    # whether the model gets one structured request or a read-only tool loop.
-    budget_keys = (("max_output_tokens",) if continuous else
-                   ("max_steps", "max_output_tokens", "max_total_input_tokens",
-                    "max_total_output_tokens", "timeout_seconds"))
-    budgets = {key: spec[key] for key in budget_keys}
-    if continuous:
-        budgets.update({"local_cumulative_token_budget": "bounded",
-                        "local_cumulative_cost_budget": "token_bound",
-                        "local_total_model_call_budget": "bounded",
-                        "local_total_tool_call_budget": "bounded",
-                        "local_total_wall_time_budget": "bounded",
-                        "legacy_cumulative_limits_ignored": True,
-                        "provider_request_timeout_seconds": MAX_PROVIDER_REQUEST_SECONDS})
-    budgets["local_cumulative_token_budget"] = "bounded"
-    budgets["local_cumulative_cost_budget"] = "token_bound"
-    budgets["legacy_cumulative_limits_ignored"] = False
-    budgets["max_provider_retries"] = spec.get("max_provider_retries", 0)
-    budgets["max_validation_repairs"] = MAX_VALIDATION_REPAIRS if mode == "tool_agent" else 0
-    budgets["max_skeptic_calls"] = MAX_SKEPTIC_CALLS if mode == "tool_agent" else 0
-    budgets["skeptic_stage_enabled"] = mode == "tool_agent"
+    no_cumulative_ceiling = spec.get("no_cumulative_token_ceiling") is True
+    continuous = (spec.get("continuous_investigation") is True
+                  or no_cumulative_ceiling)
+    if no_cumulative_ceiling:
+        budgets = {
+            "max_output_tokens_per_request": spec["max_output_tokens"],
+            "max_request_context_tokens": spec.get("max_request_context_tokens", 65536),
+            "max_request_context_bytes": spec.get(
+                "max_request_context_bytes", MAX_SMART_REQUEST_CONTEXT_BYTES),
+            "request_timeout_seconds": spec.get("request_timeout_seconds", 45),
+            "max_provider_retries_per_request": spec.get("max_provider_retries", 0),
+            "cumulative_token_ceiling": None,
+            "cumulative_request_ceiling": None,
+            "cumulative_spend_ceiling": None,
+            "local_cumulative_token_budget": "none",
+            "local_cumulative_usd_budget": "none",
+            "local_total_model_call_budget": "none",
+            "local_total_tool_call_budget": "none",
+            "local_total_wall_time_budget": "until_terminal_condition",
+        }
+    else:
+        budget_keys = (("max_output_tokens",) if continuous else
+                       ("max_steps", "max_output_tokens", "max_total_input_tokens",
+                        "max_total_output_tokens", "timeout_seconds"))
+        budgets = {key: spec[key] for key in budget_keys}
+        if continuous:
+            budgets["legacy_cumulative_limits_ignored"] = True
+        budgets.update({
+            "local_cumulative_token_budget": "bounded",
+            "local_cumulative_usd_budget": "token_bound",
+            "local_total_model_call_budget": "bounded",
+            "local_total_tool_call_budget": "bounded",
+            "local_total_wall_time_budget": "bounded",
+        })
     artifact_stage_enabled = (
         mode == "tool_agent" and spec.get("artifact_generation_stage_enabled") is not False)
+    budgets["max_provider_retries"] = spec.get("max_provider_retries", 0)
+    budgets["max_validation_repairs"] = (
+        None if no_cumulative_ceiling
+        else MAX_VALIDATION_REPAIRS if mode == "tool_agent" else 0)
+    budgets["validation_repair_policy"] = (
+        "continue_until_accepted_or_a_validation_error_repeats"
+        if no_cumulative_ceiling else "fixed_bounded_repair_count")
+    budgets["no_cumulative_token_ceiling"] = no_cumulative_ceiling
+    budgets["max_skeptic_calls"] = MAX_SKEPTIC_CALLS if mode == "tool_agent" else 0
+    budgets["skeptic_stage_enabled"] = mode == "tool_agent"
     budgets["artifact_generation_stage_enabled"] = artifact_stage_enabled
     budgets["max_artifact_generation_calls"] = (
         MAX_ARTIFACT_GENERATION_CALLS if artifact_stage_enabled else 0)
@@ -1469,7 +1533,7 @@ def consent_preview(settings, store, job, report, candidate, spec, provider, pre
     if not continuous:
         budgets["skeptic_shares_validation_repair_reserve"] = False
     budgets["max_total_model_calls"] = (
-        None if continuous else
+        None if no_cumulative_ceiling or continuous else
         spec["max_steps"] + 1 + MAX_VALIDATION_REPAIRS +
         (MAX_SKEPTIC_CALLS + (MAX_ARTIFACT_GENERATION_CALLS if artifact_stage_enabled else 0)
          if mode == "tool_agent" else 0)
@@ -1482,7 +1546,11 @@ def consent_preview(settings, store, job, report, candidate, spec, provider, pre
                         else SINGLE_SHOT_SKEPTIC_DISCLOSURE)
     if continuous and mode == "tool_agent":
         stage_disclosure += " " + CONTINUOUS_INVESTIGATION_DISCLOSURE
-    budget_cost_estimate = _budget_cost_estimate(provider, budgets, mode)
+    budget_cost_estimate = (
+        {"status": "unbounded_local_usage", "hard_spend_cap": False,
+         "note": "No cumulative token or spend cap is enforced locally; Provider billing and quota apply.",
+         "actual_charge_verified": False}
+        if no_cumulative_ceiling else _budget_cost_estimate(provider, budgets, mode))
     inference_settings = {
         "tool_call_reasoning_effort": _reasoning_effort(provider, tool_calls=True) if mode == "tool_agent" else None,
         "structured_output_reasoning_effort": _reasoning_effort(provider, tool_calls=False),
@@ -1544,7 +1612,9 @@ def consent_preview(settings, store, job, report, candidate, spec, provider, pre
             "Source comments and repository text are treated as untrusted data.",
             "Detected credential-like values are redacted before any model or tool-result transmission.",
             "For stateless tool-agent follow-up requests, provider response items (including reasoning items) are sent back to the same configured endpoint; they are not stored as raw reasoning in the investigation result.",
-            "A rejected structured answer may receive up to two bounded repairs; a tool-agent may also make one independent Skeptic request and one candidate-report/PoC draft request. These are phase limits, not total investigation call/token/time budgets.",
+            ("For this explicitly authorized smart review, there is no task-level cumulative call, token, time, or spend ceiling in OHScanner. Each Provider request retains a 45-second timeout, bounded per-request context/output, and one retry only for explicit HTTP 429/5xx. Source investigation continues until a terminal response, cancellation, Provider/API failure, or repeated validation error; Skeptic and report/PoC draft stages are separately disclosed. The user can cancel at any time."
+             if no_cumulative_ceiling else
+             "A rejected structured answer may receive up to two bounded repairs; a tool-agent may also make one independent Skeptic request and one candidate-report/PoC draft request. These are phase limits, not total investigation call/token/time budgets."),
             ("Requests use the explicitly configured proxy host shown above." if provider.proxy_url
              else "Requests connect directly; ambient system proxy variables are ignored."),
             "R2 may additionally send fixed-commit history subjects and bounded exact-symbol match contexts within the scope above.",
@@ -3896,11 +3966,17 @@ def execute_agent(settings, store, ops, task, client=None):
                        for batch in batches):
                 raise ValueError("automatic triage batch no longer matches the authorized audit")
     no_cumulative_ceiling = spec.get("no_cumulative_token_ceiling") is True
-    if no_cumulative_ceiling and not (
-            task_authorization_sha256
-            and spec.get("smart_triage_batch_id")
-            and spec.get("report_sha256") == job.get("report_sha256")):
-        raise ValueError("uncapped aggregate usage is available only to an authorized smart-review batch")
+    task_batch_consent = bool(
+        task_authorization_sha256
+        and spec.get("smart_triage_batch_id")
+        and spec.get("report_sha256") == job.get("report_sha256"))
+    direct_source_consent = bool(
+        spec.get("source_submission_approved") is True
+        and isinstance(spec.get("source_consent_sha256"), str)
+        and re.fullmatch(r"[0-9a-f]{64}", spec["source_consent_sha256"])
+        and spec.get("report_sha256") == job.get("report_sha256"))
+    if no_cumulative_ceiling and not (task_batch_consent or direct_source_consent):
+        raise ValueError("uncapped investigation requires a current, explicit source-egress authorization")
     if job["status"] not in {"completed", "completed_with_limitations"} or not job.get("report_sha256"):
         raise ValueError("candidate source scan has no complete published report")
     report = service.read_report(settings, job)
@@ -3925,15 +4001,17 @@ def execute_agent(settings, store, ops, task, client=None):
     client = client or ResponsesClient(
         config, max_retries=spec.get("max_provider_retries", 0))
     mode = spec.get("mode", "tool_agent")
-    continuous = spec.get("continuous_investigation") is True
+    continuous = (spec.get("continuous_investigation") is True
+                  or no_cumulative_ceiling)
     # Newly authorized continuous investigations omit aggregate and round
     # limits from their persisted plan. Retain the legacy value only when the
     # task explicitly carries a bounded-policy spec.
     max_steps = spec.get("max_steps", 0 if spec.get("continuous_investigation") is True else 4)
     # Continuous investigations do not set a platform output-token cap.
     # Legacy bounded tasks retain their recorded per-request and aggregate limits.
-    per_call_tokens = None if continuous else spec.get("max_output_tokens")
-    if not continuous and (not isinstance(per_call_tokens, int)
+    per_call_tokens = (spec.get("max_output_tokens") if no_cumulative_ceiling
+                       else None if continuous else spec.get("max_output_tokens"))
+    if per_call_tokens is not None and (not isinstance(per_call_tokens, int)
                            or isinstance(per_call_tokens, bool) or per_call_tokens < 128):
         raise ValueError("invalid bounded per-request output token budget")
     tool_trace, model_trace = [], []
@@ -3986,7 +4064,7 @@ def execute_agent(settings, store, ops, task, client=None):
             raise ValueError("agent model call budget exhausted")
         if ops.get(task["id"])["cancel_requested"]:
             raise InterruptedError("agent investigation cancelled")
-        requested_tokens = None
+        requested_tokens = per_call_tokens if no_cumulative_ceiling else None
         if not continuous:
             remaining_tokens = spec["max_total_output_tokens"] - output_reserved
             # Preserve a small response reserve for each bounded server-validated
@@ -4105,7 +4183,7 @@ def execute_agent(settings, store, ops, task, client=None):
             retry_output_reserve += requested_tokens * (attempts_used - 1)
         response_hash = _hash(response)
         try:
-            usage = _usage(response)
+            usage = _usage(response, allow_partial=no_cumulative_ceiling)
         except ValueError as exc:
             ops.event(task["id"], "agent_model_response_rejected",
                       "call=" + str(calls) + " response sha256=" + response_hash + "; invalid usage")
@@ -4418,6 +4496,7 @@ def execute_agent(settings, store, ops, task, client=None):
     final_validation_status = "accepted"
     final_validation_error_code = None
     validation_repair_attempts = 0
+    repeated_validation_error = False
     if provider_incomplete_reason:
         final = _rejected_structured_answer(len(prepared["initial_context"]["evidence_obligations"]))
         final_validation_status = "provider_incomplete"
@@ -4435,12 +4514,13 @@ def execute_agent(settings, store, ops, task, client=None):
         except ValueError as first_error:
             current_error = first_error
             final = None
-            if mode == "tool_agent":
+            if mode == "tool_agent" or no_cumulative_ceiling:
                 repair_error_codes = set()
                 while (no_cumulative_ceiling
                        or validation_repair_attempts < MAX_VALIDATION_REPAIRS):
                     error_code = _validation_error_code(current_error)
                     if no_cumulative_ceiling and error_code in repair_error_codes:
+                        repeated_validation_error = True
                         ops.event(task["id"], "agent_final_rejected",
                                   "The same structured-output validation failure repeated; stopping this repair stage with obligations unresolved")
                         break
@@ -4458,8 +4538,8 @@ def execute_agent(settings, store, ops, task, client=None):
                                   else "Structured answer failed server validation; code=")
                     ops.event(task["id"], "agent_final_rejected",
                               event_text + error_code + "; reason sha256=" + rejection_hash +
-                              ("; one targeted correction requested" if is_targeted
-                               else "; one bounded repair requested"))
+                              ("; targeted correction requested" if is_targeted
+                               else "; structured correction requested"))
                     input_items.append({"role": "user", "content": [{"type": "input_text", "text":
                         _structured_repair_prompt(
                             source_review_indices,
@@ -4515,13 +4595,15 @@ def execute_agent(settings, store, ops, task, client=None):
             if final is None:
                 if final_validation_status == "accepted":
                     final_validation_status = (
-                        "rejected_after_two_repairs" if validation_repair_attempts >= 2
+                        "rejected_after_repeated_validation_error"
+                        if no_cumulative_ceiling and repeated_validation_error
+                        else "rejected_after_two_repairs" if validation_repair_attempts >= 2
                         else "rejected_after_one_repair" if validation_repair_attempts == 1
                         else "rejected_without_repair")
                     final_validation_error_code = _validation_error_code(current_error)
                 ops.event(task["id"], "agent_final_rejected",
                           "Model answer discarded after " + str(validation_repair_attempts) +
-                          " bounded repair attempt(s); all obligations remain unresolved; code=" +
+                          " structured correction request(s); all obligations remain unresolved; code=" +
                           str(final_validation_error_code or _validation_error_code(current_error)))
                 final = _rejected_structured_answer(
                     len(prepared["initial_context"]["evidence_obligations"]))
@@ -4834,8 +4916,9 @@ def execute_agent(settings, store, ops, task, client=None):
             "output_budget_tokens": None if continuous else spec.get("max_total_output_tokens"),
             "per_request_output_limit_tokens": per_call_tokens,
             "per_request_output_limit_policy": (
-                "none_locally_provider_model_default_applies" if continuous else "bounded"),
-            "local_cumulative_token_budget": "bounded" if continuous else "bounded",
+                "bounded_per_request_without_cumulative_ceiling" if no_cumulative_ceiling
+                else "none_locally_provider_model_default_applies" if continuous else "bounded"),
+            "local_cumulative_token_budget": "none" if no_cumulative_ceiling or continuous else "bounded",
             "total_tokens": input_total + output_total if input_usage_complete and output_usage_complete else None,
             "cost": "unknown",
             "cost_estimate": cost_estimate},
@@ -4917,21 +5000,11 @@ def provider_connectivity_check(config=None, client=None, timeout=20):
             "This is a no-source API compatibility check. Return only a JSON object "
             "matching the supplied schema, with status set to ok."
         ),
-        "input": [{"role": "user", "content": [{"type": "input_text",
-                 "text": "Return the required JSON object for this no-source connectivity check."}]}],
+        "input": "Return only the JSON object {\"status\":\"ok\"} for this no-source connectivity check.",
         "store": False,
-        "max_output_tokens": 32,
-        "text": {"format": {
-            "type": "json_schema",
-            "name": "ohscanner_provider_probe",
-            "strict": True,
-            "schema": {
-                "type": "object",
-                "properties": {"status": {"type": "string", "enum": ["ok"]}},
-                "required": ["status"],
-                "additionalProperties": False,
-            },
-        }},
+        "max_output_tokens": 256,
+        "reasoning": {"effort": "none"},
+        "text": {"format": {"type": "json_object"}},
     }
     client = client or ResponsesClient(config, timeout=timeout)
     started = time.monotonic()
@@ -4962,7 +5035,7 @@ def provider_connectivity_check(config=None, client=None, timeout=20):
         "source_sent": False,
         "operation_created": False,
         "structured_output_supported": True,
-        "disclaimer": "This verifies API connectivity and the minimal JSON Schema output path only; it does not test tool calls, code analysis, citation correctness, or model quality.",
+        "disclaimer": "This verifies API connectivity and valid JSON mode only; it does not test tool calls, code analysis, citation correctness, or model quality.",
     }
 
 def public_status(data_dir=None):

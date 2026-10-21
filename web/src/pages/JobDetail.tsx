@@ -570,7 +570,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
                 <Descriptions.Item label="工作台费用预算">{triageSummary.authorization.platform_cost_budget_enforced
                   ? "USD " + triageSummary.authorization.cost_budget.maximum_usd
                     + "（当前费率卡最坏估算 USD " + triageSummary.authorization.cost_budget.estimated_maximum_usd + "）"
-                  : "未设置可执行的费用预算"}</Descriptions.Item>
+                  : "平台不设累计费用上限；实际账单与账户配额由服务商决定"}</Descriptions.Item>
                 <Descriptions.Item label="Provider 账单">实际账单金额无法由本平台硬限制</Descriptions.Item>
               </Descriptions>
               {!triageSummary.authorization.revoked && <Button className="section-gap" danger loading={batchBusy}
@@ -1045,6 +1045,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
                 </div>
               </div>}
             />
+
             {detail.risk_assessment && <Card
               className="section-gap"
               title="公开组件风险依据与修复验证"

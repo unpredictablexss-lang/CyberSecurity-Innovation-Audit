@@ -74,7 +74,7 @@ export default function TaskTriageConsentModal({ open, preview, loading = false,
           {consentExpiry || "服务端未提供固定到期时间；任务创建时会重验来源、模型和范围摘要，绑定项变化会拒绝创建。"}
         </Descriptions.Item>
       </Descriptions>}
-      <Alert type="info" showIcon message="调查费用与取消" description="调查按本次授权预览的 Token、请求次数和时间预算执行；费用估计按记录的费率卡计算，实际账单以服务商为准。任务运行期间可以随时取消。" />
+      <Alert type="info" showIcon message="调查费用与取消" description="平台不设本次调查累计 Token、请求次数、工具调用、总时长或费用上限；每次请求仍受单次上下文/输出限制和服务商超时约束。实际账单与账户配额由服务商决定，任务运行期间可以随时取消。自动研判候选数量仍受本次授权范围限制。" />
       {!eligible && <Alert type="error" showIcon message={preview?.reason || "当前无法生成可用的授权预览；没有任务会被创建。"} />}
       <Collapse items={[{ key: "details", label: "查看将发送给模型的内容与技术详情", children: <>
         <Typography.Paragraph type="secondary">

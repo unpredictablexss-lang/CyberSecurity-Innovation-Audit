@@ -275,12 +275,12 @@ class AgentTaskflowVerdictTests(unittest.TestCase):
         manifest = preview["manifest"]
         r2 = manifest["per_candidate_budgets"]["r2"]
         self.assertEqual(r2["max_skeptic_calls"], 1)
-        self.assertEqual(r2["max_validation_repairs"], 2)
+        self.assertIsNone(r2["max_validation_repairs"])
         self.assertTrue(r2["skeptic_uses_separate_stage_limit"])
-        self.assertGreater(manifest["budgets"]["max_total_model_calls"], 0)
-        self.assertGreater(manifest["budgets"]["max_total_tool_calls"], 0)
-        self.assertEqual(manifest["budgets"]["local_cumulative_token_budget"], "bounded_per_investigation")
-        self.assertEqual(manifest["budgets"]["local_cumulative_usd_budget"], "rate_card_bound")
+        self.assertIsNone(manifest["budgets"]["max_total_model_calls"])
+        self.assertIsNone(manifest["budgets"]["max_total_tool_calls"])
+        self.assertEqual(manifest["budgets"]["local_cumulative_token_budget"], "none")
+        self.assertEqual(manifest["budgets"]["local_cumulative_usd_budget"], "none")
         self.assertEqual(manifest["budgets"]["provider_request_timeout_seconds"], 45)
         self.assertNotIn("max_steps_per_candidate", manifest["conditional_r2"])
         self.assertIn(agent.SKEPTIC_CONSENT_DISCLOSURE, manifest["source_disclosure"])
@@ -556,6 +556,11 @@ class SensitiveDataRedactionTests(unittest.TestCase):
 
 
 class ProviderConfigTests(unittest.TestCase):
+    def test_mimo_disables_reasoning_for_structured_r1_and_keeps_low_tool_reasoning(self):
+        mimo = agent.ProviderConfig("https://api.xiaomimimo.com/v1", "mimo-v2.6-pro", "secret")
+        self.assertEqual(agent._reasoning_effort(mimo), "none")
+        self.assertEqual(agent._reasoning_effort(mimo, tool_calls=True), "low")
+
     def test_deepseek_uses_bounded_reasoning_effort_only_for_its_responses_endpoint(self):
         deepseek = agent.ProviderConfig("https://api.deepseek.com", "deepseek-v4-pro", "secret")
         self.assertEqual(agent._reasoning_effort(deepseek, tool_calls=True), "low")
@@ -662,6 +667,21 @@ class ProviderConfigTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "invalid token usage"):
             agent._usage({"usage": "unexpected"})
 
+    def test_unbounded_investigation_keeps_response_with_partial_provider_usage(self):
+        response = {"usage": {
+            "input_tokens": 100,
+            "output_tokens": 20,
+            "input_tokens_details": {"cached_tokens": "unavailable"},
+            "output_tokens_details": {"reasoning_tokens": 21},
+        }}
+        with self.assertRaisesRegex(ValueError, "invalid token usage"):
+            agent._usage(response)
+        usage = agent._usage(response, allow_partial=True)
+        self.assertEqual(usage["input_tokens"], 100)
+        self.assertEqual(usage["output_tokens"], 20)
+        self.assertIsNone(usage["input_tokens_details"])
+        self.assertIsNone(usage["output_tokens_details"])
+
     def test_provider_preserves_bounded_cache_and_reasoning_usage_details(self):
         usage = agent._usage({"usage": {
             "input_tokens": 16, "output_tokens": 8, "total_tokens": 24,
@@ -734,25 +754,77 @@ class ProviderConfigTests(unittest.TestCase):
         self.assertFalse(estimate["actual_charge_verified"])
         self.assertEqual(estimate["rate_source_url"], agent.MIMO_RATE_SOURCE_URL)
 
-    def test_task_preview_binds_finite_usage_and_optional_usd_limit(self):
+    def test_task_smart_consent_has_no_cumulative_budget_and_accepts_unpriced_provider(self):
+        plan = {"plan_sha256": "a" * 64,
+                "source": {"repository": "openharmony/demo", "commit": "b" * 40,
+                           "git_tree": "c" * 40}}
+        provider = agent.ProviderConfig("https://api.openai.com/v1", "unpriced-model", "secret")
+        preview = agent.audit_task_consent_preview(
+            plan, "d" * 64, ["."], 1, "e" * 32, provider, 1,
+            max_cost_usd="0.01")
+        manifest = preview["manifest"]
+        self.assertTrue(preview["eligible"])
+        self.assertIsNone(preview["estimated_cost"])
+        self.assertEqual(preview["cost_budget"]["status"], "unbounded_local_usage")
+        self.assertFalse(preview["cost_budget"]["hard_spend_cap"])
+        self.assertEqual(preview["cost_budget"]["local_cumulative_usd_budget"], "none")
+        self.assertFalse(preview["platform_cost_budget_enforced"])
+        self.assertEqual(manifest["candidate_selection"]["authorized_candidate_count"], 1)
+        self.assertIsNone(manifest["budgets"]["cumulative_token_ceiling"])
+        self.assertIsNone(manifest["budgets"]["cumulative_request_ceiling"])
+        self.assertIsNone(manifest["budgets"]["cumulative_spend_ceiling"])
+        self.assertEqual(manifest["budgets"]["r1_max_output_tokens_per_request"], 3000)
+        self.assertEqual(manifest["budgets"]["r2_max_output_tokens_per_request"], 3000)
+        self.assertIsNone(manifest["budgets"]["max_validation_repairs"])
+        self.assertTrue(any("structured-answer correction may resend" in item
+                            for item in manifest["source_disclosure"]))
+        self.assertTrue(any("no cumulative Token" in item
+                            for item in manifest["source_disclosure"]))
+
+    def test_legacy_candidate_and_cost_fields_do_not_change_smart_consent_policy(self):
+        plan = {"plan_sha256": "a" * 64,
+                "source": {"repository": "openharmony/demo", "commit": "b" * 40,
+                           "git_tree": "c" * 40}}
         provider = agent.ProviderConfig("https://api.xiaomimimo.com/v1", "mimo-v2.6-pro", "secret")
-        preview = agent.audit_task_consent_preview({"plan_sha256": "a" * 64, "source": {"repository": "openharmony/demo", "commit": "b" * 40, "git_tree": "c" * 40}}, "d" * 64, ["."], 2, "e" * 32, provider, max_cost_usd="10.00")
-        self.assertEqual(preview["estimated_cost"]["status"], "budget_based_upper_estimate")
-        self.assertTrue(preview["cost_budget"]["platform_enforced"])
-        self.assertEqual(preview["cost_budget"]["maximum_usd"], "10.00")
-        self.assertGreater(preview["manifest"]["budgets"]["max_total_model_calls"], 0)
-        self.assertEqual(preview["manifest"]["budgets"]["r1_max_output_tokens_per_request"], 1200)
+        first = agent.audit_task_consent_preview(
+            plan, "d" * 64, ["."], 1, "e" * 32, provider, 0,
+            max_cost_usd="0.01")
+        second = agent.audit_task_consent_preview(
+            plan, "d" * 64, ["."], 1000, "e" * 32, provider, 900,
+            max_cost_usd="5000")
+        self.assertNotEqual(first["consent_sha256"], second["consent_sha256"])
+        self.assertIsNone(first["manifest"]["budgets"]["cumulative_token_ceiling"])
+        self.assertIsNone(second["manifest"]["budgets"]["cumulative_token_ceiling"])
 
-
-    def test_task_consent_enforces_rate_card_cost_cap_and_preserves_unpriced_token_limits(self):
+    def test_task_preview_binds_uncapped_usage_and_optional_usd_limit(self):
+        provider = agent.ProviderConfig("https://api.xiaomimimo.com/v1", "mimo-v2.6-pro", "secret")
+        preview = agent.audit_task_consent_preview(
+            {"plan_sha256": "a" * 64,
+             "source": {"repository": "openharmony/demo", "commit": "b" * 40,
+                        "git_tree": "c" * 40}},
+            "d" * 64, ["."], 2, "e" * 32, provider, max_cost_usd="10.00")
+        self.assertTrue(preview["eligible"])
+        self.assertEqual(preview["cost_budget"]["status"], "unbounded_local_usage")
+        self.assertFalse(preview["cost_budget"]["hard_spend_cap"])
+        self.assertEqual(preview["cost_budget"]["local_cumulative_usd_budget"], "none")
+        self.assertFalse(preview["platform_cost_budget_enforced"])
+        self.assertEqual(preview["manifest"]["candidate_selection"]["authorized_candidate_count"], 2)
+        self.assertEqual(preview["manifest"]["budgets"]["r1_max_output_tokens_per_request"], 3000)
+        self.assertIsNone(preview["manifest"]["budgets"]["cumulative_token_ceiling"])
+    def test_task_consent_ignores_legacy_usd_caps_for_uncapped_investigations(self):
         plan = {"plan_sha256": "a" * 64, "source": {"repository": "openharmony/demo", "commit": "b" * 40, "git_tree": "c" * 40}}
         provider = agent.ProviderConfig("https://api.xiaomimimo.com/v1", "mimo-v2.6-pro", "secret")
-        with self.assertRaisesRegex(ValueError, "exceed max_cost_usd"):
-            agent.audit_task_consent_preview(plan, "d" * 64, ["."], 2, "e" * 32, provider, max_cost_usd="0.00000001")
-        unknown = agent.ProviderConfig("https://api.openai.com/v1", "unpriced-model", "secret")
-        preview = agent.audit_task_consent_preview(plan, "d" * 64, ["."], 2, "e" * 32, unknown)
-        self.assertTrue(preview["eligible"])
-        self.assertEqual(preview["manifest"]["budgets"]["per_investigation"]["max_total_input_tokens"], 128000)
+        previews = [
+            agent.audit_task_consent_preview(plan, "d" * 64, ["."], 2, "e" * 32,
+                                             provider, max_cost_usd=amount)
+            for amount in ("0.00000001", "10.00")
+        ]
+        self.assertTrue(all(item["eligible"] for item in previews))
+        for item in previews:
+            self.assertEqual(item["cost_budget"]["status"], "unbounded_local_usage")
+            self.assertFalse(item["cost_budget"]["hard_spend_cap"])
+            self.assertEqual(item["cost_budget"]["local_cumulative_usd_budget"], "none")
+        self.assertEqual(previews[0]["consent_sha256"], previews[1]["consent_sha256"])
 
 
     def test_aggregate_budget_cost_estimate_requires_matching_known_rate_cards(self):
@@ -848,6 +920,26 @@ class ProviderConfigTests(unittest.TestCase):
         with self.assertRaisesRegex(URLError, "redirects are disabled"):
             handler.redirect_request(Request("https://api.openai.com"), None, 302, "found", {}, "https://other.example")
 
+    def test_mimo_responses_adapts_json_schema_to_validated_json_mode(self):
+        config = agent.ProviderConfig("https://api.xiaomimimo.com/v1", "mimo-v2.6-pro", "secret")
+        schema = {"type": "object", "properties": {"assessment": {"type": "string"}},
+                  "required": ["assessment"], "additionalProperties": False}
+        payload = {"model": config.model, "instructions": "Assess the source.", "input": "fixed evidence",
+                   "store": False, "text": {"format": {"type": "json_schema", "name": "result",
+                   "strict": True, "schema": schema}}}
+        adapted = agent._provider_compat_payload(config, payload)
+        self.assertEqual(adapted["text"]["format"], {"type": "json_object"})
+        self.assertIn(json.dumps(schema, ensure_ascii=False, sort_keys=True, separators=(",", ":")),
+                      adapted["instructions"])
+        self.assertEqual(adapted["input"], payload["input"])
+        self.assertFalse(adapted["store"])
+        self.assertEqual(payload["text"]["format"]["type"], "json_schema")
+
+    def test_openai_responses_keeps_native_json_schema_payload(self):
+        config = agent.ProviderConfig("https://api.openai.com/v1", "review", "secret")
+        payload = {"text": {"format": {"type": "json_schema", "schema": {"type": "object"}}}}
+        self.assertIs(agent._provider_compat_payload(config, payload), payload)
+
     def test_provider_connectivity_check_sends_only_fixed_no_source_probe(self):
         config = agent.ProviderConfig("https://api.openai.com/v1", "review-model", "test-secret")
         class FakeClient:
@@ -868,8 +960,9 @@ class ProviderConfigTests(unittest.TestCase):
         self.assertEqual(client.timeout, 3)
         serialized = json.dumps(client.payload)
         self.assertIn("connectivity check", serialized)
-        self.assertEqual(client.payload["text"]["format"]["type"], "json_schema")
-        self.assertTrue(client.payload["text"]["format"]["strict"])
+        self.assertEqual(client.payload["text"]["format"]["type"], "json_object")
+        self.assertEqual(client.payload["max_output_tokens"], 256)
+        self.assertEqual(client.payload["reasoning"], {"effort": "none"})
         self.assertNotIn("test-secret", serialized)
         self.assertNotIn("candidate", serialized)
         self.assertFalse(client.payload["store"])
@@ -913,7 +1006,9 @@ class ProviderConfigTests(unittest.TestCase):
         self.assertNotIn("repository", body)
         self.assertIn("connectivity check", body)
         request_json = json.loads(body)
-        self.assertEqual(request_json["text"]["format"]["type"], "json_schema")
+        self.assertEqual(request_json["text"]["format"]["type"], "json_object")
+        self.assertEqual(request_json["max_output_tokens"], 256)
+        self.assertEqual(request_json["reasoning"], {"effort": "none"})
         self.assertAlmostEqual(timeout, 20, places=3)
         self.assertTrue(result["ok"])
         self.assertFalse(result["source_sent"])
@@ -951,10 +1046,14 @@ class ProviderConfigTests(unittest.TestCase):
         self.assertNotEqual(first["consent_sha256"], second["consent_sha256"])
 
 
-    def test_unpriced_provider_cannot_claim_a_usd_cap(self):
+    def test_unpriced_provider_ignores_legacy_usd_cap_without_stopping_review(self):
         provider = agent.ProviderConfig("https://api.openai.com/v1", "unpriced-model", "secret")
-        with self.assertRaisesRegex(ValueError, "supported rate card"):
-            agent.audit_task_consent_preview({"plan_sha256": "a" * 64, "source": {"repository": "openharmony/demo", "commit": "b" * 40, "git_tree": "c" * 40}}, "d" * 64, ["."], 1, "e" * 32, provider, max_cost_usd="0.01")
+        preview = agent.audit_task_consent_preview({"plan_sha256": "a" * 64, "source": {"repository": "openharmony/demo", "commit": "b" * 40, "git_tree": "c" * 40}}, "d" * 64, ["."], 1, "e" * 32, provider, max_cost_usd="0.01")
+        self.assertTrue(preview["eligible"])
+        self.assertEqual(preview["cost_budget"]["status"], "unbounded_local_usage")
+        self.assertFalse(preview["cost_budget"]["hard_spend_cap"])
+        self.assertEqual(preview["cost_budget"]["local_cumulative_usd_budget"], "none")
+        self.assertFalse(preview["platform_cost_budget_enforced"])
 
 
 class AgentExecutionTests(unittest.TestCase):
@@ -3049,7 +3148,7 @@ class AgentRouteTests(unittest.TestCase):
                 self.assertIn("max_total_input_tokens", preview["budgets"])
                 self.assertIn("timeout_seconds", preview["budgets"])
                 self.assertNotIn("tool-agent", preview["stage_disclosure"])
-                self.assertIn("本地累计 Token 预算生效", preview["stage_disclosure"])
+                self.assertIn("单轮模型研判发送一次结构化请求", preview["stage_disclosure"])
                 self.assertNotIn("test-secret", json.dumps(preview))
                 stale = client.post("/api/v1/operations/agent-investigations", headers={
                     "x-ohscanner-client": "workbench-v1"},
@@ -3175,10 +3274,11 @@ class AgentRouteTests(unittest.TestCase):
                     headers=headers, json={**payload, "mode": "tool_agent"})
                 self.assertEqual(tool_preview_response.status_code, 200, tool_preview_response.text)
                 tool_preview = tool_preview_response.json()
-                self.assertEqual(tool_preview["aggregate_budget"]["max_validation_repair_attempts_per_candidate"], 2)
-                self.assertEqual(tool_preview["aggregate_budget"]["max_total_model_calls"], 18)
+                self.assertIsNone(tool_preview["aggregate_budget"]["max_validation_repair_attempts_per_candidate"])
+                self.assertIsNone(tool_preview["aggregate_budget"]["max_total_model_calls"])
                 self.assertEqual(tool_preview["aggregate_budget"]["max_skeptic_requests_per_candidate"], 1)
-                self.assertEqual(tool_preview["aggregate_budget"]["local_cumulative_cost_budget"], "bounded")
+                self.assertEqual(tool_preview["aggregate_budget"]["local_cumulative_cost_budget"], "none")
+                self.assertTrue(tool_preview["aggregate_budget"]["tool_agent_continuous"])
                 self.assertTrue(any("Skeptic" in item
                                     for item in tool_preview["disclosure"]))
                 stale = client.post("/api/v1/operations/agent-investigations/batch",
@@ -3268,9 +3368,9 @@ class AgentRouteTests(unittest.TestCase):
                 self.assertEqual(preview_response.status_code, 200, preview_response.text)
                 preview = preview_response.json()
                 self.assertEqual([arm["mode"] for arm in preview["arms"]], ["single_shot", "tool_agent"])
-                self.assertGreater(preview["aggregate_budget"]["tool_agent_max_total_model_calls"], 0)
-                self.assertEqual(preview["aggregate_budget"]["tool_agent_local_cumulative_token_budget"], "bounded")
-                self.assertEqual(preview["aggregate_budget"]["tool_agent_max_validation_repair_attempts"], 2)
+                self.assertIsNone(preview["aggregate_budget"]["tool_agent_max_total_model_calls"])
+                self.assertEqual(preview["aggregate_budget"]["tool_agent_local_cumulative_token_budget"], "none")
+                self.assertEqual(preview["aggregate_budget"]["tool_agent_max_validation_repair_attempts"], None)
                 self.assertEqual(preview["aggregate_budget"]["tool_agent_max_skeptic_requests"], 1)
                 stale = client.post("/api/v1/operations/agent-investigations/paired",
                     headers=headers, json={**pair_payload, "max_output_tokens": 1201,
@@ -3285,6 +3385,10 @@ class AgentRouteTests(unittest.TestCase):
                 self.assertEqual(len(items), 2)
                 self.assertEqual({item["spec"]["experiment_id"] for item in items}, {"paired-run-1"})
                 self.assertEqual({item["spec"]["mode"] for item in items}, {"single_shot", "tool_agent"})
+                r2_spec = next(item["spec"] for item in items if item["spec"]["mode"] == "tool_agent")
+                self.assertTrue(r2_spec["no_cumulative_token_ceiling"])
+                r1_spec = next(item["spec"] for item in items if item["spec"]["mode"] == "single_shot")
+                self.assertFalse(r1_spec["no_cumulative_token_ceiling"])
                 self.assertEqual({item["spec"]["pair_id"] for item in items}, {queued.json()["pair_id"]})
                 self.assertEqual({item["spec"]["candidate_id"] for item in items}, {"candidate-pair"})
                 for item in items:
@@ -4144,6 +4248,85 @@ class AgentRouteTests(unittest.TestCase):
         self.assertEqual(invalid_result["agent_assessment"]["assessment"], "unknown")
         self.assertEqual(invalid_result["agent_assessment"]["supported_claims"], [])
 
+    def test_uncapped_single_shot_repairs_server_rejected_json_without_tools(self):
+        root = Path(tempfile.mkdtemp())
+        job = {"id": "job-r1-repair", "repository_id": "repo-1", "status": "completed",
+               "report_sha256": "b" * 64}
+        candidate = {"id": "candidate-r1-repair", "file": "src/sample.cpp", "line": 1,
+            "source_sha256": "a" * 64, "symbol": "run", "detector_id": "test.rule",
+            "detector_version": "0.1", "rule_id": "TEST-01",
+            "evidence": {"analysis_status": "partial", "obligations": [
+                {"kind": "callee_and_policy", "description": "Review the fixed source behavior.",
+                 "status": "unknown"}]}}
+        report = {"repository": "openharmony/sample", "commit": "c" * 40,
+                  "git_tree": "d" * 40, "snapshot_sha256": "e" * 64}
+        source = {"sha256": "a" * 64, "blob": "f" * 40,
+                  "text": "int run() { return 1; }\n"}
+        auth_sha, batch_id = "d" * 64, "4" * 32
+
+        class FakeStore:
+            def job(self, key): return job
+            def repository(self, key): return {"id": "repo-1", "path": str(root)}
+            def triage_authorization(self, key):
+                return {"revoked": False, "consent_sha256": auth_sha}
+
+        class FakeOps:
+            def __init__(self): self.events = []
+            def get(self, key): return {"cancel_requested": False}
+            def event(self, *args): self.events.append(args)
+            def triage_batches_for_job(self, key, report_sha256=None):
+                return [{"id": batch_id, "authorization_sha256": auth_sha}]
+
+        final = {"summary": "The available source evidence remains inconclusive.",
+            "assessment": "unknown", "supported_claims": [],
+            "obligation_reviews": [{"obligation_index": 0,
+                "disposition": "unresolved", "citations": []}],
+            "unsupported_claims": [], "unknowns": ["Reachability and policy remain unknown."],
+            "next_steps": ["Human review of the fixed source."]}
+
+        class RepairingClient:
+            def __init__(self): self.payloads = []
+            def create(self, payload):
+                self.payloads.append(payload)
+                text = '{"assessment":"unknown"}' if len(self.payloads) == 1 else json.dumps(final)
+                return {"status": "completed", "output": [{"type": "message", "content": [
+                    {"type": "output_text", "text": text}]}],
+                    "usage": {"input_tokens": 600, "output_tokens": 100, "total_tokens": 700}}
+
+        task = {"id": "task-r1-repair", "spec": {
+            "job_id": job["id"], "candidate_id": candidate["id"],
+            "report_sha256": job["report_sha256"], "mode": "single_shot",
+            "no_cumulative_token_ceiling": True, "smart_triage_batch_id": batch_id,
+            "triage_authorization_sha256": auth_sha, "source_submission_approved": True,
+            "max_output_tokens": 3000, "max_request_context_tokens": 65536,
+            "max_request_context_bytes": agent.MAX_SMART_REQUEST_CONTEXT_BYTES,
+            "request_timeout_seconds": 45, "max_provider_retries": 0,
+            "provider_fingerprint": "unused", "prompt_version": agent.PROMPT_VERSION,
+            "tool_policy_version": agent.TOOL_POLICY_VERSION}}
+        store, ops, client = FakeStore(), FakeOps(), RepairingClient()
+        try:
+            with patch.dict(os.environ, {"OHSCANNER_LLM_BASE_URL": "https://api.deepseek.com",
+                                         "OHSCANNER_LLM_MODEL": "deepseek-v4-pro",
+                                         "OHSCANNER_LLM_API_KEY": "test-secret"}, clear=False):
+                config = agent.ProviderConfig.from_env()
+                task["spec"]["provider_fingerprint"] = config.fingerprint
+                bind_test_consent(task, store, report, candidate, source)
+                with patch.object(agent.service, "read_report", return_value=report), patch.object(agent.service, "finding", return_value=candidate), patch.object(agent.service, "source", return_value=source):
+                    result = agent.execute_agent(None, store, ops, task, client=client)
+            self.assertEqual(len(client.payloads), 2)
+            self.assertTrue(all("tools" not in payload for payload in client.payloads))
+            self.assertEqual(result["structured_answer_validation"], "accepted")
+            self.assertEqual(result["validation_repair_attempts"], 1)
+            self.assertEqual(result["agent_assessment"]["assessment"], "unknown")
+            self.assertEqual(result["vulnerability_state"], "candidate")
+            self.assertEqual(result["validated_vulnerability"], 0)
+            model_calls = [event for event in ops.events if event[1] == "agent_model_call"]
+            self.assertEqual(len(model_calls), 2)
+            self.assertTrue(any(event[1] == "agent_final_rejected" for event in ops.events))
+        finally:
+            import shutil
+            shutil.rmtree(root)
+
 
 if __name__ == "__main__":
     unittest.main()
@@ -4824,12 +5007,12 @@ class AgentToolBudgetFallbackTests(unittest.TestCase):
 
 
 class AuthorizedSmartAuditUncappedUsageTests(unittest.TestCase):
-    def test_authorized_smart_review_stops_at_aggregate_token_limits(self):
+    def test_authorized_smart_review_continues_past_legacy_aggregate_token_limits(self):
         root = Path(tempfile.mkdtemp())
         job = {"id": "job-uncapped", "repository_id": "repo-1", "status": "completed",
                "report_sha256": "b" * 64}
         candidate = {"id": "candidate-uncapped", "file": "src/sample.cpp", "line": 1,
-            "source_sha256": "a" * 64, "symbol": "run", "detector_id": "test.rule",
+            "source_sha256": "a" * 64, "symbol": "x" * 30000, "detector_id": "test.rule",
             "detector_version": "0.1", "rule_id": "TEST-01",
             "evidence": {"analysis_status": "partial", "obligations": [
                 {"kind": "callee_and_policy", "description": "Review the fixed source behavior.",
@@ -4858,7 +5041,10 @@ class AuthorizedSmartAuditUncappedUsageTests(unittest.TestCase):
             def create(self, payload):
                 self.payloads.append(payload)
                 call_index = len(self.payloads)
-                usage = {"input_tokens": 13000, "output_tokens": min(1500, payload.get("max_output_tokens", 1500)), "total_tokens": 14500}
+                input_tokens = len(json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8"))
+                output_tokens = min(3000, payload.get("max_output_tokens", 3000))
+                usage = {"input_tokens": input_tokens, "output_tokens": output_tokens,
+                         "total_tokens": input_tokens + output_tokens}
                 if "tools" in payload and call_index <= 5:
                     return {"status": "completed", "output": [{"type": "function_call",
                         "name": "lookup_symbol_in_fixed_commit",
@@ -4882,7 +5068,7 @@ class AuthorizedSmartAuditUncappedUsageTests(unittest.TestCase):
             "report_sha256": job["report_sha256"], "mode": "tool_agent",
             "no_cumulative_token_ceiling": True, "smart_triage_batch_id": batch_id,
             "triage_authorization_sha256": auth_sha, "source_submission_approved": True,
-            "max_output_tokens": 2000, "max_request_context_tokens": 65536,
+            "max_output_tokens": 3000, "max_request_context_tokens": 65536,
             "max_request_context_bytes": agent.MAX_SMART_REQUEST_CONTEXT_BYTES,
             "request_timeout_seconds": 45, "max_provider_retries": 0,
             "provider_fingerprint": "unused", "prompt_version": agent.PROMPT_VERSION,
@@ -4902,9 +5088,12 @@ class AuthorizedSmartAuditUncappedUsageTests(unittest.TestCase):
                          "read_evidence_obligations": lambda args: {"obligations": candidate["evidence"]["obligations"], "obligations_truncated": False},
                          "lookup_symbol_in_fixed_commit": lambda args: {"matches": []}}):
                     result = agent.execute_agent(None, store, ops, task, client=client)
-            self.assertLess(len(client.payloads), 7)
-            self.assertLessEqual(result["model_usage"]["output_tokens"], result["model_usage"]["output_budget_tokens"])
-            self.assertIsInstance(result["model_usage"]["max_model_calls"], int)
+            self.assertGreater(len(client.payloads), 1)
+            self.assertGreater(result["model_usage"]["input_tokens"], 128000)
+            self.assertGreater(result["model_usage"]["output_tokens"], 8000)
+            self.assertIsNone(result["model_usage"]["input_budget_tokens"])
+            self.assertIsNone(result["model_usage"]["output_budget_tokens"])
+            self.assertIsNone(result["model_usage"]["max_model_calls"])
             self.assertEqual(result["status"], "completed_with_limitations")
             self.assertEqual(result["agent_assessment"]["assessment"], "unknown")
             self.assertEqual(result["vulnerability_state"], "candidate")

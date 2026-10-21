@@ -70,6 +70,13 @@ class RepositoryImportTests(unittest.TestCase):
                      "clone_url": "https://gitcode.com/openharmony/fixture.git",
                      "include_paths": ["."], "detector_ids": None, "timeout_seconds": 30,
                      "scan_timeout_seconds": 30, "memory_mb": 256, "estimated_size_kib": 64}
+        self.make_spec_patch = patch.object(
+            repository_import.service,
+            "make_spec",
+            return_value={"commit": self.commit, "git_tree": self.tree, "timeout_seconds": 30},
+        )
+        self.make_spec_mock = self.make_spec_patch.start()
+        self.addCleanup(self.make_spec_patch.stop)
 
     def fake_fetch(self, stage, slug, branch, commit, timeout, **_limits):
         subprocess.run(["git", "clone", "--no-checkout", "--no-recurse-submodules", "--depth=1",
@@ -79,7 +86,7 @@ class RepositoryImportTests(unittest.TestCase):
 
     def run_import(self, progress=None):
         return repository_import.import_and_queue_scan(self.settings, self.store, self.spec,
-                                                      progress=progress)
+                                                        progress=progress)
 
     def test_git_progress_output_is_normalized_for_the_operation_api(self):
         parsed = repository_import._parse_git_progress(
@@ -179,6 +186,7 @@ class RepositoryImportTests(unittest.TestCase):
         self.assertEqual(count, 1)
         self.assertEqual(len(results), 2)
         self.assertEqual({item["cache"] for item in results}, {"downloaded", "hit"})
+        self.assertIs(repository_import.service.make_spec, self.make_spec_mock)
 
     def test_disk_reserve_failure_is_fail_closed_before_fetch(self):
         settings = Settings(self.data, (), repository_cache_roots=(self.cache,),

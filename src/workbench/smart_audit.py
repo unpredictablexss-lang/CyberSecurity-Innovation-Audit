@@ -848,8 +848,17 @@ def enqueue_authorized_triage(settings, store, ops, job):
             "r2_status": "not_requested",
         })
     preview_spec = {
-        **agent.bounded_agent_spec({"mode": "single_shot"}),
-        "provider_request_timeout_seconds": 45, "max_provider_retries": 1,
+        **agent.bounded_agent_spec({"mode": "single_shot",
+                                    "max_output_tokens": 3000,
+                                    "no_cumulative_token_ceiling": True}),
+        "mode": "single_shot",
+        "max_output_tokens": 3000,
+        "max_request_context_tokens": 65536,
+        "max_request_context_bytes": agent.MAX_SMART_REQUEST_CONTEXT_BYTES,
+        "request_timeout_seconds": 45,
+        "provider_request_timeout_seconds": 45,
+        "max_provider_retries": 1,
+        "no_cumulative_token_ceiling": True,
         "continuous_investigation": False,
         "consent_nonce": snapshot.get("consent_nonce"),
     }
