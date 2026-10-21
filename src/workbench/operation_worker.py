@@ -38,7 +38,10 @@ class OperationWorker:
                     env={**worker_child_environment(os.environ,
                             allow_agent_provider=(not self.validation and task.get("kind") == "agent_investigation")),
                          "OHSCANNER_DATA": str(self.settings.data_dir),
-                         "OHSCANNER_TARGET_ROOTS": os.pathsep.join(map(str, self.settings.target_roots))})
+                         "OHSCANNER_TARGET_ROOTS": os.pathsep.join(map(str, self.settings.target_roots)),
+                         "OHSCANNER_REPOSITORY_CACHE_ROOTS": os.pathsep.join(map(str, self.settings.repository_cache_roots)),
+                         "OHSCANNER_REPOSITORY_CACHE_MAX_BYTES": str(self.settings.repository_cache_max_bytes),
+                         "OHSCANNER_REPOSITORY_CACHE_MIN_FREE_BYTES": str(self.settings.repository_cache_min_free_bytes)})
                 while proc.poll() is None:
                     if self.ops.get(task["id"])["cancel_requested"]:
                         self.ops.cancel(task["id"])

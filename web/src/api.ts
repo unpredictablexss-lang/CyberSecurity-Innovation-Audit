@@ -48,6 +48,15 @@ export async function api(path: string, body?: unknown): Promise<any> {
   }
   return r.json();
 }
+
+export async function apiGet(path: string): Promise<any> {
+  const r = await fetch("/api/v1" + path, { headers: { Accept: "application/json" } });
+  if (!r.ok) {
+    const e = await r.json().catch(() => ({ detail: r.statusText }));
+    throw new Error(typeof e.detail === "string" ? e.detail : JSON.stringify(e.detail));
+  }
+  return r.json();
+}
 export const artifact = (id: string, kind: string) =>
   "/api/v1/scans/" + id + "/artifacts/" + kind;
 

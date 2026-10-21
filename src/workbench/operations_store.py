@@ -219,7 +219,7 @@ class Operations:
         return self.store.root / "operations" / key
 
     def create(self, kind, spec):
-        if kind not in {"source_sync", "revision_range", "version_matrix", "branch_comparison", "validation", "investigation", "candidate_review_batch", "agent_investigation"}:
+        if kind not in {"source_sync", "repository_import_scan", "revision_range", "version_matrix", "branch_comparison", "validation", "investigation", "candidate_review_batch", "agent_investigation"}:
             raise ValueError("unknown operation kind")
         key = uuid.uuid4().hex
         with self.store.connect() as db:
@@ -239,6 +239,11 @@ class Operations:
                     existing_spec = json.loads(row["spec"])
                     if existing_spec.get("source_consent_sha256") == spec["source_consent_sha256"]:
                         return self.row(row)
+            if kind == "repository_import_scan":
+                prior = db.execute("SELECT id FROM operations WHERE kind=? AND spec=? AND status IN ('queued','running') ORDER BY created_at DESC LIMIT 1",
+                                   (kind, json.dumps(spec, sort_keys=True))).fetchone()
+                if prior:
+                    return self.row(db.execute("SELECT * FROM operations WHERE id=?", (prior[0],)).fetchone())
             if kind != "candidate_review_batch" and db.execute("SELECT count(*) FROM operations WHERE status IN ('queued','running') AND kind!='candidate_review_batch'").fetchone()[0] >= 100:
                 raise ValueError("operation queue full")
             db.execute("INSERT INTO operations(id,kind,spec,status,created_at) VALUES(?,?,?,?,?)",

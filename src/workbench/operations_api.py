@@ -16,6 +16,9 @@ from .operation_limits import MAX_DETECTOR_IDS
 from .store import now
 from . import service
 from .agent_guidance import recommend_investigation_route
+from .source_catalog import (CatalogUnavailable, repository_catalog as public_repository_catalog,
+                             repository_preview, validate_commit, validate_branch,
+                             validate_preview)
 
 
 _MARKDOWN_INLINE_SPECIAL_CHARS = frozenset(chr(92) + "*_{}[]()#+-.!|<>~" + chr(96))
@@ -75,6 +78,22 @@ class SyncRequest(Strict):
     repository: str = Field(pattern=r"^openharmony/[A-Za-z0-9_-]{1,100}$")
     url: str = Field(min_length=16, max_length=300)
     timeout_seconds: int = Field(default=900, ge=10, le=3600)
+
+
+class OfficialRepositoryPreviewRequest(Strict):
+    slug: str = Field(pattern=r"^[A-Za-z0-9_-]{1,100}$")
+
+
+class OfficialRepositoryImportRequest(Strict):
+    slug: str = Field(pattern=r"^[A-Za-z0-9_-]{1,100}$")
+    branch: str = Field(min_length=1, max_length=200)
+    commit: str = Field(pattern=r"^[0-9a-f]{40}$")
+    preview_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    include_paths: list[str] = Field(default_factory=lambda: ["."], min_length=1, max_length=100)
+    detector_ids: list[str] | None = Field(default=None, max_length=MAX_DETECTOR_IDS)
+    timeout_seconds: int = Field(default=600, ge=30, le=3600)
+    memory_mb: int = Field(default=2048, ge=256, le=8192)
+    import_timeout_seconds: int = Field(default=1800, ge=30, le=3600)
 
 
 class EndpointTriageApproval(Strict):
@@ -788,6 +807,44 @@ def install_routes(app: FastAPI, settings, store):
             raise ValueError("repository URL path must match the approved repository name")
         return ops.create("source_sync", {"name": body.repository, "url": url,
                                           "timeout_seconds": body.timeout_seconds})
+
+    @router.get("/repositories/official-catalog")
+    def official_repository_catalog(q: str = "", page: int = 1, per_page: int = 50,
+                                    refresh: bool = False):
+        try:
+            return public_repository_catalog(settings, query=q, page=page,
+                                             per_page=per_page, refresh=refresh)
+        except CatalogUnavailable as exc:
+            raise HTTPException(status_code=503, detail=str(exc)) from None
+
+    @router.post("/repositories/official-catalog/preview")
+    def official_repository_preview(body: OfficialRepositoryPreviewRequest):
+        try:
+            return repository_preview(settings, body.slug)
+        except CatalogUnavailable as exc:
+            raise HTTPException(status_code=503, detail=str(exc)) from None
+
+    @router.post("/operations/repository-import-scans", status_code=201)
+    def import_repository_and_scan(body: OfficialRepositoryImportRequest):
+        branch = validate_branch(body.branch)
+        commit = validate_commit(body.commit)
+        try:
+            preview = validate_preview(settings, body.slug, branch, commit, body.preview_sha256)
+        except CatalogUnavailable as exc:
+            raise HTTPException(status_code=503, detail=str(exc)) from None
+        from .source_catalog import approved_clone_url
+        spec = {
+            "slug": body.slug, "name": preview["name"], "branch": branch,
+            "commit": commit, "preview_sha256": body.preview_sha256,
+            "catalog_sha256": preview.get("catalog_sha256"),
+            "clone_url": approved_clone_url(body.slug),
+            "estimated_size_kib": preview.get("size_kib"),
+            "include_paths": body.include_paths, "detector_ids": body.detector_ids,
+            "timeout_seconds": body.import_timeout_seconds,
+            "scan_timeout_seconds": body.timeout_seconds, "memory_mb": body.memory_mb,
+            "audit_mode": "static_only",
+        }
+        return ops.create("repository_import_scan", spec)
 
     @router.post("/operations/intelligent-previews")
     def intelligent_operation_preview(body: IntelligentOperationPreviewRequest):

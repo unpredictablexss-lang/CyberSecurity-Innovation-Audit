@@ -183,6 +183,8 @@ def create_app(settings=None):
                 "detector_admission": True,
                 "operations_framework": True,
                 "source_sync": True,
+                "online_repository_catalog": True,
+                "repository_import_scan": True,
                 "revision_range": True,
                 "read_only_investigation": True,
                 "manual_review": True,

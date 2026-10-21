@@ -274,10 +274,14 @@ def investigation(settings, store, spec):
 
 def execute(settings, store, ops, task):
     spec, kind = task["spec"], task["kind"]
+    if kind == "repository_import_scan":
+        from .repository_import import import_and_queue_scan
+        ops.event(task["id"], "repository_import", "Importing the catalog-selected immutable revision and queueing a static scan")
+        return import_and_queue_scan(settings, store, spec)
     if kind == "source_sync":
         url = approved_url(spec["url"])
-        base = (settings.data_dir / "repo-cache").resolve()
-        base.mkdir(parents=True, exist_ok=True)
+        from .repository_import import _choose_root, git_environment
+        base = _choose_root(settings)
         target = base / spec["name"].split("/")[1]
         if target.is_symlink() or target.resolve().parent != base:
             raise ValueError("unsafe repository cache path")
@@ -286,16 +290,14 @@ def execute(settings, store, ops, task):
         import fcntl
         with (lockdir / (target.name + ".lock")).open("a") as lock:
             fcntl.flock(lock, fcntl.LOCK_EX)
-            command = ["git", "-c", "core.hooksPath=/dev/null", "-c", "protocol.file.allow=never",
+            command = ["git", "-c", "core.hooksPath=/dev/null", "-c", "http.followRedirects=false", "-c", "protocol.file.allow=never",
                        "-c", "protocol.ext.allow=never", "-c", "credential.helper="]
             if target.exists():
                 service.check_repository(settings, str(target))
                 command += ["-C", str(target), "fetch", "--prune", "--tags", url, "+refs/heads/*:refs/remotes/origin/*"]
             else:
-                command += ["clone", "--no-checkout", "--", url, str(target)]
-            env = {**os.environ, "GIT_TERMINAL_PROMPT": "0", "GIT_CONFIG_NOSYSTEM": "1",
-                   "GIT_CONFIG_GLOBAL": "/dev/null", "GIT_CONFIG_SYSTEM": "/dev/null",
-                   "GIT_ALLOW_PROTOCOL": "https"}
+                command += ["clone", "--no-checkout", "--no-recurse-submodules", "--", url, str(target)]
+            env = git_environment()
             ops.event(task["id"], "git_sync", "Explicit approved clone/fetch, no checkout/build")
             subprocess.run(command, env=env, check=True, timeout=spec["timeout_seconds"])
         existing = next((r for r in store.repositories() if r["path"] == str(target)), None)

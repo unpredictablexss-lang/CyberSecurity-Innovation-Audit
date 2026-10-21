@@ -15,9 +15,10 @@ import {
   Typography,
   message,
 } from "antd";
-import { api, apiDelete } from "../api";
+import { api, apiDelete, apiGet } from "../api";
 import { Hash, Header } from "../components";
 import { canUseCatalog, canUseVerifiedRepository, filterManagedRepositories } from "../features/workbench/repositoryState.js";
+import { canPreviewOfficialRepository, pinnedRepositoryImportRequest } from "../features/workbench/onlineRepository.js";
 const { Text } = Typography;
 
 export default function Repositories({
@@ -47,6 +48,13 @@ export default function Repositories({
   const [addingRoot, setAddingRoot] = useState(false);
   const [removingRoot, setRemovingRoot] = useState<string | null>(null);
   const [repositorySearch, setRepositorySearch] = useState("");
+  const [onlineCatalog, setOnlineCatalog] = useState<any>(null);
+  const [onlineQuery, setOnlineQuery] = useState("");
+  const [onlineLoading, setOnlineLoading] = useState(false);
+  const [onlineError, setOnlineError] = useState("");
+  const [onlinePreview, setOnlinePreview] = useState<any>(null);
+  const [onlineImportBusy, setOnlineImportBusy] = useState(false);
+  const [onlineOperation, setOnlineOperation] = useState<any>(null);
 
   const loadCatalog = async () => {
     setCatalogLoading(true);
@@ -67,6 +75,52 @@ export default function Repositories({
     }
   };
   useEffect(() => { void loadCatalog(); }, []);
+
+  const loadOnlineCatalog = async (options: { page?: number; refresh?: boolean; query?: string } = {}) => {
+    setOnlineLoading(true);
+    setOnlineError("");
+    try {
+      const params = new URLSearchParams({
+        q: options.query ?? onlineQuery,
+        page: String(options.page ?? onlineCatalog?.page ?? 1),
+        per_page: "30",
+        refresh: String(options.refresh ?? false),
+      });
+      setOnlineCatalog(await apiGet("/repositories/official-catalog?" + params.toString()));
+    } catch (reason) {
+      setOnlineError(String(reason));
+    } finally {
+      setOnlineLoading(false);
+    }
+  };
+  useEffect(() => { void loadOnlineCatalog(); }, []);
+
+  const previewOnlineRepository = async (slug: string) => {
+    setOnlineError("");
+    try {
+      setOnlinePreview(await api("/repositories/official-catalog/preview", { slug }));
+    } catch (reason) {
+      setOnlineError(String(reason));
+    }
+  };
+
+  const importAndScanOnlineRepository = async () => {
+    if (!onlinePreview) return;
+    setOnlineImportBusy(true);
+    setOnlineError("");
+    try {
+      const operation = await api("/operations/repository-import-scans", {
+        ...pinnedRepositoryImportRequest(onlinePreview),
+      });
+      setOnlineOperation(operation);
+      setOnlinePreview(null);
+      message.success("已创建持久化任务：固定版本下载完成后会自动排入静态扫描");
+    } catch (reason) {
+      setOnlineError(String(reason));
+    } finally {
+      setOnlineImportBusy(false);
+    }
+  };
 
   const catalogById = new Map(catalog.map((item) => [item.id, item]));
   const visibleRepositories = filterManagedRepositories(managedRepos, catalog, repositorySearch);
@@ -132,6 +186,35 @@ export default function Repositories({
         title="仓库与源码管理"
         description="从服务端已批准的源码根目录发现仓库；审计流程只选择仓库名称。"
       />}
+      <Card className="section-gap" title="OpenHarmony 在线仓库目录" extra={<Button loading={onlineLoading} onClick={() => void loadOnlineCatalog({ refresh: true })}>刷新目录</Button>}>
+        <Alert type="info" showIcon
+          message="搜索 GitCode 上公开列出的 OpenHarmony 代码仓库"
+          description="这是 GitCode 组织目录元数据，不能独立证明仓库身份。选择仓库后会先预览默认分支的完整 Commit；确认后固定该 Commit 下载并自动排入静态扫描，不执行检出脚本、构建或子模块获取。"
+        />
+        <Space className="section-gap" wrap>
+          <Input.Search allowClear value={onlineQuery} onChange={(event) => setOnlineQuery(event.target.value)}
+            onSearch={(value) => void loadOnlineCatalog({ page: 1, query: value })}
+            placeholder="搜索仓库名、描述或语言" style={{ width: 380, maxWidth: "100%" }} />
+          <Text type="secondary">{onlineCatalog ? `目录 ${onlineCatalog.total} 个匹配 / API 公示 ${onlineCatalog.catalog_total_count} 个代码仓库 · 更新于 ${new Date(onlineCatalog.catalog_updated_at).toLocaleString()}` : "正在加载公开目录…"}</Text>
+        </Space>
+        {onlineError && <Alert className="section-gap" type="error" showIcon message="在线仓库操作未完成" description={onlineError} />}
+        {onlineCatalog?.stale && <Alert className="section-gap" type="warning" showIcon message="当前目录缓存已过期" description={onlineCatalog.refresh_error || "刷新在线目录失败；请连接 GitCode 并刷新后再预览版本。"} />}
+        {onlineOperation && <Alert className="section-gap" type="success" showIcon
+          message="静态扫描任务已持久化排队"
+          description={<span>下载操作：<a href={`#/tasks/operations/${onlineOperation.id}`}>查看任务进度</a>。下载成功后会自动创建固定 Commit 的静态扫描；候选结果仍需复核。</span>}
+        />}
+        <Table className="section-gap" size="small" rowKey="slug" loading={onlineLoading}
+          dataSource={onlineCatalog?.items || []} pagination={{ current: onlineCatalog?.page || 1, pageSize: onlineCatalog?.per_page || 30, total: onlineCatalog?.total || 0, showSizeChanger: false, onChange: (page) => void loadOnlineCatalog({ page }) }}
+          locale={{ emptyText: onlineLoading ? "正在读取 GitCode 公开目录…" : onlineError ? "目录不可用，请检查网络后刷新" : "没有匹配仓库" }}
+          columns={[
+            { title: "仓库", dataIndex: "name", render: (value: string, row: any) => <Space direction="vertical" size={0}><Text strong>{value}</Text><Text type="secondary">{row.description || "暂无描述"}</Text><a href={row.web_url} target="_blank" rel="noreferrer">查看 GitCode 来源页面</a></Space> },
+            { title: "语言", dataIndex: "language", width: 100 },
+            { title: "默认分支", dataIndex: "default_branch", width: 160, render: (value: string, row: any) => <Space>{value}{row.fork && <Tag>Fork</Tag>}</Space> },
+            { title: "最近提交", dataIndex: "pushed_at", width: 180 },
+            { title: "操作", width: 120, render: (_: unknown, row: any) => <Button disabled={!canPreviewOfficialRepository({ loading: onlineLoading, stale: onlineCatalog?.stale, slug: row.slug })} onClick={() => void previewOnlineRepository(row.slug)}>预览固定版本</Button> },
+          ]}
+        />
+      </Card>
       <Card className="section-gap" title="受控本地源码根目录">
         <Alert type="warning" showIcon
           message="添加目录会允许 OHScanner 读取其中的本地 Git 仓库"
@@ -299,6 +382,29 @@ export default function Repositories({
             { title: "对象", dataIndex: "object", render: (value: string) => <Hash value={value} /> },
           ]}
         />
+      </Modal>
+      <Modal
+        open={onlinePreview !== null}
+        title={onlinePreview ? `准备静态扫描 · ${onlinePreview.name}` : "准备静态扫描"}
+        onCancel={() => setOnlinePreview(null)}
+        onOk={() => void importAndScanOnlineRepository()}
+        okText="固定此版本并开始"
+        cancelText="返回"
+        confirmLoading={onlineImportBusy}
+        width={760}
+      >
+        {onlinePreview && <>
+          <Alert type="warning" showIcon message="确认后将下载固定版本并自动创建静态扫描任务"
+            description="不会扫描可变分支。服务端会在下载后再次核对 Commit 和 Tree；目录来源是 GitCode 公开组织元数据，不代表独立身份认证。" />
+          <Typography.Paragraph className="section-gap">默认分支：<Text code>{onlinePreview.default_branch}</Text></Typography.Paragraph>
+          <Typography.Paragraph>Commit：<Text code copyable>{onlinePreview.commit}</Text></Typography.Paragraph>
+          <Typography.Paragraph>提交时间：{onlinePreview.commit_date || "目录未提供"}</Typography.Paragraph>
+          <Typography.Paragraph>提交说明：{onlinePreview.commit_message || "目录未提供"}</Typography.Paragraph>
+          <Typography.Paragraph>
+            目录预览：{onlinePreview.tree_preview?.length ? onlinePreview.tree_preview.map((entry: any) => entry.path).join("、") + (onlinePreview.tree_preview_truncated ? " …" : "") : "暂无可显示的目录项"}
+          </Typography.Paragraph>
+          <Typography.Paragraph type="secondary">{onlinePreview.tree_note}</Typography.Paragraph>
+        </>}
       </Modal>
     </>
   );
