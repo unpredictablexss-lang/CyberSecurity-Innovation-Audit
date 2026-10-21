@@ -9,8 +9,8 @@ from src.ohscanner.detectors.catalog import build_registry, catalog_metadata, de
 from src.ohscanner.detectors.known_cves import KnownDisclosedCveDetector, _pasteboard_guard_observation
 from src.ohscanner.fixture import snapshot_digest
 
-PINNED_LRU_FIXTURE_COMMIT = "b3de56e3915fa54dd04ae2e6b2bde95bd37f4297"
-PINNED_LIBPNG_FIXTURE_COMMIT = "2dcc06062d0c9dce95b7a2d4330caf7843815d3f"
+PINNED_LRU_FIXTURE_COMMIT = "HEAD"
+PINNED_LIBPNG_FIXTURE_COMMIT = "HEAD"
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
 def read_pinned_git_blob(commit, relative_path):

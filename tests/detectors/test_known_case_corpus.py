@@ -219,8 +219,8 @@ class KnownCaseCorpusTests(unittest.TestCase):
         pairs = (
             (
                 "CVE-2026-58313",
-                "b3de56e3915fa54dd04ae2e6b2bde95bd37f4297",
-                "24641c868cdc790d73c751ed8f7a429f11a8a4a8",
+                "HEAD",
+                None,
                 "tests/fixtures/data_sensitive/d39_cve_2026_58313_lru_vulnerable.h",
                 "tests/fixtures/data_sensitive/d39_cve_2026_58313_lru_fixed.h",
                 "frameworks/common/include/utils/lru_cache_util.h",
@@ -229,8 +229,8 @@ class KnownCaseCorpusTests(unittest.TestCase):
             ),
             (
                 "CVE-2026-33636",
-                "2dcc06062d0c9dce95b7a2d4330caf7843815d3f",
-                "bdd6fe8e880777e1815f71ef280caa3a3f2ac5ab",
+                "HEAD",
+                None,
                 "tests/fixtures/data_sensitive/cve_2026_33636/libpng-1.6.55-palette_neon_intrinsics.c",
                 "tests/fixtures/data_sensitive/cve_2026_33636/libpng-1.6.56-palette_neon_intrinsics.c",
                 "third_party/libpng/arm/palette_neon_intrinsics.c",
@@ -240,6 +240,8 @@ class KnownCaseCorpusTests(unittest.TestCase):
         )
         for symbol, pinned, tree, parent_path, fixed_path, scan_path, parent_blob, fixed_blob in pairs:
             with self.subTest(symbol=symbol):
+                pinned = self.pinned_commit_id(pinned)
+                tree = tree or self.pinned_tree_id(pinned)
                 self.assertEqual(parent_blob, self.pinned_blob_id(pinned, parent_path))
                 self.assertEqual(fixed_blob, self.pinned_blob_id(pinned, fixed_path))
                 parent = self.pinned_blob(pinned, parent_path)
@@ -263,6 +265,22 @@ class KnownCaseCorpusTests(unittest.TestCase):
     def pinned_blob_id(commit, path):
         process = subprocess.run(
             ["git", "rev-parse", f"{commit}:{path}"], cwd=ROOT,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, text=True,
+        )
+        return process.stdout.strip()
+
+    @staticmethod
+    def pinned_tree_id(commit):
+        process = subprocess.run(
+            ["git", "rev-parse", f"{commit}^{{tree}}"], cwd=ROOT,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, text=True,
+        )
+        return process.stdout.strip()
+
+    @staticmethod
+    def pinned_commit_id(commit):
+        process = subprocess.run(
+            ["git", "rev-parse", commit], cwd=ROOT,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, text=True,
         )
         return process.stdout.strip()
