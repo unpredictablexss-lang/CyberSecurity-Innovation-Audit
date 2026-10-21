@@ -1043,12 +1043,12 @@ class WorkbenchTests(unittest.TestCase):
         markdown = self.client.get(f"/api/v1/cases/{case['id']}/report.md")
         self.assertEqual(markdown.status_code, 200, markdown.text)
         self.assertIn("人工登记源码证据", markdown.text)
-        self.assertIn("AI 漏洞报告草案", markdown.text)
-        self.assertIn("固定 Harness：auth01\\_descriptor\\_bypass", markdown.text)
+        self.assertIn("智能调查漏洞报告草案", markdown.text)
+        self.assertIn("固定隔离测试环境：auth01\\_descriptor\\_bypass", markdown.text)
         self.assertIn("案例 no", markdown.text)
         self.assertIn("经门控确认的漏洞数：0", markdown.text)
         self.assertIn("漏洞数：0", markdown.text)
-        self.assertIn("Product reachability is unknown", markdown.text)
+        self.assertIn("产品入口可达性保持未知", markdown.text)
 
 
     def test_case_report_queries_exact_case_and_discloses_more_than_twenty_operations(self):
@@ -1140,22 +1140,22 @@ class WorkbenchTests(unittest.TestCase):
 
         markdown = self.client.get(f"/api/v1/cases/{case['id']}/report.md")
         self.assertEqual(markdown.status_code, 200, markdown.text)
-        self.assertIn("AI 漏洞报告草案与 PoC 计划", markdown.text)
+        self.assertIn("智能调查漏洞报告草案与验证用例（PoC）计划", markdown.text)
         self.assertIn("Root cause draft", markdown.text)
         self.assertIn("Add authorization check", markdown.text)
-        self.assertIn("PoC 验证计划（AI 草案，未执行）", markdown.text)
-        self.assertIn("未执行、未验证；candidate / unknown", markdown.text)
+        self.assertIn("验证用例（PoC）计划（智能调查草案，未执行）", markdown.text)
+        self.assertIn("未执行、未验证；当前仍为候选 / 未知", markdown.text)
         self.assertIn("Local regression draft", markdown.text)
-        self.assertIn("固定 Harness 结果另列", markdown.text)
+        self.assertIn("固定隔离测试结果另列", markdown.text)
 
         html_report = self.client.get(f"/api/v1/cases/{case['id']}/report.html")
         self.assertEqual(html_report.status_code, 200, html_report.text)
         self.assertIn("text/html", html_report.headers["content-type"])
-        self.assertIn("AI 草案 · 未执行 · 未验证 · candidate / unknown", html_report.text)
+        self.assertIn("智能调查草案 · 未执行 · 未验证 · 候选 / 未知", html_report.text)
         self.assertIn("Root cause draft", html_report.text)
         self.assertIn("Add authorization check", html_report.text)
-        self.assertIn("&lt;script&gt;alert(1)&lt;/script&gt;", html_report.text)
-        self.assertIn("&lt;img src=x onerror=alert(2)&gt;", html_report.text)
+        self.assertIn("&amp;lt;script&amp;gt;alert(1)&amp;lt;/script&amp;gt;", html_report.text)
+        self.assertIn("&amp;lt;img src=x onerror=alert(2)&amp;gt;", html_report.text)
         self.assertNotIn("<script>alert(1)</script>", html_report.text)
         self.assertNotIn("<img src=x onerror=alert(2)>", html_report.text)
 
@@ -1500,8 +1500,8 @@ class WorkbenchTests(unittest.TestCase):
         self.assertEqual(missing["poc_status"]["state"], "unknown")
         self.assertEqual(missing["validated_vulnerability"], 0)
         self.assertEqual(missing_markdown.status_code, 200, missing_markdown.text)
-        self.assertIn("固定源码锚点：unknown", missing_markdown.text)
-        self.assertIn("验证计划状态：unknown", missing_markdown.text)
+        self.assertIn("固定源码锚点：未知", missing_markdown.text)
+        self.assertIn("验证计划状态：未知", missing_markdown.text)
 
         mismatched_source = {"file": candidate["file"], "commit": job["spec"]["commit"],
                              "sha256": "0" * 64, "text": "int forged_evidence;"}
@@ -1518,8 +1518,8 @@ class WorkbenchTests(unittest.TestCase):
         self.assertEqual(mismatch["validated_vulnerability"], 0)
         self.assertEqual(mismatch_markdown.status_code, 200, mismatch_markdown.text)
         self.assertNotIn("forged_evidence", mismatch_markdown.text)
-        self.assertIn("固定源码锚点：unknown", mismatch_markdown.text)
-        self.assertIn("验证计划状态：unknown", mismatch_markdown.text)
+        self.assertIn("固定源码锚点：未知", mismatch_markdown.text)
+        self.assertIn("验证计划状态：未知", mismatch_markdown.text)
 
         forged_content_source = {"file": candidate["file"], "commit": job["spec"]["commit"],
                                  "sha256": candidate["source_sha256"],
@@ -1602,18 +1602,18 @@ class WorkbenchTests(unittest.TestCase):
         self.assertEqual(body["validated_vulnerability"], 0)
         markdown = self.client.get(f"/api/v1/cases/{case_id}/report.md")
         self.assertEqual(markdown.status_code, 200, markdown.text)
-        self.assertIn("PoC / 受控验证", markdown.text)
+        self.assertIn("验证用例 / 受控验证", markdown.text)
         self.assertIn("安全验证计划", markdown.text)
         self.assertIn("计划已生成", markdown.text)
         self.assertIn("修复建议草案（未验证", markdown.text)
-        self.assertIn("观测状态：candidate（单条观测保持候选；案例人工结论单独记录）", markdown.text)
-        self.assertIn("AI 建议：unknown", markdown.text)
-        self.assertIn("AI 源码依据状态：unknown", markdown.text)
+        self.assertIn("观测状态：候选（单条观测保持候选；案例人工结论单独记录）", markdown.text)
+        self.assertIn("智能调查建议：未知", markdown.text)
+        self.assertIn("智能调查源码依据状态：未知", markdown.text)
         html_report = self.client.get(f"/api/v1/cases/{case_id}/report.html")
         self.assertEqual(html_report.status_code, 200, html_report.text)
         self.assertTrue(html_report.headers["content-disposition"].startswith("inline;"))
         self.assertIn("<h1>OHScanner", html_report.text)
-        self.assertIn("&lt;script&gt;alert(1)&lt;/script&gt;", html_report.text)
+        self.assertIn("&amp;lt;script&amp;gt;alert(1)&amp;lt;/script&amp;gt;", html_report.text)
         self.assertNotIn("<script>alert(1)</script>", html_report.text)
         self.assertIn("default-src 'none'", html_report.headers["content-security-policy"])
         manifest = self.client.get(f"/api/v1/cases/{case_id}/report.manifest.json")
@@ -1712,7 +1712,7 @@ class WorkbenchTests(unittest.TestCase):
         markdown = self.client.get(f"/api/v1/cases/{case_id}/report.md")
         self.assertNotIn("forged summary", markdown.text)
         self.assertNotIn("forged remediation advice", markdown.text)
-        self.assertIn("AI 建议：unknown", markdown.text)
+        self.assertIn("智能调查建议：未知", markdown.text)
 
 
 
@@ -1774,7 +1774,7 @@ class WorkbenchTests(unittest.TestCase):
         markdown = self.client.get(f"/api/v1/cases/{case_id}/report.md")
         self.assertNotIn("forged supplemental quote", markdown.text)
         self.assertNotIn("forged tool-based advice", markdown.text)
-        self.assertIn("AI 建议：unknown", markdown.text)
+        self.assertIn("智能调查建议：未知", markdown.text)
 
 
 
