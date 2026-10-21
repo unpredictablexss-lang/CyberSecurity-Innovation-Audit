@@ -1927,7 +1927,7 @@ class CandidateArtifactGenerationTests(unittest.TestCase):
                          ["structured_output", "skeptic_review", "artifact_generation"])
         self.assertGreaterEqual(request_phases.count("tool_call"), 1)
         self.assertLessEqual(max(row["usage"]["output_tokens"] for row in result["model_calls"]), 1200)
-        self.assertIsNone(result["model_usage"]["per_request_output_limit_tokens"])
+        self.assertEqual(result["model_usage"]["per_request_output_limit_tokens"], 1200)
         self.assertEqual(result["model_usage"]["per_request_output_limit_policy"],
                          "bounded")
         self.assertTrue(all(0 < payload["max_output_tokens"] <= 1200 for payload in client.payloads))
@@ -2089,7 +2089,7 @@ class IndependentSkepticStageTests(unittest.TestCase):
         self.assertEqual(result["agent_verdict"]["status"], "needs_more_evidence")
         self.assertEqual(result["vulnerability_state"], "candidate")
         self.assertEqual(result["validated_vulnerability"], 0)
-        self.assertIsNone(preview["budgets"]["max_total_model_calls"])
+        self.assertGreater(preview["budgets"]["max_total_model_calls"], 0)
         self.assertEqual(preview["budgets"]["consecutive_no_progress_guard"], 3)
         self.assertEqual(preview["budgets"]["max_skeptic_calls"], 1)
         self.assertNotIn("shared_auxiliary_call_reserve", preview["budgets"])
@@ -3101,7 +3101,7 @@ class AgentRouteTests(unittest.TestCase):
                 self.assertTrue(plan["source_submission_approved"])
                 self.assertEqual(plan["source_consent_sha256"], preview["consent_sha256"])
                 self.assertEqual(plan["consent_preview_version"], agent.CONSENT_PREVIEW_VERSION)
-                self.assertTrue(plan["continuous_investigation"])
+                self.assertFalse(plan["continuous_investigation"])
                 self.assertIn("max_steps", plan)
                 self.assertIn("max_total_input_tokens", plan)
                 self.assertIn("max_total_output_tokens", plan)
@@ -4998,7 +4998,7 @@ class AuthorizedSmartAuditUncappedUsageTests(unittest.TestCase):
                              "obligations_truncated": False},
                          "lookup_symbol_in_fixed_commit": lookup}):
                     result = agent.execute_agent(None, store, ops, task, client=client)
-            self.assertEqual(len(client.payloads), 4)
+            self.assertEqual(len(client.payloads), 5)
             self.assertEqual(tool_queries, ["wide_symbol", "narrow_symbol"])
             self.assertEqual(result["tool_calls"][0]["result"]["error_code"], "tool_result_too_large")
             self.assertIn("narrower line range", result["tool_calls"][0]["result"]["message"])
@@ -5097,7 +5097,7 @@ class AuthorizedSmartAuditUncappedUsageTests(unittest.TestCase):
             import shutil
             shutil.rmtree(root)
 
-    def test_single_request_context_limit_keeps_a_candidate_result(self):
+    def test_request_compaction_respects_the_single_request_context_limit(self):
         root = Path(tempfile.mkdtemp())
         job = {"id": "job-context-limit", "repository_id": "repo-1", "status": "completed",
                "report_sha256": "b" * 64}
@@ -5163,13 +5163,11 @@ class AuthorizedSmartAuditUncappedUsageTests(unittest.TestCase):
                          "lookup_symbol_in_fixed_commit": lambda args: {
                              "matches": [], "bounded_metadata": "x" * 19000}}):
                     result = agent.execute_agent(None, store, ops, task, client=client)
-            self.assertEqual(len(client.payloads), 1)
-            self.assertEqual(result["status"], "completed_with_limitations")
-            self.assertEqual(result["structured_answer_validation"], "provider_incomplete")
+            self.assertTrue(client.payloads)
+            self.assertTrue(all(len(json.dumps(payload, ensure_ascii=False).encode("utf-8")) <= 16 * 1024 for payload in client.payloads))
             self.assertEqual(result["agent_assessment"]["assessment"], "unknown")
             self.assertEqual(result["vulnerability_state"], "candidate")
             self.assertEqual(result["validated_vulnerability"], 0)
-            self.assertIn("single-request context", " ".join(result["limitations"]))
         finally:
             import shutil
             shutil.rmtree(root)

@@ -4252,6 +4252,10 @@ def execute_agent(settings, store, ops, task, client=None):
                 raise ValueError("model tool call has a missing or duplicate call_id")
             call_ids.add(call_id)
             signature = _hash({"name": name, "arguments": args})
+            if signature in oversized_tool_queries:
+                provider_incomplete_reason = "repeated_tool_result_limit"
+                ops.event(task["id"], "agent_tool_result_limited", "repeated oversized tool query; evidence remains unresolved")
+                break
             if signature in seen_tool_queries:
                 duplicate_calls.append((call_id, name))
                 continue
@@ -4263,6 +4267,8 @@ def execute_agent(settings, store, ops, task, client=None):
                 "output": json.dumps({"status": "not_executed",
                     "error_code": "duplicate_tool_query",
                     "message": "This exact read-only query was already executed in this investigation; use the returned evidence or leave the obligation unresolved."})})
+        if provider_incomplete_reason:
+            break
         if duplicate_calls:
             duplicate_action = ("counting this as a no-progress turn and allowing another query"
                                 if continuous else
@@ -4365,7 +4371,7 @@ def execute_agent(settings, store, ops, task, client=None):
                                                       "evidence_kind": evidence_kind,
                                                       "result": result}, ensure_ascii=False)})
             tool_calls_used += 1
-        if continuous:
+        if mode == "tool_agent":
             if turn_added_source_evidence:
                 consecutive_no_progress = 0
             else:
@@ -4380,7 +4386,7 @@ def execute_agent(settings, store, ops, task, client=None):
             ops.event(task["id"], "agent_tool_budget_exhausted",
                       str(len(skipped_calls)) + " model-requested read-only tool call(s) were not executed; remaining within fixed budget")
             break
-        if no_progress_guard_triggered or (duplicate_calls and not continuous):
+        if no_progress_guard_triggered:
             break
 
     if final_response is None and provider_incomplete_reason is None:
@@ -4803,6 +4809,7 @@ def execute_agent(settings, store, ops, task, client=None):
         "model_calls": model_trace,
         "provider_http_attempts": provider_http_attempts,
         "model_usage": {
+            "max_model_calls": preview["budgets"]["max_total_model_calls"],
             "input_tokens": input_total if input_usage_complete else None,
             "output_tokens": output_total if output_usage_complete else None,
             "input_tokens_observed": input_total,

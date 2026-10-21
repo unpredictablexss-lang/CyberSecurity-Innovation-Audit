@@ -1989,7 +1989,7 @@ def install_routes(app: FastAPI, settings, store):
         # budgets for every explicitly authorized investigation. A single-shot
         # still makes exactly one request by its mode; a tool-agent continues
         # through bounded read-only tools until its terminal condition.
-        preview_spec["continuous_investigation"] = True
+        preview_spec["continuous_investigation"] = False
         preview_spec["provider_request_timeout_seconds"] = 45
         preview_spec["max_provider_retries"] = 1
         preview = consent_preview(settings, store, job, report, candidate, preview_spec, provider)
@@ -2065,7 +2065,7 @@ def install_routes(app: FastAPI, settings, store):
             "max_steps": body.max_steps, "max_total_input_tokens": body.max_total_input_tokens,
             "max_total_output_tokens": body.max_total_output_tokens, "timeout_seconds": body.timeout_seconds,
             "provider_request_timeout_seconds": 45, "max_provider_retries": 1,
-            "continuous_investigation": True,
+            "continuous_investigation": False,
             "source_submission_approved": True, "source_submission_approved_at": now(),
             "source_consent_sha256": preview["consent_sha256"], "consent_nonce": body.consent_nonce,
             "consent_preview_version": CONSENT_PREVIEW_VERSION,
@@ -2196,7 +2196,7 @@ def install_routes(app: FastAPI, settings, store):
                 "experiment_id": None, "mode": body.mode,
                 "max_output_tokens": body.max_output_tokens,
                 "provider_request_timeout_seconds": 45, "max_provider_retries": 1,
-                "continuous_investigation": True,
+                "continuous_investigation": False,
                 "source_submission_approved": True, "source_submission_approved_at": now(),
                 "source_consent_sha256": child_preview["consent_sha256"], "consent_nonce": body.consent_nonce,
                 "consent_preview_version": CONSENT_PREVIEW_VERSION,
@@ -2310,7 +2310,7 @@ def install_routes(app: FastAPI, settings, store):
                 "experiment_id": body.experiment_id, "mode": arm["mode"],
                 "max_output_tokens": body.max_output_tokens,
                 "provider_request_timeout_seconds": 45, "max_provider_retries": 1,
-                "continuous_investigation": True,
+                "continuous_investigation": False,
                 "source_submission_approved": True, "source_submission_approved_at": now(),
                 "source_consent_sha256": arm_preview["consent_sha256"], "consent_nonce": body.consent_nonce,
                 "consent_preview_version": CONSENT_PREVIEW_VERSION,
@@ -3242,6 +3242,10 @@ def install_routes(app: FastAPI, settings, store):
                 if spec.get("case_id") not in (None, case_id) or not linked:
                     continue
                 candidate = linked["candidate"]
+                legacy_case_record = case_bound and not spec.get("report_sha256")
+                if legacy_case_record:
+                    operations.append(operation)
+                    continue
                 if (spec.get("report_sha256") != linked["report_sha256"]
                         or spec.get("source_commit") != linked["commit"]
                         or spec.get("candidate_source_sha256") != candidate.get("source_sha256")):
@@ -3277,6 +3281,45 @@ def install_routes(app: FastAPI, settings, store):
                 "case_id": x["spec"].get("case_id"),
                 "job_id": x["spec"].get("job_id"),
                 "candidate_id": x["spec"].get("candidate_id")}
+            if x["kind"] == "validation":
+                harness_result = result.get("result") if isinstance(result.get("result"), dict) else {}
+                revisions = {}
+                for name, revision in (harness_result.get("revisions") or {}).items():
+                    if not isinstance(revision, dict):
+                        continue
+                    build = revision.get("build") if isinstance(revision.get("build"), dict) else {}
+                    replay = revision.get("replay") if isinstance(revision.get("replay"), dict) else {}
+                    replay_cases = []
+                    for case in replay.get("cases", []) if isinstance(replay.get("cases"), list) else []:
+                        if not isinstance(case, dict):
+                            continue
+                        replay_cases.append({key: case.get(key) for key in
+                            ("case_id", "role", "expected", "observed", "matches_expectation", "label")
+                            if key in case})
+                    revisions[name] = {
+                        "commit": revision.get("commit"), "state": revision.get("state"),
+                        "build": {key: build.get(key) for key in
+                                  ("compiler", "compiler_version", "sanitizers", "returncode") if key in build},
+                        "replay": {key: replay.get(key) for key in
+                                   ("label", "attempts", "triggered", "all_cases_match") if key in replay},
+                        "replay_cases": replay_cases,
+                        "expectations_met": revision.get("expectations_met", {}),
+                    }
+                summary["validation_evidence"] = {
+                    "harness_id": x.get("spec", {}).get("harness_id") or harness_result.get("harness"),
+                    "family": harness_result.get("family"),
+                    "target_repository": x.get("spec", {}).get("target_repository") or harness_result.get("repository"),
+                    "target_commit": x.get("spec", {}).get("target_commit"),
+                    "cutils_commit": x.get("spec", {}).get("cutils_commit"),
+                    "docker_exit_code": result.get("docker_exit_code"),
+                    "input_manifest_sha256": result.get("input_manifest_sha256"),
+                    "validation_command_sha256": result.get("validation_command_sha256"),
+                    "docker_log_sha256": result.get("docker_log_sha256"),
+                    "revisions": revisions,
+                    "patched_revision": result.get("patched_revision"),
+                    "limitations": result.get("limitations", harness_result.get("limitations", [])),
+                }
+
             if x["kind"] == "agent_investigation":
                 assessment = result.get("agent_assessment", {})
                 linked_job = store.job(linked["job_id"]) if linked else None
@@ -3570,6 +3613,29 @@ def install_routes(app: FastAPI, settings, store):
         rows += ["", "## 限制", "", *["- " + md(x) for x in data["limitations"]],
                  "", "经门控确认的漏洞数：" + md(data["validated_vulnerability"]) +
                  "（候选数不计入；模型建议不能单独确认）。"]
+        scope = data.get("operation_summaries") or {}
+        rows += ["", "## 操作范围", "展示 " + str(scope.get("included", len(data.get("operations", [])))) + " / " + str(scope.get("total", len(data.get("operations", [])))) + " 条", "经门控确认的漏洞数：" + str(data.get("validated_vulnerability", 0))]
+        rows += ["", "## 人工登记源码证据"]
+        for record in data.get("candidates", []):
+            for evidence in record.get("source_evidence", []):
+                rows.append("- " + md(evidence.get("file")) + ": " + md(evidence.get("note")))
+        rows += ["", "## Agent 建议", "## AI 修复与验证建议（未经验证）", "## AI 漏洞报告草案与 PoC 计划", "AI 草案不是已验证补丁，PoC 草案未执行。"]
+        for operation in data.get("operations", []):
+            triage = operation.get("agent_triage") or {}
+            for advice in triage.get("model_suggestions", []):
+                rows.append("- " + md(advice.get("text")))
+            for key in ("vulnerability_report", "poc_draft"):
+                draft = triage.get(key) or {}
+                rows.append("- " + md(key) + "：" + md(draft.get("status", "unknown")))
+                for field in ("title", "summary", "root_cause", "code"):
+                    if draft.get(field): rows.append(md(draft[field]))
+            evidence = operation.get("validation_evidence") or {}
+            if evidence:
+                rows.append("- 固定 Harness：" + md(evidence.get("harness_id")))
+                for revision in (evidence.get("revisions") or {}).values():
+                    for case in revision.get("replay_cases", []):
+                        rows.append("- 案例 " + md(case.get("case_id")))
+            for limitation in operation.get("limitations", []): rows.append("- " + md(limitation))
         return "\n".join(rows) + "\n"
 
 

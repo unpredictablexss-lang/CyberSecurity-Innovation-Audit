@@ -848,9 +848,9 @@ def enqueue_authorized_triage(settings, store, ops, job):
             "r2_status": "not_requested",
         })
     preview_spec = {
-        "mode": "single_shot", "max_output_tokens": None,
+        **agent.bounded_agent_spec({"mode": "single_shot"}),
         "provider_request_timeout_seconds": 45, "max_provider_retries": 1,
-        "continuous_investigation": True,
+        "continuous_investigation": False,
         "consent_nonce": snapshot.get("consent_nonce"),
     }
     if error:
@@ -1076,9 +1076,9 @@ def enqueue_authorized_r2_followups(settings, store, ops, batch_id):
     selected = eligible[:limit] if not auth_error else []
     selected_ids = {item[0]["id"] for item in selected}
     r2_preview_spec = {
-        "mode": "tool_agent", "max_output_tokens": None,
+        **agent.bounded_agent_spec({"mode": "tool_agent"}),
         "provider_request_timeout_seconds": 45, "max_provider_retries": 1,
-        "continuous_investigation": True,
+        "continuous_investigation": False,
         "include_paths": list(job.get("spec", {}).get("include_paths", [])),
         "consent_nonce": authorization["snapshot"].get("consent_nonce"),
     }
@@ -1128,7 +1128,7 @@ def enqueue_authorized_r2_followups(settings, store, ops, batch_id):
                 "r1_operation_id": r1_operation["id"],
                 "r1_result_sha256": r1_operation["result_sha256"],
                 "r2_unresolved_obligation_indices": unresolved,
-                "continuous_investigation": True,
+                "continuous_investigation": False,
                 "r2_reason": "critical/high severity with unresolved source-reviewable obligations after R1",
             })
             row.update({"state": "selected", "reason": "critical/high severity with unresolved source-reviewable obligations after R1"})

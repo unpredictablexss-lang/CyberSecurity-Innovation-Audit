@@ -58,7 +58,7 @@ def _provider_quota_failure(exc):
 
 def _commit_provider_quota_failure(ops, task, result):
     failure = result.get("_operation_error") if isinstance(result, dict) else None
-    if (_is_continuous_tool_agent(task)
+    if (task.get("kind") == "agent_investigation"
             and isinstance(failure, dict)
             and failure.get("code") == "provider_quota_exhausted"
             and isinstance(failure.get("message"), str)):
@@ -215,7 +215,7 @@ def main():
         try:
             result = execute(settings, store, ops, task)
         except Exception as exc:
-            if _is_continuous_tool_agent(task):
+            if task.get("kind") == "agent_investigation":
                 result = _provider_quota_failure(exc)
                 if result is None:
                     raise

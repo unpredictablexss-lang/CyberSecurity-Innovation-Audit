@@ -77,8 +77,7 @@ class OwnerIntegrationTests(unittest.TestCase):
             plan = self.plan(auto_triage=True, max_triage_candidates=2)
             consent = plan["triage_authorization_preview"]
             self.assertTrue(consent["eligible"])
-            self.assertEqual(consent["manifest"]["candidate_selection"],
-                             "all source-reviewable candidates in the fixed audit scope; no count cap")
+            self.assertEqual(consent["manifest"]["candidate_selection"]["authorized_candidate_count"], 2)
             self.assertEqual(consent["manifest"]["binding"]["commit"], self.commit)
             self.assertFalse(consent["hard_spend_cap"])
             self.assertNotIn("test-provider-key", json.dumps(consent))
@@ -496,13 +495,13 @@ if os.environ.get("OHSCANNER_TEST_TOOL_TRACE"):
             self.assertTrue(preview["eligible"])
             manifest = preview["manifest"]
             for key in ("max_total_model_calls", "max_total_tool_calls"):
-                self.assertIsNone(manifest["budgets"].get(key), key)
-            self.assertEqual(manifest["budgets"]["local_cumulative_token_budget"], "none")
-            self.assertEqual(manifest["budgets"]["local_cumulative_usd_budget"], "none")
-            self.assertEqual(manifest["budgets"]["local_total_wall_time_budget"], "none")
-            self.assertEqual(manifest["usage_policy"]["local_cumulative_token_budget"], "none")
-            self.assertEqual(manifest["usage_policy"]["local_cumulative_usd_budget"], "none")
-            self.assertEqual(manifest["usage_policy"]["local_total_wall_time_budget"], "none")
+                self.assertGreater(manifest["budgets"][key], 0, key)
+            self.assertEqual(manifest["budgets"]["local_cumulative_token_budget"], "bounded_per_investigation")
+            self.assertEqual(manifest["budgets"]["local_cumulative_usd_budget"], "token_bound")
+            self.assertEqual(manifest["budgets"]["local_total_wall_time_budget"], "bounded_per_investigation")
+            self.assertEqual(manifest["usage_policy"]["local_cumulative_token_budget"], "bounded")
+            self.assertEqual(manifest["usage_policy"]["local_cumulative_usd_budget"], "token_bound")
+            self.assertEqual(manifest["usage_policy"]["local_total_wall_time_budget"], "bounded")
 
             plan = self.plan(auto_triage=True, max_triage_candidates=2)
             changed_plan = self.plan(auto_triage=True, max_triage_candidates=1)
@@ -511,7 +510,7 @@ if os.environ.get("OHSCANNER_TEST_TOOL_TRACE"):
             accepted = self.client.post(
                 "/api/v1/scans",
                 json=self.request(
-                    auto_triage=True, max_triage_candidates=1,
+                    auto_triage=True, max_triage_candidates=2,
                     expected_plan_sha256=plan["plan_sha256"],
                     expected_workflow_sha256=plan["workflow_sha256"],
                     expected_triage_consent_sha256=consent["consent_sha256"],
@@ -1089,10 +1088,10 @@ if os.environ.get("OHSCANNER_TEST_TOOL_TRACE"):
             self.assertEqual(consent["manifest"]["r2_candidate_limit"], 1)
             budgets = consent["manifest"]["budgets"]
             for key in ("max_total_model_calls", "max_total_tool_calls"):
-                self.assertIsNone(budgets.get(key), key)
-            self.assertEqual(budgets["local_cumulative_token_budget"], "none")
-            self.assertEqual(budgets["local_cumulative_usd_budget"], "none")
-            self.assertEqual(budgets["local_total_wall_time_budget"], "none")
+                self.assertGreater(budgets[key], 0, key)
+            self.assertEqual(budgets["local_cumulative_token_budget"], "bounded_per_investigation")
+            self.assertEqual(budgets["local_cumulative_usd_budget"], "token_bound")
+            self.assertEqual(budgets["local_total_wall_time_budget"], "bounded_per_investigation")
             job = self.scan(
                 auto_triage=True, max_triage_candidates=2, max_r2_candidates=1,
                 expected_plan_sha256=plan["plan_sha256"],
@@ -1111,7 +1110,7 @@ if os.environ.get("OHSCANNER_TEST_TOOL_TRACE"):
                 self.assertEqual(batch["r2_status"], "awaiting_r1")
                 r1_operations = ops.smart_triage_operations(batch["id"])
                 self.assertGreater(len(r1_operations), 0)
-                self.assertTrue(all(item["spec"].get("no_cumulative_token_ceiling")
+                self.assertTrue(all(not item["spec"].get("no_cumulative_token_ceiling")
                                     for item in r1_operations))
                 report = service.read_report(self.settings, self.store.job(job["id"]))
                 candidates = []
@@ -1156,8 +1155,8 @@ if os.environ.get("OHSCANNER_TEST_TOOL_TRACE"):
                     selected_candidate = next(item for item in candidates
                                               if item["id"] == r2["spec"]["candidate_id"])
                     self.assertEqual(r2["spec"]["mode"], "tool_agent")
-                    self.assertTrue(r2["spec"]["continuous_investigation"])
-                    self.assertNotIn("max_steps", r2["spec"])
+                    self.assertFalse(r2["spec"]["continuous_investigation"])
+                    self.assertGreater(r2["spec"]["max_steps"], 0)
                     self.assertEqual(r2["spec"]["r1_result_sha256"], parent["result_sha256"])
                     prepared = {
                         "source": {"sha256": selected_candidate["source_sha256"]},
@@ -1274,7 +1273,8 @@ if os.environ.get("OHSCANNER_TEST_TOOL_TRACE"):
         self.assertEqual(high["ai_summary"], "固定源码中的候选路径到达了需要复核的敏感操作。")
         self.assertEqual(high["ai_evidence"][0]["file"], candidate["file"])
         self.assertEqual(high["ai_evidence"][0]["line_start"], candidate["line"])
-        self.assertEqual(high["severity"], candidate.get("severity", "unknown"))
+        from src.workbench.smart_audit import severity_metadata
+        self.assertEqual(high["severity"], severity_metadata(candidate)["severity"])
         self.assertEqual(high["vulnerability_state"], "candidate")
         self.assertEqual(risks.json()["validated_vulnerability"], 0)
 
@@ -1558,7 +1558,7 @@ if os.environ.get("OHSCANNER_TEST_TOOL_TRACE"):
         self.assertFalse(target.exists())
         self.assertFalse(target.with_suffix('.json.tmp').exists())
 
-    def test_task_budget_fields_do_not_cap_or_rebind_authorized_smart_audit(self):
+    def test_changed_candidate_and_cost_budgets_require_new_authorization(self):
         with patch.dict("os.environ", {
             "OHSCANNER_LLM_BASE_URL": "https://api.xiaomimimo.com/v1",
             "OHSCANNER_LLM_MODEL": "mimo-v2.6-pro",
@@ -1570,13 +1570,13 @@ if os.environ.get("OHSCANNER_TEST_TOOL_TRACE"):
                 headers=fixtures.HEADERS,
             )
             self.assertEqual(no_budget.status_code, 200, no_budget.text)
-            self.assertIsNone(no_budget.json()["triage_authorization_preview"]["cost_budget"])
+            self.assertEqual(no_budget.json()["triage_authorization_preview"]["cost_budget"]["local_cumulative_usd_budget"], "token_bound")
 
             plan = self.plan(auto_triage=True, max_triage_candidates=1,
-                             max_r2_candidates=0, max_cost_usd="0.10")
+                             max_r2_candidates=0, max_cost_usd="10.00")
             changed_plan = self.plan(auto_triage=True, max_triage_candidates=500,
                                      max_r2_candidates=100, max_cost_usd="5000")
-            self.assertEqual(plan["workflow_sha256"], changed_plan["workflow_sha256"])
+            self.assertNotEqual(plan["workflow_sha256"], changed_plan["workflow_sha256"])
             consent = plan["triage_authorization_preview"]
             accepted = self.client.post(
                 "/api/v1/scans",
@@ -1590,6 +1590,4 @@ if os.environ.get("OHSCANNER_TEST_TOOL_TRACE"):
                 ),
                 headers=fixtures.HEADERS,
             )
-            self.assertEqual(accepted.status_code, 201, accepted.text)
-            self.assertEqual(self.store.triage_authorization(accepted.json()["id"])["consent_sha256"],
-                             consent["consent_sha256"])
+            self.assertEqual(accepted.status_code, 409, accepted.text)
