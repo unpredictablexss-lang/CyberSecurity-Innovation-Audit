@@ -67,8 +67,16 @@ def evidence_status() -> None:
         fail("source replay overstates runtime or backing-store evidence")
     if harness["ark_runtime_execution"] != "not_run" or harness["backing_store_oob"]:
         fail("component harness overstates runtime or backing-store evidence")
+    if task["evidence"]["source_and_component_model"] != "COMPLETED":
+        fail("source/component model is not marked complete")
+    if task["evidence"]["component_harness"] != "COMPLETED_MODEL_AND_NODE_V8_CONTROL_ONLY":
+        fail("component harness scope is not explicit")
     if task["status"] != "COMPLETED_WITH_BUILD_BLOCKER" or task["evidence"]["ark_runtime_execution"] != "NOT_RUN":
         fail("task terminal state is inconsistent")
+    if task["evidence"]["product_impact"] != "UNKNOWN" or task["evidence"]["severity"] != "UNSCORED":
+        fail("product impact/severity state overclaims evidence")
+    if task["candidate_boundary"]["backing_store_oob_supported"]:
+        fail("candidate boundary overstates backing-store evidence")
     regression = task["evidence"]["detector_regression"]
     if regression["passed"] != 11 or regression["failed"] != 0 or regression["exit_code"] != 0:
         fail("task regression count is not 11")
@@ -88,6 +96,16 @@ def evidence_status() -> None:
             fail(f"detector regression command record is missing {expected}")
     if (EVIDENCE_DIR / "detector_regression_11.exit").read_text().strip() != "0":
         fail("detector regression exit marker is not zero")
+    if (EVIDENCE_DIR / "d1a58_source_replay.exit").read_text().strip() != "0":
+        fail("source replay exit marker is not zero")
+    if (EVIDENCE_DIR / "component_harness.exit").read_text().strip() != "0":
+        fail("component harness exit marker is not zero")
+    source_stdout = json.loads((EVIDENCE_DIR / "d1a58_source_replay.log").read_text(encoding="utf-8"))
+    if source_stdout != replay:
+        fail("source replay stdout differs from the recorded JSON artifact")
+    component_stdout = json.loads((EVIDENCE_DIR / "component_harness.log").read_text(encoding="utf-8"))
+    if component_stdout != harness:
+        fail("component harness stdout differs from the recorded JSON artifact")
     if (EVIDENCE_DIR / "rk3568_shell_exit.txt").read_text().strip() != "255":
         fail("RK3568 natural exit marker mismatch")
     if (EVIDENCE_DIR / "host_selection_shell_exit.txt").read_text().strip() != "255":
