@@ -2458,6 +2458,83 @@ class AgentFixedCommitToolTests(unittest.TestCase):
             self.assertEqual(static_result["callsites"][0]["relationship"]["status"], "unresolved")
             self.assertEqual(static_result["callsites"][0]["relationship"]["semantic_binding"], "unknown")
 
+    def test_callsite_cross_file_cpp_namespace_candidate_rejects_overloads(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            repo = root / "repo"
+            source_dir = repo / "src"
+            source_dir.mkdir(parents=True)
+            subprocess.run(["git", "init", "-q", str(repo)], check=True)
+            subprocess.run(["git", "-C", str(repo), "config", "user.name", "OHScanner test"], check=True)
+            subprocess.run(["git", "-C", str(repo), "config", "user.email", "test@example.invalid"], check=True)
+            (source_dir / "api.cpp").write_text(
+                "namespace OHOS {\n"
+                "int *inspect(int *value) { return value; }\n"
+                "}\n"
+                "namespace unrelated {\n"
+                "int *inspect(int *value) { return value; }\n"
+                "}\n", encoding="utf-8")
+            (source_dir / "caller.cpp").write_text(
+                "namespace OHOS {\n"
+                "int *inspect(int *value);\n"
+                "int *caller(int *data) { return inspect(data); }\n"
+                "}\n", encoding="utf-8")
+            subprocess.run(["git", "-C", str(repo), "add", "src"], check=True)
+            subprocess.run(["git", "-C", str(repo), "commit", "-qm", "bounded C++ namespace relation"], check=True)
+            commit = subprocess.check_output(["git", "-C", str(repo), "rev-parse", "HEAD"], text=True).strip()
+            inventory = []
+            for file in ("src/api.cpp", "src/caller.cpp"):
+                data = subprocess.check_output(["git", "-C", str(repo), "show", f"{commit}:{file}"])
+                blob = subprocess.check_output(["git", "-C", str(repo), "rev-parse", f"{commit}:{file}"],
+                                               text=True).strip()
+                inventory.append({"file": file, "blob": blob,
+                                  "sha256": hashlib.sha256(data).hexdigest()})
+            app = create_app(Settings(root / "data", (root,)))
+            repository = app.state.store.add_repository("controlled/callsite-cross-cpp", str(repo))
+            tools = agent._tool_specs(None, app.state.store,
+                {"repository_id": repository["id"], "spec": {"include_paths": ["src"]}},
+                {"commit": commit, "_workbench": {"source_inventory": inventory}},
+                {"file": "src/caller.cpp", "line": 3}, {}, "", (1, 1))
+
+            result = tools["find_callsite_candidates"]({"identifier": "inspect"})
+            self.assertEqual(result["status"], "complete", repr(result))
+            relationship = result["callsites"][0]["relationship"]
+            self.assertEqual(relationship["status"], "cross_file_cpp_syntax_candidate", repr(relationship))
+            self.assertEqual(relationship["cross_file_definition_candidate"]["file"], "src/api.cpp")
+            self.assertEqual(relationship["cross_file_definition_candidate"]["scope"],
+                             "namespace_definition")
+            self.assertEqual(relationship["semantic_binding"], "unknown")
+            self.assertEqual(relationship["reachable"], "unknown")
+            self.assertEqual(relationship["argument_edges"][0]["parameter_name"], "value")
+            self.assertEqual(relationship["cross_file_name_match_count"], 2)
+            self.assertEqual(relationship["cross_file_name_matches_are_binding_evidence"], False)
+
+            (source_dir / "api.cpp").write_text(
+                "namespace OHOS {\n"
+                "int *inspect(int *value) { return value; }\n"
+                "int inspect(int value) { return value; }\n"
+                "}\n", encoding="utf-8")
+            subprocess.run(["git", "-C", str(repo), "add", "src/api.cpp"], check=True)
+            subprocess.run(["git", "-C", str(repo), "commit", "-qm", "add same namespace overload"], check=True)
+            overloaded_commit = subprocess.check_output(
+                ["git", "-C", str(repo), "rev-parse", "HEAD"], text=True).strip()
+            overloaded_inventory = []
+            for file in ("src/api.cpp", "src/caller.cpp"):
+                data = subprocess.check_output(
+                    ["git", "-C", str(repo), "show", f"{overloaded_commit}:{file}"])
+                blob = subprocess.check_output(
+                    ["git", "-C", str(repo), "rev-parse", f"{overloaded_commit}:{file}"],
+                    text=True).strip()
+                overloaded_inventory.append({"file": file, "blob": blob,
+                                             "sha256": hashlib.sha256(data).hexdigest()})
+            overloaded_tools = agent._tool_specs(None, app.state.store,
+                {"repository_id": repository["id"], "spec": {"include_paths": ["src"]}},
+                {"commit": overloaded_commit, "_workbench": {"source_inventory": overloaded_inventory}},
+                {"file": "src/caller.cpp", "line": 3}, {}, "", (1, 1))
+            overloaded_result = overloaded_tools["find_callsite_candidates"]({"identifier": "inspect"})
+            self.assertEqual(overloaded_result["callsites"][0]["relationship"]["status"], "unresolved")
+            self.assertEqual(overloaded_result["callsites"][0]["relationship"]["semantic_binding"], "unknown")
+
     def test_callsite_lookup_reports_file_and_result_budget_truncation(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
