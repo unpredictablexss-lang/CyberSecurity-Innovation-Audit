@@ -1467,8 +1467,7 @@ def consent_preview(settings, store, job, report, candidate, spec, provider, pre
     budgets["artifact_output_tokens_per_request"] = (
         spec.get("max_output_tokens") if artifact_stage_enabled else None)
     if not continuous:
-        budgets["shared_auxiliary_call_reserve"] = MAX_VALIDATION_REPAIRS if mode == "tool_agent" else 0
-        budgets["skeptic_shares_validation_repair_reserve"] = mode == "tool_agent"
+        budgets["skeptic_shares_validation_repair_reserve"] = False
     budgets["max_total_model_calls"] = (
         None if continuous else
         spec["max_steps"] + 1 + MAX_VALIDATION_REPAIRS +
@@ -4252,7 +4251,7 @@ def execute_agent(settings, store, ops, task, client=None):
                 raise ValueError("model tool call has a missing or duplicate call_id")
             call_ids.add(call_id)
             signature = _hash({"name": name, "arguments": args})
-            if signature in seen_tool_queries:
+            if signature in seen_tool_queries and signature not in oversized_tool_queries:
                 duplicate_calls.append((call_id, name))
                 continue
             seen_tool_queries.add(signature)
@@ -4317,7 +4316,7 @@ def execute_agent(settings, store, ops, task, client=None):
             clipped = len(encoded) > MAX_TOOL_RESULT_BYTES
             if clipped:
                 original = hashlib.sha256(encoded).hexdigest()
-                oversized_tool_queries.add(query_key)
+                oversized_tool_queries.add(_hash({"name": name, "arguments": args}))
                 tool_error_code = "tool_result_too_large"
                 result = {"status": "rejected", "error_code": tool_error_code,
                           "message": (

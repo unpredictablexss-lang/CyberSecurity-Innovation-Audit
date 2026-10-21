@@ -1072,7 +1072,8 @@ def enqueue_authorized_r2_followups(settings, store, ops, batch_id):
         -len(item[3]), -_severity(item[0]), item[0].get("file", ""),
         int(item[0].get("line") or 0), item[0]["id"],
     ))
-    selected = eligible if not auth_error else []
+    limit = int(authorization["snapshot"].get("r2_candidate_limit", 0))
+    selected = eligible[:limit] if not auth_error else []
     selected_ids = {item[0]["id"] for item in selected}
     r2_preview_spec = {
         "mode": "tool_agent", "max_output_tokens": None,

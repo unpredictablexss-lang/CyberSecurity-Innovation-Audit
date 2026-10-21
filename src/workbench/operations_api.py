@@ -276,8 +276,7 @@ def _aggregate_agent_budget_cost_estimates(estimates):
 def _smart_operation_retry_available(store, ops, task):
     spec = task.get("spec") if isinstance(task.get("spec"), dict) else {}
     if (task.get("kind") != "agent_investigation" or task.get("status") != "interrupted"
-            or task.get("result_sha256") or task.get("cancel_requested")
-            or spec.get("no_cumulative_token_ceiling") is not True):
+            or task.get("result_sha256") or task.get("cancel_requested")):
         return False
     audit_id, report_sha256 = spec.get("job_id"), spec.get("report_sha256")
     authorization_sha256 = spec.get("triage_authorization_sha256")
@@ -3229,7 +3228,13 @@ def install_routes(app: FastAPI, settings, store):
         # candidate/report/source now linked to this case. Never share explicitly
         # case-bound operations with another case.
         operations = []
-        for operation in ops.list():
+        operation_page = ops.report_operations_for_case(case_id, limit=200)
+        candidate_operations = ops.list(limit=200)
+        seen_operations = set()
+        for operation in operation_page["items"] + candidate_operations:
+            if operation["id"] in seen_operations:
+                continue
+            seen_operations.add(operation["id"])
             spec = operation["spec"]
             linked = records_by_candidate.get((spec.get("job_id"), spec.get("candidate_id")))
             case_bound = spec.get("case_id") == case_id
@@ -3295,6 +3300,7 @@ def install_routes(app: FastAPI, settings, store):
                     if advice_verified_for_display and isinstance(step, str) and step.strip()]
                 summary["agent_triage"] = {
                     "triage_only": True,
+                    "repair_guidance": {"status": "unverified_model_suggestions", "patch_generated": False, "items": model_suggestions},
                     "assessment": assessment.get("assessment", "unknown") if advice_verified_for_display else "unknown",
                     "summary": assessment.get("summary", "") if advice_verified_for_display else "",
                     "summary_provenance": result.get("summary_provenance", "legacy_model_generated_unverified"),
@@ -3349,6 +3355,7 @@ def install_routes(app: FastAPI, settings, store):
             record.get("source_anchor", {}).pop("_source_lines", None)
         return {"schema_version": 2, "case_id": case_id, "candidates": records,
                 "operations": operation_summaries,
+                "operation_summaries": {"total": max(operation_page["total"], len(operations)), "included": len(operation_summaries), "limit": 20, "truncated": operation_page["total"] > len(operation_summaries)},
                 "assessments": ops.assessments(case_id),
                 "latest_human_assessment": review_status["latest_human_assessment"],
                 "validation_basis": review_status["validated_by"],

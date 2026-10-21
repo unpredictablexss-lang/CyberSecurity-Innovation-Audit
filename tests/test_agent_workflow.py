@@ -1814,7 +1814,7 @@ class CandidateArtifactGenerationTests(unittest.TestCase):
             def response(value):
                 return {"status": "completed", "output": [{"type": "message", "content": [
                     {"type": "output_text", "text": json.dumps(value)}]}],
-                    "usage": {"input_tokens": 100, "output_tokens": 1501, "total_tokens": 1601}}
+                    "usage": {"input_tokens": 100, "output_tokens": 800, "total_tokens": 900}}
             def create(self, payload):
                 self.payloads.append(payload)
                 format_name = payload.get("text", {}).get("format", {}).get("name")
@@ -1857,7 +1857,7 @@ class CandidateArtifactGenerationTests(unittest.TestCase):
                     return {"status": "completed", "output": [{
                         "type": "function_call", "name": "read_candidate_source",
                         "arguments": "{}", "call_id": "artifact-read-source"}],
-                        "usage": {"input_tokens": 100, "output_tokens": 1501, "total_tokens": 1601}}
+                        "usage": {"input_tokens": 100, "output_tokens": 800, "total_tokens": 900}}
                 output = next(item for item in payload["input"]
                     if item.get("type") == "function_call_output")
                 evidence_id = json.loads(output["output"])["evidence_id"]
