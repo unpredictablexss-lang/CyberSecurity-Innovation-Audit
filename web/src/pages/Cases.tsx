@@ -53,6 +53,77 @@ const caseOutcomeLabels: Record<string, string> = {
   confirmed: "人工确认",
   reportable: "人工认定可报告",
 };
+function CaseReportOverview({ report, caseId }: { report: any; caseId: string }) {
+  const validationOps = (report?.operations || []).filter((item: any) => item.kind === "validation");
+  const poc = report?.poc_status || { state: "not_run", label: "计划未运行", detail: "没有已登记的受控验证操作。" };
+  const pocAlert = poc.state === "completed" ? "warning" : poc.state === "running" ? "info" : "info";
+  return <Card size="small" className="section-gap" title="综合审计报告">
+    <Alert type={report?.validated_vulnerability ? "success" : "warning"} showIcon
+      message={report?.validated_vulnerability ? "人工确认 · 验证门控通过" : "候选结果 · 尚未确认为漏洞"}
+      description={report?.validated_vulnerability
+        ? "该案例有匹配的人工结论及运行时门控记录。"
+        : "静态检测和 AI 分析用于定位与整理证据；不会自动升级为已确认漏洞。"} />
+    {(report?.candidates || []).map((row: any) => {
+      const candidate = row.candidate || {};
+      const risk = row.risk || {};
+      const triageRows = (report?.operations || []).filter((item: any) =>
+        item.kind === "agent_investigation" && item.candidate_id === candidate.id && item.agent_triage);
+      const triage = triageRows[0]?.agent_triage;
+      const obligations = candidate.evidence?.obligations || [];
+      const remediation = [candidate.remediation, candidate.fix_suggestion, candidate.recommendation]
+        .find((item: any) => typeof item === "string" && item.trim());
+      return <Card key={row.job_id + candidate.id} size="small" className="section-gap"
+        title={(candidate.detector_id || "静态检测") + " · " + (candidate.rule_id || "候选")}
+        extra={<Button type="link" onClick={() => go("/tasks/" + row.job_id)}>查看源码与原始证据</Button>}>
+        <Descriptions size="small" bordered column={2}>
+          <Descriptions.Item label="风险层级"><Tag color={risk.risk_tier === "high_confidence_candidate" ? "orange" : "blue"}>{risk.risk_tier_label || "来源绑定未知"}</Tag></Descriptions.Item>
+          <Descriptions.Item label="观测状态"><Tag>candidate · 单条观测未确认</Tag></Descriptions.Item>
+          <Descriptions.Item label="静态严重性 / 置信度">{String(risk.severity ?? "unknown")} / {String(risk.confidence ?? "unknown")}</Descriptions.Item>
+          <Descriptions.Item label="代码位置">{candidate.file || "unknown"}:{candidate.line || "?"}</Descriptions.Item>
+          <Descriptions.Item label="固定来源">{row.repository || "unknown"} @ <Hash value={row.commit || "unknown"} /></Descriptions.Item>
+          <Descriptions.Item label="报告 SHA-256"><Hash value={row.report_sha256 || "unknown"} /></Descriptions.Item>
+        </Descriptions>
+        <Paragraph className="section-gap"><Text strong>静态规则依据：</Text> {candidate.message || "规则未提供摘要"}</Paragraph>
+        <Paragraph><Text type="secondary">风险分层依据：</Text> {(risk.reasons || []).join("；") || "暂无可用依据"}</Paragraph>
+        <Paragraph><Text type="secondary">建案理由：</Text> {row.rationale || "未填写"}</Paragraph>
+        {!!obligations.length && <div className="obligation">
+          <Text strong>待核实的静态证据义务</Text>
+          <ul>{obligations.slice(0, 8).map((item: any, index: number) => <li key={index}>
+            {item.description || item.kind || String(item)} <Text type="secondary">（{item.status || "unknown"}）</Text>
+          </li>)}</ul>
+        </div>}
+        {triage ? <div className="obligation">
+          <Text strong>AI 调查摘要（{triage.assessment || "unknown"} · 仍为候选）</Text>
+          <Paragraph>{triage.summary || "模型未提供可读摘要"}</Paragraph>
+          {!!triage.supported_claims?.length && <>
+            <Text strong>引用到的证据</Text>
+            <ul>{triage.supported_claims.slice(0, 8).map((claim: any, index: number) => <li key={index}>
+              {claim.claim || "未命名陈述"}
+              {(claim.citations || []).map((citation: any, citationIndex: number) => <div key={citationIndex}>
+                <Text type="secondary">{citation.evidence_id || "evidence"}：“{citation.quote || ""}”</Text>
+              </div>)}
+            </li>)}</ul>
+          </>}
+          {!!triage.unknowns?.length && <Paragraph><Text strong>仍未知：</Text> {triage.unknowns.join("；")}</Paragraph>}
+          {!!triage.next_steps?.length && <>
+            <Text strong>AI 建议的下一步（未经语义核验，不等于修复方案）</Text>
+            <ul>{triage.next_steps.slice(0, 8).map((step: string, index: number) => <li key={index}>{step}</li>)}</ul>
+          </>}
+          <Text type="secondary">AI 摘要和引文语义尚需人工复核；引文匹配不自动证明结论。</Text>
+        </div> : <Alert className="section-gap" type="info" showIcon message="暂无绑定到该固定候选的 AI 调查结果" />}
+        <Paragraph className="section-gap"><Text strong>修复建议：</Text> {remediation
+          ? <>{remediation} <Text type="secondary">（候选建议，需人工复核）</Text></>
+          : <Text type="secondary">尚无经复核的修复建议；不会根据 AI 调查步骤虚构补丁。</Text>}</Paragraph>
+      </Card>;
+    })}
+    <Alert className="section-gap" type={pocAlert as any} showIcon message={"PoC / 受控验证：" + (poc.label || "计划未运行")} description={poc.detail || "没有已登记的受控验证操作。"} />
+    {!!validationOps.length && <ul>{validationOps.map((item: any) => <li key={item.id}>
+      <Text code>{item.id.slice(0, 12)}</Text> · {item.status} · 门控 {item.validation_gate || "unknown"} · 产品可达性 {item.reachability_status || "unknown"}
+    </li>)}</ul>}
+    <Text type="secondary">报告基于案例关联的固定扫描报告、已提交的调查结果与人工记录。案例 ID：{caseId}</Text>
+  </Card>;
+}
+
 function CaseReviewPanel({ caseId, onStatusChange }: { caseId: string; onStatusChange: (value: any) => void }) {
   const [form] = Form.useForm();
   const [report, setReport] = useState<any>(null);
@@ -108,7 +179,9 @@ function CaseReviewPanel({ caseId, onStatusChange }: { caseId: string; onStatusC
     } catch (e) { setError(String(e)); }
     finally { setSaving(false); }
   };
-  return <Card size="small" className="section-gap" title="人工案例审核与结论">
+  return <>
+    {report && <CaseReportOverview report={report} caseId={caseId} />}
+    <Card size="small" className="section-gap" title="人工案例审核与结论">
     {error && <Alert type="error" showIcon message={error} />}
     {status?.validated_vulnerability ? <Alert type="success" showIcon message="案例已通过人工确认门控" description={"绑定验证操作：" + (status.validated_by?.validation_operation_id || "记录不可用") + "；该计数来自人工案例结论，不来自 Agent 分诊。"} /> :
       <Alert type="info" showIcon message="Agent 分诊和人工案例结论分开记录" description="可追加人工假设、未知或组件复现结论。只有选择本案例的通过验证、产品可达性已验证的运行操作，并引用案例证据、记录未决项后，API 才接受 confirmed/reportable；模型建议永远不能代替此门控。" />}
@@ -154,7 +227,8 @@ function CaseReviewPanel({ caseId, onStatusChange }: { caseId: string; onStatusC
           </div>)}
       </Card>}
     </>}
-  </Card>;
+    </Card>
+  </>;
 }
 export default function Cases({ embedded = false }: { embedded?: boolean } = {}) {
   const [cases, setCases] = useState<any[]>([]);

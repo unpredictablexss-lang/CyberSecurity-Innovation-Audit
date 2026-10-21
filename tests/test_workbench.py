@@ -703,6 +703,66 @@ class WorkbenchTests(unittest.TestCase):
         self.assertEqual(self.client.get(f"/api/v1/cases/{case['id']}/report.json").json()
                          ["validated_vulnerability"], 0)
 
+    def test_case_report_recovers_only_exact_fixed_candidate_agent_results(self):
+        job = self.completed()
+        candidate = service.findings(service.read_report(self.settings, job))[0]
+        source = service.source(self.settings, self.store, job, candidate["file"])
+        ops = self.app.state.operations
+        fixed_spec = {
+            "job_id": job["id"], "candidate_id": candidate["id"], "case_id": None,
+            "report_sha256": job["report_sha256"], "source_commit": job["spec"]["commit"],
+            "candidate_source_sha256": source["sha256"], "mode": "single_shot",
+        }
+        good = ops.create("agent_investigation", fixed_spec)
+        self.assertEqual(ops.claim()["id"], good["id"])
+        good_binding = {"job_id": job["id"], "candidate_id": candidate["id"],
+            "report_sha256": job["report_sha256"], "commit": job["spec"]["commit"],
+            "source_sha256": source["sha256"]}
+        ops.finish(good["id"], {"status": "completed", "binding": good_binding,
+            "vulnerability_state": "candidate", "validated_vulnerability": 0,
+            "agent_assessment": {"assessment": "needs_more_evidence",
+                                 "summary": "Synthetic hypothesis only"}},
+            state="completed_with_limitations")
+
+        wrong_result = ops.create("agent_investigation", fixed_spec)
+        self.assertEqual(ops.claim()["id"], wrong_result["id"])
+        ops.finish(wrong_result["id"], {"status": "completed", "binding": {
+            **good_binding, "source_sha256": "0" * 64}, "vulnerability_state": "candidate"},
+            state="completed_with_limitations")
+
+        case = self.client.post("/api/v1/cases", headers=HEADERS, json={
+            "title": "candidate linked after investigation",
+            "links": [{"job_id": job["id"], "candidate_id": candidate["id"],
+                       "rationale": "fixed candidate report"}],
+        })
+        self.assertEqual(case.status_code, 201, case.text)
+        case_id = case.json()["id"]
+        report = self.client.get(f"/api/v1/cases/{case_id}/report.json")
+        self.assertEqual(report.status_code, 200, report.text)
+        body = report.json()
+        self.assertEqual(len(body["candidates"]), 1)
+        self.assertEqual(body["candidates"][0]["risk"]["vulnerability_state"], "candidate")
+        self.assertEqual(body["candidates"][0]["risk"]["risk_tier"], "further_validation")
+        self.assertEqual(body["poc_status"]["state"], "not_run")
+        self.assertEqual([item["id"] for item in body["operations"]], [good["id"]])
+        self.assertEqual(body["operations"][0]["agent_triage"]["summary"], "Synthetic hypothesis only")
+        self.assertEqual(body["validated_vulnerability"], 0)
+        markdown = self.client.get(f"/api/v1/cases/{case_id}/report.md")
+        self.assertEqual(markdown.status_code, 200, markdown.text)
+        self.assertIn("PoC / 受控验证", markdown.text)
+        self.assertIn("计划未运行", markdown.text)
+        self.assertIn("观测状态：candidate（单条观测保持候选；案例人工结论单独记录）", markdown.text)
+        self.assertIn("尚无经复核的修复建议", markdown.text)
+
+        queued_validation = ops.create("validation", {"case_id": case_id})
+        queued_report = self.client.get(f"/api/v1/cases/{case_id}/report.json")
+        self.assertEqual(queued_report.status_code, 200, queued_report.text)
+        self.assertEqual(queued_report.json()["poc_status"]["state"], "queued")
+        validation_summary = next(item for item in queued_report.json()["operations"]
+                                  if item["id"] == queued_validation["id"])
+        self.assertEqual(validation_summary["status"], "queued")
+        self.assertEqual(validation_summary["validation_gate"], None)
+
     def test_case_links_require_existing_run_candidates(self):
         job = self.completed()
         identity = service.findings(service.read_report(self.settings, job))[0]["id"]

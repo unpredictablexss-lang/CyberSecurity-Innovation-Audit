@@ -2159,24 +2159,89 @@ def install_routes(app: FastAPI, settings, store):
         if not links:
             raise KeyError("case not found or empty")
         records = []
+        records_by_candidate = {}
+        risk_by_job = {}
+        risk_snapshot_unavailable = set()
         for link in links:
             job = store.job(link["job_id"])
             report = service.read_report(settings, job)
             item = service.finding(report, link["candidate_id"])
-            records.append({"job_id": job["id"], "report_sha256": job["report_sha256"],
+            if job["id"] not in risk_by_job:
+                try:
+                    from .smart_audit import risk_snapshot as build_risk_snapshot
+                    snapshot = build_risk_snapshot(settings, store, ops, job, report)
+                    risk_by_job[job["id"]] = {
+                        risk["candidate_id"]: risk
+                        for risk in snapshot.get("items", [])
+                        if isinstance(risk, dict) and risk.get("candidate_id")
+                    }
+                except (KeyError, TypeError, ValueError):
+                    # Keep the fixed-source case report readable if an older or
+                    # incomplete saved report cannot support risk-tier enrichment.
+                    risk_by_job[job["id"]] = {}
+                    risk_snapshot_unavailable.add(job["id"])
+            risk = risk_by_job[job["id"]].get(item["id"], {})
+            record = {"job_id": job["id"], "report_sha256": job["report_sha256"],
                 "repository": report["repository"], "commit": report["commit"],
                 "candidate": item, "rationale": link["rationale"],
+                "risk": {"severity": item.get("severity", "unknown"),
+                         "confidence": item.get("confidence", "unknown"),
+                         "risk_tier": risk.get("risk_tier", "unknown"),
+                         "risk_tier_label": risk.get("risk_tier_label", "风险分层不可用"),
+                         "risk_snapshot_available": job["id"] not in risk_snapshot_unavailable,
+                         "reasons": risk.get("reasons", []),
+                         "vulnerability_state": "candidate"},
                 "reviews": store.reviews(job["id"], item["id"]),
-                "source_evidence": store.source_evidence(job["id"], item["id"])})
-        operations = [x for x in ops.list() if x["spec"].get("case_id") == case_id and x["result_sha256"]]
+                "source_evidence": store.source_evidence(job["id"], item["id"])}
+            records.append(record)
+            records_by_candidate[(job["id"], item["id"])] = record
+
+        # A case may be created after an Agent investigation. Recover that result only
+        # when the immutable operation plan and committed result bind to the exact
+        # candidate/report/source now linked to this case. Never share explicitly
+        # case-bound operations with another case.
+        operations = []
+        for operation in ops.list():
+            spec = operation["spec"]
+            linked = records_by_candidate.get((spec.get("job_id"), spec.get("candidate_id")))
+            case_bound = spec.get("case_id") == case_id
+            if operation["kind"] == "agent_investigation":
+                if spec.get("case_id") not in (None, case_id) or not linked:
+                    continue
+                candidate = linked["candidate"]
+                if (spec.get("report_sha256") != linked["report_sha256"]
+                        or spec.get("source_commit") != linked["commit"]
+                        or spec.get("candidate_source_sha256") != candidate.get("source_sha256")):
+                    continue
+                if operation["result_sha256"]:
+                    try:
+                        committed = ops.result(operation["id"])
+                    except (KeyError, ValueError):
+                        continue
+                    binding = committed.get("binding")
+                    if not isinstance(binding, dict) or any((
+                            binding.get("job_id") != linked["job_id"],
+                            binding.get("candidate_id") != candidate["id"],
+                            binding.get("report_sha256") != linked["report_sha256"],
+                            binding.get("commit") != linked["commit"],
+                            binding.get("source_sha256") != candidate.get("source_sha256"),
+                    )):
+                        continue
+                operations.append(operation)
+            elif case_bound:
+                operations.append(operation)
+        operations = operations[:20]
         operation_summaries = []
-        for x in operations[:20]:
-            result = ops.result(x["id"])
+        for x in operations:
+            result = ops.result(x["id"]) if x["result_sha256"] else {}
             summary = {"id": x["id"], "kind": x["kind"], "status": x["status"],
                 "result_sha256": x["result_sha256"], "validation_gate": result.get("validation_gate"),
                 "gate_reason": result.get("gate_reason"), "reachability_status": result.get("reachability_status"),
                 "validated_vulnerability": result.get("validated_vulnerability", 0),
-                "commit": result.get("commit"), "commits": result.get("commits")}
+                "commit": result.get("commit"), "commits": result.get("commits"),
+                "case_id": x["spec"].get("case_id"),
+                "job_id": x["spec"].get("job_id"),
+                "candidate_id": x["spec"].get("candidate_id")}
             if x["kind"] == "agent_investigation":
                 assessment = result.get("agent_assessment", {})
                 summary["agent_triage"] = {
@@ -2211,27 +2276,72 @@ def install_routes(app: FastAPI, settings, store):
                 }
             operation_summaries.append(summary)
         review_status = _case_review_status(store, ops, case_id)
+        validation_operations = [item for item in operation_summaries if item.get("kind") == "validation"]
+        if not validation_operations:
+            poc_status = {"state": "not_run", "label": "计划未运行",
+                          "detail": "案例没有已登记的受控验证操作；静态或模型分析不等同于 PoC 执行。"}
+        elif any(item.get("status") == "running" for item in validation_operations):
+            poc_status = {"state": "running", "label": "验证执行中",
+                          "detail": "请等待受控验证操作完成；运行中不代表漏洞已确认。"}
+        elif any(item.get("status") == "queued" for item in validation_operations):
+            poc_status = {"state": "queued", "label": "验证计划已登记，尚未运行",
+                          "detail": "排队状态不代表 PoC 已执行或漏洞已复现。"}
+        else:
+            poc_status = {"state": "completed", "label": "验证操作已结束，需查看门控结果",
+                          "detail": "组件 Harness 结果不能单独证明产品可达性；确认状态仍以人工结论和验证门控为准。"}
         return {"schema_version": 1, "case_id": case_id, "candidates": records,
                 "operations": operation_summaries,
                 "assessments": ops.assessments(case_id),
                 "latest_human_assessment": review_status["latest_human_assessment"],
                 "validation_basis": review_status["validated_by"],
                 "validated_vulnerability": review_status["validated_vulnerability"],
+                "poc_status": poc_status,
                 "limitations": ["Static candidates and component harness observations do not establish product reachability or reportability.",
-                                "A confirmed case count requires an append-only human assessment plus a matching passed runtime gate and verified product reachability."]}
+                                "A confirmed case count requires an append-only human assessment plus a matching passed runtime gate and verified product reachability.",
+                                "AI next steps are unverified investigation suggestions, not a reviewed remediation patch or an executed PoC plan."] +
+                    (["One or more saved reports lacked fields needed for risk-tier enrichment; unknown means unavailable, not safe."]
+                     if risk_snapshot_unavailable else [])}
 
     @router.get("/cases/{case_id}/report.md")
     def case_report_md(case_id: str):
         data = case_report_json(case_id)
         md = _markdown_inline_untrusted
-        rows = ["# OHScanner 调查案例报告", "", "案例 ID：" + md(case_id), "", "## 候选与证据"]
+        case_state = ("人工确认（运行时门控通过）" if data["validated_vulnerability"]
+                      else "candidate（尚未确认）")
+        rows = ["# OHScanner 调查案例报告", "", "案例 ID：" + md(case_id),
+                "", "- 当前结论：" + md(case_state),
+                "- 确认漏洞数：" + md(data["validated_vulnerability"]),
+                "- PoC / 受控验证：" + md(data["poc_status"]["label"]),
+                "", "## 候选与证据"]
         for row in data["candidates"]:
             c = row["candidate"]
-            rows += ["", "### " + md(c["detector_id"]) + " / " + md(c["rule_id"]),
+            risk = row.get("risk") or {}
+            rows += ["", "### " + md(c.get("detector_id", "unknown detector")) + " / " + md(c.get("rule_id", "unknown rule")),
                      "", "- 来源：" + md(row["repository"]) + " @ " + md(row["commit"]),
-                     "- 文件：" + md(c["file"]) + ":" + md(c["line"]),
+                     "- 固定来源文件：" + md(c.get("file", "unknown")) + ":" + md(c.get("line", "unknown")),
+                     "- 静态规则消息：" + md(c.get("message", "未提供")),
+                     "- 静态严重性 / 置信度：" + md(risk.get("severity", "unknown")) + " / " + md(risk.get("confidence", "unknown")),
+                     "- 风险分层：" + md(risk.get("risk_tier_label", "来源绑定未知")),
+                     "- 分层依据：" + md("；".join(risk.get("reasons", [])) or "暂无可用依据"),
                      "- 报告 SHA-256：" + md(row["report_sha256"]),
-                     "- 结论：candidate；影响范围 unknown"]
+                     "- 观测状态：candidate（单条观测保持候选；案例人工结论单独记录）",
+                     "- 来源证据 SHA-256：" + md(c.get("source_sha256", "unknown")),
+                     "- 建立案例的理由：" + md(row.get("rationale", "未填写"))]
+            evidence = c.get("evidence") if isinstance(c.get("evidence"), dict) else {}
+            obligations = evidence.get("obligations") if isinstance(evidence.get("obligations"), list) else []
+            if obligations:
+                rows += ["- 静态分析义务与证据："]
+                for obligation in obligations[:40]:
+                    if isinstance(obligation, dict):
+                        description = obligation.get("description") or obligation.get("kind") or "未命名义务"
+                        state = obligation.get("status", "unknown")
+                        rows += ["  - " + md(description) + "（" + md(state) + "）"]
+                    else:
+                        rows += ["  - " + md(obligation)]
+            remediation = next((c.get(key) for key in ("remediation", "fix_suggestion", "recommendation")
+                                if isinstance(c.get(key), str) and c.get(key).strip()), None)
+            rows += ["- 修复建议：" + (md(remediation) + "（候选/规则建议，尚需人工复核）" if remediation
+                                      else "尚无经复核的修复建议；不要从调查步骤推断补丁")]
         agent_ops = [item for item in data["operations"] if item.get("kind") == "agent_investigation"
                      and item.get("agent_triage")]
         if agent_ops:
@@ -2321,6 +2431,14 @@ def install_routes(app: FastAPI, settings, store):
                     rows += ["- 源码外发目的地：" + md(consent.get("destination_host") or "unknown") +
                              "；授权预览 SHA-256 " + md(consent.get("consent_sha256") or "unknown") +
                              "；预览版本 " + md(consent.get("consent_preview_version") or "unknown")]
+        rows += ["", "## PoC / 受控验证", "",
+                 "- 状态：" + md(data["poc_status"]["label"]),
+                 "- 说明：" + md(data["poc_status"]["detail"])]
+        validation_rows = [item for item in data["operations"] if item.get("kind") == "validation"]
+        for operation in validation_rows:
+            rows += ["- 验证操作：" + md(operation["id"]) + "；状态 " + md(operation["status"])
+                     + "；门控 " + md(operation.get("validation_gate", "unknown"))
+                     + "；产品可达性 " + md(operation.get("reachability_status", "unknown"))]
         human_assessments = [item for item in data["assessments"] if item.get("reviewer_kind") == "human"]
         if human_assessments:
             rows += ["", "## 人工案例复核"]
