@@ -1,0 +1,918 @@
+diff --git a/docs/engineering/ProgressiveTriage_Architecture.md b/docs/engineering/ProgressiveTriage_Architecture.md
+index 7c5c607..cfe174c 100644
+--- a/docs/engineering/ProgressiveTriage_Architecture.md
++++ b/docs/engineering/ProgressiveTriage_Architecture.md
+@@ -12,7 +12,7 @@
+ | 策略设置 | `progressive_triage/policy.py`：四档和自定义严格校验、私有版本化文件、原子替换、审计历史与 revision 冲突；多端点操作创建时持久化不可变策略快照；智能 consent 绑定策略 SHA | 每次保存只影响新任务；只读排序预算仍不等于真实模型调用额度 |
+ | L0 归并 | `grouping.py` 生成可逆 manifest 和 SHA；固定来源、提交、报告、文件源码哈希、候选定位满足强条件才做重复归并；root-cause 候选组额外要求确定性源分析字段；多端点 Operation Worker 已调用 | 不使用 CWE/路径/行号/模型文本单独合并；来源哈希或字段不全的观察保持独立；快照单任务尚未接入 |
+ | L1 排序 | `ranking.py` 对来源绑定、局部安全事实、未决义务、初判危害、版本变化排序；多端点 Operation 使用冻结策略并输出选择理由 | 只列优先组，不触发模型；unknown/partial 保留且不自动入选；快照单任务尚未接入 |
+-| L2/L3/预算 | `quick_screen.py`、`ledger.py` 已有无工具快筛与 SQLite 原子预留/结算原语 | API 明确标记为未调度；它们不等同真实 Worker 执行、端点总预算、费用硬上限或任务级撤权 |
++| L2/L3/预算 | 新增 `/operations/progressive-quick-screens/preview` 与 start Operation；服务端从已完成报告重新提取源码、校验 report/source SHA、复用 Agent 脱敏；授权摘要绑定来源、脱敏版本、策略 revision/hash、L1 选择、模型、提示版本、证据正文、nonce 和过期时间。Worker 执行一次 no-tools 请求、持久化真实 usage，SQLite 账本按扫描任务原子预留/结算，失败保守占用额度，重复执行不重放请求 | 当前入口按单扫描任务共享预算；多端点父任务共享、selected 组自动排队、深度 Agent、撤权与费用硬封顶未接通。美元限制仍为 `advisory_only` |
+ | 风险中心设置 UI | `IntelligentAuditPolicySettings.tsx` 可读取/保存策略并显示集成状态 | 设置可见不代表审计使用它；三类创建表单、固定 consent hash、任务详情状态和继续调查尚未接线 |
+ 
+ ## 冲突与集成顺序
+@@ -72,10 +72,10 @@ flowchart TD
+ | 阶段 | 内容 | 验收证据/边界 |
+ |---|---|---|
+ | Phase 0 | 代码/远端/Issues/PR/冲突复核、架构与数据合同 | 本文矩阵、full SHA、PR/Issue 状态及兼容计划 |
+-| Phase 1 | policy 预设/校验/持久化/API、纯函数 grouping/ranking、设置页、500 候选控制测试 | 基础模块完成；本分支把 L0/L1 接到四类多端点 Operation。策略 revision/hash、每端点 SHA、500 全量保留/预算选择有测试；L2/L3 执行仍未接入 |
+-| Phase 2 | L2 独立 operation 与状态/usage 持久化、preview/start 用户授权 | mock Provider：未授权零请求、固定源码/脱敏/哈希、严格 schema、no-tools、usage unknown/超限失败安全、候选保持 candidate |
+-| Phase 3 | 父 Operation 账本与真实调度门 | 并发 reservation、跨端点共享、Provider retries/crash/恢复/取消/撤权、时间/调用/Token 止步；费用硬上限只有真实 Provider 证明后才可声明 |
++| Phase 1 | policy 预设/校验/持久化/API、纯函数 grouping/ranking、设置页、500 候选控制测试 | 基础模块完成；本分支把 L0/L1 接到四类多端点 Operation。策略 revision/hash、每端点 SHA、500 全量保留/预算选择有测试 |
++| Phase 2 | L2 独立 operation 与状态/usage 持久化、preview/start 用户授权 | 已接入单扫描及四类多端点审计候选级 API→Worker；多端点使用父任务冻结策略与完成的 L0/L1 选择。mock Provider 覆盖未授权零请求、来源/策略/排序变化拒绝、严格 schema、no-tools、usage 结算、重复执行不重放、错误保留 candidate；真实 Provider 未调用 |
++| Phase 3 | 父 Operation 账本与真实调度门 | SQLite 事务预留/结算覆盖单扫描与多端点父审计的 L2；组级幂等、并发/token/call/time 限制，父任务取消传播到排队/运行中的 L2。L3 Agent、Provider 崩溃恢复后的账单核对与全链撤权仍未接；USD 只有 advisory |
+ | Phase 4 | 三类审计与现有 Agent/Risk UI 接线 | 快照/日期/分支/矩阵 × static/intelligent API→Worker；端点 SHA 独立、每条 selected/unselected/status/reason 可追溯；使用现有只读 Agent |
+ | Phase 5 | 全量 QA、浏览器、真实 Provider 小样本与冻结 benchmark | 仓库全套 Python/Web/TypeScript/构建；mock E2E；经授权的真实 Provider；三类浏览器流程；vulnerable/fixed/safe frozen data；未执行项明确 unknown |
+ 
+-交付硬约束：静态模式零模型外发；候选不因分组、未选或失败而删除；分数/模型意见不改变漏洞确认状态；不重写 Agent 主循环或 A/B/C/D Detector；不将 synthetic fixture、mock Provider 或组件 Harness 写成产品准确率/漏洞确认。Phase 2～5 在实际测试/运行前都维持未完成。
++交付硬约束：静态模式零模型外发；候选不因分组、未选或失败而删除；分数/模型意见不改变漏洞确认状态；不重写 Agent 主循环或 A/B/C/D Detector；不将 synthetic fixture、mock Provider 或组件 Harness 写成产品准确率/漏洞确认。Phase 2 的单组 L2 与 Phase 3 的任务预算仅限用户逐组预览并授权的快筛；父任务结果中没有被 L1 选中的组会被拒绝。批量自动调度、L3、三模式 UI/Worker 验收与 Phase 5 仍未完成。
+diff --git "a/docs/\351\241\271\347\233\256\347\216\260\347\212\266\344\270\216\344\270\213\344\270\200\346\255\245.md" "b/docs/\351\241\271\347\233\256\347\216\260\347\212\266\344\270\216\344\270\213\344\270\200\346\255\245.md"
+index 3abe134..c6c9e86 100644
+--- "a/docs/\351\241\271\347\233\256\347\216\260\347\212\266\344\270\216\344\270\213\344\270\200\346\255\245.md"
++++ "b/docs/\351\241\271\347\233\256\347\216\260\347\212\266\344\270\216\344\270\213\344\270\200\346\255\245.md"
+@@ -4,7 +4,7 @@
+ 
+ 在 `feat/progressive-ai-triage-phase1-20261021`、基线 `fe9d11c237d0edac9e93144d7d75a84b1df27895` 上继续落地《OHScanner 四级渐进式智能审计与 Agent 预算调度开发任务书》。日期/区间/分支/版本矩阵父 Operation 创建时会冻结策略 revision、内容和 SHA；智能审计每端点授权 workflow 绑定该 SHA，策略变更后旧预览失效。端点静态报告完成后，Operation Worker 已实际运行来源绑定的 L0 归并、L1 排序，结果保存每组成员、选择/未选原因，风险工作区显示该计划。
+ 
+-当前仅完成多端点 Operation 的 L0/L1 计划接线。快照单任务仍未接入；L2 快筛没有单独授权/Worker 调用，L3 继续沿用已有 Agent 操作；新 progressive SQLite 账本还未连接到真实 Provider dispatch，因此不能宣称任务总 Token、并发、调用数和时间限制已执行。静态任务不会因排序而触发模型；候选处置状态不变，`validated_vulnerability=0`。专项 `test_progressive_triage.py` 在隔离依赖环境中 19/19 通过；Operation API/Store 目标回归 13/13 通过；前端 Node 测试 126/126 通过，TypeScript 与生产构建通过。未完成全仓 Python 回归及真实 Provider 测试；多端点完整 E2E 受当前 WSL 与 Windows Git 临时目录路径不兼容影响，未作为通过项。
++多端点 L0/L1 已接入四类父 Operation。Phase 2 新增单扫描及多端点审计候选级 L2 `preview → explicit consent → Operation Worker`：重新读取固定报告和源码，核对报告/源码 SHA，复用现有脱敏；多端点任务必须命中父任务冻结策略和已完成 L0/L1 选中的组。Consent 绑定来源、证据正文、模型、提示/schema 版本、策略 revision/hash、排序选择、父 Operation 的 L0/L1 计划摘要、nonce 与过期时间。Worker 仅执行一次 no-tools 请求并记录真实 Provider usage，失败保留 candidate；操作状态与结果由现有 Operation Store 持久化。SQLite 账本现按单扫描任务或多端点父 Operation 汇总 L2 调用、Token、并发与时间预算，组级幂等避免换端点重复调用；父任务取消会传播到其 L2 子任务。L2 仍需逐组人工预览授权，不会自动排队；L3 Agent 门控/接线、统一状态进度、全链撤权/崩溃账单恢复、完整三模式 UI 验收仍未完成。美元额度仍是 advisory，未调用真实 Provider，候选处置不变且 `validated_vulnerability=0`。Python 专项/API/Store 合计 30 项通过；前端 Node 126 项、TypeScript 检查与生产构建通过；未做浏览器和真实 Provider 验收。
+ 
+ ## 2026-10-21 PR #52：补齐本地领先内容并接入最新 main
+ 
+diff --git a/src/workbench/operation_worker.py b/src/workbench/operation_worker.py
+index 9bdb62b..9155803 100644
+--- a/src/workbench/operation_worker.py
++++ b/src/workbench/operation_worker.py
+@@ -33,6 +33,22 @@ def _is_consented_joint_comparison(task, ops=None):
+                 task.get("id"), spec["consent_nonce"], spec["consent_sha256"]))
+ 
+ 
++def _is_consented_quick_screen(task):
++    spec = task.get("spec") if isinstance(task.get("spec"), dict) else {}
++    auth = spec.get("authorization") if isinstance(spec.get("authorization"), dict) else {}
++    digest = spec.get("consent_sha256")
++    nonce = spec.get("consent_nonce")
++    return (task.get("kind") == "progressive_quick_screen"
++            and spec.get("source_submission_approved") is True
++            and isinstance(digest, str) and len(digest) == 64
++            and all(ch in "0123456789abcdef" for ch in digest)
++            and isinstance(nonce, str) and len(nonce) == 32
++            and all(ch in "0123456789abcdef" for ch in nonce)
++            and auth.get("consent_sha256") == digest
++            and auth.get("authorized") is True
++            and isinstance(spec.get("consent_manifest"), dict))
++
++
+ def _is_continuous_tool_agent(task):
+     spec = task.get("spec") if isinstance(task.get("spec"), dict) else {}
+     return (task.get("kind") == "agent_investigation"
+@@ -45,6 +61,8 @@ def _hard_deadline_seconds(task):
+     if task.get("kind") == "agent_investigation":
+         from .agent import bounded_agent_spec
+         return bounded_agent_spec(spec)["timeout_seconds"] + 10
++    if task.get("kind") == "progressive_quick_screen":
++        return 100
+     return spec.get("timeout_seconds", 600)
+ 
+ 
+@@ -91,6 +109,7 @@ class OperationWorker:
+                     env={**worker_child_environment(os.environ,
+                             allow_agent_provider=(not self.validation and (
+                                 task.get("kind") == "agent_investigation"
++                                or _is_consented_quick_screen(task)
+                                 or _is_consented_joint_comparison(task, self.ops)))),
+                          "OHSCANNER_DATA": str(self.settings.data_dir),
+                          "OHSCANNER_TARGET_ROOTS": os.pathsep.join(map(str, self.settings.target_roots)),
+@@ -200,6 +219,7 @@ def main():
+         ops = Operations(store)
+         task = ops.get(args.child)
+         if (task.get("kind") != "agent_investigation"
++                and not _is_consented_quick_screen(task)
+                 and not _is_consented_joint_comparison(task, ops)):
+             remove_agent_provider_environment(os.environ)
+         memory = task["spec"].get("memory_mb", 2048) * 1024 * 1024
+diff --git a/src/workbench/operations.py b/src/workbench/operations.py
+index f3107f2..cb98432 100644
+--- a/src/workbench/operations.py
++++ b/src/workbench/operations.py
+@@ -826,6 +826,12 @@ def execute(settings, store, ops, task):
+     if kind == "agent_investigation":
+         from .agent import execute_agent
+         return execute_agent(settings, store, ops, task)
++    if kind == "progressive_quick_screen":
++        from .progressive_triage.quick_screen_operation import execute_quick_screen
++        result = execute_quick_screen(settings, task, ops=ops)
++        result["status"] = ("completed" if result.get("state") == "completed"
++                            else "completed_with_limitations")
++        return result
+     if kind == "version_candidate_comparison":
+         from .joint_candidate_comparison_runtime import execute_joint_comparison
+         return execute_joint_comparison(settings, store, ops, task)
+diff --git a/src/workbench/operations_api.py b/src/workbench/operations_api.py
+index 88e5051..12cd8f4 100644
+--- a/src/workbench/operations_api.py
++++ b/src/workbench/operations_api.py
+@@ -571,6 +571,15 @@ class AgentInvestigationRequest(Strict):
+     consent_nonce: str | None = Field(default=None, pattern=r"^[0-9a-f]{32}$")
+ 
+ 
++class ProgressiveQuickScreenRequest(Strict):
++    job_id: str
++    candidate_id: str = Field(min_length=1, max_length=200)
++    source_submission_approved: bool = False
++    consent_sha256: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
++    consent_nonce: str | None = Field(default=None, pattern=r"^[0-9a-f]{32}$")
++    consent_expires_at: str | None = Field(default=None, max_length=40)
++
++
+ 
+ 
+ class AgentBatchInvestigationRequest(Strict):
+@@ -2045,6 +2054,70 @@ def install_routes(app: FastAPI, settings, store):
+         if not body.consent_nonce:
+             raise HTTPException(status_code=428, detail="缺少本次预览 nonce；请重新预览后再授权提交")
+ 
++    def _quick_screen_preview(body, provider):
++        from .progressive_triage.quick_screen_operation import prepare_quick_screen
++        parent = ops.audit_parent_for_scan(body.job_id)
++        parent_plan = None
++        if parent:
++            parent_result = ops.result(parent["id"])
++            parent_plan = parent_result.get("progressive_triage")
++        return prepare_quick_screen(settings, store, body.job_id, body.candidate_id,
++                                    provider, body.consent_nonce, body.consent_expires_at,
++                                    audit_parent=parent, audit_parent_plan=parent_plan)
++
++    @router.post("/operations/progressive-quick-screens/preview")
++    def progressive_quick_screen_preview(body: ProgressiveQuickScreenRequest):
++        from .agent import ProviderConfig
++        provider = ProviderConfig.from_env(settings.data_dir)
++        if not provider.configured:
++            raise HTTPException(status_code=503, detail="真实模型未配置；没有发送 Provider 请求")
++        body = _fresh_consent_nonce(body)
++        try:
++            return _quick_screen_preview(body, provider)
++        except (KeyError, ValueError, OSError) as exc:
++            raise HTTPException(status_code=409, detail=str(exc)) from None
++
++    @router.post("/operations/progressive-quick-screens", status_code=201)
++    def progressive_quick_screen(body: ProgressiveQuickScreenRequest):
++        from .agent import ProviderConfig
++        provider = ProviderConfig.from_env(settings.data_dir)
++        if not provider.configured:
++            raise HTTPException(status_code=503, detail="真实模型未配置；没有发送 Provider 请求")
++        if not body.source_submission_approved:
++            raise HTTPException(status_code=428, detail="请先查看本次 L2 源码外发预览并明确授权")
++        if not body.consent_sha256:
++            raise HTTPException(status_code=428, detail="缺少本次 L2 预览指纹，请重新预览")
++        if not body.consent_expires_at:
++            raise HTTPException(status_code=428, detail="缺少本次 L2 预览有效期，请重新预览")
++        _require_consent_nonce(body)
++        try:
++            preview = _quick_screen_preview(body, provider)
++        except (KeyError, ValueError, OSError) as exc:
++            raise HTTPException(status_code=409, detail=str(exc)) from None
++        if body.consent_sha256 != preview["consent_sha256"]:
++            raise HTTPException(status_code=409, detail="L2 外发预览已过期或固定来源发生变化；请重新预览")
++        spec = {
++            "source_submission_approved": True,
++            "job_id": body.job_id,
++            "audit_operation_id": preview["audit_operation_id"],
++            "candidate_id": body.candidate_id,
++            "progressive_policy": preview["progressive_policy"],
++            "ranking": preview["ranking"],
++            "consent_nonce": body.consent_nonce,
++            "consent_sha256": preview["consent_sha256"],
++            "consent_expires_at": preview["consent_expires_at"],
++            "consent_manifest": preview["consent_manifest"],
++            "group": preview["group"],
++            "evidence": preview["evidence"],
++            "authorization": preview["authorization"],
++            "provider_fingerprint": provider.fingerprint,
++            "provider_model": provider.model,
++        }
++        try:
++            return ops.create("progressive_quick_screen", spec)
++        except ValueError as exc:
++            raise HTTPException(status_code=409, detail=str(exc)) from None
++
+     @router.post("/operations/agent-investigations/preview")
+     def agent_investigation_preview(body: AgentInvestigationRequest):
+         from .agent import ProviderConfig
+diff --git a/src/workbench/operations_store.py b/src/workbench/operations_store.py
+index 7c31ade..7d9d3ad 100644
+--- a/src/workbench/operations_store.py
++++ b/src/workbench/operations_store.py
+@@ -6,7 +6,7 @@ from pathlib import Path
+ import sqlite3
+ import statistics
+ import uuid
+-from datetime import datetime
++from datetime import datetime, timezone
+ from decimal import Decimal, InvalidOperation
+ from .store import now
+ from .triage_limits import (MAX_TRIAGE_CANDIDATES_PER_ENDPOINT,
+@@ -291,8 +291,43 @@ class Operations:
+                     and row["consent_sha256"] == consent_sha256)
+ 
+     def create(self, kind, spec):
+-        if kind not in {"source_sync", "source_sync_batch", "repository_import_scan", "revision_range", "version_matrix", "branch_comparison", "recent_window_comparison", "validation", "investigation", "candidate_review_batch", "agent_investigation", "version_candidate_comparison"}:
++        if kind not in {"source_sync", "source_sync_batch", "repository_import_scan", "revision_range", "version_matrix", "branch_comparison", "recent_window_comparison", "validation", "investigation", "candidate_review_batch", "agent_investigation", "version_candidate_comparison", "progressive_quick_screen"}:
+             raise ValueError("unknown operation kind")
++        if kind == "progressive_quick_screen":
++            from .progressive_triage.contracts import SHA256_RE, content_sha256
++            required = ("consent_nonce", "consent_sha256", "job_id", "candidate_id",
++                        "consent_manifest", "group", "evidence", "authorization")
++            if (not isinstance(spec, dict)
++                    or spec.get("source_submission_approved") is not True
++                    or any(not isinstance(spec.get(name), str) or not spec[name]
++                           for name in required[:4])
++                    or not isinstance(spec.get("consent_manifest"), dict)
++                    or not isinstance(spec.get("group"), dict)
++                    or not isinstance(spec.get("evidence"), list)
++                    or not isinstance(spec.get("authorization"), dict)
++                    or not isinstance(spec.get("progressive_policy"), dict)
++                    or not isinstance(spec.get("ranking"), dict)
++                    or not isinstance(spec.get("audit_operation_id"), str)
++                    or spec["consent_manifest"].get("audit_operation_id") != spec.get("audit_operation_id")
++                    or not SHA256_RE.fullmatch(spec["consent_sha256"])
++                    or len(spec["consent_nonce"]) != 32
++                    or any(ch not in "0123456789abcdef" for ch in spec["consent_nonce"])
++                    or content_sha256(spec["consent_manifest"]) != spec["consent_sha256"]
++                    or spec["consent_manifest"].get("group") != spec["group"]
++                    or spec["consent_manifest"].get("evidence") != spec["evidence"]
++                    or spec["consent_manifest"].get("ranking") != spec["ranking"]
++                    or spec["consent_manifest"].get("policy") != spec["progressive_policy"].get("policy")
++                    or spec["consent_manifest"].get("policy_sha256") != spec["progressive_policy"].get("policy_sha256")
++                    or spec["consent_manifest"].get("policy_revision") != spec["progressive_policy"].get("revision")
++                    or spec["authorization"].get("consent_sha256") != spec["consent_sha256"]):
++                raise ValueError("progressive quick screen requires a fixed, explicit consent binding")
++            try:
++                expiry = datetime.fromisoformat(spec.get("consent_expires_at", "").replace("Z", "+00:00"))
++            except (AttributeError, TypeError, ValueError):
++                raise ValueError("progressive quick screen consent expiry is invalid") from None
++            if (expiry.tzinfo is None or expiry <= datetime.now(timezone.utc)
++                    or spec["consent_manifest"].get("consent_expires_at") != spec["consent_expires_at"]):
++                raise ValueError("progressive quick screen consent has expired or changed")
+         if kind == "version_candidate_comparison":
+             required = ("from_commit", "from_candidate_id", "to_commit", "to_candidate_id",
+                         "consent_nonce", "consent_sha256", "consent_expires_at",
+@@ -353,6 +388,27 @@ class Operations:
+                     existing_spec = json.loads(row["spec"])
+                     if existing_spec.get("source_consent_sha256") == spec["source_consent_sha256"]:
+                         return self.row(row)
++            elif kind == "progressive_quick_screen":
++                # A repeated submission of one approval returns the recorded operation;
++                # it cannot create a second billable request.
++                audit_operation_id = spec["audit_operation_id"]
++                if audit_operation_id != spec["job_id"]:
++                    parent_row = db.execute("SELECT kind,spec,status,cancel_requested FROM operations WHERE id=?",
++                                            (audit_operation_id,)).fetchone()
++                    if not parent_row or parent_row["kind"] not in {
++                            "revision_range", "version_matrix", "branch_comparison", "recent_window_comparison"}:
++                        raise ValueError("progressive quick screen parent audit does not exist")
++                    parent_spec = json.loads(parent_row["spec"])
++                    if (spec["job_id"] not in parent_spec.get("scan_ids", [])
++                            or parent_spec.get("progressive_triage_policy") != spec["progressive_policy"]
++                            or parent_spec.get("audit_mode") == "static_only"
++                            or parent_row["cancel_requested"]
++                            or parent_row["status"] in {"cancelled", "failed", "timed_out", "interrupted"}):
++                        raise ValueError("progressive quick screen is not bound to its frozen intelligent audit")
++                for row in db.execute("SELECT * FROM operations WHERE kind=?", (kind,)):
++                    existing_spec = json.loads(row["spec"])
++                    if existing_spec.get("consent_sha256") == spec["consent_sha256"]:
++                        return self.row(row)
+             if kind == "repository_import_scan":
+                 prior = db.execute("SELECT id FROM operations WHERE kind=? AND spec=? AND status IN ('queued','running') ORDER BY created_at DESC LIMIT 1",
+                                    (kind, json.dumps(spec, sort_keys=True))).fetchone()
+@@ -939,6 +995,23 @@ class Operations:
+         with self.store.connect() as db:
+             return [self.row(r) for r in db.execute("SELECT * FROM operations ORDER BY created_at DESC LIMIT 200")]
+ 
++    def audit_parent_for_scan(self, job_id):
++        """Resolve a multi-endpoint audit parent without guessing across parents."""
++        if not isinstance(job_id, str) or not job_id:
++            raise ValueError("invalid scan job ID")
++        kinds = {"revision_range", "version_matrix", "branch_comparison", "recent_window_comparison"}
++        with self.store.connect() as db:
++            rows = list(db.execute("SELECT * FROM operations WHERE kind IN (?,?,?,?)",
++                                   tuple(sorted(kinds))))
++        parents = []
++        for raw in rows:
++            row = self.row(raw)
++            if job_id in row["spec"].get("scan_ids", []):
++                parents.append(row)
++        if len(parents) > 1:
++            raise ValueError("scan job is linked to multiple audit operations; shared budget cannot be resolved")
++        return parents[0] if parents else None
++
+     def report_operations_for_case(self, case_id, limit=20):
+         """Return result-bearing operations bound to one case, with explicit truncation."""
+         if not isinstance(case_id, str) or not case_id.strip():
+@@ -1144,6 +1217,10 @@ class Operations:
+             if row["kind"] == "candidate_review_batch" and row["status"] not in END:
+                 raise ValueError("candidate review batches cannot be cancelled; all candidates must remain queued until review or explicit resolution")
+             targets = [row]
++            if row["kind"] in {"revision_range", "version_matrix", "branch_comparison", "recent_window_comparison"}:
++                targets.extend(self.row(item) for item in db.execute(
++                    "SELECT * FROM operations WHERE kind='progressive_quick_screen'")
++                    if json.loads(item["spec"]).get("audit_operation_id") == key)
+             pair_id = row["spec"].get("pair_id")
+             if pair_id and row["kind"] == "agent_investigation" and row["status"] not in END:
+                 targets = [self.row(item) for item in db.execute(
+diff --git a/src/workbench/progressive_triage/api.py b/src/workbench/progressive_triage/api.py
+index 7c4b001..b32b25c 100644
+--- a/src/workbench/progressive_triage/api.py
++++ b/src/workbench/progressive_triage/api.py
+@@ -1,73 +1,73 @@
+-"""Versioned local API for the progressive triage policy settings."""
+-
+-from __future__ import annotations
+-
+-from typing import Any, Literal
+-
+-from fastapi import HTTPException
+-from pydantic import BaseModel, ConfigDict, Field
+-
+-from .policy import (
+-    PRESETS,
+-    PolicyError,
+-    PolicyRevisionConflict,
+-    PolicyStore,
+-    PolicyStoreError,
+-    build_policy,
+-)
+-
+-
+-class PolicyUpdate(BaseModel):
+-    model_config = ConfigDict(extra="forbid")
+-
+-    expected_revision: int = Field(ge=0, strict=True)
+-    profile: Literal["economical", "standard", "deep", "custom"]
+-    limits: dict[str, Any] | None = None
+-    family_quotas: bool | None = None
+-
+-
+-def _public_state(state: dict[str, Any]) -> dict[str, Any]:
+-    return {
+-        "revision": state["revision"],
+-        "updated_at": state["updated_at"],
+-        "updated_by": state["updated_by"],
+-        "policy": state["policy"],
+-        "policy_sha256": state["policy_sha256"],
+-        "presets": PRESETS,
+-        "integration": {
+-            "grouping_and_ranking": "connected_to_multi_endpoint_operation_results",
+-            "worker_enforcement": "not_connected",
+-            "quick_screen_executor": "bounded_no_tools_not_scheduled",
+-            "task_budget_ledger": "available_but_not_connected_to_operations",
+-            "billing_hard_cap": False,
+-            "all_candidates_preserved": True,
+-            "task_level_consent_required": True,
+-        },
+-    }
+-
+-
+-def install_routes(app, data_dir) -> PolicyStore:
+-    """Register strict read/update routes and return the backing local store."""
+-    store = PolicyStore(data_dir)
+-
+-    @app.get("/api/v1/agent/triage-policy")
+-    def get_triage_policy():
+-        try:
+-            return _public_state(store.read())
+-        except PolicyStoreError as error:
+-            raise HTTPException(status_code=500, detail=str(error)) from error
+-
+-    @app.put("/api/v1/agent/triage-policy")
+-    def update_triage_policy(body: PolicyUpdate):
+-        try:
+-            policy = build_policy(body.profile, body.limits, body.family_quotas)
+-            state = store.update(policy, body.expected_revision)
+-        except PolicyRevisionConflict as error:
+-            raise HTTPException(status_code=409, detail=str(error)) from error
+-        except PolicyStoreError as error:
+-            raise HTTPException(status_code=500, detail=str(error)) from error
+-        except PolicyError as error:
+-            raise HTTPException(status_code=422, detail=str(error)) from error
+-        return _public_state(state)
+-
+-    return store
++"""Versioned local API for the progressive triage policy settings."""
++
++from __future__ import annotations
++
++from typing import Any, Literal
++
++from fastapi import HTTPException
++from pydantic import BaseModel, ConfigDict, Field
++
++from .policy import (
++    PRESETS,
++    PolicyError,
++    PolicyRevisionConflict,
++    PolicyStore,
++    PolicyStoreError,
++    build_policy,
++)
++
++
++class PolicyUpdate(BaseModel):
++    model_config = ConfigDict(extra="forbid")
++
++    expected_revision: int = Field(ge=0, strict=True)
++    profile: Literal["economical", "standard", "deep", "custom"]
++    limits: dict[str, Any] | None = None
++    family_quotas: bool | None = None
++
++
++def _public_state(state: dict[str, Any]) -> dict[str, Any]:
++    return {
++        "revision": state["revision"],
++        "updated_at": state["updated_at"],
++        "updated_by": state["updated_by"],
++        "policy": state["policy"],
++        "policy_sha256": state["policy_sha256"],
++        "presets": PRESETS,
++        "integration": {
++            "grouping_and_ranking": "connected_to_multi_endpoint_operation_results",
++            "worker_enforcement": "l2_fixed_source_consent_and_parent_budget_gate",
++            "quick_screen_executor": "independent_explicit_consent_operation",
++            "task_budget_ledger": "shared_across_fixed_endpoints_for_explicit_quick_screen",
++            "billing_hard_cap": False,
++            "all_candidates_preserved": True,
++            "task_level_consent_required": True,
++        },
++    }
++
++
++def install_routes(app, data_dir) -> PolicyStore:
++    """Register strict read/update routes and return the backing local store."""
++    store = PolicyStore(data_dir)
++
++    @app.get("/api/v1/agent/triage-policy")
++    def get_triage_policy():
++        try:
++            return _public_state(store.read())
++        except PolicyStoreError as error:
++            raise HTTPException(status_code=500, detail=str(error)) from error
++
++    @app.put("/api/v1/agent/triage-policy")
++    def update_triage_policy(body: PolicyUpdate):
++        try:
++            policy = build_policy(body.profile, body.limits, body.family_quotas)
++            state = store.update(policy, body.expected_revision)
++        except PolicyRevisionConflict as error:
++            raise HTTPException(status_code=409, detail=str(error)) from error
++        except PolicyStoreError as error:
++            raise HTTPException(status_code=500, detail=str(error)) from error
++        except PolicyError as error:
++            raise HTTPException(status_code=422, detail=str(error)) from error
++        return _public_state(state)
++
++    return store
+diff --git a/src/workbench/progressive_triage/quick_screen.py b/src/workbench/progressive_triage/quick_screen.py
+index c5c4e37..0182bc5 100644
+--- a/src/workbench/progressive_triage/quick_screen.py
++++ b/src/workbench/progressive_triage/quick_screen.py
+@@ -286,9 +286,13 @@ def _normalize_result(value: Any, group_id: str, allowed_ids: set[str]) -> dict[
+ 
+ def run_quick_screen(provider: Any, group: dict[str, Any], evidence: Any,
+                      authorization: dict[str, Any], *, provider_fingerprint: str,
+-                     model: str) -> dict[str, Any]:
++                     model: str, timeout_seconds: int = MAX_REQUEST_SECONDS) -> dict[str, Any]:
+     """Perform one explicit, no-tools quick screen; all failures degrade to unknown."""
+     group_id = group.get("group_id") if isinstance(group, dict) else None
++    if (not isinstance(timeout_seconds, int) or isinstance(timeout_seconds, bool)
++            or not 1 <= timeout_seconds <= MAX_REQUEST_SECONDS):
++        return {"group_id": group_id, "state": "quick_unknown",
++                "reason_code": "quick_screen_timeout_out_of_bounds", "validated_vulnerability": 0}
+     try:
+         payload, allowed_ids = build_quick_screen_request(
+             group, evidence, authorization, provider_fingerprint, model
+@@ -297,7 +301,7 @@ def run_quick_screen(provider: Any, group: dict[str, Any], evidence: Any,
+         return {"group_id": group_id, "state": "quick_unknown",
+                 "reason_code": str(error), "validated_vulnerability": 0}
+     try:
+-        response = provider.create(payload, timeout=MAX_REQUEST_SECONDS, max_retries=0)
++        response = provider.create(payload, timeout=timeout_seconds, max_retries=0)
+         if response.get("status") != "completed":
+             raise ValueError("provider_response_incomplete")
+         text = _response_text(response)
+diff --git a/tests/test_progressive_triage.py b/tests/test_progressive_triage.py
+index d3b4987..c7eb243 100644
+--- a/tests/test_progressive_triage.py
++++ b/tests/test_progressive_triage.py
+@@ -251,6 +251,93 @@ class PolicyApiTests(unittest.TestCase):
+         self.assertEqual(baseline, _progressive_workflow_sha256("a" * 64, "b" * 64))
+         self.assertNotEqual(baseline, _progressive_workflow_sha256("a" * 64, "c" * 64))
+ 
++    def test_quick_screen_start_without_explicit_consent_makes_no_provider_call(self):
++        from unittest.mock import patch
++        from types import SimpleNamespace
++
++        class Provider(SimpleNamespace):
++            calls = 0
++
++            def create(self, *args, **kwargs):
++                self.calls += 1
++                raise AssertionError("no consent means no Provider request")
++
++        provider = Provider(configured=True)
++        with tempfile.TemporaryDirectory() as directory:
++            settings = Settings(Path(directory) / "data", ())
++            with patch("src.workbench.agent.ProviderConfig.from_env", return_value=provider):
++                with TestClient(create_app(settings)) as client:
++                    response = client.post("/api/v1/operations/progressive-quick-screens", headers={
++                        "x-ohscanner-client": "workbench-v1"}, json={
++                            "job_id": "a" * 32, "candidate_id": "candidate-1",
++                            "source_submission_approved": False,
++                        })
++        self.assertEqual(response.status_code, 428, response.text)
++        self.assertEqual(provider.calls, 0)
++
++    def test_quick_screen_preview_start_persists_one_idempotent_operation(self):
++        from datetime import datetime, timedelta, timezone
++        from unittest.mock import patch
++        from types import SimpleNamespace
++
++        from src.workbench.progressive_triage.contracts import content_sha256
++        from src.workbench.progressive_triage.policy import policy_envelope
++
++        provider = SimpleNamespace(configured=True, fingerprint="f" * 64,
++                                   model="screen-model", public={"model": "screen-model"})
++
++        def prepare(_settings, _store, job_id, candidate_id, active_provider, nonce, expiry=None,
++                    audit_parent=None, audit_parent_plan=None):
++            expiry = expiry or (datetime.now(timezone.utc) + timedelta(minutes=8)).isoformat()
++            policy = build_policy()
++            policy_sha256 = policy_envelope(policy)["policy_sha256"]
++            progressive_policy = {"revision": 0, "policy": policy,
++                                  "policy_sha256": policy_sha256}
++            group = {"group_id": "g1", "members": [{"candidate_id": candidate_id}]}
++            evidence = [{"evidence_id": "e1", "text": "fixed excerpt"}]
++            ranking = {"decisions": [{"group_id": "g1", "selected": True}]}
++            manifest = {"consent_nonce": nonce, "consent_expires_at": expiry,
++                        "audit_operation_id": job_id,
++                        "group": group, "evidence": evidence,
++                        "policy_revision": 0, "policy": policy,
++                        "policy_sha256": policy_sha256, "ranking": ranking}
++            digest = content_sha256(manifest)
++            return {"eligible": True, "consent_nonce": nonce, "consent_expires_at": expiry,
++                    "consent_sha256": digest, "consent_manifest": manifest,
++                    "group": group, "evidence": evidence,
++                    "progressive_policy": progressive_policy, "ranking": ranking,
++                    "audit_operation_id": job_id,
++                    "authorization": {"authorized": True, "consent_sha256": digest},
++                    "provider": active_provider.public,
++                    "disclosure": {"tools_enabled": False}}
++
++        with tempfile.TemporaryDirectory() as directory:
++            settings = Settings(Path(directory) / "data", ())
++            with patch("src.workbench.agent.ProviderConfig.from_env", return_value=provider):
++                with patch("src.workbench.progressive_triage.quick_screen_operation.prepare_quick_screen",
++                           side_effect=prepare):
++                    with TestClient(create_app(settings)) as client:
++                        headers = {"x-ohscanner-client": "workbench-v1"}
++                        preview = client.post("/api/v1/operations/progressive-quick-screens/preview",
++                            headers=headers, json={"job_id": "a" * 32,
++                                                  "candidate_id": "candidate-1"})
++                        self.assertEqual(preview.status_code, 200, preview.text)
++                        body = preview.json()
++                        start_body = {"job_id": "a" * 32, "candidate_id": "candidate-1",
++                                      "source_submission_approved": True,
++                                      "consent_nonce": body["consent_nonce"],
++                                      "consent_sha256": body["consent_sha256"],
++                                      "consent_expires_at": body["consent_expires_at"]}
++                        started = client.post("/api/v1/operations/progressive-quick-screens",
++                                              headers=headers, json=start_body)
++                        self.assertEqual(started.status_code, 201, started.text)
++                        replay = client.post("/api/v1/operations/progressive-quick-screens",
++                                             headers=headers, json=start_body)
++                        self.assertEqual(replay.status_code, 201, replay.text)
++        self.assertEqual(started.json()["id"], replay.json()["id"])
++        self.assertEqual(started.json()["kind"], "progressive_quick_screen")
++        self.assertEqual(started.json()["status"], "queued")
++
+     def test_policy_routes_reject_weak_requests_and_preserve_revision(self):
+         with tempfile.TemporaryDirectory() as directory:
+             settings = Settings(Path(directory) / "data", ())
+@@ -259,7 +346,12 @@ class PolicyApiTests(unittest.TestCase):
+                 current = client.get(endpoint)
+                 self.assertEqual(current.status_code, 200, current.text)
+                 self.assertEqual(current.json()["policy"]["profile"], "standard")
+-                self.assertEqual(current.json()["integration"]["worker_enforcement"], "not_connected")
++                self.assertEqual(current.json()["integration"]["worker_enforcement"],
++                                 "l2_fixed_source_consent_and_parent_budget_gate")
++                self.assertEqual(current.json()["integration"]["quick_screen_executor"],
++                                 "independent_explicit_consent_operation")
++                self.assertEqual(current.json()["integration"]["task_budget_ledger"],
++                                 "shared_across_fixed_endpoints_for_explicit_quick_screen")
+                 self.assertEqual(current.json()["integration"]["grouping_and_ranking"],
+                                  "connected_to_multi_endpoint_operation_results")
+ 
+@@ -436,6 +528,164 @@ class QuickScreenTests(unittest.TestCase):
+         self.assertEqual(provider.calls, 1)
+ 
+ 
++class QuickScreenOperationTests(unittest.TestCase):
++    def test_preview_excerpt_is_redacted_and_within_fixed_line_and_byte_bounds(self):
++        from types import SimpleNamespace
++        from unittest.mock import patch
++        from src.workbench.progressive_triage.quick_screen_operation import prepare_quick_screen
++
++        with tempfile.TemporaryDirectory() as directory:
++            data_dir = Path(directory) / "data"
++            data_dir.mkdir(mode=0o700)
++            settings = SimpleNamespace(data_dir=data_dir)
++            source_lines = [f"int statement_{index};" for index in range(100)]
++            source_lines[49] = "Authorization: Bearer test-secret-value"
++            source_text = "\n".join(source_lines)
++            job = {"id": "job-1", "status": "completed", "report_sha256": "f" * 64}
++            report = {"repository": REPOSITORY, "commit": COMMIT,
++                      "snapshot_sha256": SNAPSHOT, "status": "completed"}
++            candidate = {"id": "candidate-1", "file": "src/example.cpp", "line": 50,
++                         "source_sha256": SOURCE, "detector_id": "cpp.memory",
++                         "rule_id": "memory.rule", "severity": "high", "evidence": {}}
++            prepared = {"source": {"text": source_text}, "initial_context": {
++                "evidence_obligations": [{"description": "check length origin"}]},
++                "initial_evidence_id": "unused", "redaction_categories": []}
++            provider = SimpleNamespace(fingerprint="provider-v1", model="small-model",
++                                       public={"model": "small-model"})
++            with patch("src.workbench.service.read_report", return_value=report), \
++                    patch("src.workbench.service.finding", return_value=candidate), \
++                    patch("src.workbench.smart_audit._source_binding_valid", return_value=True), \
++                    patch("src.workbench.agent._prepare_candidate_context", return_value=prepared):
++                preview = prepare_quick_screen(settings, SimpleNamespace(job=lambda _: job),
++                                               "job-1", "candidate-1", provider, "a" * 32)
++            evidence = preview["evidence"][0]
++            self.assertLessEqual(evidence["line_end"] - evidence["line_start"], 39)
++            self.assertLessEqual(len(evidence["text"].encode("utf-8")), 8_192)
++            self.assertEqual(evidence["source_sha256"], SOURCE)
++            self.assertNotIn("test-secret-value", evidence["text"])
++            self.assertTrue(evidence["sensitive_redactions"])
++            self.assertTrue(preview["ranking"]["decisions"][0]["selected"])
++            self.assertEqual(preview["consent_sha256"], content_sha256(preview["consent_manifest"]))
++
++    def _task(self):
++        from datetime import datetime, timedelta, timezone
++        from src.workbench.progressive_triage.quick_screen_operation import PROMPT_VERSION, QUICK_SCREEN_VERSION
++        from src.workbench.progressive_triage.policy import policy_envelope
++        from src.workbench.progressive_triage.ranking import rank_groups
++
++        fixture = QuickScreenTests()
++        fixture.setUp()
++        policy = build_policy()
++        policy_sha256 = policy_envelope(policy)["policy_sha256"]
++        group = {**fixture.group, "members": [{
++            **fixture.group["members"][0], "repository": REPOSITORY, "commit": COMMIT,
++            "snapshot_sha256": SNAPSHOT, "source_sha256": SOURCE,
++            "source_binding_verified": True, "file": "src/example.cpp",
++        }]}
++        ranking = rank_groups([group], policy["limits"]["quick_screen_groups_per_audit"],
++                              family_quotas=policy["family_quotas"])
++        expires = (datetime.now(timezone.utc) + timedelta(minutes=5)).isoformat()
++        manifest = {
++            "consent_nonce": "e" * 32,
++            "consent_expires_at": expires,
++            "audit_operation_id": "job-1",
++            "audit_operation_id": "job-1",
++            "quick_screen_version": QUICK_SCREEN_VERSION,
++            "prompt_version": PROMPT_VERSION,
++            "group": group,
++            "evidence": fixture.evidence,
++            "fixed_source": {key: fixture.authorization[key] for key in
++                             ("repository", "commit", "report_sha256")},
++            "provider_fingerprint": fixture.provider_fingerprint,
++            "model": fixture.model,
++            "redaction_policy_version": fixture.authorization["redaction_policy_version"],
++            "policy_revision": 0,
++            "policy": policy,
++            "policy_sha256": policy_sha256,
++            "ranking": ranking,
++        }
++        digest = content_sha256(manifest)
++        authorization = {**fixture.authorization, "consent_sha256": digest}
++        spec = {
++            "source_submission_approved": True,
++            "consent_nonce": "e" * 32,
++            "consent_sha256": digest,
++            "consent_expires_at": expires,
++            "audit_operation_id": "job-1",
++            "consent_manifest": manifest,
++            "group": group,
++            "evidence": fixture.evidence,
++            "authorization": authorization,
++            "job_id": "job-1",
++            "progressive_policy": {"revision": 0, "policy": policy,
++                                   "policy_sha256": policy_sha256},
++            "ranking": ranking,
++        }
++        return fixture, {"kind": "progressive_quick_screen", "spec": spec}
++
++    def test_operation_rechecks_exact_consent_and_executes_no_tools_once(self):
++        from src.workbench.progressive_triage.quick_screen_operation import execute_quick_screen
++        from types import SimpleNamespace
++
++        fixture, task = self._task()
++
++        class Provider:
++            configured = True
++            fingerprint = fixture.provider_fingerprint
++            model = fixture.model
++
++            def __init__(self):
++                self.calls = []
++
++            def create(self, payload, **kwargs):
++                self.calls.append((payload, kwargs))
++                return fixture.response()
++
++        provider = Provider()
++        with tempfile.TemporaryDirectory() as directory:
++            settings = SimpleNamespace(data_dir=Path(directory))
++            result = execute_quick_screen(settings, task, provider)
++            replay_provider = Provider()
++            replay = execute_quick_screen(settings, task, replay_provider)
++        self.assertEqual(result["state"], "completed")
++        self.assertEqual(result["vulnerability_state"], "candidate")
++        self.assertEqual(result["validated_vulnerability"], 0)
++        self.assertEqual(result["quick_screen"]["usage"]["input_tokens"], 700)
++        self.assertEqual(len(provider.calls), 1)
++        self.assertEqual(result["budget"]["usage"]["model_calls_allocated"], 1)
++        self.assertEqual(result["budget"]["usage"]["input_tokens_allocated"], 700)
++        self.assertEqual(result["budget"]["usage"]["output_tokens_allocated"], 120)
++        self.assertEqual(result["budget"]["cost"]["enforcement"], "advisory_only")
++        self.assertEqual(replay["reason_code"], "prior_request_outcome_not_replayed")
++        self.assertEqual(replay_provider.calls, [])
++        payload, kwargs = provider.calls[0]
++        self.assertNotIn("tools", payload)
++        self.assertEqual(kwargs, {"timeout": 90, "max_retries": 0})
++
++    def test_modified_evidence_after_consent_never_reaches_provider(self):
++        from src.workbench.progressive_triage.quick_screen_operation import execute_quick_screen
++        from types import SimpleNamespace
++
++        fixture, task = self._task()
++        task["spec"]["evidence"] = [{**task["spec"]["evidence"][0], "text": "changed source"}]
++
++        class Provider:
++            configured = True
++            fingerprint = fixture.provider_fingerprint
++            model = fixture.model
++            calls = 0
++
++            def create(self, *args, **kwargs):
++                self.calls += 1
++                raise AssertionError("modified consent payload must not be sent")
++
++        provider = Provider()
++        with tempfile.TemporaryDirectory() as directory:
++            result = execute_quick_screen(SimpleNamespace(data_dir=Path(directory)), task, provider)
++        self.assertEqual(result["state"], "quick_unknown")
++        self.assertEqual(provider.calls, 0)
++
++
+ class BudgetLedgerTests(unittest.TestCase):
+     def setUp(self):
+         from src.workbench.progressive_triage.contracts import content_sha256
+diff --git a/tests/test_workbench_operations.py b/tests/test_workbench_operations.py
+index cb83d3f..847118b 100644
+--- a/tests/test_workbench_operations.py
++++ b/tests/test_workbench_operations.py
+@@ -39,6 +39,56 @@ class OperationsStoreTests(unittest.TestCase):
+     def tearDown(self):
+         self.temp.cleanup()
+ 
++    def test_quick_screen_approval_is_idempotent_and_digest_bound(self):
++        from datetime import datetime, timedelta, timezone
++        from src.workbench.progressive_triage.contracts import content_sha256
++        from src.workbench.progressive_triage.policy import build_policy, policy_envelope
++
++        expires = (datetime.now(timezone.utc) + timedelta(minutes=5)).isoformat()
++        policy = build_policy()
++        policy_sha256 = policy_envelope(policy)["policy_sha256"]
++        ranking = {"decisions": [{"group_id": "g1", "selected": True}]}
++        manifest = {"consent_nonce": "a" * 32, "consent_expires_at": expires,
++                    "audit_operation_id": "job-1",
++                    "group": {"group_id": "g1"}, "evidence": [{"evidence_id": "e1"}],
++                    "policy_revision": 0, "policy": policy,
++                    "policy_sha256": policy_sha256, "ranking": ranking}
++        digest = content_sha256(manifest)
++        spec = {"source_submission_approved": True, "consent_nonce": "a" * 32,
++                "consent_sha256": digest, "consent_expires_at": expires,
++                "audit_operation_id": "job-1",
++                "job_id": "job-1", "candidate_id": "candidate-1",
++                "consent_manifest": manifest, "group": manifest["group"],
++                "evidence": manifest["evidence"],
++                "progressive_policy": {"revision": 0, "policy": policy,
++                                       "policy_sha256": policy_sha256},
++                "ranking": ranking,
++                "authorization": {"authorized": True, "consent_sha256": digest}}
++        first = self.ops.create("progressive_quick_screen", spec)
++        replay = self.ops.create("progressive_quick_screen", spec)
++        self.assertEqual(first["id"], replay["id"])
++        self.assertEqual(first["kind"], "progressive_quick_screen")
++
++        tampered = {**spec, "evidence": [{"evidence_id": "e2"}]}
++        with self.assertRaisesRegex(ValueError, "fixed, explicit consent"):
++            self.ops.create("progressive_quick_screen", tampered)
++
++    def test_endpoint_resolves_to_one_multi_endpoint_budget_owner(self):
++        parent = self.ops.create("version_matrix", {"scan_ids": ["endpoint-a", "endpoint-b"]})
++        self.assertEqual(self.ops.audit_parent_for_scan("endpoint-a")["id"], parent["id"])
++        self.assertIsNone(self.ops.audit_parent_for_scan("standalone-scan"))
++
++    def test_quick_screen_unknown_is_a_reviewable_limited_operation_result(self):
++        from src.workbench.operations import execute
++        for state, expected in (("completed", "completed"),
++                                ("quick_unknown", "completed_with_limitations")):
++            with self.subTest(state=state), patch(
++                    "src.workbench.progressive_triage.quick_screen_operation.execute_quick_screen",
++                    return_value={"state": state, "vulnerability_state": "candidate"}):
++                result = execute(self.settings, self.store, self.ops,
++                                 {"kind": "progressive_quick_screen", "spec": {}})
++            self.assertEqual(result["status"], expected)
++
+     def test_legacy_r2_budget_status_is_exposed_as_candidate_limit(self):
+         row = {"r2_status": "budget_limited", "candidate_manifest": "[]",
+                "operation_ids": "[]", "r2_operation_ids": "[]",
+diff --git a/web/src/features/audits/OperationWorkspace.tsx b/web/src/features/audits/OperationWorkspace.tsx
+index ab58d4b..fffcdee 100644
+--- a/web/src/features/audits/OperationWorkspace.tsx
++++ b/web/src/features/audits/OperationWorkspace.tsx
+@@ -97,7 +97,7 @@ function RecentWindowSummary({ result, openScan }: { result: any; openScan: (id:
+   </Card>;
+ }
+ export type OperationView = "all" | "date" | "branches" | "matrix" | "validation" | "investigate" | "agent" | "agent_research" | "sync" | "queue";
+-const kinds: Record<string, string> = { source_sync: "源码同步 / 自动扫描", source_sync_batch: "多仓库批量同步", revision_range: "固定区间", branch_comparison: "跨版本比较", recent_window_comparison: "N 日 / 1 日对照", version_matrix: "版本矩阵", validation: "隔离验证", investigation: "只读调查", agent_investigation: "模型辅助调查", candidate_review_batch: "历史候选队列（已停用）" };
++const kinds: Record<string, string> = { source_sync: "源码同步 / 自动扫描", source_sync_batch: "多仓库批量同步", revision_range: "固定区间", branch_comparison: "跨版本比较", recent_window_comparison: "N 日 / 1 日对照", version_matrix: "版本矩阵", validation: "隔离验证", investigation: "只读调查", agent_investigation: "模型辅助调查", progressive_quick_screen: "渐进式 L2 快速研判", candidate_review_batch: "历史候选队列（已停用）" };
+ const headings: Record<OperationView, [string, string]> = {
+   all: ["高级源码与验证操作", "保留既有操作入口；任务持久化，候选变化与安全影响分别记录。"],
+   date: ["时间增量扫描", "按明确时区固定时间端点；支持单一区间和 N 日 / 1 日双窗口候选对照。"],
+@@ -330,6 +330,40 @@ export default function OperationWorkspace({ view = "all", operationId, context
+           </>;
+         })()}
+       </Card>}
++      {selected.kind === "progressive_quick_screen" && selected.result && <Card size="small" className="section-gap" title="L2 快速研判结果">
++        {(() => {
++          const result = selected.result.quick_screen || {};
++          const state = result.state || selected.result.state || "quick_unknown";
++          const assessmentLabels: Record<string, string> = {
++            investigate: "建议进入深度调查", defer: "暂缓", possible_refutation: "发现待复核反证线索",
++            insufficient_context: "上下文不足", quick_unknown: "研判未知",
++          };
++          const listText = (value: unknown) => Array.isArray(value) && value.length ? value.join("、") : "无";
++          return <>
++            <Alert type={state === "completed" ? "info" : "warning"} showIcon
++              message={`${assessmentLabels[result.quick_assessment] || assessmentLabels.quick_unknown} · ${result.review_status || "model_unverified"}`}
++              description={result.reason_code || result.rationale || "没有可复核的模型研判；候选仍保留为待复核状态。模型意见不确认漏洞或误报。"} />
++            <Descriptions className="section-gap" bordered size="small" column={{ xs: 1, md: 2 }}>
++              <Descriptions.Item label="候选处置">candidate · validated_vulnerability={selected.result.validated_vulnerability ?? 0}</Descriptions.Item>
++              <Descriptions.Item label="请求状态">{state}</Descriptions.Item>
++              <Descriptions.Item label="缺失证据">{listText(result.missing_obligations)}</Descriptions.Item>
++              <Descriptions.Item label="建议下一步">{listText(result.next_tool_hints)}</Descriptions.Item>
++              <Descriptions.Item label="不确定项" span={2}>{listText(result.uncertainties)}</Descriptions.Item>
++              <Descriptions.Item label="输入 / 输出 Token">{result.usage?.input_tokens ?? "未知"} / {result.usage?.output_tokens ?? "未知"}</Descriptions.Item>
++              <Descriptions.Item label="预算结算">{selected.result.budget?.usage?.state || selected.result.budget?.status || "未知"}</Descriptions.Item>
++              <Descriptions.Item label="来源 / consent SHA" span={2}>
++                {selected.result.source_binding?.repository || "未知"} @ {String(selected.result.source_binding?.commit || "未知").slice(0, 12)} · {selected.result.source_binding?.consent_sha256 || "未知"}
++              </Descriptions.Item>
++            </Descriptions>
++            <Text type="secondary">引文 ID：{listText(result.evidence_citations)}</Text>
++            <Alert className="section-gap" type="info" showIcon message="L3 深度 Agent 尚未自动排队" description="当前结果只完成单次、无工具的 L2 快速研判。点击继续会回到固定扫描候选并重新展示深度 Agent 的源码范围与单独授权；可能反证只作为线索，不会自动标误报。" />
++            {result.quick_assessment === "investigate" && selected.spec?.job_id && selected.spec?.candidate_id &&
++              <Button className="section-gap" type="primary" onClick={() => go(`/tasks/${encodeURIComponent(selected.spec.job_id)}?tab=findings&candidate_id=${encodeURIComponent(selected.spec.candidate_id)}`)}>
++                继续深度调查 · 重新预览授权
++              </Button>}
++          </>;
++        })()}
++      </Card>}
+       {selected.kind === "recent_window_comparison" && selected.result && <RecentWindowSummary
+         result={selected.result} openScan={(id) => go("/tasks/" + id)} />}
+       {Array.isArray(selected.intelligent_review_progress) && <Card size="small" className="section-gap" title="固定版本静态与智能审计进度">
+diff --git a/web/src/pages/JobDetail.tsx b/web/src/pages/JobDetail.tsx
+index f65cb10..ae2c5f6 100644
+--- a/web/src/pages/JobDetail.tsx
++++ b/web/src/pages/JobDetail.tsx
+@@ -46,6 +46,7 @@ import { State, Hash, go, CodeView, Header, labels } from "../components";
+ import AuditPlanView from "../features/audits/AuditPlanView";
+ import SourceEvidence from "../SourceEvidence";
+ import CandidateActions from "../features/workbench/CandidateActions";
++import ProgressiveQuickScreenAction from "../features/audits/ProgressiveQuickScreenAction";
+ import { requestGate } from "../features/audits/model";
+ import { disclosureReviewed, disclosureSelectionMatches } from "../features/audits/egressDisclosure.js";
+ import { candidateConfidenceColor, candidateConfidenceLabel, candidateSeverityColor, candidateSeverityLabel, analysisStatusLabel, coverageSummaryLabel, groupingBasisLabel, groupingSymbolLabel, obligationDescriptionLabel, obligationKindLabel, obligationStatusLabel, reportLimitationLabel, riskReasonsLabel, scanStageLabel, taskReportStatusLabel, taskTriageStatusLabel, triageStateLabel } from "../features/workbench/riskLabels.js";
+@@ -736,7 +737,11 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
+                       {
+                         title: "",
+                         render: (_: any, f: any) => (
+-                          <Button onClick={() => void open(f)}>查看证据</Button>
++                          <Space wrap>
++                            <Button onClick={() => void open(f)}>查看证据</Button>
++                            <ProgressiveQuickScreenAction jobId={id} candidateId={f.id}
++                              enabled={Boolean(job?.report_sha256 && agentProvider?.configured)} />
++                          </Space>
+                         ),
+                       },
+                     ]}

@@ -571,6 +571,15 @@ class AgentInvestigationRequest(Strict):
     consent_nonce: str | None = Field(default=None, pattern=r"^[0-9a-f]{32}$")
 
 
+class ProgressiveQuickScreenRequest(Strict):
+    job_id: str
+    candidate_id: str = Field(min_length=1, max_length=200)
+    source_submission_approved: bool = False
+    consent_sha256: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
+    consent_nonce: str | None = Field(default=None, pattern=r"^[0-9a-f]{32}$")
+    consent_expires_at: str | None = Field(default=None, max_length=40)
+
+
 
 
 class AgentBatchInvestigationRequest(Strict):
@@ -2044,6 +2053,70 @@ def install_routes(app: FastAPI, settings, store):
     def _require_consent_nonce(body):
         if not body.consent_nonce:
             raise HTTPException(status_code=428, detail="缺少本次预览 nonce；请重新预览后再授权提交")
+
+    def _quick_screen_preview(body, provider):
+        from .progressive_triage.quick_screen_operation import prepare_quick_screen
+        parent = ops.audit_parent_for_scan(body.job_id)
+        parent_plan = None
+        if parent:
+            parent_result = ops.result(parent["id"])
+            parent_plan = parent_result.get("progressive_triage")
+        return prepare_quick_screen(settings, store, body.job_id, body.candidate_id,
+                                    provider, body.consent_nonce, body.consent_expires_at,
+                                    audit_parent=parent, audit_parent_plan=parent_plan)
+
+    @router.post("/operations/progressive-quick-screens/preview")
+    def progressive_quick_screen_preview(body: ProgressiveQuickScreenRequest):
+        from .agent import ProviderConfig
+        provider = ProviderConfig.from_env(settings.data_dir)
+        if not provider.configured:
+            raise HTTPException(status_code=503, detail="真实模型未配置；没有发送 Provider 请求")
+        body = _fresh_consent_nonce(body)
+        try:
+            return _quick_screen_preview(body, provider)
+        except (KeyError, ValueError, OSError) as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from None
+
+    @router.post("/operations/progressive-quick-screens", status_code=201)
+    def progressive_quick_screen(body: ProgressiveQuickScreenRequest):
+        from .agent import ProviderConfig
+        provider = ProviderConfig.from_env(settings.data_dir)
+        if not provider.configured:
+            raise HTTPException(status_code=503, detail="真实模型未配置；没有发送 Provider 请求")
+        if not body.source_submission_approved:
+            raise HTTPException(status_code=428, detail="请先查看本次 L2 源码外发预览并明确授权")
+        if not body.consent_sha256:
+            raise HTTPException(status_code=428, detail="缺少本次 L2 预览指纹，请重新预览")
+        if not body.consent_expires_at:
+            raise HTTPException(status_code=428, detail="缺少本次 L2 预览有效期，请重新预览")
+        _require_consent_nonce(body)
+        try:
+            preview = _quick_screen_preview(body, provider)
+        except (KeyError, ValueError, OSError) as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from None
+        if body.consent_sha256 != preview["consent_sha256"]:
+            raise HTTPException(status_code=409, detail="L2 外发预览已过期或固定来源发生变化；请重新预览")
+        spec = {
+            "source_submission_approved": True,
+            "job_id": body.job_id,
+            "audit_operation_id": preview["audit_operation_id"],
+            "candidate_id": body.candidate_id,
+            "progressive_policy": preview["progressive_policy"],
+            "ranking": preview["ranking"],
+            "consent_nonce": body.consent_nonce,
+            "consent_sha256": preview["consent_sha256"],
+            "consent_expires_at": preview["consent_expires_at"],
+            "consent_manifest": preview["consent_manifest"],
+            "group": preview["group"],
+            "evidence": preview["evidence"],
+            "authorization": preview["authorization"],
+            "provider_fingerprint": provider.fingerprint,
+            "provider_model": provider.model,
+        }
+        try:
+            return ops.create("progressive_quick_screen", spec)
+        except ValueError as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from None
 
     @router.post("/operations/agent-investigations/preview")
     def agent_investigation_preview(body: AgentInvestigationRequest):

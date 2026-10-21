@@ -97,7 +97,7 @@ function RecentWindowSummary({ result, openScan }: { result: any; openScan: (id:
   </Card>;
 }
 export type OperationView = "all" | "date" | "branches" | "matrix" | "validation" | "investigate" | "agent" | "agent_research" | "sync" | "queue";
-const kinds: Record<string, string> = { source_sync: "源码同步 / 自动扫描", source_sync_batch: "多仓库批量同步", revision_range: "固定区间", branch_comparison: "跨版本比较", recent_window_comparison: "N 日 / 1 日对照", version_matrix: "版本矩阵", validation: "隔离验证", investigation: "只读调查", agent_investigation: "模型辅助调查", candidate_review_batch: "历史候选队列（已停用）" };
+const kinds: Record<string, string> = { source_sync: "源码同步 / 自动扫描", source_sync_batch: "多仓库批量同步", revision_range: "固定区间", branch_comparison: "跨版本比较", recent_window_comparison: "N 日 / 1 日对照", version_matrix: "版本矩阵", validation: "隔离验证", investigation: "只读调查", agent_investigation: "模型辅助调查", progressive_quick_screen: "渐进式 L2 快速研判", candidate_review_batch: "历史候选队列（已停用）" };
 const headings: Record<OperationView, [string, string]> = {
   all: ["高级源码与验证操作", "保留既有操作入口；任务持久化，候选变化与安全影响分别记录。"],
   date: ["时间增量扫描", "按明确时区固定时间端点；支持单一区间和 N 日 / 1 日双窗口候选对照。"],
@@ -327,6 +327,40 @@ export default function OperationWorkspace({ view = "all", operationId, context 
                 ? <Tag color="blue">优先组 · 尚未调度</Tag> : <Tag>保留候选</Tag> },
               { title: "选择依据", render: (_: any, row: any) => (row.ranking?.reason_codes || []).join(" · ") || "无" },
             ]} />
+          </>;
+        })()}
+      </Card>}
+      {selected.kind === "progressive_quick_screen" && selected.result && <Card size="small" className="section-gap" title="L2 快速研判结果">
+        {(() => {
+          const result = selected.result.quick_screen || {};
+          const state = result.state || selected.result.state || "quick_unknown";
+          const assessmentLabels: Record<string, string> = {
+            investigate: "建议进入深度调查", defer: "暂缓", possible_refutation: "发现待复核反证线索",
+            insufficient_context: "上下文不足", quick_unknown: "研判未知",
+          };
+          const listText = (value: unknown) => Array.isArray(value) && value.length ? value.join("、") : "无";
+          return <>
+            <Alert type={state === "completed" ? "info" : "warning"} showIcon
+              message={`${assessmentLabels[result.quick_assessment] || assessmentLabels.quick_unknown} · ${result.review_status || "model_unverified"}`}
+              description={result.reason_code || result.rationale || "没有可复核的模型研判；候选仍保留为待复核状态。模型意见不确认漏洞或误报。"} />
+            <Descriptions className="section-gap" bordered size="small" column={{ xs: 1, md: 2 }}>
+              <Descriptions.Item label="候选处置">candidate · validated_vulnerability={selected.result.validated_vulnerability ?? 0}</Descriptions.Item>
+              <Descriptions.Item label="请求状态">{state}</Descriptions.Item>
+              <Descriptions.Item label="缺失证据">{listText(result.missing_obligations)}</Descriptions.Item>
+              <Descriptions.Item label="建议下一步">{listText(result.next_tool_hints)}</Descriptions.Item>
+              <Descriptions.Item label="不确定项" span={2}>{listText(result.uncertainties)}</Descriptions.Item>
+              <Descriptions.Item label="输入 / 输出 Token">{result.usage?.input_tokens ?? "未知"} / {result.usage?.output_tokens ?? "未知"}</Descriptions.Item>
+              <Descriptions.Item label="预算结算">{selected.result.budget?.usage?.state || selected.result.budget?.status || "未知"}</Descriptions.Item>
+              <Descriptions.Item label="来源 / consent SHA" span={2}>
+                {selected.result.source_binding?.repository || "未知"} @ {String(selected.result.source_binding?.commit || "未知").slice(0, 12)} · {selected.result.source_binding?.consent_sha256 || "未知"}
+              </Descriptions.Item>
+            </Descriptions>
+            <Text type="secondary">引文 ID：{listText(result.evidence_citations)}</Text>
+            <Alert className="section-gap" type="info" showIcon message="L3 深度 Agent 尚未自动排队" description="当前结果只完成单次、无工具的 L2 快速研判。点击继续会回到固定扫描候选并重新展示深度 Agent 的源码范围与单独授权；可能反证只作为线索，不会自动标误报。" />
+            {result.quick_assessment === "investigate" && selected.spec?.job_id && selected.spec?.candidate_id &&
+              <Button className="section-gap" type="primary" onClick={() => go(`/tasks/${encodeURIComponent(selected.spec.job_id)}?tab=findings&candidate_id=${encodeURIComponent(selected.spec.candidate_id)}`)}>
+                继续深度调查 · 重新预览授权
+              </Button>}
           </>;
         })()}
       </Card>}
