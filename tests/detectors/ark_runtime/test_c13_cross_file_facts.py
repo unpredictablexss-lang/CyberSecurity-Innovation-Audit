@@ -80,6 +80,15 @@ def candidates(result):
 
 
 class CrossFileFactControls(unittest.TestCase):
+    def test_multiple_includes_are_deduplicated_and_deterministic(self):
+        root = source('#include "z.h"\n#include "a.h"\n#include "z.h"\n', ROOT + '/includes.cpp')
+        a = source('int a;\n', ROOT + '/a.h')
+        z = source('int z;\n', ROOT + '/z.h')
+        bundle = build_cross_file_facts((root, z, a))
+        self.assertEqual(len(bundle.include_edges), 2)
+        self.assertEqual(bundle.include_edges, build_cross_file_facts((a, root, z)).include_edges)
+        self.assertTrue(all(edge.status == 'resolved' for edge in bundle.include_edges))
+
     def test_positive_alias_cast_helper_summary_loop_and_include_are_bound(self):
         root = source('#include "ecma_macros.h"\nvoid f(GateRef value) { GateRef alias = (GateRef)value; }\n', ROOT + '/positive.cpp')
         header = source('#define GUARD(x) do { (void)(x); } while (false)\n', ROOT + '/ecma_macros.h')

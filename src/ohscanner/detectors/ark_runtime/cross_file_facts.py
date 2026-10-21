@@ -29,7 +29,7 @@ class SourceIdentity:
     parse_status: str
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, order=True)
 class IncludeFact:
     source: str
     target: str
