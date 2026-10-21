@@ -42,8 +42,9 @@ def _is_continuous_tool_agent(task):
 def _hard_deadline_seconds(task):
     """Authorized Agent tasks rely on cancellation and per-request timeouts."""
     spec = task.get("spec") if isinstance(task.get("spec"), dict) else {}
-    if _is_continuous_tool_agent(task):
-        return None
+    if task.get("kind") == "agent_investigation":
+        from .agent import bounded_agent_spec
+        return bounded_agent_spec(spec)["timeout_seconds"] + 10
     return spec.get("timeout_seconds", 600)
 
 

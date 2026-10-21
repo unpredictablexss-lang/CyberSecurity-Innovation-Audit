@@ -753,6 +753,9 @@ def execute_source_sync_batch(settings, store, ops, task):
 
 def execute(settings, store, ops, task):
     spec, kind = task["spec"], task["kind"]
+    if kind == "repository_import_scan":
+        from .repository_import import execute_repository_import_scan
+        return execute_repository_import_scan(settings, store, ops, task)
     if kind == "source_sync_batch":
         return execute_source_sync_batch(settings, store, ops, task)
     if kind == "source_sync":

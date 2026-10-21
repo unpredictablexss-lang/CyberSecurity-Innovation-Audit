@@ -291,7 +291,7 @@ class Operations:
                     and row["consent_sha256"] == consent_sha256)
 
     def create(self, kind, spec):
-        if kind not in {"source_sync", "source_sync_batch", "revision_range", "version_matrix", "branch_comparison", "recent_window_comparison", "validation", "investigation", "candidate_review_batch", "agent_investigation", "version_candidate_comparison"}:
+        if kind not in {"source_sync", "source_sync_batch", "repository_import_scan", "revision_range", "version_matrix", "branch_comparison", "recent_window_comparison", "validation", "investigation", "candidate_review_batch", "agent_investigation", "version_candidate_comparison"}:
             raise ValueError("unknown operation kind")
         if kind == "version_candidate_comparison":
             required = ("from_commit", "from_candidate_id", "to_commit", "to_candidate_id",
