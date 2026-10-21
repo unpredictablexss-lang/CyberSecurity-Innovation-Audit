@@ -78,6 +78,29 @@ class OperationsStoreTests(unittest.TestCase):
         self.assertEqual(self.ops.audit_parent_for_scan("endpoint-a")["id"], parent["id"])
         self.assertIsNone(self.ops.audit_parent_for_scan("standalone-scan"))
 
+    def test_parent_cancel_propagates_to_progressive_l3_operation(self):
+        parent = self.ops.create("version_matrix", {"scan_ids": []})
+        child = self.ops.create("agent_investigation", {
+            "progressive_quick_screen_operation_id": "a" * 32,
+            "progressive_audit_operation_id": parent["id"],
+            "progressive_consent_sha256": "b" * 64,
+            "source_consent_sha256": "c" * 64,
+        })
+        self.ops.cancel(parent["id"])
+        self.assertEqual(self.ops.get(child["id"])["status"], "cancelled")
+        self.assertTrue(self.ops.get(child["id"])["cancel_requested"])
+
+    def test_progressive_l3_dispatch_reuses_existing_agent_runner(self):
+        from src.workbench.operations import execute
+        task = {"id": "d" * 32, "kind": "agent_investigation",
+                "spec": {"progressive_quick_screen_operation_id": "a" * 32}}
+        expected = {"status": "completed", "validated_vulnerability": 0}
+        with patch("src.workbench.progressive_triage.deep_agent_operation.execute_progressive_deep_agent",
+                   return_value=expected) as deep:
+            result = execute(self.settings, self.store, self.ops, task)
+        self.assertIs(result, expected)
+        deep.assert_called_once_with(self.settings, self.store, self.ops, task)
+
     def test_quick_screen_unknown_is_a_reviewable_limited_operation_result(self):
         from src.workbench.operations import execute
         for state, expected in (("completed", "completed"),

@@ -1,7 +1,7 @@
 """Versioned policy presets and protected local persistence.
 
-The values here are policy defaults. They are not enforcement until an audit task
-freezes and the Worker consumes the policy snapshot in a later integration phase.
+Snapshots are enforced by the progressive L2/L3 Worker ledger. USD remains advisory
+without a verified Provider-side spend cap.
 """
 
 from __future__ import annotations

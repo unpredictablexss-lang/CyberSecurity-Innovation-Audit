@@ -338,6 +338,120 @@ class PolicyApiTests(unittest.TestCase):
         self.assertEqual(started.json()["kind"], "progressive_quick_screen")
         self.assertEqual(started.json()["status"], "queued")
 
+    def test_progressive_deep_agent_requires_l2_and_binds_bounded_consent(self):
+        from unittest.mock import patch
+        from types import SimpleNamespace
+
+        from src.workbench.operations_store import Operations
+        from src.workbench.progressive_triage.contracts import content_sha256
+        from src.workbench.progressive_triage.policy import build_policy, policy_envelope
+        from src.workbench.store import Store
+
+        provider = SimpleNamespace(configured=True, fingerprint="f" * 64,
+                                   provider="openai-responses", model="tool-model",
+                                   endpoint_host="provider.example",
+                                   public={"model": "tool-model", "endpoint_host": "provider.example"})
+        policy = build_policy()
+        envelope = policy_envelope(policy)
+        progressive_policy = {"revision": 2, **envelope}
+
+        def prepare(_settings, _store, job_id, candidate_id, active_provider, nonce, expiry=None,
+                    audit_parent=None, audit_parent_plan=None):
+            expiry = expiry or "2099-01-01T00:00:00+00:00"
+            group = {"group_id": "g1", "members": [{"candidate_id": candidate_id}]}
+            ranking = {"decisions": [{"group_id": "g1", "selected": True}]}
+            manifest = {"consent_nonce": nonce, "consent_expires_at": expiry,
+                        "audit_operation_id": job_id, "group": group,
+                        "evidence": [{"evidence_id": "e1", "text": "fixed excerpt"}],
+                        "policy_revision": 2, "policy": policy,
+                        "policy_sha256": envelope["policy_sha256"], "ranking": ranking}
+            digest = content_sha256(manifest)
+            return {"consent_nonce": nonce, "consent_sha256": digest,
+                    "consent_expires_at": expiry, "consent_manifest": manifest,
+                    "progressive_policy": progressive_policy, "group": group,
+                    "ranking": ranking, "evidence": manifest["evidence"],
+                    "audit_operation_id": job_id,
+                    "authorization": {"authorized": True, "consent_sha256": digest,
+                                      "report_sha256": "d" * 64}}
+
+        with tempfile.TemporaryDirectory() as directory:
+            settings = Settings(Path(directory) / "data", ())
+            settings.initialize()
+            job_id = "a" * 32
+            with patch("src.workbench.agent.ProviderConfig.from_env", return_value=provider), \
+                 patch("src.workbench.progressive_triage.quick_screen_operation.prepare_quick_screen",
+                       side_effect=prepare), \
+                 TestClient(create_app(settings)) as client:
+                headers = {"x-ohscanner-client": "workbench-v1"}
+                l2_preview = client.post("/api/v1/operations/progressive-quick-screens/preview",
+                    headers=headers, json={"job_id": job_id, "candidate_id": "candidate-1"})
+                self.assertEqual(l2_preview.status_code, 200, l2_preview.text)
+                l2_start_body = {"job_id": job_id, "candidate_id": "candidate-1",
+                    "source_submission_approved": True,
+                    "consent_nonce": l2_preview.json()["consent_nonce"],
+                    "consent_sha256": l2_preview.json()["consent_sha256"],
+                    "consent_expires_at": l2_preview.json()["consent_expires_at"]}
+                l2_started = client.post("/api/v1/operations/progressive-quick-screens",
+                                         headers=headers, json=l2_start_body)
+                self.assertEqual(l2_started.status_code, 201, l2_started.text)
+
+                ops = Operations(Store(settings.data_dir))
+                claimed = ops.claim()
+                self.assertEqual(claimed["id"], l2_started.json()["id"])
+                ops.finish(claimed["id"], result={"status": "completed", "state": "completed",
+                    "quick_screen": {"state": "completed", "quick_assessment": "investigate"},
+                    "source_binding": {"report_sha256": "d" * 64, "commit": "e" * 40}},
+                    state="completed")
+
+                def mock_consent(_settings, _store, job, report, candidate, spec, active_provider, prepared=None):
+                    digest = content_sha256({"nonce": spec["consent_nonce"],
+                                             "max_steps": spec["max_steps"],
+                                             "input": spec["max_total_input_tokens"],
+                                             "output": spec["max_total_output_tokens"],
+                                             "retry": spec["max_provider_retries"],
+                                             "uncapped": spec["no_cumulative_token_ceiling"]})
+                    return {"consent_sha256": digest, "consent_nonce": spec["consent_nonce"],
+                        "agent_execution": {"eligible": True},
+                        "budgets": {"max_steps": spec["max_steps"],
+                                    "max_output_tokens": spec["max_output_tokens"],
+                                    "max_total_input_tokens": spec["max_total_input_tokens"],
+                                    "max_total_output_tokens": spec["max_total_output_tokens"],
+                                    "timeout_seconds": spec["timeout_seconds"]},
+                        "binding": {"repository": "openharmony/sample", "commit": "e" * 40,
+                                    "report_sha256": "d" * 64, "source_sha256": "g" * 64,
+                                    "file": "sample.cpp"},
+                        "provider": active_provider.public,
+                        "initial_context": {"source_excerpt": "bounded source"},
+                        "allowed_tools": ["read_source"], "additional_tool_data_scope": ["fixed inventory"],
+                        "disclosure": ["fixed source only"]}
+
+                fake_job = {"id": job_id, "status": "completed", "report_sha256": "d" * 64}
+                with patch("src.workbench.store.Store.job", return_value=fake_job), \
+                     patch("src.workbench.service.read_report", return_value={"repository": "openharmony/sample"}), \
+                     patch("src.workbench.service.finding", return_value={"id": "candidate-1"}), \
+                     patch("src.workbench.agent.consent_preview", side_effect=mock_consent):
+                    l3_preview = client.post("/api/v1/operations/progressive-deep-investigations/preview",
+                        headers=headers, json={"job_id": job_id, "candidate_id": "candidate-1",
+                            "progressive_quick_screen_operation_id": l2_started.json()["id"],
+                            "mode": "tool_agent", "max_steps": 12})
+                    self.assertEqual(l3_preview.status_code, 200, l3_preview.text)
+                    self.assertEqual(l3_preview.json()["budgets"]["max_steps"], 8)
+                    body = {"job_id": job_id, "candidate_id": "candidate-1",
+                            "progressive_quick_screen_operation_id": l2_started.json()["id"],
+                            "mode": "tool_agent", "max_steps": 12,
+                            "source_submission_approved": True,
+                            "consent_nonce": l3_preview.json()["consent_nonce"],
+                            "consent_sha256": l3_preview.json()["consent_sha256"]}
+                    started = client.post("/api/v1/operations/progressive-deep-investigations",
+                                          headers=headers, json=body)
+                    self.assertEqual(started.status_code, 201, started.text)
+                    replay = client.post("/api/v1/operations/progressive-deep-investigations",
+                                         headers=headers, json=body)
+                    self.assertEqual(replay.status_code, 201, replay.text)
+            self.assertEqual(started.json()["id"], replay.json()["id"])
+            self.assertFalse(started.json()["spec"]["no_cumulative_token_ceiling"])
+            self.assertEqual(started.json()["spec"]["max_provider_retries"], 0)
+
     def test_policy_routes_reject_weak_requests_and_preserve_revision(self):
         with tempfile.TemporaryDirectory() as directory:
             settings = Settings(Path(directory) / "data", ())
@@ -347,11 +461,11 @@ class PolicyApiTests(unittest.TestCase):
                 self.assertEqual(current.status_code, 200, current.text)
                 self.assertEqual(current.json()["policy"]["profile"], "standard")
                 self.assertEqual(current.json()["integration"]["worker_enforcement"],
-                                 "l2_fixed_source_consent_and_parent_budget_gate")
+                                 "l2_l3_fixed_source_consent_and_parent_budget_gate")
                 self.assertEqual(current.json()["integration"]["quick_screen_executor"],
                                  "independent_explicit_consent_operation")
                 self.assertEqual(current.json()["integration"]["task_budget_ledger"],
-                                 "shared_across_fixed_endpoints_for_explicit_quick_screen")
+                                 "shared_across_fixed_endpoints_for_l2_and_l3")
                 self.assertEqual(current.json()["integration"]["grouping_and_ranking"],
                                  "connected_to_multi_endpoint_operation_results")
 
@@ -802,6 +916,107 @@ class BudgetLedgerTests(unittest.TestCase):
                                          "deep_agent", evidence_gate="quick_screen_investigate")
             self.assertEqual(deep["status"], "queued")
             self.assertEqual(ledger.get("audit-2")["phase_counts"]["deep_agent_groups"], 1)
+
+    def test_progressive_deep_gate_binds_selected_l2_source_and_frozen_policy(self):
+        from types import SimpleNamespace
+        from src.workbench.progressive_triage.contracts import content_sha256
+        from src.workbench.progressive_triage.deep_agent_operation import progressive_gate
+        from src.workbench.progressive_triage.policy import policy_envelope
+
+        policy = build_policy()
+        policy_sha = policy_envelope(policy)["policy_sha256"]
+        snapshot = {"revision": 4, "policy": policy, "policy_sha256": policy_sha}
+        quick_task = {
+            "id": "a" * 32, "kind": "progressive_quick_screen", "status": "completed",
+            "result_sha256": "b" * 64,
+            "spec": {"job_id": "c" * 32, "candidate_id": "candidate-1",
+                     "audit_operation_id": "c" * 32, "group": {"group_id": "g1"},
+                     "ranking": {"decisions": [{"group_id": "g1", "selected": True}]},
+                     "progressive_policy": snapshot},
+        }
+        quick_result = {"quick_screen": {"state": "completed", "quick_assessment": "investigate"},
+                        "source_binding": {"report_sha256": "d" * 64, "commit": "e" * 40}}
+        task = {"id": "f" * 32, "spec": {
+            "job_id": "c" * 32, "candidate_id": "candidate-1", "report_sha256": "d" * 64,
+            "source_commit": "e" * 40, "progressive_quick_screen_operation_id": "a" * 32,
+            "progressive_quick_screen_result_sha256": "b" * 64,
+            "progressive_audit_operation_id": "c" * 32, "progressive_group_id": "g1",
+            "progressive_policy": snapshot, "progressive_policy_sha256": policy_sha}}
+
+        class Ops:
+            def get(self, operation_id):
+                return quick_task if operation_id == quick_task["id"] else None
+            def result(self, operation_id):
+                return quick_result
+
+        with tempfile.TemporaryDirectory() as directory:
+            spec, ledger = progressive_gate(SimpleNamespace(data_dir=Path(directory)), Ops(), task)
+            self.assertEqual(spec["progressive_policy"]["policy_sha256"], policy_sha)
+            self.assertEqual(ledger.get("c" * 32)["policy_sha256"], policy_sha)
+        quick_result["quick_screen"]["quick_assessment"] = "defer"
+        with tempfile.TemporaryDirectory() as directory:
+            with self.assertRaisesRegex(ValueError, "investigate"):
+                progressive_gate(SimpleNamespace(data_dir=Path(directory)), Ops(), task)
+        quick_result["quick_screen"]["quick_assessment"] = "investigate"
+        quick_task["spec"]["ranking"]["decisions"][0]["selected"] = False
+        with tempfile.TemporaryDirectory() as directory:
+            with self.assertRaisesRegex(ValueError, "unselected"):
+                progressive_gate(SimpleNamespace(data_dir=Path(directory)), Ops(), task)
+
+    def test_budgeted_agent_client_settles_usage_and_blocks_unknown_replay(self):
+        from src.workbench.progressive_triage.deep_agent_operation import BudgetedAgentClient
+        from src.workbench.progressive_triage.ledger import BudgetError
+
+        class FakeClient:
+            timeout = 10
+            def __init__(self, response=None, error=None):
+                self.response, self.error, self.calls = response, error, 0
+            def create_with_timeout(self, payload, timeout, max_retries=None):
+                self.calls += 1
+                if self.error:
+                    raise self.error
+                return self.response
+
+        with tempfile.TemporaryDirectory() as directory:
+            ledger, policy, sha = self.create(directory)
+            ledger.create_audit("budgeted-agent", policy, sha)
+            ledger.dispatch_group("budgeted-agent", "group-1", "endpoint-1",
+                                  "quick_screen", evidence_gate="ranked_and_selected")
+            quick = ledger.reserve("budgeted-agent", "quick-1", "endpoint-1", "group-1",
+                                   "quick_screen", max_input_tokens=1000, max_output_tokens=512)
+            ledger.settle(quick["reservation_id"], outcome="completed", input_tokens=20,
+                          output_tokens=10, quick_assessment="investigate")
+            ledger.dispatch_group("budgeted-agent", "group-1", "endpoint-1",
+                                  "deep_agent", evidence_gate="quick_screen_investigate")
+            client = FakeClient({"usage": {"input_tokens": 80, "output_tokens": 40}})
+            wrapped = BudgetedAgentClient(client, ledger, audit_id="budgeted-agent", operation_id="op-1",
+                                          endpoint_id="endpoint-1", group_id="group-1")
+            wrapped.create_with_timeout({"max_output_tokens": 128}, 10)
+            self.assertEqual(client.calls, 1)
+            usage = ledger.get("budgeted-agent")["usage"]
+            self.assertEqual(usage["model_calls_allocated"], 2)
+            self.assertEqual(usage["input_tokens_allocated"], 100)
+            self.assertEqual(usage["output_tokens_allocated"], 50)
+
+        with tempfile.TemporaryDirectory() as directory:
+            ledger, policy, sha = self.create(directory)
+            ledger.create_audit("budgeted-unknown", policy, sha)
+            ledger.dispatch_group("budgeted-unknown", "group-1", "endpoint-1",
+                                  "quick_screen", evidence_gate="ranked_and_selected")
+            quick = ledger.reserve("budgeted-unknown", "quick-1", "endpoint-1", "group-1",
+                                   "quick_screen", max_input_tokens=1000, max_output_tokens=512)
+            ledger.settle(quick["reservation_id"], outcome="completed", input_tokens=20,
+                          output_tokens=10, quick_assessment="investigate")
+            ledger.dispatch_group("budgeted-unknown", "group-1", "endpoint-1",
+                                  "deep_agent", evidence_gate="quick_screen_investigate")
+            client = FakeClient(error=TimeoutError("ambiguous Provider timeout"))
+            wrapped = BudgetedAgentClient(client, ledger, audit_id="budgeted-unknown", operation_id="op-2",
+                                          endpoint_id="endpoint-1", group_id="group-1")
+            with self.assertRaises(TimeoutError):
+                wrapped.create_with_timeout({"max_output_tokens": 128}, 10)
+            with self.assertRaises(BudgetError):
+                wrapped.create_with_timeout({"max_output_tokens": 128}, 10)
+            self.assertEqual(client.calls, 1)
 
     def test_strict_cost_fails_closed_without_provider_cap_and_known_not_sent_releases(self):
         from src.workbench.progressive_triage.ledger import BudgetError

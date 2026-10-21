@@ -36,9 +36,9 @@ def _public_state(state: dict[str, Any]) -> dict[str, Any]:
         "presets": PRESETS,
         "integration": {
             "grouping_and_ranking": "connected_to_multi_endpoint_operation_results",
-            "worker_enforcement": "l2_fixed_source_consent_and_parent_budget_gate",
+            "worker_enforcement": "l2_l3_fixed_source_consent_and_parent_budget_gate",
             "quick_screen_executor": "independent_explicit_consent_operation",
-            "task_budget_ledger": "shared_across_fixed_endpoints_for_explicit_quick_screen",
+            "task_budget_ledger": "shared_across_fixed_endpoints_for_l2_and_l3",
             "billing_hard_cap": False,
             "all_candidates_preserved": True,
             "task_level_consent_required": True,

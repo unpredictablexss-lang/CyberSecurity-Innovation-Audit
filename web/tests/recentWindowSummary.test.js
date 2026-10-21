@@ -10,7 +10,7 @@ function loadSummaryBuilder() {
     "../src/features/audits/OperationWorkspace.tsx");
   const source = readFileSync(componentPath, "utf8");
   const start = source.indexOf("export function buildRecentWindowSummary");
-  const end = source.indexOf("\n}\n\nfunction RecentWindowSummary", start);
+  const end = source.search(/\r?\n\}\r?\n\r?\nfunction RecentWindowSummary/);
   assert.ok(start >= 0 && end > start, "the task-detail summary helper should stay in OperationWorkspace");
   const declaration = source.slice(start, end + 2);
   const compiled = ts.transpileModule(declaration, {

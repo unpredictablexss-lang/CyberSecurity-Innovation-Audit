@@ -380,6 +380,11 @@ class Operations:
                     if prior and json.loads(prior["spec"]).get("consent_sha256") == spec["consent_sha256"]:
                         return self.row(prior)
                     raise ValueError("joint comparison approval ticket has already been used")
+            elif kind == "agent_investigation" and spec.get("progressive_consent_sha256"):
+                for row in db.execute("SELECT * FROM operations WHERE kind=?", (kind,)):
+                    existing_spec = json.loads(row["spec"])
+                    if existing_spec.get("progressive_consent_sha256") == spec["progressive_consent_sha256"]:
+                        return self.row(row)
             elif kind == "agent_investigation" and spec.get("source_consent_sha256"):
                 # Consent hashes include a fresh preview nonce. A network/client retry with
                 # the same explicit approval must return the original operation, avoiding
@@ -1221,6 +1226,9 @@ class Operations:
                 targets.extend(self.row(item) for item in db.execute(
                     "SELECT * FROM operations WHERE kind='progressive_quick_screen'")
                     if json.loads(item["spec"]).get("audit_operation_id") == key)
+                targets.extend(self.row(item) for item in db.execute(
+                    "SELECT * FROM operations WHERE kind='agent_investigation'")
+                    if json.loads(item["spec"]).get("progressive_audit_operation_id") == key)
             pair_id = row["spec"].get("pair_id")
             if pair_id and row["kind"] == "agent_investigation" and row["status"] not in END:
                 targets = [self.row(item) for item in db.execute(
