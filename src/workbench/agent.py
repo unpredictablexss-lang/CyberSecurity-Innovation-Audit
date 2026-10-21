@@ -4203,6 +4203,15 @@ def execute_agent(settings, store, ops, task, client=None):
         if not continuous and tool_calls_used >= max_steps:
             break
         tool_turns += 1
+        try:
+            response = ask(with_tools=True)
+        except (ValueError, TimeoutError) as request_error:
+            code = _repair_budget_error_code(request_error)
+            if code is None or not model_trace:
+                raise
+            provider_incomplete_reason = code
+            ops.event(task["id"], "agent_budget_limited", "Investigation stopped at its authorized budget: " + code)
+            break
         if response.get("status") != "completed":
             reason = (response.get("incomplete_details") or {}).get("reason")
             provider_incomplete_reason = reason if reason == "max_output_tokens" else "provider_incomplete"
