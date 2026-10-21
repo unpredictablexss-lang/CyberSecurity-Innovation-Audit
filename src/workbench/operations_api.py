@@ -548,6 +548,7 @@ class ProviderCheckRequest(Strict):
 
 
 class ProviderSettingsRequest(Strict):
+    api_protocol: Literal["openai-responses", "openai-chat-completions"] = "openai-responses"
     base_url: str = Field(min_length=1, max_length=500)
     model: str = Field(min_length=1, max_length=200)
     proxy_url: str = Field(default="", max_length=500)
@@ -1960,6 +1961,7 @@ def install_routes(app: FastAPI, settings, store):
             last_check = {key: last_check.get(key) for key in (
                 "checked_at", "endpoint_host", "model", "duration_ms", "input_tokens", "output_tokens")}
         return {
+            "api_protocol": provider.provider if env_source else saved["api_protocol"],
             "base_url": provider.base_url if env_source else saved["base_url"],
             "model": provider.model if env_source else saved["model"],
             "proxy_url": provider.proxy_url if env_source else saved["proxy_url"],
@@ -1994,6 +1996,7 @@ def install_routes(app: FastAPI, settings, store):
         if len(key) > 4096 or any(ord(ch) < 33 or ord(ch) > 126 for ch in key):
             raise ValueError("API Key 格式无效")
         write_settings({
+            "api_protocol": body.api_protocol,
             "base_url": body.base_url.strip().rstrip("/"),
             "model": model,
             "proxy_url": body.proxy_url.strip(),

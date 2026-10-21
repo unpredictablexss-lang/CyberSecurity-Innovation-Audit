@@ -14,6 +14,8 @@ from datetime import datetime, timezone
 import uuid
 
 DEFAULT_BASE_URL = "https://api.openai.com/v1"
+DEFAULT_API_PROTOCOL = "openai-responses"
+SUPPORTED_API_PROTOCOLS = frozenset({"openai-responses", "openai-chat-completions"})
 MAX_SETTINGS_BYTES = 16 * 1024
 
 def default_data_dir():
@@ -31,7 +33,8 @@ def read_settings(data_dir=None):
     try:
         fd = os.open(path, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0))
     except FileNotFoundError:
-        return {"base_url": DEFAULT_BASE_URL, "model": "", "proxy_url": "", "api_key": "",
+        return {"base_url": DEFAULT_BASE_URL, "api_protocol": DEFAULT_API_PROTOCOL,
+                "model": "", "proxy_url": "", "api_key": "",
                 "config_revision": "", "last_provider_check": None}
     except OSError as exc:
         raise ValueError("无法安全读取本地模型配置") from exc
@@ -51,8 +54,12 @@ def read_settings(data_dir=None):
             os.close(fd)
     if not isinstance(value, dict):
         raise ValueError("本地模型配置格式无效")
+    api_protocol = value.get("api_protocol", DEFAULT_API_PROTOCOL)
+    if not isinstance(api_protocol, str) or api_protocol not in SUPPORTED_API_PROTOCOLS:
+        raise ValueError("本地模型接口协议无效")
     return {
         "base_url": value.get("base_url", DEFAULT_BASE_URL),
+        "api_protocol": api_protocol,
         "model": value.get("model", ""),
         "proxy_url": value.get("proxy_url", ""),
         "api_key": value.get("api_key", ""),
@@ -62,12 +69,16 @@ def read_settings(data_dir=None):
 
 def _write_settings(settings, data_dir, revision, last_provider_check=None):
     path = settings_path(data_dir)
+    api_protocol = settings.get("api_protocol", DEFAULT_API_PROTOCOL)
+    if not isinstance(api_protocol, str) or api_protocol not in SUPPORTED_API_PROTOCOLS:
+        raise ValueError("模型接口协议无效")
     path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
     if os.name == "posix":
         os.chmod(path.parent, 0o700)
     payload = json.dumps({
-        "schema_version": 1,
+        "schema_version": 2,
         "base_url": settings["base_url"],
+        "api_protocol": api_protocol,
         "model": settings["model"],
         "proxy_url": settings.get("proxy_url", ""),
         "api_key": settings["api_key"],
@@ -193,7 +204,7 @@ def write_settings(settings, data_dir=None):
 def record_provider_check(data_dir, provider, result):
     """Persist a successful, source-free probe only for the exact local config used."""
     current = read_settings(data_dir)
-    if (current["base_url"] != provider.base_url or current["model"] != provider.model
+    if (current["api_protocol"] != provider.provider or current["base_url"] != provider.base_url or current["model"] != provider.model
             or current["proxy_url"] != provider.proxy_url or current["api_key"] != provider.api_key):
         return None
     revision = current["config_revision"] or uuid.uuid4().hex
@@ -222,5 +233,6 @@ def clear_api_key(data_dir=None):
             pass
 
 def environment_overrides():
-    names = ("OHSCANNER_LLM_BASE_URL", "OHSCANNER_LLM_MODEL", "OHSCANNER_LLM_API_KEY", "OHSCANNER_LLM_PROXY_URL")
+    names = ("OHSCANNER_LLM_API_PROTOCOL", "OHSCANNER_LLM_BASE_URL", "OHSCANNER_LLM_MODEL",
+             "OHSCANNER_LLM_API_KEY", "OHSCANNER_LLM_PROXY_URL")
     return any(name in os.environ for name in names)
