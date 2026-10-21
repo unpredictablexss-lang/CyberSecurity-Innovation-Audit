@@ -1,0 +1,45 @@
+{
+  "original_operation_id": "a820cbaed91048efa12e2749c5bce9b3",
+  "original_result_sha256": "2589f629ee4a8ef558c039c369facc0eb1fdf472addea681e12d5a84570cf3bf",
+  "root_cause": {
+    "error_type": "AttributeError",
+    "object_type": "ProviderConfig",
+    "missing_attribute": "create",
+    "outbound_request_sent": false
+  },
+  "live_operation_id": "794cc2b100d64580a9f21a6940186d1e",
+  "live_status": "completed",
+  "live_result_sha256": "486a37e7f991b4534e7a81b26d6493dc1f2603420ab7e14b4449cc62652eea96",
+  "live_assessment": "possible_refutation",
+  "live_usage": {
+    "input_tokens": 1539,
+    "output_tokens": 240,
+    "total_tokens": 1779,
+    "usage_source": "provider_reported"
+  },
+  "validated_vulnerability": 0,
+  "same_fixed_source_and_provider": true,
+  "backend_tests": {
+    "run": 221,
+    "failures": 0
+  },
+  "frontend_tests": {
+    "run": 125,
+    "failures": 0
+  },
+  "frontend_typecheck": "passed",
+  "frontend_build": "passed",
+  "served_app_sha256": "c6a28bfe2bae5506c4394c69585d433e0f37a6c8702849b1799688a968c95563",
+  "original_result_preserved": true,
+  "diagnosis_is_append_only_event": true,
+  "publication_validation": {
+    "base_commit": "db00c298874d78d643d92162f2841f3350595c7f",
+    "branch": "codex/l2-provider-diagnostics-20261022",
+    "backend_tests": 223,
+    "frontend_tests": 125,
+    "typecheck": "passed",
+    "build": "passed",
+    "cwe_cve_already_merged_pr": 60,
+    "state": "pre_push"
+  }
+}

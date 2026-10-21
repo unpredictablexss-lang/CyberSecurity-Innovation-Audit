@@ -729,6 +729,20 @@ class QuickScreenTests(unittest.TestCase):
         self.assertEqual(kwargs, {"timeout": 90, "max_retries": 0})
         self.assertEqual(result["consent_sha256"], self.authorization["consent_sha256"])
 
+    def test_incomplete_response_keeps_known_usage_and_explicit_truncation_reason(self):
+        from types import SimpleNamespace
+        response = self.response()
+        response["status"] = "incomplete"
+        response["incomplete_details"] = {"reason": "max_output_tokens", "untrusted_text": "private-secret"}
+        response["usage"] = {"input_tokens": 1000, "output_tokens": 512}
+        provider = SimpleNamespace(create=lambda *_args, **_kwargs: response)
+        result = self.run(provider, self.group, self.evidence, self.authorization,
+                          provider_fingerprint=self.provider_fingerprint, model=self.model)
+        self.assertEqual(result["state"], "quick_unknown")
+        self.assertEqual(result["failure"]["incomplete_reason"], "max_output_tokens")
+        self.assertEqual(result["usage"]["output_tokens"], 512)
+        self.assertNotIn("private-secret", str(result))
+
     def test_invalid_citation_and_missing_usage_degrade_to_unknown(self):
         class Provider:
             def __init__(self, response):
@@ -766,7 +780,9 @@ class QuickScreenTests(unittest.TestCase):
         result = self.run(provider, self.group, self.evidence, self.authorization,
                           provider_fingerprint=self.provider_fingerprint, model=self.model)
         self.assertEqual(result["state"], "quick_unknown")
-        self.assertEqual(result["reason_code"], "provider_error_unknown_outcome")
+        self.assertEqual(result["reason_code"], "provider_timeout")
+        self.assertEqual(result["failure"]["error_type"], "TimeoutError")
+        self.assertEqual(result["failure"]["request_outcome"], "unknown")
 
         outside = [dict(self.evidence[0], file="../outside.cpp")]
         result = self.run(provider, self.group, outside, self.authorization,
@@ -966,6 +982,78 @@ class QuickScreenOperationTests(unittest.TestCase):
             "ranking": ranking,
         }
         return fixture, {"kind": "progressive_quick_screen", "spec": spec}
+
+    def test_default_config_is_converted_to_transport_client_before_sending(self):
+        import json
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        from src.workbench.agent import ProviderConfig
+        from src.workbench.progressive_triage.quick_screen_operation import execute_quick_screen
+
+        fixture, task = self._task()
+        config = ProviderConfig("https://api.xiaomimimo.com/v1", fixture.model, "private-test-key")
+        spec = task["spec"]
+        spec["consent_manifest"]["provider_fingerprint"] = config.fingerprint
+        digest = content_sha256(spec["consent_manifest"])
+        spec["consent_sha256"] = digest
+        spec["authorization"] = {**spec["authorization"], "provider_fingerprint": config.fingerprint,
+                                 "consent_sha256": digest}
+        calls = []
+        class Response:
+            status = 200
+            def __enter__(self): return self
+            def __exit__(self, *_): return False
+            def read(self, _limit): return json.dumps(fixture.response()).encode()
+        class Opener:
+            def open(self, request, timeout=None):
+                calls.append((request.full_url, json.loads(request.data)))
+                return Response()
+        with tempfile.TemporaryDirectory() as directory, \
+                patch("src.workbench.agent.ProviderConfig.from_env", return_value=config), \
+                patch("src.workbench.agent.build_opener", return_value=Opener()):
+            result = execute_quick_screen(SimpleNamespace(data_dir=Path(directory)), task)
+        self.assertEqual(result["state"], "completed", result)
+        self.assertEqual(result["quick_screen"]["usage"]["input_tokens"], 700)
+        self.assertEqual(len(calls), 1)
+        self.assertEqual(calls[0][0], "https://api.xiaomimimo.com/v1/responses")
+        self.assertEqual(calls[0][1]["reasoning"], {"effort": "none"})
+        self.assertEqual(calls[0][1]["text"]["format"]["type"], "json_object")
+        self.assertNotIn("tools", calls[0][1])
+        self.assertEqual(result["validated_vulnerability"], 0)
+
+    def test_failed_call_needs_fresh_consent_and_does_not_replay_automatically(self):
+        import copy
+        from types import SimpleNamespace
+        from src.workbench.progressive_triage.quick_screen_operation import execute_quick_screen
+        fixture, task = self._task()
+        class Provider:
+            configured = True
+            fingerprint = fixture.provider_fingerprint
+            model = fixture.model
+            calls = 0
+            def create(self, *_args, **_kwargs):
+                self.calls += 1
+                if self.calls == 1:
+                    raise TimeoutError("unknown upstream outcome")
+                return fixture.response()
+        provider = Provider()
+        with tempfile.TemporaryDirectory() as directory:
+            settings = SimpleNamespace(data_dir=Path(directory))
+            first = execute_quick_screen(settings, task, provider)
+            repeated = execute_quick_screen(settings, task, provider)
+            self.assertEqual(first["quick_screen"]["reason_code"], "provider_timeout")
+            self.assertEqual(repeated["reason_code"], "prior_request_outcome_not_replayed")
+            self.assertEqual(provider.calls, 1)
+            fresh = copy.deepcopy(task)
+            fresh["spec"]["consent_manifest"]["consent_nonce"] = "f" * 32
+            fresh["spec"]["consent_nonce"] = "f" * 32
+            digest = content_sha256(fresh["spec"]["consent_manifest"])
+            fresh["spec"]["consent_sha256"] = digest
+            fresh["spec"]["authorization"]["consent_sha256"] = digest
+            retry = execute_quick_screen(settings, fresh, provider)
+            self.assertEqual(retry["state"], "completed", retry)
+            self.assertEqual(provider.calls, 2)
+            self.assertEqual(retry["budget"]["usage"]["model_calls_allocated"], 2)
 
     def test_operation_rechecks_exact_consent_and_executes_no_tools_once(self):
         from src.workbench.progressive_triage.quick_screen_operation import execute_quick_screen
@@ -1490,3 +1578,77 @@ class ProgressiveDeepApiIntegrationTests(unittest.TestCase):
                 started = client.post(endpoint, headers=headers, json=approved)
                 self.assertEqual(started.status_code, 201, started.text)
                 self.assertEqual(started.json()["spec"]["progressive_quick_screen_batch_group_id"], group_id)
+
+
+class QuickScreenFailureDiagnosticsTests(unittest.TestCase):
+    def test_safe_http_diagnostics_preserve_status_and_do_not_echo_body(self):
+        from src.workbench.progressive_triage.quick_screen import _quick_screen_failure
+        for status in (400, 401, 403, 404, 429, 500):
+            with self.subTest(status=status):
+                result = _quick_screen_failure(ValueError(f"LLM provider returned HTTP {status}"))
+                self.assertEqual(result["reason_code"], f"provider_http_{status}")
+                self.assertEqual(result["failure"]["http_status"], status)
+                self.assertTrue(result["failure"]["suggestion"])
+        result = _quick_screen_failure(RuntimeError("Bearer private-key; source: secret source"))
+        self.assertNotIn("private-key", str(result))
+        self.assertNotIn("secret source", str(result))
+        self.assertEqual(result["failure"]["error_type"], "RuntimeError")
+
+    def test_schema_json_and_local_client_errors_are_distinguished(self):
+        import json
+        from src.workbench.progressive_triage.quick_screen import _quick_screen_failure
+        from src.workbench.agent import ProviderConfig
+        try:
+            ProviderConfig("https://api.example.invalid/v1", "test", "private-test-key").create({})
+        except AttributeError as error:
+            wiring_error = error
+        cases = [
+            (wiring_error, "provider_client_error", "client_setup"),
+            (ValueError("quick_screen_citation_invalid"), "quick_screen_citation_invalid", "response_validation"),
+            (json.JSONDecodeError("private source", "private source", 0), "provider_invalid_json", "response_validation"),
+        ]
+        for error, code, stage in cases:
+            with self.subTest(code=code):
+                result = _quick_screen_failure(error)
+                self.assertEqual(result["reason_code"], code)
+                self.assertEqual(result["failure"]["stage"], stage)
+                self.assertNotIn("private", str(result))
+
+
+class QuickScreenRetrySingleFlightTests(unittest.TestCase):
+    def test_fresh_consent_cannot_start_while_another_call_is_in_flight(self):
+        from src.workbench.progressive_triage.ledger import BudgetLedger, BudgetError
+        with tempfile.TemporaryDirectory() as directory:
+            ledger = BudgetLedger(Path(directory) / "ledger.sqlite3")
+            policy = build_policy()
+            ledger.create_audit("audit-1", policy, content_sha256(policy))
+            ledger.dispatch_group("audit-1", "group-1", "endpoint-1", "quick_screen", evidence_gate="ranked_and_selected")
+            first = ledger.reserve("audit-1", "consent-1", "endpoint-1", "group-1", "quick_screen",
+                                   max_input_tokens=1000, max_output_tokens=512, reauthorized_quick_screen=True)
+            with self.assertRaisesRegex(BudgetError, "in-flight"):
+                ledger.reserve("audit-1", "consent-2", "endpoint-1", "group-1", "quick_screen",
+                               max_input_tokens=1000, max_output_tokens=512, reauthorized_quick_screen=True)
+            ledger.settle(first["reservation_id"], outcome="unknown_outcome")
+            second = ledger.reserve("audit-1", "consent-2", "endpoint-1", "group-1", "quick_screen",
+                                    max_input_tokens=1000, max_output_tokens=512, reauthorized_quick_screen=True)
+            self.assertFalse(second["idempotent_replay"])
+            self.assertNotEqual(first["reservation_id"], second["reservation_id"])
+
+
+class QuickScreenLateFailureTests(unittest.TestCase):
+    def test_unproven_transport_attribute_error_must_not_release_charged_reservation(self):
+        from src.workbench.progressive_triage.quick_screen import _quick_screen_failure
+        error = AttributeError("private provider state", name="response_headers", obj=object())
+        result = _quick_screen_failure(error)
+        self.assertEqual(result["failure"]["request_outcome"], "unknown")
+        self.assertNotIn("private provider state", str(result))
+
+    def test_non_object_provider_response_is_a_response_shape_failure(self):
+        from types import SimpleNamespace
+        fixture = QuickScreenTests()
+        fixture.setUp()
+        result = fixture.run(SimpleNamespace(create=lambda *_args, **_kwargs: []),
+            fixture.group, fixture.evidence, fixture.authorization,
+            provider_fingerprint=fixture.provider_fingerprint, model=fixture.model)
+        self.assertEqual(result["reason_code"], "provider_response_shape_invalid")
+        self.assertEqual(result["failure"]["request_outcome"], "response_received")

@@ -274,7 +274,7 @@ def prepare_quick_screen(settings, store, job_id: str, candidate_id: str,
 
 def execute_quick_screen(settings, task: dict[str, Any], provider=None, ops=None) -> dict[str, Any]:
     """Run one pre-authorized quick-screen request; unknown outcomes stay unknown."""
-    from ..agent import ProviderConfig
+    from ..agent import ProviderConfig, ResponsesClient
 
     spec = task.get("spec") if isinstance(task.get("spec"), dict) else {}
     provider = provider or ProviderConfig.from_env(settings.data_dir)
@@ -327,6 +327,8 @@ def execute_quick_screen(settings, task: dict[str, Any], provider=None, ops=None
             or manifest.get("consent_expires_at") != expires_at
             or manifest.get("provider_fingerprint") != provider.fingerprint
             or manifest.get("model") != provider.model
+            or manifest.get("prompt_version") != PROMPT_VERSION
+            or manifest.get("quick_screen_version") != QUICK_SCREEN_VERSION
             or not isinstance(manifest.get("fixed_source"), dict)
             or manifest.get("audit_operation_id") != audit_operation_id
             or manifest.get("fixed_source", {}).get("repository") != spec.get("authorization", {}).get("repository")
@@ -422,9 +424,10 @@ def execute_quick_screen(settings, task: dict[str, Any], provider=None, ops=None
         ledger.dispatch_group(audit_id, group_id, spec["job_id"], "quick_screen",
                               evidence_gate="ranked_and_selected")
         reservation = ledger.reserve(
-            audit_id, audit_id + ":" + group_id + ":quick_screen",
+            audit_id, audit_id + ":quick:" + spec["consent_sha256"],
             spec["job_id"], group_id, "quick_screen",
             max_input_tokens=input_reservation, max_output_tokens=MAX_RESPONSE_TOKENS,
+            reauthorized_quick_screen=True,
         )
         if reservation.get("idempotent_replay"):
             return {"state": "quick_unknown", "reason_code": "prior_request_outcome_not_replayed",
@@ -438,8 +441,10 @@ def execute_quick_screen(settings, task: dict[str, Any], provider=None, ops=None
         return {"state": "quick_unknown", "reason_code": "budget_gate:" + str(error),
                 "vulnerability_state": "candidate", "validated_vulnerability": 0,
                 "budget": budget}
+    # Configuration binds consent; transport is a separate client, not the config.
+    client = ResponsesClient(provider, timeout=timeout_seconds, max_retries=0) if isinstance(provider, ProviderConfig) else provider
     result = run_quick_screen(
-        provider, spec["group"], spec["evidence"], spec["authorization"],
+        client, spec["group"], spec["evidence"], spec["authorization"],
         provider_fingerprint=provider.fingerprint, model=provider.model,
         timeout_seconds=timeout_seconds,
     )
@@ -455,7 +460,8 @@ def execute_quick_screen(settings, task: dict[str, Any], provider=None, ops=None
                           "reason_code": "provider_usage_exceeded_reserved_budget",
                           "validated_vulnerability": 0}
         else:
-            ledger.settle(reservation["reservation_id"], outcome="unknown_outcome")
+            outcome = "known_not_sent" if result.get("failure", {}).get("request_outcome") == "not_sent" else "unknown_outcome"
+            ledger.settle(reservation["reservation_id"], outcome=outcome)
         budget_snapshot = ledger.get(audit_operation_id)
     except BudgetError as error:
         budget_snapshot = {"state": "settlement_unknown", "reason": str(error)}
