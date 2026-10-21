@@ -582,8 +582,8 @@ class ProgressiveQuickScreenRequest(Strict):
 
 class ProgressiveDeepInvestigationRequest(AgentInvestigationRequest):
     max_steps: int = Field(default=4, ge=1, le=12)
-    progressive_quick_screen_operation_id: str = Field(min_length=32, max_length=32,
-                                                        pattern=r"^[0-9a-f]{32}$")
+    progressive_quick_screen_operation_id: str = Field(
+        min_length=32, max_length=32, pattern=r"^[0-9a-f]{32}$")
 
 
 
@@ -2018,7 +2018,7 @@ def install_routes(app: FastAPI, settings, store):
         result["checked_at"] = persisted.get("checked_at") if persisted else None
         return result
 
-    def _agent_consent_preview(body, provider, *, continuous=None):
+    def _agent_consent_preview(body, provider, *, continuous=None, progressive_bounded=False):
         from .agent import consent_preview
         job = store.job(body.job_id)
         if job["status"] not in {"completed", "completed_with_limitations"} or not job.get("report_sha256"):
@@ -2030,9 +2030,10 @@ def install_routes(app: FastAPI, settings, store):
         # have no local cumulative usage ceiling; single-shot still performs
         # one Provider request. Per-request controls and fixed read-only scope remain.
         preview_spec["continuous_investigation"] = False
-        preview_spec["no_cumulative_token_ceiling"] = body.mode == "tool_agent"
+        preview_spec["no_cumulative_token_ceiling"] = (
+            body.mode == "tool_agent" and not progressive_bounded)
         preview_spec["provider_request_timeout_seconds"] = 45
-        preview_spec["max_provider_retries"] = 1
+        preview_spec["max_provider_retries"] = 0 if progressive_bounded else 1
         preview = consent_preview(settings, store, job, report, candidate, preview_spec, provider)
         return job, report, candidate, preview
 
@@ -2135,9 +2136,12 @@ def install_routes(app: FastAPI, settings, store):
         if (not isinstance(assessment, dict) or assessment.get("state") != "completed"
                 or assessment.get("quick_assessment") != "investigate"):
             raise HTTPException(status_code=409, detail="只有完成且建议 investigate 的 L2 结果可以进入深度调查")
-        quick_spec = quick_task.get("spec", {})
+        source_binding = result.get("source_binding") if isinstance(result, dict) else None
+        quick_spec = quick_task.get("spec") if isinstance(quick_task.get("spec"), dict) else {}
+        authorization = quick_spec.get("authorization") if isinstance(quick_spec.get("authorization"), dict) else {}
         if (quick_spec.get("job_id") != job_id or quick_spec.get("candidate_id") != candidate_id
-                or result.get("source_binding", {}).get("report_sha256") != quick_spec.get("authorization", {}).get("report_sha256")):
+                or not isinstance(source_binding, dict)
+                or source_binding.get("report_sha256") != authorization.get("report_sha256")):
             raise HTTPException(status_code=409, detail="L2 结果与本次固定候选/报告不匹配")
         return quick_task, result
 
@@ -2149,7 +2153,10 @@ def install_routes(app: FastAPI, settings, store):
         quick_task, quick_result = _progressive_quick_result(
             body.progressive_quick_screen_operation_id, body.job_id, body.candidate_id)
         quick_spec = quick_task["spec"]
-        parent = ops.get(quick_spec["audit_operation_id"]) if quick_spec["audit_operation_id"] != body.job_id else None
+        audit_id = quick_spec.get("audit_operation_id")
+        if not isinstance(audit_id, str) or not audit_id:
+            raise HTTPException(status_code=409, detail="L2 缺少父审计预算绑定")
+        parent = ops.get(audit_id) if audit_id != body.job_id else None
         if parent and (parent.get("cancel_requested") or parent.get("status") in
                        {"cancelled", "failed", "timed_out", "interrupted"}):
             raise HTTPException(status_code=409, detail="父审计已取消或不可继续")
@@ -2170,20 +2177,24 @@ def install_routes(app: FastAPI, settings, store):
             "timeout_seconds": min(body.timeout_seconds,
                                     max(90, policy["limits"]["max_ai_wall_seconds"])),
         })
-        _, _, _, preview = _agent_consent_preview(bounded, provider, continuous=False)
+        _, _, _, preview = _agent_consent_preview(
+            bounded, provider, continuous=False, progressive_bounded=True)
         if not preview["agent_execution"]["eligible"]:
             raise HTTPException(status_code=409, detail=preview["agent_execution"]["reason"])
+        group = quick_spec.get("group") if isinstance(quick_spec.get("group"), dict) else {}
+        source_binding = quick_result.get("source_binding") or {}
         binding = {
             "quick_screen_operation_id": quick_task["id"],
             "quick_screen_result_sha256": quick_task["result_sha256"],
-            "quick_assessment": "investigate",
-            "audit_operation_id": quick_spec["audit_operation_id"],
-            "group_id": quick_spec["group"]["group_id"],
-            "policy_sha256": frozen["policy_sha256"],
+            "quick_assessment": "investigate", "audit_operation_id": audit_id,
+            "group_id": group.get("group_id"), "policy_sha256": frozen["policy_sha256"],
             "candidate_id": body.candidate_id,
-            "report_sha256": quick_result["source_binding"]["report_sha256"],
-            "commit": quick_result["source_binding"]["commit"],
+            "report_sha256": source_binding.get("report_sha256"),
+            "commit": source_binding.get("commit"),
         }
+        if not all(isinstance(binding[key], str) and binding[key]
+                   for key in ("group_id", "report_sha256", "commit")):
+            raise HTTPException(status_code=409, detail="L2 固定来源或候选组绑定不完整")
         agent_consent_sha256 = preview["consent_sha256"]
         progressive_consent_sha256 = content_sha256({
             "agent_consent_sha256": agent_consent_sha256,
@@ -2192,8 +2203,7 @@ def install_routes(app: FastAPI, settings, store):
         preview.update({
             "agent_consent_sha256": agent_consent_sha256,
             "consent_sha256": progressive_consent_sha256,
-            "progressive_binding": binding,
-            "progressive_policy": frozen,
+            "progressive_binding": binding, "progressive_policy": frozen,
             "budgets": {**preview["budgets"],
                         "progressive_task_shared_input_tokens": policy["limits"]["max_input_tokens_per_audit"],
                         "progressive_task_shared_output_tokens": policy["limits"]["max_output_tokens_per_audit"],
@@ -2235,8 +2245,8 @@ def install_routes(app: FastAPI, settings, store):
             "max_total_input_tokens": bounded.max_total_input_tokens,
             "max_total_output_tokens": bounded.max_total_output_tokens,
             "timeout_seconds": bounded.timeout_seconds,
-            "provider_request_timeout_seconds": 45, "max_provider_retries": 1,
-            "continuous_investigation": False,
+            "provider_request_timeout_seconds": 45, "max_provider_retries": 0,
+            "continuous_investigation": False, "no_cumulative_token_ceiling": False,
             "source_submission_approved": True, "source_submission_approved_at": now(),
             "source_consent_sha256": preview["agent_consent_sha256"],
             "progressive_consent_sha256": preview["consent_sha256"],
@@ -2257,9 +2267,8 @@ def install_routes(app: FastAPI, settings, store):
             "report_sha256": preview["binding"]["report_sha256"],
         }
         item = ops.create("agent_investigation", spec)
-        if item["spec"].get("progressive_consent_sha256") == spec["progressive_consent_sha256"]:
-            ops.event(item["id"], "progressive_deep_consent",
-                      "User approved L3 fixed-source preview sha256=" + preview["consent_sha256"])
+        ops.event(item["id"], "progressive_deep_consent",
+                  "User approved L3 fixed-source preview sha256=" + preview["consent_sha256"])
         return ops.get(item["id"])
 
     @router.post("/operations/agent-investigations/preview")

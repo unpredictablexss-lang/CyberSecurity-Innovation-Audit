@@ -948,3 +948,65 @@ class BudgetLedgerTests(unittest.TestCase):
             Path(directory).chmod(0o755)
             with self.assertRaises(ValueError):
                 BudgetLedger(Path(directory) / "ledger.sqlite")
+
+
+class ProgressiveDeepApiIntegrationTests(unittest.TestCase):
+    def test_deep_preview_and_start_bind_bounded_agent_and_l2_result(self):
+        import os
+        from unittest.mock import patch
+        from src.workbench.operations_store import Operations
+        from src.workbench.progressive_triage.policy import policy_envelope
+        quick_id = "a" * 32
+        policy = build_policy()
+        frozen = {"revision": 0, **policy_envelope(policy)}
+        quick = {"id": quick_id, "kind": "progressive_quick_screen", "status": "completed",
+                 "result_sha256": "d" * 64,
+                 "spec": {"job_id": "job-1", "candidate_id": "candidate-1",
+                          "audit_operation_id": "job-1", "progressive_policy": frozen,
+                          "group": {"group_id": "group-1"},
+                          "authorization": {"report_sha256": "b" * 64}}}
+        quick_result = {"quick_screen": {"state": "completed", "quick_assessment": "investigate"},
+                        "source_binding": {"report_sha256": "b" * 64, "commit": "c" * 40}}
+        original_get = Operations.get
+        def get(ops, key):
+            return quick if key == quick_id else original_get(ops, key)
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            app = create_app(Settings(root / "data", (root / "targets",)))
+            repo = app.state.store.add_repository("openharmony/sample", str(root))
+            job = {"id": "job-1", "repository_id": repo["id"], "status": "completed",
+                   "report_sha256": "b" * 64}
+            report = {"repository": "openharmony/sample", "commit": "c" * 40}
+            candidate = {"id": "candidate-1", "file": "src/sample.cpp", "line": 1,
+                         "source_sha256": "a" * 64, "evidence": {"obligations": [{
+                             "kind": "callee_and_policy", "description": "review source binding", "status": "unknown"}]}}
+            source = {"sha256": "a" * 64, "blob": "f" * 40, "text": "int check() {}"}
+            with TestClient(app) as client, patch.dict(os.environ, {
+                    "OHSCANNER_LLM_MODEL": "review-model", "OHSCANNER_LLM_API_KEY": "test-secret"}), \
+                    patch.object(app.state.store, "job", return_value=job), \
+                    patch("src.workbench.operations_api.service.read_report", return_value=report), \
+                    patch("src.workbench.operations_api.service.finding", return_value=candidate), \
+                    patch("src.workbench.operations_api.service.source", return_value=source), \
+                    patch.object(Operations, "get", get), \
+                    patch.object(Operations, "result", return_value=quick_result):
+                headers = {"x-ohscanner-client": "workbench-v1"}
+                body = {"job_id": "job-1", "candidate_id": "candidate-1", "mode": "tool_agent",
+                        "progressive_quick_screen_operation_id": quick_id}
+                endpoint = "/api/v1/operations/progressive-deep-investigations"
+                response = client.post(endpoint + "/preview", headers=headers, json=body)
+                self.assertEqual(response.status_code, 200, response.text)
+                preview = response.json()
+                self.assertEqual(preview["budgets"]["local_cumulative_token_budget"], "bounded")
+                self.assertEqual(preview["progressive_binding"]["quick_screen_result_sha256"], quick["result_sha256"])
+                approved = {**body, "source_submission_approved": True,
+                            "consent_nonce": preview["consent_nonce"], "consent_sha256": preview["consent_sha256"]}
+                started = client.post(endpoint, headers=headers, json=approved)
+                self.assertEqual(started.status_code, 201, started.text)
+                spec = started.json()["spec"]
+                self.assertFalse(spec["no_cumulative_token_ceiling"])
+                self.assertEqual(spec["max_provider_retries"], 0)
+                replay = client.post(endpoint, headers=headers, json=approved)
+                self.assertEqual(replay.json()["id"], started.json()["id"])
+                quick_result["quick_screen"]["quick_assessment"] = "insufficient_context"
+                rejected = client.post(endpoint + "/preview", headers=headers, json=body)
+                self.assertEqual(rejected.status_code, 409)
