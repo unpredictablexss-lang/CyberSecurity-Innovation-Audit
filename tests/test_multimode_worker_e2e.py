@@ -563,6 +563,10 @@ if os.environ.get("OHSCANNER_TEST_PROVIDER_TRACE"):
         self.assertEqual([item["scan_id"] for item in progress], scan_ids)
         self.assertTrue(all(item["agent_status"] == "static_only" for item in progress), progress)
         self.assertTrue(all(not item["agent_authorized"] for item in progress), progress)
+        expected_candidate_counts = [
+            len(findings(read_report(self.settings, self.store.job(scan_id)))) for scan_id in scan_ids
+        ]
+        self.assertEqual([item["candidate_count"] for item in progress], expected_candidate_counts, progress)
 
     def test_static_multi_endpoint_operations_finish_without_model_authorization(self):
         common = {

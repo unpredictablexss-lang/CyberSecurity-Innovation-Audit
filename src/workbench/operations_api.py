@@ -2599,12 +2599,22 @@ def install_routes(app: FastAPI, settings, store):
                         "report_sha256": job.get("report_sha256"),
                     }
 
+                if batches:
+                    endpoint_candidate_count = int(batch.get("candidate_count") or 0)
+                elif job.get("report_sha256"):
+                    try:
+                        endpoint_candidate_count = len(service.findings(service.read_report(settings, job)))
+                    except FileNotFoundError:
+                        endpoint_candidate_count = None
+                else:
+                    endpoint_candidate_count = None
+
                 endpoint_progress.append({
                     "scan_id": job_id, "commit": job["spec"].get("commit"),
                     "scan_status": job["status"], "agent_status": state,
                     "agent_authorized": bool(authorized and not authorized["revoked"]),
                     "report_available": bool(job.get("report_sha256")),
-                    "candidate_count": int(batch.get("candidate_count") or 0) if batches else 0,
+                    "candidate_count": endpoint_candidate_count,
                     "r1_authorized_count": int((authorized or {}).get("snapshot", {}).get("candidate_limit") or 0),
                     "r1_created_count": len(r1_operations),
                     "r1_queued_count": sum(1 for operation in r1_operations if operation["status"] == "queued"),
