@@ -115,10 +115,12 @@ class RepositoryImportTests(unittest.TestCase):
         results, failures = [], []
         def invoke():
             try:
-                results.append(self.run_import())
+                results.append(repository_import.import_and_queue_scan(self.settings, self.store, self.spec))
             except Exception as exc:
                 failures.append(exc)
-        with patch.object(repository_import, "_fetch_to_stage", side_effect=delayed_fetch):
+        with patch.object(repository_import, "_fetch_to_stage", side_effect=delayed_fetch), \
+                patch.object(repository_import.service, "make_spec", return_value={
+                    "commit": self.commit, "git_tree": self.tree, "timeout_seconds": 30}):
             threads = [threading.Thread(target=invoke) for _ in range(2)]
             for thread in threads: thread.start()
             for thread in threads: thread.join(10)

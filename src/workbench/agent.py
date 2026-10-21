@@ -1390,7 +1390,7 @@ def _apply_conditional_r2_context(settings, store, spec, prepared):
 
 DEFAULT_INVESTIGATION_BUDGET = {
     "max_steps": 8, "max_output_tokens": 1200,
-    "max_total_input_tokens": 24000, "max_total_output_tokens": 8000,
+    "max_total_input_tokens": 128000, "max_total_output_tokens": 8000,
     "timeout_seconds": 300,
 }
 
@@ -3999,7 +3999,8 @@ def execute_agent(settings, store, ops, task, client=None):
         if input_override is not None:
             request_input = input_override
         elif mode == "tool_agent":
-            request_input = _compact_continuous_request_input(input_items, tool_trace)
+            request_input = _compact_continuous_request_input(input_items, tool_trace,
+                max_request_bytes=min(MAX_PROVIDER_REQUEST_BYTES, spec.get("max_request_context_bytes", MAX_PROVIDER_REQUEST_BYTES)))
         else:
             request_input = input_items
         payload = {"model": config.model,
@@ -4029,7 +4030,7 @@ def execute_agent(settings, store, ops, task, client=None):
         # while retaining a conservative bound for newly appended tool data.
         serialized_payload = json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
         request_bytes = max(1, len(serialized_payload))
-        if request_bytes > MAX_PROVIDER_REQUEST_BYTES:
+        if request_bytes > min(MAX_PROVIDER_REQUEST_BYTES, spec.get("max_request_context_bytes", MAX_PROVIDER_REQUEST_BYTES)):
             raise ValueError("Provider request exceeds the per-request input byte limit")
         if (not isolated and previous_payload_bytes is not None
                 and previous_request_input_tokens is not None):
@@ -4251,7 +4252,7 @@ def execute_agent(settings, store, ops, task, client=None):
                 raise ValueError("model tool call has a missing or duplicate call_id")
             call_ids.add(call_id)
             signature = _hash({"name": name, "arguments": args})
-            if signature in seen_tool_queries and signature not in oversized_tool_queries:
+            if signature in seen_tool_queries:
                 duplicate_calls.append((call_id, name))
                 continue
             seen_tool_queries.add(signature)

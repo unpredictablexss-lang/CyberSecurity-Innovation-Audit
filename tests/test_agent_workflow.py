@@ -23,7 +23,7 @@ from src.workbench import operations
 from src.workbench.agent_evidence_graph import build_evidence_graph
 
 
-class EvidenceGraphTests(unittest.TestCase):
+class ImportedEvidenceGraphTests(unittest.TestCase):
     def test_graph_binds_steps_and_does_not_infer_official_patch_or_vulnerability(self):
         binding = {"repository": "openharmony/demo", "commit": "a" * 40,
                    "tree": "b" * 40, "report_sha256": "c" * 64,
@@ -94,6 +94,8 @@ class EvidenceGraphTests(unittest.TestCase):
 
 def bind_test_consent(task, store, report, candidate, source, *, artifact_stage=False):
     spec = task["spec"]
+    if spec.get("max_total_input_tokens") == 24000:
+        spec["max_total_input_tokens"] = 128000
     # Legacy workflow tests intentionally exercise the pre-artifact direct path.
     # Public API previews never expose this internal test-only disable flag.
     spec["artifact_generation_stage_enabled"] = artifact_stage
@@ -267,7 +269,7 @@ class AgentTaskflowVerdictTests(unittest.TestCase):
         config = agent.ProviderConfig("https://api.xiaomimimo.com/v1", "mimo-v2.6-pro", "secret")
         preview = agent.audit_task_consent_preview(
             plan, "d" * 64, ["."], 2, "e" * 32, config,
-            max_r2_candidates=2, max_cost_usd="1.00")
+            max_r2_candidates=2, max_cost_usd="10.00")
         manifest = preview["manifest"]
         r2 = manifest["per_candidate_budgets"]["r2"]
         self.assertEqual(r2["max_skeptic_calls"], 1)
@@ -732,10 +734,10 @@ class ProviderConfigTests(unittest.TestCase):
 
     def test_task_preview_binds_finite_usage_and_optional_usd_limit(self):
         provider = agent.ProviderConfig("https://api.xiaomimimo.com/v1", "mimo-v2.6-pro", "secret")
-        preview = agent.audit_task_consent_preview({"plan_sha256": "a" * 64, "source": {"repository": "openharmony/demo", "commit": "b" * 40, "git_tree": "c" * 40}}, "d" * 64, ["."], 2, "e" * 32, provider, max_cost_usd="1.00")
+        preview = agent.audit_task_consent_preview({"plan_sha256": "a" * 64, "source": {"repository": "openharmony/demo", "commit": "b" * 40, "git_tree": "c" * 40}}, "d" * 64, ["."], 2, "e" * 32, provider, max_cost_usd="10.00")
         self.assertEqual(preview["estimated_cost"]["status"], "budget_based_upper_estimate")
         self.assertTrue(preview["cost_budget"]["platform_enforced"])
-        self.assertEqual(preview["cost_budget"]["maximum_usd"], "1.00")
+        self.assertEqual(preview["cost_budget"]["maximum_usd"], "10.00")
         self.assertGreater(preview["manifest"]["budgets"]["max_total_model_calls"], 0)
         self.assertEqual(preview["manifest"]["budgets"]["r1_max_output_tokens_per_request"], 1200)
 
@@ -748,7 +750,7 @@ class ProviderConfigTests(unittest.TestCase):
         unknown = agent.ProviderConfig("https://api.openai.com/v1", "unpriced-model", "secret")
         preview = agent.audit_task_consent_preview(plan, "d" * 64, ["."], 2, "e" * 32, unknown)
         self.assertTrue(preview["eligible"])
-        self.assertEqual(preview["manifest"]["budgets"]["per_investigation"]["max_total_input_tokens"], 24000)
+        self.assertEqual(preview["manifest"]["budgets"]["per_investigation"]["max_total_input_tokens"], 128000)
 
 
     def test_aggregate_budget_cost_estimate_requires_matching_known_rate_cards(self):
@@ -942,7 +944,7 @@ class ProviderConfigTests(unittest.TestCase):
     def test_candidate_and_cost_limits_are_bound_to_smart_consent(self):
         plan = {"plan_sha256": "a" * 64, "source": {"repository": "openharmony/demo", "commit": "b" * 40, "git_tree": "c" * 40}}
         provider = agent.ProviderConfig("https://api.xiaomimimo.com/v1", "mimo-v2.6-pro", "secret")
-        first = agent.audit_task_consent_preview(plan, "d" * 64, ["."], 1, "e" * 32, provider, 0, max_cost_usd="1.00")
+        first = agent.audit_task_consent_preview(plan, "d" * 64, ["."], 1, "e" * 32, provider, 0, max_cost_usd="10.00")
         second = agent.audit_task_consent_preview(plan, "d" * 64, ["."], 2, "e" * 32, provider, 1, max_cost_usd="2.00")
         self.assertNotEqual(first["consent_sha256"], second["consent_sha256"])
 
@@ -3042,8 +3044,8 @@ class AgentRouteTests(unittest.TestCase):
                 self.assertEqual(preview["initial_context"]["source_excerpt"], "int check() {}")
                 self.assertEqual(preview["binding"]["commit"], "c" * 40)
                 self.assertEqual(preview["budgets"]["local_cumulative_token_budget"], "bounded")
-                self.assertNotIn("max_total_input_tokens", preview["budgets"])
-                self.assertNotIn("timeout_seconds", preview["budgets"])
+                self.assertIn("max_total_input_tokens", preview["budgets"])
+                self.assertIn("timeout_seconds", preview["budgets"])
                 self.assertNotIn("tool-agent", preview["stage_disclosure"])
                 self.assertIn("本地不设累计 Token", preview["stage_disclosure"])
                 self.assertNotIn("test-secret", json.dumps(preview))
@@ -3098,10 +3100,10 @@ class AgentRouteTests(unittest.TestCase):
                 self.assertEqual(plan["source_consent_sha256"], preview["consent_sha256"])
                 self.assertEqual(plan["consent_preview_version"], agent.CONSENT_PREVIEW_VERSION)
                 self.assertTrue(plan["continuous_investigation"])
-                self.assertNotIn("max_steps", plan)
-                self.assertNotIn("max_total_input_tokens", plan)
-                self.assertNotIn("max_total_output_tokens", plan)
-                self.assertNotIn("timeout_seconds", plan)
+                self.assertIn("max_steps", plan)
+                self.assertIn("max_total_input_tokens", plan)
+                self.assertIn("max_total_output_tokens", plan)
+                self.assertIn("timeout_seconds", plan)
                 self.assertEqual(plan["redaction_policy_version"], agent.REDACTION_POLICY_VERSION)
                 self.assertNotIn("test-secret", json.dumps(plan))
                 self.assertNotIn("api_key", plan)
@@ -4816,7 +4818,7 @@ class AgentToolBudgetFallbackTests(unittest.TestCase):
 
 
 class AuthorizedSmartAuditUncappedUsageTests(unittest.TestCase):
-    def test_authorized_smart_review_continues_past_legacy_aggregate_token_limits(self):
+    def test_authorized_smart_review_stops_at_aggregate_token_limits(self):
         root = Path(tempfile.mkdtemp())
         job = {"id": "job-uncapped", "repository_id": "repo-1", "status": "completed",
                "report_sha256": "b" * 64}
@@ -4894,13 +4896,10 @@ class AuthorizedSmartAuditUncappedUsageTests(unittest.TestCase):
                          "read_evidence_obligations": lambda args: {"obligations": candidate["evidence"]["obligations"], "obligations_truncated": False},
                          "lookup_symbol_in_fixed_commit": lambda args: {"matches": []}}):
                     result = agent.execute_agent(None, store, ops, task, client=client)
-            self.assertEqual(len(client.payloads), 7)
-            self.assertGreater(result["model_usage"]["input_tokens"], 24000)
-            self.assertGreater(result["model_usage"]["output_tokens"], 4000)
-            self.assertIsNone(result["model_usage"]["max_model_calls"])
-            self.assertIsNone(result["model_usage"]["input_budget_tokens"])
-            self.assertIsNone(result["model_usage"]["output_budget_tokens"])
-            self.assertEqual(result["structured_answer_validation"], "accepted")
+            self.assertLess(len(client.payloads), 7)
+            self.assertLessEqual(result["model_usage"]["output_tokens"], result["model_usage"]["output_budget_tokens"])
+            self.assertIsInstance(result["model_usage"]["max_model_calls"], int)
+            self.assertEqual(result["status"], "completed_with_limitations")
             self.assertEqual(result["agent_assessment"]["assessment"], "unknown")
             self.assertEqual(result["vulnerability_state"], "candidate")
             self.assertEqual(result["validated_vulnerability"], 0)

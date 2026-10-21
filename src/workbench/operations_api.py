@@ -562,7 +562,7 @@ class AgentInvestigationRequest(Strict):
     mode: Literal["single_shot", "tool_agent"] = "tool_agent"
     max_steps: int = Field(default=4, ge=1, le=6)
     max_output_tokens: int = Field(default=1200, ge=128, le=3000)
-    max_total_input_tokens: int = Field(default=24000, ge=1000, le=64000)
+    max_total_input_tokens: int = Field(default=128000, ge=1000, le=512000)
     max_total_output_tokens: int = Field(default=4000, ge=512, le=12000)
     timeout_seconds: int = Field(default=240, ge=90, le=480)
     source_submission_approved: bool = False
@@ -578,7 +578,7 @@ class AgentBatchInvestigationRequest(Strict):
     mode: Literal["single_shot", "tool_agent"] = "tool_agent"
     max_steps: int = Field(default=4, ge=1, le=6)
     max_output_tokens: int = Field(default=1200, ge=128, le=3000)
-    max_total_input_tokens: int = Field(default=24000, ge=1000, le=64000)
+    max_total_input_tokens: int = Field(default=128000, ge=1000, le=512000)
     max_total_output_tokens: int = Field(default=4000, ge=512, le=12000)
     timeout_seconds: int = Field(default=240, ge=90, le=480)
     source_submission_approved: bool = False
@@ -3229,7 +3229,7 @@ def install_routes(app: FastAPI, settings, store):
         # case-bound operations with another case.
         operations = []
         operation_page = ops.report_operations_for_case(case_id, limit=200)
-        candidate_operations = ops.list(limit=200)
+        candidate_operations = ops.list()
         seen_operations = set()
         for operation in operation_page["items"] + candidate_operations:
             if operation["id"] in seen_operations:

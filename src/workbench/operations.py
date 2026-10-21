@@ -755,6 +755,7 @@ def execute(settings, store, ops, task):
     spec, kind = task["spec"], task["kind"]
     if kind == "repository_import_scan":
         from .repository_import import import_and_queue_scan
+        ops.event(task["id"], "repository_import", "Importing the fixed catalog revision and queueing a static scan")
         return import_and_queue_scan(settings, store, spec)
     if kind == "source_sync_batch":
         return execute_source_sync_batch(settings, store, ops, task)
