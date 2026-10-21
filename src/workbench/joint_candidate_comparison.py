@@ -193,70 +193,115 @@ def _evidence(label: str, side: Mapping[str, Any], ident: Mapping[str, str],
     return ctx, ev
 
 
-def build_joint_candidate_context(*, matrix_operation: Mapping[str, Any],
-                                  matrix_result: Mapping[str, Any],
-                                  from_side: Mapping[str, Any],
+def build_joint_candidate_context(*, from_side: Mapping[str, Any],
                                   to_side: Mapping[str, Any],
                                   match: Mapping[str, Any],
-                                  matrix_result_sha256: str | None = None) -> dict[str, Any]:
-    """Build side-separated contexts for one unambiguous matrix 1:1 candidate pair.
+                                  matrix_operation: Mapping[str, Any] | None = None,
+                                  matrix_result: Mapping[str, Any] | None = None,
+                                  matrix_result_sha256: str | None = None,
+                                  source_operation: Mapping[str, Any] | None = None,
+                                  source_result: Mapping[str, Any] | None = None,
+                                  source_result_sha256: str | None = None) -> dict[str, Any]:
+    """Build side-separated context for a unique 1:1 matrix or recent-window pair.
 
-    Caller must load matrix_result and reports by persisted hashes, then obtain each
-    source from fixed-snapshot service APIs. Errors/ambiguities must be turned into
-    unknown_joint_candidate_result and must not be sent to a Provider.
+    Recent-window comparisons are accepted only when their fixed operation result
+    binds exactly four scans and the selected pair is its between-window endpoint
+    pair (scan_ids[1] -> scan_ids[3]). Callers load the operation result/report by
+    persisted hashes and obtain each source through fixed-snapshot service APIs.
     """
-    op, result = _obj(matrix_operation, "matrix_operation"), _obj(matrix_result, "matrix_result")
-    if op.get("kind") != "version_matrix":
-        _fail("wrong_operation_kind", "joint comparison requires version_matrix")
+    using_generic = source_operation is not None or source_result is not None
+    using_legacy = matrix_operation is not None or matrix_result is not None
+    if using_generic == using_legacy:
+        _fail("invalid_operation_binding", "exactly one parent comparison binding is required")
+    raw_op = source_operation if using_generic else matrix_operation
+    raw_result = source_result if using_generic else matrix_result
+    op_name = "source_operation" if using_generic else "matrix_operation"
+    op, result = _obj(raw_op, op_name), _obj(raw_result, "source_result")
+    kind = op.get("kind")
+    if kind not in {"version_matrix", "recent_window_comparison"}:
+        _fail("wrong_operation_kind", "joint comparison requires a version matrix or recent-window operation")
     if op.get("status") not in _OK:
-        _fail("matrix_not_complete", "version matrix is not complete")
-    op_id = _text(op.get("id"), "matrix_operation.id")
-    result_sha = _hash(op.get("result_sha256"), "matrix_operation.result_sha256")
-    supplied_sha = _hash(matrix_result_sha256 or result_sha, "matrix_result_sha256")
+        _fail("parent_not_complete", "parent comparison operation is not complete")
+    op_id = _text(op.get("id"), op_name + ".id")
+    result_sha = _hash(op.get("result_sha256"), op_name + ".result_sha256")
+    supplied_value = source_result_sha256 if using_generic else matrix_result_sha256
+    supplied_sha = _hash(supplied_value or result_sha, "source_result_sha256")
     if supplied_sha != result_sha:
-        _fail("matrix_result_binding_mismatch", "matrix result hash differs from operation")
+        _fail("matrix_result_binding_mismatch" if kind == "version_matrix"
+              else "parent_result_binding_mismatch",
+              "parent comparison result hash differs from operation")
     spec = op.get("spec") if isinstance(op.get("spec"), Mapping) else {}
     repo_id = _text(op.get("repository_id") or spec.get("repository_id"),
-                    "matrix_operation.repository_id")
+                    op_name + ".repository_id")
     if spec.get("repository_id") not in (None, repo_id):
-        _fail("matrix_result_binding_mismatch", "matrix repository identity is inconsistent")
+        _fail("parent_result_binding_mismatch", "parent repository identity is inconsistent")
 
     fi, ti = _identity(from_side, "from"), _identity(to_side, "to")
-    scan_ids = result.get("scan_ids")
-    versions = result.get("versions")
-    if (not isinstance(scan_ids, list) or not isinstance(versions, list)
-            or len(scan_ids) != len(versions)):
-        _fail("matrix_result_binding_mismatch", "matrix scan/version bindings are incomplete")
+    if kind == "version_matrix":
+        scan_ids = result.get("scan_ids")
+        versions = result.get("versions")
+        if (not isinstance(scan_ids, list) or not isinstance(versions, list)
+                or len(scan_ids) != len(versions)):
+            _fail("matrix_result_binding_mismatch", "matrix scan/version bindings are incomplete")
 
-    def verify_endpoint(identity: Mapping[str, str]) -> None:
-        indexes = [i for i, row in enumerate(versions)
-                   if isinstance(row, Mapping) and row.get("commit") == identity["commit"]]
-        if len(indexes) != 1:
-            _fail("ambiguous_version_pair", "matrix does not uniquely bind endpoint commit")
-        index = indexes[0]
-        if scan_ids[index] != identity["job_id"]:
-            _fail("matrix_result_binding_mismatch", "endpoint job is not the matrix saved scan")
-        if versions[index].get("source_snapshot_sha256") != identity["snapshot_sha256"]:
-            _fail("matrix_result_binding_mismatch", "endpoint snapshot differs from matrix result")
+        def verify_endpoint(identity: Mapping[str, str]) -> None:
+            indexes = [i for i, row in enumerate(versions)
+                       if isinstance(row, Mapping) and row.get("commit") == identity["commit"]]
+            if len(indexes) != 1:
+                _fail("ambiguous_version_pair", "matrix does not uniquely bind endpoint commit")
+            index = indexes[0]
+            if scan_ids[index] != identity["job_id"]:
+                _fail("matrix_result_binding_mismatch", "endpoint job is not the matrix saved scan")
+            if versions[index].get("source_snapshot_sha256") != identity["snapshot_sha256"]:
+                _fail("matrix_result_binding_mismatch", "endpoint snapshot differs from matrix result")
 
-    verify_endpoint(fi)
-    verify_endpoint(ti)
+        verify_endpoint(fi)
+        verify_endpoint(ti)
+        comparisons = result.get("comparisons")
+        if not isinstance(comparisons, list):
+            _fail("matrix_pair_missing", "matrix result has no comparison groups")
+        pairs = [x for x in comparisons if isinstance(x, Mapping)
+                 and x.get("from") == fi["commit"] and x.get("to") == ti["commit"]]
+        if len(pairs) != 1:
+            _fail("ambiguous_version_pair", "selected endpoint pair is missing or duplicated")
+        groups = pairs[0].get("candidate_comparison")
+        match_error = "matrix_pair_missing"
+    else:
+        scan_ids = result.get("scan_ids")
+        windows = spec.get("windows")
+        result_windows = result.get("windows")
+        between = result.get("between_window_endpoints")
+        if (not isinstance(scan_ids, list) or len(scan_ids) != 4
+                or not isinstance(spec.get("scan_ids"), list)
+                or scan_ids != spec.get("scan_ids")
+                or not isinstance(windows, list) or len(windows) != 2
+                or not isinstance(result_windows, list) or len(result_windows) != 2
+                or not isinstance(between, Mapping)):
+            _fail("recent_window_binding_mismatch", "recent-window result lacks two fixed windows and four scans")
+        expected_from = windows[0].get("endpoint") if isinstance(windows[0], Mapping) else None
+        expected_to = windows[1].get("endpoint") if isinstance(windows[1], Mapping) else None
+        if (not isinstance(expected_from, str) or not isinstance(expected_to, str)
+                or between.get("from") != expected_from or between.get("to") != expected_to
+                or fi["commit"] != expected_from or ti["commit"] != expected_to
+                or fi["job_id"] != scan_ids[1] or ti["job_id"] != scan_ids[3]):
+            _fail("recent_window_binding_mismatch", "selected pair is not the fixed between-window endpoint scans")
+        for index, window in enumerate(windows):
+            row = result_windows[index]
+            if (not isinstance(window, Mapping) or not isinstance(row, Mapping)
+                    or row.get("selection") != dict(window)
+                    or row.get("baseline") != window.get("baseline")
+                    or row.get("endpoint") != window.get("endpoint")):
+                _fail("recent_window_binding_mismatch", "recent-window result differs from its frozen window plan")
+        groups = between.get("candidate_comparison")
+        match_error = "recent_window_pair_missing"
     if fi["repository_id"] != repo_id or ti["repository_id"] != repo_id:
-        _fail("repository_mismatch", "endpoint scans must belong to matrix repository")
+        _fail("repository_mismatch", "endpoint scans must belong to parent repository")
     if fi["commit"] == ti["commit"]:
         _fail("ambiguous_version_pair", "endpoint commits must differ")
     if fi["repository"] != ti["repository"]:
         _fail("repository_mismatch", "endpoint report names differ")
-    comparisons = result.get("comparisons")
-    if not isinstance(comparisons, list):
-        _fail("matrix_pair_missing", "matrix result has no comparisons")
-    pairs = [x for x in comparisons if isinstance(x, Mapping)
-             and x.get("from") == fi["commit"] and x.get("to") == ti["commit"]]
-    if len(pairs) != 1:
-        _fail("ambiguous_version_pair", "selected endpoint pair is missing or duplicated")
-    groups = pairs[0].get("candidate_comparison")
     if not isinstance(groups, list):
-        _fail("matrix_pair_missing", "selected endpoint pair has no candidate groups")
+        _fail(match_error, "selected endpoint pair has no candidate groups")
     selected_rows = [x for x in groups if isinstance(x, Mapping) and dict(x) == dict(match)]
     if len(selected_rows) != 1:
         _fail("ambiguous_candidate_pair", "candidate group is missing or duplicated")
@@ -269,22 +314,23 @@ def build_joint_candidate_context(*, matrix_operation: Mapping[str, Any],
     for ctx in (fc, tc):
         for field in ("detector_id", "rule_id"):
             if selected.get(field) not in (None, ctx.get(field)):
-                _fail("candidate_pair_mismatch", "matrix candidate identity differs from report")
+                _fail("candidate_pair_mismatch", "candidate identity differs from fixed endpoint report")
     evidence_index = {x["evidence_id"]: x for x in (fe, te)}
     if len(evidence_index) != 2:
         _fail("duplicate_evidence_id", "from/to evidence IDs must be unique")
     fields = ("job_id", "commit", "tree", "report_sha256", "snapshot_sha256",
               "candidate_id", "candidate_file", "source_sha256", "source_blob",
               "archive_binding", "evidence_id")
-    return {
+    prepared = {
         "schema_version": "ohscanner.joint_candidate_context.v1",
-        "bindings": {"matrix_operation_id": op_id, "matrix_result_sha256": result_sha,
+        "bindings": {"source_operation_id": op_id, "source_operation_kind": kind,
+                     "source_operation_result_sha256": result_sha,
                      "repository_id": repo_id,
                      "from": {k: fc[k] for k in fields}, "to": {k: tc[k] for k in fields}},
         "context": {
             "from": fc, "to": tc,
-            "matrix_match": {k: selected.get(k, "unknown")
-                             for k in ("status", "match_basis", "file", "detector_id", "rule_id")},
+            "endpoint_match": {k: selected.get(k, "unknown")
+                               for k in ("status", "match_basis", "file", "detector_id", "rule_id")},
             "instructions": [
                 "Compare only the two fixed source snapshots supplied.",
                 "Every comparative claim must cite at least one from and one to source line.",
@@ -296,7 +342,14 @@ def build_joint_candidate_context(*, matrix_operation: Mapping[str, Any],
         "evidence_index": evidence_index,
         "schema": JOINT_CANDIDATE_COMPARISON_SCHEMA,
     }
-
+    if kind == "version_matrix":
+        prepared["bindings"].update({"matrix_operation_id": op_id,
+                                     "matrix_result_sha256": result_sha})
+        prepared["context"]["matrix_match"] = prepared["context"]["endpoint_match"]
+    else:
+        prepared["bindings"].update({"recent_window_operation_id": op_id,
+                                     "recent_window_result_sha256": result_sha})
+    return prepared
 
 
 def attach_linked_agent_context(prepared: Mapping[str, Any], linked: Mapping[str, Any]) -> dict[str, Any]:
@@ -561,8 +614,18 @@ def validate_joint_candidate_output(value: Any, prepared_context: Mapping[str, A
     }
 
 
+def joint_comparison_failure_status(provider_call_state: str) -> str:
+    """Map execution failures to a state that cannot look like a completed analysis."""
+    if provider_call_state == "not_started":
+        return "blocked"
+    if provider_call_state == "attempted":
+        return "failed"
+    return "completed_with_limitations"
+
+
 def unknown_joint_candidate_result(reason_code: str = "analysis_unavailable",
-                                   *, matrix_operation_id: str | None = None) -> dict[str, Any]:
+                                   *, matrix_operation_id: str | None = None,
+                                   recent_window_operation_id: str | None = None) -> dict[str, Any]:
     """Safe result for preparation, Provider, parse, ambiguity, or citation failures."""
     if not isinstance(reason_code, str) or not _REASON.fullmatch(reason_code):
         reason_code = "analysis_unavailable"
@@ -577,6 +640,8 @@ def unknown_joint_candidate_result(reason_code: str = "analysis_unavailable",
     }
     if isinstance(matrix_operation_id, str) and matrix_operation_id:
         result["matrix_operation_id"] = matrix_operation_id
+    if isinstance(recent_window_operation_id, str) and recent_window_operation_id:
+        result["recent_window_operation_id"] = recent_window_operation_id
     return result
 
 
@@ -587,6 +652,9 @@ def validate_joint_candidate_output_or_unknown(value: Any,
         return validate_joint_candidate_output(value, prepared_context)
     except JointCandidateValidationError as error:
         bindings = prepared_context.get("bindings", {}) if isinstance(prepared_context, Mapping) else {}
-        op_id = bindings.get("matrix_operation_id") if isinstance(bindings, Mapping) else None
+        matrix_id = bindings.get("matrix_operation_id") if isinstance(bindings, Mapping) else None
+        recent_id = bindings.get("recent_window_operation_id") if isinstance(bindings, Mapping) else None
         return unknown_joint_candidate_result(
-            error.reason_code, matrix_operation_id=op_id if isinstance(op_id, str) else None)
+            error.reason_code,
+            matrix_operation_id=matrix_id if isinstance(matrix_id, str) else None,
+            recent_window_operation_id=recent_id if isinstance(recent_id, str) else None)

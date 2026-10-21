@@ -39,6 +39,16 @@ class IntelligentReviewProgressTests(unittest.TestCase):
         self.assertEqual(progress["r1"]["completed_count"], 1)
         self.assertEqual(progress["r1"]["failed_count"], 1)
 
+    def test_completed_with_limitations_is_separate_from_full_completion(self):
+        progress = _classify_intelligent_review(batch(), [
+            operation("r1-a", "completed_with_limitations"),
+            operation("r1-b", "completed"),
+        ], [])
+        self.assertEqual(progress["state"], "completed_with_limitations")
+        self.assertEqual(progress["r1"]["completed_count"], 1)
+        self.assertEqual(progress["r1"]["completed_with_limitations_count"], 1)
+        self.assertEqual(progress["r1"]["status_counts"]["completed_with_limitations"], 1)
+
     def test_queued_only_is_queued_and_not_completed(self):
         progress = _classify_intelligent_review(batch(), [
             operation("r1-a", "queued"), operation("r1-b", "queued"),

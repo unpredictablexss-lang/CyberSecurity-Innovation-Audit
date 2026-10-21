@@ -2,7 +2,9 @@ import React, { useMemo, useRef, useState } from "react";
 import { Alert, Button, Card, Collapse, Descriptions, Space, Table, Tag, Typography, message } from "antd";
 import { api } from "../../api";
 import { go } from "../../components";
-import { buildMatrixCandidatePairs, JOINT_CANDIDATE_CREATE_PATH, JOINT_CANDIDATE_PREVIEW_PATH,
+import { buildMatrixCandidatePairs, buildRecentWindowCandidatePairs,
+  JOINT_CANDIDATE_CREATE_PATH, JOINT_CANDIDATE_PREVIEW_PATH,
+  RECENT_JOINT_CANDIDATE_CREATE_PATH, RECENT_JOINT_CANDIDATE_PREVIEW_PATH,
   buildJointLinkedAgentChildrenView, buildJointEgressSummary, jointCandidateCreatePayload, jointCandidatePreviewPayload } from "./operationProgressModel.js";
 
 const { Text } = Typography;
@@ -80,7 +82,12 @@ function EvidencePreview({ context }: { context: any }) {
 export default function VersionCandidateComparison({ operation, onOperationCreated }: {
   operation: any; onOperationCreated?: (operation: any) => void;
 }) {
-  const pairs = useMemo(() => buildMatrixCandidatePairs(operation), [operation]);
+  const recentWindow = operation?.kind === "recent_window_comparison";
+  const parentKind = recentWindow ? "recent_window_comparison" : "version_matrix";
+  const previewPath = recentWindow ? RECENT_JOINT_CANDIDATE_PREVIEW_PATH : JOINT_CANDIDATE_PREVIEW_PATH;
+  const createPath = recentWindow ? RECENT_JOINT_CANDIDATE_CREATE_PATH : JOINT_CANDIDATE_CREATE_PATH;
+  const pairs = useMemo(() => recentWindow
+    ? buildRecentWindowCandidatePairs(operation) : buildMatrixCandidatePairs(operation), [operation, recentWindow]);
   const [activePairKey, setActivePairKey] = useState<string | null>(null);
   const [preview, setPreview] = useState<any>(null);
   const [previewBusy, setPreviewBusy] = useState(false);
@@ -88,7 +95,9 @@ export default function VersionCandidateComparison({ operation, onOperationCreat
   const [error, setError] = useState("");
   const [created, setCreated] = useState<any>(null);
   const requestTicket = useRef(0);
-  if (!operation || operation.kind !== "version_matrix" || !Array.isArray(operation.result?.comparisons)) return null;
+  if (!operation || (!recentWindow && operation.kind !== "version_matrix")
+      || (recentWindow && !Array.isArray(operation.result?.between_window_endpoints?.candidate_comparison))
+      || (!recentWindow && !Array.isArray(operation.result?.comparisons))) return null;
 
   const pair = pairs.find((item) => item.key === activePairKey) || null;
   const previewConsent = preview?.consent;
@@ -105,8 +114,8 @@ export default function VersionCandidateComparison({ operation, onOperationCreat
     const ticket = ++requestTicket.current;
     setActivePairKey(selected.key); setPreview(null); setCreated(null); setError(""); setPreviewBusy(true);
     try {
-      const payload = jointCandidatePreviewPayload(operation.id, selected);
-      const result = await api(JOINT_CANDIDATE_PREVIEW_PATH, payload);
+      const payload = jointCandidatePreviewPayload(operation.id, selected, parentKind);
+      const result = await api(previewPath, payload);
       if (ticket === requestTicket.current) setPreview(result);
     } catch (e) {
       if (ticket === requestTicket.current) setError(String(e));
@@ -119,8 +128,8 @@ export default function VersionCandidateComparison({ operation, onOperationCreat
     if (!pair || !consentValid || createBusy) return;
     setCreateBusy(true); setError("");
     try {
-      const payload = jointCandidateCreatePayload(operation.id, pair, previewConsent);
-      const item = await api(JOINT_CANDIDATE_CREATE_PATH, payload);
+      const payload = jointCandidateCreatePayload(operation.id, pair, previewConsent, parentKind);
+      const item = await api(createPath, payload);
       setCreated(item); onOperationCreated?.(item);
       message.success("联合比较任务已加入队列；模型结果仍需人工复核");
     } catch (e) {
@@ -129,7 +138,7 @@ export default function VersionCandidateComparison({ operation, onOperationCreat
   };
 
   const columns: any[] = [
-    { title: "固定版本对", render: (_: any, row: any) => <>{short(row.fromCommit)} → {short(row.toCommit)}<div className="muted">静态观察：{row.status}</div></> },
+    { title: recentWindow ? "固定时间端点对" : "固定版本对", render: (_: any, row: any) => <>{short(row.fromCommit)} → {short(row.toCommit)}<div className="muted">静态观察：{row.status}</div></> },
     { title: "匹配候选", render: (_: any, row: any) => <><Text>{row.file}</Text><div className="muted">{row.detectorId} · {row.ruleId}</div>
       {row.eligibleForPreview ? <div className="muted">{short(row.fromCandidate.id)} → {short(row.toCandidate.id)}</div>
         : <div className="muted">两侧候选身份不是唯一的一对一匹配</div>}</> },
@@ -138,9 +147,10 @@ export default function VersionCandidateComparison({ operation, onOperationCreat
       {activePairKey === row.key && preview ? "重新预览授权" : "预览联合研判"}</Button> },
   ];
 
-  return <Card className="section-gap" size="small" title="跨版本候选联合研判">
+  return <Card className="section-gap" size="small" title={recentWindow ? "跨时间窗口候选联合研判" : "跨版本候选联合研判"}>
     <Alert type="info" showIcon message="只对两个固定版本中唯一配对的候选进行联合调查" description="预览只读取已保存报告和固定源码，不调用模型、不外发源码、不创建任务。确认后才会向模型发送下方展示的内容。结果仍是 candidate/unknown，不能确认漏洞或证明漏洞由哪个版本引入/修复。" />
-    {!SHA256.test(operation.result_sha256 || "") && <Alert className="section-gap" type="warning" showIcon message="版本矩阵结果缺少有效摘要，不能安全绑定联合调查。" />}
+    {!SHA256.test(operation.result_sha256 || "") && <Alert className="section-gap" type="warning" showIcon
+      message={recentWindow ? "时间窗口结果缺少有效摘要，不能安全绑定联合调查。" : "版本矩阵结果缺少有效摘要，不能安全绑定联合调查。"} />}
     <Table<any> className="section-gap" size="small" rowKey="key" dataSource={pairs} pagination={{ pageSize: 5 }} scroll={{ x: 760 }} columns={columns}
       expandable={{ expandedRowKeys: activePairKey ? [activePairKey] : [],
         onExpand: (expanded: boolean, row: any) => { if (!expanded && row.key === activePairKey) { requestTicket.current += 1; setActivePairKey(null); setPreview(null); } },
@@ -153,8 +163,8 @@ export default function VersionCandidateComparison({ operation, onOperationCreat
               description={preview.reason || (preview.eligible ? "预览没有调用模型或创建任务；只有明确同意后才会创建一次联合调查。" : "服务端拒绝了该候选对的预览。此时不会创建任务。")} />
             {binding && <Descriptions size="small" bordered column={{ xs: 1, md: 2 }}>
               <Descriptions.Item label="模型服务">{previewConsent.provider?.destination || "目的地未知"} · {previewConsent.provider?.model || "模型未知"}</Descriptions.Item>
-              <SideSource label="来源版本" side={binding.from} />
-              <SideSource label="目标版本" side={binding.to} />
+              <SideSource label={recentWindow ? "较早窗口端点" : "来源版本"} side={binding.from} />
+              <SideSource label={recentWindow ? "最近窗口端点" : "目标版本"} side={binding.to} />
               <Descriptions.Item label="本次将发送的内容" span={2}>
                 固定源码片段 {egressSummary.evidenceCount ?? context?.source_evidence_count ?? "未知"} 项，涉及 {egressSummary.fileCount ?? "未知"} 个文件、两个固定版本；关联调查摘要 {egressSummary.linkedReviewCount ?? "未知"} 项（仅导航参考）。
               </Descriptions.Item>
@@ -169,8 +179,12 @@ export default function VersionCandidateComparison({ operation, onOperationCreat
               <Descriptions.Item label="固定仓库">{binding.repository_id || "未提供"}</Descriptions.Item>
               <Descriptions.Item label="来源版本完整 Commit">{binding.from?.commit || "未提供"}</Descriptions.Item>
               <Descriptions.Item label="目标版本完整 Commit">{binding.to?.commit || "未提供"}</Descriptions.Item>
-              <Descriptions.Item label="矩阵操作 ID">{binding.matrix_operation_id || "未提供"}</Descriptions.Item>
-              <Descriptions.Item label="矩阵结果 SHA-256">{binding.matrix_result_sha256 || "未提供"}</Descriptions.Item>
+              <Descriptions.Item label={recentWindow ? "时间窗口操作 ID" : "矩阵操作 ID"}>
+                {(recentWindow ? binding.recent_window_operation_id : binding.matrix_operation_id) || "未提供"}
+              </Descriptions.Item>
+              <Descriptions.Item label={recentWindow ? "时间窗口结果 SHA-256" : "矩阵结果 SHA-256"}>
+                {(recentWindow ? binding.recent_window_result_sha256 : binding.matrix_result_sha256) || "未提供"}
+              </Descriptions.Item>
               <Descriptions.Item label="授权 SHA-256">{previewConsent.consent_sha256 || "未提供"}</Descriptions.Item>
               <Descriptions.Item label="脱敏策略">{context?.redaction_policy_version || "未提供"} · 分类 {(context?.redaction_categories || []).join("、") || "无"}</Descriptions.Item>
               <Descriptions.Item label="两侧 Agent 操作摘要">

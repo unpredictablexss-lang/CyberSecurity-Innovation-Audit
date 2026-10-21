@@ -566,8 +566,8 @@ def _agent_signal(ops, operation, job, report, candidate):
             or type(result.get("validated_vulnerability")) is not int
             or result.get("validated_vulnerability") != 0):
         return None
-    assessment = result.get("agent_assessment")
-    assessment = assessment.get("assessment") if isinstance(assessment, dict) else None
+    assessment_record = result.get("agent_assessment")
+    assessment = assessment_record.get("assessment") if isinstance(assessment_record, dict) else None
     labels = {
         "likely_true_positive": "模型倾向真实候选",
         "likely_false_positive": "模型倾向误报",
@@ -577,11 +577,44 @@ def _agent_signal(ops, operation, job, report, candidate):
     if assessment not in labels:
         return None
     chain_complete, chain_reason = _agent_evidence_chain_gate(result, expected, candidate)
-    return {"assessment": assessment, "label": labels[assessment],
-            "operation_id": operation["id"], "human_review_required": True,
-            "product_state": "candidate",
-            "evidence_chain_complete": chain_complete,
-            "evidence_chain_reason": chain_reason if chain_complete else None}
+    signal = {"assessment": assessment, "label": labels[assessment],
+              "operation_id": operation["id"], "human_review_required": True,
+              "product_state": "candidate",
+              "evidence_chain_complete": chain_complete,
+              "evidence_chain_reason": chain_reason if chain_complete else None}
+    if chain_complete:
+        if (result.get("summary_provenance") == "server_generated_from_structured_triage"
+                and isinstance(result.get("summary"), str)):
+            signal["summary"] = result["summary"]
+            signal["summary_provenance"] = "server_generated_from_structured_triage"
+        locations = []
+        seen_locations = set()
+        for review in (assessment_record.get("obligation_reviews", [])
+                       if isinstance(assessment_record, dict) else []):
+            if not isinstance(review, dict):
+                continue
+            for citation in review.get("citations", []):
+                if not isinstance(citation, dict):
+                    continue
+                file_name = citation.get("file")
+                line_start, line_end = citation.get("line_start"), citation.get("line_end")
+                if (not isinstance(file_name, str) or not file_name
+                        or not isinstance(line_start, int) or isinstance(line_start, bool)
+                        or not isinstance(line_end, int) or isinstance(line_end, bool)
+                        or line_start < 1 or line_end < line_start):
+                    continue
+                key = (file_name, line_start, line_end)
+                if key in seen_locations:
+                    continue
+                seen_locations.add(key)
+                locations.append({"file": file_name, "line_start": line_start, "line_end": line_end})
+        signal["evidence_locations"] = locations[:12]
+        signal["evidence_locations_truncated_count"] = max(0, len(locations) - 12)
+        signal["confidence_reason"] = (
+            "每项静态证据义务都有固定源码引用，调查包含跨文件证据，并完成独立反证与报告校验。"
+            "引用语义和产品影响仍需人工复核。"
+        )
+    return signal
 
 
 def _path_in_scope(path, includes):

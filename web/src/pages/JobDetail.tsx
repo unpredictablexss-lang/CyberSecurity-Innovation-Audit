@@ -50,11 +50,51 @@ import { requestGate } from "../features/audits/model";
 import { disclosureReviewed, disclosureSelectionMatches } from "../features/audits/egressDisclosure.js";
 import { candidateConfidenceColor, candidateConfidenceLabel, candidateSeverityColor, candidateSeverityLabel, analysisStatusLabel, coverageSummaryLabel, groupingBasisLabel, groupingSymbolLabel, obligationDescriptionLabel, obligationKindLabel, obligationStatusLabel, reportLimitationLabel, riskReasonsLabel, scanStageLabel, taskReportStatusLabel, taskTriageStatusLabel, triageStateLabel } from "../features/workbench/riskLabels.js";
 const { Text, Title, Paragraph } = Typography;
+function HighConfidenceCandidateReason({ risk, jobId }: { risk: any; jobId: string }) {
+  if (risk?.risk_tier !== "high_confidence_candidate") return null;
+  const signal = risk.agent_signal || {};
+  const locations = Array.isArray(signal.evidence_locations) ? signal.evidence_locations : [];
+  const explanation = signal.confidence_reason || risk.reason
+    || (risk.confidence_basis === "human_r0"
+      ? "人工 R0 已对固定源码中的证据义务逐项引用复核。"
+      : "固定源码证据门已通过；具体义务与源码仍需人工核对。");
+  const openEvidence = (location: any) => {
+    const query = new URLSearchParams({
+      tab: "source",
+      source_file: location.file,
+      source_line: String(location.line_start),
+    });
+    go("/tasks/" + encodeURIComponent(jobId) + "?" + query.toString());
+  };
+  return <Card className="section-gap" size="small" title="为什么列为高可信">
+    <Space wrap><Tag color="gold">高可信候选</Tag><Tag color="orange">待人工复核</Tag></Space>
+    <Paragraph className="section-gap">{explanation}</Paragraph>
+    {signal.summary && <Alert className="section-gap" type="info" showIcon
+      message="智能研判摘要"
+      description={<>
+        <Paragraph style={{ marginBottom: 4 }}>{signal.summary}</Paragraph>
+        <Text type="secondary">摘要由系统根据模型结构化研判生成；引用存在性经过校验，语义是否支持结论仍需人工判断。</Text>
+      </>} />}
+    {locations.length > 0 ? <div className="section-gap">
+      <Text strong>固定源码证据位置</Text>
+      <div>{locations.map((location: any, index: number) =>
+        <Button key={location.file + ":" + location.line_start + ":" + location.line_end + ":" + index}
+          type="link" size="small" onClick={() => openEvidence(location)}>
+          {location.file}:{location.line_start}{location.line_end !== location.line_start ? "–" + location.line_end : ""}
+        </Button>)}</div>
+      {signal.evidence_locations_truncated_count > 0 && <Text type="secondary">
+        另有 {signal.evidence_locations_truncated_count} 处位置未展开
+      </Text>}
+    </div> : <Text type="secondary">该分层来自人工 R0 复核；可在下方逐项检查固定源码和证据义务。</Text>}
+    <Text type="secondary">高可信表示证据优先级较高，不代表漏洞已确认。</Text>
+  </Card>;
+}
 export default function JobDetail({ id, initialTab = "findings", candidateId, sourceFile, sourceLine, health }: { id: string; initialTab?: string; candidateId?: string; sourceFile?: string; sourceLine?: number; health?: any }) {
   const [job, setJob] = useState<any>(null);
   const [report, setReport] = useState<any>(null);
   const [triageSummary, setTriageSummary] = useState<any>(null);
   const [riskSummary, setRiskSummary] = useState<any>(null);
+  const [selectedRisk, setSelectedRisk] = useState<any>(null);
   const [coverageSummary, setCoverageSummary] = useState<any>(null);
   const [reportSnapshots, setReportSnapshots] = useState<any[]>([]);
   const [events, setEvents] = useState<any[]>([]);
@@ -228,6 +268,21 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
       .catch((e) => { if (live) setError(String(e)); });
     return () => { live = false; };
   }, [id, report?.snapshot_sha256, initialTab, sourceFile]);
+  useEffect(() => {
+    if (!detail?.id) {
+      setSelectedRisk(null);
+      return;
+    }
+    let live = true;
+    setSelectedRisk(null);
+    api("/scans/" + encodeURIComponent(id) + "/risks?candidate_id="
+      + encodeURIComponent(detail.id) + "&limit=1")
+      .then((value) => {
+        if (live) setSelectedRisk((value.items || []).find((item: any) => item.candidate_id === detail.id) || null);
+      })
+      .catch(() => { if (live) setSelectedRisk(null); });
+    return () => { live = false; };
+  }, [id, detail?.id]);
   useEffect(() => {
     if (job && candidateId && candidateAutoOpened.current !== candidateId) {
       candidateAutoOpened.current = candidateId;
@@ -426,7 +481,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
           </Descriptions></Col>
           <Col xs={24} md={8}><Descriptions size="small" column={1} title="智能研判">
             <Descriptions.Item label="状态">{taskTriageStatusLabel(triageSummary, job)}</Descriptions.Item>
-            <Descriptions.Item label="已完成 / 失败">{triageSummary?.triage_progress?.completed_count ?? 0} / {triageSummary?.triage_progress?.failed_count ?? 0}</Descriptions.Item>
+            <Descriptions.Item label="完成 / 有限制 / 失败">{triageSummary?.triage_progress?.completed_count ?? 0} / {triageSummary?.triage_progress?.completed_with_limitations_count ?? 0} / {triageSummary?.triage_progress?.failed_count ?? 0}</Descriptions.Item>
             <Descriptions.Item label="报告候选 / 授权 / 已入队">{triageSummary?.triage_progress?.candidate_count ?? "扫描后统计"} / {triageSummary?.triage_progress?.authorized_candidate_count ?? 0} / {triageSummary?.triage_progress?.queued_count ?? 0}</Descriptions.Item>
             <Descriptions.Item label="处理中 / 未研判">{triageSummary?.triage_progress?.pending_count ?? 0} / {triageSummary?.triage_progress?.not_triaged_count ?? riskSummary?.triage_counts?.not_triaged ?? 0}</Descriptions.Item>
           </Descriptions></Col>
@@ -968,6 +1023,11 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
                   {detail.message || "报告未提供规则说明。"}
                 </div>
               </div>}
+            />
+            <HighConfidenceCandidateReason
+              jobId={id}
+              risk={selectedRisk?.candidate_id === detail.id ? selectedRisk
+                : (riskSummary?.items || []).find((item: any) => item.candidate_id === detail.id)}
             />
             {detail.source ? <>
               <CandidateActions job={job} candidate={detail} />

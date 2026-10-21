@@ -12,6 +12,7 @@ from .joint_candidate_comparison import (
     build_joint_candidate_context,
     build_joint_consent_digest,
     canonical_sha256,
+    joint_comparison_failure_status,
     unknown_joint_candidate_result,
     validate_joint_candidate_output_or_unknown,
 )
@@ -22,7 +23,14 @@ _COMMIT_RE = re.compile(r"^(?:[0-9a-f]{40}|[0-9a-f]{64})$")
 
 def selectors_from_body(body: Any) -> dict[str, str]:
     values = body.model_dump() if hasattr(body, "model_dump") else dict(body)
-    keys = ("matrix_operation_id", "from_commit", "from_candidate_id", "to_commit", "to_candidate_id")
+    parent_keys = ("matrix_operation_id", "recent_window_operation_id")
+    parents = [key for key in parent_keys if isinstance(values.get(key), str) and values[key]]
+    if len(parents) != 1:
+        raise ValueError("joint comparison requires exactly one matrix or recent-window operation ID")
+    parent_key = parents[0]
+    if not re.fullmatch(r"[0-9a-f]{32}", values[parent_key]):
+        raise ValueError("joint comparison parent operation ID must be a full lowercase ID")
+    keys = (parent_key, "from_commit", "from_candidate_id", "to_commit", "to_candidate_id")
     for key in keys:
         if not isinstance(values.get(key), str) or not values[key]:
             raise ValueError("missing joint comparison selector: " + key)
@@ -163,23 +171,59 @@ def _completed_agent_children(settings, store, ops, job, report, candidate, side
 
 
 def prepare_joint_comparison(settings, store, ops, selectors):
-    """Re-load the immutable matrix, endpoint reports/source, and linked R1/R2 children."""
+    """Reload one immutable parent comparison and its fixed endpoint evidence."""
     selectors = selectors_from_body(selectors)
-    matrix = ops.get(selectors["matrix_operation_id"])
-    if matrix.get("kind") != "version_matrix" or matrix.get("status") not in _COMPLETE:
-        raise ValueError("parent version matrix must be complete before joint comparison")
-    matrix_result = ops.result(matrix["id"])
-    comparisons = matrix_result.get("comparisons")
-    if not isinstance(comparisons, list):
-        raise ValueError("saved matrix result has no comparison groups")
-    pairs = [item for item in comparisons if isinstance(item, dict)
-             and item.get("from") == selectors["from_commit"]
-             and item.get("to") == selectors["to_commit"]]
-    if len(pairs) != 1:
-        raise ValueError("selected commits do not identify exactly one saved matrix pair")
-    groups = pairs[0].get("candidate_comparison")
-    if not isinstance(groups, list):
-        raise ValueError("selected matrix pair has no candidate comparison")
+    parent_key = ("matrix_operation_id" if "matrix_operation_id" in selectors
+                  else "recent_window_operation_id")
+    parent = ops.get(selectors[parent_key])
+    parent_kind = "version_matrix" if parent_key == "matrix_operation_id" else "recent_window_comparison"
+    if parent.get("kind") != parent_kind or parent.get("status") not in _COMPLETE:
+        raise ValueError("parent comparison operation must be complete before joint analysis")
+    parent_result = ops.result(parent["id"])
+    if parent_kind == "version_matrix":
+        comparisons = parent_result.get("comparisons")
+        if not isinstance(comparisons, list):
+            raise ValueError("saved matrix result has no comparison groups")
+        pairs = [item for item in comparisons if isinstance(item, dict)
+                 and item.get("from") == selectors["from_commit"]
+                 and item.get("to") == selectors["to_commit"]]
+        if len(pairs) != 1:
+            raise ValueError("selected commits do not identify exactly one saved matrix pair")
+        groups = pairs[0].get("candidate_comparison")
+        if not isinstance(groups, list):
+            raise ValueError("selected matrix pair has no candidate comparison")
+        scan_ids, versions = parent_result.get("scan_ids"), parent_result.get("versions")
+        if not isinstance(scan_ids, list) or not isinstance(versions, list) or len(scan_ids) != len(versions):
+            raise ValueError("saved matrix result has incomplete scan bindings")
+        endpoint_scan_ids = {}
+        for commit in (selectors["from_commit"], selectors["to_commit"]):
+            indexes = [i for i, row in enumerate(versions)
+                       if isinstance(row, dict) and row.get("commit") == commit]
+            if len(indexes) != 1:
+                raise ValueError("selected commit does not uniquely identify a matrix scan")
+            endpoint_scan_ids[commit] = scan_ids[indexes[0]]
+    else:
+        spec = parent.get("spec") if isinstance(parent.get("spec"), dict) else {}
+        scan_ids, windows = parent_result.get("scan_ids"), spec.get("windows")
+        between = parent_result.get("between_window_endpoints")
+        if (not isinstance(scan_ids, list) or len(scan_ids) != 4
+                or scan_ids != spec.get("scan_ids")
+                or not isinstance(windows, list) or len(windows) != 2
+                or not isinstance(between, dict)
+                or not isinstance(parent_result.get("windows"), list)
+                or len(parent_result["windows"]) != 2):
+            raise ValueError("recent-window result is missing its fixed two-window/four-scan binding")
+        expected_from = windows[0].get("endpoint") if isinstance(windows[0], dict) else None
+        expected_to = windows[1].get("endpoint") if isinstance(windows[1], dict) else None
+        if (not isinstance(expected_from, str) or not isinstance(expected_to, str)
+                or between.get("from") != expected_from or between.get("to") != expected_to
+                or selectors["from_commit"] != expected_from or selectors["to_commit"] != expected_to):
+            raise ValueError("selected commits are not this operation's between-window endpoints")
+        endpoint_scan_ids = {expected_from: scan_ids[1], expected_to: scan_ids[3]}
+        groups = between.get("candidate_comparison")
+        if not isinstance(groups, list):
+            raise ValueError("recent-window endpoint comparison has no candidate groups")
+
     matches = []
     for group in groups:
         if not isinstance(group, dict):
@@ -187,49 +231,46 @@ def prepare_joint_comparison(settings, store, ops, selectors):
         before, after = group.get("before"), group.get("after")
         if (isinstance(before, list) and len(before) == 1
                 and isinstance(after, list) and len(after) == 1
+                and isinstance(before[0], dict) and isinstance(after[0], dict)
                 and before[0].get("id") == selectors["from_candidate_id"]
                 and after[0].get("id") == selectors["to_candidate_id"]):
             matches.append(group)
     if len(matches) != 1:
         raise ValueError("selected endpoint candidates are missing, ambiguous, or not a one-to-one pair")
-    scan_ids, versions = matrix_result.get("scan_ids"), matrix_result.get("versions")
-    if not isinstance(scan_ids, list) or not isinstance(versions, list) or len(scan_ids) != len(versions):
-        raise ValueError("saved matrix result has incomplete scan bindings")
-    endpoint_scan_ids = {}
-    for commit in (selectors["from_commit"], selectors["to_commit"]):
-        indexes = [i for i, row in enumerate(versions)
-                   if isinstance(row, dict) and row.get("commit") == commit]
-        if len(indexes) != 1:
-            raise ValueError("selected commit does not uniquely identify a matrix scan")
-        endpoint_scan_ids[commit] = scan_ids[indexes[0]]
 
-    matrix_spec = matrix.get("spec") if isinstance(matrix.get("spec"), dict) else {}
-    matrix_repository_id = matrix.get("repository_id") or matrix_spec.get("repository_id")
-    if not isinstance(matrix_repository_id, str) or not matrix_repository_id:
-        raise ValueError("version matrix has no fixed repository identity")
+    parent_spec = parent.get("spec") if isinstance(parent.get("spec"), dict) else {}
+    parent_repository_id = parent.get("repository_id") or parent_spec.get("repository_id")
+    if not isinstance(parent_repository_id, str) or not parent_repository_id:
+        raise ValueError("parent comparison has no fixed repository identity")
     sides, linked, observed = {}, {}, {}
     for side_name, commit, candidate_id in (
         ("from", selectors["from_commit"], selectors["from_candidate_id"]),
         ("to", selectors["to_commit"], selectors["to_candidate_id"]),
     ):
         job = store.job(endpoint_scan_ids[commit])
-        if job.get("repository_id") != matrix_repository_id:
-            raise ValueError("matrix endpoint scan belongs to another repository")
+        if job.get("repository_id") != parent_repository_id:
+            raise ValueError("parent endpoint scan belongs to another repository")
         if job.get("spec", {}).get("commit") != commit or job.get("status") not in _COMPLETE:
-            raise ValueError("matrix endpoint scan is no longer complete at its fixed commit")
+            raise ValueError("parent endpoint scan is no longer complete at its fixed commit")
         report = service.read_report(settings, job)
         if report.get("commit") != commit:
-            raise ValueError("endpoint report commit differs from the selected matrix")
+            raise ValueError("endpoint report commit differs from the parent comparison")
         candidate = service.finding(report, candidate_id)
         source = service.source(settings, store, job, candidate["file"])
         sides[side_name] = {"job": job, "report": report, "candidate": candidate, "source": source}
         linked[side_name], observed[side_name] = _completed_agent_children(
             settings, store, ops, job, report, candidate, side_name)
 
-    prepared = build_joint_candidate_context(
-        matrix_operation=matrix, matrix_result=matrix_result,
-        matrix_result_sha256=matrix["result_sha256"],
-        from_side=sides["from"], to_side=sides["to"], match=matches[0])
+    if parent_kind == "version_matrix":
+        prepared = build_joint_candidate_context(
+            matrix_operation=parent, matrix_result=parent_result,
+            matrix_result_sha256=parent["result_sha256"],
+            from_side=sides["from"], to_side=sides["to"], match=matches[0])
+    else:
+        prepared = build_joint_candidate_context(
+            source_operation=parent, source_result=parent_result,
+            source_result_sha256=parent["result_sha256"],
+            from_side=sides["from"], to_side=sides["to"], match=matches[0])
     prepared = attach_linked_agent_context(prepared, linked)
     prepared["bindings"]["linked_agent_children_observed"] = observed
     return prepared, selectors
@@ -369,6 +410,7 @@ def execute_joint_comparison(settings, store, ops, task):
     from .agent import ProviderConfig, ResponsesClient, _response_text
     spec = task.get("spec", {})
     matrix_id = spec.get("matrix_operation_id")
+    recent_id = spec.get("recent_window_operation_id")
     provider_call_state = "not_started"
     try:
         if (task.get("kind") != "version_candidate_comparison"
@@ -381,12 +423,14 @@ def execute_joint_comparison(settings, store, ops, task):
                 or provider.endpoint_host != spec.get("provider_host")
                 or provider.model != spec.get("provider_model")):
             raise JointCandidateValidationError("provider_changed", "Provider differs from reviewed consent")
+        selector_parent = ("matrix_operation_id" if isinstance(matrix_id, str)
+                           else "recent_window_operation_id")
         selectors = {key: spec[key] for key in (
-            "matrix_operation_id", "from_commit", "from_candidate_id", "to_commit", "to_candidate_id")}
+            selector_parent, "from_commit", "from_candidate_id", "to_commit", "to_candidate_id")}
         prepared, selectors = prepare_joint_comparison(settings, store, ops, selectors)
         prepared, _redaction_categories = _redact_joint_context(prepared)
         if prepared["bindings"] != spec.get("joint_binding_snapshot"):
-            raise JointCandidateValidationError("linked_evidence_changed", "matrix or linked child bindings changed after approval")
+            raise JointCandidateValidationError("linked_evidence_changed", "parent comparison or linked child bindings changed after approval")
         if canonical_sha256(prepared) != spec.get("joint_context_sha256"):
             raise JointCandidateValidationError("context_changed", "fixed source or Agent context changed after approval")
         if not _expires_at_is_valid(spec.get("consent_expires_at")):
@@ -403,7 +447,8 @@ def execute_joint_comparison(settings, store, ops, task):
             "context": prepared["context"],
             "citable_fixed_source_evidence": list(prepared["evidence_index"].values()),
             "redaction_policy_version": prepared["redaction_policy_version"],
-            "matrix_match": prepared["context"]["matrix_match"],
+            "comparison_match": prepared["context"].get(
+                "endpoint_match", prepared["context"].get("matrix_match", {})),
         }
         payload = {
             "model": provider.model,
@@ -443,20 +488,24 @@ def execute_joint_comparison(settings, store, ops, task):
                                      ("input_tokens", "output_tokens", "total_tokens")}
         return result
     except JointCandidateValidationError as exc:
-        result = unknown_joint_candidate_result(exc.reason_code, matrix_operation_id=matrix_id)
+        result = unknown_joint_candidate_result(
+            exc.reason_code, matrix_operation_id=matrix_id, recent_window_operation_id=recent_id)
     except Exception as exc:
-        result = unknown_joint_candidate_result("evidence_or_provider_failure", matrix_operation_id=matrix_id)
+        result = unknown_joint_candidate_result(
+            "evidence_or_provider_failure", matrix_operation_id=matrix_id,
+            recent_window_operation_id=recent_id)
         result["failure_detail"] = type(exc).__name__
     call_state = ("outcome_unknown" if provider_call_state == "attempted" else provider_call_state)
     result.update({
-        "status": "completed_with_limitations", "kind": "joint_version_candidate_root_cause",
+        "status": joint_comparison_failure_status(provider_call_state),
+        "kind": "joint_version_candidate_root_cause",
         "model_called": (True if provider_call_state == "response_received"
                          else False if provider_call_state == "not_started" else None),
         "provider_call_state": call_state,
         "validated_vulnerability": 0, "poc": None,
         "consent_sha256": spec.get("consent_sha256"),
         "limitations": list(result.get("limitations", [])) + [
-            ("Provider was not contacted because consent, source, matrix, or linked child evidence could not be revalidated."
+            ("Provider was not contacted because consent, parent comparison, or linked child evidence could not be revalidated."
              if provider_call_state == "not_started"
              else "Provider request was attempted, but no response was recorded; remote receipt or processing is unknown.")
         ],

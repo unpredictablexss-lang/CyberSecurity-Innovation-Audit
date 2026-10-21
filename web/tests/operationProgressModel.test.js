@@ -1,8 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
-  buildIntelligentReviewView, buildMatrixCandidatePairs,
+  buildIntelligentReviewView, buildMatrixCandidatePairs, buildRecentWindowCandidatePairs,
   buildJointLinkedAgentChildrenView, buildJointEgressSummary, JOINT_CANDIDATE_CREATE_PATH, JOINT_CANDIDATE_PREVIEW_PATH,
+  RECENT_JOINT_CANDIDATE_CREATE_PATH, RECENT_JOINT_CANDIDATE_PREVIEW_PATH,
   jointCandidateCreatePayload, jointCandidatePreviewPayload,
 } from "../src/features/audits/operationProgressModel.js";
 
@@ -32,6 +33,30 @@ test("phase progress separates statuses and only exposes child links bound to th
   assert.match(row.r1.operations[1].bindingIssue, /Commit/);
   assert.equal(row.r1.operations[1].resultSha256, null);
   assert.equal(row.r1.summariesReturned, true);
+});
+
+test("limited completion remains distinct in labels, counts, tone, and result bindings", () => {
+  const row = buildIntelligentReviewView({
+    commit: from, agent_status: "completed_with_limitations",
+    r1_progress: { state: "completed_with_limitations", status_counts: { completed: 1, completed_with_limitations: 1 } },
+    r1_operations: [
+      { id: "op-limited", status: "completed_with_limitations", commit: from, candidate_id: "cid-limited",
+        result_sha256: sha, report_sha256: sha },
+    ],
+  });
+  assert.equal(row.stateLabel, "授权范围内研判已返回（存在限制）");
+  assert.equal(row.stateTone, "warning");
+  assert.equal(row.r1.stateLabel, "已完成（存在限制）");
+  assert.equal(row.r1.counts.completed, 1);
+  assert.equal(row.r1.counts.completed_with_limitations, 1);
+  assert.equal(row.r1.operations[0].statusLabel, "已完成（存在限制）");
+  assert.equal(row.r1.operations[0].bindingValid, true);
+  const unbound = buildIntelligentReviewView({
+    commit: from, r1_operations: [
+      { id: "op-limited-unbound", status: "completed_with_limitations", commit: from },
+    ],
+  });
+  assert.equal(unbound.r1.operations[0].bindingValid, false);
 });
 
 test("missing child summary arrays are distinguished from an explicitly empty operation list", () => {
@@ -77,6 +102,27 @@ test("matrix pair model only enables a uniquely matched one-to-one fixed candida
   assert.equal(pairs[0].fromCandidate.id, "candidate-a");
   assert.equal(pairs[1].eligibleForPreview, false);
   assert.equal(pairs[1].fromCandidate, null);
+});
+
+test("recent-window pair selectors bind only the fixed between-window endpoints", () => {
+  const operation = { id: "recent-1", kind: "recent_window_comparison", result: {
+    between_window_endpoints: { from, to, candidate_comparison: [
+      { status: "persistent_candidate", detector_id: "det", rule_id: "rule", file: "src/a.cpp",
+        before: [{ id: "candidate-a" }], after: [{ id: "candidate-b" }] },
+      { status: "new_candidate", detector_id: "det", rule_id: "new", file: "src/b.cpp",
+        before: [], after: [{ id: "candidate-c" }] },
+    ] },
+  } };
+  const pairs = buildRecentWindowCandidatePairs(operation);
+  assert.equal(pairs.length, 2);
+  assert.equal(pairs[0].eligibleForPreview, true);
+  assert.equal(pairs[1].eligibleForPreview, false);
+  assert.deepEqual(jointCandidatePreviewPayload("recent-1", pairs[0], "recent_window_comparison"), {
+    recent_window_operation_id: "recent-1", from_commit: from, from_candidate_id: "candidate-a",
+    to_commit: to, to_candidate_id: "candidate-b",
+  });
+  assert.equal(RECENT_JOINT_CANDIDATE_PREVIEW_PATH, "/operations/joint-candidate-comparisons/preview");
+  assert.equal(RECENT_JOINT_CANDIDATE_CREATE_PATH, "/operations/joint-candidate-comparisons");
 });
 
 test("preview request contains only pair selectors; no caller-chosen source or Provider data", () => {

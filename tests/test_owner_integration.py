@@ -717,6 +717,8 @@ if os.environ.get("OHSCANNER_TEST_TOOL_TRACE"):
             binding=binding, candidate_file=candidate["file"],
             obligation_count=len(obligations),
         )
+        result["summary"] = "模型分诊倾向：倾向真阳性；结构化主张 1 条；语义仍需人工复核。"
+        result["summary_provenance"] = "server_generated_from_structured_triage"
         operations = Operations(self.store)
         operation = operations.create("agent_investigation", {
             "job_id": job["id"], "report_sha256": job["report_sha256"],
@@ -748,8 +750,23 @@ if os.environ.get("OHSCANNER_TEST_TOOL_TRACE"):
                         item["agent_signal"].get("evidence_chain_reason"))
         self.assertEqual(item["confidence_basis"], "agent_evidence_graph")
         self.assertTrue(item["agent_signal"]["evidence_chain_complete"])
+        self.assertEqual(item["agent_signal"]["summary"], result["summary"])
+        self.assertEqual(item["agent_signal"]["summary_provenance"],
+                         "server_generated_from_structured_triage")
+        locations = item["agent_signal"]["evidence_locations"]
+        self.assertTrue(any(location["file"] != candidate["file"] for location in locations))
+        self.assertTrue(all(location["line_start"] >= 1 for location in locations))
+        self.assertIn("固定源码引用", item["agent_signal"]["confidence_reason"])
         self.assertEqual(item["vulnerability_state"], "candidate")
         self.assertEqual(response.json()["validated_vulnerability"], 0)
+        focused = self.client.get(
+            "/api/v1/scans/" + job["id"] + "/risks?candidate_id="
+            + candidate["id"] + "&limit=1",
+            headers=fixtures.HEADERS,
+        )
+        self.assertEqual(focused.status_code, 200, focused.text)
+        self.assertEqual(focused.json()["total"], 1)
+        self.assertEqual(focused.json()["items"][0]["candidate_id"], candidate["id"])
 
     def test_overview_risk_queue_paginates_after_combined_filters(self):
         job = self.scan()

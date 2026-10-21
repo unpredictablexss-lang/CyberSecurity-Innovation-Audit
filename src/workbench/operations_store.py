@@ -294,12 +294,19 @@ class Operations:
         if kind not in {"source_sync", "source_sync_batch", "revision_range", "version_matrix", "branch_comparison", "recent_window_comparison", "validation", "investigation", "candidate_review_batch", "agent_investigation", "version_candidate_comparison"}:
             raise ValueError("unknown operation kind")
         if kind == "version_candidate_comparison":
-            required = ("matrix_operation_id", "from_commit", "from_candidate_id",
-                        "to_commit", "to_candidate_id", "consent_nonce", "consent_sha256",
-                        "consent_expires_at", "provider_fingerprint", "joint_context_sha256",
-                        "joint_binding_snapshot")
+            required = ("from_commit", "from_candidate_id", "to_commit", "to_candidate_id",
+                        "consent_nonce", "consent_sha256", "consent_expires_at",
+                        "provider_fingerprint", "joint_context_sha256", "joint_binding_snapshot")
+            parent_ids = ("matrix_operation_id", "recent_window_operation_id")
+            selected_parent_ids = ([name for name in parent_ids
+                                    if isinstance(spec.get(name), str) and spec[name]]
+                                   if isinstance(spec, dict) else [])
             if (not isinstance(spec, dict)
                     or spec.get("source_submission_approved") is not True
+                    or len(selected_parent_ids) != 1
+                    or any(len(spec[name]) != 32
+                           or any(ch not in "0123456789abcdef" for ch in spec[name])
+                           for name in selected_parent_ids)
                     or any(not isinstance(spec.get(name), str) or not spec[name] for name in required[:-1])
                     or not isinstance(spec.get("joint_binding_snapshot"), dict)
                     or len(spec["consent_nonce"]) != 32

@@ -261,3 +261,161 @@ agent.ResponsesClient = FakeJointResponsesClient
                 self.assertEqual(manifest_row["prior_citations_transmitted"], 0)
         self.assertEqual(result["bindings"]["linked_agent_results"],
                          saved["joint_binding_snapshot"]["linked_agent_results"])
+
+    def test_recent_window_pair_uses_fixed_endpoints_completed_agents_and_explicit_consent(self):
+        payload = {
+            "repository_id": self.repo["id"], "branch": "refs/heads/main",
+            "lookback_days": 2, "reference_time": "2025-01-05T00:00:00+00:00",
+            "timezone": "UTC", "include_paths": ["."], "detector_ids": DETECTORS,
+            "timeout_seconds": 90, "memory_mb": 1024,
+            "audit_mode": "standard_review", "auto_triage": True,
+            "max_triage_candidates": 1, "max_r2_candidates": 1,
+        }
+        expected_commits = [self.commits[1], self.commits[2], self.commits[2], self.commits[3]]
+        operation, endpoint_previews = _multi()._preview_and_submit(
+            self, "recent", "/api/v1/operations/recent-comparisons", payload, expected_commits)
+        _multi()._finish_operation_scans(self, operation)
+        _multi()._finish_agent_children(self, operation, endpoint_previews, expect_r2=True)
+
+        ops = Operations(self.store)
+        parent_result = ops.result(operation["id"])
+        self.assertEqual(parent_result["validated_vulnerability"], 0)
+        between = parent_result["between_window_endpoints"]
+        self.assertEqual((between["from"], between["to"]), (self.commits[2], self.commits[3]))
+        pair_rows = []
+        for match in between["candidate_comparison"]:
+            before, after = match.get("before"), match.get("after")
+            if (isinstance(before, list) and len(before) == 1
+                    and isinstance(after, list) and len(after) == 1):
+                pair_rows.append(match)
+        self.assertEqual(len(pair_rows), 1, pair_rows)
+        match = pair_rows[0]
+        selectors = {
+            "recent_window_operation_id": operation["id"],
+            "from_commit": between["from"], "from_candidate_id": match["before"][0]["id"],
+            "to_commit": between["to"], "to_candidate_id": match["after"][0]["id"],
+        }
+        preview_path = "/api/v1/operations/joint-candidate-comparisons/preview"
+        create_path = "/api/v1/operations/joint-candidate-comparisons"
+        with patch.dict(os.environ, _fixture_module.PROVIDER_ENV, clear=False):
+            both_parents = self.client.post(preview_path, headers=HEADERS, json={
+                **selectors, "matrix_operation_id": "a" * 32})
+            self.assertEqual(both_parents.status_code, 422, both_parents.text)
+            preview_response = self.client.post(preview_path, headers=HEADERS, json=selectors)
+        self.assertEqual(preview_response.status_code, 200, preview_response.text)
+        preview = preview_response.json()
+        consent = preview["consent"]
+        binding = consent["binding"]
+        self.assertEqual(binding["source_operation_id"], operation["id"])
+        self.assertEqual(binding["source_operation_kind"], "recent_window_comparison")
+        self.assertEqual(binding["source_operation_result_sha256"], ops.get(operation["id"])["result_sha256"])
+        self.assertEqual(binding["recent_window_operation_id"], operation["id"])
+        self.assertEqual(binding["from"]["job_id"], operation["spec"]["scan_ids"][1])
+        self.assertEqual(binding["to"]["job_id"], operation["spec"]["scan_ids"][3])
+        self.assertEqual(binding["from"]["commit"], self.commits[2])
+        self.assertEqual(binding["to"]["commit"], self.commits[3])
+
+        children = preview["context_summary"]["linked_agent_children"]
+        for side in ("from", "to"):
+            self.assertTrue(children[side], children)
+            self.assertTrue(all(row["status"] in {"completed", "completed_with_limitations"}
+                                and row["result_sha256"] for row in children[side]), children)
+            modes = {ops.get(row["operation_id"])["spec"]["mode"] for row in children[side]}
+            self.assertEqual(modes, {"single_shot", "tool_agent"})
+
+        wrong_endpoint = self.client.post(preview_path, headers=HEADERS, json={
+            **selectors, "from_commit": self.commits[1]})
+        self.assertEqual(wrong_endpoint.status_code, 409, wrong_endpoint.text)
+        unapproved = self.client.post(create_path, headers=HEADERS, json={
+            **selectors, "approved": False, "consent_nonce": consent["consent_nonce"],
+            "expected_consent_sha256": consent["consent_sha256"], "expires_at": consent["expires_at"],
+        })
+        self.assertEqual(unapproved.status_code, 422, unapproved.text)
+        stale = self.client.post(create_path, headers=HEADERS, json={
+            **selectors, "approved": True, "consent_nonce": consent["consent_nonce"],
+            "expected_consent_sha256": "0" * 64, "expires_at": consent["expires_at"],
+        })
+        self.assertEqual(stale.status_code, 409, stale.text)
+        with patch.dict(os.environ, _fixture_module.PROVIDER_ENV, clear=False):
+            created_response = self.client.post(create_path, headers=HEADERS, json={
+                **selectors, "approved": True, "consent_nonce": consent["consent_nonce"],
+                "expected_consent_sha256": consent["consent_sha256"],
+                "expires_at": consent["expires_at"],
+            })
+        self.assertEqual(created_response.status_code, 201, created_response.text)
+        created = created_response.json()
+        self.assertEqual(created["kind"], "version_candidate_comparison")
+        self.assertTrue(created["spec"]["source_submission_approved"])
+        self.assertEqual(created["spec"]["joint_binding_snapshot"]["recent_window_operation_id"],
+                         operation["id"])
+
+        fake_provider = self.root / "joint-recent-fake-provider"
+        fake_provider.mkdir()
+        fake_provider.joinpath("sitecustomize.py").write_text(r'''
+import json
+import os
+from src.workbench import agent
+
+class FakeRecentJointProvider:
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def create(self, request, **kwargs):
+        if request.get("text", {}).get("format", {}).get("name") != "ohscanner_joint_candidate_comparison":
+            raise ValueError("unexpected Provider schema in recent-window test")
+        sent = json.loads(request["input"][0]["content"][0]["text"])
+        context = sent["context"]
+        evidence = sent["citable_fixed_source_evidence"]
+        if not context.get("from_linked_agent_results") or not context.get("to_linked_agent_results"):
+            raise ValueError("completed R1/R2 child context missing on an endpoint")
+        if {item.get("side") for item in evidence} != {"from", "to"}:
+            raise ValueError("fixed evidence from both endpoint sides was not provided")
+        with open(os.environ["OHSCANNER_TEST_RECENT_JOINT_TRACE"], "w", encoding="utf-8") as stream:
+            stream.write(json.dumps({
+                "endpoint_match": context.get("endpoint_match"),
+                "from_commit": context["from"]["commit"],
+                "to_commit": context["to"]["commit"],
+                "evidence_sides": sorted({item["side"] for item in evidence}),
+                "linked_agent_results": {
+                    side: context[side + "_linked_agent_results"] for side in ("from", "to")
+                },
+            }))
+        value = {
+            "assessment": "unknown",
+            "summary": "Synthetic offline comparison; product impact remains unknown.",
+            "introduced_or_fixed": "unknown",
+            "supported_claims": [],
+            "unknowns": ["No product execution or exploitability evidence was supplied."],
+            "limitations": ["Synthetic Provider response used for wiring verification only."],
+        }
+        return {"status": "completed", "output": [{
+            "type": "message", "content": [{
+                "type": "output_text", "text": json.dumps(value),
+            }],
+        }], "usage": {"input_tokens": 30, "output_tokens": 10, "total_tokens": 40}}
+
+agent.ResponsesClient = FakeRecentJointProvider
+''', encoding="utf-8")
+        trace = self.root / "recent-joint-provider-trace.json"
+        worker_env = {
+            **_fixture_module.PROVIDER_ENV,
+            "PYTHONPATH": os.pathsep.join([str(fake_provider), str(ROOT)]),
+            "OHSCANNER_TEST_RECENT_JOINT_TRACE": str(trace),
+        }
+        with patch.dict(os.environ, worker_env, clear=False):
+            OperationWorker(self.settings).run(once=True)
+        finished = ops.get(created["id"])
+        self.assertIn(finished["status"], {"completed", "completed_with_limitations"}, finished)
+        result = ops.result(created["id"])
+        self.assertEqual(result["assessment"], "unknown")
+        self.assertEqual(result["vulnerability_state"], "unknown")
+        self.assertEqual(result["validated_vulnerability"], 0)
+        self.assertIsNone(result["poc"])
+        self.assertEqual(result["bindings"]["recent_window_operation_id"], operation["id"])
+        self.assertEqual(result["bindings"]["from"]["job_id"], operation["spec"]["scan_ids"][1])
+        self.assertEqual(result["bindings"]["to"]["job_id"], operation["spec"]["scan_ids"][3])
+        sent = json.loads(trace.read_text())
+        self.assertEqual((sent["from_commit"], sent["to_commit"]), (self.commits[2], self.commits[3]))
+        self.assertEqual(sent["evidence_sides"], ["from", "to"])
+        self.assertTrue(sent["linked_agent_results"]["from"])
+        self.assertTrue(sent["linked_agent_results"]["to"])

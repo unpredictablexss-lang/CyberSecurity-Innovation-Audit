@@ -254,11 +254,16 @@ export default function OperationWorkspace({ view = "all", operationId, context 
               const progress = buildIntelligentReviewView(row);
               if (!progress) return <Text type="secondary">暂无智能研判摘要</Text>;
               const countLabels: Record<string, string> = {
-                queued: "排队", running: "运行", completed: "完成", failed: "失败",
+                queued: "排队", running: "运行", completed: "完成",
+                completed_with_limitations: "有限制", failed: "失败",
                 cancelled: "取消", timed_out: "超时", interrupted: "中断", blocked: "受阻",
               };
               const renderPhase = (name: string, phase: any) => <div key={name}>
-                <Text strong>{name}</Text> <Tag>{phase.stateLabel}</Tag>
+                <Text strong>{name}</Text> <Tag color={phase.state === "completed" ? "green"
+                  : phase.state === "completed_with_limitations" || phase.state === "partially_completed" ? "orange"
+                    : ["failed", "timed_out", "interrupted", "blocked"].includes(phase.state) ? "red" : undefined}>
+                  {phase.stateLabel}
+                </Tag>
                 <div className="muted">{Object.entries(phase.counts).map(([key, value]) => `${countLabels[key]} ${value}`).join(" · ")}</div>
                 {!phase.summariesReturned && <Alert className="section-gap" type="warning" showIcon message={`${name} 子任务摘要未由本次 API 响应提供`}
                   description="缺少 operation ID、状态和结果绑定字段，因此这里不提供 Agent 详情入口；这不表示模型没有运行或没有结果。" />}
@@ -267,7 +272,7 @@ export default function OperationWorkspace({ view = "all", operationId, context 
                   description={phase.operationCount ? `阶段计数记录 ${phase.operationCount} 项，但没有返回可核对的逐项摘要；不提供详情入口。` : "当前响应明确返回空子任务列表；这只表示没有关联子任务记录，不代表源码安全。"} />}
                 {phase.operations.length > 0 && <Space direction="vertical" size={2} className="section-gap">
                   {phase.operations.map((item: any, index: number) => <Space wrap key={`${item.id || "missing"}-${index}`}>
-                    <Tag color={item.status === "completed" ? "green" : ["failed", "timed_out", "interrupted", "blocked"].includes(item.status) ? "red" : "default"}>{item.statusLabel}</Tag>
+                    <Tag color={item.status === "completed" ? "green" : item.status === "completed_with_limitations" ? "orange" : ["failed", "timed_out", "interrupted", "blocked"].includes(item.status) ? "red" : "default"}>{item.statusLabel}</Tag>
                     <Text>候选 {item.candidateId ? item.candidateId.slice(0, 12) : "未知"}</Text>
                     <Text>Commit {item.commit ? item.commit.slice(0, 12) : "未知"}</Text>
                     <Text type="secondary">Result SHA-256</Text>{item.resultSha256 ? <Hash value={item.resultSha256} /> : <Text type="secondary">{["queued", "running"].includes(item.status) ? "结果尚未生成" : "摘要未提供或无效"}</Text>}
@@ -291,7 +296,7 @@ export default function OperationWorkspace({ view = "all", operationId, context 
             } },
           ]} />
       </Card>}
-      {selected.kind === "version_matrix" && <VersionCandidateComparison operation={selected}
+      {(selected.kind === "version_matrix" || selected.kind === "recent_window_comparison") && <VersionCandidateComparison operation={selected}
         onOperationCreated={(item: any) => { if (item?.id) void show(item.id); }} />}
       {["source_sync", "source_sync_batch"].includes(selected.kind) ? <SourceSyncDetails operation={selected} />
         : selected.kind === "agent_investigation" && selected.result ? <AgentAssessment result={selected.result} reviews={selected.agent_reviews || []}

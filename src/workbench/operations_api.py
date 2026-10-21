@@ -353,11 +353,18 @@ class MatrixRequest(TaskTriageOptions):
 
 
 class JointCandidateComparisonSelectors(Strict):
-    matrix_operation_id: str = Field(pattern=r"^[0-9a-f]{32}$")
+    matrix_operation_id: str | None = Field(default=None, pattern=r"^[0-9a-f]{32}$")
+    recent_window_operation_id: str | None = Field(default=None, pattern=r"^[0-9a-f]{32}$")
     from_commit: str = Field(pattern=r"^(?:[0-9a-f]{40}|[0-9a-f]{64})$")
     from_candidate_id: str = Field(min_length=1, max_length=200)
     to_commit: str = Field(pattern=r"^(?:[0-9a-f]{40}|[0-9a-f]{64})$")
     to_candidate_id: str = Field(min_length=1, max_length=200)
+
+    @model_validator(mode="after")
+    def exactly_one_parent_operation(self):
+        if (self.matrix_operation_id is None) == (self.recent_window_operation_id is None):
+            raise ValueError("provide exactly one matrix_operation_id or recent_window_operation_id")
+        return self
 
 
 class JointCandidateComparisonCreateRequest(JointCandidateComparisonSelectors):
@@ -608,7 +615,9 @@ def _operation_phase_progress(records, *, phase_state=None):
     counts = {}
     for status in statuses:
         counts[status] = counts.get(status, 0) + 1
-    success = sum(counts.get(status, 0) for status in _TRIAGE_SUCCESS_STATUSES)
+    completed = counts.get("completed", 0)
+    completed_with_limitations = counts.get("completed_with_limitations", 0)
+    success = completed + completed_with_limitations
     failed = sum(counts.get(status, 0) for status in _TRIAGE_FAILURE_STATUSES)
     cancelled = counts.get("cancelled", 0)
     queued, running = counts.get("queued", 0), counts.get("running", 0)
@@ -630,14 +639,15 @@ def _operation_phase_progress(records, *, phase_state=None):
     elif success and (failed or cancelled or not all(status in _TRIAGE_SUCCESS_STATUSES for status in statuses)):
         state = "partially_completed"
     elif all(status in _TRIAGE_SUCCESS_STATUSES for status in statuses):
-        state = "completed"
+        state = "completed_with_limitations" if completed_with_limitations else "completed"
     elif failed:
         state = "failed"
     else:
         state = phase_state or "not_triaged"
     return {
         "state": state, "operation_count": len(records), "status_counts": counts,
-        "queued_count": queued, "running_count": running, "completed_count": success,
+        "queued_count": queued, "running_count": running, "completed_count": completed,
+        "completed_with_limitations_count": completed_with_limitations,
         "failed_count": failed, "cancelled_count": cancelled,
         "timed_out_count": counts.get("timed_out", 0),
         "interrupted_count": counts.get("interrupted", 0),
@@ -678,7 +688,9 @@ def _classify_intelligent_review(batch, r1_records, r2_records, *, revoked=False
         if all_success and full_coverage and r2_state not in {
             "candidate_limit_reached", "failed_selection", "queue_limit_exceeded"
         }:
-            state = "completed"
+            state = ("completed_with_limitations"
+                     if any(item.get("status") == "completed_with_limitations" for item in all_records)
+                     else "completed")
         elif successes:
             state = "partially_completed"
         elif failures:
@@ -1475,6 +1487,7 @@ def install_routes(app: FastAPI, settings, store):
             "max_cost_usd": None})
         return ops.create_with_scans(operation_kind, operation_spec, repo["id"], scans)
 
+    @router.post("/operations/joint-candidate-comparisons/preview")
     @router.post("/operations/version-matrix-candidate-comparisons/preview")
     def joint_candidate_comparison_preview(body: JointCandidateComparisonSelectors):
         from .joint_candidate_comparison_runtime import build_joint_preview
@@ -1484,12 +1497,17 @@ def install_routes(app: FastAPI, settings, store):
         binding = preview["binding"]
         linked_children = binding.get("linked_agent_children_observed", {"from": [], "to": []})
         result_binding = {
-            "matrix_operation_id": binding["matrix_operation_id"],
-            "matrix_result_sha256": binding["matrix_result_sha256"],
+            "source_operation_id": binding["source_operation_id"],
+            "source_operation_kind": binding["source_operation_kind"],
+            "source_operation_result_sha256": binding["source_operation_result_sha256"],
             "repository_id": binding["repository_id"],
             "from": binding["from"],
             "to": binding["to"],
         }
+        for key in ("matrix_operation_id", "matrix_result_sha256",
+                    "recent_window_operation_id", "recent_window_result_sha256"):
+            if key in binding:
+                result_binding[key] = binding[key]
         limitations = list(preview["disclosure"]["limitations"])
         limitations.append(
             "The server validates citation side, path, line range, and source text, but not whether a quote semantically supports a model claim."
@@ -1542,6 +1560,7 @@ def install_routes(app: FastAPI, settings, store):
             },
         }
 
+    @router.post("/operations/joint-candidate-comparisons", status_code=201)
     @router.post("/operations/version-matrix-candidate-comparisons", status_code=201)
     def joint_candidate_comparison_create(body: JointCandidateComparisonCreateRequest):
         from .joint_candidate_comparison_runtime import create_joint_operation
@@ -2078,7 +2097,8 @@ def install_routes(app: FastAPI, settings, store):
                                      "candidate_count": None,
                                      "authorized_candidate_count": int((auth_view or {}).get("candidate_limit") or 0),
                                      "created_count": 0, "queued_count": 0, "running_count": 0,
-                                     "planned_count": 0, "completed_count": 0, "failed_count": 0,
+                                     "planned_count": 0, "completed_count": 0,
+                                     "completed_with_limitations_count": 0, "failed_count": 0,
                                      "pending_count": 0, "cancelled_count": 0,
                                      "stop_requested_count": 0, "not_triaged_count": None},
                 "report_sha256": None,
@@ -2147,9 +2167,12 @@ def install_routes(app: FastAPI, settings, store):
             if any(item["status"] in {"queued", "running"} for item in items):
                 state = "stopped" if authorization and authorization["revoked"] else "in_progress"
             elif all(item["status"] in END for item in items):
-                state = "completed" if all(
-                    item["status"] in {"completed", "completed_with_limitations"} for item in items
-                ) else "partially_completed"
+                if all(item["status"] in {"completed", "completed_with_limitations"} for item in items):
+                    state = ("completed_with_limitations"
+                             if any(item["status"] == "completed_with_limitations" for item in items)
+                             else "completed")
+                else:
+                    state = "partially_completed"
             else:
                 state = "in_progress"
         elif authorization and authorization["revoked"]:
@@ -2174,7 +2197,10 @@ def install_routes(app: FastAPI, settings, store):
         if (candidate_count == 0 and not batches and not items
                 and job["spec"].get("audit_mode") == "standard_review"):
             state = "no_eligible_candidates"
-        completed_count = sum(1 for item in items if item["status"] in {"completed", "completed_with_limitations"})
+        completed_count = sum(1 for item in items if item["status"] == "completed")
+        completed_with_limitations_count = sum(
+            1 for item in items if item["status"] == "completed_with_limitations"
+        )
         failed_count = sum(1 for item in items if item["status"] in {"failed", "timed_out", "interrupted"})
         pending_count = sum(1 for item in items if item["status"] in {"queued", "running"})
         manifest_not_triaged = sum(
@@ -2202,6 +2228,7 @@ def install_routes(app: FastAPI, settings, store):
                 "queued_count": counts.get("queued", 0),
                 "running_count": counts.get("running", 0),
                 "planned_count": planned_count, "completed_count": completed_count,
+                "completed_with_limitations_count": completed_with_limitations_count,
                 "failed_count": failed_count, "pending_count": pending_count,
                 "cancelled_count": cancelled_count,
                 "stop_requested_count": stop_requested_count,
@@ -2236,9 +2263,12 @@ def install_routes(app: FastAPI, settings, store):
         return scan_triage_summary(job["id"])
 
     @router.get("/scans/{key}/risks")
-    def scan_risks(key: str, offset: int = 0, limit: int = 100):
+    def scan_risks(key: str, offset: int = 0, limit: int = 100,
+                   candidate_id: str | None = None):
         if offset < 0 or not 1 <= limit <= 200:
             raise ValueError("invalid pagination")
+        if candidate_id is not None and (not candidate_id.strip() or len(candidate_id) > 200):
+            raise ValueError("candidate_id must contain 1 to 200 characters")
         job = store.job(key)
         if not job.get("report_sha256"):
             return {"audit_id": key, "state": "waiting_for_scan", "items": [], "counts": {}}
@@ -2249,6 +2279,8 @@ def install_routes(app: FastAPI, settings, store):
         snapshot["validated_vulnerability"] = len(confirmed_cases)
         snapshot["confirmed_cases"] = confirmed_cases
         items = snapshot["items"]
+        if candidate_id is not None:
+            items = [item for item in items if item.get("candidate_id") == candidate_id]
         return {**{name: value for name, value in snapshot.items() if name != "items"},
                 "total": len(items), "items": items[offset:offset + limit]}
 

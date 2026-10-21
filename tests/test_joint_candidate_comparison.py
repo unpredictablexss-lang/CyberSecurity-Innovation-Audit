@@ -16,6 +16,15 @@ def sha(text):
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
+class JointCandidateFailureStateTests(unittest.TestCase):
+    def test_preflight_provider_and_response_failures_do_not_look_completed(self):
+        from src.workbench.joint_candidate_comparison import joint_comparison_failure_status
+
+        self.assertEqual(joint_comparison_failure_status("not_started"), "blocked")
+        self.assertEqual(joint_comparison_failure_status("attempted"), "failed")
+        self.assertEqual(joint_comparison_failure_status("response_received"), "completed_with_limitations")
+
+
 class JointCandidateComparisonTests(unittest.TestCase):
     def setUp(self):
         self.repo_id = "repo-fixed-id"
@@ -137,6 +146,61 @@ class JointCandidateComparisonTests(unittest.TestCase):
         })
         self.assertEqual(ctx["context"]["from"]["source_excerpt_start_line"], 1)
         self.assertEqual(ctx["context"]["to"]["source_excerpt_end_line"], 4)
+
+    def recent_window_inputs(self):
+        windows = [
+            {"baseline": "9" * 40, "endpoint": self.from_commit},
+            {"baseline": self.from_commit, "endpoint": self.to_commit},
+        ]
+        scan_ids = ["old-baseline", "job-from", "new-baseline", "job-to"]
+        operation = {
+            "id": "f" * 32, "kind": "recent_window_comparison",
+            "status": "completed_with_limitations",
+            "spec": {"repository_id": self.repo_id, "windows": windows, "scan_ids": scan_ids},
+            "result_sha256": "6" * 64,
+        }
+        result = {
+            "scan_ids": list(scan_ids),
+            "windows": [
+                {"selection": dict(row), "baseline": row["baseline"], "endpoint": row["endpoint"]}
+                for row in windows
+            ],
+            "between_window_endpoints": {
+                "from": self.from_commit, "to": self.to_commit,
+                "candidate_comparison": [copy.deepcopy(self.match)],
+            },
+        }
+        return operation, result
+
+    def test_recent_window_context_uses_only_fixed_between_window_endpoints(self):
+        operation, result = self.recent_window_inputs()
+        context = build_joint_candidate_context(
+            source_operation=operation, source_result=result,
+            source_result_sha256=operation["result_sha256"],
+            from_side=self.from_side, to_side=self.to_side, match=self.match)
+        self.assertEqual(context["bindings"]["source_operation_kind"], "recent_window_comparison")
+        self.assertEqual(context["bindings"]["recent_window_operation_id"], operation["id"])
+        self.assertEqual(context["bindings"]["recent_window_result_sha256"], "6" * 64)
+        self.assertEqual(context["bindings"]["from"]["job_id"], "job-from")
+        self.assertEqual(context["bindings"]["to"]["job_id"], "job-to")
+        self.assertEqual({row["side"] for row in context["evidence_index"].values()}, {"from", "to"})
+        self.assertNotIn("matrix_operation_id", context["bindings"])
+
+    def test_recent_window_context_rejects_any_non_endpoint_scan_or_commit(self):
+        operation, result = self.recent_window_inputs()
+        bad_result = copy.deepcopy(result)
+        bad_result["scan_ids"][1] = "other-job"
+        with self.assertRaises(JointCandidateValidationError) as error:
+            build_joint_candidate_context(
+                source_operation=operation, source_result=bad_result,
+                from_side=self.from_side, to_side=self.to_side, match=self.match)
+        self.assertEqual(error.exception.reason_code, "recent_window_binding_mismatch")
+        with self.assertRaises(JointCandidateValidationError) as error:
+            build_joint_candidate_context(
+                source_operation=operation, source_result=result,
+                from_side=self.from_side, to_side=self.to_side, match=self.match,
+                source_result_sha256="7" * 64)
+        self.assertEqual(error.exception.reason_code, "parent_result_binding_mismatch")
 
     def test_valid_two_sided_citations_are_rebuilt_from_fixed_lines(self):
         result = validate_joint_candidate_output(self.candidate_output(), self.prepared)

@@ -3,9 +3,12 @@ const COMMIT = /^[a-f0-9]{40}$/i;
 
 export const JOINT_CANDIDATE_PREVIEW_PATH = "/operations/version-matrix-candidate-comparisons/preview";
 export const JOINT_CANDIDATE_CREATE_PATH = "/operations/version-matrix-candidate-comparisons";
+export const RECENT_JOINT_CANDIDATE_PREVIEW_PATH = "/operations/joint-candidate-comparisons/preview";
+export const RECENT_JOINT_CANDIDATE_CREATE_PATH = "/operations/joint-candidate-comparisons";
 
 export const REVIEW_STATUS_LABELS = Object.freeze({
-  queued: "排队中", running: "运行中", completed: "已完成", failed: "失败",
+  queued: "排队中", running: "运行中", completed: "已完成",
+  completed_with_limitations: "已完成（存在限制）", failed: "失败",
   cancelled: "已取消", timed_out: "超时", interrupted: "中断", blocked: "受阻",
   not_triaged: "未研判", not_requested: "未请求", awaiting_r1: "等待初步研判",
   candidate_limit_reached: "超过授权名额", failed_selection: "候选选择失败",
@@ -15,6 +18,7 @@ export const REVIEW_STATUS_LABELS = Object.freeze({
 const ENDPOINT_STATE_LABELS = Object.freeze({
   static_only: "仅静态扫描，未请求模型", awaiting_static: "等待静态扫描",
   static_incomplete: "静态结果未完成", awaiting_individual_consent: "等待逐端点授权",
+  completed_with_limitations: "授权范围内研判已返回（存在限制）",
   authorization_revoked: "外发授权已撤销", revoked: "外发授权已撤销",
   awaiting_model_schedule: "等待 Agent 排队", authorization_changed: "授权条件已变化",
   no_eligible_candidates: "没有符合条件的研判候选", completed: "授权范围内研判已完成",
@@ -24,7 +28,7 @@ const ENDPOINT_STATE_LABELS = Object.freeze({
   queue_limit_exceeded: "Agent 队列容量不足",
 });
 
-const PHASE_STATES = ["queued", "running", "completed", "failed", "cancelled", "timed_out", "interrupted", "blocked"];
+const PHASE_STATES = ["queued", "running", "completed", "completed_with_limitations", "failed", "cancelled", "timed_out", "interrupted", "blocked"];
 
 function countValue(progress, status) {
   const explicit = progress?.[`${status}_count`];
@@ -58,12 +62,13 @@ function phaseView(progress, operations, endpointCommit) {
       const status = typeof item?.status === "string" ? item.status : null;
       const resultSha256 = sha(item?.result_sha256) ? item.result_sha256 : null;
       const reportSha256 = sha(item?.report_sha256) ? item.report_sha256 : null;
-      const hasExpectedResultBinding = status !== "completed" || Boolean(resultSha256 && reportSha256);
+      const hasTerminalResult = status === "completed" || status === "completed_with_limitations";
+      const hasExpectedResultBinding = !hasTerminalResult || Boolean(resultSha256 && reportSha256);
       const bindingIssue = !id ? "operation ID 未提供"
         : !status ? "子任务状态未提供"
           : !commit(endpointCommit) || boundCommit !== endpointCommit ? "固定端点 Commit 缺失或不一致"
-            : status === "completed" && !resultSha256 ? "已完成结果缺少有效 Result SHA-256"
-              : status === "completed" && !reportSha256 ? "已完成结果缺少有效源码 Report SHA-256"
+            : hasTerminalResult && !resultSha256 ? "结束结果缺少有效 Result SHA-256"
+              : hasTerminalResult && !reportSha256 ? "结束结果缺少有效源码 Report SHA-256"
                 : null;
       const bindingValid = Boolean(id && status && hasExpectedResultBinding
         && commit(endpointCommit) && boundCommit === endpointCommit);
@@ -87,7 +92,7 @@ export function buildIntelligentReviewView(endpoint) {
   return {
     state, stateLabel: ENDPOINT_STATE_LABELS[state] || REVIEW_STATUS_LABELS[state] || state || "未知",
     stateTone: state === "completed" ? "success" : state === "failed" || state === "revoked" || state === "authorization_revoked" ? "error"
-      : state === "partially_completed" ? "warning" : "default",
+      : state === "partially_completed" || state === "completed_with_limitations" ? "warning" : "default",
     reason: typeof endpoint.triage_state_reason === "string" ? endpoint.triage_state_reason : null,
     candidateCount: Number.isSafeInteger(endpoint.candidate_count) ? endpoint.candidate_count : null,
     commit: typeof endpoint.commit === "string" ? endpoint.commit : null,
@@ -96,6 +101,16 @@ export function buildIntelligentReviewView(endpoint) {
     isStatic,
     modelResultIsConfirmation: endpoint.model_result_is_product_vulnerability_confirmation === true,
   };
+}
+
+export function buildRecentWindowCandidatePairs(operation) {
+  const endpoints = operation?.result?.between_window_endpoints;
+  if (!endpoints || typeof endpoints !== "object") return [];
+  return buildMatrixCandidatePairs({ result: { comparisons: [{
+    from: endpoints.from,
+    to: endpoints.to,
+    candidate_comparison: endpoints.candidate_comparison,
+  }] } });
 }
 
 export function buildMatrixCandidatePairs(operation) {
@@ -133,11 +148,13 @@ function requiredText(value, label) {
   return value;
 }
 
-export function jointCandidatePreviewPayload(matrixOperationId, pair) {
+export function jointCandidatePreviewPayload(parentOperationId, pair, parentKind = "version_matrix") {
   if (!pair || !COMMIT.test(pair.fromCommit || "") || !COMMIT.test(pair.toCommit || "")
       || pair.fromCommit === pair.toCommit) throw new Error("必须选择两个不同的固定版本");
+  const recentWindow = parentKind === "recent_window_comparison";
   return {
-    matrix_operation_id: requiredText(matrixOperationId, "版本矩阵任务 ID"),
+    [recentWindow ? "recent_window_operation_id" : "matrix_operation_id"]:
+      requiredText(parentOperationId, recentWindow ? "时间窗口任务 ID" : "版本矩阵任务 ID"),
     from_commit: pair.fromCommit,
     from_candidate_id: requiredText(pair.fromCandidate?.id, "基准候选 ID"),
     to_commit: pair.toCommit,
@@ -145,10 +162,10 @@ export function jointCandidatePreviewPayload(matrixOperationId, pair) {
   };
 }
 
-export function jointCandidateCreatePayload(matrixOperationId, pair, consent) {
+export function jointCandidateCreatePayload(parentOperationId, pair, consent, parentKind = "version_matrix") {
   const preview = consent && typeof consent === "object" ? consent : {};
   return {
-    ...jointCandidatePreviewPayload(matrixOperationId, pair),
+    ...jointCandidatePreviewPayload(parentOperationId, pair, parentKind),
     approved: true,
     consent_nonce: requiredText(preview.consent_nonce, "预览授权 nonce"),
     expected_consent_sha256: requiredText(preview.consent_sha256, "预览授权摘要"),
