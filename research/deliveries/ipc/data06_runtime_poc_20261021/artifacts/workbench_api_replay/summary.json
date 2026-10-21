@@ -9,11 +9,11 @@
     "fixed_file_sha256": "30ad2a9fa4f45792b83e75cef6c5106818b290ae523d9e17e48c88853854d777"
   },
   "local_workbench": {
-    "vulnerable_scan_commit": "22d37f9fc1012877471b9985afcb09f596d07eea",
-    "fixed_scan_commit": "2c6b93f3ef0065b5449ec33a8a0463a4748f78d3",
-    "vulnerable_report_sha256": "94844a526fa3ced3df273ee87b8261c3ddb598c7b3f0cacd03318f3794dd247b",
-    "fixed_report_sha256": "5c24fb525d9874aba77d94737644dc02893f469b74f3d727f5228b34ad367247",
-    "finding_detail_sha256": "e0246517c53b74dfdd07bcfcb96fccd439843c4b6d1ea5167a9d1cf4e5f6f901"
+    "vulnerable_scan_commit": "2dc64b3f7a5b7970912587ace9e5baa7aa27a166",
+    "fixed_scan_commit": "01467045258b87f3595f164739aab91d81fd90c2",
+    "vulnerable_report_sha256": "761956f62459167b8dbafa214e175dcd8561d827e5c51d2b02824bf58d406183",
+    "fixed_report_sha256": "4528c03af7696a20b729a360673619153212777429959214de1f031b832dd7fa",
+    "finding_detail_sha256": "7936a6319b168a49541f4b2c36786d9b183f51cfcf0c5eb9083d8bc5e57539b0"
   },
   "finding": {
     "rule_id": "ipc.parcel.array-allocation-width",
@@ -73,8 +73,8 @@
   },
   "fixed_retest": {
     "rule_findings": 0,
-    "report_sha256": "5c24fb525d9874aba77d94737644dc02893f469b74f3d727f5228b34ad367247"
+    "report_sha256": "4528c03af7696a20b729a360673619153212777429959214de1f031b832dd7fa"
   },
   "product_impact": "unknown",
-  "poc_limit": "source-semantic harness; no component binary or Binder/DBinder reachability claim"
+  "poc_limit": "source-semantic harness; no OpenHarmony component build, real IPC/FFI reachability, or product impact claim"
 }

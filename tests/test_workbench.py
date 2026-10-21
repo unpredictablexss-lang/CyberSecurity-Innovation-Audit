@@ -396,6 +396,56 @@ class WorkbenchTests(unittest.TestCase):
                 "fixed_report.json": fixed_report_response.content,
                 "fixed_report.md": fixed_markdown.content,
             }
+            source_location = risk["source_location"]
+            poc = risk["poc"]
+            retest = risk["component_retest"]
+            evidence_markdown = "\n".join([
+                "# DATA-06 candidate evidence",
+                "",
+                "> Source-level candidate only. The CVE association is provenance, not root-cause proof.",
+                "",
+                f"- Candidate report SHA-256: `{job['report_sha256']}`",
+                f"- Candidate: `{candidate['rule_id']}` at `{candidate['file']}:{candidate['line']}`",
+                f"- Source SHA-256: `{candidate['source_sha256']}`",
+                f"- Source location: `{source_location['symbol']}`, `{source_location['file']}:{source_location['lines']}`",
+                f"- Vulnerable source commit: `{source_location['vulnerable_commit']}`",
+                f"- CVE mapping: {risk['identifier']}",
+                f"- Mapping basis: {risk['mapping_basis']}",
+                f"- Mapping source: {risk['source']}",
+                f"- Severity / product applicability: `{risk['severity']}` / `{risk['product_applicability']}`",
+                "- Disposition: `candidate/unknown`; no product confirmation.",
+                "",
+                "## Component-level PoC and fix comparison",
+                "",
+                f"- PoC scope: {poc['kind']}",
+                f"- Harness entry: {poc['entrypoint']}",
+                f"- PoC record: `{poc['record']}` (SHA-256 `{poc['record_sha256']}`)",
+                f"- Replay command: `{poc['replay']}` (SHA-256 `{poc['replay_sha256']}`)",
+                f"- Raw ASan output: `{poc['raw_output']}` (decoded SHA-256 `{poc['raw_output_sha256']}`)",
+                f"- Fixed source: `{source_location['fixed_commit']}`; {risk['remediation']}",
+                f"- Upstream fix: {risk['upstream_fix']}",
+                f"- Vulnerable replay: {retest['affected_poc']}",
+                f"- Fixed replay: {retest['fixed_poc']}",
+                f"- Exact-source retest: {retest['fixed_source']}",
+                "",
+                "## Limits",
+                "",
+                f"- {risk['product_evidence']}",
+                f"- {retest['scope']}",
+                "- No real IPC or FFI reachability or product impact was established; no OpenHarmony component build was produced.",
+                "- The API replay wraps pinned official source bytes in temporary local Git commits; those wrapper commits are not OpenHarmony release identifiers.",
+                "",
+            ]).encode("utf-8")
+            evidence_text = evidence_markdown.decode("utf-8")
+            self.assertIn("CVE mapping: CVE-2025-26474", evidence_text)
+            self.assertIn(source_location["vulnerable_commit"], evidence_text)
+            self.assertIn(poc["raw_output_sha256"], evidence_text)
+            self.assertIn(source_location["fixed_commit"], evidence_text)
+            self.assertIn("Upstream fix:", evidence_text)
+            self.assertIn("No real IPC or FFI reachability", evidence_text)
+            self.assertIn("does not establish Binder/DBinder reachability", evidence_text)
+            self.assertIn("candidate/unknown", evidence_text)
+            artifacts["finding_evidence.md"] = evidence_markdown
             for name, payload in artifacts.items():
                 (output / name).write_bytes(payload)
             summary = {
@@ -425,7 +475,7 @@ class WorkbenchTests(unittest.TestCase):
                 },
                 "fixed_retest": {"rule_findings": 0, "report_sha256": fixed_job["report_sha256"]},
                 "product_impact": "unknown",
-                "poc_limit": "source-semantic harness; no component binary or Binder/DBinder reachability claim",
+                "poc_limit": "source-semantic harness; no OpenHarmony component build, real IPC/FFI reachability, or product impact claim",
             }
             (output / "summary.json").write_text(
                 json.dumps(summary, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"

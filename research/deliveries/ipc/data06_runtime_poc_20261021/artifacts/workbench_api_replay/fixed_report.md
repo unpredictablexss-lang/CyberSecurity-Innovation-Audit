@@ -3,7 +3,7 @@
 > Detection candidates and coverage limitations, NOT validated vulnerabilities.
 
 - Source repository (declared): `openharmony/communication_ipc`
-- Pinned commit: `2c6b93f3ef0065b5449ec33a8a0463a4748f78d3`
+- Pinned commit: `01467045258b87f3595f164739aab91d81fd90c2`
 - Git tree: `913ac22f73be8fd309fedfdea3b257138d1aaf9e`
 - Snapshot SHA-256: `177b3213312e7ba796b8b612ab19a072372c59cda42111590ad2fbc70e1e1d88`
 - Source files indexed: 1
@@ -55,5 +55,5 @@ Files without a claiming detector: 0
 ## Frozen execution plan
 
 - Planner: 0.1.1; mode: explicit
-- Plan SHA-256: `236ef6a4e3c6cf5943142c33cc396462a8ca4f1dfd8e5e3caacbd4e532826dad`
+- Plan SHA-256: `9060d68a7cf58f88693aa1918f4a4f29c6a4b6e03996a317920219a8b38cc575`
 - Language matching plans attempts; actual coverage remains in the results above.
