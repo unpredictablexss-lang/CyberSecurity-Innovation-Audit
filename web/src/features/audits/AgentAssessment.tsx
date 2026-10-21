@@ -28,7 +28,7 @@ const evidenceGraphStageLabels: Record<string, string> = {
   candidate_routing: "候选范围",
   root_cause_hypothesis: "根因假设",
   bounded_cross_file_trace: "跨文件源码追查",
-  counterevidence_search: "主动反证与未决项",
+  counterevidence_search: "支持、反向与未决记录",
   official_patch_version_comparison: "官方公告、影响版本与补丁",
   evidence_arbitration: "证据裁决",
 };
@@ -39,7 +39,8 @@ const evidenceGraphStatusLabels: Record<string, string> = {
   not_performed: "未执行",
   search_completed_no_callsite: "已搜索，未找到语法调用点",
   partial_parse: "解析不完整，结果有限",
-  review_recorded: "已记录，待人工核对",
+  structured_review_recorded_unverified: "已记录模型处置，待人工核对",
+  not_attested: "未记录结构化处置",
   not_available: "本次未收集",
   structure_validated_semantics_unverified: "结构通过，语义未确认",
   incomplete: "未完成",

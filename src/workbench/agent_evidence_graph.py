@@ -236,14 +236,10 @@ def build_evidence_graph(binding, initial_evidence, tool_calls, model_calls,
         trace_status = "partial_parse"
     else:
         trace_status = "search_completed_no_callsite"
-    followup_source_search = any(
-        isinstance(call, dict) and call.get("status") == "completed"
-        and call.get("evidence_kind") == "source_code"
-        and call.get("tool") != "read_candidate_source"
-        for call in tool_calls)
     counterevidence_status = (
-        "review_recorded" if validation_status == "accepted" and followup_source_search
-        else "not_performed" if validation_status == "accepted" else "incomplete")
+        "structured_review_recorded_unverified"
+        if validation_status == "accepted" and reviews
+        else "not_attested" if validation_status == "accepted" else "incomplete")
     stages = [
         ("candidate_routing", "completed", "静态候选与固定源码身份已绑定。", [], []),
         ("root_cause_hypothesis",
@@ -256,7 +252,7 @@ def build_evidence_graph(binding, initial_evidence, tool_calls, model_calls,
          model_node_ids, caller_site_evidence),
         ("counterevidence_search",
          counterevidence_status,
-         "结果可记录支持、反证与未决项；系统不证明反证搜索已穷尽。",
+         "只记录模型提交的结构化义务处置；源码读取不证明已主动搜索反证，系统也不验证搜索是否穷尽。",
          model_node_ids, obligation_nodes),
         ("official_patch_version_comparison", "not_available",
          "本次操作没有绑定官方公告、受影响版本与修复补丁证据。",

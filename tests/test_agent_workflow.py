@@ -67,7 +67,13 @@ class EvidenceGraphTests(unittest.TestCase):
         self.assertEqual(trace_stage["status"], "not_performed")
         counter_stage = next(node for node in graph["nodes"]
                              if node.get("stage") == "counterevidence_search")
-        self.assertEqual(counter_stage["status"], "review_recorded")
+        self.assertEqual(counter_stage["status"], "structured_review_recorded_unverified")
+        self.assertIn("不证明已主动搜索反证", counter_stage["summary"])
+        unreviewed_graph = build_evidence_graph(
+            binding, initial, tools, models, {"supported_claims": assessment["supported_claims"]}, "accepted")
+        unreviewed_counter_stage = next(node for node in unreviewed_graph["nodes"]
+                                        if node.get("stage") == "counterevidence_search")
+        self.assertEqual(unreviewed_counter_stage["status"], "not_attested")
         traced_tools = [{"step": 1, "tool": "trace_fixed_caller_sites", "status": "completed",
                          "evidence_id": "ev-callsite-1", "evidence_kind": "source_code",
                          "result_sha256": "7" * 64,
