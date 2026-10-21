@@ -53,8 +53,8 @@ const { Text, Title, Paragraph } = Typography;
 function HighConfidenceCandidateReason({ risk, jobId }: { risk: any; jobId: string }) {
   if (risk?.risk_tier !== "high_confidence_candidate") return null;
   const signal = risk.agent_signal || {};
-  const locations = Array.isArray(signal.evidence_locations) ? signal.evidence_locations : [];
-  const explanation = signal.confidence_reason || risk.reason
+  const locations = risk.confidence_basis === "ai_source_evidence" ? (risk.ai_evidence || []) : (Array.isArray(signal.evidence_locations) ? signal.evidence_locations : []);
+  const explanation = risk.ai_summary || signal.confidence_reason || risk.reason
     || (risk.confidence_basis === "human_r0"
       ? "人工 R0 已对固定源码中的证据义务逐项引用复核。"
       : "固定源码证据门已通过；具体义务与源码仍需人工核对。");

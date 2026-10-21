@@ -37,5 +37,24 @@
     "No real Provider calls, product PoC or scale benchmark was run.",
     "Progressive policy Worker enforcement is not connected.",
     "Original worktrees, local indexes, credentials and existing running services were preserved."
-  ]
+  ],
+  "latest_main_integrated": "efa5b162f3e61ccdb982f6a88f9822d3e310b62a",
+  "validation_after_latest_main": {
+    "detectors": {
+      "run": 861,
+      "skipped": 5,
+      "failures": 0
+    },
+    "repository_import_and_reports": {
+      "run": 22,
+      "failures": 0
+    },
+    "web_node": {
+      "run": 126,
+      "failures": 0
+    },
+    "web_build": "passed",
+    "full_suite": "Final PR #52 CI and fresh local run after the main update are authoritative."
+  },
+  "active_c_model": "C13 0.8.15 from PR #51; earlier C12 adapter retained as a patch and in Git history"
 }

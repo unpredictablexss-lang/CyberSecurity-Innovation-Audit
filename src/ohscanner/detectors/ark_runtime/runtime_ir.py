@@ -77,9 +77,10 @@ def label_identity(fn, node):
     return binding.identity if binding and binding.type_name in ('Label', 'Label*') else None
 
 
-def build_graph(fn, budget):
+def build_graph(fn, budget, extra_controls=()):
     instructions = []
     limitations = []
+    control_names = CONTROL | frozenset(extra_controls)
 
     def append(node, kind, arguments=(), problem=''):
         instructions.append(Instruction(node, kind, arguments, problem=problem))
@@ -119,12 +120,12 @@ def build_graph(fn, budget):
                 shadowed = fn.resolve(name, expression)
                 if name in ('Return', 'ReturnVoid', 'Throw'):
                     append(expression, 'unknown', problem='unmodeled_generated_termination:' + name)
-                elif name in CONTROL and shadowed is None:
-                    count = 3 if name == 'BRANCH' else 1
+                elif name in control_names and shadowed is None:
+                    count = 3 if name in ('BRANCH', 'Branch') else 1
                     if len(args) != count:
                         append(expression, 'unknown', problem='invalid_control_signature:' + name)
                     else:
-                        append(expression, name, args)
+                        append(expression, 'BRANCH' if name in ('BRANCH', 'Branch') else name, args)
                 elif name != 'DEFVARIABLE' and (
                     name.isupper() or any(label_identity(fn, a) for a in args)
                 ):

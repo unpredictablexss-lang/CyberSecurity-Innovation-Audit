@@ -40,13 +40,11 @@ class OriginState:
 
 
 class OriginEvaluator:
-    def __init__(self, fn, model, cyclic_ranges=(), identity_helpers=(), helper_contracts=(),
-                 species_read_width_bound=False):
+    def __init__(self, fn, model, cyclic_ranges=(), identity_helpers=(), helper_contracts=()):
         self.fn, self.model = fn, model
         self.identity_helpers = tuple(identity_helpers)
         self.helper_contracts = tuple(helper_contracts)
         self.cyclic_ranges = tuple(cyclic_ranges)
-        self.species_read_width_bound = bool(species_read_width_bound)
 
     @staticmethod
     def token_key(value):
@@ -130,21 +128,6 @@ class OriginEvaluator:
         for node in walk(root):
             effect_problem = effectful_helper_problem(fn, node, self.helper_contracts)
             if effect_problem:
-                # This exact helper's contract is intentionally type-stable:
-                # it reads a TypedArray element using the supplied JSType but
-                # does not mutate the receiver's HClass. Its cross-object
-                # width misuse is analyzed separately at the call site below.
-                stable = dict(self.model.type_stable_operations)
-                callee = node.child_by_field_name('function') if node.type == 'call_expression' else None
-                helper_name = fn.call_name(node).removeprefix('this->') if node.type == 'call_expression' else ''
-                if (self.species_read_width_bound and fn.qualified_name == OWNER + '::Map'
-                        and helper_name == 'FastGetPropertyByIndex'
-                        and len(fn.arguments(node)) == stable.get(helper_name)
-                        and not fn.resolve(helper_name, node)
-                        and callee is not None and callee.type == 'identifier'
-                        and tuple(fn.text(arg).strip() for arg in fn.arguments(node))
-                        == ('glue', 'thisValue', 'TruncInt64ToInt32(*i)', 'newArrayType')):
-                    continue
                 return effect_problem
             if node.type in ('new_expression', 'delete_expression', 'update_expression'):
                 return 'unmodeled_cpp_lifetime_or_update_expression'
@@ -191,48 +174,51 @@ class OriginEvaluator:
         return OriginState({b.identity: Value('object', b.identity, origin_line=self.fn.node.start_point[0] + 1)
                             for b in self.fn.bindings if b.parameter and b.type_name == 'GateRef'})
 
-    def invalidate(self, state, call, may_rebind=True):
-        """Forget sampled facts while preserving only justified local identity.
+    def invalidate(self, state, call, may_rebind=True, preserve_unescaped=True,
+                   preserve_fresh_type=False):
+        """Forget sampled facts; preserve only local fresh results proven unescaped.
 
         An unmodelled call invalidates source-object observations and aliases.
-        A fresh result's type can survive an unrelated by-argument callback only
-        while that result is local and unescaped; global calls and unknown member
-        calls invalidate every sampled type fact. The old token can still form a
-        distinct-origin candidate, never a proof of current equality.
+        A fresh result cannot be mutated by a call until it escapes; direct and
+        nested call arguments plus the modeled JSCallArgs initializer record
+        those escapes. Other unsupported host writes block function analysis.
+        This finite abstraction converges in loops and never revalidates a copy
+        of an old token when a later read observes the same object.
         """
         from dataclasses import replace
-        args = list(self.fn.arguments(call))
-        callee = call.child_by_field_name("function")
-        member_call = bool(callee and callee.type == "field_expression")
-        arguments = list(args)
-        if member_call:
-            arguments.append(callee.child_by_field_name("argument"))
-        passed_objects = set()
-        for argument in args:
-            for node in walk(argument):
-                if node.type == "identifier":
-                    value = self.value(node, state)
-                    if value.kind == "object":
-                        passed_objects.add(value.identity)
-        fresh = {
-            value.identity for value in state.values.values()
-            if value.kind == "object" and value.detail == "fresh_local_typed_array"
-        }
         invalidated = set(state.invalidated)
+        passed_objects = set()
+        # Passing GateRef by value preserves the local variable binding, but
+        # still exposes the referenced object to the call. Track those object
+        # identities even when the callee cannot rebind the C++ parameter.
+        for argument in self.fn.arguments(call):
+            for node in walk(argument):
+                if node.type == 'identifier':
+                    value = self.value(node, state)
+                    if value.kind == 'object':
+                        passed_objects.add(value.identity)
         for value in state.values.values():
-            if value.kind != "object":
+            if value.kind != 'object':
                 continue
-            if (value.detail == "fresh_local_typed_array"
+            if (preserve_unescaped and value.detail == 'fresh_local_typed_array'
                     and value.identity not in passed_objects
                     and value.identity not in state.escaped):
                 continue
             invalidated.add(value.identity)
         state.invalidated = frozenset(invalidated)
-        preserve_fresh_type = bool(args) and not member_call
-        stable_fresh = (fresh - passed_objects) if preserve_fresh_type else set()
+        # Keep the identity of an unescaped local allocation so a distinct
+        # origin can remain a candidate, but an unknown call cannot preserve
+        # any sampled type fact. This avoids treating local non-escape as a
+        # proof that every callback or host effect is type-stable.
+        stable_fresh = {
+            value.identity for value in state.values.values()
+            if preserve_fresh_type and value.kind == 'object'
+            and value.detail == 'fresh_local_typed_array'
+            and value.identity not in passed_objects and value.identity not in state.escaped
+        }
         state.values = {
             key: (replace(value, valid=False)
-                  if value.kind in ("type", "hclass")
+                  if value.kind in ('type', 'hclass')
                   and (not value.valid or value.origin not in stable_fresh)
                   else value)
             for key, value in state.values.items()
@@ -240,13 +226,20 @@ class OriginEvaluator:
         state.equivalent = frozenset()
         state.predicates = frozenset()
         state.effects |= frozenset(((call.start_point[0] + 1, self.fn.call_name(call)),))
-        rebind = arguments if may_rebind else []
-        for argument in rebind:
-            while argument and argument.type in ("pointer_expression", "parenthesized_expression"):
+        # Without the C++ callee declaration, GateRef arguments could be bound
+        # by non-const reference. Retain aliases of the old object but forget
+        # the passed lvalue's current binding; a later read cannot silently
+        # equate it to a pre-call alias.
+        arguments = list(self.fn.arguments(call)) if may_rebind else []
+        callee = call.child_by_field_name('function')
+        if may_rebind and callee and callee.type == 'field_expression':
+            arguments.append(callee.child_by_field_name('argument'))
+        for argument in arguments:
+            while argument and argument.type in ('pointer_expression', 'parenthesized_expression'):
                 argument = argument.named_children[-1] if argument.named_children else None
-            if argument and argument.type == "identifier":
+            if argument and argument.type == 'identifier':
                 binding = self.fn.resolve(self.fn.text(argument), argument)
-                if binding and state.values.get(binding.identity, UNKNOWN).kind in ("object", "type", "hclass"):
+                if binding and state.values.get(binding.identity, UNKNOWN).kind in ('object', 'type', 'hclass'):
                     state.values[binding.identity] = UNKNOWN
 
     def bound_call(self, node, state):
@@ -265,6 +258,24 @@ class OriginEvaluator:
             return True
         if fn.resolve(base, node):
             return False
+        callee = node.child_by_field_name('function')
+        if callee and callee.type == 'field_expression':
+            receiver = callee.child_by_field_name('argument')
+            receiver_text = fn.text(receiver).replace(' ', '') if receiver else ''
+            member = fn.text(callee.child_by_field_name('field'))
+            if receiver_text not in ('this', 'this->'):
+                builder = self.value(receiver, state)
+                if (builder.kind == 'builder' and builder.detail == self.model.creator_owner
+                        and member == 'SetParameters' and len(args) == 2):
+                    return True
+                if (builder.kind == 'builder' and builder.detail == NAMESPACE + '::BuiltinsArrayStubBuilder'
+                        and member == 'GetTaggedValueWithElementsKind' and len(args) == 3
+                        and self.model.build_profile.startswith('assumed:NDEBUG=1;ENABLE_ASM_ASSERT=0;')):
+                    return True
+                if (builder.kind == 'builder' and builder.detail == self.model.creator_owner
+                        and member == self.model.creator_name and len(args) == self.model.creator_arguments):
+                    return True
+                return False
         if (base in dict(self.model.reviewed_graph_read_overloads)
                 and len(args) == dict(self.model.reviewed_graph_read_overloads)[base]):
             return True
@@ -366,7 +377,12 @@ class OriginEvaluator:
                     # intrinsic constructor; it does not use species dispatch.
                     pass
                 elif not self.bound_call(call, state):
-                    self.invalidate(state, call, may_rebind=not self.passes_by_value(call, state))
+                    callee = call.child_by_field_name('function')
+                    unknown_member = callee is not None and callee.type == 'field_expression'
+                    preserve_fresh_type = bool(self.fn.arguments(call)) and not unknown_member
+                    self.invalidate(state, call, may_rebind=not self.passes_by_value(call, state),
+                                    preserve_unescaped=True,
+                                    preserve_fresh_type=preserve_fresh_type)
 
     def value(self, node, state):
         if node is None:
@@ -379,6 +395,8 @@ class OriginEvaluator:
                 detail = '+'.join(item for item in (value.detail, 'cross_helper_identity') if item)
                 return replace(value, detail=detail)
             return value
+        if node.type in ('parenthesized_expression', 'pointer_expression'):
+            return self.value(node.named_children[-1], state) if node.named_children else UNKNOWN
         if node.type == 'identifier':
             binding = fn.resolve(fn.text(node), node)
             return state.values.get(binding.identity, UNKNOWN) if binding else UNKNOWN
@@ -468,37 +486,8 @@ class OriginEvaluator:
     def store_arguments(self, node, state):
         fn, model = self.fn, self.model
         if node.type != 'call_expression':
-            # The Map source read is assigned to kValue; inspect only the
-            # direct RHS call so unrelated nested calls cannot acquire this
-            # source-specific summary or produce duplicate observations.
-            right = (node.child_by_field_name('right')
-                     if node.type == 'assignment_expression' else None)
-            if right is None or right.type != 'call_expression':
-                return None
-            node = right
-        name = fn.call_name(node)
-        if (self.species_read_width_bound and fn.qualified_name == OWNER + '::Map'
-                and name in ('FastGetPropertyByIndex', 'this->FastGetPropertyByIndex',
-                             OWNER + '::FastGetPropertyByIndex')):
-            args = fn.arguments(node)
-            if (len(args) != 4 or fn.resolve('FastGetPropertyByIndex', node)
-                    or tuple(fn.text(arg).strip() for arg in args)
-                    != ('glue', 'thisValue', 'TruncInt64ToInt32(*i)', 'newArrayType')):
-                return ('unknown', UNKNOWN, UNKNOWN, 'species_source_read_signature_unresolved')
-            source = self.value(args[1], state)
-            source_type = self.value(args[3], state)
-            result = next((value for value in state.values.values()
-                           if value.kind == 'object' and value.identity == source_type.origin), UNKNOWN)
-            if source.kind != 'object' or source_type.kind != 'type':
-                return ('unknown', source, source_type, 'species_source_read_origin_unresolved')
-            if (source_type.valid and source.identity != source_type.origin
-                    and result.kind == 'object' and result.may_differ
-                    and result.creation_line):
-                return ('candidate', source, source_type,
-                        'species_result_type_used_for_source_element_read_width')
-            if not source_type.valid:
-                return ('unknown', source, source_type, 'species_source_read_type_invalidated')
             return None
+        name = fn.call_name(node)
         property_name, property_arity, property_target_index, property_token_index = model.property_store
         is_element_store = name in (model.store_name, 'this->' + model.store_name,
                                     OWNER + '::' + model.store_name)
@@ -562,8 +551,7 @@ class OriginEvaluator:
                         # Repeated sampling sites need iteration-sensitive
                         # token identities before they can justify guards.
                         return state
-                    known_equal = ((left.valid and right.valid
-                                    and self.token_key(left) == self.token_key(right))
+                    known_equal = (self.token_key(left) == self.token_key(right)
                         or (left.valid and right.valid and left.origin == right.origin)
                         or (right.valid and (self.token_key(left), right.origin) in state.equivalent)
                         or (left.valid and (self.token_key(right), left.origin) in state.equivalent))

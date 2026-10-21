@@ -291,7 +291,7 @@ class Operations:
                     and row["consent_sha256"] == consent_sha256)
 
     def create(self, kind, spec):
-        if kind not in {"source_sync", "repository_import_scan", "source_sync_batch", "revision_range", "version_matrix", "branch_comparison", "recent_window_comparison", "validation", "investigation", "candidate_review_batch", "agent_investigation", "version_candidate_comparison"}:
+        if kind not in {"source_sync", "source_sync_batch", "repository_import_scan", "revision_range", "version_matrix", "branch_comparison", "recent_window_comparison", "validation", "investigation", "candidate_review_batch", "agent_investigation", "version_candidate_comparison"}:
             raise ValueError("unknown operation kind")
         if kind == "version_candidate_comparison":
             required = ("from_commit", "from_candidate_id", "to_commit", "to_candidate_id",
@@ -369,42 +369,6 @@ class Operations:
                     raise ValueError("joint comparison approval ticket could not be consumed")
         self.event(key, "queued", "Immutable operation plan saved")
         return self.get(key)
-
-    def retry_repository_import(self, key):
-        """Queue a new attempt for a failed import without mutating its original plan."""
-        retryable = {"failed", "interrupted", "timed_out"}
-        new_key = uuid.uuid4().hex
-        stamp = now()
-        with self.store.connect() as db:
-            db.execute("BEGIN IMMEDIATE")
-            original = self.row(db.execute(
-                "SELECT * FROM operations WHERE id=?", (key,)).fetchone())
-            if original["kind"] != "repository_import_scan":
-                raise ValueError("only repository import operations can be retried here")
-            existing = []
-            for row in db.execute("SELECT * FROM operations WHERE kind='repository_import_scan'"):
-                spec = json.loads(row["spec"])
-                if spec.get("retry_of") == key:
-                    existing.append(self.row(row))
-            if existing:
-                # Repeated HTTP submissions return the same attempt, including after it
-                # completes. To deliberately retry again, submit the latest failed attempt.
-                retry = existing[0]
-                retry["retry_reused"] = True
-                return retry
-            if original["status"] not in retryable:
-                raise ValueError("repository import can be retried only after failed, interrupted, or timed-out status")
-            active = db.execute(
-                "SELECT count(*) FROM operations WHERE status IN ('queued','running') AND kind!='candidate_review_batch'").fetchone()[0]
-            if active >= 100:
-                raise ValueError("operation queue full")
-            retry_spec = {**original["spec"], "retry_of": key}
-            db.execute("INSERT INTO operations(id,kind,spec,status,created_at) VALUES(?,?,?,?,?)",
-                       (new_key, "repository_import_scan", json.dumps(retry_spec, sort_keys=True),
-                        "queued", stamp))
-            db.execute("INSERT INTO operation_events(operation_id,created_at,stage,message) VALUES(?,?,?,?)",
-                       (new_key, stamp, "retry_queued", "Explicit retry of failed repository import " + key))
-        return self.get(new_key)
 
     def create_agent_batch(self, specs):
         """Atomically queue a small, explicitly approved set of candidate reviews."""
@@ -1054,8 +1018,7 @@ class Operations:
                 raise KeyError("operation not found")
             spec = json.loads(old["spec"])
             if (old["kind"] != "agent_investigation" or old["status"] != "interrupted"
-                    or old["result_sha256"] or old["cancel_requested"]
-                    or spec.get("no_cumulative_token_ceiling") is not True):
+                    or old["result_sha256"] or old["cancel_requested"]):
                 raise ValueError("only an interrupted, result-free authorized smart investigation can be retried")
             batch_id = spec.get("smart_triage_batch_id")
             audit_id = spec.get("job_id")
@@ -2188,3 +2151,40 @@ class Operations:
         with self.store.connect() as db:
             return [{"id": r["id"], "created_at": r["created_at"], **json.loads(r["record"])}
                     for r in db.execute("SELECT * FROM case_assessments WHERE case_id=? ORDER BY id", (case_id,))]
+
+    def retry_repository_import(self, key):
+        """Queue a new attempt for a failed import without mutating its original plan."""
+        retryable = {"failed", "interrupted", "timed_out"}
+        new_key = uuid.uuid4().hex
+        stamp = now()
+        with self.store.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            original = self.row(db.execute(
+                "SELECT * FROM operations WHERE id=?", (key,)).fetchone())
+            if original["kind"] != "repository_import_scan":
+                raise ValueError("only repository import operations can be retried here")
+            existing = []
+            for row in db.execute("SELECT * FROM operations WHERE kind='repository_import_scan'"):
+                spec = json.loads(row["spec"])
+                if spec.get("retry_of") == key:
+                    existing.append(self.row(row))
+            if existing:
+                # Repeated HTTP submissions return the same attempt, including after it
+                # completes. To deliberately retry again, submit the latest failed attempt.
+                retry = existing[0]
+                retry["retry_reused"] = True
+                return retry
+            if original["status"] not in retryable:
+                raise ValueError("repository import can be retried only after failed, interrupted, or timed-out status")
+            active = db.execute(
+                "SELECT count(*) FROM operations WHERE status IN ('queued','running') AND kind!='candidate_review_batch'").fetchone()[0]
+            if active >= 100:
+                raise ValueError("operation queue full")
+            retry_spec = {**original["spec"], "retry_of": key}
+            db.execute("INSERT INTO operations(id,kind,spec,status,created_at) VALUES(?,?,?,?,?)",
+                       (new_key, "repository_import_scan", json.dumps(retry_spec, sort_keys=True),
+                        "queued", stamp))
+            db.execute("INSERT INTO operation_events(operation_id,created_at,stage,message) VALUES(?,?,?,?)",
+                       (new_key, stamp, "retry_queued", "Explicit retry of failed repository import " + key))
+        return self.get(new_key)
+

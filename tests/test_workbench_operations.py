@@ -680,7 +680,6 @@ class OperationEndToEndTests(unittest.TestCase):
 
 
 
-
 class OperationLifecycleTests(unittest.TestCase):
     """Exercise persisted operation state transitions without touching live data."""
 
@@ -693,7 +692,7 @@ class OperationLifecycleTests(unittest.TestCase):
         self.store = Store(self.settings.data_dir)
         self.ops = Operations(self.store)
 
-    def test_continuous_agent_has_no_outer_deadline_and_quota_is_explicit_failure(self):
+    def test_legacy_continuous_agent_is_bounded_and_quota_is_explicit_failure(self):
         from src.workbench.agent import ProviderQuotaError
         from src.workbench.operation_worker import (
             _commit_provider_quota_failure, _hard_deadline_seconds, _provider_quota_failure,
@@ -707,9 +706,9 @@ class OperationLifecycleTests(unittest.TestCase):
                             "timeout_seconds": 90}}
         single_shot = {"kind": "agent_investigation",
                        "spec": {"mode": "single_shot", "continuous_investigation": True}}
-        self.assertIsNone(_hard_deadline_seconds(continuous))
-        self.assertEqual(_hard_deadline_seconds(bounded), 90)
-        self.assertIsNone(_hard_deadline_seconds(single_shot))
+        self.assertEqual(_hard_deadline_seconds(continuous), 100)
+        self.assertEqual(_hard_deadline_seconds(bounded), 100)
+        self.assertEqual(_hard_deadline_seconds(single_shot), 310)
 
         result = _provider_quota_failure(
             ProviderQuotaError("Provider quota or billing limit exhausted (HTTP 429; code=insufficient_quota)"))
@@ -764,28 +763,6 @@ class OperationLifecycleTests(unittest.TestCase):
         self.assertTrue(processes)
         self.assertIsNotNone(processes[0].poll())
 
-    def test_operation_hard_timeout_terminates_child_and_records_no_result(self):
-        task = self.ops.create("investigation", {"job_id": "j" * 32, "timeout_seconds": 1})
-        claimed = self.ops.claim()
-        real_popen = subprocess.Popen
-        processes = []
-
-        def sleeper(*args, **kwargs):
-            proc = real_popen(["/usr/bin/python3", "-c", "import time; time.sleep(30)"], **kwargs)
-            processes.append(proc)
-            return proc
-
-        start = time.monotonic()
-        with patch("src.workbench.operation_worker.subprocess.Popen", side_effect=sleeper):
-            OperationWorker(self.settings).execute(claimed)
-
-        result = self.ops.get(task["id"])
-        self.assertLess(time.monotonic() - start, 5)
-        self.assertEqual(result["status"], "timed_out")
-        self.assertIsNone(result["result_sha256"])
-        self.assertTrue(processes)
-        self.assertIsNotNone(processes[0].poll())
-
     def test_authorized_smart_worker_trims_logs_without_stopping_and_accepts_large_result(self):
         task = self.ops.create("agent_investigation", {
             "job_id": "a" * 32, "report_sha256": "b" * 64,
@@ -823,7 +800,27 @@ class OperationLifecycleTests(unittest.TestCase):
         self.assertIn(b"older diagnostic output trimmed", log)
         self.assertLess(len(log), 2 * 1024 * 1024)
 
+    def test_operation_hard_timeout_terminates_child_and_records_no_result(self):
+        task = self.ops.create("investigation", {"job_id": "j" * 32, "timeout_seconds": 1})
+        claimed = self.ops.claim()
+        real_popen = subprocess.Popen
+        processes = []
 
+        def sleeper(*args, **kwargs):
+            proc = real_popen(["/usr/bin/python3", "-c", "import time; time.sleep(30)"], **kwargs)
+            processes.append(proc)
+            return proc
+
+        start = time.monotonic()
+        with patch("src.workbench.operation_worker.subprocess.Popen", side_effect=sleeper):
+            OperationWorker(self.settings).execute(claimed)
+
+        result = self.ops.get(task["id"])
+        self.assertLess(time.monotonic() - start, 5)
+        self.assertEqual(result["status"], "timed_out")
+        self.assertIsNone(result["result_sha256"])
+        self.assertTrue(processes)
+        self.assertIsNotNone(processes[0].poll())
 
 
 if __name__ == "__main__":

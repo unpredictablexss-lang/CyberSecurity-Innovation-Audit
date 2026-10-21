@@ -547,12 +547,14 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
     setPairBusy(true); setPairError(""); setPairPreview(null); setPairDisclosureOpened([]); setPairSubmissionApproved(false);
     try {
       const values = await form.validateFields(["job_id", "candidate_id", "experiment_id",
-        "case_id", "max_output_tokens"]);
+        "case_id", "max_output_tokens", "max_steps", "max_total_input_tokens", "max_total_output_tokens", "timeout_seconds"]);
       if (!values.experiment_id?.trim()) throw new Error("请先填写实验批次 ID");
       const result = await api("/operations/agent-investigations/paired/preview", {
         job_id: values.job_id, candidate_id: values.candidate_id,
         experiment_id: values.experiment_id?.trim(), case_id: values.case_id || undefined,
         max_output_tokens: values.max_output_tokens,
+          max_steps: values.max_steps, max_total_input_tokens: values.max_total_input_tokens,
+          max_total_output_tokens: values.max_total_output_tokens, timeout_seconds: values.timeout_seconds,
       });
       setPairPreview(result); setPairDisclosureOpened([]); setPairSubmissionApproved(false);
     } catch (e) { setPairError(String(e)); }
@@ -567,6 +569,8 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
         experiment_id: form.getFieldValue("experiment_id")?.trim(),
         case_id: form.getFieldValue("case_id") || undefined,
         max_output_tokens: form.getFieldValue("max_output_tokens"),
+        max_steps: form.getFieldValue("max_steps"), max_total_input_tokens: form.getFieldValue("max_total_input_tokens"),
+        max_total_output_tokens: form.getFieldValue("max_total_output_tokens"), timeout_seconds: form.getFieldValue("timeout_seconds"),
         source_submission_approved: true, consent_sha256: pairPreview.consent_sha256,
         consent_nonce: pairPreview.consent_nonce,
       });
@@ -580,12 +584,14 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
     const ticket = previewGate.current.next(); setPreviewBusy(true); setPreview(null); setPreviewError(""); setPreviewDisclosureOpened(false);
     try {
       const values = await form.validateFields(["job_id", "candidate_id", "experiment_id", "case_id", "mode",
-        "max_output_tokens"]);
+        "max_output_tokens", "max_steps", "max_total_input_tokens", "max_total_output_tokens", "timeout_seconds"]);
       const result = await api("/operations/agent-investigations/preview",
         { job_id: values.job_id, candidate_id: values.candidate_id,
           experiment_id: values.experiment_id, case_id: values.case_id,
           mode: values.mode,
           max_output_tokens: values.max_output_tokens,
+          max_steps: values.max_steps, max_total_input_tokens: values.max_total_input_tokens,
+          max_total_output_tokens: values.max_total_output_tokens, timeout_seconds: values.timeout_seconds,
           source_submission_approved: false });
       if (previewGate.current.current(ticket)) {
         setPreview(result); setPreviewDisclosureOpened(false); form.setFieldValue("source_submission_approved", false);
@@ -606,7 +612,7 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
     </Space>}
     {providerCheckError && <Alert className="section-gap" type="error" showIcon message={providerCheckError} />}
     {previewError && <Alert className="section-gap" type="error" showIcon message={previewError} />}
-    <Form name="agent-candidate-investigation" form={form} layout="vertical" initialValues={{ mode: "tool_agent", max_output_tokens: 1200, job_id: context.job_id, candidate_id: context.candidate_id, case_id: context.case_id }}
+    <Form name="agent-candidate-investigation" form={form} layout="vertical" initialValues={{ mode: "tool_agent", max_steps: 4, max_total_input_tokens: 128000, max_total_output_tokens: 4000, timeout_seconds: 240, max_output_tokens: 1200, job_id: context.job_id, candidate_id: context.candidate_id, case_id: context.case_id }}
       onValuesChange={(changed) => {
         if (!("source_submission_approved" in changed)) invalidatePreview();
         setPairPreview(null); setPairError(""); setPairDisclosureOpened([]); setPairSubmissionApproved(false);
@@ -622,6 +628,15 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
       }}>
       <Form.Item name="job_id" label="已完成扫描任务 ID" rules={[{ required: true }]}><Input readOnly /></Form.Item>
       <Form.Item name="candidate_id" label="扫描候选 ID" rules={[{ required: true }]}><Input readOnly /></Form.Item>
+      <Collapse className="section-gap" items={[{ key: "investigation-budget", label: "调查预算", children: <>
+        <Form.Item name="max_steps" label="最多只读工具调用" rules={[{ required: true }]}><InputNumber min={1} max={6} /></Form.Item>
+        <Form.Item name="max_output_tokens" label="单次输出 Token 上限" rules={[{ required: true }]}><InputNumber min={128} max={3000} /></Form.Item>
+        <Form.Item name="max_total_input_tokens" label="累计输入 Token 上限" rules={[{ required: true }]}><InputNumber min={1000} max={512000} /></Form.Item>
+        <Form.Item name="max_total_output_tokens" label="累计输出 Token 上限" rules={[{ required: true }]}><InputNumber min={512} max={12000} /></Form.Item>
+        <Form.Item name="timeout_seconds" label="调查总时限（秒）" rules={[{ required: true }]}><InputNumber min={90} max={480} /></Form.Item>
+        <Text type="secondary">达到预算时保留已收集证据与未决义务；候选不会因此变为安全。修改预算后需重新预览授权。</Text>
+      </> }]} />
+
       <Collapse className="section-gap" items={[{ key: "research-settings", label: "研究实验设置（可选）", children: <>
         <Form.Item name="experiment_id" label="实验批次 ID" extra="仅用于人工基线或模型对照实验；普通单次调查可留空。">
           <Input maxLength={64} placeholder="例如 OH-2026-10-dsoftbus-core-frame" />
@@ -772,7 +787,7 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
             <Descriptions.Item label="模型端点">{pairPreview.provider?.endpoint_host} · {pairPreview.provider?.model}</Descriptions.Item>
             <Descriptions.Item label="固定候选" span={2}>{pairPreview.candidate?.repository} @ {pairPreview.candidate?.commit} · {pairPreview.candidate?.candidate_id}</Descriptions.Item>
             <Descriptions.Item label="单轮模型研判">每候选一个 Provider 请求，单次输出上限 {pairPreview.aggregate_budget?.single_shot_max_output_tokens_per_request ?? pairPreview.arms?.[0]?.preview?.budgets?.max_output_tokens} tokens，45 秒超时</Descriptions.Item>
-            <Descriptions.Item label="跨文件工具调查">不设平台累计 Token、费用、调用次数或总时长上限；Provider 账户计费和额度适用</Descriptions.Item>
+            <Descriptions.Item label="跨文件工具调查">按授权预览的累计 Token、调用次数和总时限执行；实际账单以 Provider 为准</Descriptions.Item>
           </Descriptions>
           <Text type="secondary">整组预览 SHA-256：{pairPreview.consent_sha256}</Text>
           {pairPreview.arms?.map((arm: any) => <Card key={arm.mode} className="section-gap" size="small" title={arm.mode === "single_shot" ? "单轮模型研判" : "跨文件智能调查"}>
@@ -805,7 +820,7 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
       <Collapse className="section-gap" items={[{ key: "execution-budget", label: "单次请求设置", children: <Space wrap>
         <Form.Item name="max_output_tokens" label="单次 Provider 输出上限"><InputNumber min={128} max={3000} /></Form.Item>
       </Space> }]} />
-      <Text type="secondary">平台不设调查累计 Token、费用、模型/工具调用次数或总时长上限；服务商账户计费和额度适用。单次请求最多输出此处设置的 Token，45 秒无响应会结束该次请求。工具只读并限定在本次固定候选及扫描源码范围；连续 3 轮没有新增源码证据时会请求总结，用户也可随时取消。</Text>
+      <Text type="secondary">调查执行本次预览中的累计 Token、模型/工具调用次数和总时限；费用估计按记录的费率卡计算。单次请求最多输出此处设置的 Token，45 秒无响应会结束该次请求。工具只读并限定在本次固定候选及扫描源码范围；连续 3 轮没有新增源码证据时会请求总结，用户也可随时取消。</Text>
       <Button className="section-gap" loading={previewBusy} disabled={!ready || !context.job_id || !context.candidate_id}
         onClick={() => void requestPreview()}>预览本次将发送的数据</Button>
       {preview && <Card className="section-gap" size="small" title="外发预览：仅限本次扫描候选">

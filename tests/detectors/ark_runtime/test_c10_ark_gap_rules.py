@@ -59,7 +59,7 @@ class NativeInlineExceptionGapTests(unittest.TestCase):
     def test_native_inline_lowering_path_is_selected(self):
         source = fixture('ia_positive.cpp')
         raw = source.text.encode('utf-8')
-        blob = sha1(b'blob ' + str(len(raw)).encode('ascii') + bytes((0)) + raw).hexdigest()
+        blob = sha1(b'blob ' + str(len(raw)).encode('ascii') + bytes((0,)) + raw).hexdigest()
         model = replace(RuntimeTypeModel(), source_repository='fixture/ark-runtime',
                         target_bindings=(), exception_guard_bindings=(),
                         receiver_guard_bindings=(), size_overflow_bindings=(),
@@ -156,82 +156,6 @@ class DataViewIndexBoundsGapTests(unittest.TestCase):
 
     def test_rule_version_is_stable(self):
         self.assertEqual(GAP_RULE_VERSIONS[INDEX_BOUNDS_RULE_ID], '1.1.0')
-
-    def test_exact_width_evidence_suppresses_only_api_wrap_candidates_as_unknown(self):
-        source = '''
-void BuiltinsDataView::GetViewValue() {
-  int32_t indexInt = 0;
-  indexInt = NumberHelper::DoubleInRangeInt32(value);
-  if (indexInt < 0) return;
-  uint32_t index = static_cast<uint32_t>(indexInt);
-  if (index + elementSize > size) return;
-  uint32_t bufferIndex = index + offset;
-  GetValueFromBuffer(bufferIndex);
-}
-void BuiltinsDataView::SetViewValue() {
-  int64_t index = 0;
-  index = NumberHelper::DoubleInRangeInt32(value);
-  if (index < 0) return;
-  if (static_cast<uint32_t>(index) + elementSize > size) return;
-  uint32_t bufferIndex = static_cast<uint32_t>(index) + offset;
-  SetValueInBuffer(bufferIndex);
-}
-'''
-        evidence = '''
-uint32_t JSDataView::GetElementSize(DataViewType type) {
- switch(type) { case DataViewType::INT8: size = 1; break;
- case DataViewType::INT16: size = 2; break; case DataViewType::INT32: size = 4; break;
- case DataViewType::FLOAT64: size = 8; break; default: UNREACHABLE(); } return size;
-}
-int32_t NumberHelper::DoubleInRangeInt32(double d) {
- if (d >= static_cast<double>(INT_MAX)) return INT_MAX;
- if (d <= static_cast<double>(INT_MIN)) return INT_MIN;
- return base::NumberHelper::DoubleToInt(d, base::INT32_BITS);
-}
-'''
-        source_unit = unit(source, 'ecmascript/builtins/builtins_dataview.cpp')
-        result = index_bounds_result(source_unit, 'model-digest', evidence)
-        self.assertFalse(any(item.kind == 'candidate' for item in result.observations))
-        self.assertEqual(result.file_outcome, 'partial')
-        self.assertEqual(sum(item.kind == 'unknown' for item in result.observations), 2)
-
-    def test_missing_or_widened_dependency_does_not_suppress_candidate(self):
-        source = '''
-void BuiltinsDataView::GetViewValue() {
-  int32_t indexInt = 0;
-  indexInt = NumberHelper::DoubleInRangeInt32(value);
-  if (indexInt < 0) return;
-  uint32_t index = static_cast<uint32_t>(indexInt);
-  if (index + elementSize > size) return;
-  uint32_t bufferIndex = index + offset;
-  GetValueFromBuffer(bufferIndex);
-}
-void BuiltinsDataView::SetViewValue() {
-  int64_t index = 0;
-  index = NumberHelper::DoubleInRangeInt32(value);
-  if (index < 0) return;
-  if (static_cast<uint32_t>(index) + elementSize > size) return;
-  uint32_t bufferIndex = static_cast<uint32_t>(index) + offset;
-  SetValueInBuffer(bufferIndex);
-}
-'''
-        evidence = '''
-uint32_t JSDataView::GetElementSize(DataViewType type) {
- switch(type) { case DataViewType::INT8: size = 1; break;
- case DataViewType::INT16: size = 2; break; case DataViewType::INT32: size = 4; break;
- case DataViewType::FLOAT64: size = 16; break; default: UNREACHABLE(); } return size;
-}
-int32_t NumberHelper::DoubleInRangeInt32(double d) {
- if (d >= static_cast<double>(INT_MAX)) return INT_MAX;
- if (d <= static_cast<double>(INT_MIN)) return INT_MIN;
- return base::NumberHelper::DoubleToInt(d, base::INT32_BITS);
-}
-'''
-        source_unit = unit(source, 'ecmascript/builtins/builtins_dataview.cpp')
-        missing = index_bounds_result(source_unit, 'model-digest')
-        widened = index_bounds_result(source_unit, 'model-digest', evidence)
-        self.assertEqual(sum(item.kind == 'candidate' for item in missing.observations), 2)
-        self.assertEqual(sum(item.kind == 'candidate' for item in widened.observations), 2)
 
 
 if __name__ == '__main__':

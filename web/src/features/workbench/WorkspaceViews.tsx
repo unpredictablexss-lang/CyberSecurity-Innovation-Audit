@@ -53,6 +53,12 @@ function severityBasisHint(row: any) {
     return "检测器给出的初步风险级别；并非运行时漏洞确认或正式 CVSS 评级。";
   return "当前候选缺少足够的类型或影响信息，因此暂未分级；不代表低风险。";
 }
+function riskDetailsAction(row: any) {
+  if (row.risk_tier === "high_confidence_candidate") {
+    return row.confidence_basis === "ai_source_evidence" ? "查看 AI 理由与证据" : "查看复核依据";
+  }
+  return "查看证据与下一步";
+}
 export function ScanTable({ jobs, compact = false }: { jobs: any[]; compact?: boolean }) {
   return <Table<any> rowKey="id" size={compact ? "small" : "middle"} dataSource={compact ? jobs.slice(0, 4) : jobs} pagination={compact ? false : { pageSize: 10 }} scroll={{ x: 650 }} columns={[
     { title: "仓库 / 扫描版本", render: (_, j) => <><a onClick={() => go("/tasks/" + j.id)}>{j.spec.repository}</a><div className="muted"><Hash value={j.spec.commit} /></div></> },
@@ -346,7 +352,7 @@ export function SettingsView({ repos, detectors, health, refresh, tab }: { repos
           { key: "health", label: "API", children: health?.status || "未知" },
           { key: "worker", label: "扫描 Worker", children: health ? health.worker_running ? "运行中" : "未运行" : "未知" },
           { key: "concurrency", label: "扫描并发上限", children: health?.limits?.concurrent_scans ?? "未知" },
-                { key: "agent", label: "真实模型", children: health?.capabilities?.agent ? "服务宣告可用，需专项验收" : "未连接；只读调查可单独使用" },
+          { key: "agent", label: "真实模型", children: health?.capabilities?.agent ? "服务宣告可用，需专项验收" : "未连接；只读调查可单独使用" },
           { key: "validation", label: "产品运行时验证", children: health?.capabilities?.runtime_validation ? "服务宣告可用，需核对证据" : "未验收；组件 Harness 单独记录" },
         ]} /><Paragraph type="secondary">模型服务凭据和连接测试位于“Agent / LLM”设置页；此处仅展示 Worker 运行状态。</Paragraph>
         <Button onClick={() => go("/operations")}>更多操作</Button>

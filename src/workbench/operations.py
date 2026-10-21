@@ -1,3 +1,4 @@
+from datetime import datetime
 """Bounded operation planning and read-only evidence tools shared by API/Workers."""
 from collections import defaultdict
 from datetime import datetime, timedelta
@@ -922,3 +923,4 @@ def execute(settings, store, ops, task):
                 "validated_vulnerability": 0,
                 "limitations": ["Branch endpoint comparison is candidate-level observation; it does not prove vulnerability introduction, remediation, affected versions, or product impact."]}
     raise ValueError("unimplemented operation")
+

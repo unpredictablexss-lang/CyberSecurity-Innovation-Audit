@@ -40,10 +40,11 @@ def _is_continuous_tool_agent(task):
 
 
 def _hard_deadline_seconds(task):
-    """Authorized Agent tasks rely on cancellation and per-request timeouts."""
+    """Bound Agent runtime, allowing ten seconds for child cleanup."""
     spec = task.get("spec") if isinstance(task.get("spec"), dict) else {}
-    if _is_continuous_tool_agent(task):
-        return None
+    if task.get("kind") == "agent_investigation":
+        from .agent import bounded_agent_spec
+        return bounded_agent_spec(spec)["timeout_seconds"] + 10
     return spec.get("timeout_seconds", 600)
 
 
@@ -57,7 +58,7 @@ def _provider_quota_failure(exc):
 
 def _commit_provider_quota_failure(ops, task, result):
     failure = result.get("_operation_error") if isinstance(result, dict) else None
-    if (_is_continuous_tool_agent(task)
+    if (task.get("kind") == "agent_investigation"
             and isinstance(failure, dict)
             and failure.get("code") == "provider_quota_exhausted"
             and isinstance(failure.get("message"), str)):
@@ -66,32 +67,6 @@ def _commit_provider_quota_failure(ops, task, result):
         return True
     return False
 
-
-def _authorized_smart_batch(store, ops, task):
-    spec = task.get("spec") if isinstance(task.get("spec"), dict) else {}
-    job_id = spec.get("job_id")
-    report_sha256 = spec.get("report_sha256")
-    authorization_sha256 = spec.get("triage_authorization_sha256")
-    batch_id = spec.get("smart_triage_batch_id")
-    if (task.get("kind") != "agent_investigation"
-            or not (spec.get("no_cumulative_token_ceiling") is True or spec.get("continuous_investigation") is True)
-            or not all(isinstance(value, str) and value for value in
-                       (job_id, report_sha256, authorization_sha256, batch_id))):
-        return False
-    try:
-        authorization = store.triage_authorization(job_id)
-        job = store.job(job_id)
-        if (not authorization or authorization.get("revoked")
-                or authorization.get("consent_sha256") != authorization_sha256
-                or job.get("report_sha256") != report_sha256):
-            return False
-        return any(batch.get("id") == batch_id
-                   and batch.get("authorization_sha256") == authorization_sha256
-                   and task["id"] in (batch.get("operation_ids", [])
-                                      + batch.get("r2_operation_ids", []))
-                   for batch in ops.triage_batches_for_job(job_id, report_sha256))
-    except (KeyError, ValueError):
-        return False
 
 class OperationWorker:
     def __init__(self, settings, validation=False):
@@ -105,6 +80,8 @@ class OperationWorker:
         folder.mkdir(parents=True, exist_ok=True)
         proc = None
         start = time.monotonic()
+        spec = task.get("spec") if isinstance(task.get("spec"), dict) else {}
+        uncapped_smart = _authorized_smart_batch(self.store, self.ops, task)
         try:
             with (folder / "worker.log").open("wb") as log:
                 proc = subprocess.Popen([sys.executable, "-m", "src.workbench.operation_worker",
@@ -116,7 +93,10 @@ class OperationWorker:
                                 task.get("kind") == "agent_investigation"
                                 or _is_consented_joint_comparison(task, self.ops)))),
                          "OHSCANNER_DATA": str(self.settings.data_dir),
-                         "OHSCANNER_TARGET_ROOTS": os.pathsep.join(map(str, self.settings.target_roots))})
+                         "OHSCANNER_TARGET_ROOTS": os.pathsep.join(map(str, self.settings.target_roots)),
+                         "OHSCANNER_REPOSITORY_CACHE_ROOTS": os.pathsep.join(map(str, self.settings.repository_cache_roots)),
+                         "OHSCANNER_REPOSITORY_CACHE_MAX_BYTES": str(self.settings.repository_cache_max_bytes),
+                         "OHSCANNER_REPOSITORY_CACHE_MIN_FREE_BYTES": str(self.settings.repository_cache_min_free_bytes)})
                 while proc.poll() is None:
                     if self.ops.get(task["id"])["cancel_requested"]:
                         self.ops.cancel(task["id"])
@@ -126,14 +106,17 @@ class OperationWorker:
                     hard_deadline = _hard_deadline_seconds(task)
                     if hard_deadline is not None and time.monotonic() - start > hard_deadline:
                         Worker.terminate(proc)
-                        for key in task["spec"].get("scan_ids", []):
+                        for key in spec.get("scan_ids", []):
                             self.store.cancel(key)
                         self.ops.finish(task["id"], state="timed_out", error="Operation hard deadline exceeded")
                         return
-                    if (folder / "worker.log").stat().st_size > 10 * 1024 * 1024:
-                        if not _authorized_smart_batch(self.store, self.ops, task):
+                    log_path = folder / "worker.log"
+                    if log_path.stat().st_size > 10 * 1024 * 1024:
+                        if not uncapped_smart:
                             raise ValueError("operation log quota exceeded")
-                        with (folder / "worker.log").open("r+b") as log:
+                        # Retain a bounded diagnostic tail without stopping a
+                        # source-authorized smart investigation on cumulative log bytes.
+                        with log_path.open("r+b") as log:
                             log.seek(-1024 * 1024, os.SEEK_END)
                             tail = log.read()
                             log.seek(0)
@@ -143,7 +126,7 @@ class OperationWorker:
             if proc.returncode:
                 raise RuntimeError("Operation child exited " + str(proc.returncode) + "; inspect log")
             data = (folder / "child-result.json").read_bytes()
-            if len(data) > 16 * 1024 * 1024 and not _authorized_smart_batch(self.store, self.ops, task):
+            if len(data) > 16 * 1024 * 1024 and not uncapped_smart:
                 raise ValueError("operation result quota exceeded")
             result = json.loads(data)
             if _commit_provider_quota_failure(self.ops, task, result):
@@ -221,13 +204,19 @@ def main():
             remove_agent_provider_environment(os.environ)
         memory = task["spec"].get("memory_mb", 2048) * 1024 * 1024
         resource.setrlimit(resource.RLIMIT_AS, (memory, memory))
-        resource.setrlimit(resource.RLIMIT_FSIZE, (64 * 1024 * 1024,) * 2)
+        if _authorized_smart_batch(store, ops, task):
+            # Result size follows the finite fixed-source investigation; do not
+            # apply an aggregate output-file quota to the explicitly authorized path.
+            resource.setrlimit(resource.RLIMIT_FSIZE,
+                               (resource.RLIM_INFINITY, resource.RLIM_INFINITY))
+        else:
+            resource.setrlimit(resource.RLIMIT_FSIZE, (64 * 1024 * 1024,) * 2)
         from .operations import execute
         child_started = time.monotonic()
         try:
             result = execute(settings, store, ops, task)
         except Exception as exc:
-            if _is_continuous_tool_agent(task):
+            if task.get("kind") == "agent_investigation":
                 result = _provider_quota_failure(exc)
                 if result is None:
                     raise
@@ -247,6 +236,36 @@ def main():
         if args.validation:
             remove_agent_provider_environment(os.environ)
         OperationWorker(settings, args.validation).run(args.once)
+
+
+
+
+
+def _authorized_smart_batch(store, ops, task):
+    spec = task.get("spec") if isinstance(task.get("spec"), dict) else {}
+    job_id = spec.get("job_id")
+    report_sha256 = spec.get("report_sha256")
+    authorization_sha256 = spec.get("triage_authorization_sha256")
+    batch_id = spec.get("smart_triage_batch_id")
+    if (task.get("kind") != "agent_investigation"
+            or spec.get("no_cumulative_token_ceiling") is not True
+            or not all(isinstance(value, str) and value for value in
+                       (job_id, report_sha256, authorization_sha256, batch_id))):
+        return False
+    try:
+        authorization = store.triage_authorization(job_id)
+        job = store.job(job_id)
+        if (not authorization or authorization.get("revoked")
+                or authorization.get("consent_sha256") != authorization_sha256
+                or job.get("report_sha256") != report_sha256):
+            return False
+        return any(batch.get("id") == batch_id
+                   and batch.get("authorization_sha256") == authorization_sha256
+                   and task["id"] in (batch.get("operation_ids", [])
+                                      + batch.get("r2_operation_ids", []))
+                   for batch in ops.triage_batches_for_job(job_id, report_sha256))
+    except (KeyError, ValueError):
+        return False
 
 
 if __name__ == "__main__":

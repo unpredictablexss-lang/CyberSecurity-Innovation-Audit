@@ -347,7 +347,7 @@ def create_app(settings=None):
             raise ValueError("Audit workflow changed since preview; refresh the plan before scanning")
         spec["audit_mode"] = body.audit_mode
         spec["max_r2_candidates"] = body.max_r2_candidates
-        spec["max_cost_usd"] = None
+        spec["max_cost_usd"] = body.max_cost_usd
         spec["workflow_sha256"] = workflow_sha256
         if body.auto_triage:
             if body.audit_mode != "standard_review":

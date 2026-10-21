@@ -112,6 +112,8 @@ def _git(repo: Path, *args: str, timeout: int = 30) -> bytes:
     )
     if process.returncode:
         message = process.stderr.decode("utf-8", "replace")[:300]
+        if "lazy fetching disabled" in message.lower():
+            raise ValueError("missing_local_git_object: offline-only read (no fetch). " + message)
         if args and args[0] == "cat-file" and args[1] == "blob":
             raise ValueError("missing_local_git_object_or_unreadable_blob: "
                              + args[2] + "; offline-only read (no fetch). " + message)

@@ -1,4 +1,3 @@
-import { caseAgentEvidencePresentation, caseRemediationDraftPresentation, casePocPlanPresentation } from "../features/workbench/caseReport.js";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Alert,
@@ -43,6 +42,7 @@ import {
 import "antd/dist/reset.css";
 import { api, artifact, terminal } from "../api";
 import { State, Hash, go, CodeView, Header, labels } from "../components";
+import { caseAgentEvidencePresentation, caseRemediationDraftPresentation, casePocPlanPresentation } from "../features/workbench/caseReport.js";
 import CaseEvidenceReport from "../features/cases/CaseEvidenceReport";
 const { Text, Title, Paragraph } = Typography;
 const caseOutcomeLabels: Record<string, string> = {

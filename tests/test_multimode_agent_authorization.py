@@ -40,7 +40,7 @@ class MultiEndpointAuthorizationTests(unittest.TestCase):
         self.tmp.cleanup()
 
     @staticmethod
-    def fake_preview(plan, workflow, paths, candidates, nonce, provider, r2):
+    def fake_preview(plan, workflow, paths, candidates, nonce, provider, r2, *, max_cost_usd=None):
         digest = hashlib.sha256((plan["plan_sha256"] + workflow + nonce).encode()).hexdigest()
         return {"eligible": True, "consent_sha256": digest, "consent_nonce": nonce,
                 "manifest": {"binding": {"plan_sha256": plan["plan_sha256"],
@@ -176,7 +176,7 @@ class MultiEndpointAuthorizationTests(unittest.TestCase):
         explicit_no_deep_review = RangeRequest.model_validate({
             **base, "auto_triage": True, "max_r2_candidates": 0})
         self.assertEqual(explicit_no_deep_review.max_r2_candidates, 0)
-        for cost in ("5.00", "abc", "0x55", "5.2.1", "-1", "5 USD"):
+        for cost in ("0", "abc", "0x55", "5.2.1", "-1", "5 USD"):
             with self.subTest(cost=cost), self.assertRaises(Exception):
                 RangeRequest.model_validate({**base, "max_cost_usd": cost})
         with self.assertRaises(Exception):

@@ -214,18 +214,8 @@ def run_all_with_coverage(context: ScanContext, registry: DetectorRegistry):
         raise ValueError("source unit manifest does not match ScanRequest")
     reports, sidecar = [], {"schema_version": 1, "detectors": {}}
     for detector in registry.detectors():
-        supported = tuple(unit for unit in context.units
-                          if unit.language in detector.supported_languages)
-        selector = getattr(detector, "select_applicable_units", None)
-        if callable(selector):
-            applicable = tuple(selector(context, supported))
-            allowed = {id(unit) for unit in supported}
-            if (any(id(unit) not in allowed for unit in applicable)
-                    or len({id(unit) for unit in applicable}) != len(applicable)
-                    or any(unit.language not in detector.supported_languages for unit in applicable)):
-                raise ValueError("detector applicability selector returned duplicate, out-of-context, or unsupported units")
-        else:
-            applicable = supported
+        applicable = tuple(unit for unit in context.units
+                           if unit.language in detector.supported_languages)
         selected = applicable
         skipped = {}
         run = None
