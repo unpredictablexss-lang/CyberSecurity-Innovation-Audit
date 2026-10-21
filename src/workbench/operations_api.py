@@ -3179,6 +3179,10 @@ def install_routes(app: FastAPI, settings, store):
         return ops.cancel(key)
 
     @router.get("/cases/{case_id}/report.json")
+    def download_case_report_json(case_id: str):
+        return Response(_case_report_exports(case_id)["json"], media_type="application/json")
+
+
     def case_report_json(case_id: str):
         links = _case_links(store, case_id)
         if not links:
@@ -3664,12 +3668,13 @@ def install_routes(app: FastAPI, settings, store):
         manifest = {
             "schema_version": 1,
             "case_id": case_id,
+            "scope": {"validated_vulnerability": data["validated_vulnerability"]},
             "hash_contract": "SHA-256 over UTF-8 bytes; report.json uses canonical JSON v1 (sorted keys, compact separators, no ASCII escaping).",
             "artifacts": {
                 "report.json": {"sha256": hashlib.sha256(canonical_json).hexdigest(),
-                                "serialization": "canonical-json-v1"},
-                "report.md": {"sha256": hashlib.sha256(markdown.encode("utf-8")).hexdigest()},
-                "report.html": {"sha256": hashlib.sha256(html_document.encode("utf-8")).hexdigest()},
+                                "serialization": "canonical-json-v1", "size_bytes": len(canonical_json)},
+                "report.md": {"sha256": hashlib.sha256(markdown.encode("utf-8")).hexdigest(), "size_bytes": len(markdown.encode("utf-8"))},
+                "report.html": {"sha256": hashlib.sha256(html_document.encode("utf-8")).hexdigest(), "size_bytes": len(html_document.encode("utf-8"))},
             },
             "source_bindings": [{
                 "job_id": row["job_id"],
