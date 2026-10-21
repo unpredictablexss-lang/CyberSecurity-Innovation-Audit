@@ -1,0 +1,50 @@
+=================================================================
+==513==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x741eebfe0030 at pc 0x60101a56d3f8 bp 0x7fff2dd5b2b0 sp 0x7fff2dd5b2a8
+WRITE of size 8 at 0x741eebfe0030 thread T0
+    #0 0x60101a56d3f7 in ReadRemoteObjectArray(Parcel&, int*) /mnt/d/openHarmonyScanner/worktrees/b-ipc-closeout-20261020/research/deliveries/ipc/data06_runtime_poc_20261021/array_width_poc.cpp:74:19
+    #1 0x60101a56d1a1 in main /mnt/d/openHarmonyScanner/worktrees/b-ipc-closeout-20261020/research/deliveries/ipc/data06_runtime_poc_20261021/array_width_poc.cpp:97:38
+    #2 0x77feecd1dfb9  (/usr/lib/x86_64-linux-gnu/libc.so.6+0x29fb9) (BuildId: 9bee4eb8329d9d71d9f59a08465751cbc1a1f7cf)
+    #3 0x77feecd1e0d6 in __libc_start_main (/usr/lib/x86_64-linux-gnu/libc.so.6+0x2a0d6) (BuildId: 9bee4eb8329d9d71d9f59a08465751cbc1a1f7cf)
+    #4 0x60101a482370 in _start (/mnt/d/openHarmonyScanner/worktrees/b-ipc-closeout-20261020/research/deliveries/ipc/data06_runtime_poc_20261021/artifacts/vulnerable+0x2d370) (BuildId: d12d41c69a5637cddef6913032a9015ce230fcc8)
+
+0x741eebfe0034 is located 0 bytes after 4-byte region [0x741eebfe0030,0x741eebfe0034)
+allocated by thread T0 here:
+    #0 0x60101a527918 in malloc (/mnt/d/openHarmonyScanner/worktrees/b-ipc-closeout-20261020/research/deliveries/ipc/data06_runtime_poc_20261021/artifacts/vulnerable+0xd2918) (BuildId: d12d41c69a5637cddef6913032a9015ce230fcc8)
+    #1 0x60101a56d2c8 in ReadRemoteObjectArray(Parcel&, int*) /mnt/d/openHarmonyScanner/worktrees/b-ipc-closeout-20261020/research/deliveries/ipc/data06_runtime_poc_20261021/array_width_poc.cpp:53:45
+    #2 0x60101a56d1a1 in main /mnt/d/openHarmonyScanner/worktrees/b-ipc-closeout-20261020/research/deliveries/ipc/data06_runtime_poc_20261021/array_width_poc.cpp:97:38
+    #3 0x77feecd1dfb9  (/usr/lib/x86_64-linux-gnu/libc.so.6+0x29fb9) (BuildId: 9bee4eb8329d9d71d9f59a08465751cbc1a1f7cf)
+    #4 0x7fff2dd5d01e  (<unknown module>)
+
+SUMMARY: AddressSanitizer: heap-buffer-overflow /mnt/d/openHarmonyScanner/worktrees/b-ipc-closeout-20261020/research/deliveries/ipc/data06_runtime_poc_20261021/array_width_poc.cpp:74:19 in ReadRemoteObjectArray(Parcel&, int*)
+Shadow bytes around the buggy address:
+  0x741eebfdfd80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x741eebfdfe00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x741eebfdfe80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x741eebfdff00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x741eebfdff80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+=>0x741eebfe0000: fa fa 04 fa fa fa[04]fa fa fa fa fa fa fa fa fa
+  0x741eebfe0080: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x741eebfe0100: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x741eebfe0180: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x741eebfe0200: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x741eebfe0280: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+==513==ABORTING

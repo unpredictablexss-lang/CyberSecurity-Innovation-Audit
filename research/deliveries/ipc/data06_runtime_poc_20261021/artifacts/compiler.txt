@@ -1,0 +1,4 @@
+Debian clang version 21.1.8 (10)
+Target: x86_64-pc-linux-gnu
+Thread model: posix
+InstalledDir: /usr/lib/llvm-21/bin
