@@ -1,0 +1,19 @@
+{
+  "harness": "isolated component arithmetic + Node/V8 language control",
+  "ark_runtime_execution": "not_run",
+  "number_offset": "18446744073709549568",
+  "old_source_model": {
+    "wrappedSum": 2048,
+    "first": 2048,
+    "limit": 6144,
+    "writes": 4096
+  },
+  "fixed_guard": "RangeError before writes",
+  "native_engine_control": {
+    "outcome": "RangeError",
+    "offsetConversions": 1,
+    "lengthReads": 1,
+    "indexedReads": 0
+  },
+  "backing_store_oob": false
+}
