@@ -521,7 +521,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
       {progressiveTriage && progressiveTriage.state !== "not_available" && <Card className="section-gap" title="渐进式审计 · L0-L3 计划与进度">
         <Alert className="section-gap" type="info" showIcon
           message={progressiveTriage.state === "planned_by_parent_operation" ? "候选排序由父审计统一计算" : progressiveTriage.state === "awaiting_static_report" ? "等待固定版本静态报告" : progressiveTriage.state === "ranked_static_only" ? "静态审计：仅本地归并和排序，不会调用模型" : "L0/L1 本地计划；所有原始候选继续保留"}
-          description={progressiveTriage.state === "planned_by_parent_operation" ? "这是多端点审计中的一个固定端点；跨版本分组和共享预算请查看父审计计划。" : "分组和优先级只决定人工复核顺序与后续授权入口，不会把候选判为误报、安全或已确认漏洞。"} />
+          description={progressiveTriage.state === "planned_by_parent_operation" ? "这是多端点审计中的一个固定端点；跨版本分组和候选范围请查看父审计计划。" : "分组和优先级只决定人工复核顺序与后续授权入口，不会把候选判为误报、安全或已确认漏洞。"} />
         {progressiveTriage.state !== "planned_by_parent_operation" && job.spec?.audit_mode !== "static_only" &&
           <div className="section-gap"><ProgressiveQuickScreenBatchAction auditOperationId={id}
             enabled={Boolean(progressiveTriage.ranking?.selected_group_count)

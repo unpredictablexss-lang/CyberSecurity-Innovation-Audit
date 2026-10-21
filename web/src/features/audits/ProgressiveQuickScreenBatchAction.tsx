@@ -60,10 +60,8 @@ export default function ProgressiveQuickScreenBatchAction({ auditOperationId, en
           <Descriptions.Item label="Provider / 模型">{preview.provider?.provider || preview.provider?.endpoint_host} · {preview.provider?.model}</Descriptions.Item>
           <Descriptions.Item label="冻结策略版本">{preview.progressive_policy?.revision} · {preview.progressive_policy?.policy_sha256}</Descriptions.Item>
           <Descriptions.Item label="L1 选中 / 本次执行">{preview.selected_group_count} / {preview.scheduled_group_count} 组</Descriptions.Item>
-          <Descriptions.Item label="任务模型调用上限">{preview.budget_limits?.max_model_calls_per_audit}</Descriptions.Item>
-          <Descriptions.Item label="任务 Token 上限">输入 {preview.budget_limits?.max_input_tokens_per_audit} / 输出 {preview.budget_limits?.max_output_tokens_per_audit}</Descriptions.Item>
-          <Descriptions.Item label="AI 时间上限">{preview.budget_limits?.max_ai_wall_seconds} 秒</Descriptions.Item>
-          <Descriptions.Item label="美元策略">${preview.budget_limits?.max_cost_usd}（估算提示，不是 Provider 账单硬封顶）</Descriptions.Item>
+          <Descriptions.Item label="累计调查额度">平台不设 Token、调用次数、时长或费用上限</Descriptions.Item>
+          <Descriptions.Item label="计费与停止方式">按 Provider 账户实际额度计费；可随时取消</Descriptions.Item>
           <Descriptions.Item label="授权摘要 SHA-256" span={2}>{preview.consent_sha256}</Descriptions.Item>
         </Descriptions>
         {preview.skipped?.length > 0 && <Alert className="section-gap" type="info" showIcon
@@ -78,7 +76,7 @@ export default function ProgressiveQuickScreenBatchAction({ auditOperationId, en
             <pre className="raw section-gap" style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere", maxHeight: 260, overflow: "auto" }}>{item.excerpt}</pre>
           </section>)}
         </div>
-        <Paragraph type="secondary">L3 深度 Agent 仍需逐项新的源码范围预览和授权。USD 预算是估算值；本地 Token、调用数、并发和时间门会在 Worker 请求前执行。</Paragraph>
+        <Paragraph type="secondary">L3 深度 Agent 仍需逐项新的源码范围预览和授权。平台会记录用量；服务商额度、网络或 API 错误可能导致请求失败，人工取消也会停止任务。</Paragraph>
         <Checkbox checked={approved} onChange={(event) => setApproved(event.target.checked)}>
           我已逐项检查上面列出的全部固定版本源码摘录、模型和预算，并明确允许本任务发送这些内容。
         </Checkbox>

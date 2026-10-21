@@ -12,12 +12,12 @@ DETECTOR_ID = "ohscanner.ark.runtime.type_safety"
 
 
 class ArkRuntimeCatalogTests(unittest.TestCase):
-    def test_static_candidate_is_explicit_and_default_off(self):
-        self.assertNotIn(DETECTOR_ID, default_detector_ids())
+    def test_static_candidate_is_included_in_default_research_scan(self):
+        self.assertIn(DETECTOR_ID, default_detector_ids())
         metadata = catalog_metadata()[DETECTOR_ID]
         self.assertEqual(metadata["kind"], "research_candidate")
-        self.assertFalse(metadata["default_enabled"])
-        self.assertIn("explicit_selection_required", metadata["admission_reason"])
+        self.assertTrue(metadata.get("default_enabled", True))
+        self.assertIn("candidate_only", metadata["admission_reason"])
         self.assertEqual(build_registry((DETECTOR_ID,)).detectors()[0].detector_id, DETECTOR_ID)
 
 

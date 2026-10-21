@@ -4,14 +4,9 @@ import { Alert, Button, Card, Col, Input, InputNumber, Radio, Row, Space, Spin, 
 const { Paragraph, Text } = Typography;
 const API_PATH = "/api/v1/agent/triage-policy";
 const LIMIT_FIELDS: Array<{ key: string; label: string; min: number; max: number; unit?: string }> = [
-  { key: "quick_screen_groups_per_audit", label: "快速研判组数（整个任务）", min: 1, max: 10_000, unit: "组" },
-  { key: "deep_groups_per_audit", label: "深度 Agent 组数（整个任务）", min: 0, max: 1_000, unit: "组" },
-  { key: "max_tool_steps_per_group", label: "跨文件工具步骤（每个深度组）", min: 1, max: 32, unit: "步" },
+  { key: "quick_screen_groups_per_audit", label: "自动快筛候选组数", min: 1, max: 10_000, unit: "组" },
+  { key: "deep_groups_per_audit", label: "可进入深度调查的候选组数", min: 0, max: 1_000, unit: "组" },
   { key: "max_model_concurrency", label: "模型请求并发", min: 1, max: 8, unit: "路" },
-  { key: "max_ai_wall_seconds", label: "AI 调查时间预算", min: 60, max: 14_400, unit: "秒" },
-  { key: "max_model_calls_per_audit", label: "模型调用参考上限（整个任务）", min: 1, max: 10_000, unit: "次" },
-  { key: "max_input_tokens_per_audit", label: "输入 Token 参考上限（整个任务）", min: 1_024, max: 2_000_000, unit: "tokens" },
-  { key: "max_output_tokens_per_audit", label: "输出 Token 参考上限（整个任务）", min: 256, max: 500_000, unit: "tokens" },
 ];
 
 type Limits = Record<string, number | string>;
@@ -114,8 +109,8 @@ export default function IntelligentAuditPolicySettings() {
 
   if (loading) return <Card><Spin /></Card>;
   return <Space direction="vertical" size="middle" style={{ width: "100%" }}>
-    <Alert type="info" showIcon message="L0–L3 渐进式审计策略已接入"
-      description={`运行状态：L0/L1 ${String(integration.grouping_and_ranking || "unknown")}；Worker 门禁 ${String(integration.worker_enforcement || "unknown")}；L2 ${String(integration.quick_screen_executor || "unknown")}；L3 ${String(integration.deep_agent_executor || "unknown")}；任务账本 ${String(integration.task_budget_ledger || "unknown")}。静态审计仍只做本地分析；L2/L3 必须先预览固定源码范围并取得任务级授权。美元预算用于调度参考，Provider 账单没有硬封顶。`} />
+    <Alert type="info" showIcon message="智能审计使用范围"
+      description={`运行状态：L0/L1 ${String(integration.grouping_and_ranking || "unknown")}；Worker 门禁 ${String(integration.worker_enforcement || "unknown")}；L2 ${String(integration.quick_screen_executor || "unknown")}；L3 ${String(integration.deep_agent_executor || "unknown")}。静态审计只做本地分析；L2/L3 会先展示固定源码范围并要求授权。平台不设累计 Token、模型调用或调查时长上限；真实额度和费用由模型服务商账户决定，调查可随时取消。`} />
     {error && <Alert type="error" showIcon message="策略读取或保存失败" description={error} />}
     <Card title="选择策略" extra={<Tag color={updatedAt ? "green" : "blue"}>{updatedAt ? `已保存 · 修订 ${revision}` : "使用默认标准策略"}</Tag>}>
       <Radio.Group value={profile} onChange={(event) => selectProfile(event.target.value)}>
@@ -127,11 +122,10 @@ export default function IntelligentAuditPolicySettings() {
         </Space>
       </Radio.Group>
       <Paragraph type="secondary" style={{ marginTop: 14, marginBottom: 0 }}>
-        配额针对一次完整审计任务；时间范围、分支对比和版本矩阵不得按端点重复发放。
-        初始预设来自产品建议，尚未通过真实 Provider 费用和召回实验验证。
+        预设只调整自动进入 L2/L3 的候选范围与请求并发，不限制单次调查累计 Token、模型调用或总时长。
       </Paragraph>
     </Card>
-    <Card title="资源预算" extra={isCustom ? <Tag>自定义</Tag> : <Tag>{profile}</Tag>}>
+    <Card title="候选范围与并发" extra={isCustom ? <Tag>自定义</Tag> : <Tag>{profile}</Tag>}>
       <Row gutter={[16, 8]}>
         {LIMIT_FIELDS.map(({ key, label, min, max, unit }) => (
           <Col xs={24} md={12} key={key}>
@@ -143,7 +137,7 @@ export default function IntelligentAuditPolicySettings() {
           </Col>
         ))}
         <Col xs={24} md={12}>
-          <Text>美元预算建议值（软预算）</Text>
+          <Text>费用估算参考（不触发停止）</Text>
           <Input style={{ marginTop: 6 }} disabled={!isCustom || saving} value={String(limits.max_cost_usd || "")}
             addonAfter="USD" onChange={(event) => editLimit("max_cost_usd", event.target.value)} />
         </Col>
@@ -153,7 +147,7 @@ export default function IntelligentAuditPolicySettings() {
         <Text>启用漏洞家族覆盖配额</Text>
       </Space>
       <Paragraph type="secondary" style={{ marginTop: 12 }}>
-        日期、区间、分支和矩阵操作结果会按任务冻结的策略分组和排序；L2 快筛与 L3 深度调查使用任务共享账本限制模型调用和 Token 额度。未进入模型预算的静态候选仍保留供人工查看，不会变成误报或安全结论。
+        任务会冻结候选分组、自动快筛范围和并发策略。账本记录模型用量供查看，不会因累计 Token、调用次数、时长或费用停止调查；未进入自动调查范围的静态候选仍保留供人工查看，不会因此变成误报或安全结论。
       </Paragraph>
       <Space>
         <Button type="primary" onClick={() => void save()} loading={saving} disabled={saving || (isCustom && !changedLimitsValid)}>保存策略</Button>

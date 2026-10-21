@@ -153,7 +153,7 @@ class ProgressiveDeepAgentBatchTests(unittest.TestCase):
         self.assertEqual(len(events), 2)
         self.assertTrue(all(row[0] == task["id"] for row in events))
 
-    def test_budget_gate_stops_and_preserves_remaining_group_as_candidate(self):
+    def test_provider_quota_stops_and_preserves_remaining_group_as_candidate(self):
         audit_id, l2_id, l2, l2_result, task = make_task()
 
         class FakeOps:
@@ -177,11 +177,11 @@ class ProgressiveDeepAgentBatchTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory, \
                 patch("src.workbench.agent.ProviderConfig.from_env", return_value=provider), \
                 patch("src.workbench.progressive_triage.deep_agent_operation.execute_progressive_deep_agent",
-                      side_effect=ValueError("task-wide model-call budget exhausted")) as execute:
+                      side_effect=ValueError("Provider quota or billing limit exhausted")) as execute:
             result = execute_progressive_deep_agent_batch(
                 SimpleNamespace(data_dir=Path(directory)), object(), FakeOps(), task)
         self.assertEqual(execute.call_count, 1)
-        self.assertEqual(result["stop_reason"], "budget_exhausted")
+        self.assertEqual(result["stop_reason"], "provider_quota_exhausted")
         self.assertEqual(result["not_started"], [{"group_id": "group-2", "state": "not_started_candidate"}])
         self.assertFalse(result["candidate_disposition_changed"])
 

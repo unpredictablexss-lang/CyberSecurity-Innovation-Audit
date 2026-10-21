@@ -328,7 +328,9 @@ def run_quick_screen(provider: Any, group: dict[str, Any], evidence: Any,
         result["report_sha256"] = authorization["report_sha256"]
         return result
     except Exception as error:
-        code = str(error) if str(error) in {
+        from ..agent import ProviderQuotaError
+        code = ("provider_quota_exhausted" if isinstance(error, ProviderQuotaError) else
+                str(error) if str(error) in {
             "provider_response_shape_invalid", "provider_refused",
             "provider_response_incomplete", "provider_usage_missing_or_invalid",
             "quick_screen_schema_invalid", "quick_screen_binding_invalid",
@@ -337,7 +339,7 @@ def run_quick_screen(provider: Any, group: dict[str, Any], evidence: Any,
             "quick_screen_missing_obligations_invalid", "quick_screen_next_tool_hints_invalid",
             "quick_screen_uncertainties_invalid", "quick_screen_citation_invalid",
             "quick_screen_refutation_needs_evidence",
-        } else "provider_error_unknown_outcome"
+        } else "provider_error_unknown_outcome")
         return {"group_id": group_id, "state": "quick_unknown",
                 "reason_code": code, "validated_vulnerability": 0,
                 "consent_sha256": authorization.get("consent_sha256")}

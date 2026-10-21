@@ -42,10 +42,14 @@ class OwnerIntegrationTests(unittest.TestCase):
         self.assertEqual(plan['audit_mode'], 'standard_review')
         self.assertEqual(plan['workflow']['triage_stage'], 'user_authorized_candidate_batch')
         self.assertEqual(plan['selection_mode'], 'automatic')
-        self.assertEqual(len(plan['suggested_detector_ids']), 8)
+        self.assertIn('ohscanner.cpp.null_dereference', plan['suggested_detector_ids'])
+        self.assertIn('ohscanner.cpp.path_traversal', plan['suggested_detector_ids'])
+        self.assertIn('ohscanner.ark.runtime.type_safety', plan['suggested_detector_ids'])
+        self.assertIn('ohscanner.data.sensitive_exposure', plan['suggested_detector_ids'])
+        self.assertIn('ohscanner.known_disclosed_cves', plan['suggested_detector_ids'])
         self.assertEqual(plan['execution_status'], 'not_run')
         null = next(d for d in plan['detectors'] if d['id']=='ohscanner.cpp.null_dereference')
-        self.assertEqual(null['reason_codes'], ['explicit_selection_required'])
+        self.assertEqual(null['decision'], 'planned')
         self.assertIn('partial.cpp', [f['file'] for f in plan['parse_limitations']])
         job = self.scan(expected_plan_sha256=plan['plan_sha256'])
         self.assertEqual(job['spec']['audit_plan'], static_plan)
@@ -1475,7 +1479,7 @@ if os.environ.get("OHSCANNER_TEST_TOOL_TRACE"):
         self.assertEqual(r.status_code, 422)
         self.assertEqual(self.store.jobs(), [])
 
-    def test_c_is_explicit_research_only_while_d_requires_explicit_selection(self):
+    def test_default_scan_includes_all_research_candidates_and_explicit_subsets_still_work(self):
         c_id = 'ohscanner.ark.runtime.type_safety'
         plan = self.plan(detector_ids=[c_id])
         self.assertEqual(plan['selection_mode'], 'explicit')
@@ -1485,8 +1489,8 @@ if os.environ.get("OHSCANNER_TEST_TOOL_TRACE"):
         d_id = 'ohscanner.data.sensitive_exposure'
         automatic = self.plan()
         d_row = next(row for row in automatic['detectors'] if row['id'] == d_id)
-        self.assertEqual(d_row['decision'], 'skipped')
-        self.assertIn('explicit_selection_required', d_row['reason_codes'])
+        self.assertEqual(d_row['decision'], 'planned')
+        self.assertIn(d_id, automatic['suggested_detector_ids'])
         # Unknown-source fallback should preserve a name-based finding through
         # the same API -> Worker -> report path, without changing its status.
         (self.repo/'sensitive.cpp').write_text('''void logCredential(const char *password) {

@@ -119,10 +119,6 @@ def _validate_limits(value: Any) -> dict[str, Any]:
         raise PolicyError("max_cost_usd must be greater than 0 and no more than 1000")
     if result["deep_groups_per_audit"] > result["quick_screen_groups_per_audit"]:
         raise PolicyError("deep group limit cannot exceed quick-screen group limit")
-    if result["max_model_calls_per_audit"] < (
-        result["quick_screen_groups_per_audit"] + result["deep_groups_per_audit"]
-    ):
-        raise PolicyError("model-call limit must cover at least one call for each selected group")
     result["max_cost_usd"] = cost
     return result
 

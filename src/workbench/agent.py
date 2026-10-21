@@ -1202,6 +1202,7 @@ def audit_task_consent_preview(plan, workflow_sha256, include_paths, max_candida
             "local_total_model_call_budget": "none",
             "local_total_tool_call_budget": "none",
             "local_total_wall_time_budget": "until_terminal_condition",
+            "cumulative_usage_limits_enforced": False,
             "per_request_output_limit": 3000,
             "provider_request_timeout_seconds": MAX_PROVIDER_REQUEST_SECONDS,
             "termination": ["Provider final response", "user cancellation", "Provider/API error", "three consecutive tool turns without new source evidence"],

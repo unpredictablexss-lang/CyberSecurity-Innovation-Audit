@@ -418,11 +418,6 @@ def execute_quick_screen(settings, task: dict[str, Any], provider=None, ops=None
         audit_id = audit_operation_id
         policy_snapshot = spec["progressive_policy"]
         ledger.create_audit(audit_id, policy, policy_snapshot["policy_sha256"])
-        budget_before = ledger.get(audit_id)
-        seconds_remaining = budget_before["usage"]["wall_seconds_remaining"]
-        if seconds_remaining <= 2:
-            raise BudgetError("insufficient wall-time budget for another Provider request")
-        timeout_seconds = min(MAX_REQUEST_SECONDS, seconds_remaining - 2)
         group_id = spec["group"]["group_id"]
         ledger.dispatch_group(audit_id, group_id, spec["job_id"], "quick_screen",
                               evidence_gate="ranked_and_selected")

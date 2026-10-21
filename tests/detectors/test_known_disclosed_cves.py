@@ -727,8 +727,8 @@ class KnownDisclosedCveTests(unittest.TestCase):
         self.assertEqual("blocked", run.status)
         self.assertIn("CVE-2026-46675", {f.symbol for f in run.findings})
         self.assertTrue(any("remaining coverage is unknown" in item for item in run.limitations))
-        self.assertNotIn("ohscanner.known_disclosed_cves", default_detector_ids())
-        self.assertFalse(catalog_metadata()["ohscanner.known_disclosed_cves"]["default_enabled"])
+        self.assertIn("ohscanner.known_disclosed_cves", default_detector_ids())
+        self.assertTrue(catalog_metadata()["ohscanner.known_disclosed_cves"].get("default_enabled", True))
         self.assertEqual("ohscanner.known_disclosed_cves", build_registry(("ohscanner.known_disclosed_cves",)).detectors()[0].detector_id)
 
     def test_webview_flowbuffer_cve_vulnerable_fixed_and_unrelated_shapes(self):

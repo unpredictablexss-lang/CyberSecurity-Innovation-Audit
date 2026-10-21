@@ -28,28 +28,19 @@ export function defaultRepositoryRevision(refs) {
 }
 // Request builders match the existing strict /api/v1 request schemas.
 export function approvedDetectorIds(detectors, explicitIds = []) {
-  const approved = detectors.filter((d) => d.kind === "research_candidate" && d.default_enabled !== false &&
-    typeof d.id === "string" && typeof d.version === "string" && d.version.length &&
-    Array.isArray(d.supported_languages) && d.supported_languages.length);
-  const availableExperimental = new Set(detectors.filter((d) =>
-    d.kind === "research_candidate" && d.default_enabled === false &&
-    typeof d.id === "string" && typeof d.version === "string" && d.version.length &&
-    Array.isArray(d.supported_languages) && d.supported_languages.length).map((d) => d.id));
-  if (!Array.isArray(explicitIds) || explicitIds.some((id) => !availableExperimental.has(id)))
-    throw new Error("显式选择包含不可用的实验规则，请刷新能力配置。");
-  const ids = [...approved.map((d) => d.id), ...explicitIds].sort();
-  if (!ids.length) throw new Error("当前没有可用的已批准研究规则，请查看系统设置。");
-  if (new Set(ids).size !== ids.length) throw new Error("规则配置出现重复身份，请刷新能力配置。");
-  return ids;
-}
-export function researchDetectorIds(detectors) {
   const candidates = detectors.filter((d) => d.kind === "research_candidate" &&
     typeof d.id === "string" && typeof d.version === "string" && d.version.length &&
     Array.isArray(d.supported_languages) && d.supported_languages.length);
   const ids = candidates.map((d) => d.id).sort();
-  if (!ids.length) throw new Error("当前没有可用于全规则研究的已批准规则。");
+  if (!Array.isArray(explicitIds) || explicitIds.some((id) => !ids.includes(id)))
+    throw new Error("规则配置包含不可用的检测器，请刷新能力配置。");
+  if (!ids.length) throw new Error("当前没有可用的静态检测器，请查看系统设置。");
   if (new Set(ids).size !== ids.length) throw new Error("规则配置出现重复身份，请刷新能力配置。");
+  if (new Set(explicitIds).size !== explicitIds.length) throw new Error("规则配置出现重复身份，请刷新能力配置。");
   return ids;
+}
+export function researchDetectorIds(detectors) {
+  return approvedDetectorIds(detectors);
 }
 export function includePaths(value = ".") {
   const paths = String(value).split(/[\n,]/).map((p) => p.trim()).filter(Boolean);
@@ -68,7 +59,7 @@ function common(values, detectors, explicitIds = []) {
       !Number.isInteger(memory) || memory < 256 || memory > 8192)
     throw new Error("执行预算超出允许范围。");
   return { repository_id: values.repository_id, include_paths: includePaths(values.include_text),
-    detector_ids: values.full_rules_research ? researchDetectorIds(detectors) : approvedDetectorIds(detectors, explicitIds),
+    detector_ids: approvedDetectorIds(detectors, explicitIds),
     timeout_seconds: timeout, memory_mb: memory };
 }
 export function snapshotPayload(values, detectors, explicitIds = []) {

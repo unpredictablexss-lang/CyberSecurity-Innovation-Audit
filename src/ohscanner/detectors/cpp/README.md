@@ -1,16 +1,16 @@
 # C/C++ detectors
 
-## A-NULL-01 v0.2.0
+## A-NULL-01 v0.7.0 / rule 2.0.0
 
-`ohscanner.cpp.null_dereference` v0.2.0 recognizes a narrow same-function C/C++
-null-source and pointer-dereference shape. It records local, parameter, member and
-function-return pointer roles, `new (std::nothrow)` allocation results, pointer/reference aliases, bounded guard/error-path
-relations and source-bound candidate evidence. It handles multi-statement terminal
-error paths, local non-null rebinding, nothrow allocation guards and narrow short-circuit guards. It is not a
-complete CFG, type, alias, macro, template, exception, destructor or build-context
-analysis. Candidate results require the A-NULL-01 EvidenceObligation gate; zero
-findings are not a safe verdict. The detector enforces 1 MiB per unit and 32 MiB per
-run limits and keeps partial/failed/not-analyzed coverage fail-closed.
+`ohscanner.cpp.null_dereference` v0.7.0 (rule 2.0.0) reports only explicit NULL
+assignments to local/member pointers, `new (std::nothrow)` results, and function returns
+with an explicit nullable contract. All pointer parameters, smart pointers with
+unknown nullability, and unannotated function returns are suppressed. The
+detector still uses bounded same-function syntax and guard/error-path analysis; it
+does not prove full CFG dominance, cross-function aliases, build context, runtime
+reachability or impact. Results remain candidates requiring review. Zero findings
+are not a safe verdict. The detector enforces 1 MiB per unit and 32 MiB per run
+limits and keeps partial/failed/not-analyzed coverage fail-closed.
 
 Owner approval is recorded in
 `research/contracts/a_ccr_04/owner_approval.json`; catalog registration remains a

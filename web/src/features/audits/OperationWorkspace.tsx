@@ -318,6 +318,7 @@ export default function OperationWorkspace({ view = "all", operationId, context 
         {selected.result_sha256 && <><Text>Result SHA-256</Text><Hash value={selected.result_sha256} /></>}</Space>
       {selected.error && <Alert className="section-gap" type="error" message={selected.error} />}
       {selected.kind === "repository_import_scan" && <Card size="small" className="section-gap" title="固定版本下载进度">
+        <div className="section-gap"><Text type="secondary">源码保存位置：</Text><Text code>{selected.result?.destination_dir || selected.spec?.destination_dir || "服务器默认源码缓存目录"}</Text></div>
         {selected.download_progress ? <>
           <Space wrap><Tag color={selected.download_progress.state === "failed" ? "red" : selected.download_progress.state === "completed" ? "green" : "blue"}>
             {importProgressLabels[selected.download_progress.phase] || selected.download_progress.phase || "处理中"}
@@ -349,7 +350,7 @@ export default function OperationWorkspace({ view = "all", operationId, context 
             /></div>
             <Alert type="info" showIcon
               message={`固定策略 ${plan.policy_profile || "unknown"} · ${plan.grouping?.group_count ?? plan.groups?.length ?? 0} 个候选组 · 阶段：${activeStatus?.phase || "deterministic_ranked"}`}
-              description="未选、尚未授权或信息不足的组仍是候选；模型意见不改变漏洞确认状态。仅美元预算为估算，任务调度上限见下方账本。" />
+              description="未选、尚未授权或信息不足的组仍是候选；模型意见不改变漏洞确认状态。平台不按累计 Token、调用次数、调查时长或费用停止任务；账本用于记录模型用量。" />
             <Descriptions className="section-gap" size="small" column={{ xs: 1, md: 2 }}>
               <Descriptions.Item label="策略修订 / 摘要 SHA-256">{plan.policy_revision ?? "未知"} · <Hash value={plan.policy_sha256} /></Descriptions.Item>
               <Descriptions.Item label="原始候选观察">{plan.original_observation_count ?? "未知"}</Descriptions.Item>
