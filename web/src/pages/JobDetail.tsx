@@ -50,6 +50,8 @@ import { requestGate } from "../features/audits/model";
 import { disclosureReviewed, disclosureSelectionMatches } from "../features/audits/egressDisclosure.js";
 import { analysisStatusLabel, coverageSummaryLabel, groupingBasisLabel, groupingSymbolLabel, obligationDescriptionLabel, obligationKindLabel, obligationStatusLabel, reportLimitationLabel, riskReasonsLabel, scanStageLabel, taskReportStatusLabel, taskTriageStatusLabel, triageStateLabel } from "../features/workbench/riskLabels.js";
 const { Text, Title, Paragraph } = Typography;
+const severityLabels: Record<string, string> = { critical: "严重", high: "高危", medium: "中危", low: "低危", info: "提示" };
+const severityColors: Record<string, string> = { critical: "red", high: "volcano", medium: "orange", low: "blue" };
 export default function JobDetail({ id, initialTab = "findings", candidateId, sourceFile, sourceLine, health }: { id: string; initialTab?: string; candidateId?: string; sourceFile?: string; sourceLine?: number; health?: any }) {
   const [job, setJob] = useState<any>(null);
   const [report, setReport] = useState<any>(null);
@@ -68,6 +70,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("");
   const [detail, setDetail] = useState<any>(null);
+  const selectedRisk = (riskSummary?.items || []).find((item: any) => item.candidate_id === detail?.id);
   const selectedDetailId = useRef<string | null>(null);
   const detailGate = useRef(requestGate());
   const candidateAutoOpened = useRef<string | null>(null);
@@ -460,7 +463,17 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
           <Table size="small" rowKey="candidate_id" pagination={false}
             dataSource={(riskSummary?.items || []).slice(0, 20)}
             columns={[
-              { title: "风险层级", dataIndex: "risk_tier_label" },
+              { title: "严重程度", render: (_: unknown, row: any) => {
+                const labels: Record<string, string> = { critical: "严重", high: "高", medium: "中", low: "低", info: "提示" };
+                const colors: Record<string, string> = { critical: "red", high: "volcano", medium: "orange", low: "blue" };
+                return <Tag color={colors[row.severity]}>{labels[row.severity] || "未分级"}</Tag>;
+              } },
+              { title: "可信度", render: (_: unknown, row: any) => row.risk_tier === "high_confidence_candidate"
+                ? <Tag color="gold">高可信候选 · 待复核</Tag>
+                : <Tag>{row.risk_tier_label || "待进一步验证"}</Tag> },
+              { title: "漏洞状态", render: (_: unknown, row: any) => row.vulnerability_state === "confirmed"
+                ? <Tag color="green">已确认</Tag>
+                : row.vulnerability_state === "unknown" ? <Tag>未知</Tag> : <Tag>候选</Tag> },
               { title: "候选", dataIndex: "candidate_id", render: (value: string) => <Text code>{String(value).slice(0, 12)}</Text> },
               { title: "规则", dataIndex: "rule_id" },
               { title: "位置", render: (_: unknown, row: any) => row.file + ":" + row.line },
@@ -954,6 +967,29 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
                 </div>
               </div>}
             />
+            {selectedRisk?.risk_tier === "high_confidence_candidate" && <Card className="section-gap"
+              title={<Space><Tag color="gold">高可信候选</Tag><Text>优先人工复核</Text></Space>}>
+              <Space wrap className="section-gap">
+                <Text strong>严重程度</Text>
+                <Tag color={severityColors[detail.severity]}>
+                  {severityLabels[detail.severity] || "未分级"}
+                </Tag>
+                <Tag>漏洞状态：候选</Tag>
+              </Space>
+              {selectedRisk.confidence_basis === "ai_source_evidence" ? <>
+                <Paragraph><Text strong>AI 调查理由：</Text>{selectedRisk.ai_summary || "AI 在固定源码中形成了支持性判断。"}</Paragraph>
+                <Space direction="vertical" size={4} style={{ width: "100%" }}>
+                  <Text strong>关键源码证据</Text>
+                  {(selectedRisk.ai_evidence || []).map((citation: any, index: number) => <Button key={citation.evidence_id + ":" + index}
+                    type="link" className="source-citation-link" style={{ height: "auto", whiteSpace: "normal", textAlign: "left", paddingInline: 0 }}
+                    onClick={() => go("/tasks/" + encodeURIComponent(id) + "?tab=source&source_file="
+                      + encodeURIComponent(citation.file) + "&source_line=" + citation.line_start)}>
+                    {citation.file}:{citation.line_start}-{citation.line_end} · {citation.quote}
+                  </Button>)}
+                </Space>
+                <Text type="secondary">引用指向本次固定源码。AI 判断仍需人工核对；产品入口、触发条件和实际影响没有由这项源码分析确认。</Text>
+              </> : <Paragraph>该标记来自完整的静态人工复核。它表示值得优先复核，不代表漏洞已经确认。</Paragraph>}
+            </Card>}
             {detail.source ? <>
               <CandidateActions job={job} candidate={detail} />
               <CodeView source={detail.source} line={detail.line} />

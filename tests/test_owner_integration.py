@@ -223,6 +223,10 @@ class OwnerIntegrationTests(unittest.TestCase):
         self.assertEqual(summary["available_report_count"], 1)
         self.assertGreater(summary["candidate_observation_count"], 0)
         self.assertGreater(summary["counts"]["further_validation"], 0)
+        first_risk = summary["items"][0]
+        self.assertIn("severity", first_risk)
+        self.assertIn("confidence_basis", first_risk)
+        self.assertEqual(first_risk["vulnerability_state"], "candidate")
         self.assertEqual(summary["validated_vulnerability"], 0)
         self.assertIn("not deduplicated", summary["semantics"])
         self.assertTrue(summary["detector_counts"])
@@ -574,6 +578,95 @@ class OwnerIntegrationTests(unittest.TestCase):
                     )
                     self.assertEqual(revoked.status_code, 200, revoked.text)
                     self.assertEqual(ops.get(r2["id"])["status"], "cancelled")
+
+    def test_ai_source_evidence_can_raise_review_priority_without_confirming_product_vulnerability(self):
+        from src.workbench.operations_store import Operations
+
+        job = self.scan()
+        Worker(self.settings).run(once=True)
+        job = self.store.job(job["id"])
+        report = service.read_report(self.settings, job)
+        candidate = service.findings(report)[0]
+        ops = Operations(self.store)
+        source = service.source(self.settings, self.store, job, candidate["file"])
+        citation_quote = source["text"].splitlines()[candidate["line"] - 1].strip()
+        self.assertGreaterEqual(len(citation_quote), 8)
+
+        def create_result(assessment, *, positive):
+            operation = ops.create("agent_investigation", {
+                "job_id": job["id"], "candidate_id": candidate["id"],
+                "report_sha256": job["report_sha256"], "mode": "tool_agent",
+            })
+            claimed = ops.claim()
+            self.assertEqual(claimed["id"], operation["id"])
+            obligations = candidate["evidence"]["obligations"]
+            review_rows = [
+                {"obligation_index": index,
+                 "disposition": "evidence_found" if positive and index == 0 else "unresolved",
+                 "citations": ([{"evidence_id": "source-1", "file": candidate["file"],
+                                 "line_start": candidate["line"], "line_end": candidate["line"],
+                                 "quote": citation_quote}]
+                               if positive and index == 0 else [])}
+                for index in range(len(obligations))
+            ]
+            supported_claims = ([{
+                "claim": "固定源码中的候选路径到达了需要复核的敏感操作。",
+                "obligation_indices": [0],
+                "citations": [{"evidence_id": "source-1", "file": candidate["file"],
+                               "line_start": candidate["line"], "line_end": candidate["line"],
+                               "quote": citation_quote}],
+            }] if positive else [])
+            result = {
+                "status": "completed_with_limitations",
+                "structured_answer_validation": "accepted",
+                "summary_provenance": "server_generated_from_structured_triage",
+                "binding": {"job_id": job["id"], "candidate_id": candidate["id"],
+                            "report_sha256": job["report_sha256"], "source_sha256": candidate["source_sha256"],
+                            "commit": report["commit"]},
+                "citation_integrity": {"quote_presence": "verified_for_all_citations" if positive else "no_citations"},
+                "agent_assessment": {
+                    "assessment": assessment,
+                    "unsupported_claims": [],
+                    "supported_claims": supported_claims,
+                    "obligation_reviews": review_rows,
+                },
+                "agent_verdict": {
+                    "status": "likely_true_positive" if positive else "needs_more_evidence",
+                    "confidence": "medium" if positive else "low",
+                    "scope": "fixed_source_code", "product_status": "unknown",
+                },
+                "initial_evidence": {"context": {
+                    "evidence_routing": {"agent_source_review_indices": [0]},
+                }},
+                "vulnerability_state": "candidate", "validated_vulnerability": 0,
+            }
+            ops.finish(operation["id"], result)
+            return operation
+
+        create_result("likely_true_positive", positive=True)
+        risks = self.client.get("/api/v1/scans/" + job["id"] + "/risks",
+                                headers=fixtures.HEADERS)
+        self.assertEqual(risks.status_code, 200, risks.text)
+        high = next(item for item in risks.json()["items"]
+                    if item["candidate_id"] == candidate["id"])
+        self.assertEqual(high["risk_tier"], "high_confidence_candidate")
+        self.assertEqual(high["confidence_basis"], "ai_source_evidence")
+        self.assertEqual(high["ai_summary"], "固定源码中的候选路径到达了需要复核的敏感操作。")
+        self.assertEqual(high["ai_evidence"][0]["file"], candidate["file"])
+        self.assertEqual(high["ai_evidence"][0]["line_start"], candidate["line"])
+        self.assertEqual(high["severity"], candidate.get("severity", "unknown"))
+        self.assertEqual(high["vulnerability_state"], "candidate")
+        self.assertEqual(risks.json()["validated_vulnerability"], 0)
+
+        create_result("needs_more_evidence", positive=False)
+        latest = self.client.get("/api/v1/scans/" + job["id"] + "/risks",
+                                 headers=fixtures.HEADERS)
+        self.assertEqual(latest.status_code, 200, latest.text)
+        current = next(item for item in latest.json()["items"]
+                       if item["candidate_id"] == candidate["id"])
+        self.assertEqual(current["risk_tier"], "further_validation")
+        self.assertIsNone(current["ai_summary"])
+        self.assertEqual(latest.json()["validated_vulnerability"], 0)
 
     def test_risk_tiers_require_complete_human_evidence_and_report_snapshots_are_immutable(self):
         import hashlib

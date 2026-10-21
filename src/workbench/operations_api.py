@@ -1647,8 +1647,11 @@ def install_routes(app: FastAPI, settings, store):
                     "file": item.get("file"),
                     "line": item.get("line"),
                     "rule_id": item.get("rule_id"),
+                    "severity": item.get("severity", "unknown"),
+                    "vulnerability_state": item.get("vulnerability_state", "candidate"),
                     "risk_tier": item.get("risk_tier"),
                     "risk_tier_label": item.get("risk_tier_label"),
+                    "confidence_basis": item.get("confidence_basis"),
                     "triage_state": item.get("triage", {}).get("state"),
                     "reason": "；".join(item.get("reasons", [])),
                 })

@@ -134,7 +134,17 @@ export function RiskCenter({ jobs, query = new URLSearchParams() }: { jobs: any[
         pagination={false} loading={loading}
         onRow={(row) => ({ onClick: () => openCandidate(row), style: { cursor: "pointer" } })}
         columns={[
-          { title: "风险层级", dataIndex: "risk_tier_label" },
+          { title: "严重程度", render: (_: unknown, row: any) => {
+            const labels: Record<string, string> = { critical: "严重", high: "高", medium: "中", low: "低", info: "提示" };
+            const colors: Record<string, string> = { critical: "red", high: "volcano", medium: "orange", low: "blue" };
+            return <Tag color={colors[row.severity]}>{labels[row.severity] || "未分级"}</Tag>;
+          } },
+          { title: "可信度", render: (_: unknown, row: any) => row.risk_tier === "high_confidence_candidate"
+            ? <Tag color="gold">高可信候选 · 待复核</Tag>
+            : <Tag>{row.risk_tier_label || "待进一步验证"}</Tag> },
+          { title: "漏洞状态", render: (_: unknown, row: any) => row.vulnerability_state === "confirmed"
+            ? <Tag color="green">已确认</Tag>
+            : row.vulnerability_state === "unknown" ? <Tag>未知</Tag> : <Tag>候选</Tag> },
           { title: "仓库 / Commit", render: (_: unknown, row: any) => <><Text>{row.repository}</Text><div className="muted">{String(row.commit || "").slice(0, 12)}</div></> },
           { title: "检测器 / 候选位置", render: (_: unknown, row: any) => <>{row.detector_id || "未知检测器"}<div>{row.file}:{row.line}</div><div className="muted">{row.rule_id}</div></> },
           { title: "研判状态", dataIndex: "triage_state", render: (value: string) => triageStateLabel(value) },
@@ -211,8 +221,18 @@ export function AuditRiskOverview() {
       dataSource={rows} pagination={false} loading={loading}
       onRow={(row) => ({ onClick: () => openCandidate(row), style: { cursor: "pointer" } })}
       columns={[
-        { title: "风险层级", dataIndex: "risk_tier_label" },
-        { title: "仓库 / Commit", render: (_: unknown, row: any) => <><Text>{row.repository}</Text><div className="muted">{String(row.commit || "").slice(0, 12)}</div></> },
+        { title: "严重程度", render: (_: unknown, row: any) => {
+          const labels: Record<string, string> = { critical: "严重", high: "高", medium: "中", low: "低", info: "提示" };
+          const colors: Record<string, string> = { critical: "red", high: "volcano", medium: "orange", low: "blue" };
+          return <Tag color={colors[row.severity]}>{labels[row.severity] || "未分级"}</Tag>;
+        } },
+        { title: "可信度", render: (_: unknown, row: any) => row.risk_tier === "high_confidence_candidate"
+          ? <Tag color="gold">高可信候选 · 待复核</Tag>
+          : <Tag>{row.risk_tier_label || "待进一步验证"}</Tag> },
+        { title: "漏洞状态", render: (_: unknown, row: any) => row.vulnerability_state === "confirmed"
+            ? <Tag color="green">已确认</Tag>
+            : row.vulnerability_state === "unknown" ? <Tag>未知</Tag> : <Tag>候选</Tag> },
+          { title: "仓库 / Commit", render: (_: unknown, row: any) => <><Text>{row.repository}</Text><div className="muted">{String(row.commit || "").slice(0, 12)}</div></> },
         { title: "候选位置", render: (_: unknown, row: any) => <>{row.file}:{row.line}<div className="muted">{row.rule_id}</div></> },
         { title: "研判状态", dataIndex: "triage_state", render: (value: string) => triageStateLabel(value) },
         { title: "查看", render: (_: unknown, row: any) => <Button size="small" onClick={(event) => { event.stopPropagation(); openCandidate(row); }}>证据与下一步</Button> },
