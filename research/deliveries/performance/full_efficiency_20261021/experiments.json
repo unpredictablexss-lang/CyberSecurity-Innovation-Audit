@@ -274,8 +274,8 @@
         "command": "npm run build && npm test",
         "result": "build passed; 69 passed"
       },
-      "fixed_corpus_parent_available": false,
-      "fixed_corpus_incremental_equivalence": "not_run; pinned shallow checkouts have no base parent object"
+      "fixed_corpus_parent_available": true,
+      "fixed_corpus_incremental_equivalence": "completed_for_11_of_11_with_verified_base_objects; conservative_full_head_fallback_due_to_configuration_and_dependency_uncertainty; see E2_fixed_corpus/equivalence.json"
     },
     "P3_current_provider_retest": {
       "status": "completed",
@@ -352,7 +352,7 @@
       "corpus": "benchmarks/perf_scale_corpus_2026-10-10.json",
       "components": 11,
       "head_commits_exactly_verified": "11_of_11",
-      "base_parent_objects_available": "0_of_11",
+      "base_parent_objects_available": "11_of_11_reconstructed_and_SHA_verified_for_separate_E2_fixed_corpus_run; see E2_parent_objects/materialized_base_evidence.json",
       "scanned_files": 9508,
       "diagnostic_candidates": 63,
       "validated_vulnerabilities": 0,
@@ -429,7 +429,7 @@
       "limitations": [
         "This is a component corpus execution of two narrow research detectors, not ABCD full vulnerability coverage or an accuracy evaluation.",
         "Performance depends on cache storage; the measured cache was WSL2 ext4. An earlier /mnt/d NTFS-backed cache trial was much slower and was stopped before completion; its partial logs are retained but excluded from the comparison.",
-        "Full dependency-closure E2 comparison was not run because each pinned head is shallow and its parent commit object is absent locally."
+        "This M2 AST+detector-cache comparison itself is not a dependency-closure benchmark. A separate E2 fixed-corpus base-to-head run completed with all 11 exact base objects reconstructed and SHA-verified; conservative dependency/configuration fallback kept full head inventory in scope. See E2_fixed_corpus/README.md and equivalence.json."
       ]
     }
   },
