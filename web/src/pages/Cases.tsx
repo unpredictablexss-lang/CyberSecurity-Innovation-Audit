@@ -196,6 +196,7 @@ function CaseReviewPanel({ caseId, onStatusChange }: { caseId: string; onStatusC
   const validationOptions = (report?.operations || []).filter((item: any) =>
     item.kind === "validation" && ["completed", "completed_with_limitations"].includes(item.status)
     && item.validation_gate === "passed" && item.reachability_status === "verified");
+  const multiCandidateCase = new Set((report?.candidates || []).map((row: any) => JSON.stringify([row.job_id, row.candidate?.id]))).size > 1;
   const recordAssessment = async (values: any) => {
     const evidenceIds = values.evidence_ids || [];
     const validationIds = values.validation_operation_ids || [];
@@ -228,12 +229,17 @@ function CaseReviewPanel({ caseId, onStatusChange }: { caseId: string; onStatusC
       最新人工意见：{caseOutcomeLabels[status.latest_human_assessment.outcome] || status.latest_human_assessment.outcome}
       （{status.latest_human_assessment.reviewer} · {new Date(status.latest_human_assessment.created_at).toLocaleString()}）
     </Paragraph>}
+    {multiCandidateCase && <Alert type="warning" showIcon className="section-gap"
+      message="这个案例关联了多条候选，暂不能整体标为已确认"
+      description="请为每条候选分别建立案例并复核，避免一条候选的验证结果误确认其他候选。" />}
     {loading && !report ? <Spin /> : <>
       <Form form={form} layout="vertical" initialValues={{ outcome: "candidate" }} onFinish={(values) => void recordAssessment(values)}>
         <Space wrap>
           <Form.Item name="reviewer" label="复核人（手工填写）" rules={[{ required: true, max: 100 }]}><Input maxLength={100} /></Form.Item>
           <Form.Item name="outcome" label="人工结论" rules={[{ required: true }]}>
-            <Select style={{ width: 260 }} options={Object.entries(caseOutcomeLabels).map(([value, label]) => ({ value, label }))} />
+            <Select style={{ width: 260 }} options={Object.entries(caseOutcomeLabels).map(([value, label]) => ({
+              value, label, disabled: multiCandidateCase && (value === "confirmed" || value === "reportable"),
+            }))} />
           </Form.Item>
         </Space>
         <Form.Item name="evidence_ids" label="案例来源证据（确认/可报告必填）">
@@ -281,7 +287,7 @@ export default function Cases({ embedded = false }: { embedded?: boolean } = {})
       })
       .catch((e) => setError(String(e)));
   }, []);
-  const downloadReport = async (caseId: string, kind: "json" | "md" | "html" | "manifest.json" | "bundle.zip") => {
+  const downloadReport = async (caseId: string, kind: "json" | "md" | "manifest.json" | "bundle.zip") => {
     try {
       const endpoint = kind === "manifest.json" ? "report.manifest.json"
         : kind === "bundle.zip" ? "report.bundle.zip" : "report." + kind;
@@ -318,7 +324,8 @@ export default function Cases({ embedded = false }: { embedded?: boolean } = {})
             { title: "关联观测", render: (_: any, c: any) => c.links.length },
             { title: "报告", render: (_: any, c: any) => <Space wrap>
               <Button size="small" type="primary" onClick={() => void downloadReport(c.id, "bundle.zip")}>下载完整报告包</Button>
-              <Button size="small" onClick={() => void downloadReport(c.id, "html")}>阅读报告</Button>
+              <Button size="small" href={"/api/v1/cases/" + encodeURIComponent(c.id) + "/report.html"}
+                target="_blank" rel="noopener noreferrer">打开可读报告</Button>
               <Button size="small" onClick={() => void downloadReport(c.id, "md")}>Markdown</Button>
               <Button size="small" onClick={() => void downloadReport(c.id, "json")}>JSON</Button>
               <Button size="small" onClick={() => void downloadReport(c.id, "manifest.json")}>证据清单</Button>

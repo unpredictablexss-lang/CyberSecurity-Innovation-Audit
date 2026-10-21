@@ -813,16 +813,15 @@ def _case_review_status(store, ops, case_id):
     assessments = ops.assessments(case_id)
     human_assessments = [item for item in assessments if item.get("reviewer_kind") == "human"]
     latest = human_assessments[-1] if human_assessments else None
-    valid_evidence_ids = {
-        item["id"]
-        for link in _case_links(store, case_id)
-        for item in store.source_evidence(link["job_id"], link["candidate_id"])
-    }
+    links = _case_links(store, case_id)
+    single_candidate = len({(item["job_id"], item["candidate_id"]) for item in links}) == 1
+    valid_evidence_ids = {item["id"] for link in links
+                          for item in store.source_evidence(link["job_id"], link["candidate_id"])}
     validated_by = None
     # The latest human decision controls current case status. An older confirmation
     # must not survive a later append-only candidate/unknown/refutation assessment.
     assessment = latest
-    if (assessment and assessment.get("outcome") in {"confirmed", "reportable"}
+    if (single_candidate and assessment and assessment.get("outcome") in {"confirmed", "reportable"}
             and assessment.get("evidence_ids")
             and assessment.get("remaining_unknowns")
             and set(assessment["evidence_ids"]).issubset(valid_evidence_ids)):
@@ -3126,6 +3125,7 @@ def install_routes(app: FastAPI, settings, store):
     def case_report_html(case_id: str):
         document = _case_report_exports(case_id)["html"]
         return Response(document, media_type="text/html; charset=utf-8", headers={
+            "Content-Disposition": f'inline; filename="ohscanner-case-{case_id}.html"',
             "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
             "X-Content-Type-Options": "nosniff",
             "X-Frame-Options": "DENY",
@@ -3206,6 +3206,8 @@ def install_routes(app: FastAPI, settings, store):
         if not set(body.evidence_ids).issubset(valid_refs):
             raise ValueError("assessment references evidence outside this case")
         if body.outcome in {"confirmed", "reportable"}:
+            if len({(item["job_id"], item["candidate_id"]) for item in links}) != 1:
+                raise ValueError("confirmed/reportable is disabled for multi-candidate cases; create one case per candidate and review each separately")
             eligible = False
             for oid in body.validation_operation_ids:
                 task = ops.get(oid)

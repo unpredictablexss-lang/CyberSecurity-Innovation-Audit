@@ -704,6 +704,40 @@ class WorkbenchTests(unittest.TestCase):
         self.assertEqual(self.client.get(f"/api/v1/cases/{case['id']}/report.json").json()
                          ["validated_vulnerability"], 0)
 
+    def test_case_confirmation_rejects_multi_candidate_case(self):
+        job = self.completed()
+        candidates = service.findings(service.read_report(self.settings, job))
+        self.assertGreaterEqual(len(candidates), 2)
+        case = self.client.post("/api/v1/cases", headers=HEADERS, json={
+            "title": "multi-candidate case cannot confirm as a whole",
+            "links": [{"job_id": job["id"], "candidate_id": item["id"], "rationale": "test"}
+                      for item in candidates[:2]],
+        }).json()
+        first = candidates[0]
+        evidence = self.client.post(
+            f"/api/v1/scans/{job['id']}/findings/{first['id']}/evidence",
+            headers=HEADERS,
+            json={"file": first["file"], "start_line": first["line"],
+                  "end_line": first["line"], "note": "evidence for only the first candidate"},
+        )
+        self.assertEqual(evidence.status_code, 201, evidence.text)
+        validation = self.app.state.operations.create("validation", {"case_id": case["id"]})
+        self.assertEqual(self.app.state.operations.claim(validation=True)["id"], validation["id"])
+        self.app.state.operations.finish(validation["id"], {
+            "status": "completed_with_limitations", "validation_gate": "passed",
+            "case_id": case["id"], "reachability_status": "verified",
+        }, state="completed_with_limitations")
+        rejected = self.client.post(f"/api/v1/cases/{case['id']}/assessments", headers=HEADERS, json={
+            "outcome": "confirmed", "reviewer_kind": "human", "reviewer": "reviewer:test",
+            "notes": "Only one linked candidate has source evidence.",
+            "evidence_ids": [evidence.json()["id"]], "validation_operation_ids": [validation["id"]],
+            "remaining_unknowns": ["the other candidate was not reviewed"],
+        })
+        self.assertEqual(rejected.status_code, 409, rejected.text)
+        self.assertIn("one case per candidate", rejected.text)
+        report = self.client.get(f"/api/v1/cases/{case['id']}/report.json").json()
+        self.assertEqual(report["validated_vulnerability"], 0)
+
     def test_case_report_recovers_only_exact_fixed_candidate_agent_results(self):
         job = self.completed()
         candidate = service.findings(service.read_report(self.settings, job))[0]
@@ -779,6 +813,7 @@ class WorkbenchTests(unittest.TestCase):
         self.assertIn("AI 源码依据状态：unknown", markdown.text)
         html_report = self.client.get(f"/api/v1/cases/{case_id}/report.html")
         self.assertEqual(html_report.status_code, 200, html_report.text)
+        self.assertTrue(html_report.headers["content-disposition"].startswith("inline;"))
         self.assertIn("<h1>OHScanner", html_report.text)
         self.assertIn("&lt;script&gt;alert(1)&lt;/script&gt;", html_report.text)
         self.assertNotIn("<script>alert(1)</script>", html_report.text)
