@@ -5,6 +5,7 @@ investigation note; it cannot change a finding, case assessment, or validation
 state. Provider credentials are read from the worker environment and never
 stored in operation specs or results.
 """
+from .agent_output import check_output_contract, output_contract_prompt, safe_validation_diagnostic, source_citation_options, OutputValidationError
 from dataclasses import dataclass
 from decimal import Decimal
 import hashlib
@@ -606,7 +607,7 @@ def implementation_fingerprint():
     """Bind actual Agent/tool policy bytes, not only a manually bumped version."""
     root = Path(__file__).resolve().parents[2]
     digest = hashlib.sha256()
-    for name in ("agent.py", "api.py", "operations.py", "operations_api.py",
+    for name in ("agent.py", "agent_output.py", "api.py", "operations.py", "operations_api.py",
                  "operations_store.py", "operation_worker.py", "service.py",
                  "smart_audit.py", "worker.py"):
         digest.update(name.encode())
@@ -3385,6 +3386,7 @@ def _validate_final(text, evidence_texts, expected_obligations=(), source_review
         value = json.loads(text)
     except (TypeError, json.JSONDecodeError):
         raise ValueError("model final answer was not valid JSON") from None
+    check_output_contract(value, _FINAL_SCHEMA)
     if not isinstance(value, dict) or set(value) != set(_FINAL_SCHEMA["required"]):
         raise ValueError("model final answer did not match the investigation schema")
     if (not isinstance(value["assessment"], str)
@@ -3399,12 +3401,13 @@ def _validate_final(text, evidence_texts, expected_obligations=(), source_review
     if not isinstance(claims, list) or len(claims) > 30:
         raise ValueError("invalid supported claims")
 
-    def validate_citations(citations, *, required):
+    def validate_citations(citations, *, required, path):
         if (not isinstance(citations, list) or len(citations) > 8
                 or (required and not citations)):
             raise ValueError("evidence assessment must contain bounded citations")
         normalized = []
-        for citation in citations:
+        for citation_index, citation in enumerate(citations):
+            citation_path = path + f"[{citation_index}]"
             if not isinstance(citation, dict) or not isinstance(citation.get("evidence_id"), str):
                 raise ValueError("evidence assessment references an invalid evidence quote")
             evidence_id = citation["evidence_id"]
@@ -3420,7 +3423,7 @@ def _validate_final(text, evidence_texts, expected_obligations=(), source_review
                 normalized.append(citation)
                 continue
             if set(citation) != {"evidence_id", "file", "line_start", "line_end"} or evidence_lines is None:
-                raise ValueError("evidence assessment references an invalid source line range")
+                raise OutputValidationError("evidence assessment references an invalid source line range", [{"path": citation_path, "kind": "source_range", "constraint": "same_supplied_evidence_file;1_to_8_lines;8_to_500_characters"}])
             file = citation["file"]
             line_start, line_end = citation["line_start"], citation["line_end"]
             if not isinstance(file, str) or not file or file.startswith("/") or ".." in Path(file).parts:
@@ -3428,15 +3431,15 @@ def _validate_final(text, evidence_texts, expected_obligations=(), source_review
             if (not isinstance(line_start, int) or isinstance(line_start, bool)
                     or not isinstance(line_end, int) or isinstance(line_end, bool)
                     or line_start < 1 or line_end < line_start or line_end - line_start > 7):
-                raise ValueError("evidence assessment references an invalid source line range")
+                raise OutputValidationError("evidence assessment references an invalid source line range", [{"path": citation_path, "kind": "source_range", "constraint": "same_supplied_evidence_file;1_to_8_lines;8_to_500_characters"}])
             files = evidence_lines.get(evidence_id)
             source_lines = files.get(file) if isinstance(files, dict) else None
             if not isinstance(source_lines, dict) or any(number not in source_lines
                                                          for number in range(line_start, line_end + 1)):
-                raise ValueError("evidence assessment references an invalid source line range")
+                raise OutputValidationError("evidence assessment references an invalid source line range", [{"path": citation_path, "kind": "source_range", "constraint": "same_supplied_evidence_file;1_to_8_lines;8_to_500_characters"}])
             quote = "\n".join(source_lines[number] for number in range(line_start, line_end + 1))
             if not 8 <= len(quote) <= 500:
-                raise ValueError("evidence assessment references an invalid source line range")
+                raise OutputValidationError("evidence assessment references an invalid source line range", [{"path": citation_path, "kind": "source_range", "constraint": "same_supplied_evidence_file;1_to_8_lines;8_to_500_characters"}])
             normalized.append({"evidence_id": evidence_id, "quote": quote, "file": file,
                                "line_start": line_start, "line_end": line_end})
         return normalized
@@ -3463,7 +3466,7 @@ def _validate_final(text, evidence_texts, expected_obligations=(), source_review
     if mandatory_unresolved and value["assessment"] == "likely_false_positive":
         raise ValueError("likely-false-positive triage cannot suppress an IPC authorization candidate with unresolved policy")
 
-    for claim in claims:
+    for claim_index, claim in enumerate(claims):
         if (not isinstance(claim, dict)
                 or set(claim) != {"claim", "obligation_indices", "citations"}
                 or not isinstance(claim["claim"], str) or not claim["claim"] or len(claim["claim"]) > 1000
@@ -3479,12 +3482,12 @@ def _validate_final(text, evidence_texts, expected_obligations=(), source_review
             raise ValueError("supported claim cannot map to human/runtime-only evidence obligations")
         if set(indices).intersection(mandatory_unresolved):
             raise ValueError("supported claim cannot close a mandatory-unresolved authorization policy obligation")
-        claim["citations"] = validate_citations(claim["citations"], required=True)
+        claim["citations"] = validate_citations(claim["citations"], required=True, path=f"$.supported_claims[{claim_index}].citations")
     obligation_reviews = value["obligation_reviews"]
     if not isinstance(obligation_reviews, list) or len(obligation_reviews) != expected_count:
         raise ValueError("model must review every supplied evidence obligation exactly once")
     reviewed_indices = []
-    for review in obligation_reviews:
+    for review_position, review in enumerate(obligation_reviews):
         if (not isinstance(review, dict)
                 or set(review) != {"obligation_index", "disposition", "citations"}
                 or not isinstance(review["obligation_index"], int)
@@ -3497,7 +3500,7 @@ def _validate_final(text, evidence_texts, expected_obligations=(), source_review
             raise ValueError("evidence obligation review indices must be unique and in range")
         reviewed_indices.append(index)
         review["citations"] = validate_citations(
-            review["citations"],
+            review["citations"], path=f"$.obligation_reviews[{review_position}].citations",
             required=review["disposition"] in {"evidence_found", "contrary_evidence"})
         if (allowed_source_indices is not None and index not in allowed_source_indices
                 and (review["disposition"] != "unresolved" or review["citations"])):
@@ -3800,6 +3803,7 @@ def _validate_skeptic_review(text, expected_obligations, source_review_indices, 
         value = json.loads(text)
     except (TypeError, json.JSONDecodeError):
         raise ValueError("skeptic response was not valid JSON") from None
+    check_output_contract(value, _SKEPTIC_SCHEMA, skeptic=True)
     if not isinstance(value, dict) or set(value) != {"reviews"}:
         raise ValueError("skeptic response did not match its structured schema")
     reviews = value["reviews"]
@@ -3865,6 +3869,23 @@ def _validate_skeptic_review(text, expected_obligations, source_review_indices, 
     return normalized
 
 
+def _skeptic_validation_error_code(error):
+    return {
+        "skeptic response was not valid JSON": "skeptic_invalid_json",
+        "skeptic response did not match its structured schema": "skeptic_invalid_schema",
+        "skeptic must review every obligation exactly once": "skeptic_incomplete_reviews",
+        "invalid skeptic obligation review": "skeptic_invalid_review",
+        "skeptic obligation indices must be unique and in range": "skeptic_invalid_indices",
+        "human/runtime-only skeptic obligation must remain unknown": "skeptic_human_runtime_verdict",
+        "skeptic counterevidence candidate requires a source citation": "skeptic_missing_citation",
+        "skeptic citations are allowed only for a counterevidence candidate": "skeptic_unexpected_citation",
+        "skeptic citations exceeded the per-obligation bound": "skeptic_citation_limit",
+        "invalid skeptic source citation": "skeptic_invalid_citation",
+        "invalid skeptic source citation line range": "skeptic_invalid_source_range",
+        "skeptic omitted an evidence obligation": "skeptic_incomplete_reviews",
+    }.get(str(error), "invalid_skeptic_response")
+
+
 def _validation_error_code(error):
     codes = {
         "model final answer was not valid JSON": "invalid_json",
@@ -3890,6 +3911,13 @@ def _validation_error_code(error):
         "supported claim cannot map to human/runtime-only evidence obligations": "human_runtime_claim_mapping",
         "supported claim cannot close a mandatory-unresolved authorization policy obligation": "unresolved_authorization_policy_claim",
         "likely-false-positive triage cannot suppress an IPC authorization candidate with unresolved policy": "unresolved_authorization_policy_suppression",
+        "artifact response was not valid JSON": "artifact_invalid_json",
+        "artifact response did not match its structured schema": "artifact_invalid_schema",
+        "fixed source inventory is unavailable": "artifact_inventory_unavailable",
+        "artifact citation is outside the fixed source inventory": "artifact_citation_outside_inventory",
+        "artifact citation does not bind to supplied fixed-source evidence": "artifact_citation_not_supplied",
+        "invalid artifact source citation line range": "artifact_invalid_source_range",
+        "artifact source citation quote is outside the bounded excerpt": "artifact_invalid_source_range",
         "artifact narrative must be Chinese: report.title": "artifact_narrative_not_chinese",
         "artifact narrative must be Chinese: report.summary": "artifact_narrative_not_chinese",
         "artifact narrative must be Chinese: report.root_cause": "artifact_narrative_not_chinese",
@@ -3913,6 +3941,7 @@ def _repair_budget_error_code(error):
         "agent total output token budget exhausted": "output_budget_exhausted",
         "agent wall-clock budget exceeded": "wall_clock_budget_exhausted",
         "agent per-request context limit exceeded; remaining evidence stays unresolved": "per_request_context_limit",
+        "Provider request exceeds the per-request input byte limit": "per_request_context_limit",
         "Provider request timed out; remaining evidence stays unresolved": "per_request_timeout",
         "Provider request outcome is unknown; remaining evidence stays unresolved": "provider_request_outcome_unknown",
         "LLM provider response exceeded the 2 MiB limit": "per_request_response_limit",
@@ -3956,6 +3985,13 @@ def _structured_repair_prompt(source_review_indices, obligation_count, mandatory
            f"does not establish that its principal is authorized: {mandatory_unresolved}. Do not map any "
            "supported claim to them, give them no citations, or choose likely_false_positive while they "
            "remain unresolved." if mandatory_unresolved else "")
+        + (" Top-level fields must be exactly summary, assessment, supported_claims, obligation_reviews, "
+           "unsupported_claims, unknowns, next_steps; include every field and no wrapper."
+           if previous_error_code == "invalid_schema" else "")
+        + (" Each obligation review must contain exactly obligation_index (integer), disposition "
+           "(evidence_found / contrary_evidence / unresolved), citations (array). Do not translate or "
+           "substitute the assessment enum for disposition."
+           if previous_error_code == "invalid_obligation_review" else "")
         + (" The server rejected your previous repair because a supported claim was mapped to a "
            "mandatory-unresolved authorization-policy obligation. Remove every claim mapped to the "
            "mandatory indices and leave those reviews unresolved with no citations. Preserve only claims "
@@ -4481,6 +4517,22 @@ def execute_agent(settings, store, ops, task, client=None):
                                           "name": schema_name,
                                           "strict": True,
                                           "schema": schema_override or _FINAL_SCHEMA}}
+        if not with_tools:
+            schema = schema_override or _FINAL_SCHEMA
+            obligation_count = (None if request_phase == "artifact_generation" else
+                                len(prepared["initial_context"]["evidence_obligations"]))
+            contract = output_contract_prompt(schema, obligation_count,
+                                               skeptic=request_phase == "skeptic_review")
+            citation_lines = evidence_lines
+            if request_phase == "skeptic_review":
+                # The independent stage may cite only its own actually sent subset.
+                citation_lines = skeptic_evidence_lines
+            contract += ("\n以下是服务端根据本次实际提供的源码计算出的合法短引用选项。"
+                         "仅在其原文支持当前解释时选择；没有合适引用就保持未决。不要扩大行范围。\n"
+                         + json.dumps(source_citation_options(citation_lines), ensure_ascii=False,
+                                      separators=(",", ":")))
+            payload["input"] = [*request_input, {"role": "user", "content": [
+                {"type": "input_text", "text": contract}]}]
         # The Responses API is stateless, so each call resends the prior
         # transcript. Bound a repeated request using its measured prior input
         # tokens plus the absolute UTF-8 byte-size change (at most one token
@@ -4892,6 +4944,7 @@ def execute_agent(settings, store, ops, task, client=None):
         candidate, prepared["initial_context"]["evidence_obligations"])
     final_validation_status = "accepted"
     final_validation_error_code = None
+    validation_diagnostic = None
     validation_repair_attempts = 0
     repeated_validation_error = False
     if provider_incomplete_reason:
@@ -4910,18 +4963,20 @@ def execute_agent(settings, store, ops, task, client=None):
                                     mandatory_unresolved_indices=mandatory_unresolved_indices)
         except ValueError as first_error:
             current_error = first_error
+            validation_diagnostic = safe_validation_diagnostic(first_error, _validation_error_code(first_error), "primary")
             final = None
             if mode == "tool_agent" or no_cumulative_ceiling:
                 repair_error_codes = set()
                 while (no_cumulative_ceiling
                        or validation_repair_attempts < MAX_VALIDATION_REPAIRS):
                     error_code = _validation_error_code(current_error)
-                    if no_cumulative_ceiling and error_code in repair_error_codes:
+                    error_identity = (error_code, json.dumps(getattr(current_error, "issues", []), sort_keys=True))
+                    if no_cumulative_ceiling and error_identity in repair_error_codes:
                         repeated_validation_error = True
                         ops.event(task["id"], "agent_final_rejected",
                                   "The same structured-output validation failure repeated; stopping this repair stage with obligations unresolved")
                         break
-                    repair_error_codes.add(error_code)
+                    repair_error_codes.add(error_identity)
                     is_targeted = validation_repair_attempts > 0
                     if is_targeted and error_code not in TARGETED_REPAIR_CODES:
                         break
@@ -4942,7 +4997,8 @@ def execute_agent(settings, store, ops, task, client=None):
                             source_review_indices,
                             len(prepared["initial_context"]["evidence_obligations"]),
                             mandatory_unresolved_indices,
-                            previous_error_code=error_code if is_targeted else None)}]})
+                            previous_error_code=error_code) + "\n服务端具体校验问题：" +
+                        json.dumps(safe_validation_diagnostic(current_error, error_code, "primary"), ensure_ascii=False)}]})
                     validation_repair_attempts += 1
                     try:
                         repaired = ask(with_tools=False, request_phase=phase)
@@ -4980,6 +5036,7 @@ def execute_agent(settings, store, ops, task, client=None):
                             mandatory_unresolved_indices=mandatory_unresolved_indices)
                     except ValueError as repair_validation_error:
                         current_error = repair_validation_error
+                        validation_diagnostic = safe_validation_diagnostic(repair_validation_error, _validation_error_code(repair_validation_error), "primary")
                         final_validation_error_code = _validation_error_code(repair_validation_error)
                         rejection_hash = hashlib.sha256(str(repair_validation_error).encode("utf-8")).hexdigest()
                         ops.event(task["id"], "agent_final_rejected",
@@ -4988,6 +5045,7 @@ def execute_agent(settings, store, ops, task, client=None):
                         final = None
                     else:
                         final_validation_error_code = None
+                        validation_diagnostic = None
                         break
             if final is None:
                 if final_validation_status == "accepted":
@@ -5066,7 +5124,12 @@ def execute_agent(settings, store, ops, task, client=None):
                         skeptic_reviews = _validate_skeptic_review(
                             _response_text(skeptic_response), obligations,
                             source_review_indices, skeptic_evidence_lines)
-                    except ValueError:
+                    except ValueError as skeptic_error:
+                        validation_diagnostic = safe_validation_diagnostic(
+                            skeptic_error, _skeptic_validation_error_code(skeptic_error), "skeptic")
+                        skeptic_review["validation_diagnostic"] = validation_diagnostic
+                        ops.event(task["id"], "agent_skeptic_validation_failed",
+                                  json.dumps(validation_diagnostic, ensure_ascii=False))
                         skeptic_review.update({
                             "status": "incomplete",
                             "reason_code": "invalid_skeptic_response",
@@ -5251,6 +5314,7 @@ def execute_agent(settings, store, ops, task, client=None):
         "model_called": True,
         "structured_answer_validation": final_validation_status,
         "structured_answer_validation_error_code": final_validation_error_code,
+        "validation_diagnostic": validation_diagnostic,
         "validation_repair_attempts": validation_repair_attempts,
         "model_answer_retained": final_validation_status == "accepted",
         "provider": provider,

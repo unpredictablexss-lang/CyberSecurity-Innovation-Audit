@@ -3312,6 +3312,12 @@ def install_routes(app: FastAPI, settings, store):
                     operation_result = ops.result(summary["id"])
                     summary["assessment"] = (operation_result.get("agent_assessment") or {}).get(
                         "assessment", "unknown")
+                    artifact = operation_result.get("artifact_generation") or {}
+                    summary["artifact_generation"] = {key: artifact.get(key) for key in ("status", "reason_code")}
+                    summary["validation_status"] = operation_result.get("structured_answer_validation")
+                    summary["failure_code"] = operation_result.get("structured_answer_validation_error_code")
+                    summary["validation_diagnostic"] = operation_result.get("validation_diagnostic") or (
+                        operation_result.get("skeptic_review") or {}).get("validation_diagnostic")
                     summary["investigation_limitations"] = [
                         str(value) for value in operation_result.get("limitations", [])
                         if isinstance(value, str) and any(
