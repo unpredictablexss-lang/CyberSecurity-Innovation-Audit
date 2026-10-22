@@ -392,6 +392,14 @@ class PolicyStoreTests(unittest.TestCase):
             with self.assertRaises(PolicyRevisionConflict):
                 store.update(build_policy("economical"), expected_revision=0)
 
+    def test_legacy_v1_policy_remains_readable_after_v2_settings_upgrade(self):
+        from src.workbench.progressive_triage.policy import validate_policy
+        legacy = build_policy()
+        legacy["policy_version"] = "progressive-triage-v1"
+        legacy["limits"].pop("max_output_tokens_per_request")
+        self.assertEqual(validate_policy(legacy), legacy)
+        self.assertEqual(content_sha256(validate_policy(legacy)), content_sha256(legacy))
+
     def test_policy_reader_rejects_symlinks_and_non_private_files(self):
         with tempfile.TemporaryDirectory() as directory:
             store = PolicyStore(directory)
@@ -1247,55 +1255,84 @@ class BudgetLedgerTests(unittest.TestCase):
             self.assertEqual(snapshot["cost"]["actual_usd"], None)
             self.assertEqual(snapshot["cost"]["enforcement"], "advisory_only")
 
-    def test_cumulative_token_call_and_time_values_are_advisory_only(self):
+    def test_frozen_token_call_and_time_budgets_stop_future_provider_requests(self):
+        from src.workbench.progressive_triage.ledger import BudgetError
         with tempfile.TemporaryDirectory() as directory:
             limits = {
                 **build_policy()["limits"],
-                "quick_screen_groups_per_audit": 130,
+                "quick_screen_groups_per_audit": 3,
                 "deep_groups_per_audit": 0,
-                "max_model_calls_per_audit": 120,
-                "max_input_tokens_per_audit": 1_024,
-                "max_output_tokens_per_audit": 256,
+                "max_model_calls_per_audit": 1,
+                "max_input_tokens_per_audit": 2_048,
+                "max_output_tokens_per_audit": 1_024,
+                "max_output_tokens_per_request": 512,
                 "max_ai_wall_seconds": 60,
                 "max_model_concurrency": 1,
             }
             policy = build_policy("custom", limits, True)
             ledger, policy, sha = self.create(directory, policy)
-            ledger.create_audit("audit-no-cumulative-cap", policy, sha)
+            ledger.create_audit("audit-limited", policy, sha)
+            ledger.dispatch_group("audit-limited", "group-1", "endpoint-1",
+                                  "quick_screen", evidence_gate="ranked_and_selected")
+            reservation = ledger.reserve(
+                "audit-limited", "request-1", "endpoint-1", "group-1",
+                "quick_screen", max_input_tokens=1_000, max_output_tokens=512,
+            )
+            settled = ledger.settle(
+                reservation["reservation_id"], outcome="completed",
+                input_tokens=900, output_tokens=400, quick_assessment="investigate",
+            )
+            self.assertEqual(settled["status"], "completed")
+            ledger.dispatch_group("audit-limited", "group-2", "endpoint-2",
+                                  "quick_screen", evidence_gate="ranked_and_selected")
+            with self.assertRaisesRegex(BudgetError, "model-call budget exhausted"):
+                ledger.reserve("audit-limited", "request-2", "endpoint-2", "group-2",
+                               "quick_screen", max_input_tokens=100, max_output_tokens=512)
+            request_cap_policy = build_policy("custom", {**limits, "max_model_calls_per_audit": 2}, True)
+            request_cap_sha = content_sha256(request_cap_policy)
+            ledger.create_audit("audit-request-cap", request_cap_policy, request_cap_sha)
+            ledger.dispatch_group("audit-request-cap", "group-cap", "endpoint-cap",
+                                  "quick_screen", evidence_gate="ranked_and_selected")
+            with self.assertRaisesRegex(BudgetError, "per-request output-token limit"):
+                ledger.reserve("audit-request-cap", "request-cap", "endpoint-cap", "group-cap",
+                               "quick_screen", max_input_tokens=100, max_output_tokens=513)
+
+            input_policy = build_policy("custom", {**limits, "max_model_calls_per_audit": 3,
+                                                     "max_input_tokens_per_audit": 1_024}, True)
+            ledger.create_audit("audit-input-cap", input_policy, content_sha256(input_policy))
+            ledger.dispatch_group("audit-input-cap", "group-in", "endpoint-in",
+                                  "quick_screen", evidence_gate="ranked_and_selected")
+            first = ledger.reserve("audit-input-cap", "input-1", "endpoint-in", "group-in",
+                                   "quick_screen", max_input_tokens=900, max_output_tokens=512)
+            ledger.settle(first["reservation_id"], outcome="completed", input_tokens=900,
+                          output_tokens=100, quick_assessment="investigate")
+            ledger.dispatch_group("audit-input-cap", "group-in-2", "endpoint-in-2",
+                                  "quick_screen", evidence_gate="ranked_and_selected")
+            with self.assertRaisesRegex(BudgetError, "input-token budget exhausted"):
+                ledger.reserve("audit-input-cap", "input-2", "endpoint-in-2", "group-in-2",
+                               "quick_screen", max_input_tokens=200, max_output_tokens=512)
+
+            expired = build_policy("custom", {**limits, "max_model_calls_per_audit": 3}, True)
+            ledger.create_audit("audit-wall-cap", expired, content_sha256(expired))
             db = ledger._connect()
             try:
-                db.execute("UPDATE audit_budget SET created_at=0 WHERE audit_id=?",
-                           ("audit-no-cumulative-cap",))
+                db.execute("UPDATE audit_budget SET created_at=0 WHERE audit_id=?", ("audit-wall-cap",))
             finally:
                 db.close()
-
-            for index in range(130):
-                group_id = f"group-{index}"
-                endpoint_id = f"endpoint-{index}"
-                ledger.dispatch_group("audit-no-cumulative-cap", group_id, endpoint_id,
+            with self.assertRaisesRegex(BudgetError, "AI wall-time budget exhausted"):
+                ledger.dispatch_group("audit-wall-cap", "group-time", "endpoint-time",
                                       "quick_screen", evidence_gate="ranked_and_selected")
-                reservation = ledger.reserve(
-                    "audit-no-cumulative-cap", f"request-{index}", endpoint_id, group_id,
-                    "quick_screen", max_input_tokens=1_000, max_output_tokens=512,
-                )
-                settled = ledger.settle(
-                    reservation["reservation_id"], outcome="completed",
-                    input_tokens=1_500, output_tokens=700,
-                    quick_assessment="investigate",
-                )
-                self.assertEqual(settled["status"], "completed")
 
-            snapshot = ledger.get("audit-no-cumulative-cap")
+            snapshot = ledger.get("audit-limited")
             self.assertEqual(snapshot["status"], "active")
             self.assertIsNone(snapshot["stop_reason"])
-            self.assertEqual(snapshot["usage"]["model_calls_allocated"], 130)
-            self.assertEqual(snapshot["usage"]["input_tokens_allocated"], 195_000)
-            self.assertEqual(snapshot["usage"]["output_tokens_allocated"], 91_000)
-            self.assertFalse(snapshot["usage"]["cumulative_usage_limits_enforced"])
-            self.assertIsNone(snapshot["usage"]["max_model_calls"])
-            self.assertIsNone(snapshot["usage"]["max_input_tokens"])
-            self.assertIsNone(snapshot["usage"]["max_output_tokens"])
-            self.assertIsNone(snapshot["usage"]["wall_seconds_remaining"])
+            self.assertEqual(snapshot["usage"]["model_calls_allocated"], 1)
+            self.assertEqual(snapshot["usage"]["input_tokens_allocated"], 900)
+            self.assertEqual(snapshot["usage"]["output_tokens_allocated"], 400)
+            self.assertTrue(snapshot["usage"]["cumulative_usage_limits_enforced"])
+            self.assertEqual(snapshot["usage"]["max_model_calls"], 1)
+            self.assertEqual(snapshot["usage"]["max_input_tokens"], 2_048)
+            self.assertEqual(snapshot["usage"]["max_output_tokens"], 1_024)
 
     def test_deep_agent_requires_completed_investigate_and_policy_sha_is_immutable(self):
         from src.workbench.progressive_triage.ledger import BudgetError, BudgetConflict
@@ -1529,10 +1566,12 @@ class ProgressiveDeepApiIntegrationTests(unittest.TestCase):
                 response = client.post(endpoint + "/preview", headers=headers, json=body)
                 self.assertEqual(response.status_code, 200, response.text)
                 preview = response.json()
-                self.assertEqual(preview["budgets"]["local_cumulative_token_budget"], "none")
-                self.assertEqual(preview["budgets"]["local_total_model_call_budget"], "none")
-                self.assertEqual(preview["budgets"]["local_total_wall_time_budget"], "until_terminal_condition")
-                self.assertFalse(preview["budgets"]["cumulative_usage_limits_enforced"])
+                self.assertEqual(preview["budgets"]["local_cumulative_token_budget"], "bounded_by_frozen_progressive_policy")
+                self.assertEqual(preview["budgets"]["local_total_model_call_budget"], "bounded_by_frozen_progressive_policy")
+                self.assertEqual(preview["budgets"]["local_total_wall_time_budget"], "bounded_by_frozen_progressive_policy")
+                self.assertTrue(preview["budgets"]["cumulative_usage_limits_enforced"])
+                self.assertEqual(preview["budgets"]["max_output_tokens_per_request"],
+                                 preview["progressive_policy"]["policy"]["limits"]["max_output_tokens_per_request"])
                 self.assertEqual(preview["progressive_binding"]["quick_screen_result_sha256"], quick["result_sha256"])
                 approved = {**body, "source_submission_approved": True,
                             "consent_nonce": preview["consent_nonce"], "consent_sha256": preview["consent_sha256"]}
@@ -1540,6 +1579,8 @@ class ProgressiveDeepApiIntegrationTests(unittest.TestCase):
                 self.assertEqual(started.status_code, 201, started.text)
                 spec = started.json()["spec"]
                 self.assertTrue(spec["no_cumulative_token_ceiling"])
+                self.assertEqual(spec["max_output_tokens"], preview["budgets"]["max_output_tokens_per_request"])
+                self.assertEqual(spec["max_steps"], preview["budgets"]["max_steps"])
                 self.assertTrue(spec["continuous_investigation"])
                 self.assertEqual(spec["max_provider_retries"], 0)
                 replay = client.post(endpoint, headers=headers, json=approved)

@@ -146,7 +146,8 @@ def _validate_evidence(evidence: Any) -> list[dict[str, str]]:
 
 def build_quick_screen_request(group: dict[str, Any], evidence: Any,
                                authorization: dict[str, Any], provider_fingerprint: str,
-                               model: str, *, max_output_tokens: int | None = MAX_RESPONSE_TOKENS) -> tuple[dict[str, Any], set[str]]:
+                               model: str, *, max_output_tokens: int = MAX_RESPONSE_TOKENS
+                               ) -> tuple[dict[str, Any], set[str]]:
     """Build the exact no-tools request after checking consent and fixed-source binding."""
     if max_output_tokens is not None and (type(max_output_tokens) is not int or not 128 <= max_output_tokens <= 65536):
         raise QuickScreenInputError("quick_screen_output_cap_invalid")
@@ -162,7 +163,6 @@ def build_quick_screen_request(group: dict[str, Any], evidence: Any,
     model = _bounded_text(model, "model", 200)
     if authorization.get("model") != model:
         raise QuickScreenInputError("model changed after quick-screen consent")
-
     members = group.get("members") or []
     if not isinstance(members, list) or not members:
         raise QuickScreenInputError("group has no original candidate members")
@@ -383,7 +383,8 @@ def run_quick_screen(provider: Any, group: dict[str, Any], evidence: Any,
                 or not isinstance(usage.get("output_tokens"), int)
                 or isinstance(usage.get("output_tokens"), bool)
                 or usage["output_tokens"] < 0
-                or (max_output_tokens is not None and usage["output_tokens"] > max_output_tokens)):
+                or (max_output_tokens is not None
+                    and usage["output_tokens"] > max_output_tokens)):
             raise ValueError("provider_usage_missing_or_invalid")
         value = json.loads(text)
         result = _normalize_result(value, group_id, allowed_ids)

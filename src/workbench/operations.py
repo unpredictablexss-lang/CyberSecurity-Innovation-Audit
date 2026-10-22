@@ -69,7 +69,7 @@ def range_plan(settings, store, repository_id, baseline, endpoint, includes, det
 
 
 
-def multimode_triage_preview(scan_specs, body, provider, nonces):
+def multimode_triage_preview(scan_specs, body, provider, nonces, system_policy_snapshot=None):
     """Build a separately consented, immutable source-egress preview per endpoint."""
     from .agent import audit_task_consent_preview
     if body.get("audit_mode") != "standard_review" or not body.get("auto_triage"):
@@ -85,7 +85,8 @@ def multimode_triage_preview(scan_specs, body, provider, nonces):
         )
         preview = audit_task_consent_preview(
             spec["audit_plan"], workflow, spec["include_paths"], max_candidates,
-            nonce, provider, max_r2
+            nonce, provider, max_r2,
+            system_policy_snapshot=system_policy_snapshot,
         )
         if not preview.get("eligible"):
             raise ValueError("endpoint automatic triage unavailable: " + preview.get("reason", "unknown"))
@@ -109,14 +110,19 @@ def bind_multimode_triage(settings, scan_specs, body):
     provider = ProviderConfig.from_env(settings.data_dir)
     if not provider.configured:
         raise ValueError("model provider not configured; static endpoint scans remain available")
+    from .progressive_triage.policy import PolicyStore
+    stored_policy = PolicyStore(settings.data_dir).read()
+    policy_snapshot = {"revision": stored_policy["revision"], "policy": stored_policy["policy"],
+                       "policy_sha256": stored_policy["policy_sha256"]}
     nonces = [row.get("consent_nonce") if isinstance(row, dict) else None for row in approvals]
-    previews = multimode_triage_preview(scan_specs, body, provider, nonces)
+    previews = multimode_triage_preview(scan_specs, body, provider, nonces, policy_snapshot)
     enriched = []
     for spec, approval, preview in zip(scan_specs, approvals, previews):
         if approval.get("consent_sha256") != preview["consent_sha256"]:
             raise ValueError("endpoint consent expired: source, model, policy or provider changed")
         enriched.append({
             **spec, "audit_mode": "standard_review",
+            "progressive_triage_policy": policy_snapshot,
             "workflow_sha256": preview["workflow_sha256"],
             "max_r2_candidates": body.get("max_r2_candidates", 0),
             "max_cost_usd": None,

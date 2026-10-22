@@ -773,8 +773,8 @@ class ProviderConfigTests(unittest.TestCase):
         self.assertIsNone(manifest["budgets"]["cumulative_token_ceiling"])
         self.assertIsNone(manifest["budgets"]["cumulative_request_ceiling"])
         self.assertIsNone(manifest["budgets"]["cumulative_spend_ceiling"])
-        self.assertEqual(manifest["budgets"]["r1_max_output_tokens_per_request"], 5000)
-        self.assertEqual(manifest["budgets"]["r2_max_output_tokens_per_request"], 5000)
+        self.assertEqual(manifest["budgets"]["r1_max_output_tokens_per_request"], min(agent.DEFAULT_AGENT_OUTPUT_TOKENS, 3000))
+        self.assertEqual(manifest["budgets"]["r2_max_output_tokens_per_request"], min(agent.DEFAULT_AGENT_OUTPUT_TOKENS, 3000))
         self.assertIsNone(manifest["budgets"]["max_validation_repairs"])
         self.assertTrue(any("structured-answer correction may resend" in item
                             for item in manifest["source_disclosure"]))
@@ -796,6 +796,30 @@ class ProviderConfigTests(unittest.TestCase):
         self.assertIsNone(first["manifest"]["budgets"]["cumulative_token_ceiling"])
         self.assertIsNone(second["manifest"]["budgets"]["cumulative_token_ceiling"])
 
+    def test_task_triage_consent_freezes_system_single_round_output_limit(self):
+        from src.workbench.progressive_triage.policy import build_policy, policy_envelope
+        policy = build_policy()
+        policy["profile"] = "custom"
+        policy["limits"]["max_output_tokens_per_request"] = 768
+        snapshot = {"revision": 7, "policy": policy,
+                    "policy_sha256": policy_envelope(policy)["policy_sha256"]}
+        provider = agent.ProviderConfig("https://api.xiaomimimo.com/v1", "mimo-v2.6-pro", "secret")
+        preview = agent.audit_task_consent_preview(
+            {"plan_sha256": "a" * 64,
+             "source": {"repository": "openharmony/demo", "commit": "b" * 40,
+                        "git_tree": "c" * 40}},
+            "d" * 64, ["."], 2, "e" * 32, provider, 1,
+            system_policy_snapshot=snapshot)
+        manifest = preview["manifest"]
+        self.assertTrue(preview["eligible"])
+        self.assertEqual(manifest["system_policy"]["revision"], 7)
+        self.assertEqual(manifest["system_policy"]["policy_sha256"], snapshot["policy_sha256"])
+        self.assertEqual(manifest["system_policy"]["max_output_tokens_per_request"], 768)
+        self.assertEqual(manifest["budgets"]["r1_max_output_tokens_per_request"], 768)
+        self.assertEqual(manifest["budgets"]["r2_max_output_tokens_per_request"], 768)
+        self.assertFalse(manifest["system_policy"]["cumulative_ledger_enforced"])
+        self.assertTrue(any("single-round output" in item for item in manifest["source_disclosure"]))
+
     def test_task_preview_binds_uncapped_usage_and_optional_usd_limit(self):
         provider = agent.ProviderConfig("https://api.xiaomimimo.com/v1", "mimo-v2.6-pro", "secret")
         preview = agent.audit_task_consent_preview(
@@ -809,7 +833,7 @@ class ProviderConfigTests(unittest.TestCase):
         self.assertEqual(preview["cost_budget"]["local_cumulative_usd_budget"], "none")
         self.assertFalse(preview["platform_cost_budget_enforced"])
         self.assertEqual(preview["manifest"]["candidate_selection"]["authorized_candidate_count"], 2)
-        self.assertEqual(preview["manifest"]["budgets"]["r1_max_output_tokens_per_request"], 5000)
+        self.assertEqual(preview["manifest"]["budgets"]["r1_max_output_tokens_per_request"], min(agent.DEFAULT_AGENT_OUTPUT_TOKENS, 3000))
         self.assertIsNone(preview["manifest"]["budgets"]["cumulative_token_ceiling"])
     def test_task_consent_ignores_legacy_usd_caps_for_uncapped_investigations(self):
         plan = {"plan_sha256": "a" * 64, "source": {"repository": "openharmony/demo", "commit": "b" * 40, "git_tree": "c" * 40}}
@@ -2963,9 +2987,9 @@ class AgentOutputDefaultTests(unittest.TestCase):
         for request_type, payload in requests:
             with self.subTest(request=request_type.__name__):
                 default = request_type(**payload)
-                self.assertEqual(default.max_output_tokens, 5000)
-                self.assertEqual(agent.bounded_agent_spec(default.model_dump())["max_output_tokens"], 5000)
-                for cap in [1200, 5000, 16000]:
+                self.assertEqual(default.max_output_tokens, 1200)
+                self.assertEqual(agent.bounded_agent_spec(default.model_dump())["max_output_tokens"], 1200)
+                for cap in [512, 1200, 3000]:
                     explicit = request_type(**payload, max_output_tokens=cap)
                     self.assertEqual(agent.bounded_agent_spec(explicit.model_dump())["max_output_tokens"], cap)
         self.assertEqual(agent.bounded_agent_spec({"mode": "tool_agent"})["max_output_tokens"], 5000)
@@ -3063,6 +3087,19 @@ class AgentRouteTests(unittest.TestCase):
                                                 headers=headers, json=payload)
                 self.assertEqual(preview_response.status_code, 200, preview_response.text)
                 preview = preview_response.json()
+                self.assertEqual(preview["system_policy"]["policy"]["profile"], "standard")
+                self.assertEqual(preview["budgets"]["max_output_tokens"], 1200)
+                self.assertEqual(preview["budgets"]["max_total_input_tokens"], 400000)
+                self.assertEqual(preview["budgets"]["max_total_output_tokens"], 100000)
+                self.assertEqual(preview["budgets"]["timeout_seconds"], 1800)
+                caller_budget_preview = client.post(
+                    "/api/v1/operations/agent-investigations/preview",
+                    headers={"x-ohscanner-client": "workbench-v1"},
+                    json={**payload, "max_output_tokens": 128,
+                          "max_total_input_tokens": 1000, "max_total_output_tokens": 512,
+                          "max_total_model_calls": 1, "timeout_seconds": 60})
+                self.assertEqual(caller_budget_preview.status_code, 409)
+                self.assertIn("System Settings", caller_budget_preview.json()["detail"])
                 self.assertFalse(preview["agent_execution"]["eligible"])
                 self.assertEqual(preview["agent_execution"]["route"], "human_or_runtime_validation")
                 self.assertEqual(preview["agent_execution"]["source_reviewable_open_obligations"], 0)
@@ -3189,7 +3226,7 @@ class AgentRouteTests(unittest.TestCase):
                 stale = client.post("/api/v1/operations/agent-investigations", headers={
                     "x-ohscanner-client": "workbench-v1"},
                     json={**preview_payload, "source_submission_approved": True,
-                          "consent_sha256": preview["consent_sha256"], "consent_nonce": preview["consent_nonce"],
+                          "consent_sha256": "0" * 64, "consent_nonce": preview["consent_nonce"],
                           "max_output_tokens": preview["budgets"]["max_output_tokens"] - 1})
                 self.assertEqual(stale.status_code, 409)
                 self.assertEqual(client.get("/api/v1/operations").json(), [])
@@ -3229,10 +3266,14 @@ class AgentRouteTests(unittest.TestCase):
                 self.assertEqual(plan["source_commit"], "c" * 40)
                 self.assertEqual(plan["report_sha256"], "b" * 64)
                 self.assertEqual(plan["mode"], "single_shot")
-                self.assertEqual(preview["budgets"]["max_output_tokens"], 5000)
-                self.assertEqual(plan["max_output_tokens"], 5000)
                 self.assertEqual(plan["experiment_id"], "paired-test-1")
                 self.assertEqual(plan["case_id"], case_id)
+                self.assertEqual(plan["max_output_tokens"], 1200)
+                self.assertEqual(plan["max_total_input_tokens"], 400000)
+                self.assertEqual(plan["max_total_output_tokens"], 100000)
+                self.assertEqual(plan["max_total_model_calls"], 120)
+                self.assertEqual(plan["timeout_seconds"], 1800)
+                self.assertEqual(plan["system_policy"]["policy"]["profile"], "standard")
                 self.assertEqual(plan["prompt_version"], agent.PROMPT_VERSION)
                 self.assertEqual(plan["tool_policy_version"], agent.TOOL_POLICY_VERSION)
                 self.assertTrue(plan["source_submission_approved"])
@@ -3302,7 +3343,7 @@ class AgentRouteTests(unittest.TestCase):
                 self.assertEqual(preview["candidate_count"], 2)
                 self.assertGreater(preview["aggregate_budget"]["max_total_model_calls"], 0)
                 self.assertEqual(preview["aggregate_budget"]["single_shot_candidate_request_count"], 2)
-                self.assertEqual(preview["aggregate_budget"]["local_cumulative_token_budget"], "bounded")
+                self.assertEqual(preview["aggregate_budget"]["local_cumulative_token_budget"], "bounded_by_system_policy")
                 self.assertFalse(preview["aggregate_budget"]["tool_agent_continuous"])
                 self.assertEqual([x["candidate_id"] for x in preview["candidates"]],
                                  ["candidate-1", "candidate-2"])
@@ -3312,11 +3353,11 @@ class AgentRouteTests(unittest.TestCase):
                     headers=headers, json={**payload, "mode": "tool_agent"})
                 self.assertEqual(tool_preview_response.status_code, 200, tool_preview_response.text)
                 tool_preview = tool_preview_response.json()
-                self.assertIsNone(tool_preview["aggregate_budget"]["max_validation_repair_attempts_per_candidate"])
-                self.assertIsNone(tool_preview["aggregate_budget"]["max_total_model_calls"])
+                self.assertGreater(tool_preview["aggregate_budget"]["max_validation_repair_attempts_per_candidate"], 0)
+                self.assertGreater(tool_preview["aggregate_budget"]["max_total_model_calls"], 0)
                 self.assertEqual(tool_preview["aggregate_budget"]["max_skeptic_requests_per_candidate"], 1)
-                self.assertEqual(tool_preview["aggregate_budget"]["local_cumulative_cost_budget"], "none")
-                self.assertTrue(tool_preview["aggregate_budget"]["tool_agent_continuous"])
+                self.assertEqual(tool_preview["aggregate_budget"]["local_cumulative_cost_budget"], "token_bound_advisory_only")
+                self.assertFalse(tool_preview["aggregate_budget"]["tool_agent_continuous"])
                 self.assertTrue(any("Skeptic" in item
                                     for item in tool_preview["disclosure"]))
                 stale = client.post("/api/v1/operations/agent-investigations/batch",
@@ -3406,13 +3447,13 @@ class AgentRouteTests(unittest.TestCase):
                 self.assertEqual(preview_response.status_code, 200, preview_response.text)
                 preview = preview_response.json()
                 self.assertEqual([arm["mode"] for arm in preview["arms"]], ["single_shot", "tool_agent"])
-                self.assertIsNone(preview["aggregate_budget"]["tool_agent_max_total_model_calls"])
-                self.assertEqual(preview["aggregate_budget"]["tool_agent_local_cumulative_token_budget"], "none")
-                self.assertEqual(preview["aggregate_budget"]["tool_agent_max_validation_repair_attempts"], None)
+                self.assertGreater(preview["aggregate_budget"]["tool_agent_max_total_model_calls"], 0)
+                self.assertEqual(preview["aggregate_budget"]["tool_agent_local_cumulative_token_budget"], "bounded_by_system_policy")
+                self.assertGreater(preview["aggregate_budget"]["tool_agent_max_validation_repair_attempts"], 0)
                 self.assertEqual(preview["aggregate_budget"]["tool_agent_max_skeptic_requests"], 1)
                 stale = client.post("/api/v1/operations/agent-investigations/paired",
-                    headers=headers, json={**pair_payload, "max_output_tokens": 1201,
-                        "source_submission_approved": True, "consent_sha256": preview["consent_sha256"], "consent_nonce": preview["consent_nonce"]})
+                    headers=headers, json={**pair_payload, "consent_sha256": "0" * 64,
+                        "source_submission_approved": True, "consent_nonce": preview["consent_nonce"]})
                 self.assertEqual(stale.status_code, 409)
                 self.assertEqual(client.get("/api/v1/operations").json(), [])
                 queued = client.post("/api/v1/operations/agent-investigations/paired",
@@ -3424,7 +3465,7 @@ class AgentRouteTests(unittest.TestCase):
                 self.assertEqual({item["spec"]["experiment_id"] for item in items}, {"paired-run-1"})
                 self.assertEqual({item["spec"]["mode"] for item in items}, {"single_shot", "tool_agent"})
                 r2_spec = next(item["spec"] for item in items if item["spec"]["mode"] == "tool_agent")
-                self.assertTrue(r2_spec["no_cumulative_token_ceiling"])
+                self.assertFalse(r2_spec["no_cumulative_token_ceiling"])
                 r1_spec = next(item["spec"] for item in items if item["spec"]["mode"] == "single_shot")
                 self.assertFalse(r1_spec["no_cumulative_token_ceiling"])
                 self.assertEqual({item["spec"]["pair_id"] for item in items}, {queued.json()["pair_id"]})

@@ -4,7 +4,7 @@ import { Alert, Button, Card, Checkbox, Collapse, Descriptions, Form, Input, Inp
 import { api } from "../../api";
 import { Hash, go } from "../../components";
 import { analysisStatusLabel, coverageStatusLabel, triageStateLabel } from "../workbench/riskLabels.js";
-import { auditDefaults, AuditModeSelector, RepositoryField, RefField, RuleNotice, ScopeAvailability, ScopeBudget, useRepositoryRefs } from "./AuditFields";
+import { auditDefaults, AuditModeSelector, PolicyBudgetNotice, RepositoryField, RefField, RuleNotice, ScopeAvailability, ScopeBudget, useRepositoryRefs } from "./AuditFields";
 import { approvedDetectorIds, datePreviewPayload, operationPayload, recentRange, requestGate, selectedAuditModeValues } from "./model";
 import TaskTriageConsentModal from "./TaskTriageConsentModal";
 import { canApproveSourceSubmission, canCreateAgentInvestigation, disclosureReviewed, disclosureSelectionMatches, redactionNotice } from "./egressDisclosure.js";
@@ -110,6 +110,7 @@ export function ComparisonForm({ kind, repos, detectors, cases, busy, agentStatu
       onValuesChange={invalidate}
       onFinish={finish}>
       <AuditModeSelector />
+      {smartMode && <PolicyBudgetNotice />}
       <Alert className="section-gap" type="info" showIcon
         message={smartMode ? "智能审计：先静态扫描，再调查候选证据" : "静态审计：只运行本地检测器"}
         description={smartMode
@@ -568,15 +569,11 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
   const requestPairPreview = async () => {
     setPairBusy(true); setPairError(""); setPairPreview(null); setPairDisclosureOpened([]); setPairSubmissionApproved(false);
     try {
-      const values = await form.validateFields(["job_id", "candidate_id", "experiment_id",
-        "case_id", "max_output_tokens", "max_steps", "max_total_input_tokens", "max_total_output_tokens", "timeout_seconds"]);
+      const values = await form.validateFields(["job_id", "candidate_id", "experiment_id", "case_id"]);
       if (!values.experiment_id?.trim()) throw new Error("请先填写实验批次 ID");
       const result = await api("/operations/agent-investigations/paired/preview", {
         job_id: values.job_id, candidate_id: values.candidate_id,
         experiment_id: values.experiment_id?.trim(), case_id: values.case_id || undefined,
-        max_output_tokens: values.max_output_tokens,
-          max_steps: values.max_steps, max_total_input_tokens: values.max_total_input_tokens,
-          max_total_output_tokens: values.max_total_output_tokens, timeout_seconds: values.timeout_seconds,
       });
       setPairPreview(result); setPairDisclosureOpened([]); setPairSubmissionApproved(false);
     } catch (e) { setPairError(String(e)); }
@@ -590,9 +587,6 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
         job_id: form.getFieldValue("job_id"), candidate_id: form.getFieldValue("candidate_id"),
         experiment_id: form.getFieldValue("experiment_id")?.trim(),
         case_id: form.getFieldValue("case_id") || undefined,
-        max_output_tokens: form.getFieldValue("max_output_tokens"),
-        max_steps: form.getFieldValue("max_steps"), max_total_input_tokens: form.getFieldValue("max_total_input_tokens"),
-        max_total_output_tokens: form.getFieldValue("max_total_output_tokens"), timeout_seconds: form.getFieldValue("timeout_seconds"),
         source_submission_approved: true, consent_sha256: pairPreview.consent_sha256,
         consent_nonce: pairPreview.consent_nonce,
       });
@@ -605,15 +599,11 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
   const requestPreview = async () => {
     const ticket = previewGate.current.next(); setPreviewBusy(true); setPreview(null); setPreviewError(""); setPreviewDisclosureOpened(false);
     try {
-      const values = await form.validateFields(["job_id", "candidate_id", "experiment_id", "case_id", "mode",
-        "max_output_tokens", "max_steps", "max_total_input_tokens", "max_total_output_tokens", "timeout_seconds"]);
+      const values = await form.validateFields(["job_id", "candidate_id", "experiment_id", "case_id", "mode"]);
       const result = await api("/operations/agent-investigations/preview",
         { job_id: values.job_id, candidate_id: values.candidate_id,
           experiment_id: values.experiment_id, case_id: values.case_id,
           mode: values.mode,
-          max_output_tokens: values.max_output_tokens,
-          max_steps: values.max_steps, max_total_input_tokens: values.max_total_input_tokens,
-          max_total_output_tokens: values.max_total_output_tokens, timeout_seconds: values.timeout_seconds,
           source_submission_approved: false });
       if (previewGate.current.current(ticket)) {
         setPreview(result); setPreviewDisclosureOpened(false); form.setFieldValue("source_submission_approved", false);
@@ -627,14 +617,14 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
   return <Card title="模型辅助候选调查">
     {contextHolder}
     {!ready ? <Alert type="warning" showIcon message="模型服务尚未配置" description={(agentStatus?.missing?.length ? "Worker 环境缺少：" + agentStatus.missing.join(", ") : "请由服务管理员配置 OHSCANNER_LLM_MODEL 和 OHSCANNER_LLM_API_KEY") + "；密钥不在浏览器或数据库保存。"} /> :
-      <Alert type="info" showIcon message={"目的地：" + agentStatus.endpoint_host + " · 模型：" + agentStatus.model} description="先生成本次外发预览；模型、方式、单次输出上限或固定候选变化后，预览与授权都会失效。" />}
+      <Alert type="info" showIcon message={"目的地：" + agentStatus.endpoint_host + " · 模型：" + agentStatus.model} description="先生成本次外发预览；模型、调查方式、系统预算策略或固定候选变化后，预览与授权都会失效。" />}
     {ready && <Space className="section-gap" wrap>
       <Button loading={providerCheckBusy} onClick={checkProvider}>测试模型服务</Button>
       {providerCheckResult && <Text type="secondary">最近通过：{providerCheckResult.endpoint_host} · {providerCheckResult.model} · {providerCheckResult.duration_ms} ms · 输入/输出 Token {providerCheckResult.usage?.input_tokens ?? "未知"}/{providerCheckResult.usage?.output_tokens ?? "未知"}</Text>}
     </Space>}
     {providerCheckError && <Alert className="section-gap" type="error" showIcon message={providerCheckError} />}
     {previewError && <Alert className="section-gap" type="error" showIcon message={previewError} />}
-    <Form name="agent-candidate-investigation" form={form} layout="vertical" initialValues={{ mode: "tool_agent", max_steps: 4, max_total_input_tokens: 128000, max_total_output_tokens: 8000, timeout_seconds: 240, job_id: context.job_id, candidate_id: context.candidate_id, case_id: context.case_id }}
+    <Form name="agent-candidate-investigation" form={form} layout="vertical" initialValues={{ mode: "tool_agent", job_id: context.job_id, candidate_id: context.candidate_id, case_id: context.case_id }}
       onValuesChange={(changed) => {
         if (!("source_submission_approved" in changed)) invalidatePreview();
         setPairPreview(null); setPairError(""); setPairDisclosureOpened([]); setPairSubmissionApproved(false);
@@ -650,13 +640,7 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
       }}>
       <Form.Item name="job_id" label="已完成扫描任务 ID" rules={[{ required: true }]}><Input readOnly /></Form.Item>
       <Form.Item name="candidate_id" label="扫描候选 ID" rules={[{ required: true }]}><Input readOnly /></Form.Item>
-      <Form.Item name="max_steps" hidden><InputNumber /></Form.Item>
-      <Alert className="section-gap" type="info" message="单次模型输出额度统一在系统设置 → 智能审计策略与资源预算中配置；本次外发预览会显示实际额度。" />
-      <Form.Item name="max_total_input_tokens" hidden><InputNumber /></Form.Item>
-      <Form.Item name="max_total_output_tokens" hidden><InputNumber /></Form.Item>
-      <Form.Item name="timeout_seconds" hidden><InputNumber /></Form.Item>
-      <Alert className="section-gap" type="info" showIcon message="智能调查会持续追查，不因累计用量停止"
-        description="平台不设累计 Token、模型调用、工具步骤、调查时长或费用上限。调查会在模型完成、连续没有新增源码证据、服务商/API 出错或你手动取消时结束；实际账户额度和费用由模型服务商决定。" />
+      <PolicyBudgetNotice />
 
       <Collapse className="section-gap" items={[{ key: "research-settings", label: "研究实验设置（可选）", children: <>
         <Form.Item name="experiment_id" label="实验批次 ID" extra="仅用于人工基线或模型对照实验；普通单次调查可留空。">
@@ -807,8 +791,8 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
             <Descriptions.Item label="实验批次">{pairPreview.experiment_id}</Descriptions.Item>
             <Descriptions.Item label="模型端点">{pairPreview.provider?.endpoint_host} · {pairPreview.provider?.model}</Descriptions.Item>
             <Descriptions.Item label="固定候选" span={2}>{pairPreview.candidate?.repository} @ {pairPreview.candidate?.commit} · {pairPreview.candidate?.candidate_id}</Descriptions.Item>
-            <Descriptions.Item label="AI 初步分析">每候选一个 Provider 请求，单次输出上限 {pairPreview.aggregate_budget?.single_shot_max_output_tokens_per_request == null ? "无本地上限，由服务商决定" : String(pairPreview.aggregate_budget.single_shot_max_output_tokens_per_request) + " tokens"}，45 秒超时</Descriptions.Item>
-            <Descriptions.Item label="跨文件工具调查">平台不设累计 Token、调用次数、费用或总时长上限；每次请求仍有输出上限和 45 秒超时，可随时取消</Descriptions.Item>
+            <Descriptions.Item label="单轮模型研判">每候选一个 Provider 请求，单次输出上限 {pairPreview.aggregate_budget?.single_shot_max_output_tokens_per_request ?? pairPreview.arms?.[0]?.preview?.budgets?.max_output_tokens} tokens，45 秒超时</Descriptions.Item>
+            <Descriptions.Item label="跨文件工具调查">系统策略：单轮 {pairPreview.arms?.[1]?.preview?.budgets?.max_output_tokens} tokens；累计输入/输出 {pairPreview.arms?.[1]?.preview?.budgets?.max_total_input_tokens}/{pairPreview.arms?.[1]?.preview?.budgets?.max_total_output_tokens} tokens；工具步骤 {pairPreview.arms?.[1]?.preview?.budgets?.max_steps}；最长 {pairPreview.arms?.[1]?.preview?.budgets?.timeout_seconds} 秒</Descriptions.Item>
           </Descriptions>
           <Text type="secondary">整组预览 SHA-256：{pairPreview.consent_sha256}</Text>
           {pairPreview.arms?.map((arm: any) => <Card key={arm.mode} className="section-gap" size="small" title={arm.mode === "single_shot" ? "AI 初步分析" : "AI 深入追查"}>
@@ -838,10 +822,6 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
         { value: "tool_agent", label: "工具增强调查（固定源码只读）" },
       ]} /></Form.Item>
 
-      <Collapse className="section-gap" items={[{ key: "execution-budget", label: "单次请求设置", children: <Space wrap>
-        <Text type="secondary">单次输出额度统一使用系统设置中的智能审计策略。</Text>
-      </Space> }]} />
-      <Text type="secondary">工具增强调查不设累计 Token、模型/工具调用、总时长或费用上限；每次请求仍受单次输出 Token 设置、上下文长度和 45 秒 Provider 超时约束。工具只读并限定在本次固定候选及扫描源码范围；连续 3 轮没有新增源码证据时会请求总结，用户也可随时取消。实际账单与账户配额由 Provider 决定。</Text>
       <Button className="section-gap" loading={previewBusy} disabled={!ready || !context.job_id || !context.candidate_id}
         onClick={() => void requestPreview()}>预览本次将发送的数据</Button>
       {preview && <Card className="section-gap" size="small" title="外发预览：仅限本次扫描候选">
@@ -849,6 +829,7 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
           <Descriptions bordered size="small" column={{ xs: 1, md: 2 }}>
             <Descriptions.Item label="目的地">{preview.provider.endpoint_host} · {preview.provider.model}</Descriptions.Item>
             <Descriptions.Item label="方式">{preview.mode === "single_shot" ? "单轮模型研判" : "工具增强只读调查"}</Descriptions.Item>
+            <Descriptions.Item label="额度策略">{preview.system_policy?.policy?.profile || "系统设置"} · 单轮输出 {preview.budgets?.max_output_tokens_per_request ?? preview.budgets?.max_output_tokens} tokens · 累计输入 {preview.budgets?.max_total_input_tokens ?? "—"} / 输出 {preview.budgets?.max_total_output_tokens ?? "—"} tokens · 模型请求 {preview.budgets?.max_total_model_calls ?? "—"} 次 · 工具步骤 {preview.budgets?.max_steps ?? 0} · 最长 {preview.budgets?.timeout_seconds ?? "—"} 秒</Descriptions.Item>
             <Descriptions.Item label="推理强度">工具调用 {preview.inference_settings?.tool_call_reasoning_effort || "无"}；结构化输出 {preview.inference_settings?.structured_output_reasoning_effort || "服务商默认"}</Descriptions.Item>
             <Descriptions.Item label="结构化修复上限">{preview.budgets?.max_validation_repairs ?? 0} 次；每次按单请求输出上限执行</Descriptions.Item>
             <Descriptions.Item label="Skeptic 请求">{preview.budgets?.max_skeptic_calls ?? 0} 次；与修复调用分别计数</Descriptions.Item>

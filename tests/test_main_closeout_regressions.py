@@ -175,7 +175,7 @@ class MultiRequestDeepGroupTests(unittest.TestCase):
             self.assertEqual(ledger.get("audit")["usage"]["model_calls_allocated"], 1)
             self.assertEqual(self.status(ledger), "partial")
 
-    def test_legacy_wall_clock_value_does_not_clamp_per_request_timeout(self):
+    def test_remaining_task_wall_clock_clamps_provider_request_timeout(self):
         from unittest.mock import patch
         from types import SimpleNamespace
         with tempfile.TemporaryDirectory() as directory:
@@ -189,9 +189,9 @@ class MultiRequestDeepGroupTests(unittest.TestCase):
                                           endpoint_id="scan", group_id="group")
             with patch.object(ledger, "get", return_value=snapshot):
                 wrapped.create_with_timeout({"max_output_tokens": 128}, 45)
-            # Old persisted cumulative-time values remain telemetry only; the
-            # request still keeps its independent 45-second network timeout.
-            self.assertEqual(calls[0][0][1], 45)
+            # The frozen task budget bounds each request by the time still
+            # available to the whole audit.
+            self.assertEqual(calls[0][0][1], 6)
             self.assertEqual(calls[0][1]["max_retries"], 0)
 
     def test_group_claim_is_atomic_between_operations(self):

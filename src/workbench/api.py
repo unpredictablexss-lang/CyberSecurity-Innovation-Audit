@@ -334,6 +334,7 @@ def create_app(settings=None):
             triage_preview = audit_task_consent_preview(
                 plan, workflow_sha256, body.include_paths, body.max_triage_candidates,
                 uuid.uuid4().hex, provider, body.max_r2_candidates,
+                system_policy_snapshot=progressive_policy,
             )
             if not triage_preview.get("eligible"):
                 raise ValueError("automatic triage cannot be authorized: " + triage_preview.get("reason", "provider unavailable"))
@@ -399,6 +400,7 @@ def create_app(settings=None):
                 spec["audit_plan"], workflow_sha256, body.include_paths,
                 body.max_triage_candidates, body.triage_consent_nonce, provider,
                 body.max_r2_candidates,
+                system_policy_snapshot=progressive_policy,
             )
             if preview["consent_sha256"] != body.expected_triage_consent_sha256:
                 raise ValueError("task-level source egress preview expired; provider, source, scope, policy or provider changed")

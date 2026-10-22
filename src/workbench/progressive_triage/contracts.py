@@ -8,7 +8,7 @@ import re
 from typing import Any
 
 
-POLICY_VERSION = "progressive-triage-v1"
+POLICY_VERSION = "progressive-triage-v2"
 GROUPING_VERSION = "source-bound-groups-v1"
 RANKING_VERSION = "evidence-family-rank-v1"
 SHA256_RE = re.compile(r"^[a-f0-9]{64}$")

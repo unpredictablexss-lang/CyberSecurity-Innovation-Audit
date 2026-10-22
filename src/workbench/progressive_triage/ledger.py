@@ -1,9 +1,4 @@
-"""Transactional usage accounting and scheduling for progressive AI triage.
-
-The ledger records usage and enforces concurrency. It does not cap cumulative
-tokens, model calls, or investigation duration; Provider availability and
-per-request service limits still apply. USD remains advisory.
-"""
+"""Transactional usage accounting and policy enforcement for progressive AI triage."""
 from __future__ import annotations
 
 from contextlib import closing
@@ -125,6 +120,17 @@ class BudgetLedger:
         if strict_cost:
             raise BudgetError("strict USD budget is unavailable without a verified Provider-side cap")
         cost_mode = "advisory_only"
+        # The signed top-level setting is the source of truth for each request.
+        # Keep the original policy hash above, then derive the ledger's effective
+        # reservation ceiling without changing the frozen policy identity.
+        if "request_output_tokens" in policy:
+            limits = dict(policy["limits"])
+            configured_cap = policy["request_output_tokens"]
+            audit_cap = limits["max_output_tokens_per_audit"]
+            limits["max_output_tokens_per_request"] = (
+                min(configured_cap, audit_cap) if configured_cap is not None else audit_cap
+            )
+            policy = {**policy, "limits": limits}
         policy_json = json.dumps(policy, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
         with closing(self._connect()) as db:
             db.execute("BEGIN IMMEDIATE")
@@ -178,6 +184,11 @@ class BudgetLedger:
             if audit["status"] != "active":
                 db.rollback()
                 raise BudgetError("audit scheduling has stopped")
+            if now - audit["created_at"] >= limits["max_ai_wall_seconds"]:
+                db.execute("UPDATE audit_budget SET status='stopped',stop_reason='ai_wall_time_budget_exhausted' WHERE audit_id=?",
+                           (audit_id,))
+                db.commit()
+                raise BudgetError("AI wall-time budget exhausted")
             if stage == "deep_agent" and evidence_gate == "quick_screen_investigate":
                 quick = db.execute(
                     "SELECT status,quick_assessment FROM triage_dispatch WHERE audit_id=? AND group_id=? AND stage='quick_screen'",
@@ -274,6 +285,11 @@ class BudgetLedger:
             if audit["status"] != "active":
                 db.rollback()
                 raise BudgetError("audit scheduling has stopped")
+            if now - audit["created_at"] >= limits["max_ai_wall_seconds"]:
+                db.execute("UPDATE audit_budget SET status='stopped',stop_reason='ai_wall_time_budget_exhausted' WHERE audit_id=?",
+                           (audit_id,))
+                db.commit()
+                raise BudgetError("AI wall-time budget exhausted")
             dispatch = db.execute(
                 "SELECT status FROM triage_dispatch WHERE audit_id=? AND group_id=? AND stage=? AND endpoint_id=?",
                 (audit_id, group_id, stage, endpoint_id),
@@ -308,6 +324,32 @@ class BudgetLedger:
             if inflight >= limits["max_model_concurrency"]:
                 db.rollback()
                 raise BudgetError("model concurrency budget exhausted")
+            reserved = db.execute(
+                "SELECT status,max_input_tokens,max_output_tokens,actual_input_tokens,actual_output_tokens "
+                "FROM budget_reservation WHERE audit_id=?", (audit_id,),
+            ).fetchall()
+            calls = 0
+            input_used = output_used = 0
+            for row in reserved:
+                if row["status"] == "known_not_sent":
+                    continue
+                calls += 1
+                input_used += (row["actual_input_tokens"] if row["actual_input_tokens"] is not None
+                               else row["max_input_tokens"])
+                output_used += (row["actual_output_tokens"] if row["actual_output_tokens"] is not None
+                                else row["max_output_tokens"])
+            if calls >= limits["max_model_calls_per_audit"]:
+                db.rollback()
+                raise BudgetError("model-call budget exhausted")
+            if input_used + max_input_tokens > limits["max_input_tokens_per_audit"]:
+                db.rollback()
+                raise BudgetError("input-token budget exhausted")
+            if output_used + max_output_tokens > limits["max_output_tokens_per_audit"]:
+                db.rollback()
+                raise BudgetError("output-token budget exhausted")
+            if max_output_tokens > limits.get("max_output_tokens_per_request", max_output_tokens):
+                db.rollback()
+                raise BudgetError("per-request output-token limit exceeded")
             reservation_id = uuid.uuid4().hex
             db.execute(
                 "INSERT INTO budget_reservation(reservation_id,audit_id,idempotency_key,endpoint_id,group_id,stage,phase,max_input_tokens,max_output_tokens,status,created_at) VALUES(?,?,?,?,?,?,?,?,?,?,?)",
@@ -369,11 +411,21 @@ class BudgetLedger:
                 # Keep full pre-call reservation: an ambiguous response may have been billed.
                 status, actual_in, actual_out = "unknown_outcome", None, None
             else:
-                # Reservations are estimates for usage reporting only. Provider
-                # usage may exceed an estimate and must never stop an authorized
-                # investigation. Missing usage remains unknown while the call
-                # itself is still completed.
                 status, actual_in, actual_out = "completed", input_tokens, output_tokens
+                audit = db.execute("SELECT policy_json FROM audit_budget WHERE audit_id=?",
+                                   (row["audit_id"],)).fetchone()
+                limits = json.loads(audit["policy_json"])["limits"]
+                totals = db.execute(
+                    "SELECT COALESCE(SUM(CASE WHEN actual_input_tokens IS NULL THEN max_input_tokens ELSE actual_input_tokens END),0), "
+                    "COALESCE(SUM(CASE WHEN actual_output_tokens IS NULL THEN max_output_tokens ELSE actual_output_tokens END),0) "
+                    "FROM budget_reservation WHERE audit_id=? AND status!='known_not_sent' AND reservation_id!=?",
+                    (row["audit_id"], reservation_id),
+                ).fetchone()
+                if (totals[0] + input_tokens > limits["max_input_tokens_per_audit"]
+                        or totals[1] + output_tokens > limits["max_output_tokens_per_audit"]):
+                    status = "budget_violation"
+                    db.execute("UPDATE audit_budget SET status='stopped',stop_reason='provider_usage_exceeded_frozen_budget' WHERE audit_id=?",
+                               (row["audit_id"],))
             db.execute(
                 "UPDATE budget_reservation SET status=?,actual_input_tokens=?,actual_output_tokens=?,estimated_cost_usd=?,finished_at=? WHERE reservation_id=?",
                 (status, actual_in, actual_out, estimated_cost_usd, now, reservation_id),
@@ -511,11 +563,13 @@ class BudgetLedger:
                 "model_calls_allocated": calls, "model_calls_in_flight": inflight,
                 "input_tokens_allocated": used_in, "output_tokens_allocated": used_out,
                 "wall_seconds_elapsed": elapsed,
-                "wall_seconds_remaining": None,
-                "max_model_calls": None,
-                "max_input_tokens": None,
-                "max_output_tokens": None,
-                "cumulative_usage_limits_enforced": False,
+                "wall_seconds_remaining": max(0, limits["max_ai_wall_seconds"] - elapsed),
+                "max_model_calls": limits["max_model_calls_per_audit"],
+                "max_input_tokens": limits["max_input_tokens_per_audit"],
+                "max_output_tokens": limits["max_output_tokens_per_audit"],
+                "max_output_tokens_per_request": limits.get("max_output_tokens_per_request"),
+                "max_wall_seconds": limits["max_ai_wall_seconds"],
+                "cumulative_usage_limits_enforced": True,
                 "by_phase": usage_by_phase,
             },
             "cost": {

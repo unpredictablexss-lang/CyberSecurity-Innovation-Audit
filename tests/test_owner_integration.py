@@ -346,7 +346,8 @@ if os.environ.get("OHSCANNER_TEST_PROVIDER_TRACE"):
             self.assertEqual(preview_response.status_code, 200, preview_response.text)
             preview = preview_response.json()
             self.assertTrue(preview["agent_execution"]["eligible"], preview)
-            self.assertEqual(preview["budgets"]["max_output_tokens_per_request"], 5000)
+            self.assertEqual(preview["budgets"]["max_output_tokens_per_request"],
+                             preview["budgets"]["max_output_tokens"])
             created = self.client.post(
                 "/api/v1/operations/agent-investigations",
                 json={**payload, "source_submission_approved": True,
@@ -1007,6 +1008,9 @@ if os.environ.get("OHSCANNER_TEST_TOOL_TRACE"):
                     job["id"], saved_job["report_sha256"])[0]
                 queued = operations.smart_triage_operations(batch["id"])
                 self.assertTrue(queued)
+                frozen_limit = saved_job["spec"]["progressive_triage_policy"]["policy"]["limits"]["max_output_tokens_per_request"]
+                self.assertTrue(all(item["spec"]["max_output_tokens"] == frozen_limit
+                                    for item in queued))
                 self.assertEqual(saved_job["status"], "completed_with_limitations")
                 self.assertTrue(all(item["status"] == "queued" for item in queued))
 
@@ -1186,6 +1190,8 @@ if os.environ.get("OHSCANNER_TEST_TOOL_TRACE"):
                     selected_candidate = next(item for item in candidates
                                               if item["id"] == r2["spec"]["candidate_id"])
                     self.assertEqual(r2["spec"]["mode"], "tool_agent")
+                    self.assertEqual(r2["spec"]["max_output_tokens"],
+                                     self.store.job(job["id"])["spec"]["progressive_triage_policy"]["policy"]["limits"]["max_output_tokens_per_request"])
                     self.assertFalse(r2["spec"]["continuous_investigation"])
                     self.assertGreater(r2["spec"]["max_steps"], 0)
                     self.assertEqual(r2["spec"]["r1_result_sha256"], parent["result_sha256"])

@@ -104,6 +104,11 @@ def _hard_deadline_seconds(task):
     if task.get("kind") == "agent_investigation":
         from .agent import bounded_agent_spec
         bounded = bounded_agent_spec(spec)
+        progressive_limits = (spec.get("progressive_policy", {}).get("policy", {}).get("limits", {})
+                              if isinstance(spec.get("progressive_policy"), dict) else {})
+        if spec.get("progressive_audit_operation_id") and isinstance(
+                progressive_limits.get("max_ai_wall_seconds"), int):
+            return progressive_limits["max_ai_wall_seconds"] + 10
         # Uncapped, separately consented ordinary Agent uses per-request
         # timeouts and cancellation/no-progress guards, not the old total cap.
         # Progressive L3 remains bounded and is NOT exempt from this deadline.
@@ -112,7 +117,9 @@ def _hard_deadline_seconds(task):
             return None
         return bounded["timeout_seconds"] + 10
     if task.get("kind") == "progressive_quick_screen":
-        return 100
+        limits = spec.get("progressive_policy", {}).get("policy", {}).get("limits", {})
+        seconds = limits.get("max_ai_wall_seconds", 90)
+        return (seconds if isinstance(seconds, int) and not isinstance(seconds, bool) else 90) + 10
     if task.get("kind") == "progressive_quick_screen_batch":
         spec = task.get("spec") if isinstance(task.get("spec"), dict) else {}
         limits = spec.get("progressive_policy", {}).get("policy", {}).get("limits", {})

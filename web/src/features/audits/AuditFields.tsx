@@ -5,6 +5,32 @@ import { go } from "../../components";
 import { approvedDetectorIds, requestGate } from "./model";
 const { Text } = Typography;
 export type AuditProps = { repos: any[]; detectors: any[]; refresh: () => Promise<void> };
+const POLICY_PROFILES: Record<string, string> = {
+  economical: "经济", standard: "标准", deep: "深度", custom: "自定义",
+};
+export function PolicyBudgetNotice() {
+  const [policy, setPolicy] = useState<any>(null);
+  const [error, setError] = useState("");
+  useEffect(() => {
+    let active = true;
+    void api("/agent/triage-policy").then((result) => {
+      if (active) setPolicy(result);
+    }).catch((reason) => {
+      if (active) setError(String(reason));
+    });
+    return () => { active = false; };
+  }, []);
+  const limits = policy?.policy?.limits;
+  const description = limits ? <Space direction="vertical" size={2}>
+    <Text>当前默认：单轮输出 {limits.max_output_tokens_per_request ?? "未知"} tokens；单次审计输入/输出 {limits.max_input_tokens_per_audit ?? "未知"}/{limits.max_output_tokens_per_audit ?? "未知"} tokens；模型请求 {limits.max_model_calls_per_audit ?? "未知"} 次；AI 时长 {limits.max_ai_wall_seconds ?? "未知"} 秒。</Text>
+    <Text type="secondary">这里只选择审计范围，不重复填写额度。创建时以授权预览中冻结的服务端策略为准；修改额度请前往 <a href="#/settings/policy">系统设置 → 智能审计策略与资源预算</a>。</Text>
+  </Space> : error
+    ? <Text>无法读取当前默认额度：{error}。授权预览仍会显示本次服务端冻结策略。</Text>
+    : <Text>正在读取系统额度；本任务不提供单独的 Token 配置。创建前会显示服务端冻结策略。</Text>;
+  return <Alert className="section-gap" type={error ? "warning" : "info"} showIcon
+    message={`额度统一由系统设置管理${policy?.policy?.profile ? ` · ${POLICY_PROFILES[policy.policy.profile] || "系统"}策略 · 修订 ${policy.revision}` : ""}`}
+    description={description} />;
+}
 export function AuditModeSelector() {
   return <Form.Item name="audit_mode" label="本次审计方式" className="audit-mode-field">
     <Radio.Group className="audit-mode-options" aria-label="本次审计方式">

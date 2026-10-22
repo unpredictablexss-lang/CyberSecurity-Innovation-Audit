@@ -53,13 +53,14 @@ export default function ProgressiveDeepInvestigationBatchAction({ quickScreenBat
       onOk={() => void start()} onCancel={() => { setOpen(false); setApproved(false); }} destroyOnClose>
       {loading && !preview ? <Paragraph>正在逐组构造固定来源 Agent、只读工具和 Skeptic 范围…</Paragraph> : preview ? <>
         <Alert type="warning" showIcon message="仅对 L2 已完成且建议 investigate 的组继续；本次授权覆盖下面展示的全部 Agent/Skeptic 调查范围，不运行 PoC。"
-          description="Worker 按组顺序执行固定 Commit 只读调查。平台不设累计 Token、调用次数、总时长或费用上限；服务商账户额度、API 可用性和人工取消仍会影响任务。未开始、失败和未知项继续保留为候选。" />
+          description="Worker 按组顺序执行固定 Commit 只读调查，并共用父审计冻结的 Token、请求数、并发和总时长预算。美元金额只是参考；预算耗尽、服务商错误或人工取消后，未开始、失败和未知项继续保留为候选。" />
         <Descriptions className="section-gap" bordered size="small" column={{ xs: 1, md: 2 }}>
           <Descriptions.Item label="审计任务">{preview.audit_operation_id}</Descriptions.Item>
           <Descriptions.Item label="L2 批次 / 结果 SHA">{preview.l2_batch_operation_id} · {preview.l2_batch_result_sha256}</Descriptions.Item>
           <Descriptions.Item label="Provider / 模型">{preview.provider?.provider || preview.provider?.endpoint_host} · {preview.provider?.model}</Descriptions.Item>
           <Descriptions.Item label="已选 L3 组">{preview.selected_group_count}</Descriptions.Item>
-          <Descriptions.Item label="累计调查额度">平台不设累计 Token、调用次数、时长或费用上限</Descriptions.Item>
+          <Descriptions.Item label="冻结累计 Token / 请求上限">输入 {preview.budget_limits?.max_input_tokens_per_audit ?? "未知"} / 输出 {preview.budget_limits?.max_output_tokens_per_audit ?? "未知"} tokens；最多 {preview.budget_limits?.max_model_calls_per_audit ?? "未知"} 次请求</Descriptions.Item>
+          <Descriptions.Item label="单轮 / 工具 / 时长上限">每轮输出 {preview.budget_limits?.max_output_tokens_per_request ?? "未知"} tokens；每组最多 {preview.progressive_policy?.policy?.limits?.max_tool_steps_per_group ?? "未知"} 步；{preview.budget_limits?.max_ai_wall_seconds ?? "未知"} 秒</Descriptions.Item>
           <Descriptions.Item label="计费来源">按 Provider 账户实际额度和费率计费</Descriptions.Item>
           <Descriptions.Item label="授权摘要 SHA-256" span={2}>{preview.consent_sha256}</Descriptions.Item>
         </Descriptions>
@@ -76,7 +77,7 @@ export default function ProgressiveDeepInvestigationBatchAction({ quickScreenBat
             <Text strong>允许的工具与附加源码范围</Text>
             <div>{(item.allowed_tools || []).join("、") || "无"}</div>
             <pre className="raw section-gap">{(item.additional_tool_data_scope || []).join("\n") || "无额外源码范围"}</pre>
-            <Text type="secondary">调查会持续运行至模型给出终结答复、服务商/API 错误、无新增源码证据或人工取消；平台不设累计 Token、步骤或总时长上限。</Text>
+            <Text type="secondary">本组继承父审计冻结的请求、Token、单轮输出、工具步数和总时长上限。额度耗尽后本组和后续组保持未完成候选。</Text>
             <Paragraph className="section-gap">授权说明：{Array.isArray(item.disclosure) ? item.disclosure.join(" ") : "固定来源只读调查"}</Paragraph>
           </section>)}
         </div>

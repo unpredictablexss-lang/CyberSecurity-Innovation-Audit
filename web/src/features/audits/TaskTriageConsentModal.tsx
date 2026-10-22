@@ -20,6 +20,10 @@ function sourceLines(preview: any) {
   return [];
 }
 
+const PROFILE_LABELS: Record<string, string> = {
+  economical: "经济", standard: "标准", deep: "深度", custom: "自定义",
+};
+
 export default function TaskTriageConsentModal({ open, preview, loading = false, onCancel, onConfirm }: {
   open: boolean; preview: any; loading?: boolean; onCancel: () => void; onConfirm: () => void;
 }) {
@@ -50,10 +54,10 @@ export default function TaskTriageConsentModal({ open, preview, loading = false,
         <Descriptions.Item label="模型服务">{provider.endpoint_host || provider.destination_host || provider.destination || "目的地未知"}</Descriptions.Item>
         <Descriptions.Item label="模型">{provider.model || "未知"}</Descriptions.Item>
         {progressive && <>
-          <Descriptions.Item label="渐进策略">{progressive.policy?.profile || "unknown"} · 修订 {progressive.revision ?? "unknown"}</Descriptions.Item>
+          <Descriptions.Item label="渐进策略">{PROFILE_LABELS[progressive.policy?.profile] || "未知"} · 修订 {progressive.revision ?? "未知"}</Descriptions.Item>
           <Descriptions.Item label="策略摘要 SHA-256">{short(progressive.policy_sha256)}</Descriptions.Item>
           <Descriptions.Item label="本次本地排序名额" span={2}>
-            {progressive.policy?.limits?.quick_screen_groups_per_audit ?? "未知"} 个候选组；只用于 L0/L1 计划排序，L2/L3 调度与任务级模型额度尚未接入。
+            {progressive.policy?.limits?.quick_screen_groups_per_audit ?? "未知"} 个候选组；后续 L2/L3 会继承这里的冻结策略和共享模型预算。
           </Descriptions.Item>
         </>}
         {endpoints.map((item: any, index: number) => {
@@ -73,6 +77,9 @@ export default function TaskTriageConsentModal({ open, preview, loading = false,
               {Number.isInteger(r2Cap) && r2Cap > 0 ? "；符合条件时最多 " + r2Cap + " 条深入追查" : ""}
               <div><Text type="secondary">精确候选总数在扫描后统计；未入选项保留待复核。</Text></div>
             </Descriptions.Item>
+          <Descriptions.Item label="系统额度策略">
+            {PROFILE_LABELS[manifest.system_policy?.profile] || "系统设置"} · 修订 {manifest.system_policy?.revision ?? "未知"} · 单轮输出最多 {manifest.system_policy?.max_output_tokens_per_request ?? manifest.budgets?.r1_max_output_tokens_per_request ?? "未知"} tokens
+          </Descriptions.Item>
             <Descriptions.Item label="源码范围" span={2}>
               {paths.length ? paths.join("、") : "当前审计纳入范围"}
             </Descriptions.Item>
@@ -82,7 +89,7 @@ export default function TaskTriageConsentModal({ open, preview, loading = false,
           {consentExpiry || "服务端未提供固定到期时间；任务创建时会重验来源、模型和范围摘要，绑定项变化会拒绝创建。"}
         </Descriptions.Item>
       </Descriptions>}
-      <Alert type="info" showIcon message="调查费用与取消" description="平台不设本次调查累计 Token、请求次数、工具调用、总时长或费用上限；每次请求仍受单次上下文/输出限制和服务商超时约束。实际账单与账户配额由服务商决定，任务运行期间可以随时取消。自动研判候选数量仍受本次授权范围限制。" />
+      <Alert type="info" showIcon message="额度继承、调查费用与取消" description="单轮输出上限从系统设置中冻结的策略继承，不需要为本任务重复填写。此旧自动分诊流程尚未接入累计 Token、请求次数和调查时长账本；费用按服务商实际计费与账户额度执行。任务运行期间可随时取消。" />
       {!eligible && <Alert type="error" showIcon message={preview?.reason || "当前无法生成可用的授权预览；没有任务会被创建。"} />}
       <Collapse items={[{ key: "details", label: "查看将发送给模型的内容与技术详情", children: <>
         <Typography.Paragraph type="secondary">

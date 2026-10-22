@@ -20,6 +20,29 @@ from .ranking import rank_groups
 from ..store import Store
 
 
+_OUTPUT_UNSET = object()
+
+
+def _request_output_cap(policy: dict[str, Any], fallback=_OUTPUT_UNSET):
+    if "request_output_tokens" in policy:
+        return policy["request_output_tokens"]
+    if fallback is not _OUTPUT_UNSET:
+        return fallback
+    return min(MAX_RESPONSE_TOKENS,
+               policy["limits"].get("max_output_tokens_per_request", MAX_RESPONSE_TOKENS))
+
+
+def _reservation_output_cap(policy: dict[str, Any], request_output_tokens):
+    limits = policy["limits"]
+    total = limits["max_output_tokens_per_audit"]
+    if request_output_tokens is not None:
+        return min(total, request_output_tokens)
+    calls = max(1, limits["max_model_calls_per_audit"])
+    average = (total + calls - 1) // calls
+    legacy = limits.get("max_output_tokens_per_request", MAX_RESPONSE_TOKENS)
+    return min(total, max(legacy, average))
+
+
 def prepare_quick_screen(settings, store, job_id: str, candidate_id: str,
                          provider, consent_nonce: str,
                          consent_expires_at: str | None = None,
@@ -201,6 +224,9 @@ def prepare_quick_screen(settings, store, job_id: str, candidate_id: str,
                              if row["group_id"] == group["group_id"]), None)
     if not selected or not selected["selected"]:
         raise ValueError("local evidence ranking did not select this candidate for quick screen")
+    request_timeout = min(MAX_REQUEST_SECONDS, policy["limits"]["max_ai_wall_seconds"])
+    request_output_tokens = _request_output_cap(
+        policy, getattr(provider, "request_output_tokens", agent.DEFAULT_AGENT_OUTPUT_TOKENS))
     authorization = {
         "authorized": True,
         "audit_mode": "intelligent",
@@ -214,7 +240,7 @@ def prepare_quick_screen(settings, store, job_id: str, candidate_id: str,
     }
     # Validate the request before showing a consent screen, not after the user submits it.
     build_quick_screen_request(group, evidence, authorization, provider.fingerprint, provider.model,
-                               max_output_tokens=getattr(provider, "request_output_tokens", agent.DEFAULT_AGENT_OUTPUT_TOKENS))
+                               max_output_tokens=request_output_tokens)
     expires_at = consent_expires_at or (
         datetime.now(timezone.utc) + timedelta(minutes=10)).isoformat()
     try:
@@ -262,8 +288,8 @@ def prepare_quick_screen(settings, store, job_id: str, candidate_id: str,
         "disclosure": {
             "model_calls": 1,
             "tools_enabled": False,
-            "max_output_tokens": manifest["request_output_tokens"],
-            "timeout_seconds": 90,
+            "max_output_tokens": request_output_tokens,
+            "timeout_seconds": request_timeout,
             "source_excerpt_count": 1,
             "source_excerpt_bytes": len(excerpt.encode("utf-8")),
             "source_excerpt": excerpt,
@@ -347,9 +373,13 @@ def execute_quick_screen(settings, task: dict[str, Any], provider=None, ops=None
     try:
         policy_snapshot = spec["progressive_policy"]
         policy = validate_policy(policy_snapshot["policy"])
+        request_output_tokens = _request_output_cap(
+            policy, manifest.get("request_output_tokens", _OUTPUT_UNSET))
         if (policy_snapshot["policy_sha256"] != policy_envelope(policy)["policy_sha256"]
                 or manifest.get("policy") != policy
-                or manifest.get("policy_revision") != policy_snapshot["revision"]):
+                or manifest.get("policy_revision") != policy_snapshot["revision"]
+                or ("request_output_tokens" in manifest
+                    and manifest["request_output_tokens"] != request_output_tokens)):
             raise ValueError("quick-screen policy snapshot changed")
         if audit_operation_id != spec.get("job_id"):
             plan_decision = next((row for row in parent_plan["ranking"]["decisions"]
@@ -404,7 +434,7 @@ def execute_quick_screen(settings, task: dict[str, Any], provider=None, ops=None
         payload, _ = build_quick_screen_request(
             spec["group"], spec["evidence"], spec["authorization"],
             provider.fingerprint, provider.model,
-            max_output_tokens=manifest.get("request_output_tokens", MAX_RESPONSE_TOKENS),
+            max_output_tokens=request_output_tokens,
         )
     except (KeyError, TypeError, ValueError) as error:
         return {"state": "quick_unknown", "reason_code": "request_preflight:" + str(error),
@@ -418,12 +448,14 @@ def execute_quick_screen(settings, task: dict[str, Any], provider=None, ops=None
     from .ledger import BudgetError, BudgetLedger
     ledger = None
     reservation = None
-    timeout_seconds = MAX_REQUEST_SECONDS
+    timeout_seconds = min(MAX_REQUEST_SECONDS, policy["limits"]["max_ai_wall_seconds"])
     try:
         ledger = BudgetLedger(settings.data_dir / "progressive-triage-budget.sqlite3")
         audit_id = audit_operation_id
         policy_snapshot = spec["progressive_policy"]
         ledger.create_audit(audit_id, policy, policy_snapshot["policy_sha256"])
+        remaining = ledger.get(audit_id)["usage"]["wall_seconds_remaining"]
+        timeout_seconds = min(timeout_seconds, max(1, remaining))
         group_id = spec["group"]["group_id"]
         ledger.dispatch_group(audit_id, group_id, spec["job_id"], "quick_screen",
                               evidence_gate="ranked_and_selected")
@@ -431,7 +463,7 @@ def execute_quick_screen(settings, task: dict[str, Any], provider=None, ops=None
             audit_id, audit_id + ":quick:" + spec["consent_sha256"],
             spec["job_id"], group_id, "quick_screen",
             max_input_tokens=input_reservation,
-            max_output_tokens=manifest.get("request_output_tokens", MAX_RESPONSE_TOKENS) or 65536,
+            max_output_tokens=_reservation_output_cap(policy, request_output_tokens),
             reauthorized_quick_screen=True,
         )
         if reservation.get("idempotent_replay"):
@@ -452,7 +484,7 @@ def execute_quick_screen(settings, task: dict[str, Any], provider=None, ops=None
         client, spec["group"], spec["evidence"], spec["authorization"],
         provider_fingerprint=provider.fingerprint, model=provider.model,
         timeout_seconds=timeout_seconds,
-        max_output_tokens=manifest.get("request_output_tokens", MAX_RESPONSE_TOKENS),
+        max_output_tokens=request_output_tokens,
     )
     try:
         if result.get("state") == "completed":
@@ -486,6 +518,6 @@ def execute_quick_screen(settings, task: dict[str, Any], provider=None, ops=None
         "limitations": [
             "L2 quick screen is model triage only; source reachability and vulnerability validity remain unconfirmed.",
             "USD remains advisory because no verified Provider-side hard cap is configured.",
-            "The ledger shares task-level budgets across fixed endpoints; L3 requires a separate, explicit consent and is not auto-scheduled.",
+            "The ledger enforces the frozen task token, request-count, concurrency, group-count, and elapsed-time limits across fixed endpoints; L3 still needs separate explicit consent.",
         ],
     }
