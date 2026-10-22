@@ -4,6 +4,8 @@ import { INITIAL_ANALYSIS_LABEL, DEEP_ANALYSIS_LABEL, ANALYSIS_DESCRIPTION, read
 import { useCandidateScope } from "../features/audits/CandidateScope";
 import { candidateBatchLimit } from "../features/audits/model";
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { batchEligibility } from "../features/audits/batchEligibility.js";
+import { disclosedCves, loadCandidatePages, prioritizeWithRiskEvidence } from "../features/workbench/cvePriority.js";
 import {
   Alert,
   Button,
@@ -138,6 +140,8 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
   const [batchOpen, setBatchOpen] = useState(false);
   const [batchBusy, setBatchBusy] = useState(false);
   const [batchError, setBatchError] = useState("");
+  const [batchSubmitError, setBatchSubmitError] = useState("");
+  const batchSubmitting = useRef(false);
   const [snapshotBusy, setSnapshotBusy] = useState(false);
   const [retryBusyId, setRetryBusyId] = useState<string | null>(null);
   const [batchPreview, setBatchPreview] = useState<any>(null);
@@ -149,6 +153,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
   const batchLimit = candidateBatchLimit(candidateScope.policy, batchMode);
   const batchPreviewCandidateIds = (batchPreview?.candidates || []).map((item: any) => String(item.candidate_id));
   const batchPreviewMatchesSelection = disclosureSelectionMatches(batchCandidateIds, batchPreviewCandidateIds);
+  const batchEligible = batchEligibility(batchPreview);
   const batchDisclosureReviewed = batchDisclosureReady({ mode: batchMode,
     openKeys: batchDisclosureOpened, selectedKeys: batchCandidateIds, previewKeys: batchPreviewCandidateIds });
   const [caseOpen, setCaseOpen] = useState(false);
@@ -164,17 +169,16 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
   }, [caseOpen]);
   async function loadFindings() {
     try {
-      const r = await api(
+      const r = await loadCandidatePages(api,
         "/scans/" +
           id +
-          "/findings?offset=" +
-          (page - 1) * 20 +
-          "&limit=20&q=" +
+          "/findings?q=" +
           encodeURIComponent(query) +
           "&review_status=" +
           filter,
       );
-      setItems(r.items);
+      const risks = await loadCandidatePages(api, "/scans/" + id + "/risks");
+      setItems(prioritizeWithRiskEvidence(r.items, risks.items).slice((page - 1) * 20, page * 20));
       setTotal(r.total);
     } catch (e) {
       setError(String(e));
@@ -212,7 +216,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
           const [r, triage, risks, coverage, progressive] = await Promise.all([
             api("/scans/" + id + "/report"),
             triageRequest,
-            api("/scans/" + id + "/risks?limit=100"),
+            loadCandidatePages(api, "/scans/" + id + "/risks"),
             api("/scans/" + id + "/coverage"),
             progressiveRequest,
           ]);
@@ -342,6 +346,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
     if (limit === null || !candidateIds.length || candidateIds.length > limit) return;
     setBatchMode(mode);
     setBatchError("");
+    setBatchSubmitError("");
     setBatchCandidateIds(candidateIds);
     setBatchPreview(null);
     setBatchDisclosureOpened([]);
@@ -360,7 +365,13 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
     }
   }
   async function enqueueAgentBatch() {
-    if (!batchPreview || !batchDisclosureReviewed || !batchSubmissionApproved) return;
+    if (batchSubmitting.current) return;
+    if (!batchPreview || !batchDisclosureReviewed || !batchSubmissionApproved || !batchEligible.eligible) {
+      setBatchSubmitError(batchEligible.reason || "请先展开核对发送内容并勾选确认；尚未创建调查任务。");
+      return;
+    }
+    batchSubmitting.current = true;
+    setBatchSubmitError("");
     setBatchBusy(true);
     try {
       const result = await api("/operations/agent-investigations/batch", {
@@ -375,9 +386,12 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
         setActiveTab("priority"); setPriorityRefresh(value => value + 1);
       } else if (result.operations?.[0]?.id) go("/tasks/operations/" + result.operations[0].id);
     } catch (e) {
-      message.error(String(e));
+      setBatchSubmitError("提交未成功返回任务编号：" + (e instanceof Error ? e.message : String(e))
+        + "。请先检查任务中心，确认没有已创建的任务，再重新预览；不要连续重复提交。");
+      setBatchSubmissionApproved(false);
     } finally {
       setBatchBusy(false);
+      batchSubmitting.current = false;
     }
   }
   async function action(name: string) {
@@ -622,8 +636,12 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
         </Row>
         <Card className="section-gap" title="证据风险分层">
           <Alert type="info" showIcon
-            message="风险层级由扫描源码、静态证据和人工逐项复核决定"
-            description="模型自报置信度或引文存在性不会提升风险层级。高可信风险仍是待复核候选；未研判和未知不代表安全。" />
+            message="源码可信程度与实际复现状态分开记录"
+            description="紫色‘高可信源码链’表示固定版本中已用源码引用串起输入、路径拼接和文件操作；这不代表攻击者可达或漏洞已确认。橙色风险层级与实际复现状态独立显示。已披露 CVE 映射也不等于本次产品漏洞已确认。" />
+          {riskSummary && <Paragraph className="section-gap">
+            <Tag color="purple">已披露 CVE 映射：{(riskSummary.items || []).filter((item: any) => disclosedCves(item).length > 0).length} 处候选 / {new Set((riskSummary.items || []).flatMap((item: any) => disclosedCves(item))).size} 个编号</Tag>
+            所有仓库统一按证据可信程度排序：高可信候选、待验证候选、来源待核对项、低优先级项。同层内优先展示 CVE 映射和危害较高项；人工驳回项靠后。
+          </Paragraph>}
           <Row gutter={18} className="section-gap">{[
             { title: "高可信候选", value: riskSummary?.counts?.high_confidence_candidate ?? "未知" },
             { title: "待进一步验证", value: riskSummary?.counts?.further_validation ?? "未知" },
@@ -635,8 +653,10 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
           <Table size="small" rowKey="candidate_id" pagination={false} scroll={{ x: 1500 }}
             dataSource={(riskSummary?.items || []).slice(0, 20)}
             columns={[
-              { title: "可信程度", render: (_: unknown, row: any) =>
-                  <Tag color={candidateConfidenceColor(row.risk_tier)}>{candidateConfidenceLabel(row.risk_tier)}</Tag> },
+              { title: "源码可信程度", render: (_: unknown, row: any) =>
+                  <Tag color={row.source_chain_confidence === "high" ? "purple" : candidateConfidenceColor(row.risk_tier)}>{row.source_confidence_label || candidateConfidenceLabel(row.risk_tier)}</Tag> },
+              { title: "实际复现", render: (_: unknown, row: any) => <Tag>{row.reproduction_status_label || "未记录实际复现"}</Tag> },
+              { title: "源码证据缺口", width: 340, render: (_: unknown, row: any) => <div style={{whiteSpace: "pre-wrap"}}>{(row.source_evidence_gaps || []).join("\n") || "源码复核达到当前层级；实际复现另行记录。"}</div> },
               { title: "危害等级（初判）", render: (_: unknown, row: any) =>
                   <Tag color={candidateSeverityColor(row.severity)}>{candidateSeverityLabel(row.severity)}</Tag> },
               { title: "候选", dataIndex: "candidate_id", render: (value: string) => <Text code>{String(value).slice(0, 12)}</Text> },
@@ -648,7 +668,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
               { title: "研判", render: (_: unknown, row: any) => triageStateLabel(row.triage?.state) },
               { title: "下一步", render: (_: unknown, row: any) => riskReasonsLabel(row.reasons) },
             ]} locale={{ emptyText: "当前扫描报告没有原始候选；这不代表仓库不存在漏洞。" }} />
-          {(riskSummary?.total || 0) > 20 && <Text type="secondary">按证据优先级显示前 20 项；完整候选可在“候选与复核”中检索。</Text>}
+          {(riskSummary?.total || 0) > 20 && <Text type="secondary">优先展示高可信证据候选和已披露 CVE 映射，当前显示前 20 项；完整候选可在“候选与复核”中检索。</Text>}
         </Card>
         <Card className="section-gap" title="源码解析覆盖（文件数）">
           <Row gutter={18}>{[
@@ -841,6 +861,11 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
                           </Tag>
                         ),
                       },
+                      { title: "源码可信程度", render: (_: any, f: any) => {
+                        const risk = riskSummary?.items?.find((item: any) => item.candidate_id === f.id);
+                        return <Tag color={risk?.source_chain_confidence === "high" ? "purple" : candidateConfidenceColor(risk?.risk_tier)}>{risk?.source_confidence_label || "源码证据待补齐"}</Tag>;
+                      } },
+                      { title: "实际复现", render: () => <Tag>未记录实际复现</Tag> },
                       {
                         title: "静态检查状态",
                         render: (_: any, f: any) => (
@@ -1171,6 +1196,15 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
               </div>}
             />
 
+            <Card className="section-gap" title="源码可信程度与实际复现">
+              {(() => { const risk = riskSummary?.items?.find((item: any) => item.candidate_id === detail.id);
+                return <><Tag color={risk?.source_chain_confidence === "high" ? "purple" : candidateConfidenceColor(risk?.risk_tier)}>{risk?.source_confidence_label || "源码证据待补齐"}</Tag>
+                  <Tag>{risk?.reproduction_status_label || "未记录实际复现"}</Tag>
+                  <Paragraph>源码证据与实际复现分别记录；高可信源码风险仍需人工复核。</Paragraph>
+                  {(risk?.source_supported_claims || []).map((claim: string, i: number) => <Paragraph key={"claim" + i}>源码支持：{claim}</Paragraph>)}
+                  {(risk?.source_evidence_gaps || []).map((gap: string, i: number) => <Paragraph key={"gap" + i}>待补证据：{gap}</Paragraph>)}
+                </>; })()}
+            </Card>
             {detail.risk_assessment && <Card
               className="section-gap"
               title="公开组件风险依据与修复验证"
@@ -1405,17 +1439,29 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
         open={batchOpen}
         width={900}
         confirmLoading={batchBusy}
+        cancelButtonProps={{ disabled: batchBusy }}
+        closable={!batchBusy}
+        maskClosable={!batchBusy}
         okText="确认并开始 AI 调查"
         cancelText="取消"
-        okButtonProps={{ disabled: !batchPreview || !batchDisclosureReviewed || !batchSubmissionApproved }}
+        okButtonProps={{ disabled: !batchPreview || !batchEligible.eligible || !batchDisclosureReviewed || !batchSubmissionApproved || Boolean(batchSubmitError) }}
         onOk={() => void enqueueAgentBatch()}
         onCancel={() => { setBatchOpen(false); setBatchDisclosureOpened([]); setBatchSubmissionApproved(false); }}
       >
+        {batchPreview && !batchEligible.eligible && <Alert className="section-gap" type="warning" showIcon
+          message="这些候选不能直接启动 AI 源码调查" description={<>
+            <div>{batchEligible.reason}</div>
+            {batchEligible.blocked.map((item) => <div key={item.id} style={{ marginTop: 8 }}>
+              <Text code>{item.file || item.id.slice(0, 12)}</Text>：{item.reason}
+            </div>)}
+            <div>请核对文件、行号及源码快照后重新预览；无法读取的候选不会被静默剔除。</div>
+          </>} />}
         {batchError && <Alert className="section-gap" type="error" showIcon
           message="发送内容预览失败，尚未开始 AI 调查"
           description={batchError}
           action={<Button size="small" loading={batchBusy} onClick={() => void previewAgentBatch()}>重新生成预览</Button>} />}
         {batchBusy && !batchPreview ? <Spin /> : batchPreview ? <>
+          <Alert className="section-gap" type="info" showIcon message="有可读取的源码即可调查；需要人工或动态验证的事项仍保留待验证。" description="AI 会尝试追查相关源码。缺少文件、超出扫描范围、工具不支持或调用关系无法确定时，须说明原因；不会修改源码，也不会自动确认漏洞。" />
           <Alert type="warning" showIcon message={"确认后将为每条候选分别创建一个" + (batchMode === "single_shot" ? "AI 初步分析" : "连续 AI 深入追查") + "任务；下列源码上下文会发送给所示模型端点。模型结论仍是候选，需人工审核。"} />
           <Descriptions className="section-gap" bordered size="small" column={2}>
             <Descriptions.Item label="模型端点">{batchPreview.provider?.endpoint_host || "未显示"}</Descriptions.Item>
@@ -1450,13 +1496,21 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
           <ul>{batchPreview.disclosure?.map((line: string) => <li key={line}>{readableAnalysisText(line)}</li>)}</ul>
           {!batchPreviewMatchesSelection && <Alert className="section-gap" type="error" showIcon message="预览候选与所选候选不一致，不能授权批量发送。请关闭并重新生成预览。" />}
           <Checkbox checked={batchSubmissionApproved}
-            disabled={!batchDisclosureReviewed}
+            disabled={!batchDisclosureReviewed || !batchEligible.eligible}
             onChange={(event) => setBatchSubmissionApproved(event.target.checked)}>
             {batchMode === "single_shot"
               ? "我同意将本批次所列候选的源码上下文发送给上述模型进行 AI 初判（详情可按需展开）"
               : "我已逐条展开并检查所有候选的完整外发上下文与工具范围，允许按此预览向模型发送"}
           </Checkbox>
         </> : !batchError ? <Text>正在生成预览…</Text> : null}
+        {batchPreview && !batchEligible.eligible && <Alert className="section-gap" type="warning" showIcon
+          message={batchEligible.reason} description="未开始本批 AI 调查。上方列出了逐项原因；勾选授权不会改变调查适用条件。" />}
+        {batchSubmitError && <Alert className="section-gap" type="error" showIcon
+          message="AI 调查未确认创建，请核对后处理" description={batchSubmitError}
+          action={<Space wrap><Button size="small" onClick={() => go("/tasks")}>查看任务中心</Button>
+            <Button size="small" loading={batchBusy} onClick={() => void previewAgentBatch(batchCandidateIds, batchMode)}>重新生成预览</Button></Space>} />}
+        {batchBusy && batchPreview && <Alert className="section-gap" type="info" showIcon
+          message="正在提交调查任务，请稍候，不要重复点击。" />}
       </Modal>
       <Modal
         open={caseOpen}

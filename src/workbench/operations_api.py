@@ -3028,7 +3028,7 @@ def install_routes(app: FastAPI, settings, store):
         preview["system_policy"] = policy_snapshot
         if preview["blocked_candidate_ids"]:
             raise HTTPException(status_code=409, detail=(
-                "批次包含没有可由 Agent 补充源码义务的候选，拒绝将其发送给模型：" +
+                "批次包含缺少可读取固定源码片段的候选，请核对文件、行号与源码快照：" +
                 ", ".join(preview["blocked_candidate_ids"])))
         if body.consent_sha256 != preview["consent_sha256"]:
             raise HTTPException(status_code=409, detail="整批源码外发预览已过期，请重新预览")

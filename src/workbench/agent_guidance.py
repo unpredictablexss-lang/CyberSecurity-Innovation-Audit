@@ -5,7 +5,7 @@ an evidence obligation, or promotes a vulnerability state.
 """
 
 _SOURCE_REVIEW_KINDS = frozenset({
-    "callee_and_policy", "dispatch_binding",
+    "source_trace_review", "callee_and_policy", "dispatch_binding",
     "descriptor_identity_mismatch", "descriptor_identity_unresolved",
     "receiver_and_guard_binding", "fd_origin_and_capacity",
     "capacity_and_alias_identity", "integer_range_and_signedness",

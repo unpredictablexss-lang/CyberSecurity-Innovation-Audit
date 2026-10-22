@@ -117,7 +117,7 @@ export function RiskCenter({ jobs, query = new URLSearchParams() }: { jobs: any[
     go(jobDetailPath(row.audit_id, "findings") + "&candidate_id=" + encodeURIComponent(row.candidate_id));
   };
   const items = summary?.items || [];
-  return <><Header title="风险中心" description="按证据可信程度、潜在危害等级及研判状态筛选。每条风险可查看固定源码与人工复核入口。" />
+  return <><Header title="风险中心" description="所有仓库统一优先展示高可信证据候选，再展示待验证、来源待核对和低优先级项；先排序再分页。每条风险均可查看固定源码与复核入口。" />
     <Alert className="section-gap" type="info" showIcon
       message="可信程度 ≠ 潜在危害等级 ≠ 漏洞确认状态"
       description={"仅展示最近 " + filters.scan_limit + " 份可校验报告中的候选观测。红色/橙色表示检测器初步危害分级，不代表已确认；金色高可信需要独立的确定性证据门。部分解析、模型未研判、来源未知都不代表安全。"} />
@@ -182,19 +182,19 @@ export function RiskCenter({ jobs, query = new URLSearchParams() }: { jobs: any[
         pagination={false} loading={loading} scroll={{ x: 1190 }}
         onRow={(row) => ({ onClick: () => openCandidate(row), style: { cursor: "pointer" } })}
         columns={[
-          { title: "可信程度", render: (_: unknown, row: any) =>
-            <Tag color={candidateConfidenceColor(row.risk_tier)}>{candidateConfidenceLabel(row.risk_tier)}</Tag> },
+          { title: "源码可信程度", render: (_: unknown, row: any) =>
+            <Tag color={row.source_chain_confidence === "high" ? "purple" : candidateConfidenceColor(row.risk_tier)}>{row.source_confidence_label || candidateConfidenceLabel(row.risk_tier)}</Tag> },
           { title: "危害等级（初判）", render: (_: unknown, row: any) =>
             <Tooltip title={severityBasisHint(row)}>
               <Tag color={candidateSeverityColor(row.severity)}>{candidateSeverityLabel(row.severity)}</Tag>
             </Tooltip> },
-          { title: "漏洞状态", render: (_: unknown, row: any) =>
+          { title: "实际复现", render: (_: unknown, row: any) =>
             row.validated_case_ids?.length
               ? <Space direction="vertical" size={0}>
-                  <Tag color="green">关联已验证案例</Tag>
+                  <Tag>{row.reproduction_status_label || "未记录实际复现"}</Tag><Tag color="green">关联已验证案例</Tag>
                   <Text type="secondary" style={{ fontSize: 12 }}>候选本身仍需核对</Text>
                 </Space>
-              : candidateVerificationLabel(row.vulnerability_state) },
+              : <Tag>{row.reproduction_status_label || "未记录实际复现"}</Tag> },
           { title: "仓库 / Commit", render: (_: unknown, row: any) => <><Text>{row.repository}</Text><div className="muted">{String(row.commit || "").slice(0, 12)}</div></> },
           { title: "检测器 / 候选位置", render: (_: unknown, row: any) => <>{row.detector_id || "未知检测器"}<div>{row.file}:{row.line}</div><div className="muted">{row.rule_id}</div></> },
           { title: "AI 研判", render: (_: unknown, row: any) => <AgentSignal row={row} /> },
@@ -245,7 +245,7 @@ export function AuditRiskOverview() {
     extra={<Button type="link" onClick={() => go("/risks?scan_limit=10")}>打开风险中心 →</Button>}>
     <Alert type="info" showIcon
       message="按最近 10 份已保存扫描报告汇总候选观测"
-      description="可信程度根据证据门计算，危害等级只是检测器初判；高可信也不是已确认。模型未完成或未请求的候选继续保留。" />
+      description="所有仓库按证据可信程度优先展示；高可信也不是已确认，危害等级不等于证据可信度。模型未完成或未请求的候选继续保留。" />
     {error && <Alert className="section-gap" type="warning" showIcon message="风险摘要暂不可用" description={error} />}
     <Row gutter={[12, 12]} className="section-gap">{[
       { title: "高可信候选", value: summary?.counts?.high_confidence_candidate ?? "—" },
@@ -272,9 +272,9 @@ export function AuditRiskOverview() {
       dataSource={rows} pagination={false} loading={loading} scroll={{ x: 1140 }}
       onRow={(row) => ({ onClick: () => openCandidate(row), style: { cursor: "pointer" } })}
       columns={[
-        { title: "可信程度", render: (_: unknown, row: any) =>
+        { title: "源码可信程度", render: (_: unknown, row: any) =>
           <Tooltip title={confidenceBasisHint(row)}>
-            <Tag color={candidateConfidenceColor(row.risk_tier)}>{candidateConfidenceLabel(row.risk_tier)}</Tag>
+            <Tag color={row.source_chain_confidence === "high" ? "purple" : candidateConfidenceColor(row.risk_tier)}>{row.source_confidence_label || candidateConfidenceLabel(row.risk_tier)}</Tag>
           </Tooltip> },
         { title: "危害等级（初判）", render: (_: unknown, row: any) =>
           <Tooltip title={severityBasisHint(row)}>

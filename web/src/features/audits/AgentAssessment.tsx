@@ -44,7 +44,7 @@ const usefulnessLabels: Record<string, string> = {
   useful: "有用", partially_useful: "部分有用", not_useful: "无用", unsafe: "有误导风险",
 };
 const obligationKindLabels: Record<string, string> = {
-  reachability: "入口与调用链", impact: "潜在安全影响", authorization: "权限边界",
+  source_trace_review: "源码依据与相关链追查", reachability: "入口与调用链", impact: "潜在安全影响", authorization: "权限边界",
   trigger: "触发条件", dataflow: "数据流", ownership: "对象归属",
   concurrency: "并发条件", bounds: "长度与边界", "evidence-obligation": "待核实事项",
 };

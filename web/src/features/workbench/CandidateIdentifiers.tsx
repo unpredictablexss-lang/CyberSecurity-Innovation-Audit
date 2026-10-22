@@ -1,5 +1,6 @@
 import React from "react";
 import { Space, Tag } from "antd";
+import { identifierLabel } from "./identifierTypes.js";
 
 function identifiers(values: unknown[], pattern: RegExp): string[] {
   return [...new Set(values.flatMap((value) => {
@@ -36,8 +37,8 @@ export default function CandidateIdentifiers({ candidate, related = [] }: { cand
   if (!cwes.length && !cves.length) return null;
   return <Space wrap size={[4, 4]} style={{ marginTop: 6 }} aria-label="CWE / CVE 候选标识">
     {cwes.map((id) => <Tag key={id} color="blue" style={{ marginInlineEnd: 0, fontWeight: 600 }}
-      title="报告中的候选弱点类型；不代表漏洞已确认">{id}</Tag>)}
+      title="报告中的候选弱点类型；中文类型说明不代表漏洞已确认">{identifierLabel(id)}</Tag>)}
     {cves.map((id) => <Tag key={id} color="purple" style={{ marginInlineEnd: 0, fontWeight: 600 }}
-      title="报告中的已披露 CVE 候选映射；产品适用性仍须核验">{id}</Tag>)}
+      title="报告中的已披露 CVE 候选映射；中文类型说明不代表本次候选或产品漏洞已确认">{identifierLabel(id)}</Tag>)}
   </Space>;
 }

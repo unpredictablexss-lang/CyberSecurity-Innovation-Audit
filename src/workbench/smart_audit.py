@@ -197,6 +197,75 @@ def _r0_gate(records, candidate, report, obligation_count):
     return None
 
 
+def source_review_dimensions(ops, job, report, candidate, operations, tier):
+    """Separate source confidence from reproduction; never infer runtime success."""
+    labels = {"high_confidence_candidate": "高可信源码风险", "further_validation": "源码证据待补齐",
+              "unknown_source_binding": "源码版本待核对", "low_priority_manual": "低优先级源码线索"}
+    evidence = []; gaps = []; operation_id = None
+    completed = [op for op in operations if op.get("candidate_id") == candidate.get("id")
+                 and op.get("status") in {"completed", "completed_with_limitations"} and op.get("result_sha256")]
+    if completed:
+        op = completed[-1]
+        try:
+            result = ops.result(op["id"])
+        except Exception:
+            result = {}
+        binding = result.get("binding") or {}
+        bound = all(binding.get(key) == value and value is not None for key, value in {
+            "job_id": job.get("id"), "candidate_id": candidate.get("id"),
+            "report_sha256": job.get("report_sha256"), "source_sha256": candidate.get("source_sha256"),
+            "commit": report.get("commit")}.items())
+        if (bound and result.get("structured_answer_validation") == "accepted"
+                and (result.get("citation_integrity") or {}).get("quote_presence") == "verified_for_all_citations"):
+            operation_id = op["id"]
+            assessment = result.get("agent_assessment") or {}
+            evidence = [claim["claim"] for claim in assessment.get("supported_claims", [])
+                        if isinstance(claim, dict) and claim.get("claim") and claim.get("citations")]
+            gaps = [item for item in assessment.get("unknowns", []) if isinstance(item, str)]
+            if any(row.get("disposition") == "unresolved" for row in assessment.get("obligation_reviews", []) if isinstance(row, dict)):
+                gaps += [item for item in assessment.get("next_steps", []) if isinstance(item, str)]
+            gaps += ["独立复查仍有相反源码线索，需要人工核对其是否推翻主张。"] if (result.get("skeptic_review") or {}).get("counterevidence_candidates") else []
+    source_chain_high = False
+    if (candidate.get("rule_id") and "path-traversal" in str(candidate.get("rule_id", ""))
+            and operation_id and len(evidence) >= 3):
+        result = ops.result(operation_id)
+        claims = (result.get("agent_assessment") or {}).get("supported_claims", [])
+        citations = [citation for claim in claims if isinstance(claim, dict)
+                     for citation in claim.get("citations", []) if isinstance(citation, dict)]
+        quotes = [str(citation.get("quote", "")) for citation in citations]
+        claims = [claim for claim in claims if isinstance(claim, dict)]
+        input_chain = any(("字段" in claim.get("claim", "") or "input" in claim.get("claim", "").lower())
+                          and any(citation.get("file") == candidate.get("file")
+                                  and citation.get("line_start", 0) <= candidate.get("line", 0) + 120
+                                  and citation.get("line_end", 0) >= candidate.get("line", 0) - 40
+                                  for citation in claim.get("citations", []) if isinstance(citation, dict))
+                          for claim in claims)
+        path_chain = any(any(word in claim.get("claim", "").lower()
+                             for word in ("拼接", "concatenat", "path"))
+                         and len(claim.get("citations", [])) >= 1 for claim in claims)
+        sink_chain = any(any(token in citation.get("quote", "") for token in ("unlink(", "open(", "remove(", "DeleteFile"))
+                         for claim in claims for citation in claim.get("citations", [])
+                         if isinstance(citation, dict))
+        source_chain_high = bool(input_chain and path_chain and sink_chain
+                                 and len({citation.get("file") for citation in citations
+                                          if citation.get("file")}) >= 2)
+    if source_chain_high:
+        # This label attests to the quoted source chain only. The independent
+        # risk tier and unresolved exploitability obligations remain authoritative.
+        labels[tier] = "高可信源码链（漏洞仍待验证）"
+    elif tier == "further_validation" and evidence:
+        labels[tier] = "已有源码支持（待补证）"
+    if tier != "high_confidence_candidate" and not gaps:
+        gaps = ["尚缺能够闭合输入来源、危险操作及保护措施检查的源码复核证据。"]
+    return {"source_confidence": ("high" if source_chain_high else tier),
+            "source_confidence_label": labels[tier],
+            "source_chain_confidence": "high" if source_chain_high else None,
+            "source_supported_claims": evidence, "source_evidence_gaps": list(dict.fromkeys(gaps)),
+            "source_review_operation_id": operation_id,
+            "reproduction_status": "not_recorded", "reproduction_status_label": "未记录实际复现",
+            "reproduction_note": "源码分析、AI 置信度及关联案例不等于当前候选已实际复现；复现结果须单独核对。"}
+
+
 def _agent_source_evidence(ops, job, report, candidate, operations):
     """Return source-bound Agent rationale suitable for a human-review priority tier."""
     workbench = report.get("_workbench")
@@ -477,6 +546,7 @@ def risk_snapshot(settings, store, ops, job, report):
             "evidence_level": "candidate", "vulnerability_state": "candidate",
             "risk_tier": tier, "risk_tier_label": tier_labels[tier],
             "confidence_basis": confidence_basis,
+            **source_review_dimensions(ops, job, report, candidate, job_agent_operations, tier),
             # Severity (potential impact) is orthogonal to evidence confidence.
             # Neither the detector nor a model is permitted to confirm a product flaw.
             **severity_metadata(original),

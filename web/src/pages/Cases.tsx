@@ -82,7 +82,8 @@ function CaseReportOverview({ report, caseId }: { report: any; caseId: string })
         title={(candidate.detector_id || "静态检测") + " · " + (candidate.rule_id || "候选")}
         extra={<Button type="link" onClick={() => go("/tasks/" + row.job_id)}>查看源码与原始证据</Button>}>
         <Descriptions size="small" bordered column={2}>
-          <Descriptions.Item label="风险层级"><Tag color={risk.risk_tier === "high_confidence_candidate" ? "orange" : "blue"}>{risk.risk_tier_label || "源码版本未核对"}</Tag></Descriptions.Item>
+          <Descriptions.Item label="源码可信程度"><Tag color={risk.source_chain_confidence === "high" ? "purple" : risk.risk_tier === "high_confidence_candidate" ? "orange" : "blue"}>{risk.source_confidence_label || risk.risk_tier_label || "源码版本未核对"}</Tag></Descriptions.Item>
+          <Descriptions.Item label="实际复现"><Tag>{risk.reproduction_status_label || "未记录实际复现"}</Tag></Descriptions.Item>
           <Descriptions.Item label="观测状态"><Tag>candidate · 单条观测未确认</Tag></Descriptions.Item>
           <Descriptions.Item label="静态严重性 / 置信度">{String(risk.severity ?? "unknown")} / {String(risk.confidence ?? "unknown")}</Descriptions.Item>
           <Descriptions.Item label="代码位置">{candidate.file || "unknown"}:{candidate.line || "?"}</Descriptions.Item>
@@ -91,6 +92,7 @@ function CaseReportOverview({ report, caseId }: { report: any; caseId: string })
         </Descriptions>
         <Paragraph className="section-gap"><Text strong>静态规则依据：</Text> {candidate.message || "规则未提供摘要"}</Paragraph>
         <Paragraph><Text type="secondary">风险分层依据：</Text> {(risk.reasons || []).join("；") || "暂无可用依据"}</Paragraph>
+        <Paragraph><Text type="secondary">待补源码证据：</Text> {(risk.source_evidence_gaps || []).join("；") || "请查看当前任务的源码复核记录"}</Paragraph>
         <Paragraph><Text type="secondary">建案理由：</Text> {row.rationale || "未填写"}</Paragraph>
         {!!obligations.length && <div className="obligation">
           <Text strong>待核实的静态证据义务</Text>
