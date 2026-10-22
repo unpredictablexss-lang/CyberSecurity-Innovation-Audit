@@ -1,0 +1,9 @@
+Starting OHScanner in Ubuntu; browse http://localhost:18765 after startup. Ctrl+C stops the service.
+wsl: �hKm0R localhost �NtM�n
+�FO*g\��P0R WSL0NAT !j_
+N�v WSL
+N/ec localhost �Nt0
+INFO:     Started server process [840]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:18765 (Press CTRL+C to quit)

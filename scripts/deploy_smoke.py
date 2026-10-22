@@ -19,6 +19,7 @@ import urllib.request
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--port", type=int, default=8765)
+    parser.add_argument("--hold-seconds", type=int, default=0)
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
     # Refuse to mistake another healthy server for the process started below.
@@ -98,6 +99,7 @@ def main():
             result.update(status="passed", worker_running=True, homepage=True, static_asset=True,
                           job_status=job["status"], candidates=candidates,
                           report_sha256=job["report_sha256"])
+            time.sleep(max(0, min(args.hold_seconds, 30)))
     finally:
         if process is not None and process.poll() is None:
             process.send_signal(signal.SIGTERM)

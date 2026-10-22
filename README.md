@@ -20,7 +20,8 @@
 
 - Windows：双击根目录 `deploy-windows.cmd`，或运行 `powershell -ExecutionPolicy Bypass -File .\deploy-windows.ps1`。通过 WSL2/Ubuntu 运行，无需 Windows Python/Node 或 Docker Desktop；缺少 WSL 时尝试安装，若 Windows 要求重启，重启后再执行。
 - Ubuntu 22.04+/Debian 12+：运行 `bash deploy-linux.sh`；缺少系统依赖时使用 apt/sudo 自动安装，Node 在项目私有目录安装并校验 SHA-256。
-- 默认访问 `http://localhost:8765`。端口可用 `--port 18867`（Linux）或 `-Port 18867`（Windows）修改。
+- 与操作手册一致，默认访问 `http://localhost:8765`，不会自动换端口。Windows 若该端口被系统保留/占用，会明确报错；验证 Windows 侧健康接口、首页和资源后自动打开浏览器。自行指定其他端口时，Windows 用 `-Port`，Linux 用 `--port` 修改。
+- 首次部署后可用 `start-windows.cmd` 或 `bash start-linux.sh` 一键启动，复用已有环境和构建。终端保持打开，Ctrl+C 停止服务。
 - Linux 自动部署的运行环境、数据和目标源码默认放在 `.deploy/`；Windows 存放在 WSL 的 `~/.local/share/ohscanner/windows-目录摘要/`，启动时显示实际路径，避免在 Windows 文件系统存放数据库/锁/虚拟环境。已有本机配置及环境变量仍优先。首次安装需要联网及安装系统依赖的权限。
 - 自测用 `bash deploy-linux.sh --smoke-test` 或 `deploy-windows.ps1 -SmokeTest`：检查页面、资源、真实 Worker 扫描与报告后自动退出，保留独立测试日志。详情见[开发与交付](docs/开发协作与交付指南.md)。
 

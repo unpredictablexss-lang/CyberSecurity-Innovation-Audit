@@ -1,0 +1,8 @@
+Windows port 8765 is occupied or reserved. The script will not change it automatically. Free the port, or explicitly ch
+oose another port with -Port.
+At D:\openHarmonyScanner\deployment-main-20261022\deploy-windows.ps1:16 char:5
++     throw "Windows port $Port is occupied or reserved. The script wil ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (Windows port 87...ort with -Port.:String) [], RuntimeException
+    + FullyQualifiedErrorId : Windows port 8765 is occupied or reserved. The script will not change it automatically.
+   Free the port, or explicitly choose another port with -Port.

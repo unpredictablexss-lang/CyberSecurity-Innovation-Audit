@@ -3,10 +3,18 @@ param(
     [ValidateRange(1024,65535)][int]$Port = 8765,
     [string]$Distribution = 'Ubuntu',
     [switch]$SetupOnly,
-    [switch]$SmokeTest
+    [switch]$SmokeTest,
+    [switch]$StartOnly
 )
 $ErrorActionPreference = 'Stop'
-if ($SetupOnly -and $SmokeTest) { throw 'Choose SetupOnly or SmokeTest.' }
+if (@($SetupOnly, $SmokeTest, $StartOnly).Where({$_}).Count -gt 1) { throw 'Choose SetupOnly, SmokeTest or StartOnly.' }
+function Test-LocalPort([int]$Candidate) {
+    $listener = New-Object System.Net.Sockets.TcpListener([System.Net.IPAddress]::Loopback, $Candidate)
+    try { $listener.Start(); return $true } catch { return $false } finally { $listener.Stop() }
+}
+if (-not $SetupOnly -and -not (Test-LocalPort $Port)) {
+    throw "Windows port $Port is occupied or reserved. The script will not change it automatically. Free the port, or explicitly choose another port with -Port."
+}
 if (-not (Get-Command wsl.exe -ErrorAction SilentlyContinue)) {
     throw 'WSL is unavailable. Enable Windows Subsystem for Linux and virtualization, reboot, then rerun.'
 }
@@ -24,6 +32,28 @@ if ($distros -notcontains $Distribution) {
 $deployArgs = @('-d', $Distribution, '--cd', $PSScriptRoot, '--exec', 'bash', './scripts/deploy_windows_wsl.sh', '--port', "$Port")
 if ($SetupOnly) { $deployArgs += '--setup-only' }
 if ($SmokeTest) { $deployArgs += '--smoke-test' }
+if ($StartOnly) { $deployArgs += '--start-only' }
 Write-Host "Starting OHScanner in $Distribution; browse http://localhost:$Port after startup. Ctrl+C stops the service."
-& wsl.exe @deployArgs
-exit $LASTEXITCODE
+$monitor = $null
+$resultFile = Join-Path ([System.IO.Path]::GetTempPath()) ('ohscanner-windows-ready-' + [guid]::NewGuid().ToString('N') + '.json')
+try {
+    if (-not $SetupOnly) {
+        $monitorScript = (Join-Path $PSScriptRoot 'scripts\check_windows_access.ps1').Replace("'", "''")
+        $resultLiteral = $resultFile.Replace("'", "''")
+        $monitorCommand = "& '$monitorScript' -Port $Port -ResultFile '$resultLiteral'"
+        if (-not $SmokeTest) { $monitorCommand += ' -OpenBrowser' }
+        $encodedCommand = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($monitorCommand))
+        $monitor = Start-Process -FilePath powershell.exe -ArgumentList '-NoProfile','-ExecutionPolicy','Bypass','-EncodedCommand',$encodedCommand -WindowStyle Hidden -PassThru
+    }
+    & wsl.exe @deployArgs
+    $deployExit = $LASTEXITCODE
+    if ($SmokeTest -and $deployExit -eq 0) {
+        if (-not (Test-Path -LiteralPath $resultFile) -or (Get-Content -LiteralPath $resultFile -Raw | ConvertFrom-Json).status -ne 'passed') {
+            throw "WSL self-test finished, but Windows browser access was not verified. See $resultFile"
+        }
+        Write-Host "Windows host self-test passed: http://localhost:$Port"
+    }
+} finally {
+    if ($monitor -and -not $monitor.HasExited) { Stop-Process -Id $monitor.Id -ErrorAction SilentlyContinue }
+}
+exit $deployExit

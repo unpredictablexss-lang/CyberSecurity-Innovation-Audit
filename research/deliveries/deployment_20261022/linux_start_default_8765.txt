@@ -1,0 +1,5 @@
+OHScanner: http://localhost:8765 (API + scan, operation and validation Workers)
+INFO:     Started server process [28]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8765 (Press CTRL+C to quit)

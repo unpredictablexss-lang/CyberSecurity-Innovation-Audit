@@ -1,0 +1,44 @@
+{
+  "default_port": 8765,
+  "automatic_port_change": false,
+  "windows_reserved_range": [
+    8709,
+    8808
+  ],
+  "windows_default_8765": "correctly_rejected_reserved_port",
+  "windows_host_scan_explicit_18872": "passed",
+  "windows_start_explicit_18765": "passed",
+  "linux_start_default_8765": "passed",
+  "windows_readiness_negative_65534": "failed_as_expected",
+  "records": {
+    "windows_host_scan": {
+      "log": "windows_host_scan.txt",
+      "sha256": "cbb20f681d99662a9244c1e560bfb566dfee11e8105cb901dcdb21ccce2d7726",
+      "result": {
+        "status": "passed",
+        "run_dir": "/home/deepsleep/.local/share/ohscanner/windows-5fafe12edc5df591/smoke-2xpk87ad",
+        "commit": "1a1d3e9ac98eb72029e21fbdbe98c4dd62e6215f",
+        "worker_running": true,
+        "homepage": true,
+        "static_asset": true,
+        "job_status": "completed",
+        "candidates": 1,
+        "report_sha256": "91023db26d908b8a0c3716ae5ac32f787505ee6f87eb33d7d9ef2885dac50cd1",
+        "server_exit_code": 0
+      }
+    },
+    "windows_default_8765_rejected": {
+      "log": "windows_default_8765_rejected.txt",
+      "sha256": "ce721b498e0ebade1765b5f624b095492f09cc5c731b9854a95dd64025e3efe3"
+    },
+    "windows_start_only": {
+      "log": "windows_start_only.txt",
+      "sha256": "a1895c2f519801481b11a26c47db4b330b0ad4a5900951bde7c865ce2139ea7d"
+    },
+    "linux_start_default_8765": {
+      "log": "linux_start_default_8765.txt",
+      "sha256": "7d51993e32728cda21fe93467f7dc2b9f2edc69a1c9ce3a61bbbbc86a42661fb"
+    }
+  },
+  "previous_windows_smoke_scope": "WSL-internal only, not Windows browser access"
+}

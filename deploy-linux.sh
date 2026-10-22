@@ -11,7 +11,8 @@ while (($#)); do
     --port) PORT=${2:?Missing port}; shift 2 ;;
     --setup-only) MODE=setup; shift ;;
     --smoke-test) MODE=smoke; shift ;;
-    -h|--help) echo 'Usage: bash deploy-linux.sh [--port 8765] [--setup-only|--smoke-test]'; exit 0 ;;
+    --start-only) MODE=start; shift ;;
+    -h|--help) echo 'Usage: bash deploy-linux.sh [--port 8765] [--setup-only|--smoke-test|--start-only]'; exit 0 ;;
     *) echo "Unknown argument: $1" >&2; exit 2 ;;
   esac
 done
@@ -26,6 +27,12 @@ if [[ -z ${OHSCANNER_CONFIG:-} && ! -f "$ROOT/config/workbench.local.json" ]]; t
   export OHSCANNER_DATA=${OHSCANNER_DATA:-"$STATE/data"}
   export OHSCANNER_TARGET_ROOTS=${OHSCANNER_TARGET_ROOTS:-"$STATE/targets"}
   mkdir -p "$OHSCANNER_DATA" "$STATE/targets"
+fi
+if [[ "$MODE" == start ]]; then
+  [[ -x "$OHSCANNER_VENV/bin/python" && -f "$ROOT/web/dist/index.html" ]] || { echo 'Run deploy-linux.sh once before start-linux.sh.' >&2; exit 1; }
+  exec 9>"$STATE/deploy.lock"
+  flock -n 9 || { echo "Deployment already running for $STATE" >&2; exit 1; }
+  exec "$OHSCANNER_VENV/bin/python" -m src.workbench serve --port "$PORT"
 fi
 need_packages=0
 for cmd in python3 git curl xz flock; do command -v "$cmd" >/dev/null || need_packages=1; done
@@ -64,6 +71,6 @@ python3 -m venv "$OHSCANNER_VENV"
 (cd web && npm ci --no-audit --no-fund && npm run build)
 if [[ "$MODE" == setup ]]; then echo 'Setup complete.'; exit 0; fi
 if [[ "$MODE" == smoke ]]; then
-  exec "$OHSCANNER_VENV/bin/python" scripts/deploy_smoke.py --port "$PORT"
+  exec "$OHSCANNER_VENV/bin/python" scripts/deploy_smoke.py --port "$PORT" --hold-seconds "${OHSCANNER_SMOKE_HOLD_SECONDS:-0}"
 fi
 exec "$OHSCANNER_VENV/bin/python" -m src.workbench serve --port "$PORT"

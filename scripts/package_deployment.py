@@ -25,7 +25,7 @@ def main():
     output.parent.mkdir(parents=True, exist_ok=True)
     paths = ["src", "web", "scripts", "config", "rules", "models", "docker", "validation",
              "docs", "samples", "requirements.txt", "requirements-web.txt", "README.md",
-             "AGENTS.md", "deploy-linux.sh", "deploy-windows.ps1", "deploy-windows.cmd",
+             "AGENTS.md", "deploy-linux.sh", "deploy-windows.ps1", "deploy-windows.cmd", "start-linux.sh", "start-windows.cmd",
              "research/deliveries/OHScanner结项交付_20261021/实验材料包"]
     subprocess.run(["git", "archive", "--format=zip", "--prefix=OHScanner/",
                     "--output=" + str(output), commit, *paths], cwd=root, check=True)
