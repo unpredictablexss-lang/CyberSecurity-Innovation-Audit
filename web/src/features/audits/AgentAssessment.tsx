@@ -152,6 +152,10 @@ export default function AgentAssessment({ result, reviews = [], onSubmit }: { re
   const verdict = result.agent_verdict || {};
   const claims = Array.isArray(assessment.supported_claims) ? assessment.supported_claims : [];
   const context = result.initial_evidence?.context || {};
+  const knowledgeRetrieval = result.knowledge_retrieval || context.knowledge_retrieval;
+  const knowledgeReferences = Array.isArray(result.knowledge_references)
+    ? result.knowledge_references
+    : (Array.isArray(knowledgeRetrieval?.references) ? knowledgeRetrieval.references : []);
   const obligations = Array.isArray(context.evidence_obligations) ? context.evidence_obligations : [];
   const sourceCitationPolicy = typeof result.citation_evidence_policy === "string";
   const modelAnswerRetained = result.model_answer_retained !== false;
@@ -229,6 +233,17 @@ export default function AgentAssessment({ result, reviews = [], onSubmit }: { re
         <pre className="raw">{context.source_excerpt || "固定源码摘录为空。"}</pre>
         {context.source_excerpt_truncated && <Text type="secondary">摘录经过长度限制；完整源码仍可在候选详情中查看。</Text>}
       </DetailFold>}
+      {knowledgeRetrieval && <Card className="section-gap" size="small" title={`知识库参考资料（${knowledgeReferences.length}）`}>
+        <Alert type="info" showIcon message={`本地 BM25 · ${knowledgeRetrieval.status || "未知"} · 索引 ${knowledgeRetrieval.indexed_files ?? 0} 个文件 · 语料 SHA-256 ${knowledgeRetrieval.corpus_sha256 || "不可用"}`}
+          description={knowledgeRetrieval.disclaimer || "这些资料只供类比参考，不能证明当前候选、满足源码证据义务或作为当前漏洞结论的引用。"} />
+        {knowledgeReferences.length ? <List className="section-gap" size="small" dataSource={knowledgeReferences} renderItem={(item: any) => <List.Item>
+          <Space direction="vertical" style={{ width: "100%" }}>
+            <Text strong>{item.path}:{item.start_line ?? "?"}–{item.end_line ?? "?"}</Text>
+            <Text type="secondary">{item.summary || "参考资料"} · SHA-256 {item.sha256 || "未记录"}</Text>
+            <pre className="raw">{item.excerpt || ""}</pre>
+          </Space>
+        </List.Item>} /> : <Text type="secondary">没有匹配的参考片段（{knowledgeRetrieval.status || "未知"}）。</Text>}
+      </Card>}
       {claims.length > 0 && <Card className="section-gap" size="small" title={`模型列出的源码主张（${claims.length}）`}>
         <List size="small" dataSource={claims} renderItem={(item: any) => <List.Item>
           <Space direction="vertical" style={{ width: "100%" }}>

@@ -1911,7 +1911,8 @@ class AgentExecutionTests(unittest.TestCase):
 
 
 class CandidateArtifactGenerationTests(unittest.TestCase):
-    def _run(self, assessment, *, invalid_citation=False, poc_code=None, uncapped_output=False):
+    def _run(self, assessment, *, invalid_citation=False, poc_code=None, uncapped_output=False,
+             include_knowledge=False):
         source_text = "void run() {\n  check_permission();\n  privileged_call();\n}\n"
         source_sha = hashlib.sha256(source_text.encode()).hexdigest()
         candidate = {"id": "candidate-artifact", "file": "src/guard.cpp", "line": 2,
@@ -2022,20 +2023,28 @@ class CandidateArtifactGenerationTests(unittest.TestCase):
             "max_output_tokens": None, "continuous_investigation": True,
             "source_submission_approved": True, "provider_fingerprint": "unused",
             "prompt_version": agent.PROMPT_VERSION, "tool_policy_version": agent.TOOL_POLICY_VERSION,
-            "include_paths": ["src"]}}
+            "include_paths": ["src"], "knowledge_retrieval_enabled": include_knowledge}}
+
+        knowledge = {"status": "matched", "algorithm": "bm25-k1.5-b0.75-v1",
+            "corpus_sha256": "1" * 64, "indexed_files": 1,
+            "disclaimer": "Untrusted analogical reference only.",
+            "references": [{"title": "CVE fixture", "path": "04_D线/CVE回放与PoC/example.md",
+                "summary": "Historical component-only harness case.", "start_line": 3, "end_line": 4,
+                "sha256": "2" * 64, "score": 1.0, "excerpt": "Historical PoC reference, not source proof."}]}
 
         with patch.dict(os.environ, {"OHSCANNER_LLM_BASE_URL": "https://api.deepseek.com",
                                      "OHSCANNER_LLM_MODEL": "deepseek-v4-pro",
                                      "OHSCANNER_LLM_API_KEY": "test-secret"}, clear=False):
             task["spec"]["provider_fingerprint"] = agent.ProviderConfig.from_env().fingerprint
             store, fake, ops = Store(), FakeClient(), Ops()
-            bind_test_consent(task, store, report, candidate, source, artifact_stage=True)
-            with patch.object(agent.service, "read_report", return_value=report), \
-                 patch.object(agent.service, "finding", return_value=candidate), \
-                 patch.object(agent.service, "source", return_value=source):
-                preview = agent.consent_preview(None, store, store.job("job-artifact"), report,
-                    candidate, task["spec"], agent.ProviderConfig.from_env())
-                result = agent.execute_agent(None, store, ops, task, client=fake)
+            with patch.object(agent, "retrieve_knowledge", return_value=knowledge):
+                bind_test_consent(task, store, report, candidate, source, artifact_stage=True)
+                with patch.object(agent.service, "read_report", return_value=report), \
+                     patch.object(agent.service, "finding", return_value=candidate), \
+                     patch.object(agent.service, "source", return_value=source):
+                    preview = agent.consent_preview(None, store, store.job("job-artifact"), report,
+                        candidate, task["spec"], agent.ProviderConfig.from_env())
+                    result = agent.execute_agent(None, store, ops, task, client=fake)
         return result, fake, preview
 
     def test_tool_agent_generates_fixed_source_cited_draft_and_counts_the_request(self):
@@ -2066,6 +2075,18 @@ class CandidateArtifactGenerationTests(unittest.TestCase):
         self.assertTrue(all(0 < payload["max_output_tokens"] <= 5000 for payload in client.payloads))
         self.assertEqual(result["vulnerability_state"], "candidate")
         self.assertEqual(result["validated_vulnerability"], 0)
+
+    def test_r2_receives_authorized_knowledge_references_separate_from_source_citations(self):
+        result, client, preview = self._run("likely_true_positive", include_knowledge=True)
+        self.assertEqual(preview["knowledge_retrieval"]["corpus_sha256"], "1" * 64)
+        self.assertEqual(preview["knowledge_retrieval"]["references"][0]["path"],
+                         "04_D线/CVE回放与PoC/example.md")
+        initial = json.loads(client.payloads[0]["input"][0]["content"][0]["text"])
+        self.assertEqual(initial["knowledge_retrieval"]["references"][0]["excerpt"],
+                         "Historical PoC reference, not source proof.")
+        self.assertEqual(result["knowledge_references"], preview["knowledge_retrieval"]["references"])
+        self.assertEqual(result["agent_assessment"]["supported_claims"][0]["citations"][0]["file"],
+                         "src/guard.cpp")
 
     def test_invalid_artifact_citation_rejects_both_drafts_and_clears_poc_code(self):
         result, _, _ = self._run("likely_true_positive", invalid_citation=True)
@@ -3209,7 +3230,14 @@ class AgentRouteTests(unittest.TestCase):
                  patch.object(app.state.store, "job", return_value=job), \
                  patch("src.workbench.operations_api.service.read_report", return_value=report), \
                  patch("src.workbench.operations_api.service.finding", return_value=candidate), \
-                 patch("src.workbench.operations_api.service.source", return_value=source):
+                 patch("src.workbench.operations_api.service.source", return_value=source), \
+                 patch("src.workbench.agent.retrieve_knowledge", return_value={
+                     "status": "matched", "algorithm": "bm25-k1.5-b0.75-v1",
+                     "corpus_sha256": "1" * 64, "indexed_files": 1,
+                     "disclaimer": "Untrusted analogical reference.",
+                     "references": [{"path": "04_D线/CVE回放与PoC/example.md",
+                         "start_line": 1, "end_line": 1, "sha256": "2" * 64,
+                         "summary": "Fixture reference", "score": 1.0, "excerpt": "fixture"}]}):
                 case_id = app.state.store.create_case("linked candidate", [{
                     "job_id": "job-1", "candidate_id": "candidate-1", "rationale": "test"}])
                 preview_payload = {"job_id": "job-1", "candidate_id": "candidate-1", "case_id": case_id,
@@ -3219,6 +3247,8 @@ class AgentRouteTests(unittest.TestCase):
                     headers={"x-ohscanner-client": "workbench-v1"}, json=preview_payload)
                 self.assertEqual(preview_response.status_code, 200, preview_response.text)
                 preview = preview_response.json()
+                self.assertEqual(preview["knowledge_retrieval"]["corpus_sha256"], "1" * 64)
+                self.assertEqual(preview["knowledge_retrieval"]["references"][0]["excerpt"], "fixture")
                 without_r0 = client.post("/api/v1/operations/agent-investigations", headers={
                     "x-ohscanner-client": "workbench-v1"}, json={**preview_payload,
                     "source_submission_approved": True, "consent_sha256": preview["consent_sha256"], "consent_nonce": preview["consent_nonce"]})
@@ -3305,6 +3335,7 @@ class AgentRouteTests(unittest.TestCase):
                 self.assertEqual(plan["system_policy"]["policy"]["profile"], "standard")
                 self.assertEqual(plan["prompt_version"], agent.PROMPT_VERSION)
                 self.assertEqual(plan["tool_policy_version"], agent.TOOL_POLICY_VERSION)
+                self.assertTrue(plan["knowledge_retrieval_enabled"])
                 self.assertTrue(plan["source_submission_approved"])
                 self.assertEqual(plan["source_consent_sha256"], preview["consent_sha256"])
                 self.assertEqual(plan["consent_preview_version"], agent.CONSENT_PREVIEW_VERSION)
@@ -3431,7 +3462,14 @@ class AgentRouteTests(unittest.TestCase):
                  patch.object(app.state.store, "job", return_value=job), \
                  patch("src.workbench.operations_api.service.read_report", return_value=report), \
                  patch("src.workbench.operations_api.service.finding", return_value=candidate), \
-                 patch("src.workbench.operations_api.service.source", return_value=source):
+                 patch("src.workbench.operations_api.service.source", return_value=source), \
+                 patch("src.workbench.agent.retrieve_knowledge", return_value={
+                     "status": "matched", "algorithm": "bm25-k1.5-b0.75-v1",
+                     "corpus_sha256": "1" * 64, "indexed_files": 1,
+                     "disclaimer": "Untrusted analogical references.",
+                     "references": [{"path": "04_D线/CVE回放与PoC/example.md",
+                         "start_line": 1, "end_line": 1, "sha256": "2" * 64,
+                         "summary": "Fixture reference", "score": 1.0, "excerpt": "fixture"}]}):
                 pair_payload = {key: value for key, value in payload.items() if key != "mode"}
                 missing_r0 = client.post("/api/v1/operations/agent-investigations/paired/preview",
                                          headers=headers, json=pair_payload)
@@ -3476,6 +3514,10 @@ class AgentRouteTests(unittest.TestCase):
                 self.assertEqual(preview_response.status_code, 200, preview_response.text)
                 preview = preview_response.json()
                 self.assertEqual([arm["mode"] for arm in preview["arms"]], ["single_shot", "tool_agent"])
+                self.assertTrue(all(arm["preview"]["knowledge_retrieval"]["corpus_sha256"]
+                                    for arm in preview["arms"]))
+                self.assertEqual(preview["arms"][0]["preview"]["knowledge_retrieval"],
+                                 preview["arms"][1]["preview"]["knowledge_retrieval"])
                 self.assertGreater(preview["aggregate_budget"]["tool_agent_max_total_model_calls"], 0)
                 self.assertEqual(preview["aggregate_budget"]["tool_agent_local_cumulative_token_budget"], "bounded_by_system_policy")
                 self.assertGreater(preview["aggregate_budget"]["tool_agent_max_validation_repair_attempts"], 0)
@@ -3495,8 +3537,10 @@ class AgentRouteTests(unittest.TestCase):
                 self.assertEqual({item["spec"]["mode"] for item in items}, {"single_shot", "tool_agent"})
                 r2_spec = next(item["spec"] for item in items if item["spec"]["mode"] == "tool_agent")
                 self.assertFalse(r2_spec["no_cumulative_token_ceiling"])
+                self.assertTrue(r2_spec["knowledge_retrieval_enabled"])
                 r1_spec = next(item["spec"] for item in items if item["spec"]["mode"] == "single_shot")
                 self.assertFalse(r1_spec["no_cumulative_token_ceiling"])
+                self.assertTrue(r1_spec["knowledge_retrieval_enabled"])
                 self.assertEqual({item["spec"]["pair_id"] for item in items}, {queued.json()["pair_id"]})
                 self.assertEqual({item["spec"]["candidate_id"] for item in items}, {"candidate-pair"})
                 for item in items:
@@ -4304,28 +4348,37 @@ class AgentRouteTests(unittest.TestCase):
                      "source_sha256": "a" * 64, "evidence": {"obligations": [
                          {"kind": "callee_and_policy", "description": "source fact", "status": "unknown"}]}}
         source = {"sha256": "a" * 64, "blob": "f" * 40, "text": "int f() { return 0; }"}
+        knowledge = {"status": "matched", "algorithm": "bm25-k1.5-b0.75-v1",
+            "corpus_sha256": "1" * 64, "indexed_files": 1, "disclaimer": "untrusted analogy",
+            "references": [{"path": "04_D线/CVE回放与PoC/example.md", "start_line": 5,
+                "end_line": 5, "sha256": "2" * 64, "summary": "historical PoC",
+                "score": 1.0, "excerpt": "CVE fixture text unavailable in current source."}]}
         task = {"id": "task-r1", "spec": {"job_id": "j", "candidate_id": "candidate-1",
             "mode": "single_shot", "max_steps": 6, "max_output_tokens": 500,
             "max_total_input_tokens": 24000, "max_total_output_tokens": 1000,
             "timeout_seconds": 90, "source_submission_approved": True, "provider_fingerprint": "",
-            "prompt_version": agent.PROMPT_VERSION, "tool_policy_version": agent.TOOL_POLICY_VERSION}}
+            "prompt_version": agent.PROMPT_VERSION, "tool_policy_version": agent.TOOL_POLICY_VERSION,
+            "knowledge_retrieval_enabled": True}}
         with patch.dict(os.environ, {"OHSCANNER_LLM_MODEL": "test-model", "OHSCANNER_LLM_API_KEY": "key"}, clear=False):
             task["spec"]["provider_fingerprint"] = agent.ProviderConfig.from_env().fingerprint
-            bind_test_consent(task, Store(), report, candidate, source)
-            fake = OneShot()
-            ops = Ops()
-            with patch.object(agent.service, "read_report", return_value=report), \
-                 patch.object(agent.service, "finding", return_value=candidate), \
-                 patch.object(agent.service, "source", return_value=source):
-                result = agent.execute_agent(None, Store(), ops, task, client=fake)
-                failing_ops = Ops()
-                rejected_assessment = agent.execute_agent(
-                    None, Store(), failing_ops, task, client=OneShot("confirmed"))
-                no_usage_result = agent.execute_agent(None, Store(), Ops(), task,
-                                                       client=OneShot(include_usage=False))
-                invalid_ops = Ops()
-                invalid_result = agent.execute_agent(None, Store(), invalid_ops, task,
-                                                       client=OneShot(quote="not present"))
+            with patch.object(agent, "retrieve_knowledge", return_value=knowledge):
+                bind_test_consent(task, Store(), report, candidate, source)
+                fake = OneShot()
+                ops = Ops()
+                with patch.object(agent.service, "read_report", return_value=report), \
+                     patch.object(agent.service, "finding", return_value=candidate), \
+                     patch.object(agent.service, "source", return_value=source):
+                    result = agent.execute_agent(None, Store(), ops, task, client=fake)
+                    failing_ops = Ops()
+                    rejected_assessment = agent.execute_agent(
+                        None, Store(), failing_ops, task, client=OneShot("confirmed"))
+                    no_usage_result = agent.execute_agent(None, Store(), Ops(), task,
+                                                           client=OneShot(include_usage=False))
+                    invalid_ops = Ops()
+                    invalid_result = agent.execute_agent(None, Store(), invalid_ops, task,
+                                                           client=OneShot(quote="not present"))
+                    knowledge_quote_result = agent.execute_agent(None, Store(), Ops(), task,
+                        client=OneShot(quote=knowledge["references"][0]["excerpt"]))
         self.assertEqual(len(fake.payloads), 1)
         model_events = [event for event in failing_ops.events if event[1] == "agent_model_call"]
         self.assertEqual(len(model_events), 1)
@@ -4336,6 +4389,9 @@ class AgentRouteTests(unittest.TestCase):
         self.assertIn("response_sha256=", model_events[0][2])
         self.assertIn("duration_ms=", model_events[0][2])
         self.assertNotIn("tools", fake.payloads[0])
+        sent_context = json.loads(fake.payloads[0]["input"][0]["content"][0]["text"])
+        self.assertEqual(sent_context["knowledge_retrieval"]["references"], knowledge["references"])
+        self.assertEqual(result["knowledge_references"], knowledge["references"])
         self.assertEqual(result["mode"], "single_shot")
         self.assertEqual(result["tool_calls"], [])
         self.assertEqual(result["vulnerability_state"], "candidate")
@@ -4355,6 +4411,9 @@ class AgentRouteTests(unittest.TestCase):
         self.assertFalse(invalid_result["model_answer_retained"])
         self.assertEqual(invalid_result["agent_assessment"]["assessment"], "unknown")
         self.assertEqual(invalid_result["agent_assessment"]["supported_claims"], [])
+        self.assertEqual(knowledge_quote_result["structured_answer_validation_error_code"],
+                         "invalid_evidence_reference")
+        self.assertFalse(knowledge_quote_result["model_answer_retained"])
 
     def test_uncapped_single_shot_repairs_server_rejected_json_without_tools(self):
         root = Path(tempfile.mkdtemp())

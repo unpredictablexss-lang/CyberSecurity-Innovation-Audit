@@ -2210,14 +2210,19 @@ def install_routes(app: FastAPI, settings, store):
         return result
 
     def _agent_consent_preview(body, provider, *, continuous=None, progressive_bounded=False,
-                               system_policy_sha256=None):
+                               system_policy_sha256=None, knowledge_retrieval_enabled=False,
+                               source_context=None, prepared_context=None):
         from .agent import consent_preview
-        job = store.job(body.job_id)
-        if job["status"] not in {"completed", "completed_with_limitations"} or not job.get("report_sha256"):
-            raise ValueError("只允许预览已有完整报告的候选")
-        report = service.read_report(settings, job)
-        candidate = service.finding(report, body.candidate_id)
+        if source_context is None:
+            job = store.job(body.job_id)
+            if job["status"] not in {"completed", "completed_with_limitations"} or not job.get("report_sha256"):
+                raise ValueError("只允许预览已有完整报告的候选")
+            report = service.read_report(settings, job)
+            candidate = service.finding(report, body.candidate_id)
+        else:
+            job, report, candidate = source_context
         preview_spec = body.model_dump()
+        preview_spec["knowledge_retrieval_enabled"] = knowledge_retrieval_enabled is True
         # Ordinary tasks inherit budgets from System Settings. Progressive L3
         # retains its ledger-controlled continuous Agent execution semantics.
         preview_spec["continuous_investigation"] = continuous is True
@@ -2228,7 +2233,8 @@ def install_routes(app: FastAPI, settings, store):
         preview_spec["max_provider_retries"] = 0 if progressive_bounded else 1
         if system_policy_sha256:
             preview_spec["system_policy_sha256"] = system_policy_sha256
-        preview = consent_preview(settings, store, job, report, candidate, preview_spec, provider)
+        preview = consent_preview(settings, store, job, report, candidate, preview_spec, provider,
+                                  prepared=prepared_context)
         return job, report, candidate, preview
 
     def _agent_policy_request(body):
@@ -2827,7 +2833,8 @@ def install_routes(app: FastAPI, settings, store):
         body, policy_snapshot = _agent_policy_request(body)
         body = _fresh_consent_nonce(body)
         _, _, _, preview = _agent_consent_preview(
-            body, provider, system_policy_sha256=policy_snapshot["policy_sha256"])
+            body, provider, system_policy_sha256=policy_snapshot["policy_sha256"],
+            knowledge_retrieval_enabled=True)
         preview["system_policy"] = policy_snapshot
         preview_budgets = preview.setdefault("budgets", {})
         preview_budgets["max_output_tokens"] = body.max_output_tokens
@@ -2848,7 +2855,8 @@ def install_routes(app: FastAPI, settings, store):
         _require_consent_nonce(body)
         body, policy_snapshot = _agent_policy_request(body)
         job, report, candidate, preview = _agent_consent_preview(
-            body, provider, system_policy_sha256=policy_snapshot["policy_sha256"])
+            body, provider, system_policy_sha256=policy_snapshot["policy_sha256"],
+            knowledge_retrieval_enabled=True)
         preview["system_policy"] = policy_snapshot
         if not preview["agent_execution"]["eligible"]:
             raise HTTPException(status_code=409, detail=preview["agent_execution"]["reason"])
@@ -2886,6 +2894,7 @@ def install_routes(app: FastAPI, settings, store):
             "provider_host": provider.endpoint_host, "provider_fingerprint": provider.fingerprint,
             "prompt_version": PROMPT_VERSION,
             "tool_policy_version": TOOL_POLICY_VERSION,
+            "knowledge_retrieval_enabled": True,
             "candidate_source_sha256": candidate.get("source_sha256"),
             "source_commit": report["commit"], "report_sha256": job["report_sha256"],
         }
@@ -3062,13 +3071,24 @@ def install_routes(app: FastAPI, settings, store):
                 "note": "每个候选一个独立任务；结论仍为候选，等待人工审核。"}
 
     def _agent_pair_previews(body, provider, *, system_policy_sha256=None):
+        from .agent import _prepare_candidate_context
+        job = store.job(body.job_id)
+        if job["status"] not in {"completed", "completed_with_limitations"} or not job.get("report_sha256"):
+            raise ValueError("只允许预览已有完整报告的候选")
+        report = service.read_report(settings, job)
+        candidate = service.finding(report, body.candidate_id)
+        source_context = (job, report, candidate)
+        prepared = _prepare_candidate_context(
+            settings, store, job, report, candidate, include_knowledge=True)
         previews = []
         for mode in ("single_shot", "tool_agent"):
             child = _agent_policy_child_request(
                 body, candidate_id=body.candidate_id, mode=mode,
                 experiment_id=body.experiment_id)
             job, report, candidate, preview = _agent_consent_preview(
-                child, provider, system_policy_sha256=system_policy_sha256)
+                child, provider, system_policy_sha256=system_policy_sha256,
+                knowledge_retrieval_enabled=True, source_context=source_context,
+                prepared_context=prepared)
             if not preview["agent_execution"]["eligible"]:
                 raise HTTPException(status_code=409, detail=preview["agent_execution"]["reason"])
             baselines = ops.agent_baseline_reviews(body.experiment_id)
@@ -3181,6 +3201,7 @@ def install_routes(app: FastAPI, settings, store):
                 "provider": provider.provider, "provider_model": provider.model,
                 "provider_host": provider.endpoint_host, "provider_fingerprint": provider.fingerprint,
                 "prompt_version": PROMPT_VERSION, "tool_policy_version": TOOL_POLICY_VERSION,
+                "knowledge_retrieval_enabled": True,
                 "candidate_source_sha256": binding.get("source_sha256"),
                 "source_commit": binding["commit"], "report_sha256": binding["report_sha256"],
                 "pair_id": pair_id, "pair_consent_sha256": preview["consent_sha256"],
@@ -4314,6 +4335,8 @@ def install_routes(app: FastAPI, settings, store):
                     "model_usage": result.get("model_usage"),
                     "model_calls": result.get("model_calls", []),
                     "initial_evidence": result.get("initial_evidence"),
+                    "knowledge_references": result.get("knowledge_references", []),
+                    "knowledge_retrieval": result.get("knowledge_retrieval"),
                     "tool_calls": result.get("tool_calls", []),
                     "prompt_version": result.get("prompt_version"),
                     "tool_policy_version": result.get("tool_policy_version"),
@@ -4498,6 +4521,23 @@ def install_routes(app: FastAPI, settings, store):
                 if triage["initial_evidence"]:
                     rows += ["- 初始证据：" + md(triage["initial_evidence"].get("evidence_id")) +
                              "；上下文 SHA-256 " + md(triage["initial_evidence"].get("context_sha256"))]
+                knowledge = triage.get("knowledge_retrieval") or {}
+                knowledge_refs = triage.get("knowledge_references", [])
+                if knowledge:
+                    rows += ["", "### 知识库参考资料（不属于当前源码证据）", "",
+                             "- 检索状态：" + md(knowledge.get("status", "unknown")) +
+                             "；索引文件数：" + md(knowledge.get("indexed_files", 0)) +
+                             "；语料 SHA-256：" + md(knowledge.get("corpus_sha256") or "不可用"),
+                             "- 边界：这些资料只供类比参考，不能证明当前候选、满足源码证据义务或作为漏洞结论引用。"]
+                    for reference in knowledge_refs if isinstance(knowledge_refs, list) else []:
+                        if not isinstance(reference, dict):
+                            continue
+                        rows += ["- " + md(reference.get("path", "未知路径")) + ":" +
+                                 md(reference.get("start_line", "?")) + "–" +
+                                 md(reference.get("end_line", "?")) + "；" +
+                                 md(reference.get("summary", "参考资料")) +
+                                 "；SHA-256 " + md(reference.get("sha256", "未记录")),
+                                 "  - 片段：" + md(reference.get("excerpt", ""))]
                 for review in triage.get("human_reviews", []):
                     rows += ["- 人工评价（仅评价智能调查意见，不是漏洞结论）：" +
                              md(review.get("reviewer")) + "；有用性 " + md(_case_enum_label(review.get("usefulness"))) +

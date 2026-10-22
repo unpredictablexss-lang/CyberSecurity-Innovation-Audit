@@ -982,15 +982,24 @@ class WorkbenchTests(unittest.TestCase):
         ops = self.app.state.operations
         agent = ops.create("agent_investigation", {
             "case_id": case["id"], "job_id": job["id"], "candidate_id": candidate["id"],
-            "experiment_id": "case-report-eval",
+            "experiment_id": "case-report-eval", "report_sha256": job["report_sha256"],
+            "source_commit": self.commit, "candidate_source_sha256": candidate["source_sha256"],
         })
         self.assertEqual(ops.claim()["id"], agent["id"])
         ops.finish(agent["id"], {
             "status": "completed", "case_id": case["id"], "vulnerability_state": "candidate",
             "validated_vulnerability": 0, "mode": "tool_agent", "experiment_id": "case-report-eval",
-            "binding": {"repository": "fixture/sample", "commit": self.commit,
+            "binding": {"job_id": job["id"], "report_sha256": job["report_sha256"],
+                        "source_sha256": candidate["source_sha256"],
+                        "repository": "fixture/sample", "commit": self.commit,
                         "file": candidate["file"], "line": candidate["line"],
                         "candidate_id": candidate["id"]},
+            "knowledge_references": [{"path": "04_D线/CVE回放与PoC/example.md", "start_line": 3,
+                "end_line": 4, "sha256": "2" * 64, "summary": "Historical PoC reference",
+                "score": 1.0, "excerpt": "CVE fixture remains untrusted reference material."}],
+            "knowledge_retrieval": {"status": "matched", "algorithm": "bm25-k1.5-b0.75-v1",
+                "corpus_sha256": "1" * 64, "indexed_files": 1,
+                "disclaimer": "Untrusted analogical references only."},
             "summary_provenance": "server_generated_from_structured_triage",
             "initial_evidence": {"evidence_id": "evidence-1", "context": {
                 "file": candidate["file"], "evidence_obligations": [{"kind": "reachability", "description": "Trace product entry."}],
@@ -1051,7 +1060,12 @@ class WorkbenchTests(unittest.TestCase):
         self.assertEqual(data["validated_vulnerability"], 0)
         self.assertEqual(data["candidates"][0]["source_evidence"][0]["note"], "Reviewer-recorded source location")
         self.assertEqual(data["candidates"][0]["reviews"][0]["status"], "needs_more_evidence")
-        self.assertNotIn(agent["id"], [item["id"] for item in data["operations"]])
+        agent_row = next(item for item in data["operations"] if item["id"] == agent["id"])
+        triage = agent_row["agent_triage"]
+        self.assertEqual(triage["knowledge_retrieval"]["corpus_sha256"], "1" * 64)
+        self.assertEqual(triage["knowledge_references"][0]["path"],
+                         "04_D线/CVE回放与PoC/example.md")
+        self.assertEqual(triage["initial_evidence"]["evidence_id"], "evidence-1")
         validation_row = next(item for item in data["operations"] if item["id"] == validation["id"])
         evidence = validation_row["validation_evidence"]
         self.assertEqual(evidence["harness_id"], "auth01_descriptor_bypass")
@@ -1064,6 +1078,9 @@ class WorkbenchTests(unittest.TestCase):
         self.assertEqual(markdown.status_code, 200, markdown.text)
         self.assertIn("人工登记源码证据", markdown.text)
         self.assertIn("智能调查漏洞报告草案", markdown.text)
+        self.assertIn("知识库参考资料（不属于当前源码证据）", markdown.text)
+        self.assertIn("CVE回放与PoC/example", markdown.text)
+        self.assertIn("3–4；Historical PoC reference", markdown.text)
         self.assertIn("固定隔离测试环境：auth01\\_descriptor\\_bypass", markdown.text)
         self.assertIn("案例 no", markdown.text)
         self.assertIn("经门控确认的漏洞数：0", markdown.text)

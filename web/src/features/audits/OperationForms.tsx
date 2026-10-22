@@ -1,7 +1,7 @@
 import { INITIAL_ANALYSIS_LABEL, DEEP_ANALYSIS_LABEL, ANALYSIS_DESCRIPTION, readableAnalysisText } from "../workbench/analysisLabels.js";
 import CandidateScope from "./CandidateScope";
 import React, { useEffect, useRef, useState } from "react";
-import { Alert, Button, Card, Checkbox, Collapse, Descriptions, Form, Input, InputNumber, Modal, Radio, Select, Space, Tabs, Tag, Typography, message } from "antd";
+import { Alert, Button, Card, Checkbox, Collapse, Descriptions, Form, Input, InputNumber, List, Modal, Radio, Select, Space, Tabs, Tag, Typography, message } from "antd";
 import { api } from "../../api";
 import { Hash, go } from "../../components";
 import { analysisStatusLabel, coverageStatusLabel, triageStateLabel } from "../workbench/riskLabels.js";
@@ -10,6 +10,21 @@ import { approvedDetectorIds, datePreviewPayload, operationPayload, recentRange,
 import TaskTriageConsentModal from "./TaskTriageConsentModal";
 import { canApproveSourceSubmission, canCreateAgentInvestigation, disclosureReviewed, disclosureSelectionMatches, redactionNotice } from "./egressDisclosure.js";
 const { Text } = Typography;
+function KnowledgeReferences({ retrieval }: { retrieval: any }) {
+  if (!retrieval) return null;
+  const references = Array.isArray(retrieval.references) ? retrieval.references : [];
+  return <Card className="section-gap" size="small" title={`CVE / PoC / Harness 知识库参考资料（${references.length}）`}>
+    <Alert type="info" showIcon message={`本地 BM25 · ${retrieval.status || "未知"} · 索引 ${retrieval.indexed_files ?? 0} 个文件 · 语料 SHA-256 ${retrieval.corpus_sha256 || "不可用"}`}
+      description={retrieval.disclaimer || "这些资料只供类比参考，不能证明当前候选、满足源码证据义务或作为当前漏洞结论的引用。"} />
+    {references.length ? <List className="section-gap" size="small" dataSource={references} renderItem={(item: any) => <List.Item>
+      <Space direction="vertical" style={{ width: "100%" }}>
+        <Text strong>{item.path}:{item.start_line ?? "?"}–{item.end_line ?? "?"}</Text>
+        <Text type="secondary">{item.summary || "参考资料"} · SHA-256 {item.sha256 || "未记录"}</Text>
+        <pre className="raw">{item.excerpt || ""}</pre>
+      </Space>
+    </List.Item>} /> : <Text type="secondary">没有匹配片段；当前候选调查仍可继续（{retrieval.status || "未知"}）。</Text>}
+  </Card>;
+}
 export type SourceContext = { job_id?: string; candidate_id?: string; repository_id?: string; case_id?: string };
 export type OperationFormProps = { context?: SourceContext; repos: any[]; detectors: any[]; cases: any[]; busy: boolean; agentStatus?: any; submit: (path: string, payload: any) => Promise<void> };
 export function ComparisonForm({ kind, repos, detectors, cases, busy, agentStatus, submit, context = {} }: OperationFormProps & { kind: "date" | "recent" | "branches" | "range" | "matrix" }) {
@@ -800,6 +815,7 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
             <Text>上下文 UTF-8 字节：{arm.preview?.initial_context_utf8_bytes} · 工具思考：{arm.preview?.inference_settings?.tool_call_reasoning_effort || "无"} · 结构化输出思考：{arm.preview?.inference_settings?.structured_output_reasoning_effort || "服务商默认"} · 单次输出上限：{arm.preview?.budgets?.max_output_tokens_per_request == null && arm.preview?.budgets?.max_output_tokens == null ? "无本地上限，由服务商决定" : String(arm.preview?.budgets?.max_output_tokens_per_request ?? arm.preview?.budgets?.max_output_tokens) + " tokens"} · 源码 SHA-256：{arm.preview?.binding?.source_sha256}</Text>
             <Alert type="warning" showIcon message="自动脱敏不是完整 DLP，请检查本组完整外发预览"
               description={redactionNotice(arm.preview)} />
+            <KnowledgeReferences retrieval={arm.preview?.knowledge_retrieval} />
             <Collapse activeKey={pairDisclosureOpened.includes(String(arm.mode)) ? [String(arm.mode)] : []}
               onChange={(keys) => {
                 const opened = Array.isArray(keys) ? keys.map(String) : [String(keys)];
@@ -864,6 +880,7 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
               children: <pre className="raw">{JSON.stringify(preview.initial_context, null, 2)}</pre> }]} />
           {preview.additional_tool_data_scope?.length > 0 && <Alert type="warning" showIcon message="只读调查可能追加发送的数据范围"
             description={<ul>{preview.additional_tool_data_scope.map((item: string) => <li key={item}>{item}</li>)}</ul>} />}
+          <KnowledgeReferences retrieval={preview.knowledge_retrieval} />
           <Text type="secondary">AI 初步分析只发送上方初始上下文；AI 深入追查的源码或历史输出取决于模型实际请求，并限制在预览列出的提交范围内。案例 ID 和 API Key 不发送给模型。</Text>
         </Space>
       </Card>}

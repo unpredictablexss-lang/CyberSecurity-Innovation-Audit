@@ -204,6 +204,10 @@ function AgentOperation({ operation }: { operation: any }) {
   const binding = triage.binding || {};
   const initial = triage.initial_evidence || {};
   const context = initial.context || {};
+  const knowledgeRetrieval = triage.knowledge_retrieval || context.knowledge_retrieval;
+  const knowledgeReferences = listValue(triage.knowledge_references).length
+    ? listValue(triage.knowledge_references)
+    : listValue(knowledgeRetrieval?.references);
   const claims = listValue(triage.supported_claims);
   const obligations = listValue(context.evidence_obligations);
   const obligationReviews = listValue(triage.obligation_reviews);
@@ -230,6 +234,17 @@ function AgentOperation({ operation }: { operation: any }) {
       <Paragraph><ChineseNarrative value={triage.summary || "结果未记录摘要。"} /></Paragraph>
       {triage.model_summary_unverified && <details><summary>查看未经核验的模型原始摘要</summary><Paragraph><ChineseNarrative value={triage.model_summary_unverified} /></Paragraph></details>}
     </Card>
+    {knowledgeRetrieval && <Card className="section-gap" size="small" title={`知识库参考资料（${knowledgeReferences.length}）`}>
+      <Alert type="info" showIcon message={`本地 BM25 · ${knowledgeRetrieval.status || "未知"} · 索引 ${knowledgeRetrieval.indexed_files ?? 0} 个文件 · 语料 SHA-256 ${knowledgeRetrieval.corpus_sha256 || "不可用"}`}
+        description={knowledgeRetrieval.disclaimer || "这些资料只供类比参考，不能证明当前候选、满足源码证据义务或作为当前漏洞结论的引用。"} />
+      {knowledgeReferences.length ? <List className="section-gap" size="small" dataSource={knowledgeReferences} renderItem={(item: any) => <List.Item>
+        <Space direction="vertical" style={{ width: "100%" }}>
+          <Text strong>{item.path}:{item.start_line ?? "?"}–{item.end_line ?? "?"}</Text>
+          <Text type="secondary">{item.summary || "参考资料"} · SHA-256 {item.sha256 || "未记录"}</Text>
+          <pre className="raw">{item.excerpt || ""}</pre>
+        </Space>
+      </List.Item>} /> : <Text type="secondary">没有匹配的参考片段（{knowledgeRetrieval.status || "未知"}）。</Text>}
+    </Card>}
     <Card className="section-gap" size="small" title={"模型列出的源码主张（" + claims.length + "）"}>
       {claims.length
         ? <List size="small" dataSource={claims} renderItem={(claim: any) =>
