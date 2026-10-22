@@ -3258,6 +3258,16 @@ def install_routes(app: FastAPI, settings, store):
         return ops.create("investigation", {**body.model_dump(), "timeout_seconds": 60,
                                              "memory_mb": 512})
 
+    @router.get("/scans/{key}/investigation-priority")
+    def scan_investigation_priority(key: str):
+        from .investigation_priority import investigation_priority
+        job = store.job(key)
+        if not job.get("report_sha256"):
+            raise ValueError("No committed report; initial analysis is not available")
+        report = service.read_report(settings, job)
+        return investigation_priority(report, key, job["report_sha256"],
+            ops.agent_investigations_for_job(key, job["report_sha256"]), ops.result)
+
     @router.get("/scans/{key}/triage")
     def scan_triage_summary(key: str):
         job = store.job(key)

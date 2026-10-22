@@ -1,3 +1,4 @@
+import InvestigationPriority from "../features/audits/InvestigationPriority";
 import { artifactFailureMessage, structuredAnswerRejection } from "../features/audits/agentValidationMessage.js";
 import { INITIAL_ANALYSIS_LABEL, DEEP_ANALYSIS_LABEL, ANALYSIS_DESCRIPTION, readableAnalysisText } from "../features/workbench/analysisLabels.js";
 import { useCandidateScope } from "../features/audits/CandidateScope";
@@ -105,6 +106,9 @@ function HighConfidenceCandidateReason({ risk, jobId }: { risk: any; jobId: stri
   </Card>;
 }
 export default function JobDetail({ id, initialTab = "findings", candidateId, sourceFile, sourceLine, health }: { id: string; initialTab?: string; candidateId?: string; sourceFile?: string; sourceLine?: number; health?: any }) {
+  const [activeTab, setActiveTab] = useState(initialTab);
+  const [priorityRefresh, setPriorityRefresh] = useState(0);
+  useEffect(() => { setActiveTab(initialTab); }, [id, initialTab]);
   const [job, setJob] = useState<any>(null);
   const [report, setReport] = useState<any>(null);
   const identifierIndex = useMemo(() => reportCandidateIndex(report), [report]);
@@ -331,9 +335,12 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
       void open({ id: candidateId });
     }
   }, [job?.id, candidateId]);
-  async function previewAgentBatch() {
-    const candidateIds = selected.map(String);
-    if (batchLimit === null || !candidateIds.length || candidateIds.length > batchLimit) return;
+  async function previewAgentBatch(explicitIds?: string[], requestedMode?: "single_shot" | "tool_agent") {
+    const candidateIds = explicitIds || selected.map(String);
+    const mode = requestedMode || batchMode;
+    const limit = candidateBatchLimit(candidateScope.policy, mode);
+    if (limit === null || !candidateIds.length || candidateIds.length > limit) return;
+    setBatchMode(mode);
     setBatchError("");
     setBatchCandidateIds(candidateIds);
     setBatchPreview(null);
@@ -343,7 +350,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
     setBatchBusy(true);
     try {
       const preview = await api("/operations/agent-investigations/batch/preview", {
-        job_id: id, candidate_ids: candidateIds, mode: batchMode,
+        job_id: id, candidate_ids: candidateIds, mode,
       });
       setBatchPreview(preview);
     } catch (e) {
@@ -364,7 +371,9 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
       setBatchOpen(false); setBatchDisclosureOpened([]); setBatchSubmissionApproved(false);
       setSelected([]);
       message.success("已创建 " + result.created_count + " 个独立模型辅助研判任务");
-      if (result.operations?.[0]?.id) go("/tasks/operations/" + result.operations[0].id);
+      if (batchMode === "single_shot") {
+        setActiveTab("priority"); setPriorityRefresh(value => value + 1);
+      } else if (result.operations?.[0]?.id) go("/tasks/operations/" + result.operations[0].id);
     } catch (e) {
       message.error(String(e));
     } finally {
@@ -716,8 +725,17 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
       </>}
       <Card className="section-gap">
         <Tabs
-          defaultActiveKey={initialTab}
+          activeKey={activeTab}
+          onChange={setActiveTab}
           items={[
+            {
+              key: "priority", label: "AI 初判排名",
+              children: report ? <InvestigationPriority key={id} jobId={id} active={activeTab === "priority"}
+                refreshKey={priorityRefresh} limit={candidateBatchLimit(candidateScope.policy, "tool_agent")}
+                enabled={Boolean(job?.report_sha256 && agentProvider?.configured)}
+                onInvestigate={ids => void previewAgentBatch(ids, "tool_agent")}
+                onEvidence={row => void open(row)} /> : <Text type="secondary">静态报告生成后可查看初判排名。</Text>,
+            },
             {
               key: "findings",
               label: "候选与复核",
