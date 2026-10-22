@@ -23,6 +23,7 @@
 - 与操作手册一致，默认访问 `http://localhost:18765`，不会自动换端口。Windows 若该端口被系统保留/占用，会明确报错；验证 Windows 侧健康接口、首页和资源后自动打开浏览器。自行指定其他端口时，Windows 用 `-Port`，Linux 用 `--port` 修改。
 - 首次部署后可用 `start-windows.cmd` 或 `bash start-linux.sh` 一键启动，复用已有环境和构建。终端保持打开，Ctrl+C 停止服务。
 - Linux 自动部署的运行环境、数据和目标源码默认放在 `.deploy/`；Windows 存放在 WSL 的 `~/.local/share/ohscanner/windows-目录摘要/`，启动时显示实际路径，避免在 Windows 文件系统存放数据库/锁/虚拟环境。已有本机配置及环境变量仍优先。首次安装需要联网及安装系统依赖的权限。
+- Windows 安装时通过 Windows 网络及系统代理下载 Linux Node 包，校验官方 SHA-256 后交给 WSL 使用，下载缓存保存在 `.deploy/downloads/`。不要求 WSL 直连 nodejs.org，也不将 Windows 的 localhost 代理地址直接当作 WSL 代理。下载/安装/构建完成前网站尚未启动，请等待浏览器自动打开。
 - 自测用 `bash deploy-linux.sh --smoke-test` 或 `deploy-windows.ps1 -SmokeTest`：检查页面、资源、真实 Worker 扫描与报告后自动退出，保留独立测试日志。详情见[开发与交付](docs/开发协作与交付指南.md)。
 
 工作台运行于 Python 3.10+ 的 Linux 环境（Windows 可使用 WSL2），并需要 Git、Node 22/npm。运行数据目录和 OpenHarmony 目标源码根目录均从配置读取，不依赖 `/home/audit` 或某个盘符：

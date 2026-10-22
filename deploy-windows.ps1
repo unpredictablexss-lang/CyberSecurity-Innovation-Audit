@@ -29,11 +29,14 @@ if ($distros -notcontains $Distribution) {
         exit 3010
     }
 }
+if (-not $StartOnly) {
+    & (Join-Path $PSScriptRoot 'scripts\prepare_windows_node.ps1') -Distribution $Distribution
+}
 $deployArgs = @('-d', $Distribution, '--cd', $PSScriptRoot, '--exec', 'bash', './scripts/deploy_windows_wsl.sh', '--port', "$Port")
 if ($SetupOnly) { $deployArgs += '--setup-only' }
 if ($SmokeTest) { $deployArgs += '--smoke-test' }
 if ($StartOnly) { $deployArgs += '--start-only' }
-Write-Host "Starting OHScanner in $Distribution; browse http://localhost:$Port after startup. Ctrl+C stops the service."
+Write-Host "Preparing OHScanner in $Distribution (install/build/start). The browser opens only after http://localhost:$Port is verified. Ctrl+C stops the service."
 $monitor = $null
 $resultFile = Join-Path ([System.IO.Path]::GetTempPath()) ('ohscanner-windows-ready-' + [guid]::NewGuid().ToString('N') + '.json')
 try {

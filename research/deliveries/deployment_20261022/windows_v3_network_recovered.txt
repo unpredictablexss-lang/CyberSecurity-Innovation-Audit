@@ -1,0 +1,99 @@
+wsl: �hKm0R localhost �NtM�n
+�FO*g\��P0R WSL0NAT !j_
+N�v WSL
+N/ec localhost �Nt0
+Using checksum-verified Node archive from the Windows download cache.
+Preparing OHScanner in Ubuntu (install/build/start). The browser opens only after http://localhost:18765 is verified. Ctrl+C stops the service.
+wsl: �hKm0R localhost �NtM�n
+�FO*g\��P0R WSL0NAT !j_
+N�v WSL
+N/ec localhost �Nt0
+Runtime and data: /home/deepsleep/.local/share/ohscanner/windows-c10da8b27329a351
+Collecting tree-sitter<1,>=0.23 (from -r requirements.txt (line 3))
+  Using cached tree_sitter-0.26.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (10 kB)
+Collecting tree-sitter-c<1,>=0.23 (from -r requirements.txt (line 4))
+  Using cached tree_sitter_c-0.24.2-cp310-abi3-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (1.8 kB)
+Collecting tree-sitter-cpp<1,>=0.23 (from -r requirements.txt (line 5))
+  Using cached tree_sitter_cpp-0.23.4-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (1.8 kB)
+Collecting tree-sitter-javascript==0.25.0 (from -r requirements.txt (line 6))
+  Using cached tree_sitter_javascript-0.25.0-cp310-abi3-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (2.2 kB)
+Collecting tree-sitter-typescript==0.23.2 (from -r requirements.txt (line 7))
+  Using cached tree_sitter_typescript-0.23.2-cp39-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (2.3 kB)
+Collecting fastapi==0.143.0 (from -r requirements-web.txt (line 2))
+  Using cached fastapi-0.143.0-py3-none-any.whl.metadata (26 kB)
+Collecting uvicorn==0.54.0 (from -r requirements-web.txt (line 3))
+  Using cached uvicorn-0.54.0-py3-none-any.whl.metadata (6.6 kB)
+Collecting httpx==0.28.1 (from -r requirements-web.txt (line 4))
+  Using cached httpx-0.28.1-py3-none-any.whl.metadata (7.1 kB)
+Collecting starlette>=0.46.0 (from fastapi==0.143.0->-r requirements-web.txt (line 2))
+  Using cached starlette-1.9.0-py3-none-any.whl.metadata (6.6 kB)
+Collecting pydantic>=2.9.0 (from fastapi==0.143.0->-r requirements-web.txt (line 2))
+  Using cached pydantic-2.14.1-py3-none-any.whl.metadata (133 kB)
+Collecting typing-extensions>=4.8.0 (from fastapi==0.143.0->-r requirements-web.txt (line 2))
+  Using cached typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting typing-inspection>=0.4.2 (from fastapi==0.143.0->-r requirements-web.txt (line 2))
+  Using cached typing_inspection-0.4.4-py3-none-any.whl.metadata (2.6 kB)
+Collecting annotated-doc>=0.0.2 (from fastapi==0.143.0->-r requirements-web.txt (line 2))
+  Using cached annotated_doc-0.0.5-py3-none-any.whl.metadata (6.5 kB)
+Collecting opentelemetry-api>=1.44.0 (from fastapi==0.143.0->-r requirements-web.txt (line 2))
+  Using cached opentelemetry_api-1.45.1-py3-none-any.whl.metadata (1.4 kB)
+Collecting click>=7.0 (from uvicorn==0.54.0->-r requirements-web.txt (line 3))
+  Using cached click-8.5.0-py3-none-any.whl.metadata (2.6 kB)
+Collecting h11>=0.8 (from uvicorn==0.54.0->-r requirements-web.txt (line 3))
+  Using cached h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+Collecting anyio (from httpx==0.28.1->-r requirements-web.txt (line 4))
+  Using cached anyio-4.15.1-py3-none-any.whl.metadata (4.7 kB)
+Collecting certifi (from httpx==0.28.1->-r requirements-web.txt (line 4))
+  Using cached certifi-2026.10.19-py3-none-any.whl.metadata (2.5 kB)
+Collecting httpcore==1.* (from httpx==0.28.1->-r requirements-web.txt (line 4))
+  Using cached httpcore-1.0.9-py3-none-any.whl.metadata (21 kB)
+Collecting idna (from httpx==0.28.1->-r requirements-web.txt (line 4))
+  Using cached idna-3.20-py3-none-any.whl.metadata (7.2 kB)
+Collecting annotated-types>=0.6.0 (from pydantic>=2.9.0->fastapi==0.143.0->-r requirements-web.txt (line 2))
+  Using cached annotated_types-0.8.0-py3-none-any.whl.metadata (15 kB)
+Collecting pydantic-core==2.50.1 (from pydantic>=2.9.0->fastapi==0.143.0->-r requirements-web.txt (line 2))
+  Using cached pydantic_core-2.50.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.5 kB)
+Using cached tree_sitter_javascript-0.25.0-cp310-abi3-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (99 kB)
+Using cached tree_sitter_typescript-0.23.2-cp39-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl (344 kB)
+Using cached fastapi-0.143.0-py3-none-any.whl (144 kB)
+Using cached uvicorn-0.54.0-py3-none-any.whl (87 kB)
+Using cached httpx-0.28.1-py3-none-any.whl (73 kB)
+Using cached httpcore-1.0.9-py3-none-any.whl (78 kB)
+Using cached tree_sitter-0.26.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (667 kB)
+Using cached tree_sitter_c-0.24.2-cp310-abi3-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (94 kB)
+Using cached tree_sitter_cpp-0.23.4-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (316 kB)
+Using cached annotated_doc-0.0.5-py3-none-any.whl (5.3 kB)
+Using cached click-8.5.0-py3-none-any.whl (125 kB)
+Using cached h11-0.16.0-py3-none-any.whl (37 kB)
+Using cached opentelemetry_api-1.45.1-py3-none-any.whl (60 kB)
+Using cached pydantic-2.14.1-py3-none-any.whl (488 kB)
+Using cached pydantic_core-2.50.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.2 MB)
+Using cached starlette-1.9.0-py3-none-any.whl (80 kB)
+Using cached anyio-4.15.1-py3-none-any.whl (132 kB)
+Using cached idna-3.20-py3-none-any.whl (69 kB)
+Using cached typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+Using cached typing_inspection-0.4.4-py3-none-any.whl (14 kB)
+Using cached certifi-2026.10.19-py3-none-any.whl (136 kB)
+Using cached annotated_types-0.8.0-py3-none-any.whl (13 kB)
+Installing collected packages: typing-extensions, tree-sitter-typescript, tree-sitter-javascript, tree-sitter-cpp, tree-sitter-c, tree-sitter, idna, h11, click, certifi, annotated-types, annotated-doc, uvicorn, typing-inspection, pydantic-core, opentelemetry-api, httpcore, anyio, starlette, pydantic, httpx, fastapi
+Successfully installed annotated-doc-0.0.5 annotated-types-0.8.0 anyio-4.15.1 certifi-2026.10.19 click-8.5.0 fastapi-0.143.0 h11-0.16.0 httpcore-1.0.9 httpx-0.28.1 idna-3.20 opentelemetry-api-1.45.1 pydantic-2.14.1 pydantic-core-2.50.1 starlette-1.9.0 tree-sitter-0.26.0 tree-sitter-c-0.24.2 tree-sitter-cpp-0.23.4 tree-sitter-javascript-0.25.0 tree-sitter-typescript-0.23.2 typing-extensions-4.16.0 typing-inspection-0.4.4 uvicorn-0.54.0
+
+added 77 packages in 15s
+
+> ohscanner-workbench@0.1.0 build
+> tsc --noEmit && node build.mjs
+
+{
+  "status": "passed",
+  "run_dir": "/home/deepsleep/.local/share/ohscanner/windows-c10da8b27329a351/smoke-posgeb0a",
+  "commit": "ed1ebda60bf74728e57b062cfd163cdc0751d247",
+  "worker_running": true,
+  "homepage": true,
+  "static_asset": true,
+  "job_status": "completed",
+  "candidates": 1,
+  "report_sha256": "c1801eb3d7aa94f06dfcecbe34d6dfdedb4c818f18ba81523f0367d71405db57",
+  "server_exit_code": 0
+}
+Windows host self-test passed: http://localhost:18765
+Press any key to continue . . .

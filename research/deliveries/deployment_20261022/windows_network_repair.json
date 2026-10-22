@@ -1,0 +1,28 @@
+{
+  "default_port": 18765,
+  "actual_user_v3_cmd_smoke": "passed",
+  "result": {
+    "status": "passed",
+    "run_dir": "/home/deepsleep/.local/share/ohscanner/windows-c10da8b27329a351/smoke-posgeb0a",
+    "commit": "ed1ebda60bf74728e57b062cfd163cdc0751d247",
+    "worker_running": true,
+    "homepage": true,
+    "static_asset": true,
+    "job_status": "completed",
+    "candidates": 1,
+    "report_sha256": "c1801eb3d7aa94f06dfcecbe34d6dfdedb4c818f18ba81523f0367d71405db57",
+    "server_exit_code": 0
+  },
+  "network_before": "WSL external connections to Node, PyPI, npm and HTTP example all failed",
+  "network_repair": "User explicitly approved all-WSL restart; wsl --shutdown followed by Ubuntu startup rebuilt the virtual network",
+  "network_after": {
+    "nodejs.org": 200,
+    "pypi.org": 200,
+    "registry.npmjs.org": 200
+  },
+  "node_download": "Windows networking/system proxy; SHA-256 verified in both Windows and WSL",
+  "automatic_wsl_shutdown_in_installer": false,
+  "test_server_left_running": false,
+  "log": "windows_v3_network_recovered.txt",
+  "log_sha256": "d5faafb3616e49c29cd307c1d4facde370f7118820f84404bd35f6d391afe365"
+}

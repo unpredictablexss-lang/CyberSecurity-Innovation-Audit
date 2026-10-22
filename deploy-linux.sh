@@ -61,7 +61,15 @@ esac
 NODE_DIR="$STATE/node-v$NODE_VERSION-linux-$NODE_ARCH"
 if [[ ! -x "$NODE_DIR/bin/node" ]]; then
   NODE_TAR="$STATE/node-v$NODE_VERSION-linux-$NODE_ARCH.tar.xz"
-  curl --fail --location --retry 3 --connect-timeout 20 "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-$NODE_ARCH.tar.xz" -o "$NODE_TAR"
+  if [[ -n ${OHSCANNER_NODE_ARCHIVE:-} && -f "$OHSCANNER_NODE_ARCHIVE" ]]; then
+    echo 'Using Node archive downloaded through Windows networking.'
+    echo "$NODE_SHA  $OHSCANNER_NODE_ARCHIVE" | sha256sum -c -
+    cp -- "$OHSCANNER_NODE_ARCHIVE" "$NODE_TAR"
+  elif [[ -f "$NODE_TAR" ]] && echo "$NODE_SHA  $NODE_TAR" | sha256sum -c - >/dev/null 2>&1; then
+    echo 'Using verified local Node download cache.'
+  else
+    curl --fail --location --retry 3 --connect-timeout 20 "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-$NODE_ARCH.tar.xz" -o "$NODE_TAR"
+  fi
   echo "$NODE_SHA  $NODE_TAR" | sha256sum -c -
   tar -xJf "$NODE_TAR" -C "$STATE"
 fi
