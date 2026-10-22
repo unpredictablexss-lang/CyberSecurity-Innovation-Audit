@@ -286,7 +286,7 @@ export default function AgentAssessment({ result, reviews = [], onSubmit }: { re
     </Card>
     <Descriptions bordered size="small" column={{ xs: 1, md: 2 }}>
       <Descriptions.Item label="分诊倾向">{labels[assessment.assessment] || (assessment.assessment ? <ChineseNarrative value={assessment.assessment} /> : "尚无结果")}</Descriptions.Item>
-      <Descriptions.Item label="模式">{result.mode === "single_shot" ? "单轮模型研判" : "工具增强只读调查"}</Descriptions.Item>
+      <Descriptions.Item label="模式">{result.mode === "single_shot" ? "AI 初步分析" : "AI 深入追查"}</Descriptions.Item>
       <Descriptions.Item label="模型">{result.provider?.model || "—"}</Descriptions.Item>
       <Descriptions.Item label="外发目的地">{result.source_submission?.destination_host || "—"}</Descriptions.Item>
       <Descriptions.Item label="候选">{binding.candidate_id || "—"}</Descriptions.Item>

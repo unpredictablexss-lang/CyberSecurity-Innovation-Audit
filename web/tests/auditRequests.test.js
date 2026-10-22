@@ -151,7 +151,7 @@ test("audit workflow label describes the frozen conditional triage scope", () =>
     candidate_limit_per_authorized_batch: 3,
     conditional_r2_candidate_limit: 2,
   } }, "standard_review"),
-  "标准研判：静态扫描后，最多 3 条候选初步研判；高/严重且仍有源码义务未解决时，最多补充核查 2 条持续追查");
+  "智能审计：静态扫描后，最多 3 条候选AI 初步分析；高/严重且仍有源码义务未解决时，最多补充核查 2 条持续追查");
 });
 
 

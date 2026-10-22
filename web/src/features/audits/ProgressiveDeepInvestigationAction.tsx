@@ -1,3 +1,4 @@
+import { DEEP_ANALYSIS_LABEL } from "../workbench/analysisLabels.js";
 import React, { useState } from "react";
 import { Alert, Button, Checkbox, Descriptions, Modal, Space, Tag, Typography, message } from "antd";
 import { api } from "../../api";
@@ -36,7 +37,7 @@ export default function ProgressiveDeepInvestigationAction({ jobId, candidateId,
       setPreview(value);
     } catch (error) {
       setOpen(false);
-      message.error("深度调查操作未能完成，请检查服务状态或任务详情后重试。");
+      message.error("AI 深入追查操作未能完成，请检查服务状态或任务详情后重试。");
     } finally {
       setLoading(false);
     }
@@ -61,10 +62,10 @@ export default function ProgressiveDeepInvestigationAction({ jobId, candidateId,
         consent_nonce: preview.consent_nonce,
       });
       setOpen(false);
-      message.success("深度智能调查已排队；将使用固定版本源码和只读工具继续追查");
+      message.success("AI 深入追查已排队；将使用固定版本源码和只读工具继续追查");
       if (operation?.id) go("/tasks/operations/" + operation.id);
     } catch (error) {
-      message.error("深度调查操作未能完成，请检查服务状态或任务详情后重试。");
+      message.error("AI 深入追查操作未能完成，请检查服务状态或任务详情后重试。");
     } finally {
       setLoading(false);
     }
@@ -72,14 +73,14 @@ export default function ProgressiveDeepInvestigationAction({ jobId, candidateId,
 
   return <>
     <Button className="section-gap" type="primary" onClick={() => void showPreview()}>
-      继续深度调查 · 重新预览授权
+      {DEEP_ANALYSIS_LABEL} · 重新预览授权
     </Button>
-    <Modal title="深度调查的源码发送与访问范围预览" open={open} width={820}
+    <Modal title="AI 深入追查的源码发送与访问范围预览" open={open} width={820}
       confirmLoading={loading} okText="确认授权并排队" cancelText="取消"
       okButtonProps={{ disabled: !preview || !approved }}
       onOk={() => void start()} onCancel={() => { setOpen(false); setApproved(false); }} destroyOnClose>
-      {loading && !preview ? <Paragraph>正在校验快速研判结果并读取固定版本的只读调查上下文…</Paragraph> : preview ? <>
-        <Alert type="warning" showIcon message="快速研判的“建议继续调查”只用于决定后续流程，不代表漏洞已确认。深度调查将访问预览列出的固定提交源码，并进行反方核查。" />
+      {loading && !preview ? <Paragraph>正在校验AI 初步分析结果并读取固定版本的只读调查上下文…</Paragraph> : preview ? <>
+        <Alert type="warning" showIcon message="AI 初步分析的“建议继续调查”只用于决定后续流程，不代表漏洞已确认。AI 深入追查将访问预览列出的固定提交源码，并进行反方核查。" />
         <Descriptions className="section-gap" bordered size="small" column={2}>
           <Descriptions.Item label="模型服务商 / 模型">{preview.provider?.endpoint_host || "未知"} · {preview.provider?.model || "未知"}</Descriptions.Item>
           <Descriptions.Item label="固定仓库 / Commit">{preview.binding?.repository} · {preview.binding?.commit}</Descriptions.Item>
@@ -97,9 +98,9 @@ export default function ProgressiveDeepInvestigationAction({ jobId, candidateId,
         <Text strong>只读工具可查看的范围</Text>
         <pre className="raw section-gap">{(preview.additional_tool_data_scope || []).join("\n") || "没有额外工具范围"}</pre>
         <CollapseDisclosure items={preview.disclosure} />
-        <Alert className="section-gap" type="info" message="深度调查会跨文件追查、寻找反证并整理报告；结果仍需人工复核，候选状态不会自动改变。" />
+        <Alert className="section-gap" type="info" message="AI 深入追查会跨文件追查、寻找反证并整理报告；结果仍需人工复核，候选状态不会自动改变。" />
         <Checkbox checked={approved} onChange={(event) => setApproved(event.target.checked)}>
-          我已检查初始上下文、只读工具范围和模型服务商，并明确授权这次深度调查。
+          我已检查初始上下文、只读工具范围和模型服务商，并明确授权这次AI 深入追查。
         </Checkbox>
         <div className="section-gap"><Space wrap><Tag color="blue">继续调查候选</Tag><Text type="secondary">反证线索仍需核实，系统不会自动标记为误报。</Text></Space></div>
       </> : null}

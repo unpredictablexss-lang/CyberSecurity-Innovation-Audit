@@ -65,7 +65,8 @@ export function useRepositoryRefs(repositoryId?: string) {
   }, [repositoryId]);
   return { refs: loadedFor === (repositoryId || null) ? refs : [], error, loading, loadedFor };
 }
-export function RepositoryField({ repos, onChange, refresh }: { repos: any[]; onChange: () => void; refresh?: () => Promise<void> }) {
+export function RepositoryField({ repos, onChange, refresh, multiple = false, disabled = false }: { repos: any[]; onChange: () => void; refresh?: () => Promise<void>; multiple?: boolean; disabled?: boolean }) {
+  const form = Form.useFormInstance();
   const [catalog, setCatalog] = useState<any[] | null>(null);
   const [catalogLoading, setCatalogLoading] = useState(false);
   const [catalogError, setCatalogError] = useState("");
@@ -89,14 +90,16 @@ export function RepositoryField({ repos, onChange, refresh }: { repos: any[]; on
   const unavailable = (catalog || []).filter((item) => item.status !== "available");
   const options = available.map((item) => ({ value: item.id, label: item.display_name || item.name }));
   return <>
-    <Form.Item name="repository_id" label="审计仓库" rules={[{ required: true, message: "请选择通过目录和 Git 校验的仓库" }]}>
+    <Form.Item name={multiple ? "repository_ids" : "repository_id"} label="审计仓库" rules={[{ required: true, message: "请选择通过目录和 Git 校验的仓库" }]}>
       <Select
+        mode={multiple ? "multiple" : undefined}
+        maxTagCount="responsive"
         showSearch
         optionFilterProp="label"
         placeholder={catalogLoading ? "正在核验已登记仓库…" : "搜索可用仓库名称"}
         options={options}
         loading={catalogLoading}
-        disabled={catalogLoading || catalog === null}
+        disabled={disabled || catalogLoading || catalog === null}
         notFoundContent={catalogLoading ? "正在核验…" : catalogError ? "仓库目录核验失败" : "没有通过校验的仓库"}
         onChange={onChange}
         onOpenChange={(open) => {
@@ -107,6 +110,13 @@ export function RepositoryField({ repos, onChange, refresh }: { repos: any[]; on
         }}
       />
     </Form.Item>
+    {multiple && <Space wrap className="section-gap">
+      <Button disabled={disabled || catalogLoading || !available.length} onClick={() => {
+        form.setFieldValue("repository_ids", available.map((item) => item.id)); onChange();
+      }}>全选可用仓库（{available.length}）</Button>
+      <Button disabled={disabled} onClick={() => { form.setFieldValue("repository_ids", []); onChange(); }}>清空选择</Button>
+      <Text type="secondary">每个仓库分别固定版本、扫描范围并创建任务。</Text>
+    </Space>}
     {catalogError && <Alert className="section-gap" type="error" showIcon message="仓库目录暂时无法核验" description={catalogError}
       action={<Button size="small" onClick={() => void loadCatalog(true)}>重试</Button>} />}
     {!catalogLoading && catalog !== null && !catalogError && available.length === 0 && <Alert className="section-gap" type="warning" showIcon
@@ -123,7 +133,7 @@ export function RepositoryField({ repos, onChange, refresh }: { repos: any[]; on
     </Space>}
   </>;
 }
-export function RefField({ name, label, refs, required = true }: { name: string; label: string; refs: any[]; required?: boolean }) {
+export function RefField({ name, label, refs, required = true }: { name: string | (string | number)[]; label: string; refs: any[]; required?: boolean }) {
   return <Form.Item name={name} label={label} rules={[{ required, message: "请选择或填写版本" }]}>
     <AutoComplete allowClear options={refs.map((r) => ({ value: r.ref, label: r.is_default ? r.ref + "（默认分支）" : r.ref }))} placeholder="分支、Tag 或完整 Commit SHA"
       filterOption={(input, option) => String(option?.value).toLowerCase().includes(input.toLowerCase())} />

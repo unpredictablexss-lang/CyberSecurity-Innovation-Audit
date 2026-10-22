@@ -1,6 +1,6 @@
 import { chineseNarrative } from "../cases/chineseNarrativeText.js";
 const assessmentLabels = {
-  investigate: "建议继续深度调查",
+  investigate: "建议继续 AI 深入追查",
   defer: "暂缓调查",
   possible_refutation: "发现待复核的反证线索",
   insufficient_context: "当前证据不足",
@@ -59,7 +59,7 @@ export function quickScreenPresentation(result = {}, requestState = "unknown") {
     : chineseReason
       ? reason
       : rationale || reason
-        ? "模型已完成本轮初步研判，但详细说明以英文返回，原文已保留在下方“模型原文”中。该意见仅供人工复核，不代表漏洞已确认。"
+        ? "模型已完成本轮AI 初步分析，但详细说明以英文返回，原文已保留在下方“模型原文”中。该意见仅供人工复核，不代表漏洞已确认。"
         : "没有可复核的模型说明；候选仍待人工复核。模型意见不确认漏洞，也不代表源码安全。";
 
   return {

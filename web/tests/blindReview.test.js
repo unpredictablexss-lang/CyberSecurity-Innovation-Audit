@@ -11,7 +11,7 @@ function operation(id, mode, overrides = {}) {
   };
 }
 
-test("blind review options contain complete R1/R2 pairs and expand to both operation IDs", () => {
+test("blind review options contain complete AI 初步分析与 AI 深入追查 pairs and expand to both operation IDs", () => {
   const rows = [operation("r1", "single_shot"), operation("r2", "tool_agent")];
   const result = blindReviewPairs(rows, "study-1");
   assert.equal(result.eligibleOperationCount, 2);

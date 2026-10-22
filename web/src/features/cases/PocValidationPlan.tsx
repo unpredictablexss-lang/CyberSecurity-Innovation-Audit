@@ -64,6 +64,9 @@ export default function PocValidationPlan({ candidateRow, operations = [] }: { c
     <Alert type="warning" showIcon
       message="当前结论：候选 / 待确认"
       description="这是待人工审查的验证计划，不是执行结果；没有生成可执行验证用例，也不表示漏洞已经确认。" />
+    <Alert className="section-gap" type="info" showIcon
+      message="获得授权的智能调查可生成 PoC 草案"
+      description="对候选创建并授权智能调查后，模型会根据本次读取的固定源码与研判证据提出本地测试草案；证据不足时保留空白。草案只展示、不自动执行，需人工审查并通过受控验证。结果见智能调查与报告草案。" />
     <Descriptions className="section-gap" bordered size="small" column={{ xs: 1, md: 3 }}>
       <Descriptions.Item label="仓库">{binding.repository || "待确认"}</Descriptions.Item>
       <Descriptions.Item label="固定版本">{binding.commit ? String(binding.commit || "").slice(0, 12) : "待确认"}</Descriptions.Item>

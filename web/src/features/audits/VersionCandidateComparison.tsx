@@ -23,7 +23,7 @@ function statusLabel(status: any) {
   return labels[String(status)] || "状态未知";
 }
 function stageLabel(stage: any) {
-  if (stage === "initial_review") return "初步调查";
+  if (stage === "initial_review") return "AI 初步分析";
   if (stage === "source_tracing") return "深入追查";
   return "调查阶段未知";
 }

@@ -10,7 +10,7 @@ export const REVIEW_STATUS_LABELS = Object.freeze({
   queued: "排队中", running: "运行中", completed: "已完成",
   completed_with_limitations: "已完成（存在限制）", failed: "失败",
   cancelled: "已取消", timed_out: "超时", interrupted: "中断", blocked: "受阻",
-  not_triaged: "未研判", not_requested: "未请求", awaiting_r1: "等待初步研判",
+  not_triaged: "未研判", not_requested: "未请求", awaiting_r1: "等待 AI 初步分析",
   candidate_limit_reached: "超过授权名额", failed_selection: "候选选择失败",
   queue_limit_exceeded: "队列容量不足", revoked: "授权已撤销",
 });
