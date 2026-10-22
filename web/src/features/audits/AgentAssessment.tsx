@@ -49,6 +49,9 @@ const obligationKindLabels: Record<string, string> = {
   concurrency: "并发条件", bounds: "长度与边界", "evidence-obligation": "待核实事项",
 };
 const currencyLabels: Record<string, string> = { USD: "美元", CNY: "人民币" };
+function DetailFold({ label, children }: { label: string; children: React.ReactNode }) {
+  return <Collapse size="small" defaultActiveKey={[]} items={[{ key: "details", label, children }]} />;
+}
 function AgentArtifactDetails({ result, onCitation }: {
   result: any;
   onCitation: (citation: any, index: number) => React.ReactNode;
@@ -62,25 +65,8 @@ function AgentArtifactDetails({ result, onCitation }: {
         : <Text>{item.displayText || [item.evidenceId, item.location, item.quote].filter(Boolean).join(" · ")}</Text>}
     </List.Item>} />;
   return <>
-    {artifacts.artifactGeneration && <Card className="section-gap" size="small" title="报告与验证用例草案生成阶段">
-      <Space wrap>
-        <Tag color="blue">阶段：{artifacts.artifactGeneration.statusLabel}</Tag>
-        <Tag>报告：{artifacts.artifactGeneration.reportStatusLabel}</Tag>
-        <Tag>验证用例：{artifacts.artifactGeneration.pocStatusLabel}</Tag>
-      </Space>
-      <Text className="section-gap" type="secondary" style={{ display: "block" }}>
-        本阶段模型调用：{artifacts.artifactGeneration.callsUsed === null
-          ? "未记录"
-          : artifacts.artifactGeneration.callsUsed + " 次" + (artifacts.artifactGeneration.maximumModelCalls === null
-            ? ""
-            : " / 最多 " + artifacts.artifactGeneration.maximumModelCalls + " 次")}
-      </Text>
-      <Alert className="section-gap" type="info" showIcon
-        message="生成阶段不代表扫描完成、验证用例已执行或漏洞已确认。" />
-    </Card>}
     {artifacts.vulnerabilityReport && <Card className="section-gap" size="small" title="智能调查候选漏洞报告">
-      <Alert type="warning" showIcon message={artifacts.vulnerabilityReport.boundary}
-        description="报告内容来自绑定到本次智能调查操作的结构化结果，仅供人工复核，不代表漏洞已经确认。" />
+      <Text type="secondary">{artifacts.vulnerabilityReport.boundary} · 仅供人工复核</Text>
       {artifacts.vulnerabilityReport.title && <Text strong className="section-gap" style={{ display: "block" }}><ChineseNarrative value={artifacts.vulnerabilityReport.title} /></Text>}
       {(artifacts.vulnerabilityReport.summary || artifacts.vulnerabilityReport.rootCause || artifacts.vulnerabilityReport.impact)
         && <Descriptions className="section-gap" bordered size="small" column={1}>
@@ -99,10 +85,7 @@ function AgentArtifactDetails({ result, onCitation }: {
       {artifacts.vulnerabilityReport.citations.length > 0 && <div className="section-gap"><Text strong>报告引用</Text>{renderCitations(artifacts.vulnerabilityReport.citations)}</div>}
     </Card>}
     {artifacts.pocDraft && <Card className="section-gap" size="small" title="智能调查生成的验证用例草案" extra={<Tag color="orange">{artifacts.pocDraft.statusLabel}</Tag>}>
-      <Alert type="warning" showIcon message={artifacts.pocDraft.boundary}
-        description={artifacts.pocDraft.status === "insufficient_evidence"
-          ? "该智能调查结果标记为证据不足。以下仅展示已绑定结果中的草案字段；不会执行或验证，也不能证明漏洞成立。"
-          : "以下仅展示已绑定的智能调查验证用例草案；不会执行或验证，也不能证明漏洞成立。"} />
+      <Text type="secondary">{artifacts.pocDraft.boundary} · 草案未执行，需人工验证</Text>
       {artifacts.pocDraft.title && <Text strong className="section-gap" style={{ display: "block" }}><ChineseNarrative value={artifacts.pocDraft.title} /></Text>}
       {artifacts.pocDraft.language && <div className="section-gap">语言：<Text code>{artifacts.pocDraft.language}</Text></div>}
       {artifacts.pocDraft.prerequisites.length > 0 && <div className="section-gap"><Text strong>前置条件</Text>
@@ -122,6 +105,22 @@ function AgentArtifactDetails({ result, onCitation }: {
       </Descriptions>}
       {artifacts.pocDraft.citations.length > 0 && <div className="section-gap"><Text strong>验证用例草案引用</Text>{renderCitations(artifacts.pocDraft.citations)}</div>}
     </Card>}
+    {artifacts.artifactGeneration && <DetailFold label="报告与验证用例生成记录">
+      <Space wrap>
+        <Tag color="blue">阶段：{artifacts.artifactGeneration.statusLabel}</Tag>
+        <Tag>报告：{artifacts.artifactGeneration.reportStatusLabel}</Tag>
+        <Tag>验证用例：{artifacts.artifactGeneration.pocStatusLabel}</Tag>
+      </Space>
+      <Text className="section-gap" type="secondary" style={{ display: "block" }}>
+        本阶段模型调用：{artifacts.artifactGeneration.callsUsed === null
+          ? "未记录"
+          : artifacts.artifactGeneration.callsUsed + " 次" + (artifacts.artifactGeneration.maximumModelCalls === null
+            ? ""
+            : " / 最多 " + artifacts.artifactGeneration.maximumModelCalls + " 次")}
+      </Text>
+      <Alert className="section-gap" type="info" showIcon
+        message="生成阶段不代表扫描完成、验证用例已执行或漏洞已确认。" />
+    </DetailFold>}
   </>;
 }
 export default function AgentAssessment({ result, reviews = [], onSubmit }: { result: any; reviews?: any[]; onSubmit: (review: any) => Promise<void> }) {
@@ -198,37 +197,14 @@ export default function AgentAssessment({ result, reviews = [], onSubmit }: { re
     </Descriptions> },
   ];
   return <Space direction="vertical" size="middle" style={{ width: "100%" }}>
-    <Alert type={verdict.status === "analysis_failed" ? "error" : ["unknown", "needs_more_evidence"].includes(verdict.status) ? "warning" : "info"} showIcon
-      message={agentVerdictLabel(verdict.status) || verdictLabels[verdict.status] || "模型尚未形成有效分诊结果"}
-      description={`复核范围：${agentScopeLabel(verdict.scope)}；模型置信度：${agentConfidenceLabel(verdict.confidence)}；产品状态：${productStatusLabel(verdict.product_status)}。${agentVerdictReasonLabel(verdict.reason)} 产品漏洞状态仍为 ${productStatusLabel(result.vulnerability_state || "candidate")}，已验证漏洞数 ${result.validated_vulnerability ?? 0}；产品可达性和影响仍需后续证据。`} />
-    {artifactFailureMessage(result.artifact_generation) && <Alert type="warning" showIcon message="报告 / PoC 草稿未通过校验" description={artifactFailureMessage(result.artifact_generation)} />}
-    {rejectionDescription && <Alert type="error" showIcon message="模型结构化答复未通过服务端校验" description={rejectionDescription} />}
-    {(toolIssues.length > 0 || (result.model_tool_calls_skipped || 0) > 0) && <Alert type="warning" showIcon message={`只读工具有 ${toolIssues.length + (result.model_tool_calls_skipped || 0)} 项未完成，相关证据可能不完整`} description={<List size="small" dataSource={toolIssues} renderItem={(item: any) => <List.Item><Text><Text strong>{toolNameLabels[item.tool] || "其他只读工具"}</Text> · {toolStatusLabels[item.status] || "待核对"} · 错误类型：{toolErrorLabels[item.errorCode] || "其他错误"}：<ChineseNarrative value={item.message} /></Text></List.Item>} footer={(result.model_tool_calls_skipped || 0) > 0 ? `另有 ${result.model_tool_calls_skipped} 个模型请求因工具调用预算耗尽而未执行；对应证据保持未决。` : null} />} />}
-    <Alert type="warning" showIcon message="源码引句存在 ≠ 陈述已证实" description={sourceCitationPolicy ? `支持性主张和已判定义务只能引用固定提交中的源码摘录；扫描器义务描述、提交历史只作检索上下文，不能当作源码证明。服务端核对了 ${result.citation_integrity?.citation_count ?? "未知"} 条引句的来源类型和逐字存在性，但仍未验证引句是否在语义上支持模型推理。摘要由服务端从结构化分诊字段生成；模型原始摘要、未支持陈述、未知项和下一步建议仍是未核验文本。` : "这是较早版本的结果，未记录“只能引用源码证据”的策略版本；请人工确认每条引句确实来自固定提交源码，并逐项判断它是否支持模型陈述。摘要和其他模型自由文本均不能当作已验证结论。"} />
-    <AgentArtifactDetails result={result} onCitation={citationLink} />
-    {evidenceGraph && <Card size="small" title="跨文件证据链" extra={<Tag color={evidenceGraph.unresolved.length ? "orange" : evidenceGraph.complete ? "green" : "default"}>{evidenceGraph.statusLabel}</Tag>}>
-      <Alert type="info" showIcon message="固定版本追踪结果"
-        description={<>{evidenceGraph.binding.repository || "仓库未记录"} · 提交 <Text code>{evidenceGraph.binding.commit || "未知"}</Text> · {evidenceGraph.evidence.length} 份来源记录、{evidenceGraph.citations.length} 条引用关系。该图用于核对智能调查从候选到其他源码位置的调查路径；引用位置已绑定固定源码，但系统没有自动判断引句是否在语义上证明主张。</>} />
-      {evidenceGraph.stages.length > 0 && <List className="section-gap" size="small" header={<Text strong>调查阶段</Text>}
-        dataSource={evidenceGraph.stages} renderItem={(stage: any) => <List.Item>
-          <Space wrap><Text>{stage.label}</Text><Tag color={["completed", "accepted"].includes(stage.status) ? "green" : stage.status === "running" ? "blue" : "orange"}>{stage.statusLabel}</Tag></Space>
-        </List.Item>} />}
-      {evidenceGraph.citations.length > 0 && <List className="section-gap" size="small" header={<Text strong>源码引用关系</Text>}
-        dataSource={evidenceGraph.citations} renderItem={(edge: any) => <List.Item>
-          <Space direction="vertical" size={2} style={{ width: "100%" }}>
-            <Space wrap><Tag>{edge.stageLabel}</Tag><Text strong>{edge.label}</Text>
-              {binding.job_id && edge.file && edge.line
-                ? <Button type="link" size="small" onClick={() => go("/tasks/" + encodeURIComponent(binding.job_id) + "?tab=source&source_file=" + encodeURIComponent(edge.file) + "&source_line=" + edge.line)}>{edge.location}</Button>
-                : <Text code>{edge.location}</Text>}
-            </Space>
-            <Text type="secondary">来源 {edge.evidenceId || "未记录"}；引用语义由人工复核，不能直接作为漏洞确认依据。</Text>
-          </Space>
-        </List.Item>} />}
-      {evidenceGraph.unresolved.length > 0 && <Alert className="section-gap" type="warning" showIcon message={"有 " + evidenceGraph.unresolved.length + " 条引用未绑定到固定源码"}
-        description={<List size="small" dataSource={evidenceGraph.unresolved} renderItem={(item: any) => <List.Item>{item.stageLabel} · {item.file || "文件未记录"} · <ChineseNarrative value={item.reason} /></List.Item>} />} />}
-      <Text type="secondary">漏洞状态：{productStatusLabel(evidenceGraph.productState)}；已确认漏洞：{evidenceGraph.validatedVulnerability}。{evidenceGraph.boundary}</Text>
-    </Card>}
-    {binding.job_id && binding.candidate_id && <Button type="primary" onClick={() => go(`/tasks/${encodeURIComponent(binding.job_id)}?tab=findings&candidate_id=${encodeURIComponent(binding.candidate_id)}`)}>打开该候选人工复核</Button>}
+    <Card size="small" title="AI 研判概览" extra={<Tag>候选 · 待人工复核</Tag>}>
+      <Space wrap>
+        <Tag color={verdict.status === "analysis_failed" ? "error" : "blue"}>{agentVerdictLabel(verdict.status) || verdictLabels[verdict.status] || "尚无有效研判"}</Tag>
+        <Text type="secondary">范围：{agentScopeLabel(verdict.scope)} · 置信度：{agentConfidenceLabel(verdict.confidence)}</Text>
+      </Space>
+      {rejectionDescription && <div style={{ marginTop: 8 }}><Text type="danger">{rejectionDescription}</Text></div>}
+      {!rejectionDescription && artifactFailureMessage(result.artifact_generation) && <div style={{ marginTop: 8 }}><Text type="secondary">报告 / PoC 草稿未通过引用或格式校验；下方研判记录仍可查看，详情见“限制与失败详情”。</Text></div>}
+    </Card>
     <Card size="small" title="智能调查研判报告">
       <Alert type="info" showIcon
         message={result.summary_provenance === "server_generated_from_structured_triage"
@@ -249,10 +225,10 @@ export default function AgentAssessment({ result, reviews = [], onSubmit }: { re
         <Descriptions.Item label="检测器 / 规则">{[context.detector_id, context.rule_id].filter(Boolean).join(" / ") || "结果未记录"}</Descriptions.Item>
         <Descriptions.Item label="固定提交 SHA-256">{context.commit || binding.commit || "结果未记录"}</Descriptions.Item>
       </Descriptions>
-      {typeof context.source_excerpt === "string" && <Card size="small" title={`固定提交源码摘录（${context.source_excerpt_start_line ?? "?"}–${context.source_excerpt_end_line ?? "?"} 行）`}>
+      {typeof context.source_excerpt === "string" && <DetailFold label={`固定提交源码摘录（${context.source_excerpt_start_line ?? "?"}–${context.source_excerpt_end_line ?? "?"} 行）`}>
         <pre className="raw">{context.source_excerpt || "固定源码摘录为空。"}</pre>
         {context.source_excerpt_truncated && <Text type="secondary">摘录经过长度限制；完整源码仍可在候选详情中查看。</Text>}
-      </Card>}
+      </DetailFold>}
       {claims.length > 0 && <Card className="section-gap" size="small" title={`模型列出的源码主张（${claims.length}）`}>
         <List size="small" dataSource={claims} renderItem={(item: any) => <List.Item>
           <Space direction="vertical" style={{ width: "100%" }}>
@@ -264,7 +240,7 @@ export default function AgentAssessment({ result, reviews = [], onSubmit }: { re
           </Space>
         </List.Item>} />
       </Card>}
-      <Card className="section-gap" size="small" title={`静态证据义务与模型分诊（${obligations.length}）`}>
+      <DetailFold label={`逐项证据核查与模型分诊（${obligations.length}）`}>
         <Alert type="info" showIcon message="模型标签仅表示本次研判记录，不代表义务已满足或漏洞已确认。" />
         {obligations.length > 0 ? <List className="section-gap" size="small" dataSource={obligations}
           renderItem={(obligation: any, index: number) => {
@@ -278,12 +254,49 @@ export default function AgentAssessment({ result, reviews = [], onSubmit }: { re
             </Space></List.Item>;
           }} /> : <Text type="secondary">静态结果未记录证据义务；这不代表安全或义务已满足。</Text>}
         {context.evidence_obligations_truncated && <Alert className="section-gap" type="warning" showIcon message="静态证据义务列表已截断；报告只覆盖已保存并发送研判的条目。" />}
-      </Card>
+      </DetailFold>
       <div className="section-gap"><Text strong>模型列出的未知项</Text>{renderReportedList(assessment.unknowns, "模型未列出未知项。")}</div>
       <div className="section-gap"><Text strong>模型建议的后续步骤</Text>{renderReportedList(assessment.next_steps, "模型未列出后续步骤。")}</div>
       <div className="section-gap"><Text strong>未支持的模型陈述</Text>{renderReportedList(assessment.unsupported_claims, "模型未列出未支持陈述。")}</div>
-      <div className="section-gap"><Text strong>结果限制</Text>{renderReportedList(result.limitations, "结果未记录额外限制。")}</div>
+
     </Card>
+    <AgentArtifactDetails result={result} onCitation={citationLink} />
+    <DetailFold label="限制与失败详情（点击展开）">
+      <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+    <Alert type={verdict.status === "analysis_failed" ? "error" : ["unknown", "needs_more_evidence"].includes(verdict.status) ? "warning" : "info"} showIcon
+      message={agentVerdictLabel(verdict.status) || verdictLabels[verdict.status] || "模型尚未形成有效分诊结果"}
+      description={`复核范围：${agentScopeLabel(verdict.scope)}；模型置信度：${agentConfidenceLabel(verdict.confidence)}；产品状态：${productStatusLabel(verdict.product_status)}。${agentVerdictReasonLabel(verdict.reason)} 产品漏洞状态仍为 ${productStatusLabel(result.vulnerability_state || "candidate")}，已验证漏洞数 ${result.validated_vulnerability ?? 0}；产品可达性和影响仍需后续证据。`} />
+    {artifactFailureMessage(result.artifact_generation) && <Alert type="warning" showIcon message="报告 / PoC 草稿未通过校验" description={artifactFailureMessage(result.artifact_generation)} />}
+    {rejectionDescription && <Alert type="error" showIcon message="模型结构化答复未通过服务端校验" description={rejectionDescription} />}
+    {(toolIssues.length > 0 || (result.model_tool_calls_skipped || 0) > 0) && <Alert type="warning" showIcon message={`只读工具有 ${toolIssues.length + (result.model_tool_calls_skipped || 0)} 项未完成，相关证据可能不完整`} description={<List size="small" dataSource={toolIssues} renderItem={(item: any) => <List.Item><Text><Text strong>{toolNameLabels[item.tool] || "其他只读工具"}</Text> · {toolStatusLabels[item.status] || "待核对"} · 错误类型：{toolErrorLabels[item.errorCode] || "其他错误"}：<ChineseNarrative value={item.message} /></Text></List.Item>} footer={(result.model_tool_calls_skipped || 0) > 0 ? `另有 ${result.model_tool_calls_skipped} 个模型请求因工具调用预算耗尽而未执行；对应证据保持未决。` : null} />} />}
+    <Alert type="warning" showIcon message="源码引句存在 ≠ 陈述已证实" description={sourceCitationPolicy ? `支持性主张和已判定义务只能引用固定提交中的源码摘录；扫描器义务描述、提交历史只作检索上下文，不能当作源码证明。服务端核对了 ${result.citation_integrity?.citation_count ?? "未知"} 条引句的来源类型和逐字存在性，但仍未验证引句是否在语义上支持模型推理。摘要由服务端从结构化分诊字段生成；模型原始摘要、未支持陈述、未知项和下一步建议仍是未核验文本。` : "这是较早版本的结果，未记录“只能引用源码证据”的策略版本；请人工确认每条引句确实来自固定提交源码，并逐项判断它是否支持模型陈述。摘要和其他模型自由文本均不能当作已验证结论。"} />
+        <div><Text strong>完整结果限制</Text>{renderReportedList(result.limitations, "结果未记录额外限制。")}</div>
+      </Space>
+    </DetailFold>
+    {evidenceGraph && <DetailFold label={`跨文件证据链 · ${evidenceGraph.statusLabel}`}>
+      <Alert type="info" showIcon message="固定版本追踪结果"
+        description={<>{evidenceGraph.binding.repository || "仓库未记录"} · 提交 <Text code>{evidenceGraph.binding.commit || "未知"}</Text> · {evidenceGraph.evidence.length} 份来源记录、{evidenceGraph.citations.length} 条引用关系。该图用于核对智能调查从候选到其他源码位置的调查路径；引用位置已绑定固定源码，但系统没有自动判断引句是否在语义上证明主张。</>} />
+      {evidenceGraph.stages.length > 0 && <List className="section-gap" size="small" header={<Text strong>调查阶段</Text>}
+        dataSource={evidenceGraph.stages} renderItem={(stage: any) => <List.Item>
+          <Space wrap><Text>{stage.label}</Text><Tag color={["completed", "accepted"].includes(stage.status) ? "green" : stage.status === "running" ? "blue" : "orange"}>{stage.statusLabel}</Tag></Space>
+        </List.Item>} />}
+      {evidenceGraph.citations.length > 0 && <List className="section-gap" size="small" header={<Text strong>源码引用关系</Text>}
+        dataSource={evidenceGraph.citations} renderItem={(edge: any) => <List.Item>
+          <Space direction="vertical" size={2} style={{ width: "100%" }}>
+            <Space wrap><Tag>{edge.stageLabel}</Tag><Text strong>{edge.label}</Text>
+              {binding.job_id && edge.file && edge.line
+                ? <Button type="link" size="small" onClick={() => go("/tasks/" + encodeURIComponent(binding.job_id) + "?tab=source&source_file=" + encodeURIComponent(edge.file) + "&source_line=" + edge.line)}>{edge.location}</Button>
+                : <Text code>{edge.location}</Text>}
+            </Space>
+            <Text type="secondary">来源 {edge.evidenceId || "未记录"}；引用语义由人工复核，不能直接作为漏洞确认依据。</Text>
+          </Space>
+        </List.Item>} />}
+      {evidenceGraph.unresolved.length > 0 && <Alert className="section-gap" type="warning" showIcon message={"有 " + evidenceGraph.unresolved.length + " 条引用未绑定到固定源码"}
+        description={<List size="small" dataSource={evidenceGraph.unresolved} renderItem={(item: any) => <List.Item>{item.stageLabel} · {item.file || "文件未记录"} · <ChineseNarrative value={item.reason} /></List.Item>} />} />}
+      <Text type="secondary">漏洞状态：{productStatusLabel(evidenceGraph.productState)}；已确认漏洞：{evidenceGraph.validatedVulnerability}。{evidenceGraph.boundary}</Text>
+    </DetailFold>}
+    {binding.job_id && binding.candidate_id && <Button type="primary" onClick={() => go(`/tasks/${encodeURIComponent(binding.job_id)}?tab=findings&candidate_id=${encodeURIComponent(binding.candidate_id)}`)}>打开该候选人工复核</Button>}
+    <DetailFold label="模型调用、用量与来源信息">
     <Descriptions bordered size="small" column={{ xs: 1, md: 2 }}>
       <Descriptions.Item label="分诊倾向">{labels[assessment.assessment] || (assessment.assessment ? <ChineseNarrative value={assessment.assessment} /> : "尚无结果")}</Descriptions.Item>
       <Descriptions.Item label="模式">{result.mode === "single_shot" ? "AI 初步分析" : "AI 深入追查"}</Descriptions.Item>
@@ -303,6 +316,7 @@ export default function AgentAssessment({ result, reviews = [], onSubmit }: { re
           ? <Space wrap><Text>美元 {result.model_usage.cost_estimate.amount_usd}{result.model_usage.cost_estimate.amount_cny ? " / 人民币 " + result.model_usage.cost_estimate.amount_cny : ""}；美元与人民币为独立官方价目参考；费率快照 {result.model_usage.cost_estimate.rate_card_id}；非实账</Text><a href={result.model_usage.cost_estimate.rate_source_url} target="_blank" rel="noreferrer">费率来源</a></Space>
         : "未知"}</Descriptions.Item>
     </Descriptions>
+    </DetailFold>
     {claims.length > 0 && <Card size="small" title="人工逐条复核模型主张">{claims.map((item: any, index: number) => <div className="obligation" key={index}>
       <Text strong><ChineseNarrative value={item.claim || "主张文本未记录"} /></Text>
       {claimObligationLabel(item.obligation_indices) ? <div><Text type="secondary">关联核查义务：{claimObligationLabel(item.obligation_indices)}</Text></div>
