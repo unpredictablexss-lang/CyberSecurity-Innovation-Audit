@@ -10,7 +10,7 @@ export function auditWorkflowLabel(plan, auditMode = plan?.audit_mode) {
     const r2Limit = Number.isInteger(workflow.conditional_r2_candidate_limit)
       ? "最多补充核查 " + workflow.conditional_r2_candidate_limit + " 条"
       : "有限数量的补充核查";
-    return "标准研判：静态扫描后，" + limit + "初步研判；高/严重且仍有源码义务未解决时，" + r2Limit + "持续追查";
+    return "智能审计：静态扫描后，" + limit + "AI 初步分析；高/严重且仍有源码义务未解决时，" + r2Limit + "持续追查";
   }
   if (workflow.automatic_model_calls) {
     return "智能审计：对本次扫描范围内所有满足证据条件的候选逐项调查；高/严重且仍缺源码证据的候选继续追查。按服务商按量计费，可随时取消。";

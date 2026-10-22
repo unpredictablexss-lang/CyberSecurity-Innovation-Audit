@@ -10,6 +10,9 @@ export function experimentHoldoutPresentation(holdout) {
 }
 
 export function validationScopePresentation(run) {
+  if (run?.scope === "synthetic_harness") {
+    return { state: "synthetic_harness", label: "自编样例复现（不绑定产品源码）" };
+  }
   if (run?.scope === "component_harness") {
     return { state: "component_harness", label: "组件 Harness（非产品验证）" };
   }

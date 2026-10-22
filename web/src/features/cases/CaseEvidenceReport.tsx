@@ -35,7 +35,7 @@ const reachabilityLabels: Record<string, string> = {
 };
 const operationKindLabels: Record<string, string> = {
   agent_investigation: "智能调查", validation: "隔离验证", source_sync: "源码同步",
-  progressive_quick_screen: "快速研判", revision_range: "版本区间扫描",
+  progressive_quick_screen: "AI 初步分析", revision_range: "版本区间扫描",
 };
 const evidenceKindLabels: Record<string, string> = {
   reachability: "入口与调用链", impact: "潜在安全影响", authorization: "权限边界",
@@ -137,6 +137,29 @@ function AgentGeneratedReports({ triage }: { triage: any }) {
     </Card>}
   </>;
 }
+function ReviewerChecklist({ row }: { row: any }) {
+  const checklist = row.reviewer_checklist || {};
+  const items = listValue(checklist.items);
+  const stateLabels: Record<string, string> = {
+    verified: "已核实", recorded: "已记录", context_only: "仅作背景",
+    unknown: "待核实", insufficient_evidence: "证据不足", partial: "部分完成",
+    missing: "尚未提供",
+  };
+  const colorFor = (state: string) => state === "verified" || state === "recorded"
+    ? "green" : state === "context_only" ? "blue"
+      : state === "unknown" || state === "insufficient_evidence" || state === "partial" ? "orange" : "red";
+  return <Card className="section-gap" size="small" title="审阅清单 · 修复与重验">
+    <Alert type="warning" showIcon message="材料完整性检查，当前结论仍为候选 / 待核实"
+      description={<ChineseNarrative value={checklist.note || "清单不会自动确认漏洞。智能调查草案、组件复现和修复版 Harness 对照均需按证据边界解释。"} />} />
+    {items.length
+      ? <List size="small" dataSource={items} renderItem={(item: any) =>
+        <List.Item><Space direction="vertical" style={{ width: "100%" }}>
+          <Space wrap><Text strong>{item.label || "审阅项"}</Text><Tag color={colorFor(item.state)}>{stateLabels[item.state] || "待核实"}</Tag></Space>
+          <Text><ChineseNarrative value={item.detail || "未记录"} /></Text>
+        </Space></List.Item>} />
+      : <Text type="secondary">没有可用的审阅清单。</Text>}
+  </Card>;
+}
 function CandidateEvidence({ row, operations }: { row: any; operations: any[] }) {
   const candidate = row.candidate || {};
   const sourceEvidence = listValue(row.source_evidence);
@@ -153,6 +176,7 @@ function CandidateEvidence({ row, operations }: { row: any; operations: any[] })
       <Descriptions.Item label="扫描器描述"><ChineseNarrative value={candidate.message || "未记录"} /></Descriptions.Item>
     </Descriptions>
     {row.rationale && <Paragraph>关联理由：<ChineseNarrative value={row.rationale} /></Paragraph>}
+    <ReviewerChecklist row={row} />
     <Card size="small" title={"人工登记源码证据（" + sourceEvidence.length + "）"}>
       {sourceEvidence.length
         ? <List size="small" dataSource={sourceEvidence} renderItem={(item: any) =>
@@ -316,7 +340,7 @@ export default function CaseEvidenceReport({ report }: { report: any }) {
         </Space>
         : <Empty description="没有关联候选记录。" />}
     </Card>
-    <Card className="section-gap" size="small" title={"智能调查（" + view.agentOperations.length + "）"}>
+    <Card className="section-gap" size="small" title={"智能调查与报告草案（" + view.agentOperations.length + "）"}>
       {view.agentOperations.length
         ? <Space direction="vertical" style={{ width: "100%" }}>
           {view.agentOperations.map((operation: any) => <AgentOperation key={operation.id} operation={operation} />)}

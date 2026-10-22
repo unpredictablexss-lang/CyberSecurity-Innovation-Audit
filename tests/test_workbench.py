@@ -1604,6 +1604,13 @@ class WorkbenchTests(unittest.TestCase):
         self.assertEqual(candidate_report["remediation_draft"]["state"], "draft_unverified")
         self.assertIn("source_anchor", candidate_report["remediation_draft"])
         self.assertEqual(candidate_report["poc_plan"]["state"], "plan_only")
+        checklist = candidate_report["reviewer_checklist"]
+        self.assertFalse(checklist["review_ready"])
+        self.assertEqual(checklist["status"], "incomplete")
+        check_by_id = {item["id"]: item for item in checklist["items"]}
+        self.assertEqual(check_by_id["source_binding"]["state"], "verified")
+        self.assertEqual(check_by_id["patch_revalidation"]["state"], "missing")
+        self.assertEqual(check_by_id["affected_versions"]["state"], "unknown")
         self.assertFalse(candidate_report["poc_plan"]["execution"]["requested"])
         self.assertFalse(candidate_report["poc_plan"]["execution"]["queued"])
         self.assertFalse(candidate_report["poc_plan"]["execution"]["executed"])
@@ -1629,6 +1636,8 @@ class WorkbenchTests(unittest.TestCase):
         self.assertIn("观测状态：候选（单条观测保持候选；案例人工结论单独记录）", markdown.text)
         self.assertIn("智能调查建议：未知", markdown.text)
         self.assertIn("智能调查源码依据状态：未知", markdown.text)
+        self.assertIn("比赛审阅清单（材料完整性，不是漏洞判定）", markdown.text)
+        self.assertIn("修复后重验", markdown.text)
         html_report = self.client.get(f"/api/v1/cases/{case_id}/report.html")
         self.assertEqual(html_report.status_code, 200, html_report.text)
         self.assertTrue(html_report.headers["content-disposition"].startswith("inline;"))

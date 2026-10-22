@@ -1,3 +1,4 @@
+import { INITIAL_ANALYSIS_LABEL, DEEP_ANALYSIS_LABEL, ANALYSIS_DESCRIPTION, readableAnalysisText } from "../workbench/analysisLabels.js";
 import CandidateScope from "./CandidateScope";
 import React, { useEffect, useRef, useState } from "react";
 import { Alert, Button, Card, Checkbox, Collapse, Descriptions, Form, Input, InputNumber, Modal, Radio, Select, Space, Tabs, Tag, Typography, message } from "antd";
@@ -311,7 +312,7 @@ export function ComparisonForm({ kind, repos, detectors, cases, busy, agentStatu
         ? <Form.Item name="revision" label="同步后扫描版本" rules={[{ required: true }]}><Input placeholder="HEAD 或 refs/remotes/origin/master" /></Form.Item>
         : <Alert className="section-gap" type="info" showIcon message="批量扫描使用各仓库目录中的默认分支" description="每个扫描任务固定自己的提交和文件树；批量扫描只运行静态检测，不会自动调用模型。" />}
       <Form.Item name="include_paths" label="纳入路径"><Select mode="tags" tokenSeparators={[",", "\n"]} /></Form.Item>
-      {!selectedNames.length && <Form.Item name="audit_mode" label="扫描后的审计方式"><Radio.Group><Space direction="vertical"><Radio value="static_only">仅静态扫描</Radio><Radio value="standard_review">标准研判（结果中提供 Agent 入口）</Radio></Space></Radio.Group></Form.Item>}
+      {!selectedNames.length && <Form.Item name="audit_mode" label="扫描后的审计方式"><Radio.Group><Space direction="vertical"><Radio value="static_only">仅静态扫描</Radio><Radio value="standard_review">智能审计（结果中提供 Agent 入口）</Radio></Space></Radio.Group></Form.Item>}
       <Form.Item name="scan_timeout_seconds" label="单次扫描超时（秒）"><InputNumber min={30} max={3600} /></Form.Item>
       <Form.Item name="memory_mb" label="扫描内存预算（MB）"><InputNumber min={256} max={8192} /></Form.Item>
     </>}
@@ -696,7 +697,7 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
       <Collapse className="section-gap" items={[{ key: "research-baseline", label: "人工静态基线与模型对照（高级研究）", children: <Card size="small" title="人工静态基线">
         <Alert type="info" showIcon message="仅记录人工静态分诊和复核耗时，不是漏洞真值。开始调查方式对照前先保存该基线；保存后不能补写。" />
         <Space wrap className="section-gap">
-          <Form.Item name="r0_reviewer" label="R0 复核人" rules={[{ required: Boolean(experimentId), max: 100 }]}><Input maxLength={100} /></Form.Item>
+          <Form.Item name="r0_reviewer" label="人工复核人" rules={[{ required: Boolean(experimentId), max: 100 }]}><Input maxLength={100} /></Form.Item>
           <Form.Item name="r0_disposition" label="静态分诊" rules={[{ required: Boolean(experimentId) }]}>
             <Select style={{ width: 200 }} options={[
               { value: "investigate", label: "值得继续调查" },
@@ -721,7 +722,7 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
             <Button loading={r0SourceBusy} disabled={!staticReviewReady || !staticCandidate?.source_line_count}
               onClick={() => void loadR0SourceRange()}>读取该扫描版本中的文件行范围</Button>
           </Space>
-          <Text type="secondary">补读只访问扫描报告绑定的同一文件与源码 SHA，不调用 Provider。服务端保存 R0 时会再次核对每条引文的原文和行号。</Text>
+          <Text type="secondary">补读只访问扫描报告绑定的同一文件与源码 SHA，不调用 Provider。服务端保存人工复核 时会再次核对每条引文的原文和行号。</Text>
           {r0SourceError && <Alert className="section-gap" type="error" showIcon message={r0SourceError} />}
           {r0SourceRanges.map((item) => <Card key={item.start_line + ":" + item.end_line} className="section-gap" size="small"
             title={"已读取源码范围 " + item.file + ":" + item.start_line + "–" + item.end_line}>
@@ -786,12 +787,12 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
         okButtonProps={{ disabled: !pairDisclosureReviewed || !pairSubmissionApproved }}
         onOk={() => void enqueuePair()} onCancel={() => { setPairPreview(null); setPairDisclosureOpened([]); setPairSubmissionApproved(false); }}>
         {pairPreview && <>
-          <Alert type="warning" showIcon message="确认后会对同一候选分别运行单轮模型研判和跨文件工具调查。必须先有同来源的人工静态基线；结果仍是待复核候选，盲审完成前不要比较哪种方式更好。" />
+          <Alert type="warning" showIcon message="确认后会对同一候选分别运行AI 初步分析和跨文件工具调查。必须先有同来源的人工静态基线；结果仍是待复核候选，盲审完成前不要比较哪种方式更好。" />
           <Descriptions className="section-gap" bordered size="small" column={2}>
             <Descriptions.Item label="实验批次">{pairPreview.experiment_id}</Descriptions.Item>
             <Descriptions.Item label="模型端点">{pairPreview.provider?.endpoint_host} · {pairPreview.provider?.model}</Descriptions.Item>
             <Descriptions.Item label="固定候选" span={2}>{pairPreview.candidate?.repository} @ {pairPreview.candidate?.commit} · {pairPreview.candidate?.candidate_id}</Descriptions.Item>
-            <Descriptions.Item label="单轮模型研判">每候选一个 Provider 请求，单次输出上限 {pairPreview.aggregate_budget?.single_shot_max_output_tokens_per_request ?? pairPreview.arms?.[0]?.preview?.budgets?.max_output_tokens} tokens，45 秒超时</Descriptions.Item>
+            <Descriptions.Item label="AI 初步分析">每候选一个 Provider 请求，单次输出上限 {pairPreview.aggregate_budget?.single_shot_max_output_tokens_per_request ?? pairPreview.arms?.[0]?.preview?.budgets?.max_output_tokens} tokens，45 秒超时</Descriptions.Item>
             <Descriptions.Item label="跨文件工具调查">系统策略：单轮 {pairPreview.arms?.[1]?.preview?.budgets?.max_output_tokens} tokens；累计输入/输出 {pairPreview.arms?.[1]?.preview?.budgets?.max_total_input_tokens}/{pairPreview.arms?.[1]?.preview?.budgets?.max_total_output_tokens} tokens；工具步骤 {pairPreview.arms?.[1]?.preview?.budgets?.max_steps}；最长 {pairPreview.arms?.[1]?.preview?.budgets?.timeout_seconds} 秒</Descriptions.Item>
           </Descriptions>
           <Text type="secondary">整组预览 SHA-256：{pairPreview.consent_sha256}</Text>
@@ -818,9 +819,10 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
       </Modal>
       <Form.Item name="case_id" label="关联案例（可选）"><Select allowClear placeholder="选择后纳入案例报告导出" options={linkedCases.map((item: any) => ({ value: item.id, label: item.title }))} /></Form.Item>
       <Form.Item name="mode" label="调查方式"><Radio.Group options={[
-        { value: "single_shot", label: "模型辅助研判（单轮）" },
-        { value: "tool_agent", label: "工具增强调查（固定源码只读）" },
+        { value: "single_shot", label: INITIAL_ANALYSIS_LABEL },
+        { value: "tool_agent", label: DEEP_ANALYSIS_LABEL },
       ]} /></Form.Item>
+      <Typography.Paragraph type="secondary">{ANALYSIS_DESCRIPTION}</Typography.Paragraph>
 
       <Button className="section-gap" loading={previewBusy} disabled={!ready || !context.job_id || !context.candidate_id}
         onClick={() => void requestPreview()}>预览本次将发送的数据</Button>
@@ -828,7 +830,7 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
         <Space direction="vertical" style={{ width: "100%" }}>
           <Descriptions bordered size="small" column={{ xs: 1, md: 2 }}>
             <Descriptions.Item label="目的地">{preview.provider.endpoint_host} · {preview.provider.model}</Descriptions.Item>
-            <Descriptions.Item label="方式">{preview.mode === "single_shot" ? "单轮模型研判" : "工具增强只读调查"}</Descriptions.Item>
+            <Descriptions.Item label="方式">{preview.mode === "single_shot" ? "AI 初步分析" : "AI 深入追查"}</Descriptions.Item>
             <Descriptions.Item label="额度策略">{preview.system_policy?.policy?.profile || "系统设置"} · 单轮输出 {preview.budgets?.max_output_tokens_per_request ?? preview.budgets?.max_output_tokens} tokens · 累计输入 {preview.budgets?.max_total_input_tokens ?? "—"} / 输出 {preview.budgets?.max_total_output_tokens ?? "—"} tokens · 模型请求 {preview.budgets?.max_total_model_calls ?? "—"} 次 · 工具步骤 {preview.budgets?.max_steps ?? 0} · 最长 {preview.budgets?.timeout_seconds ?? "—"} 秒</Descriptions.Item>
             <Descriptions.Item label="推理强度">工具调用 {preview.inference_settings?.tool_call_reasoning_effort || "无"}；结构化输出 {preview.inference_settings?.structured_output_reasoning_effort || "服务商默认"}</Descriptions.Item>
             <Descriptions.Item label="结构化修复上限">{preview.budgets?.max_validation_repairs ?? 0} 次；每次按单请求输出上限执行</Descriptions.Item>
@@ -862,7 +864,7 @@ export function AgentInvestigationForm({ busy, submit, context = {}, cases = [],
               children: <pre className="raw">{JSON.stringify(preview.initial_context, null, 2)}</pre> }]} />
           {preview.additional_tool_data_scope?.length > 0 && <Alert type="warning" showIcon message="只读调查可能追加发送的数据范围"
             description={<ul>{preview.additional_tool_data_scope.map((item: string) => <li key={item}>{item}</li>)}</ul>} />}
-          <Text type="secondary">单轮研判只发送上方初始上下文；工具增强调查的源码或历史输出取决于模型实际请求，并限制在预览列出的提交范围内。案例 ID 和 API Key 不发送给模型。</Text>
+          <Text type="secondary">AI 初步分析只发送上方初始上下文；AI 深入追查的源码或历史输出取决于模型实际请求，并限制在预览列出的提交范围内。案例 ID 和 API Key 不发送给模型。</Text>
         </Space>
       </Card>}
       <Form.Item name="source_submission_approved" valuePropName="checked" rules={[{ validator: (_, value) => value ? Promise.resolve() : Promise.reject(new Error("请检查预览并确认本次源码外发")) }]}>

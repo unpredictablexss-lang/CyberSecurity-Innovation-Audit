@@ -1,4 +1,5 @@
 import { artifactFailureMessage, structuredAnswerRejection } from "../features/audits/agentValidationMessage.js";
+import { INITIAL_ANALYSIS_LABEL, DEEP_ANALYSIS_LABEL, ANALYSIS_DESCRIPTION, readableAnalysisText } from "../features/workbench/analysisLabels.js";
 import { useCandidateScope } from "../features/audits/CandidateScope";
 import { candidateBatchLimit } from "../features/audits/model";
 import React, { useEffect, useMemo, useRef, useState } from "react";
@@ -54,10 +55,11 @@ import ProgressiveQuickScreenAction from "../features/audits/ProgressiveQuickScr
 import ProgressiveQuickScreenBatchAction from "../features/audits/ProgressiveQuickScreenBatchAction";
 import { requestGate } from "../features/audits/model";
 import { batchDisclosureReady, disclosureSelectionMatches } from "../features/audits/egressDisclosure.js";
+import { auditProgress } from "../features/workbench/auditProgress.js";
 import { candidateConfidenceColor, candidateConfidenceLabel, candidateSeverityColor, candidateSeverityLabel, analysisStatusLabel, coverageSummaryLabel, groupingBasisLabel, groupingSymbolLabel, obligationDescriptionLabel, obligationKindLabel, obligationStatusLabel, reportLimitationLabel, riskReasonsLabel, scanStageLabel, taskReportStatusLabel, taskTriageStatusLabel, triageStateLabel } from "../features/workbench/riskLabels.js";
 const { Text, Title, Paragraph } = Typography;
 function budgetPhaseSummary(usage: any) {
-  const labels: Record<string, string> = { quick_screen: "L2", deep_agent: "L3", structured_repair: "结构修复", skeptic: "Skeptic", report: "报告草案" };
+  const labels: Record<string, string> = { quick_screen: "AI 初步分析", deep_agent: "AI 深入追查", structured_repair: "结构修复", skeptic: "Skeptic", report: "报告草案" };
   const rows = Object.entries(usage?.by_phase || {}) as [string, any][];
   const summary = rows.filter(([, value]) => value.model_calls_allocated > 0)
     .map(([phase, value]) => `${labels[phase] || phase} ${value.model_calls_allocated}`).join(" · ");
@@ -69,7 +71,7 @@ function HighConfidenceCandidateReason({ risk, jobId }: { risk: any; jobId: stri
   const locations = risk.confidence_basis === "ai_source_evidence" ? (risk.ai_evidence || []) : (Array.isArray(signal.evidence_locations) ? signal.evidence_locations : []);
   const explanation = risk.ai_summary || signal.confidence_reason || risk.reason
     || (risk.confidence_basis === "human_r0"
-      ? "人工 R0 已对固定源码中的证据义务逐项引用复核。"
+      ? "人工已对固定源码中的证据义务逐项引用复核。"
       : "固定源码证据门已通过；具体义务与源码仍需人工核对。");
   const openEvidence = (location: any) => {
     const query = new URLSearchParams({
@@ -98,7 +100,7 @@ function HighConfidenceCandidateReason({ risk, jobId }: { risk: any; jobId: stri
       {signal.evidence_locations_truncated_count > 0 && <Text type="secondary">
         另有 {signal.evidence_locations_truncated_count} 处位置未展开
       </Text>}
-    </div> : <Text type="secondary">该分层来自人工 R0 复核；可在下方逐项检查固定源码和证据义务。</Text>}
+    </div> : <Text type="secondary">该分层来自人工静态复核；可在下方逐项检查固定源码和证据义务。</Text>}
     <Text type="secondary">高可信表示证据优先级较高，不代表漏洞已确认。</Text>
   </Card>;
 }
@@ -131,6 +133,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
   const [selected, setSelected] = useState<React.Key[]>([]);
   const [batchOpen, setBatchOpen] = useState(false);
   const [batchBusy, setBatchBusy] = useState(false);
+  const [batchError, setBatchError] = useState("");
   const [snapshotBusy, setSnapshotBusy] = useState(false);
   const [retryBusyId, setRetryBusyId] = useState<string | null>(null);
   const [batchPreview, setBatchPreview] = useState<any>(null);
@@ -186,6 +189,8 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
         setJob(j);
         setEvents(e);
         const triageRequest = api("/scans/" + id + "/triage");
+        const latestTriage = await triageRequest;
+        if (live) setTriageSummary(latestTriage);
         const progressiveRequest = api("/scans/" + id + "/progressive-triage?offset=0&limit=50");
         const loadProgressiveStatus = async (plan: any) => {
           const auditId = plan?.state === "planned_by_parent_operation" ? plan.parent_operation_id
@@ -221,9 +226,9 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
             setProgressiveTriage(progressive); setProgressiveStatus(null);
           }
         }
-        if (terminal.has(j.status) && timer) clearInterval(timer);
+        if (!auditProgress(j, latestTriage).poll && timer) clearInterval(timer);
       } catch (e) {
-        if (live) setError(String(e));
+        if (live) { setError(String(e)); setTriageSummary(null); }
       }
     }
     void load();
@@ -329,6 +334,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
   async function previewAgentBatch() {
     const candidateIds = selected.map(String);
     if (batchLimit === null || !candidateIds.length || candidateIds.length > batchLimit) return;
+    setBatchError("");
     setBatchCandidateIds(candidateIds);
     setBatchPreview(null);
     setBatchDisclosureOpened([]);
@@ -341,8 +347,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
       });
       setBatchPreview(preview);
     } catch (e) {
-      message.error(String(e));
-      setBatchOpen(false);
+      setBatchError(e instanceof Error ? e.message : String(e));
     } finally {
       setBatchBusy(false);
     }
@@ -454,7 +459,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
         }
         extra={
           <Space>
-            <State value={job.status} />
+            <Tag color={auditProgress(job, triageSummary).color}>{auditProgress(job, triageSummary).label}</Tag>
             {auditCanCancel ? (
               <Button danger onClick={() => void action("cancel")}>
                 停止扫描和调查
@@ -471,6 +476,14 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
           </Space>
         }
       />
+      <Alert className="section-gap" showIcon
+        type={auditProgress(job, triageSummary).active ? "info" : "warning"}
+        message={"整体任务：" + auditProgress(job, triageSummary).label}
+        description={<>
+          {auditProgress(job, triageSummary).phases.map((phase) => <div key={phase.label}>{phase.text}</div>)}
+          {auditProgress(job, triageSummary).active && job.report_sha256 && <div>静态扫描已结束，AI 仍在处理。页面会自动更新，无需重新勾选候选或重复提交。</div>}
+          {!triageSummary && job.spec.audit_mode === "standard_review" && <div>尚未读到 AI 进度，暂不将整个任务标记为完成。</div>}
+        </>} />
       {error && <Alert type="error" message={error} />}{" "}
       {job.error && (
         <Alert
@@ -526,9 +539,9 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
         />
       </Card>
       <AuditPlanView plan={{ ...job.spec.audit_plan, base_commit: job.spec.base_commit }} auditMode={job.spec.audit_mode} />
-      {progressiveTriage && progressiveTriage.state !== "not_available" && <Card className="section-gap" title="渐进式审计 · L0-L3 计划与进度">
+      {progressiveTriage && progressiveTriage.state !== "not_available" && <Card className="section-gap" title="渐进式审计 · 候选整理与 AI 分析进度">
         <Alert className="section-gap" type="info" showIcon
-          message={progressiveTriage.state === "planned_by_parent_operation" ? "候选排序由父审计统一计算" : progressiveTriage.state === "awaiting_static_report" ? "等待固定版本静态报告" : progressiveTriage.state === "ranked_static_only" ? "静态审计：仅本地归并和排序，不会调用模型" : "L0/L1 本地计划；所有原始候选继续保留"}
+          message={progressiveTriage.state === "planned_by_parent_operation" ? "候选排序由父审计统一计算" : progressiveTriage.state === "awaiting_static_report" ? "等待固定版本静态报告" : progressiveTriage.state === "ranked_static_only" ? "静态审计：仅本地归并和排序，不会调用模型" : "本地候选整理 本地计划；所有原始候选继续保留"}
           description={progressiveTriage.state === "planned_by_parent_operation" ? "这是多端点审计中的一个固定端点；跨版本分组和候选范围请查看父审计计划。" : "分组和优先级只决定人工复核顺序与后续授权入口，不会把候选判为误报、安全或已确认漏洞。"} />
         {progressiveTriage.state !== "planned_by_parent_operation" && job.spec?.audit_mode !== "static_only" &&
           <div className="section-gap"><ProgressiveQuickScreenBatchAction auditOperationId={id}
@@ -542,7 +555,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
         </Descriptions>}
         {progressiveStatus && <Descriptions className="section-gap" size="small" column={{ xs: 1, md: 3 }}>
           <Descriptions.Item label="当前阶段">{progressiveStatus.phase}</Descriptions.Item>
-          <Descriptions.Item label="L2 完成 / L3 完成">{progressiveStatus.phase_counts?.quick_screen_completed ?? 0} / {progressiveStatus.phase_counts?.deep_agent_completed ?? 0}</Descriptions.Item>
+          <Descriptions.Item label="AI 初步分析 完成 / AI 深入追查 完成">{progressiveStatus.phase_counts?.quick_screen_completed ?? 0} / {progressiveStatus.phase_counts?.deep_agent_completed ?? 0}</Descriptions.Item>
           <Descriptions.Item label="模型请求 / 在途">{progressiveStatus.budget?.usage ? `${progressiveStatus.budget.usage.model_calls_allocated} / ${progressiveStatus.budget.usage.model_calls_in_flight}` : "尚未开始"}</Descriptions.Item>
           <Descriptions.Item label="按阶段调用数">{budgetPhaseSummary(progressiveStatus.budget?.usage)}</Descriptions.Item>
           <Descriptions.Item label="输入 / 输出 Token">{progressiveStatus.budget?.usage ? `${progressiveStatus.budget.usage.input_tokens_allocated} / ${progressiveStatus.budget.usage.output_tokens_allocated}` : "尚未开始"}</Descriptions.Item>
@@ -554,13 +567,13 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
             { title: "计划组", dataIndex: "group_id", render: (value: string) => <Text code>{value}</Text> },
             { title: "候选观察", render: (_: unknown, row: any) => row.member_candidate_ids?.length ?? 0 },
             { title: "优先级", render: (_: unknown, row: any) => row.ranking?.rank ?? "未知" },
-            { title: "L1 / L2 快筛", render: (_: unknown, row: any) => {
+            { title: "本地筛选 / AI 初步分析", render: (_: unknown, row: any) => {
               const current = progressiveStatus?.groups?.find((item: any) => item.group_id === row.group_id);
               const state = current?.quick_screen_state;
               return <Space><Tag color={row.ranking?.selected ? "blue" : undefined}>{row.ranking?.selected ? "优先复核" : "保留候选"}</Tag>
                 {state && <Tag color={state === "completed" ? "green" : state === "running" ? "processing" : state === "unknown" || state === "partial" ? "orange" : undefined}>{state}</Tag>}</Space>;
             } },
-            { title: "L3 深查", render: (_: unknown, row: any) => {
+            { title: "AI 深入追查", render: (_: unknown, row: any) => {
               const current = progressiveStatus?.groups?.find((item: any) => item.group_id === row.group_id);
               return current?.deep_agent_state ? <Tag color={current.deep_agent_state === "completed" ? "green" : current.deep_agent_state === "running" ? "processing" : current.deep_agent_state === "unknown" || current.deep_agent_state === "partial" ? "orange" : undefined}>{current.deep_agent_state}</Tag> : <Tag>未授权/未排队</Tag>;
             } },
@@ -577,11 +590,10 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
             <Descriptions.Item label="状态">{taskReportStatusLabel(triageSummary, job)}</Descriptions.Item>
             <Descriptions.Item label="报告 SHA-256"><Hash value={job.report_sha256} /></Descriptions.Item>
           </Descriptions></Col>
-          <Col xs={24} md={8}><Descriptions size="small" column={1} title="智能研判">
-            <Descriptions.Item label="状态">{taskTriageStatusLabel(triageSummary, job)}</Descriptions.Item>
-            <Descriptions.Item label="完成 / 有限制 / 失败">{triageSummary?.triage_progress?.completed_count ?? 0} / {triageSummary?.triage_progress?.completed_with_limitations_count ?? 0} / {triageSummary?.triage_progress?.failed_count ?? 0}</Descriptions.Item>
-            <Descriptions.Item label="报告候选 / 授权 / 已入队">{triageSummary?.triage_progress?.candidate_count ?? "扫描后统计"} / {triageSummary?.triage_progress?.authorized_candidate_count ?? 0} / {triageSummary?.triage_progress?.queued_count ?? 0}</Descriptions.Item>
-            <Descriptions.Item label="处理中 / 未研判">{triageSummary?.triage_progress?.pending_count ?? 0} / {triageSummary?.triage_progress?.not_triaged_count ?? riskSummary?.triage_counts?.not_triaged ?? 0}</Descriptions.Item>
+          <Col xs={24} md={8}><Descriptions size="small" column={1} title="AI 分析与追查">
+            <Descriptions.Item label="当前进度">{auditProgress(job, triageSummary).label}</Descriptions.Item>
+            {auditProgress(job, triageSummary).phases.map((phase) => <Descriptions.Item key={phase.label} label={phase.label}>{phase.text.replace(phase.label + "：", "")}</Descriptions.Item>)}
+            <Descriptions.Item label="尚未自动分析的候选">{triageSummary?.triage_progress?.not_triaged_count ?? "正在核对"}</Descriptions.Item>
           </Descriptions></Col>
         </Row>
         <Text type="secondary">未授权、超过每端点候选上限、超过受控队列容量或失败的候选仍保持未研判，不会被计为低风险；需缩小范围并重新预览授权。</Text>
@@ -641,7 +653,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
         <Card className="section-gap" title="模型辅助研判进度">
           {auditMode === "standard_review" ? <>
             <Alert type="info" showIcon
-              message={"标准研判 · " + (triageLabels[triageSummary?.state] || "状态未知")}
+              message={"智能审计 · " + (triageLabels[triageSummary?.state] || "状态未知")}
               description={triageSummary?.limitation || "静态扫描报告与候选已保存。未授权的任务不会发送源码；模型输出不会修改候选或确认状态。"} />
             {triageSummary?.state === "cancelled" && <Alert className="section-gap" type="warning" showIcon
               message="本审计的后续模型研判已停止"
@@ -689,7 +701,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
               dataSource={triageSummary.items}
               columns={[
                 { title: "候选", dataIndex: "candidate_id", render: (value: string) => <Text code>{String(value || "").slice(0, 12)}</Text> },
-                { title: "方式", dataIndex: "mode", render: (value: string) => value === "single_shot" ? "AI 分析（单次）" : "AI 追查源码（只读）" },
+                { title: "方式", dataIndex: "mode", render: (value: string) => value === "single_shot" ? INITIAL_ANALYSIS_LABEL : DEEP_ANALYSIS_LABEL },
                 { title: "状态", dataIndex: "status", render: (value: string) => <State value={value} /> },
                 { title: "模型研判", dataIndex: "assessment", render: (value: string, row: any) => structuredAnswerRejection(row.validation_status, row.failure_code, row.validation_diagnostic) ? <Tag color="error">研判未完成</Tag> : value || "尚无结果（未知）" },
                 { title: "结果 / 失败原因", render: (_: unknown, row: any) => { const failure = structuredAnswerRejection(row.validation_status, row.failure_code, row.validation_diagnostic) || artifactFailureMessage(row.artifact_generation); return failure ? <Text type="danger">{failure}</Text> : row.investigation_limitations?.length ? <Text type="warning">{row.investigation_limitations.join("；")}</Text> : row.result_sha256 ? "调查已结束；未记录额外单次限制" : "尚无结果；候选保持未知"; } },
@@ -751,8 +763,8 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
                     <Select aria-label="模型研判方式" value={batchMode} style={{ minWidth: 220 }}
                       onChange={(value) => setBatchMode(value)}
                       options={[
-                        { value: "single_shot", label: "AI 分析（单次）" },
-                        { value: "tool_agent", label: "AI 追查源码（只读）" },
+                        { value: "single_shot", label: INITIAL_ANALYSIS_LABEL },
+                        { value: "tool_agent", label: DEEP_ANALYSIS_LABEL },
                       ]} />
                     <Button
                       type="primary"
@@ -762,6 +774,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
                       查看发送内容（{selected.length}/{batchLimit ?? "读取中"}）
                     </Button>
                   </Space>
+                  <Typography.Paragraph type="secondary">{ANALYSIS_DESCRIPTION}</Typography.Paragraph>
                   <Typography.Paragraph type="secondary">本次批量范围：{batchLimit === null ? "正在读取设置" : `最多 ${batchLimit} 条候选`}，与系统设置一致。
                     <a href="#/settings/policy"> 修改候选范围</a>{candidateScope.error && `；读取失败：${candidateScope.error}`}
                   </Typography.Paragraph>
@@ -1030,7 +1043,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
                       children: (
                         <>
                           <Text strong>{scanStageLabel(e.stage)}</Text>
-                          <div>{e.message}</div>
+                          <div>{readableAnalysisText(e.message)}</div>
                           <Text type="secondary">
                             {new Date(e.created_at).toLocaleString()}
                           </Text>
@@ -1380,8 +1393,12 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
         onOk={() => void enqueueAgentBatch()}
         onCancel={() => { setBatchOpen(false); setBatchDisclosureOpened([]); setBatchSubmissionApproved(false); }}
       >
+        {batchError && <Alert className="section-gap" type="error" showIcon
+          message="发送内容预览失败，尚未开始 AI 调查"
+          description={batchError}
+          action={<Button size="small" loading={batchBusy} onClick={() => void previewAgentBatch()}>重新生成预览</Button>} />}
         {batchBusy && !batchPreview ? <Spin /> : batchPreview ? <>
-          <Alert type="warning" showIcon message={"确认后将为每条候选分别创建一个" + (batchMode === "single_shot" ? "单次模型研判" : "连续工具增强调查") + "任务；下列源码上下文会发送给所示模型端点。模型结论仍是候选，需人工审核。"} />
+          <Alert type="warning" showIcon message={"确认后将为每条候选分别创建一个" + (batchMode === "single_shot" ? "AI 初步分析" : "连续 AI 深入追查") + "任务；下列源码上下文会发送给所示模型端点。模型结论仍是候选，需人工审核。"} />
           <Descriptions className="section-gap" bordered size="small" column={2}>
             <Descriptions.Item label="模型端点">{batchPreview.provider?.endpoint_host || "未显示"}</Descriptions.Item>
             <Descriptions.Item label="候选数">{batchPreview.candidate_count}</Descriptions.Item>
@@ -1412,7 +1429,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
                 <Paragraph className="section-gap" type="secondary">可能追加的只读工具数据范围：{(item.preview?.additional_tool_data_scope || []).join(" ") || "无"}</Paragraph>
               </> }]} />
           </Card>)}
-          <ul>{batchPreview.disclosure?.map((line: string) => <li key={line}>{line}</li>)}</ul>
+          <ul>{batchPreview.disclosure?.map((line: string) => <li key={line}>{readableAnalysisText(line)}</li>)}</ul>
           {!batchPreviewMatchesSelection && <Alert className="section-gap" type="error" showIcon message="预览候选与所选候选不一致，不能授权批量发送。请关闭并重新生成预览。" />}
           <Checkbox checked={batchSubmissionApproved}
             disabled={!batchDisclosureReviewed}
@@ -1421,7 +1438,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
               ? "我同意将本批次所列候选的源码上下文发送给上述模型进行 AI 初判（详情可按需展开）"
               : "我已逐条展开并检查所有候选的完整外发上下文与工具范围，允许按此预览向模型发送"}
           </Checkbox>
-        </> : <Text>正在生成预览…</Text>}
+        </> : !batchError ? <Text>正在生成预览…</Text> : null}
       </Modal>
       <Modal
         open={caseOpen}

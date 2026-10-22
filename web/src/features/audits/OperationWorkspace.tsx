@@ -19,7 +19,7 @@ import { budgetStateLabel, quickAssessmentLabel, quickScreenPresentation,
   quickScreenStateLabel, investigationStopReasonLabel, budgetEnforcementLabel } from "./quickScreenPresentation.js";
 const { Text } = Typography;
 function budgetPhaseSummary(usage: any) {
-  const labels: Record<string, string> = { quick_screen: "快速研判", deep_agent: "深度智能调查", structured_repair: "结构修复", skeptic: "反方审查", report: "报告草案" };
+  const labels: Record<string, string> = { quick_screen: "AI 初步分析", deep_agent: "AI 深入追查", structured_repair: "结构修复", skeptic: "反方审查", report: "报告草案" };
   const rows = Object.entries(usage?.by_phase || {}) as [string, any][];
   const summary = rows.filter(([, value]) => value.model_calls_allocated > 0)
     .map(([phase, value]) => `${labels[phase] || "其他阶段"} ${value.model_calls_allocated}`).join(" · ");
@@ -112,7 +112,7 @@ function RecentWindowSummary({ result, openScan }: { result: any; openScan: (id:
 }
 export type OperationView = "all" | "date" | "branches" | "matrix" | "validation" | "investigate" | "agent" | "agent_research" | "sync" | "queue";
 const evaluationLabels: Record<string, string> = {
-  single_shot: "单轮研判", tool_agent: "工具增强调查", unknown: "未知",
+  single_shot: "AI 初步分析", tool_agent: "AI 深入追查", unknown: "未知",
   completed: "已完成", completed_with_limitations: "已完成（存在限制）",
   running: "进行中", queued: "排队中", failed: "失败", interrupted: "已中断",
   cancelled: "已取消", timed_out: "已超时", blocked: "受阻", accepted: "通过",
@@ -128,9 +128,9 @@ const evaluationLabels: Record<string, string> = {
   unverifiable: "无法判断", not_reviewed: "未复核",
 };
 const evaluationLabel = (value: unknown) => evaluationLabels[String(value)] || "未知";
-const triagePhaseLabels: Record<string, string> = { static_in_progress: "静态扫描进行中", deterministic_ranked: "候选已排序", awaiting_quick_screen_authorization: "等待快速研判授权", quick_screening: "快速研判中", awaiting_deep_agent_authorization: "等待深度调查授权", deep_investigating: "深度调查中", evidence_judged: "证据已初步整理", partial_unknown: "部分结果待核实" };
+const triagePhaseLabels: Record<string, string> = { static_in_progress: "静态扫描进行中", deterministic_ranked: "候选已排序", awaiting_quick_screen_authorization: "等待 AI 初步分析授权", quick_screening: "AI 初步分析中", awaiting_deep_agent_authorization: "等待 AI 深入追查授权", deep_investigating: "AI 深入追查中", evidence_judged: "证据已初步整理", partial_unknown: "部分结果待核实" };
 const rankingReasonLabels: Record<string, string> = { source_binding_incomplete: "来源信息不完整", coverage_unknown: "证据覆盖仍待核实", unresolved_evidence_obligations: "仍有证据事项待核实", source_bound_security_facts: "存在固定源码安全线索", version_change_observed: "观察到版本变更", family_quota_coverage: "覆盖不同候选类别", within_model_selection_budget: "纳入本次研判范围", retained_for_manual_review_not_auto_selected: "保留候选，待人工复核", model_selection_budget_exhausted: "本次未选中，仍保留候选" };
-const kinds: Record<string, string> = { repository_import_scan: "在线仓库下载与扫描", source_sync: "源码同步 / 自动扫描", source_sync_batch: "多仓库批量同步", revision_range: "固定区间", branch_comparison: "跨版本比较", recent_window_comparison: "N 日 / 1 日对照", version_matrix: "版本矩阵", validation: "隔离验证", investigation: "只读调查", agent_investigation: "智能调查", progressive_quick_screen: "渐进式快速研判", progressive_quick_screen_batch: "批量快速研判", candidate_review_batch: "历史候选队列（已停用）" };
+const kinds: Record<string, string> = { repository_import_scan: "在线仓库下载与扫描", source_sync: "源码同步 / 自动扫描", source_sync_batch: "多仓库批量同步", revision_range: "固定区间", branch_comparison: "跨版本比较", recent_window_comparison: "N 日 / 1 日对照", version_matrix: "版本矩阵", validation: "隔离验证", investigation: "只读调查", agent_investigation: "智能调查", progressive_quick_screen: "AI 初步分析", progressive_quick_screen_batch: "批量 AI 初步分析", candidate_review_batch: "历史候选队列（已停用）" };
 const headings: Record<OperationView, [string, string]> = {
   all: ["高级源码与验证操作", "保留既有操作入口；任务持久化，候选变化与安全影响分别记录。"],
   date: ["时间增量扫描", "按明确时区固定时间端点；支持单一区间和 N 日 / 1 日双窗口候选对照。"],
@@ -287,7 +287,7 @@ export default function OperationWorkspace({ view = "all", operationId, context 
           { title: "人工复核中位秒数", dataIndex: "median_elapsed_seconds", render: (value) => value ?? "未知" },
         ]} locale={{ emptyText: "尚无人工反馈；该表不包含漏洞真值标签。" }} />
     </Card>}
-    {view === "agent_research" && agentEvaluation?.r0_baseline_reviews?.length > 0 && <Card className="section-gap" size="small" title="R0 静态人工基线记录">
+    {view === "agent_research" && agentEvaluation?.r0_baseline_reviews?.length > 0 && <Card className="section-gap" size="small" title="人工静态基线记录">
       <Alert type="info" showIcon message="先于模型运行的静态分诊记录；仅为人工意见，不是漏洞真值。" />
       <Table<any> className="section-gap" size="small" rowKey="id" dataSource={agentEvaluation.r0_baseline_reviews}
         pagination={{ pageSize: 5 }} scroll={{ x: 1050 }} columns={[
@@ -307,7 +307,7 @@ export default function OperationWorkspace({ view = "all", operationId, context 
           { title: "固定候选", render: (_, row) => <><Text>{row.repository}</Text><div className="muted">{row.commit.slice(0, 12)} · {row.candidate_id.slice(0, 12)}</div></> },
           { title: "人工静态基线", render: (_, row) => row.r0_static_baseline ? `${row.r0_static_baseline.dispositions.investigate} 调查 / ${row.r0_static_baseline.dispositions.likely_noise} 噪声 / ${row.r0_static_baseline.dispositions.unknown} 未知；${row.r0_static_baseline.median_elapsed_seconds ?? "未知"} 秒` : "未记录" },
           { title: "模型", dataIndex: "model" },
-          { title: "单轮研判评价 / 引文 / 中位秒", render: (_, row) => `${row.single_shot.review_count} / ${row.single_shot.citation_accuracy.all_accurate}·${row.single_shot.citation_accuracy.some_incorrect + row.single_shot.citation_accuracy.mostly_incorrect} / ${row.single_shot.median_elapsed_seconds ?? "未知"}` },
+          { title: "AI 初步分析评价 / 引文 / 中位秒", render: (_, row) => `${row.single_shot.review_count} / ${row.single_shot.citation_accuracy.all_accurate}·${row.single_shot.citation_accuracy.some_incorrect + row.single_shot.citation_accuracy.mostly_incorrect} / ${row.single_shot.median_elapsed_seconds ?? "未知"}` },
           { title: "跨文件调查评价 / 引文 / 中位秒", render: (_, row) => `${row.tool_agent.review_count} / ${row.tool_agent.citation_accuracy.all_accurate}·${row.tool_agent.citation_accuracy.some_incorrect + row.tool_agent.citation_accuracy.mostly_incorrect} / ${row.tool_agent.median_elapsed_seconds ?? "未知"}` },
         ]} />
     </Card>}    {view === "agent_research" && <AgentBlindReview operations={rows} />}
@@ -377,8 +377,8 @@ export default function OperationWorkspace({ view = "all", operationId, context 
             <Descriptions className="section-gap" size="small" column={{ xs: 1, md: 2 }}>
               <Descriptions.Item label="策略修订 / 摘要 SHA-256">{plan.policy_revision ?? "未知"} · <Hash value={plan.policy_sha256} /></Descriptions.Item>
               <Descriptions.Item label="原始候选观察">{plan.original_observation_count ?? "未知"}</Descriptions.Item>
-              <Descriptions.Item label="L0 归并组 / L1 选中">{activeStatus ? `${activeStatus.phase_counts.candidate_groups} / ${activeStatus.phase_counts.selected_for_quick_screen}` : `${plan.grouping?.group_count ?? groups.length} / ${plan.ranking?.selected_group_count ?? 0}`}</Descriptions.Item>
-              <Descriptions.Item label="快速研判完成 / 深度调查完成">{activeStatus ? `${activeStatus.phase_counts.quick_screen_completed} / ${activeStatus.phase_counts.deep_agent_completed}` : "0 / 0"}</Descriptions.Item>
+              <Descriptions.Item label="候选归并组 / 本地筛选入选组">{activeStatus ? `${activeStatus.phase_counts.candidate_groups} / ${activeStatus.phase_counts.selected_for_quick_screen}` : `${plan.grouping?.group_count ?? groups.length} / ${plan.ranking?.selected_group_count ?? 0}`}</Descriptions.Item>
+              <Descriptions.Item label="AI 初步分析完成 / AI 深入追查完成">{activeStatus ? `${activeStatus.phase_counts.quick_screen_completed} / ${activeStatus.phase_counts.deep_agent_completed}` : "0 / 0"}</Descriptions.Item>
               <Descriptions.Item label="未完成快筛的组成员">{activeStatus?.phase_counts.unassessed_group_members ?? plan.original_observation_count ?? "未知"}</Descriptions.Item>
               <Descriptions.Item label="模型请求 / 在途">{budget.usage ? `${budget.usage.model_calls_allocated} / ${budget.usage.model_calls_in_flight}` : "尚未开始"}</Descriptions.Item>
               <Descriptions.Item label="按阶段调用数">{budgetPhaseSummary(budget.usage)}</Descriptions.Item>
@@ -391,14 +391,14 @@ export default function OperationWorkspace({ view = "all", operationId, context 
               { title: "排序", dataIndex: ["ranking", "rank"], width: 70 },
               { title: "组 / 家族", render: (_: any, row: any) => <><Text>{row.group_id}</Text><div className="muted">{row.ranking?.family_bucket || "未知"}</div></> },
               { title: "候选成员", render: (_: any, row: any) => Array.isArray(row.members) ? row.members.length : 0 },
-              { title: "L1 决定", render: (_: any, row: any) => row.ranking?.selected
+              { title: "本地筛选决定", render: (_: any, row: any) => row.ranking?.selected
                 ? <Tag color="blue">优先复核</Tag> : <Tag>保留候选</Tag> },
-              { title: "快速研判", render: (_: any, row: any) => {
+              { title: "AI 初步分析", render: (_: any, row: any) => {
                 const state = row.quick_screen_state || "not_scheduled";
                 const labels: Record<string, string> = { not_scheduled: "未授权/未排队", queued: "排队中", running: "执行中", completed: "已完成", partial: "部分/受限", unknown: "结果未知" };
                 return <Tag color={state === "completed" ? "green" : state === "running" ? "processing" : state === "unknown" || state === "partial" ? "orange" : undefined}>{labels[state] || "状态待核对"}</Tag>;
               } },
-              { title: "深度调查", render: (_: any, row: any) => {
+              { title: "AI 深入追查", render: (_: any, row: any) => {
                 const state = row.deep_agent_state || "not_scheduled";
                 const labels: Record<string, string> = { not_scheduled: "未授权/未排队", queued: "排队中", running: "执行中", completed: "已完成", partial: "部分/受限", unknown: "结果未知" };
                 return <Tag color={state === "completed" ? "green" : state === "running" ? "processing" : state === "unknown" || state === "partial" ? "orange" : undefined}>{labels[state] || "状态待核对"}</Tag>;
@@ -425,7 +425,7 @@ export default function OperationWorkspace({ view = "all", operationId, context 
           const failure = result.failure || (diagnosed ? {
             title: "模型客户端配置错误（已定位并修复）",
             message: "此历史任务把 ProviderConfig 配置对象当作请求客户端，调用不存在的 create() 方法，导致属性调用错误；请求未发出。",
-            suggestion: "下方可重新预览并授权快速研判。本说明来自补充诊断事件，原始失败结果与哈希保持不变。",
+            suggestion: "下方可重新预览并授权AI 初步分析。本说明来自补充诊断事件，原始失败结果与哈希保持不变。",
             error_type: "AttributeError", http_status: null, response_status: null, incomplete_reason: null,
           } : null);
           const failureReasonLabels: Record<string, string> = {
@@ -443,7 +443,7 @@ export default function OperationWorkspace({ view = "all", operationId, context 
             <Alert type={state === "completed" ? "info" : "error"} showIcon
               message={state === "completed"
                 ? `${presentation.assessment} · ${presentation.reviewStatus}`
-                : failure?.title || "快速研判未形成有效结果"}
+                : failure?.title || "AI 初步分析未形成有效结果"}
               description={state === "completed" ? presentation.rationale : <>
                 <div>{failure?.message || (result.reason_code === "provider_error_unknown_outcome"
                   ? "此历史记录未保存具体异常；原始候选仍待人工复核。"
@@ -485,13 +485,13 @@ export default function OperationWorkspace({ view = "all", operationId, context 
                 uncertainties: result.uncertainties,
               }, null, 2)}</pre>,
             }]} />}
-            <Alert className="section-gap" type="info" showIcon message="深度智能调查需要单独授权" description="只有快速研判完成且建议继续深度调查后，才能提交新的授权。后续调查会使用固定版本只读工具；模型意见仍是候选研判，不会自动确认漏洞或标记误报。" />
+            <Alert className="section-gap" type="info" showIcon message="AI 深入追查需要单独授权" description="只有AI 初步分析完成且建议继续 AI 深入追查后，才能提交新的授权。后续调查会使用固定版本只读工具；模型意见仍是候选研判，不会自动确认漏洞或标记误报。" />
             {result.quick_assessment === "investigate" && selected.spec?.job_id && selected.spec?.candidate_id &&
               <ProgressiveDeepInvestigationAction jobId={selected.spec.job_id} candidateId={selected.spec.candidate_id} quickScreenOperationId={selected.id} />}
           </>;
         })()}
       </Card>}
-      {selected.kind === "progressive_quick_screen_batch" && selected.result && <Card size="small" className="section-gap" title="批量快速研判">
+      {selected.kind === "progressive_quick_screen_batch" && selected.result && <Card size="small" className="section-gap" title="批量 AI 初步分析">
         {(() => {
           const result = selected.result;
           const groups = Array.isArray(result.groups) ? result.groups : [];
@@ -529,14 +529,14 @@ export default function OperationWorkspace({ view = "all", operationId, context 
           </>;
         })()}
       </Card>}
-      {selected.kind === "progressive_deep_agent_batch" && selected.result && <Card size="small" className="section-gap" title="批量深度智能调查">
+      {selected.kind === "progressive_deep_agent_batch" && selected.result && <Card size="small" className="section-gap" title="批量 AI 深入追查">
         {(() => {
           const result = selected.result;
           const groups = Array.isArray(result.groups) ? result.groups : [];
           return <>
             <Alert className="section-gap" type="info" showIcon
               message={`处理 ${result.processed_group_count ?? groups.length} / ${result.eligible_group_count ?? "未知"} 组；完成 ${result.completed_group_count ?? 0} 组`}
-              description={`停止原因：${investigationStopReasonLabel(result.stop_reason)}。失败、未知和未开始的候选仍保留；深度调查结果不会自动确认漏洞。`} />
+              description={`停止原因：${investigationStopReasonLabel(result.stop_reason)}。失败、未知和未开始的候选仍保留；AI 深入追查结果不会自动确认漏洞。`} />
             <Descriptions size="small" column={{ xs: 1, md: 2 }}>
               <Descriptions.Item label="任务授权摘要 SHA-256"><Hash value={result.consent_sha256} /></Descriptions.Item>
               <Descriptions.Item label="确认漏洞数">{result.validated_vulnerability ?? 0}</Descriptions.Item>
@@ -546,7 +546,7 @@ export default function OperationWorkspace({ view = "all", operationId, context 
             <Table<any> className="section-gap" size="small" rowKey="group_id" dataSource={groups} pagination={{ pageSize: 10 }} scroll={{ x: 720 }} columns={[
               { title: "候选组", dataIndex: "group_id" },
               { title: "候选", dataIndex: "candidate_id" },
-              { title: "深度调查状态", dataIndex: "state", render: (value) => <Tag color={value === "completed" ? "green" : value === "未知" ? "orange" : undefined}>{quickScreenStateLabel(value)}</Tag> },
+              { title: "AI 深入追查状态", dataIndex: "state", render: (value) => <Tag color={value === "completed" ? "green" : value === "未知" ? "orange" : undefined}>{quickScreenStateLabel(value)}</Tag> },
               { title: "结果或停止原因", render: (_: unknown, row: any) => row.reason ? "出现技术原因，详见原始结果" : quickScreenStateLabel(row.result?.status) },
             ]} />
             {Array.isArray(result.not_started) && result.not_started.length > 0 && <Alert type="warning" showIcon message={`${result.not_started.length} 组尚未开始，继续保留为候选`} description={result.not_started.map((row: any) => row.group_id).join("、")} />}
@@ -602,7 +602,7 @@ export default function OperationWorkspace({ view = "all", operationId, context 
                 <Tag color={progress.stateTone === "success" ? "green" : progress.stateTone === "warning" ? "orange" : progress.stateTone === "error" ? "red" : "default"}>{progress.stateLabel}</Tag>
                 {progress.reason && <Text type="secondary"><ChineseNarrative value={progress.reason} /></Text>}
                 <Text type="secondary">候选数：{progress.candidateCount ?? "未知"}；模型结果不等于产品漏洞确认。</Text>
-                {renderPhase("初步调查", progress.r1)}
+                {renderPhase("AI 初步分析", progress.r1)}
                 {renderPhase("深入追查", progress.r2)}
               </Space>;
             } },

@@ -1,4 +1,5 @@
 import IntelligentAuditPolicySettings from "./IntelligentAuditPolicySettings";
+import AuditTaskStatus from "./AuditTaskStatus";
 import React, { useEffect, useState } from "react";
 import { Alert, Button, Card, Col, Descriptions, Empty, Input, Pagination, Row, Select, Space, Statistic, Table, Tabs, Tag, Tooltip, Typography } from "antd";
 import { api, artifact, terminal } from "../../api";
@@ -62,8 +63,8 @@ function riskDetailsAction(row: any) {
 export function ScanTable({ jobs, compact = false }: { jobs: any[]; compact?: boolean }) {
   return <Table<any> rowKey="id" size={compact ? "small" : "middle"} dataSource={compact ? jobs.slice(0, 4) : jobs} pagination={compact ? false : { pageSize: 10 }} scroll={{ x: 650 }} columns={[
     { title: "仓库 / 扫描版本", render: (_, j) => <><a onClick={() => go("/tasks/" + j.id)}>{j.spec.repository}</a><div className="muted"><Hash value={j.spec.commit} /></div></> },
-    { title: "状态", dataIndex: "status", render: (v) => <State value={v} /> },
-    { title: "实际耗时", render: (_, j) => j.elapsed_seconds == null ? "尚未结束" : Number(j.elapsed_seconds).toFixed(2) + " s" },
+    { title: "整体审计进度", render: (_, j) => <AuditTaskStatus job={j} /> },
+    { title: "静态扫描耗时", render: (_, j) => j.elapsed_seconds == null ? "尚未结束" : Number(j.elapsed_seconds).toFixed(2) + " s" },
     { title: "创建时间", dataIndex: "created_at", render: (v) => new Date(v).toLocaleString() },
     { title: "操作", render: (_, j) => <Button onClick={() => go("/tasks/" + j.id)}>查看任务</Button> },
   ]} locale={{ emptyText: <Empty description="当前没有扫描任务"><Button onClick={() => go("/audits/repository")}>创建仓库扫描</Button></Empty> }} />;

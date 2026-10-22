@@ -1,3 +1,4 @@
+import { INITIAL_ANALYSIS_LABEL } from "../workbench/analysisLabels.js";
 import { useState } from "react";
 import { Alert, Button, Checkbox, Descriptions, Modal, Space, Tag, Typography, message } from "antd";
 import { api } from "../../api";
@@ -27,7 +28,7 @@ export default function ProgressiveQuickScreenAction({ jobId, candidateId, enabl
       setPreview(value);
     } catch (error) {
       setOpen(false);
-      message.error("快速研判操作未能完成，请检查服务状态或任务详情后重试。");
+      message.error("AI 初步分析操作未能完成，请检查服务状态或任务详情后重试。");
     } finally {
       setLoading(false);
     }
@@ -46,19 +47,19 @@ export default function ProgressiveQuickScreenAction({ jobId, candidateId, enabl
         consent_expires_at: preview.consent_expires_at,
       });
       setOpen(false);
-      message.success("快速研判任务已创建；候选仍保持待复核状态");
+      message.success("AI 初步分析任务已创建；候选仍保持待复核状态");
       if (operation?.id) go("/tasks/operations/" + operation.id);
     } catch (error) {
-      message.error("快速研判操作未能完成，请检查服务状态或任务详情后重试。");
+      message.error("AI 初步分析操作未能完成，请检查服务状态或任务详情后重试。");
     } finally {
       setLoading(false);
     }
   }
 
   return <>
-    <Button size="small" disabled={!enabled} onClick={() => void showPreview()}>快速研判</Button>
+    <Button size="small" disabled={!enabled} onClick={() => void showPreview()}>{INITIAL_ANALYSIS_LABEL}</Button>
     <Modal
-      title="快速研判源码外发预览"
+      title="AI 初步分析源码外发预览"
       open={open}
       width={760}
       confirmLoading={loading}

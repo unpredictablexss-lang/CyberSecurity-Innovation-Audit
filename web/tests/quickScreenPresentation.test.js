@@ -56,7 +56,7 @@ test("unknown codes fail closed to readable Chinese labels", () => {
   assert.equal(budgetStateLabel("active"), "进行中");
 });
 
-test("L3 stop and budget states use Chinese display labels", () => {
+test("AI 深入追查 stop and budget states use Chinese display labels", () => {
   assert.equal(investigationStopReasonLabel("completed_with_limitations"), "调查已结束，部分内容受限");
   assert.equal(investigationStopReasonLabel("provider_internal_code"), "因技术原因停止，详情见原始记录");
   assert.equal(budgetEnforcementLabel("advisory_only"), "仅记录实际用量");

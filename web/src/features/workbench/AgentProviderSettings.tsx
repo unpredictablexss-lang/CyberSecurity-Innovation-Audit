@@ -57,7 +57,7 @@ export default function AgentProviderSettings() {
       description="单机模式将 Key 存在 OHSCANNER_DATA 下独立且仅当前系统用户可读写的文件，不写入 Git、SQLite 或任务记录。共享/托管部署应接入系统密钥库或外部 Secret Manager。候选源码外发仍需逐次预览并批准。" />
     {settings && !settings.editable && <Alert className="section-gap" type="warning" showIcon message="配置由服务环境变量管理，面板只读。" />}
     <Alert className="section-gap" type="info" showIcon message="支持两类常见模型接口协议"
-      description="Responses API 可用于 OpenAI、MiMo 等兼容端点；Chat Completions 兼容接口可用于 DeepSeek、阿里云百炼、火山方舟及兼容网关。具体模型还需支持 JSON 输出；R2 工具调查需要额外支持函数调用。Anthropic Messages 与 Gemini 原生接口暂未适配；若服务商提供 OpenAI 兼容端点，可选择 Chat Completions。" />
+      description="Responses API 可用于 OpenAI、MiMo 等兼容端点；Chat Completions 兼容接口可用于 DeepSeek、阿里云百炼、火山方舟及兼容网关。具体模型还需支持 JSON 输出；AI 深入追查需要额外支持函数调用。Anthropic Messages 与 Gemini 原生接口暂未适配；若服务商提供 OpenAI 兼容端点，可选择 Chat Completions。" />
     {settings?.base_url && (() => {
       try {
         const endpoint = new URL(settings.base_url);

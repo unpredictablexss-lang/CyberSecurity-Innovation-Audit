@@ -212,7 +212,7 @@ const riskReasons = Object.freeze({
   "a human marked this item as refuted or low-priority; this is not a safety verdict":
     "人工将此项标为驳回或低优先级；这不代表已证明安全。",
   "fixed source/report hashes match and every recorded obligation has a quoted R0 evidence_found review":
-    "本次扫描源码与报告哈希一致，且已逐项完成 R0 引用复核；结论仍为候选。",
+    "本次扫描源码与报告哈希一致，且已逐项完成 人工源码引用复核；结论仍为候选。",
   "candidate analysis is partial or unknown": "候选分析不完整或状态未知。",
   "no complete evidence-obligation set is available": "尚无完整的证据义务清单。",
   "no complete quoted static-human evidence review is recorded": "尚未完成带源码引用的静态人工复核。",

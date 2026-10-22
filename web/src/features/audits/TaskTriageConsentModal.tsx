@@ -1,3 +1,4 @@
+import { readableAnalysisText } from "../workbench/analysisLabels.js";
 import React from "react";
 import { Alert, Collapse, Descriptions, Modal, Space, Typography } from "antd";
 
@@ -57,7 +58,7 @@ export default function TaskTriageConsentModal({ open, preview, loading = false,
           <Descriptions.Item label="渐进策略">{PROFILE_LABELS[progressive.policy?.profile] || "未知"} · 修订 {progressive.revision ?? "未知"}</Descriptions.Item>
           <Descriptions.Item label="策略摘要 SHA-256">{short(progressive.policy_sha256)}</Descriptions.Item>
           <Descriptions.Item label="本次本地排序名额" span={2}>
-            {progressive.policy?.limits?.quick_screen_groups_per_audit ?? "未知"} 个候选组；后续 L2/L3 会继承这里的冻结策略和共享模型预算。
+            {progressive.policy?.limits?.quick_screen_groups_per_audit ?? "未知"} 个候选组；后续 AI 初步分析与 AI 深入追查 会继承这里的冻结策略和共享模型预算。
           </Descriptions.Item>
         </>}
         {endpoints.map((item: any, index: number) => {
@@ -73,7 +74,7 @@ export default function TaskTriageConsentModal({ open, preview, loading = false,
               {repo}{commit ? <> @ <Text code>{short(commit)}</Text></> : ""}
             </Descriptions.Item>
             <Descriptions.Item label="候选上限">
-              {Number.isInteger(cap) ? "最多 " + cap + " 条自动初步调查" : "上限见技术详情"}
+              {Number.isInteger(cap) ? "最多 " + cap + " 条自动AI 初步分析" : "上限见技术详情"}
               {Number.isInteger(r2Cap) && r2Cap > 0 ? "；符合条件时最多 " + r2Cap + " 条深入追查" : ""}
               <div><Text type="secondary">精确候选总数在扫描后统计；未入选项保留待复核。</Text></div>
             </Descriptions.Item>
@@ -111,7 +112,7 @@ export default function TaskTriageConsentModal({ open, preview, loading = false,
           return <div key={"manifest-" + index} className="section-gap">
             <Text strong>{endpoints.length > 1 ? "固定来源 " + (index + 1) + " 的披露范围" : "外发范围"}</Text>
             <ul>{(manifest.source_disclosure || []).map((line: string, lineIndex: number) =>
-              <li key={lineIndex}>{line.replace(/\bR1\b/g, "初步调查").replace(/\bR2\b/g, "深入追查")}</li>)}</ul>
+              <li key={lineIndex}>{readableAnalysisText(line)}</li>)}</ul>
             <Descriptions size="small" column={1}>
               <Descriptions.Item label="候选超限处理">超过每个版本的授权上限时，未入选候选保持待研判，不会视为安全。</Descriptions.Item>
               <Descriptions.Item label="单次输出长度">{manifest.per_candidate_budgets?.r1?.max_output_tokens_per_request == null ? "由模型服务商和模型决定" : String(manifest.per_candidate_budgets.r1.max_output_tokens_per_request) + " tokens"}；单次超时 {manifest.per_candidate_budgets?.r1?.provider_request_timeout_seconds || "未知"} 秒</Descriptions.Item>

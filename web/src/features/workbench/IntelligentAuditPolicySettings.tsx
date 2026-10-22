@@ -5,7 +5,7 @@ const { Paragraph, Text } = Typography;
 const API_PATH = "/api/v1/agent/triage-policy";
 const LIMIT_FIELDS: Array<{ key: string; label: string; min: number; max: number; unit?: string }> = [
   { key: "quick_screen_groups_per_audit", label: "自动快筛候选组数", min: 1, max: 10_000, unit: "组" },
-  { key: "deep_groups_per_audit", label: "可进入深度调查的候选组数", min: 0, max: 1_000, unit: "组" },
+  { key: "deep_groups_per_audit", label: "可进入AI 深入追查的候选组数", min: 0, max: 1_000, unit: "组" },
   { key: "max_tool_steps_per_group", label: "每组只读工具步骤上限", min: 1, max: 12, unit: "步" },
   { key: "max_model_concurrency", label: "模型请求并发", min: 1, max: 8, unit: "路" },
   { key: "max_model_calls_per_audit", label: "单次审计模型请求总数", min: 1, max: 10_000, unit: "次" },
@@ -19,8 +19,8 @@ const TOKEN_LIMIT_FIELDS: Array<{ key: string; label: string; min: number; max: 
 const INTEGRATION_LABELS: Record<string, string> = {
   connected_to_multi_endpoint_operation_results: "已接入多端审计结果",
   l2_l3_fixed_source_consent_and_parent_budget_gate: "已接入固定源码授权与共享预算门禁",
-  task_level_explicit_consent_batch_and_individual_explicit_consent: "L2 单项与批量授权已接入",
-  task_level_explicit_scope_consent_sequential_existing_agent_with_shared_budget: "L3 固定范围授权与共享预算已接入",
+  task_level_explicit_consent_batch_and_individual_explicit_consent: "AI 初步分析 单项与批量授权已接入",
+  task_level_explicit_scope_consent_sequential_existing_agent_with_shared_budget: "AI 深入追查 固定范围授权与共享预算已接入",
   unknown: "状态未知",
 };
 
@@ -146,8 +146,8 @@ export default function IntelligentAuditPolicySettings() {
   return <Space direction="vertical" size="middle" style={{ width: "100%" }}>
     <Alert type="info" showIcon message="智能审计策略说明"
       description={<Space direction="vertical" size={4}>
-        <Text>静态审计在本地运行。渐进 L2/L3 和普通 Agent 调查发送源码前会展示固定范围并要求本次授权；任务创建后冻结当前策略，后续修改只影响新任务。</Text>
-        <Text type="secondary">L0/L1：{INTEGRATION_LABELS[String(integration.grouping_and_ranking)] || "状态未知"}；L2：{INTEGRATION_LABELS[String(integration.quick_screen_executor)] || "状态未知"}；L3：{INTEGRATION_LABELS[String(integration.deep_agent_executor)] || "状态未知"}。</Text>
+        <Text>静态审计在本地运行。渐进 AI 初步分析与 AI 深入追查 和普通 Agent 调查发送源码前会展示固定范围并要求本次授权；任务创建后冻结当前策略，后续修改只影响新任务。</Text>
+        <Text type="secondary">本地候选整理：{INTEGRATION_LABELS[String(integration.grouping_and_ranking)] || "状态未知"}；AI 初步分析：{INTEGRATION_LABELS[String(integration.quick_screen_executor)] || "状态未知"}；AI 深入追查：{INTEGRATION_LABELS[String(integration.deep_agent_executor)] || "状态未知"}。</Text>
       </Space>} />
     {error && <Alert type="error" showIcon message="策略读取或保存失败" description={error} />}
     <Card title="选择策略" extra={<Tag color={hasUnsavedChanges ? "orange" : updatedAt ? "green" : "blue"}>
@@ -162,7 +162,7 @@ export default function IntelligentAuditPolicySettings() {
         </Space>
       </Radio.Group>
       <Paragraph type="secondary" style={{ marginTop: 14, marginBottom: 0 }}>
-        选择经济、标准或深度后，保存即可一次应用整套候选范围、单轮输出、累计 Token、请求次数、工具步数、并发与 AI 时长；要改单项时先切换到“自定义”。普通 Agent 单候选、批量、配对任务以及渐进 L2/L3 都从这里继承额度；L2 单轮最多 512 tokens，L3 与普通调查使用所选策略的单轮上限。费用金额仅用于账本参考，不能作为服务商账单硬限额。
+        选择经济、标准或深度后，保存即可一次应用整套候选范围、单轮输出、累计 Token、请求次数、工具步数、并发与 AI 时长；要改单项时先切换到“自定义”。普通 Agent 单候选、批量、配对任务以及渐进 AI 初步分析与 AI 深入追查 都从这里继承额度；AI 初步分析 单轮最多 512 tokens，AI 深入追查 与普通调查使用所选策略的单轮上限。费用金额仅用于账本参考，不能作为服务商账单硬限额。
       </Paragraph>
     </Card>
     <Card title="审计范围与资源预算" extra={isCustom ? <Tag color="blue">自定义</Tag> : <Tag color="blue">{profile === "standard" ? "标准策略" : profile === "economical" ? "经济策略" : "深度策略"}</Tag>}>
@@ -201,7 +201,7 @@ export default function IntelligentAuditPolicySettings() {
         <Text>启用漏洞家族覆盖配额</Text>
       </Space>
       <Paragraph type="secondary" style={{ marginTop: 12 }}>
-        保存后新建的渐进式智能审计和普通 Agent 调查会自动继承这些额度，任务表单不再重复配置；创建任务时会冻结本策略，已有任务不受后续设置修改影响。渐进审计使用任务共享账本；普通 Agent 调查按单任务限制累计用量、请求、工具步骤和时长。标准审计的旧自动分诊 R1/R2 已继承单轮输出上限，但还没有累计 Token、请求次数和总时长账本。美元金额只作估算参考，真正账单和账户额度由服务商决定；未进入自动调查范围的候选继续保留人工复核。
+        保存后新建的渐进式智能审计和普通 Agent 调查会自动继承这些额度，任务表单不再重复配置；创建任务时会冻结本策略，已有任务不受后续设置修改影响。渐进审计使用任务共享账本；普通 Agent 调查按单任务限制累计用量、请求、工具步骤和时长。标准审计的旧自动分诊 AI 初步分析与 AI 深入追查 已继承单轮输出上限，但还没有累计 Token、请求次数和总时长账本。美元金额只作估算参考，真正账单和账户额度由服务商决定；未进入自动调查范围的候选继续保留人工复核。
       </Paragraph>
       <Space>
         <Button type="primary" onClick={() => void save()} loading={saving} disabled={saving || (isCustom && !changedLimitsValid)}>保存并应用到之后的新任务</Button>
