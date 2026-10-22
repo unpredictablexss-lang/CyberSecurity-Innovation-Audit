@@ -36,3 +36,9 @@ export function canCreateAgentInvestigation({ ready, jobId, candidateId, preview
   return canApproveSourceSubmission({ ready, preview, disclosureOpened })
     && Boolean(jobId) && Boolean(candidateId) && approved === true;
 }
+
+export function batchDisclosureReady({ mode, openKeys, selectedKeys, previewKeys }) {
+  if (!disclosureSelectionMatches(selectedKeys, previewKeys)) return false;
+  if (mode === "single_shot") return true;
+  return mode === "tool_agent" && disclosureReviewed(openKeys, selectedKeys);
+}

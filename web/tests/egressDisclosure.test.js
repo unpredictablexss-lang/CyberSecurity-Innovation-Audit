@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { canApproveSourceSubmission, canCreateAgentInvestigation, disclosureReviewed, disclosureSelectionMatches, redactionNotice } from "../src/features/audits/egressDisclosure.js";
+import { batchDisclosureReady, canApproveSourceSubmission, canCreateAgentInvestigation, disclosureReviewed, disclosureSelectionMatches, redactionNotice } from "../src/features/audits/egressDisclosure.js";
 
 test("no recognized secret formats still warns that source may contain secrets", () => {
   const message = redactionNotice({ sensitive_redactions: [], redaction_policy_version: "policy-1" });
@@ -55,4 +55,25 @@ test("model investigation creation requires the reviewed preview, bound candidat
   assert.equal(canCreateAgentInvestigation({ ...reviewed, candidateId: undefined, approved: true }), false);
   assert.equal(canCreateAgentInvestigation({ ...reviewed, disclosureOpened: false, approved: true }), false);
   assert.equal(canCreateAgentInvestigation({ ...reviewed, approved: true }), true);
+});
+
+
+test("thirty initial-review candidates need one batch consent without opening each detail", () => {
+  const ids = Array.from({ length: 30 }, (_, index) => String(index));
+  assert.equal(batchDisclosureReady({ mode: "single_shot", openKeys: [], selectedKeys: ids, previewKeys: ids }), true);
+});
+
+test("initial batch review still rejects missing, duplicate or mismatched selection", () => {
+  const base = { mode: "single_shot", openKeys: [] };
+  assert.equal(batchDisclosureReady({ ...base, selectedKeys: [], previewKeys: [] }), false);
+  assert.equal(batchDisclosureReady({ ...base, selectedKeys: ["a", "b"], previewKeys: ["a"] }), false);
+  assert.equal(batchDisclosureReady({ ...base, selectedKeys: ["a", "a"], previewKeys: ["a", "a"] }), false);
+  assert.equal(batchDisclosureReady({ ...base, selectedKeys: ["a"], previewKeys: ["a", "b"] }), false);
+});
+
+test("deep batch review retains per-candidate disclosure and refuses unknown modes", () => {
+  const base = { selectedKeys: ["a", "b"], previewKeys: ["b", "a"] };
+  assert.equal(batchDisclosureReady({ ...base, mode: "tool_agent", openKeys: ["a"] }), false);
+  assert.equal(batchDisclosureReady({ ...base, mode: "tool_agent", openKeys: ["a", "b"] }), true);
+  assert.equal(batchDisclosureReady({ ...base, mode: "other", openKeys: ["a", "b"] }), false);
 });
