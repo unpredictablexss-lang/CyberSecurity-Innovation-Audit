@@ -2221,10 +2221,14 @@ def install_routes(app: FastAPI, settings, store):
         state = PolicyStore(settings.data_dir).read()
         policy = validate_policy(state["policy"])
         limits = policy["limits"]
+        output_cap = policy.get("request_output_tokens", limits.get(
+            "max_output_tokens_per_request", min(1200, limits["max_output_tokens_per_audit"])))
+        if ("max_output_tokens" in getattr(body, "model_fields_set", set())
+                and body.max_output_tokens != output_cap):
+            raise HTTPException(status_code=409, detail="Single output cap is configured in System Settings.")
         bounded = body.model_copy(update={
             "max_steps": limits["max_tool_steps_per_group"],
-            "max_output_tokens": limits.get(
-                "max_output_tokens_per_request", min(1200, limits["max_output_tokens_per_audit"])),
+            "max_output_tokens": output_cap,
             "max_total_input_tokens": limits["max_input_tokens_per_audit"],
             "max_total_output_tokens": limits["max_output_tokens_per_audit"],
             "max_total_model_calls": limits["max_model_calls_per_audit"],
@@ -2447,9 +2451,11 @@ def install_routes(app: FastAPI, settings, store):
         # audit. Token and tool limits are configured once in System Settings.
         limits = policy["limits"]
         max_steps = min(limits["max_tool_steps_per_group"], 12)
+        output_cap = policy.get("request_output_tokens", limits.get(
+            "max_output_tokens_per_request", body.max_output_tokens))
         bounded = body.model_copy(update={
             "max_steps": max_steps,
-            "max_output_tokens": limits.get("max_output_tokens_per_request", body.max_output_tokens),
+            "max_output_tokens": output_cap,
         })
         _, _, _, preview = _agent_consent_preview(
             bounded, provider, continuous=True, progressive_bounded=True)
@@ -2484,7 +2490,7 @@ def install_routes(app: FastAPI, settings, store):
                         "progressive_task_shared_output_tokens": limits["max_output_tokens_per_audit"],
                         "progressive_task_shared_model_calls": limits["max_model_calls_per_audit"],
                         "progressive_task_shared_wall_seconds": limits["max_ai_wall_seconds"],
-                        "max_output_tokens_per_request": limits.get("max_output_tokens_per_request"),
+                        "max_output_tokens_per_request": output_cap,
                         "local_cumulative_token_budget": "bounded_by_frozen_progressive_policy",
                         "local_total_model_call_budget": "bounded_by_frozen_progressive_policy",
                         "local_total_wall_time_budget": "bounded_by_frozen_progressive_policy",
@@ -2807,6 +2813,9 @@ def install_routes(app: FastAPI, settings, store):
         _, _, _, preview = _agent_consent_preview(
             body, provider, system_policy_sha256=policy_snapshot["policy_sha256"])
         preview["system_policy"] = policy_snapshot
+        preview_budgets = preview.setdefault("budgets", {})
+        preview_budgets["max_output_tokens"] = body.max_output_tokens
+        preview_budgets["max_output_tokens_per_request"] = body.max_output_tokens
         return preview
 
     @router.post("/operations/agent-investigations", status_code=201)
@@ -4123,6 +4132,7 @@ def install_routes(app: FastAPI, settings, store):
             record["source_anchor"] = source_anchor
             record["remediation_draft"] = _candidate_remediation_draft(item, source_anchor)
             record["poc_plan"] = _candidate_poc_plan(item, source_anchor)
+            record["reviewer_checklist"] = _candidate_reviewer_checklist(source_anchor)
             records.append(record)
             records_by_candidate[(job["id"], item["id"])] = record
 
@@ -4419,6 +4429,12 @@ def install_routes(app: FastAPI, settings, store):
                              md(step_anchor.get("source_sha256", "未记录"))]
             else:
                 rows += ["- 验证计划状态：未知；" + _case_md_narrative(plan.get("reason", "固定源码证据不可用；没有生成伪造步骤。"))]
+            checklist = row.get("reviewer_checklist") or {}
+            rows += ["", "#### 比赛审阅清单（材料完整性，不是漏洞判定）"]
+            for item in checklist.get("items", []):
+                rows += ["- " + md(item.get("label", item.get("id", "审阅项"))) + "：" +
+                         md(_case_enum_label(item.get("state", "unknown"))) + "；" +
+                         _case_md_narrative(item.get("note", "尚无完整材料。"))]
         agent_ops = [item for item in data["operations"] if item.get("kind") == "agent_investigation"
                      and item.get("agent_triage")]
         if agent_ops:
@@ -5128,6 +5144,23 @@ def _candidate_poc_plan(candidate, source_anchor):
         "source_anchor": _source_anchor_reference(source_anchor),
     }
 
+
+
+def _candidate_reviewer_checklist(source_anchor):
+    """Summarize report-material completeness without making a vulnerability verdict."""
+    source_verified = isinstance(source_anchor, dict) and source_anchor.get("verified") is True
+    items = [
+        {"id": "source_binding", "label": "固定源码绑定",
+         "state": "verified" if source_verified else "unknown",
+         "note": "候选路径、提交和源码摘要已绑定。" if source_verified
+                 else "固定源码锚点尚未核验，需恢复来源材料。"},
+        {"id": "patch_revalidation", "label": "修复后重验",
+         "state": "missing", "note": "尚未提供经过人工审查的补丁和重验结果。"},
+        {"id": "affected_versions", "label": "受影响版本",
+         "state": "unknown", "note": "尚未核实受影响版本范围。"},
+    ]
+    return {"status": "incomplete", "review_ready": False, "items": items,
+            "purpose": "material_completeness_only_not_vulnerability_verdict"}
 
 
 def _agent_citation_state(settings, store, result, job, candidate, source_anchor):

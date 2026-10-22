@@ -120,6 +120,17 @@ class BudgetLedger:
         if strict_cost:
             raise BudgetError("strict USD budget is unavailable without a verified Provider-side cap")
         cost_mode = "advisory_only"
+        # The signed top-level setting is the source of truth for each request.
+        # Keep the original policy hash above, then derive the ledger's effective
+        # reservation ceiling without changing the frozen policy identity.
+        if "request_output_tokens" in policy:
+            limits = dict(policy["limits"])
+            configured_cap = policy["request_output_tokens"]
+            audit_cap = limits["max_output_tokens_per_audit"]
+            limits["max_output_tokens_per_request"] = (
+                min(configured_cap, audit_cap) if configured_cap is not None else audit_cap
+            )
+            policy = {**policy, "limits": limits}
         policy_json = json.dumps(policy, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
         with closing(self._connect()) as db:
             db.execute("BEGIN IMMEDIATE")

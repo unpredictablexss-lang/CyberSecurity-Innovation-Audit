@@ -3097,9 +3097,9 @@ class AgentRouteTests(unittest.TestCase):
                     headers={"x-ohscanner-client": "workbench-v1"},
                     json={**payload, "max_output_tokens": 128,
                           "max_total_input_tokens": 1000, "max_total_output_tokens": 512,
-                          "max_total_model_calls": 1, "timeout_seconds": 60}).json()
-                self.assertEqual(caller_budget_preview["budgets"]["max_output_tokens"], 1200)
-                self.assertEqual(caller_budget_preview["budgets"]["max_total_input_tokens"], 400000)
+                          "max_total_model_calls": 1, "timeout_seconds": 60})
+                self.assertEqual(caller_budget_preview.status_code, 409)
+                self.assertIn("System Settings", caller_budget_preview.json()["detail"])
                 self.assertFalse(preview["agent_execution"]["eligible"])
                 self.assertEqual(preview["agent_execution"]["route"], "human_or_runtime_validation")
                 self.assertEqual(preview["agent_execution"]["source_reviewable_open_obligations"], 0)

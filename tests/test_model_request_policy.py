@@ -132,14 +132,18 @@ class ModelRequestPolicyTests(unittest.TestCase):
         from types import SimpleNamespace
         from tests import test_progressive_triage as triage_tests
         from src.workbench.progressive_triage.contracts import content_sha256
+        from src.workbench.progressive_triage.policy import build_policy, policy_envelope
         from src.workbench.progressive_triage.quick_screen_operation import execute_quick_screen
         for cap in [5000, None]:
             fixture, task = triage_tests.QuickScreenOperationTests()._task()
             config = agent.ProviderConfig("https://api.xiaomimimo.com/v1", fixture.model,
                 "fake-test-key", request_output_tokens=cap)
             spec = task["spec"]
+            policy = build_policy(request_output_tokens=cap)
+            policy_sha256 = policy_envelope(policy)["policy_sha256"]
+            spec["progressive_policy"].update(policy=policy, policy_sha256=policy_sha256)
             spec["consent_manifest"].update(provider_fingerprint=config.fingerprint,
-                request_output_tokens=cap)
+                request_output_tokens=cap, policy=policy, policy_sha256=policy_sha256)
             digest = content_sha256(spec["consent_manifest"])
             spec["consent_sha256"] = digest
             spec["authorization"].update(provider_fingerprint=config.fingerprint, consent_sha256=digest)

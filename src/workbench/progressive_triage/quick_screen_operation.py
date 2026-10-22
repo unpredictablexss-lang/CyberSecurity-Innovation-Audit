@@ -20,6 +20,29 @@ from .ranking import rank_groups
 from ..store import Store
 
 
+_OUTPUT_UNSET = object()
+
+
+def _request_output_cap(policy: dict[str, Any], fallback=_OUTPUT_UNSET):
+    if "request_output_tokens" in policy:
+        return policy["request_output_tokens"]
+    if fallback is not _OUTPUT_UNSET:
+        return fallback
+    return min(MAX_RESPONSE_TOKENS,
+               policy["limits"].get("max_output_tokens_per_request", MAX_RESPONSE_TOKENS))
+
+
+def _reservation_output_cap(policy: dict[str, Any], request_output_tokens):
+    limits = policy["limits"]
+    total = limits["max_output_tokens_per_audit"]
+    if request_output_tokens is not None:
+        return min(total, request_output_tokens)
+    calls = max(1, limits["max_model_calls_per_audit"])
+    average = (total + calls - 1) // calls
+    legacy = limits.get("max_output_tokens_per_request", MAX_RESPONSE_TOKENS)
+    return min(total, max(legacy, average))
+
+
 def prepare_quick_screen(settings, store, job_id: str, candidate_id: str,
                          provider, consent_nonce: str,
                          consent_expires_at: str | None = None,
@@ -202,8 +225,8 @@ def prepare_quick_screen(settings, store, job_id: str, candidate_id: str,
     if not selected or not selected["selected"]:
         raise ValueError("local evidence ranking did not select this candidate for quick screen")
     request_timeout = min(MAX_REQUEST_SECONDS, policy["limits"]["max_ai_wall_seconds"])
-    request_output_tokens = min(MAX_RESPONSE_TOKENS,
-                                policy["limits"].get("max_output_tokens_per_request", MAX_RESPONSE_TOKENS))
+    request_output_tokens = _request_output_cap(
+        policy, getattr(provider, "request_output_tokens", agent.DEFAULT_AGENT_OUTPUT_TOKENS))
     authorization = {
         "authorized": True,
         "audit_mode": "intelligent",
@@ -350,9 +373,13 @@ def execute_quick_screen(settings, task: dict[str, Any], provider=None, ops=None
     try:
         policy_snapshot = spec["progressive_policy"]
         policy = validate_policy(policy_snapshot["policy"])
+        request_output_tokens = _request_output_cap(
+            policy, manifest.get("request_output_tokens", _OUTPUT_UNSET))
         if (policy_snapshot["policy_sha256"] != policy_envelope(policy)["policy_sha256"]
                 or manifest.get("policy") != policy
-                or manifest.get("policy_revision") != policy_snapshot["revision"]):
+                or manifest.get("policy_revision") != policy_snapshot["revision"]
+                or ("request_output_tokens" in manifest
+                    and manifest["request_output_tokens"] != request_output_tokens)):
             raise ValueError("quick-screen policy snapshot changed")
         if audit_operation_id != spec.get("job_id"):
             plan_decision = next((row for row in parent_plan["ranking"]["decisions"]
@@ -407,8 +434,7 @@ def execute_quick_screen(settings, task: dict[str, Any], provider=None, ops=None
         payload, _ = build_quick_screen_request(
             spec["group"], spec["evidence"], spec["authorization"],
             provider.fingerprint, provider.model,
-            max_output_tokens=min(MAX_RESPONSE_TOKENS,
-                                  policy["limits"].get("max_output_tokens_per_request", MAX_RESPONSE_TOKENS)),
+            max_output_tokens=request_output_tokens,
         )
     except (KeyError, TypeError, ValueError) as error:
         return {"state": "quick_unknown", "reason_code": "request_preflight:" + str(error),
@@ -437,8 +463,7 @@ def execute_quick_screen(settings, task: dict[str, Any], provider=None, ops=None
             audit_id, audit_id + ":quick:" + spec["consent_sha256"],
             spec["job_id"], group_id, "quick_screen",
             max_input_tokens=input_reservation,
-            max_output_tokens=min(MAX_RESPONSE_TOKENS,
-                                  policy["limits"].get("max_output_tokens_per_request", MAX_RESPONSE_TOKENS)),
+            max_output_tokens=_reservation_output_cap(policy, request_output_tokens),
             reauthorized_quick_screen=True,
         )
         if reservation.get("idempotent_replay"):
@@ -459,8 +484,7 @@ def execute_quick_screen(settings, task: dict[str, Any], provider=None, ops=None
         client, spec["group"], spec["evidence"], spec["authorization"],
         provider_fingerprint=provider.fingerprint, model=provider.model,
         timeout_seconds=timeout_seconds,
-        max_output_tokens=min(MAX_RESPONSE_TOKENS,
-                              policy["limits"].get("max_output_tokens_per_request", MAX_RESPONSE_TOKENS)),
+        max_output_tokens=request_output_tokens,
     )
     try:
         if result.get("state") == "completed":
