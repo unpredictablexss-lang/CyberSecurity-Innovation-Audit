@@ -6,7 +6,7 @@ import { api } from "../../api";
 import { Hash, go } from "../../components";
 import { analysisStatusLabel, coverageStatusLabel, triageStateLabel } from "../workbench/riskLabels.js";
 import { auditDefaults, AuditModeSelector, PolicyBudgetNotice, RepositoryField, RefField, RuleNotice, ScopeAvailability, ScopeBudget, useRepositoryRefs } from "./AuditFields";
-import { approvedDetectorIds, datePreviewPayload, operationPayload, recentRange, requestGate, selectedAuditModeValues } from "./model";
+import { auditErrorMessage, approvedDetectorIds, datePreviewPayload, operationPayload, recentRange, requestGate, selectedAuditModeValues } from "./model";
 import TaskTriageConsentModal from "./TaskTriageConsentModal";
 import { canApproveSourceSubmission, canCreateAgentInvestigation, disclosureReviewed, disclosureSelectionMatches, redactionNotice } from "./egressDisclosure.js";
 const { Text } = Typography;
@@ -26,8 +26,8 @@ function KnowledgeReferences({ retrieval }: { retrieval: any }) {
   </Card>;
 }
 export type SourceContext = { job_id?: string; candidate_id?: string; repository_id?: string; case_id?: string };
-export type OperationFormProps = { context?: SourceContext; repos: any[]; detectors: any[]; cases: any[]; busy: boolean; agentStatus?: any; submit: (path: string, payload: any) => Promise<void> };
-export function ComparisonForm({ kind, repos, detectors, cases, busy, agentStatus, submit, context = {} }: OperationFormProps & { kind: "date" | "recent" | "branches" | "range" | "matrix" }) {
+export type OperationFormProps = { context?: SourceContext; repos: any[]; detectors: any[]; cases: any[]; busy: boolean; agentStatus?: any; submissionError?: string; submit: (path: string, payload: any) => Promise<void> };
+export function ComparisonForm({ kind, repos, detectors, cases, busy, agentStatus, submit, submissionError, context = {} }: OperationFormProps & { kind: "date" | "recent" | "branches" | "range" | "matrix" }) {
   const [form] = Form.useForm();
   const repository = Form.useWatch("repository_id", form);
   const auditMode = Form.useWatch("audit_mode", form) || "static_only";
@@ -43,7 +43,7 @@ export function ComparisonForm({ kind, repos, detectors, cases, busy, agentStatu
   const smartMode = auditMode === "standard_review";
   let ready = false;
   try { ready = approvedDetectorIds(detectors).length > 0; } catch { /* blocked */ }
-  const submitLabel = kind === "date" ? "固定区间并创建任务" : kind === "recent" ? "创建 N 日与 1 日对照" : kind === "matrix" ? "创建版本矩阵" : "扫描并比较两个端点";
+  const submitLabel = kind === "date" ? "创建时间增量扫描任务" : kind === "recent" ? "创建 N 日与 1 日对照" : kind === "matrix" ? "创建版本矩阵" : "扫描并比较两个端点";
   const submitPath = kind === "date" ? "/operations/date-ranges" : kind === "recent" ? "/operations/recent-comparisons" : kind === "matrix" ? "/operations/version-matrices" : kind === "range" ? "/operations/revision-ranges" : "/operations/branch-comparisons";
   const invalidate = () => {
     gate.current.invalidate();
@@ -77,7 +77,7 @@ export function ComparisonForm({ kind, repos, detectors, cases, busy, agentStatu
       setTriagePreview(consent);
       setConsentOpen(true);
     } catch (e) {
-      if (gate.current.current(ticket)) setError(String(e));
+      if (gate.current.current(ticket)) setError(auditErrorMessage(e));
     } finally {
       if (gate.current.current(ticket)) setPreviewBusy(false);
     }
@@ -107,7 +107,7 @@ export function ComparisonForm({ kind, repos, detectors, cases, busy, agentStatu
       setConsentOpen(false);
       pendingPayload.current = null;
     } catch (e) {
-      setError(String(e));
+      setError(auditErrorMessage(e));
       setConsentOpen(false);
       setTriagePreview(null);
       pendingPayload.current = null;
@@ -115,7 +115,7 @@ export function ComparisonForm({ kind, repos, detectors, cases, busy, agentStatu
       setConsentBusy(false);
     }
   }
-  return <Card title={kind === "date" ? "时间范围与固定端点" : kind === "recent" ? "近 N 日与近 1 日提交对照" : kind === "matrix" ? "关联案例的版本矩阵" : "选择两个版本"}>
+  return <Card title={kind === "date" ? "按时间范围扫描" : kind === "recent" ? "近 N 日与近 1 日对照" : kind === "matrix" ? "关联案例的版本矩阵" : kind === "range" ? "指定两个提交进行比较" : "选择两个版本进行比较"}>
     {kind !== "matrix" && <ScopeAvailability />}
     {error && <Alert className="section-gap" type="error" showIcon message={error} />}
     {refError && <Alert type="warning" message={refError} />}
@@ -124,6 +124,8 @@ export function ComparisonForm({ kind, repos, detectors, cases, busy, agentStatu
         reference_time: new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16),
         repository_id: context.repository_id, auto_r2: true }}
       onValuesChange={invalidate}
+      scrollToFirstError
+      onFinishFailed={(info) => { const text = auditErrorMessage(info); setError(text); message.error(text, 8); }}
       onFinish={finish}>
       <AuditModeSelector />
       {smartMode && <PolicyBudgetNotice />}
@@ -150,7 +152,7 @@ export function ComparisonForm({ kind, repos, detectors, cases, busy, agentStatu
             const values = await form.validateFields(["repository_id", "branch", "start", "end", "timezone"]);
             const result = await api("/operations/date-ranges/preview", datePreviewPayload(values));
             if (gate.current.current(ticket)) setPreview(result);
-          } catch (e) { if (gate.current.current(ticket)) setError(String(e)); }
+          } catch (e) { if (gate.current.current(ticket)) setError(auditErrorMessage(e)); }
           finally { if (gate.current.current(ticket)) setPreviewBusy(false); }
         }}>预览时间范围（可选）</Button>
         {preview && <Alert className="section-gap" type="success" showIcon message={"已选中 " + preview.selected_commits.length + " 个提交；拓扑跨度外 " + preview.intervening_outside_date.length + " 个"}
@@ -169,7 +171,7 @@ export function ComparisonForm({ kind, repos, detectors, cases, busy, agentStatu
             const payload = operationPayload("recent", selectedAuditModeValues(values), detectors);
             const result = await api("/operations/recent-comparisons/preview", payload);
             if (gate.current.current(ticket)) setPreview(result);
-          } catch (e) { if (gate.current.current(ticket)) setError(String(e)); }
+          } catch (e) { if (gate.current.current(ticket)) setError(auditErrorMessage(e)); }
           finally { if (gate.current.current(ticket)) setPreviewBusy(false); }
         }}>预览时间窗口（可选）</Button>
         {preview?.long_window && <Alert className="section-gap" type="success" showIcon message={"已预览 " + preview.long_window.selected_commits.length + " 个较早提交、" + preview.one_day_window.selected_commits.length + " 个最近 1 日提交"}
@@ -197,6 +199,7 @@ export function ComparisonForm({ kind, repos, detectors, cases, busy, agentStatu
           </Form.Item>
         </>}
       </> }]} />
+      {(error || submissionError) && <Alert className="section-gap" type="error" showIcon message={error || submissionError} />}
       <Button aria-label={submitLabel} className="section-gap" type="primary" htmlType="submit" size="large"
         loading={busy || previewBusy}
         disabled={!ready || !repos.length || (kind === "matrix" && !cases.length) || (smartMode && agentStatus?.configured === false)}>

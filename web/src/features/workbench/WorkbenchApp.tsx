@@ -89,7 +89,7 @@ function Workspace() {
         { key: "new-audit", icon: <PlusOutlined />, label: "新建审计", children: [
           { key: "/audits/repository", icon: <FolderOutlined />, label: auditLinks.find((item) => item.path === "/audits/repository")?.title || "仓库审计" },
           { key: "/audits/time", icon: <CalendarOutlined />, label: "时间增量扫描" },
-          { key: "/audits/versions", icon: <BranchesOutlined />, label: "跨版本安全分析" },
+          { key: "/audits/versions", icon: <BranchesOutlined />, label: "跨版本安全审计" },
         ] },
         { type: "divider" },
         { key: "/tasks", icon: <FileSearchOutlined />, label: "任务中心" },

@@ -25,7 +25,7 @@ def parses_raw(text, grammar):
     from tree_sitter import Language, Parser
     return not Parser(Language(grammar)).parse(text).root_node.has_error
 
-def context_sources(items):
+def context_sources(items, repository="fixture/ipc"):
     units=[]
     ast={}
     for path,text in sorted(items):
@@ -34,8 +34,8 @@ def context_sources(items):
                         parsed.parse_status)
         units.append(unit)
         ast[path]=parsed.to_dict()
-    request=ScanRequest('ipc-test','fixture/ipc','synthetic-ipc-multifile-v1',
-                        snapshot_digest(tuple(units)),'current-component:fixture/ipc')
+    request=ScanRequest('ipc-test',repository,'synthetic-ipc-multifile-v1',
+                        snapshot_digest(tuple(units)),'current-component:' + repository)
     return ScanContext(request,tuple(units),{'ast':ast})
 
 def fixture_account_policy():
@@ -46,6 +46,47 @@ def fixture_account_policy():
     ),))
 
 class IpcDetectorTests(unittest.TestCase):
+    def test_hcamera_deferred_session_requires_system_app_guard(self):
+        entry = """
+int32_t HCameraService::CreateDeferredVideoProcessingSession(int32_t userId,
+    Callback &callback, Session &session)
+{
+    CAMERA_SYNC_TRACE;
+    DeferredProcessingService::GetInstance().CreateDeferredVideoProcessingSession(userId, callback);
+    return CAMERA_OK;
+}
+"""
+        fixed = entry.replace(
+            "    CAMERA_SYNC_TRACE;\n",
+            "    CAMERA_SYNC_TRACE;\n"
+            '    CHECK_ERROR_RETURN_RET_LOG(!CheckSystemApp(), CAMERA_NO_PERMISSION, "denied");\n',
+        )
+        macro_header = """
+#define CHECK_ERROR_RETURN_RET_LOG(cond, ret, fmt, ...) \\
+    do { \\
+        if (cond) { \\
+            MEDIA_ERR_LOG(fmt, ##__VA_ARGS__); \\
+            return ret; \\
+        } \\
+    } while (0)
+"""
+        file = "services/camera_service/src/hcamera_service.cpp"
+        header = "common/utils/camera_log.h"
+        repository = "openharmony/multimedia_camera_framework"
+        vulnerable_ctx = context_sources(((file, entry), (header, macro_header)), repository)
+        fixed_ctx = context_sources(((file, fixed), (header, macro_header)), repository)
+        wrong_guard = fixed.replace("!CheckSystemApp()", "CheckSystemApp()")
+        wrong_ctx = context_sources(((file, wrong_guard), (header, macro_header)), repository)
+        unrelated = entry.replace("HCameraService::", "UnrelatedService::")
+        unrelated_ctx = context_sources(((file, unrelated), (header, macro_header)), repository)
+        vulnerable = IpcInterfaceDetector().detect(vulnerable_ctx, vulnerable_ctx.units)
+        remediated = IpcInterfaceDetector().detect(fixed_ctx, fixed_ctx.units)
+        wrong = IpcInterfaceDetector().detect(wrong_ctx, wrong_ctx.units)
+        unrelated_run = IpcInterfaceDetector().detect(unrelated_ctx, unrelated_ctx.units)
+        self.assertIn("ipc.auth.missing", {item.rule_id for item in vulnerable.findings})
+        self.assertNotIn("ipc.auth.missing", {item.rule_id for item in remediated.findings})
+        self.assertIn("ipc.auth.missing", {item.rule_id for item in wrong.findings})
+        self.assertEqual(unrelated_run.findings, ())
     def test_auth07_does_not_assume_unauthorized_effect(self):
         text=(BASE / "auth07" / "denial_transport_success_positive.cpp").read_text()
         run=IpcInterfaceDetector().detect(context(text),context(text).units)
@@ -255,7 +296,7 @@ public:
         shapes=(
             b'void f(MessageParcel& data, uint32_t n){ COMM_LOGE(TAG, "count=%{public}" PRIu32, n); }\n',
             b'void g(void){ if (sscanf_s(p, "pkg_%" SCNd64 "_%" SCNd64, &pid, &uid) != 2) { return; } }\n',
-            b'void h(intmax_t n){ char buf[32]; sprintf_s(buf, 32, "%" PRIdMAX "\\n", n); }\n',
+            b'void h(intmax_t n){ char buf[32]; sprintf_s(buf, 32, "%" PRIdMAX "\n", n); }\n',
         )
         for raw in shapes:
             with self.subTest(shape=raw[:44]):

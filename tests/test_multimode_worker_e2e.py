@@ -515,7 +515,7 @@ if os.environ.get("OHSCANNER_TEST_PROVIDER_TRACE"):
         operation, previews = self._preview_and_submit(
             "date", "/api/v1/operations/date-ranges", payload,
             [self.commits[0], self.commits[1]])
-        self.assertEqual(operation["kind"], "revision_range")
+        self.assertEqual(operation["kind"], "time_incremental_scan")
         self.assertEqual(operation["spec"]["date_selection"]["selected_commits"],
                          [self.commits[1]])
         self._finish_operation_scans(operation)

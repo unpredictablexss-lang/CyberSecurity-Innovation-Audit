@@ -204,6 +204,7 @@ def create_app(settings=None):
                 "online_repository_catalog": True,
                 "repository_import_scan": True,
                 "revision_range": True,
+                "time_incremental_scan": True,
                 "read_only_investigation": True,
                 "manual_review": True,
                 "case_linking": True,

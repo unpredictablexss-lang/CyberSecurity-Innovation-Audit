@@ -1,7 +1,7 @@
 export const auditLinks = [
   { path: "/audits/repository", title: "仓库审计", description: "先做静态扫描，再授权模型辅助研判" },
-  { path: "/audits/time", title: "时间增量扫描", description: "按提交者时间固定两端并比较" },
-  { path: "/audits/versions", title: "跨版本安全分析", description: "分支、Tag、SHA 与案例版本矩阵" },
+  { path: "/audits/time", title: "时间增量扫描", description: "按日期选择同一分支的提交并对照候选" },
+  { path: "/audits/versions", title: "跨版本安全审计", description: "比较指定提交、分支或 Tag" },
 ];
 const aliases = { "/": "/overview", "/new": "/audits/repository", "/reposcan": "/audits/repository",
   "/deltascan": "/audits/time", "/versions": "/audits/versions", "/cases": "/investigations", "/agent": "/investigations",

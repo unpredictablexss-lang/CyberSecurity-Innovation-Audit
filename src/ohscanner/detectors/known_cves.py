@@ -7,7 +7,7 @@ from .adapters.artifacts import classify_artifact, limitation_message
 from .cpp.memory_safety import MAX_TOTAL_BYTES, MAX_UNIT_BYTES, line_column, mask_comments_and_literals
 
 DETECTOR_ID = "ohscanner.known_disclosed_cves"
-VERSION = "0.19.11"
+VERSION = "0.19.12"
 LINEAGE = "OH-KNOWN-CVE:component-source-signatures"
 OBLIGATIONS = (
     EvidenceObligation("component_identity", "Bind source to exact built component/version.", "missing"),
@@ -230,9 +230,15 @@ def _has_guarded_quota_helper(text: str, before_insert: str, collection: str) ->
 
 def _finding(unit: SourceUnit, pos: int, rule: str, cve: str, detail: str, cwe: str, impact: str = "availability_or_memory_safety"):
     line, col = line_column(unit.text, pos)
+    obligations = OBLIGATIONS
+    if cve == "CVE-2025-9900":
+        obligations += (EvidenceObligation(
+            "bounds_proof",
+            "Review the fixed-source TIFFReadRGBAImageOriented wrapper and TIFFRGBAImageGet callee: establish the declared width/height arithmetic types and check whether a dominating guard prevents the shifted raster pointer from leaving the caller-provided raster when rheight is smaller than img.height. Cite source only; product build inclusion, attacker control and runtime impact remain separate unresolved obligations.",
+            "unknown"),)
     return DetectorFinding(file=unit.path, line=line, column=col, rule_id=rule,
         message=f"Candidate component-code match for {cve}: {detail} Product reachability and vulnerability status remain unconfirmed.",
-        evidence_type="syntax", candidate_cwe=cwe, symbol=cve, evidence_obligations=OBLIGATIONS,
+        evidence_type="syntax", candidate_cwe=cwe, symbol=cve, evidence_obligations=obligations,
         consequence_impact=impact, consequence_cwe=cwe,
         risk_assessment=(dict(LIBPNG_46675_RISK) if cve == "CVE-2026-46675" else None),
         source_sha256=unit.sha256, rule_version=VERSION, rule_lineage_id=LINEAGE,

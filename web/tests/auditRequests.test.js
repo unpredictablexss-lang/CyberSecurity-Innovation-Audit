@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { approvedDetectorIds, researchDetectorIds, datePreviewPayload, defaultRepositoryRevision, includePaths, operationPayload, recentRange, requestGate, snapshotPayload, planPayload, auditErrorMessage, taskAuthorizationPayload, candidateBatchLimit, auditWorkflowLabel, selectedAuditModeValues } from "../src/features/audits/model.js";
+import { approvedDetectorIds, researchDetectorIds, datePreviewPayload, defaultRepositoryRevision, includePaths, operationPayload, recentRange, requestGate, snapshotPayload, planPayload, auditErrorMessage, taskAuthorizationPayload, candidateBatchLimit, isTimeRangeOperation, auditWorkflowLabel, selectedAuditModeValues } from "../src/features/audits/model.js";
 const detectors = [
   { id: "test.cpp", version: "2", kind: "research_candidate", supported_languages: ["cpp"] },
   { id: "test.example", version: "1", kind: "example", supported_languages: ["cpp"] },
@@ -203,4 +203,17 @@ test("manual batch stage follows current policy including six and zero", () => {
   assert.equal(candidateBatchLimit({ limits: { deep_groups_per_audit: 12 } }, "tool_agent"), 12);
   assert.equal(candidateBatchLimit({ limits: { deep_groups_per_audit: 0 } }, "tool_agent"), 0);
   assert.equal(candidateBatchLimit(null, "tool_agent"), null);
+});
+
+test("date operation rejections explain missing history and empty intervals in Chinese", () => {
+  assert.match(auditErrorMessage(new Error("earliest selected commit has no baseline parent; choose explicit SHAs")), /浅克隆.*补齐仓库历史/);
+  assert.match(auditErrorMessage("Error: no commits selected in the requested date interval"), /没有提交，没有创建任务/);
+  assert.match(auditErrorMessage(new Error("date selection exceeds 5000 first-parent commits; use explicit SHAs")), /两个明确的提交版本/);
+});
+test("time increment and explicit commit comparison operations are separated by their saved time selection", () => {
+  assert.equal(isTimeRangeOperation({ kind: "time_incremental_scan", spec: { date_selection: { start: "2026-10-01", end: "2026-10-02" } } }), true);
+  assert.equal(isTimeRangeOperation({ kind: "revision_range", spec: { date_selection: { start: "2026-10-01", end: "2026-10-02" } } }), true);
+  assert.equal(isTimeRangeOperation({ kind: "revision_range", spec: { baseline: "a".repeat(40), endpoint: "b".repeat(40), date_selection: null } }), false);
+  assert.equal(isTimeRangeOperation({ kind: "recent_window_comparison" }), true);
+  assert.equal(isTimeRangeOperation({ kind: "branch_comparison" }), false);
 });

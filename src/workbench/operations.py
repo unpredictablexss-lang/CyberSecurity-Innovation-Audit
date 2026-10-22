@@ -904,7 +904,7 @@ def execute(settings, store, ops, task):
             "scan_ids": spec["scan_ids"], "impact": "unknown",
             "validated_vulnerability": 0,
             "limitations": spec.get("limitations", [])}
-    if kind == "revision_range":
+    if kind in {"revision_range", "time_incremental_scan"}:
         repo = store.repository(spec["repository_id"])
         change = changes(repo["path"], spec["baseline"], spec["endpoint"])
         pairs = compare_reports(reports[0], reports[1], change)

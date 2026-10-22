@@ -291,7 +291,7 @@ class Operations:
                     and row["consent_sha256"] == consent_sha256)
 
     def create(self, kind, spec):
-        if kind not in {"source_sync", "source_sync_batch", "repository_import_scan", "revision_range", "version_matrix", "branch_comparison", "recent_window_comparison", "validation", "investigation", "candidate_review_batch", "agent_investigation", "version_candidate_comparison", "progressive_quick_screen", "progressive_quick_screen_batch", "progressive_deep_agent_batch"}:
+        if kind not in {"source_sync", "source_sync_batch", "repository_import_scan", "revision_range", "time_incremental_scan", "version_matrix", "branch_comparison", "recent_window_comparison", "validation", "investigation", "candidate_review_batch", "agent_investigation", "version_candidate_comparison", "progressive_quick_screen", "progressive_quick_screen_batch", "progressive_deep_agent_batch"}:
             raise ValueError("unknown operation kind")
         if kind == "progressive_deep_agent_batch" and isinstance(spec, dict):
             # A retry must recover the already-created batch even after its short
@@ -418,7 +418,7 @@ class Operations:
                                             (audit_id,)).fetchone()
                 if parent_row:
                     parent_spec = json.loads(parent_row["spec"])
-                    if (parent_row["kind"] not in {"revision_range", "version_matrix", "branch_comparison", "recent_window_comparison"}
+                    if (parent_row["kind"] not in {"revision_range", "time_incremental_scan", "version_matrix", "branch_comparison", "recent_window_comparison"}
                             or parent_row["status"] not in {"completed", "completed_with_limitations"}
                             or parent_spec.get("progressive_triage_policy") != spec["progressive_policy"]
                             or parent_spec.get("audit_mode") == "static_only"
@@ -540,7 +540,7 @@ class Operations:
                     raise ValueError("task-level L3 batch is not bound to its intelligent snapshot")
             else:
                 parent = self.get(audit_id)
-                if (parent.get("kind") not in {"revision_range", "version_matrix", "branch_comparison", "recent_window_comparison"}
+                if (parent.get("kind") not in {"revision_range", "time_incremental_scan", "version_matrix", "branch_comparison", "recent_window_comparison"}
                         or parent.get("status") not in {"completed", "completed_with_limitations"}
                         or parent.get("cancel_requested") is True
                         or parent.get("spec", {}).get("audit_mode") == "static_only"
@@ -622,7 +622,7 @@ class Operations:
                     parent_row = db.execute("SELECT kind,spec,status,cancel_requested FROM operations WHERE id=?",
                                             (audit_operation_id,)).fetchone()
                     if not parent_row or parent_row["kind"] not in {
-                            "revision_range", "version_matrix", "branch_comparison", "recent_window_comparison"}:
+                            "revision_range", "time_incremental_scan", "version_matrix", "branch_comparison", "recent_window_comparison"}:
                         raise ValueError("progressive quick screen parent audit does not exist")
                     parent_spec = json.loads(parent_row["spec"])
                     if (spec["job_id"] not in parent_spec.get("scan_ids", [])
@@ -1173,7 +1173,7 @@ class Operations:
 
     def create_with_scans(self, kind, spec, repository_id, scan_specs):
         """Create an operation and its immutable endpoint jobs in one DB transaction."""
-        if kind not in {"revision_range", "version_matrix", "branch_comparison", "recent_window_comparison"} or not scan_specs:
+        if kind not in {"revision_range", "time_incremental_scan", "version_matrix", "branch_comparison", "recent_window_comparison"} or not scan_specs:
             raise ValueError("invalid scan operation")
         key = uuid.uuid4().hex
         job_ids = [uuid.uuid4().hex for _ in scan_specs]
@@ -1268,10 +1268,10 @@ class Operations:
         """Resolve a multi-endpoint audit parent without guessing across parents."""
         if not isinstance(job_id, str) or not job_id:
             raise ValueError("invalid scan job ID")
-        kinds = {"revision_range", "version_matrix", "branch_comparison", "recent_window_comparison"}
+        kinds = {"revision_range", "time_incremental_scan", "version_matrix", "branch_comparison", "recent_window_comparison"}
         with self.store.connect() as db:
-            rows = list(db.execute("SELECT * FROM operations WHERE kind IN (?,?,?,?)",
-                                   tuple(sorted(kinds))))
+            rows = list(db.execute("SELECT * FROM operations WHERE kind IN (" +
+                                   ",".join("?" for _ in kinds) + ")", tuple(sorted(kinds))))
         parents = []
         for raw in rows:
             row = self.row(raw)
@@ -1486,7 +1486,7 @@ class Operations:
             if row["kind"] == "candidate_review_batch" and row["status"] not in END:
                 raise ValueError("candidate review batches cannot be cancelled; all candidates must remain queued until review or explicit resolution")
             targets = [row]
-            if row["kind"] in {"revision_range", "version_matrix", "branch_comparison", "recent_window_comparison"}:
+            if row["kind"] in {"revision_range", "time_incremental_scan", "version_matrix", "branch_comparison", "recent_window_comparison"}:
                 for item in db.execute(
                         "SELECT * FROM operations WHERE kind IN ('progressive_quick_screen','progressive_quick_screen_batch','agent_investigation','progressive_deep_agent_batch')"):
                     child_spec = json.loads(item["spec"])

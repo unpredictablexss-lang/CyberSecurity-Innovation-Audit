@@ -74,8 +74,11 @@ class OperationsStoreTests(unittest.TestCase):
             self.ops.create("progressive_quick_screen", tampered)
 
     def test_endpoint_resolves_to_one_multi_endpoint_budget_owner(self):
-        parent = self.ops.create("version_matrix", {"scan_ids": ["endpoint-a", "endpoint-b"]})
-        self.assertEqual(self.ops.audit_parent_for_scan("endpoint-a")["id"], parent["id"])
+        for kind in ("version_matrix", "time_incremental_scan"):
+            with self.subTest(kind=kind):
+                scan_id = kind + "-endpoint"
+                parent = self.ops.create(kind, {"scan_ids": [scan_id]})
+                self.assertEqual(self.ops.audit_parent_for_scan(scan_id)["id"], parent["id"])
         self.assertIsNone(self.ops.audit_parent_for_scan("standalone-scan"))
 
     def test_quick_screen_unknown_is_a_reviewable_limited_operation_result(self):
@@ -325,6 +328,19 @@ class OperationsApiTests(unittest.TestCase):
             self.assertEqual(response.status_code, 200)
             self.assertEqual(response.json(), [])
 
+    def test_operations_list_limit_is_applied_and_invalid_bounds_are_rejected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            settings = Settings(Path(directory) / "data", (Path(directory) / "targets",))
+            with TestClient(create_app(settings)) as client:
+                ops = client.app.state.operations
+                ops.create("source_sync", {"repository": "openharmony/one"})
+                latest = ops.create("source_sync", {"repository": "openharmony/two"})
+                response = client.get("/api/v1/operations?limit=1")
+                self.assertEqual(response.status_code, 200)
+                self.assertEqual([row["id"] for row in response.json()], [latest["id"]])
+                self.assertEqual(client.get("/api/v1/operations?limit=0").status_code, 422)
+                self.assertEqual(client.get("/api/v1/operations?limit=1001").status_code, 422)
+
     def test_local_api_rejects_arbitrary_git_sync_url(self):
         with tempfile.TemporaryDirectory() as directory:
             settings = Settings(Path(directory) / "data", (Path(directory) / "targets",))
@@ -516,6 +532,7 @@ class OperationEndToEndTests(unittest.TestCase):
         sha_range = self.client.post("/api/v1/operations/revision-ranges", headers=headers, json={
             **base, "audit_mode": "static_only", "baseline": self.commits[0], "endpoint": self.commits[1]})
         self.assertEqual(sha_range.status_code, 201, sha_range.text)
+        self.assertEqual(sha_range.json()["kind"], "revision_range")
         self.assertEqual(sha_range.json()["spec"]["commits"], [self.commits[1]])
         self.assertEqual(sha_range.json()["spec"]["audit_mode"], "static_only")
         self.assertEqual([self.store.job(key)["spec"]["audit_mode"] for key in sha_range.json()["spec"]["scan_ids"]], ["static_only", "static_only"])
@@ -528,6 +545,7 @@ class OperationEndToEndTests(unittest.TestCase):
             "start": "2025-01-02T00:00:00+00:00",
             "end": "2025-01-03T00:00:00+00:00", "timezone": "UTC"})
         self.assertEqual(date_range.status_code, 201, date_range.text)
+        self.assertEqual(date_range.json()["kind"], "time_incremental_scan")
         self.assertEqual(date_range.json()["spec"]["audit_mode"], "static_only")
         self.assertEqual([self.store.job(key)["spec"]["audit_mode"] for key in date_range.json()["spec"]["scan_ids"]], ["static_only", "static_only"])
         self.assertTrue(all(self.store.triage_authorization(key) is None

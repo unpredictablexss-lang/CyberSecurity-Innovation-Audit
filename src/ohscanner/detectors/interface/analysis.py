@@ -1401,8 +1401,10 @@ class Interpreter:
 
     def authorized(self, state, name, qualified=""):
         expected = self.expected_permission(name, qualified)
-        if expected:
-            return expected in state.auth
+        contract = self.repository_caller_class_contract(qualified)
+        if expected or contract:
+            return ((expected is None or expected in state.auth)
+                    and (contract is None or contract[0] in state.caller_class))
         # A service-account role is accepted only for the operations the reviewed
         # record names. Recognizing the account that guards an interface is not a
         # statement that the account may do anything else, so this set is computed
@@ -3122,10 +3124,11 @@ class Interpreter:
                 for expr in node.named_children:
                     macro_guard = self._fail_fast_macro_predicate(fn, expr, s, depth)
                     if macro_guard is not None:
-                        # The definition is source-bound and proves that a false
-                        # condition returns from this function. Only the normal
-                        # continuation receives the predicate's true facts.
-                        guarded = self.refine(fn, macro_guard, s, True, depth)
+                        # The definition is source-bound and proves which side
+                        # returns. Only the normal continuation receives facts.
+                        predicate, normal_truth = (macro_guard if isinstance(macro_guard, tuple)
+                                                   else (macro_guard, True))
+                        guarded = self.refine(fn, predicate, s, normal_truth, depth)
                         for continuation in guarded:
                             continuation.trace = (continuation.trace +
                                 ((expr.start_point[0] + 1,
@@ -3183,6 +3186,21 @@ class Interpreter:
         if len(signatures) != 1:
             return None
         body, params, conditions = next(iter(signatures))
+        arguments = expr.child_by_field_name("arguments")
+        args = list(arguments.named_children) if arguments is not None else []
+        if name == "CHECK_ERROR_RETURN_RET_LOG":
+            # This OpenHarmony camera macro is variadic, so the general macro
+            # expander intentionally refuses it. Credit its guard only when the
+            # scan-local definition has the exact fail-fast body and parameters;
+            # the macro name alone is never authorization evidence.
+            if conditions or tuple(params) != ("cond", "ret", "fmt", "..."):
+                return None
+            compact = re.sub(r"\\\s*|\s+", "", body)
+            expected = "do{if(cond){MEDIA_ERR_LOG(fmt,##__VA_ARGS__);returnret;}}while(0)"
+            if compact != expected or len(args) < 3:
+                return None
+            predicate = self.value(fn, args[0], state, depth)
+            return (args[0], False) if predicate.kind == "predicate" else None
         if conditions or len(params) != 2:
             return None
         cond_param, return_param = params

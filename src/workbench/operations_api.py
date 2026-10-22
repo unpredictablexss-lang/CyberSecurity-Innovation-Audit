@@ -36,7 +36,7 @@ import uuid
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Literal
-from fastapi import APIRouter, FastAPI, HTTPException
+from fastapi import APIRouter, FastAPI, HTTPException, Query
 from fastapi.responses import FileResponse, JSONResponse, Response
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from .download_locations import normalize_download_dir
@@ -1022,7 +1022,7 @@ def _operation_scan_plan(settings, store, kind, body):
             "endpoint": after["commit"], "commits": commits, "audit_mode": mode,
             "timeout_seconds": body.timeout_seconds * 2 + 60, "memory_mb": body.memory_mb,
             "date_selection": selection}
-        return "revision_range", repo, spec, scans
+        return "time_incremental_scan" if selection is not None else "revision_range", repo, spec, scans
     if kind == "branches":
         repo = store.repository(body.repository_id)
         service.check_repository(settings, repo["path"])
@@ -3809,8 +3809,8 @@ def install_routes(app: FastAPI, settings, store):
                 "note": "Candidates remain queued until a configured, source-bound review provider is available; no conclusion was inferred."}
 
     @router.get("/operations")
-    def list_operations():
-        return ops.list()
+    def list_operations(limit: int = Query(default=100, ge=1, le=1000)):
+        return ops.list()[:limit]
 
     def _progressive_status(audit_id):
         from .progressive_triage.status import build_progressive_status
@@ -3871,7 +3871,7 @@ def install_routes(app: FastAPI, settings, store):
         if item["result_sha256"]:
             item["result"] = ops.result(key)
         item["agent_reviews"] = ops.agent_reviews(key) if item["kind"] == "agent_investigation" else []
-        if item["kind"] in {"revision_range", "branch_comparison", "version_matrix",
+        if item["kind"] in {"revision_range", "time_incremental_scan", "branch_comparison", "version_matrix",
                             "recent_window_comparison"}:
             endpoint_progress = []
             for job_id in item["spec"].get("scan_ids", []):

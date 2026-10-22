@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any
 
 
-AUDIT_KINDS = {"revision_range", "recent_window_comparison", "branch_comparison", "version_matrix"}
+AUDIT_KINDS = {"revision_range", "time_incremental_scan", "recent_window_comparison", "branch_comparison", "version_matrix"}
 
 
 def build_progressive_status(settings, ops, audit_id: str, *, store=None) -> dict[str, Any]:

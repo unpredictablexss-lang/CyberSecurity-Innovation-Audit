@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Alert, Button, Card, Collapse, Descriptions, Empty, List, Progress, Space, Table, Tabs, Tag, Typography, message } from "antd";
 import { api, terminal } from "../../api";
 import ChineseNarrative from "../cases/ChineseNarrative";
+import { auditErrorMessage, isTimeRangeOperation } from "./model";
 import { go, Hash, Header, State } from "../../components";
 import { refreshSelectedOperation } from "../../pages/operationSelection";
 import { AgentInvestigationForm, ComparisonForm, InvestigationForm, SyncForm, ValidationForm, SourceContext } from "./OperationForms";
@@ -110,6 +111,57 @@ function RecentWindowSummary({ result, openScan }: { result: any; openScan: (id:
       ]} locale={{ emptyText: summary.comparisonAvailable ? "暂无候选观察差异；不表示源码无漏洞。" : "比较未完成；候选差异未知。" }} />
   </Card>;
 }
+export function buildRevisionRangeSummary(operation: any) {
+  if (!operation || !["revision_range", "time_incremental_scan"].includes(operation.kind)) return null;
+  const spec = operation.spec || {};
+  const result = operation.result || {};
+  const selection = result.date_selection || spec.date_selection || {};
+  const baseline = selection.baseline || result.baseline || spec.baseline || null;
+  const endpoint = selection.endpoint || result.endpoint || spec.endpoint || null;
+  const branch = selection.branch || null;
+  const comparisons = Array.isArray(result.candidate_comparison) ? result.candidate_comparison : [];
+  const counts = { new_candidate: 0, disappeared_candidate: 0, persistent_candidate: 0, unknown: 0 };
+  for (const row of comparisons) {
+    if (row?.status === "new_candidate") counts.new_candidate += 1;
+    else if (row?.status === "disappeared_candidate") counts.disappeared_candidate += 1;
+    else if (row?.status === "persistent_candidate") counts.persistent_candidate += 1;
+    else counts.unknown += 1;
+  }
+  const repository = result.progressive_triage?.endpoint_states?.find((row: any) => row.repository)?.repository || null;
+  return {
+    branch: typeof branch === "string" ? branch.replace(/^refs\/(remotes\/origin|heads)\//, "") : null,
+    repository, baseline, endpoint,
+    start: selection.start || null, end: selection.end || null, timezone: selection.timezone || null,
+    comparisonAvailable: Array.isArray(result.candidate_comparison), counts,
+    validatedVulnerability: Number.isInteger(result.validated_vulnerability) ? result.validated_vulnerability : 0,
+  };
+}
+
+function RevisionRangeSummary({ operation }: { operation: any }) {
+  const summary = buildRevisionRangeSummary(operation);
+  if (!summary) return null;
+  const short = (value: any) => typeof value === "string" ? value.slice(0, 12) : "未提供";
+  return <Card size="small" className="section-gap" title="这次具体比较了什么">
+    <Alert type="info" showIcon
+      message={summary.branch ? `时间增量扫描 · ${summary.branch}` : "时间增量扫描"}
+      description="系统按你选定的时间范围，在同一分支上找到较早和较晚两个提交，分别扫描后对照候选。这是时间增量扫描，不是跨分支审计；提交号用于标识两个代码快照。候选变化不能单独证明漏洞何时引入或修复。" />
+    <Descriptions className="section-gap" size="small" bordered column={{ xs: 1, md: 2 }}>
+      {summary.repository && <Descriptions.Item label="仓库">{summary.repository}</Descriptions.Item>}
+      {summary.branch && <Descriptions.Item label="分支">{summary.branch}</Descriptions.Item>}
+      <Descriptions.Item label="时间起点（较早提交）">{short(summary.baseline)}</Descriptions.Item>
+      <Descriptions.Item label="时间终点（较新提交）">{short(summary.endpoint)}</Descriptions.Item>
+      {(summary.start || summary.end) && <Descriptions.Item label="提交时间范围" span={2}>
+        {summary.start || "起始时间未知"} 至 {summary.end || "结束时间未知"}{summary.timezone ? `（${summary.timezone}）` : ""}
+      </Descriptions.Item>}
+      <Descriptions.Item label="候选对照结果" span={2}>
+        {summary.comparisonAvailable
+          ? `持续出现 ${summary.counts.persistent_candidate} 组 · 仅时间终点出现 ${summary.counts.new_candidate} 组 · 仅时间起点出现 ${summary.counts.disappeared_candidate} 组 · 无法对应 ${summary.counts.unknown} 组`
+          : "当前没有可核对的候选对照结果"}
+        <div className="muted">已确认漏洞：{summary.validatedVulnerability}。候选是待核查线索，不等于漏洞结论。</div>
+      </Descriptions.Item>
+    </Descriptions>
+  </Card>;
+}
 export type OperationView = "all" | "date" | "branches" | "matrix" | "validation" | "investigate" | "agent" | "agent_research" | "sync" | "queue";
 const evaluationLabels: Record<string, string> = {
   single_shot: "AI 初步分析", tool_agent: "AI 深入追查", unknown: "未知",
@@ -130,11 +182,12 @@ const evaluationLabels: Record<string, string> = {
 const evaluationLabel = (value: unknown) => evaluationLabels[String(value)] || "未知";
 const triagePhaseLabels: Record<string, string> = { static_in_progress: "静态扫描进行中", deterministic_ranked: "候选已排序", awaiting_quick_screen_authorization: "等待 AI 初步分析授权", quick_screening: "AI 初步分析中", awaiting_deep_agent_authorization: "等待 AI 深入追查授权", deep_investigating: "AI 深入追查中", evidence_judged: "证据已初步整理", partial_unknown: "部分结果待核实" };
 const rankingReasonLabels: Record<string, string> = { source_binding_incomplete: "来源信息不完整", coverage_unknown: "证据覆盖仍待核实", unresolved_evidence_obligations: "仍有证据事项待核实", source_bound_security_facts: "存在固定源码安全线索", version_change_observed: "观察到版本变更", family_quota_coverage: "覆盖不同候选类别", within_model_selection_budget: "纳入本次研判范围", retained_for_manual_review_not_auto_selected: "保留候选，待人工复核", model_selection_budget_exhausted: "本次未选中，仍保留候选" };
-const kinds: Record<string, string> = { repository_import_scan: "在线仓库下载与扫描", source_sync: "源码同步 / 自动扫描", source_sync_batch: "多仓库批量同步", revision_range: "固定区间", branch_comparison: "跨版本比较", recent_window_comparison: "N 日 / 1 日对照", version_matrix: "版本矩阵", validation: "隔离验证", investigation: "只读调查", agent_investigation: "智能调查", progressive_quick_screen: "AI 初步分析", progressive_quick_screen_batch: "批量 AI 初步分析", candidate_review_batch: "历史候选队列（已停用）" };
+const kinds: Record<string, string> = { repository_import_scan: "在线仓库下载与扫描", source_sync: "源码同步 / 自动扫描", source_sync_batch: "多仓库批量同步", revision_range: "指定提交比较", time_incremental_scan: "时间增量扫描", branch_comparison: "跨版本安全审计", recent_window_comparison: "N 日 / 1 日对照", version_matrix: "版本矩阵", validation: "隔离验证", investigation: "只读调查", agent_investigation: "智能调查", progressive_quick_screen: "AI 初步分析", progressive_quick_screen_batch: "批量 AI 初步分析", candidate_review_batch: "历史候选队列（已停用）" };
+const operationLabel = (operation: any) => operation?.kind === "revision_range" ? (isTimeRangeOperation(operation) ? "时间增量扫描" : "指定提交比较") : kinds[operation?.kind] || operation?.kind || "未知操作";
 const headings: Record<OperationView, [string, string]> = {
   all: ["高级源码与验证操作", "保留既有操作入口；任务持久化，候选变化与安全影响分别记录。"],
   date: ["时间增量扫描", "按明确时区固定时间端点；支持单一区间和 N 日 / 1 日双窗口候选对照。"],
-  branches: ["跨版本安全分析", "比较同一仓库的分支、Tag 或 Commit；候选变化不等于漏洞引入或修复。"],
+  branches: ["跨版本安全审计", "比较同一仓库指定提交、分支或 Tag 的静态候选；候选变化不等于漏洞引入或修复。"],
   matrix: ["影响与修复", "先核对多个扫描版本的候选观察，再补充影响与修复证据。"],
   validation: ["验证用例", "围绕绑定源码和已登记的隔离测试环境申请验证，保留失败与未知项。"],
   investigate: ["候选调查", "先用确定性工具整理证据，也可在明确同意后调用受限智能调查。"],
@@ -202,13 +255,13 @@ export default function OperationWorkspace({ view = "all", operationId, context 
   const submit = async (path: string, payload: any) => {
     setBusy(true); setError("");
     try { const item = await api(path, payload); selectedId.current = item.id; setSelected(item); await refresh(); message.success("任务已加入持久化队列"); }
-    catch (e) { setError(String(e)); } finally { setBusy(false); }
+    catch (e) { const text = auditErrorMessage(e); setError(text); message.error(text, 8); } finally { setBusy(false); }
   };
-  const props = { repos, detectors, cases, busy, agentStatus, submit, context };
+  const props = { repos, detectors, cases, busy, agentStatus, submit, context, submissionError: error };
   const forms = [
     { key: "sync", label: "同步源码", children: <SyncForm {...props} /> },
-    { key: "range", label: "两个 SHA 区间", children: <ComparisonForm {...props} kind="range" /> },
-    { key: "date", label: "提交者日期区间", children: <ComparisonForm {...props} kind="date" /> },
+    { key: "range", label: "指定提交比较", children: <ComparisonForm {...props} kind="range" /> },
+    { key: "date", label: "时间区间扫描", children: <ComparisonForm {...props} kind="date" /> },
     { key: "recent", label: "N 日与 1 日对照", children: <ComparisonForm {...props} kind="recent" /> },
     { key: "branches", label: "跨分支比较", children: <ComparisonForm {...props} kind="branches" /> },
     { key: "matrix", label: "版本矩阵", children: <ComparisonForm {...props} kind="matrix" /> },
@@ -216,11 +269,11 @@ export default function OperationWorkspace({ view = "all", operationId, context 
     { key: "investigate", label: "只读调查", children: <InvestigationForm {...props} /> },
     { key: "agent", label: "智能调查", children: <AgentInvestigationForm busy={busy} submit={submit} context={context} cases={cases} agentStatus={agentStatus} /> },
   ];
-  const filtered = view === "agent_research" ? [] : rows.filter((r) => r.kind !== "candidate_review_batch" && (view === "all" || view === "queue" || (view === "date" ? ["revision_range", "recent_window_comparison"].includes(r.kind) : view === "branches" ? ["branch_comparison", "revision_range"].includes(r.kind) : view === "sync" ? ["source_sync", "source_sync_batch"].includes(r.kind) : r.kind === ({ matrix: "version_matrix", validation: "validation", investigate: "investigation", agent: "agent_investigation" } as Record<string, string>)[view])));
+  const filtered = view === "agent_research" ? [] : rows.filter((r) => r.kind !== "candidate_review_batch" && (view === "all" || view === "queue" || (view === "date" ? isTimeRangeOperation(r) : view === "branches" ? ["branch_comparison", "version_matrix"].includes(r.kind) || (r.kind === "revision_range" && !isTimeRangeOperation(r)) : view === "sync" ? ["source_sync", "source_sync_batch"].includes(r.kind) : r.kind === ({ matrix: "version_matrix", validation: "validation", investigate: "investigation", agent: "agent_investigation" } as Record<string, string>)[view])));
   return <>
     <Header title={headings[view][0]} description={headings[view][1]} />
     {error && <Alert className="section-gap" type="error" showIcon message={<ChineseNarrative value={error} />} />}
-    {view === "all" ? <Tabs items={forms} /> : view === "date" ? <Tabs items={[forms[2], forms[3]]} /> : view === "branches" ? <Tabs items={[forms[4], forms[5]]} /> : view === "investigate" ? <Tabs items={[forms[7], forms[8]]} /> : view === "agent_research" ? null : forms.find((f) => f.key === view)?.children}
+    {view === "all" ? <Tabs items={forms} /> : view === "date" ? <Tabs items={[forms[2], forms[3]]} /> : view === "branches" ? <Tabs items={[forms[1], forms[4], forms[5]]} /> : view === "investigate" ? <Tabs items={[forms[7], forms[8]]} /> : view === "agent_research" ? null : forms.find((f) => f.key === view)?.children}
     {view === "agent_research" && agentEvaluation && <Card className="section-gap" size="small" title="模型执行与成本评估（最近 200 个任务）">
       <Alert type="info" showIcon message="令牌数为模型服务商完整返回用量的合计；费用仅按已知费率估算，实际账单未核验。耗时来自任务记录和智能调查子进程；常驻内存峰值不含容器与模型服务商侧资源。以上不构成漏洞准确率或独立真值。" description={<ChineseNarrative value={agentEvaluation.execution_limitation} />} />
       <Table<any> className="section-gap" size="small" rowKey={(row) => [row.mode, row.provider, row.endpoint_host, row.model, row.prompt_version, row.tool_policy_version].join("|")}
@@ -318,7 +371,7 @@ export default function OperationWorkspace({ view = "all", operationId, context 
         message={`保留了 ${reviewQueue.queued_batches} 条旧版候选队列占位记录`}
         description="这些历史占位记录不会执行模型调用，也不会改变候选或漏洞状态。当前未研判候选请在对应审计任务中查看；历史记录仍保留供追溯。" />}
       <Table<any> rowKey="id" dataSource={filtered} pagination={{ pageSize: 8 }} scroll={{ x: 640 }} columns={[
-        { title: "任务", render: (_, row) => <><Text strong>{kinds[row.kind] || "其他操作"}</Text><div className="muted">{row.id.slice(0, 12)}</div></> },
+        { title: "任务", render: (_, row) => <><Text strong>{operationLabel(row)}</Text><div className="muted">{row.id.slice(0, 12)}</div></> },
         { title: "状态", dataIndex: "status", render: (v) => <State value={v} /> },
         { title: "创建时间", dataIndex: "created_at", render: (v) => new Date(v).toLocaleString() },
         { title: "操作", render: (_, row) => <Space><Button onClick={() => void show(row.id)}>查看</Button>{!terminal.has(row.status) && row.kind !== "candidate_review_batch" && <Button danger onClick={async () => {
@@ -327,7 +380,7 @@ export default function OperationWorkspace({ view = "all", operationId, context 
       ]} locale={{ emptyText: <Empty description="尚无此类操作记录" /> }} />
     </Card>
     {selected && <Card className="section-gap" title={<Space>操作详情 <Text copyable>{selected.id}</Text></Space>} extra={<Button onClick={() => { selectedId.current = null; setSelected(null); }}>收起</Button>}>
-      <Space wrap><State value={selected.status} /><Text>{kinds[selected.kind] || "其他操作"}</Text><Button size="small" onClick={() => go("/tasks/operations/" + selected.id)}>任务中心打开</Button>
+      <Space wrap><State value={selected.status} /><Text>{operationLabel(selected)}</Text><Button size="small" onClick={() => go("/tasks/operations/" + selected.id)}>任务中心打开</Button>
         {selected.kind === "repository_import_scan" && selected.result?.scan_job?.id && <Button size="small" type="primary" onClick={() => go("/tasks/" + selected.result.scan_job.id)}>查看自动创建的扫描</Button>}
         {selected.kind === "repository_import_scan" && ["failed", "interrupted", "timed_out"].includes(selected.status) && <Button size="small" type="primary" onClick={async () => {
           try {
@@ -340,6 +393,7 @@ export default function OperationWorkspace({ view = "all", operationId, context 
         }}>重新排队</Button>}
         {selected.result_sha256 && <><Text>结果摘要 SHA-256</Text><Hash value={selected.result_sha256} /></>}</Space>
       {selected.error && <Alert className="section-gap" type="error" message={<ChineseNarrative value={selected.error} />} />}
+      {isTimeRangeOperation(selected) && selected.kind !== "recent_window_comparison" && <RevisionRangeSummary operation={selected} />}
       {selected.kind === "repository_import_scan" && <Card size="small" className="section-gap" title="固定版本下载进度">
         <div className="section-gap"><Text type="secondary">源码保存位置：</Text><Text code>{selected.result?.destination_dir || selected.spec?.destination_dir || "服务器默认源码缓存目录"}</Text></div>
         {selected.download_progress ? <>
@@ -555,14 +609,34 @@ export default function OperationWorkspace({ view = "all", operationId, context 
       </Card>}
       {selected.kind === "recent_window_comparison" && selected.result && <RecentWindowSummary
         result={selected.result} openScan={(id) => go("/tasks/" + id)} />}
-      {Array.isArray(selected.intelligent_review_progress) && <Card size="small" className="section-gap" title="固定版本静态与智能审计进度">
-        <Alert type="info" showIcon message="端点静态对比完成不等于智能研判完成"
-          description="每个固定版本的 智能调查 都独立获得源码外发授权；模型处理失败、候选超出本次授权名额或尚未研判不代表源码安全。" />
+      {Array.isArray(selected.intelligent_review_progress) && <Card size="small" className="section-gap" title={isTimeRangeOperation(selected) && selected.kind !== "recent_window_comparison" ? "时间起点 / 终点扫描与 AI 调查进度" : selected.kind === "recent_window_comparison" ? "各时间窗口扫描与 AI 调查进度" : "跨版本扫描与 AI 调查进度"}>
+        <Alert type="info" showIcon
+          message={selected.spec?.audit_mode === "static_only" ? (isTimeRangeOperation(selected) ? "时间端点的静态扫描已完成，AI 调查尚未开始" : "对比版本的静态扫描已完成，AI 调查尚未开始") : (isTimeRangeOperation(selected) ? "各时间端点分别显示静态扫描和 AI 调查进度" : "各对比版本分别显示静态扫描和 AI 调查进度")}
+          description={selected.spec?.audit_mode === "static_only"
+            ? "本次任务设置为“只做静态扫描”，没有授权或创建 AI 初步分析、深入追查任务。下方仍可查看各端点的静态候选；AI 子任务列表为空不代表候选已经排队，也不代表源码安全。"
+            : "下方分别显示每个时间端点或对比版本的静态扫描、候选数量和 AI 调查状态。AI 调查需要另行授权；尚未排队或没有子任务记录不代表源码安全。"} />
         <Table<any> size="small" rowKey="scan_id" pagination={false} dataSource={selected.intelligent_review_progress}
           columns={[
-            { title: "版本", render: (_: any, row: any) => <><Hash value={row.commit} /><div><Button size="small" onClick={() => go("/tasks/" + row.scan_id)}>查看扫描任务</Button></div></> },
-            { title: "静态扫描", dataIndex: "scan_status", render: (value: string) => <State value={value} /> },
-            { title: "智能研判", render: (_: any, row: any) => {
+            { title: isTimeRangeOperation(selected) ? "时间端点" : "对比版本", render: (_: any, row: any, index: number) => {
+              const range = selected.result?.date_selection || selected.spec?.date_selection || {};
+              let role = `对比版本 ${index + 1}`;
+              if (isTimeRangeOperation(selected) && selected.kind !== "recent_window_comparison") {
+                role = row.commit === range.baseline ? "时间起点（较早提交）" : row.commit === range.endpoint ? "时间终点（较新提交）" : `时间端点 ${index + 1}`;
+              } else if (selected.kind === "recent_window_comparison") {
+                const match = (selected.result?.windows || []).find((window: any) => row.commit && (row.commit === window.baseline || row.commit === window.endpoint));
+                role = match ? `${match.label || "时间窗口"}${row.commit === match.baseline ? "起点" : "终点"}` : `时间端点 ${index + 1}`;
+              } else {
+                const ref = row.ref || row.version || row.branch || row.tag;
+                if (ref) role = `对比版本 · ${ref}`;
+              }
+              return <><Text strong>{role}</Text><div><Hash value={row.commit} /></div><div><Button size="small" onClick={() => go("/tasks/" + row.scan_id)}>查看静态扫描与候选</Button></div></>;
+            } },
+            { title: "静态扫描状态", dataIndex: "scan_status", render: (value: string) => <State value={value} /> },
+            { title: "静态候选", render: (_: any, row: any) => <Space direction="vertical" size={2}>
+              <Text strong>{Number.isInteger(row.candidate_count) ? `${row.candidate_count} 条候选` : "候选数未知"}</Text>
+              <Button size="small" onClick={() => go("/tasks/" + row.scan_id)}>查看候选明细</Button>
+            </Space> },
+            { title: "AI 调查进度", render: (_: any, row: any) => {
               const progress = buildIntelligentReviewView(row);
               if (!progress) return <Text type="secondary">暂无智能研判摘要</Text>;
               const countLabels: Record<string, string> = {

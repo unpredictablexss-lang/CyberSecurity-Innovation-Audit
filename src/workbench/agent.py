@@ -3655,6 +3655,150 @@ def _initial_source_lines(source_excerpt, start_line, file):
     return {file: {start_line + index: line for index, line in enumerate(source_excerpt.splitlines())}}
 
 
+def _quarantine_policy_boundary_claims(text, expected_obligations, source_review_indices,
+                                       mandatory_unresolved_indices):
+    """Remove only model conclusions routed to obligations that must stay unresolved."""
+    try:
+        value = json.loads(text)
+    except (TypeError, json.JSONDecodeError):
+        return None
+    if not isinstance(value, dict) or set(value) != set(_FINAL_SCHEMA["required"]):
+        return None
+    expected_count = len(expected_obligations)
+    claims = value.get("supported_claims")
+    reviews = value.get("obligation_reviews")
+    if not isinstance(claims, list) or not isinstance(reviews, list) or len(reviews) != expected_count:
+        return None
+    mandatory = set(mandatory_unresolved_indices or [])
+    allowed = set(source_review_indices) if isinstance(source_review_indices, list) else None
+    blocked = set(mandatory)
+    if allowed is not None:
+        blocked.update(set(range(expected_count)) - allowed)
+    if any(index < 0 or index >= expected_count for index in blocked):
+        return None
+
+    normalized_claims = []
+    quarantined_claim_count = 0
+    changed = False
+    for claim in claims:
+        if (not isinstance(claim, dict)
+                or set(claim) != {"claim", "obligation_indices", "citations"}
+                or not isinstance(claim.get("obligation_indices"), list)
+                or not isinstance(claim.get("citations"), list)):
+            return None
+        indices = claim["obligation_indices"]
+        if (any(not isinstance(index, int) or isinstance(index, bool)
+                or index < 0 or index >= expected_count for index in indices)
+                or len(indices) != len(set(indices))):
+            return None
+        blocked_indices = set(indices).intersection(blocked)
+        if blocked_indices:
+            changed = True
+            # A claim mixing source facts with a human/runtime-only conclusion
+            # cannot be safely split without rewriting its meaning. Quarantine it whole.
+            quarantined_claim_count += 1
+        else:
+            normalized_claims.append(claim)
+
+    normalized_reviews = []
+    forced_unresolved_count = 0
+    seen = set()
+    for review in reviews:
+        if (not isinstance(review, dict)
+                or set(review) != {"obligation_index", "disposition", "citations"}
+                or not isinstance(review.get("obligation_index"), int)
+                or isinstance(review.get("obligation_index"), bool)
+                or not isinstance(review.get("citations"), list)):
+            return None
+        index = review["obligation_index"]
+        if index < 0 or index >= expected_count or index in seen:
+            return None
+        seen.add(index)
+        if index in blocked and (review.get("disposition") != "unresolved" or review["citations"]):
+            normalized_reviews.append({"obligation_index": index,
+                                       "disposition": "unresolved", "citations": []})
+            forced_unresolved_count += 1
+            changed = True
+        else:
+            normalized_reviews.append(review)
+    if seen != set(range(expected_count)):
+        return None
+    if not changed and not (value.get("assessment") == "likely_false_positive" and mandatory):
+        return None
+
+    value["supported_claims"] = normalized_claims
+    value["obligation_reviews"] = normalized_reviews
+    disposition_by_index = {item["obligation_index"]: item["disposition"]
+                            for item in normalized_reviews}
+    mapped = {disposition_by_index[index]
+              for claim in normalized_claims for index in claim["obligation_indices"]}
+    prior_assessment = value.get("assessment")
+    if prior_assessment == "likely_false_positive" and mandatory:
+        changed = True
+    if ((prior_assessment == "likely_false_positive" and mandatory)
+            or (prior_assessment == "likely_true_positive" and "evidence_found" not in mapped)
+            or (prior_assessment == "likely_false_positive" and "contrary_evidence" not in mapped)):
+        value["assessment"] = "needs_more_evidence"
+    assessment_downgraded = value["assessment"] != prior_assessment
+
+    note = ("服务端已隔离映射到人工/运行时验证义务的模型主张；这些义务仍未解决，不能据此确认权限、可达性或漏洞影响。")
+    for key, item in (("unsupported_claims", note),
+                      ("unknowns", "调用方授权和其他人工/运行时验证事项仍未决，源码引文不能证明实际授权或产品可利用性。"),
+                      ("next_steps", "由人工或授权运行时核查调用入口、调用方身份/权限策略及实际影响。")):
+        if not isinstance(value.get(key), list):
+            return None
+        if item not in value[key]:
+            if len(value[key]) >= 30:
+                value[key][-1] = item
+            else:
+                value[key].append(item)
+    retained_count = len(normalized_claims)
+    value["summary"] = (
+        f"服务端保留 {retained_count} 条映射到可源码复核事项的主张并校验其固定源码引用；"
+        "调用方授权及人工/运行时事项仍未决，候选状态不变。"
+    )
+    return {
+        "text": json.dumps(value, ensure_ascii=False),
+        "metadata": {
+            "status": "applied",
+            "reason_code": "human_runtime_policy_claim_quarantined",
+            "quarantined_claim_count": quarantined_claim_count,
+            "forced_unresolved_obligation_count": forced_unresolved_count,
+            "retained_source_claim_count": retained_count,
+            "assessment_downgraded": assessment_downgraded,
+            "message": "已保留通过源码引用校验且映射到可源码复核事项的主张；人工/运行时义务保持未决。",
+        },
+    }
+
+
+def _validate_final_preserving_source_claims(text, evidence_texts, expected_obligations=(),
+                                             source_review_indices=None, evidence_lines=None,
+                                             mandatory_unresolved_indices=None):
+    """Validate normally, then salvage source-only evidence after a policy-boundary overclaim."""
+    try:
+        return (_validate_final(text, evidence_texts, expected_obligations,
+                                source_review_indices=source_review_indices,
+                                evidence_lines=evidence_lines,
+                                mandatory_unresolved_indices=mandatory_unresolved_indices), None)
+    except ValueError as original_error:
+        if _validation_error_code(original_error) not in {
+                "human_runtime_obligation_mapped", "human_runtime_claim_mapping",
+                "unresolved_authorization_policy_claim", "unresolved_authorization_policy_suppression"}:
+            raise
+        normalized = _quarantine_policy_boundary_claims(
+            text, expected_obligations, source_review_indices, mandatory_unresolved_indices)
+        if normalized is None:
+            raise
+        try:
+            final = _validate_final(
+                normalized["text"], evidence_texts, expected_obligations,
+                source_review_indices=source_review_indices, evidence_lines=evidence_lines,
+                mandatory_unresolved_indices=mandatory_unresolved_indices)
+        except ValueError:
+            raise original_error from None
+        return final, normalized["metadata"]
+
+
 def _validate_final(text, evidence_texts, expected_obligations=(), source_review_indices=None,
                     evidence_lines=None, mandatory_unresolved_indices=None):
     try:
@@ -5244,6 +5388,8 @@ def execute_agent(settings, store, ops, task, client=None):
     final_validation_status = "accepted"
     final_validation_error_code = None
     validation_diagnostic = None
+    structured_answer_normalization = None
+    normalization_candidate_text = None
     validation_repair_attempts = 0
     repeated_validation_error = False
     if provider_incomplete_reason:
@@ -5254,12 +5400,25 @@ def execute_agent(settings, store, ops, task, client=None):
                   "Provider response incomplete; partial model output discarded and all obligations left unresolved; reason=" +
                   provider_incomplete_reason)
     else:
+        normalization_candidate_text = _response_text(final_response)
         try:
-            final = _validate_final(_response_text(final_response), evidence_texts,
-                                    prepared["initial_context"]["evidence_obligations"],
-                                    source_review_indices=source_review_indices,
-                                    evidence_lines=evidence_lines,
-                                    mandatory_unresolved_indices=mandatory_unresolved_indices)
+            validator = (_validate_final if mode == "tool_agent" or no_cumulative_ceiling
+                         else _validate_final_preserving_source_claims)
+            validated_answer = validator(
+                _response_text(final_response), evidence_texts,
+                prepared["initial_context"]["evidence_obligations"],
+                source_review_indices=source_review_indices,
+                evidence_lines=evidence_lines,
+                mandatory_unresolved_indices=mandatory_unresolved_indices)
+            if isinstance(validated_answer, tuple):
+                final, structured_answer_normalization = validated_answer
+            else:
+                final = validated_answer
+            if structured_answer_normalization:
+                ops.event(task["id"], "agent_final_policy_boundary_quarantined",
+                          "Server retained validated source claims and left human/runtime obligations unresolved; "
+                          "quarantined_claims=" + str(structured_answer_normalization["quarantined_claim_count"]) +
+                          " forced_unresolved=" + str(structured_answer_normalization["forced_unresolved_obligation_count"]))
         except ValueError as first_error:
             current_error = first_error
             validation_diagnostic = safe_validation_diagnostic(first_error, _validation_error_code(first_error), "primary")
@@ -5326,13 +5485,19 @@ def execute_agent(settings, store, ops, task, client=None):
                                   "left unresolved; reason=" + final_validation_error_code)
                         final_validation_status = "provider_incomplete"
                         break
+                    normalization_candidate_text = _response_text(repaired)
                     try:
                         final = _validate_final(
-                            _response_text(repaired), evidence_texts,
+                            normalization_candidate_text, evidence_texts,
                             prepared["initial_context"]["evidence_obligations"],
                             source_review_indices=source_review_indices,
                             evidence_lines=evidence_lines,
                             mandatory_unresolved_indices=mandatory_unresolved_indices)
+                        if structured_answer_normalization:
+                            ops.event(task["id"], "agent_final_policy_boundary_quarantined",
+                                      "Server retained validated source claims and left human/runtime obligations unresolved; "
+                                      "quarantined_claims=" + str(structured_answer_normalization["quarantined_claim_count"]) +
+                                      " forced_unresolved=" + str(structured_answer_normalization["forced_unresolved_obligation_count"]))
                     except ValueError as repair_validation_error:
                         current_error = repair_validation_error
                         validation_diagnostic = safe_validation_diagnostic(repair_validation_error, _validation_error_code(repair_validation_error), "primary")
@@ -5346,6 +5511,29 @@ def execute_agent(settings, store, ops, task, client=None):
                         final_validation_error_code = None
                         validation_diagnostic = None
                         break
+            if (final is None and normalization_candidate_text is not None
+                    and (mode == "tool_agent" or no_cumulative_ceiling)):
+                try:
+                    salvaged, normalization = _validate_final_preserving_source_claims(
+                        normalization_candidate_text, evidence_texts,
+                        prepared["initial_context"]["evidence_obligations"],
+                        source_review_indices=source_review_indices,
+                        evidence_lines=evidence_lines,
+                        mandatory_unresolved_indices=mandatory_unresolved_indices)
+                except ValueError:
+                    pass
+                else:
+                    if normalization:
+                        final = salvaged
+                        structured_answer_normalization = normalization
+                        final_validation_status = "accepted"
+                        final_validation_error_code = None
+                        validation_diagnostic = None
+                        ops.event(task["id"], "agent_final_policy_boundary_quarantined",
+                                  "After structured correction did not resolve a human/runtime policy overclaim, "
+                                  "server retained validated source claims and left those obligations unresolved; "
+                                  "quarantined_claims=" + str(normalization["quarantined_claim_count"]) +
+                                  " forced_unresolved=" + str(normalization["forced_unresolved_obligation_count"]))
             if final is None:
                 if final_validation_status == "accepted":
                     final_validation_status = (
@@ -5550,7 +5738,7 @@ def execute_agent(settings, store, ops, task, client=None):
     final["poc_draft"] = artifacts["poc_draft"]
 
     final["model_summary_unverified"] = (
-        final["summary"] if final_validation_status == "accepted" else None)
+        final["summary"] if final_validation_status == "accepted" and not structured_answer_normalization else None)
     final["summary"] = _server_generated_triage_summary(final)
     claim_citation_count = sum(len(claim["citations"]) for claim in final["supported_claims"])
     obligation_citation_count = sum(len(review["citations"]) for review in final["obligation_reviews"])
@@ -5618,6 +5806,7 @@ def execute_agent(settings, store, ops, task, client=None):
         "structured_answer_validation": final_validation_status,
         "structured_answer_validation_error_code": final_validation_error_code,
         "validation_diagnostic": validation_diagnostic,
+        "structured_answer_normalization": structured_answer_normalization,
         "validation_repair_attempts": validation_repair_attempts,
         "model_answer_retained": final_validation_status == "accepted",
         "provider": provider,

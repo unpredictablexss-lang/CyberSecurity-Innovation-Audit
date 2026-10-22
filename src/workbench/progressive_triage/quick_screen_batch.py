@@ -8,7 +8,7 @@ from typing import Any
 from .contracts import content_sha256
 from .policy import policy_envelope, validate_policy
 
-AUDIT_KINDS = {"revision_range", "recent_window_comparison", "branch_comparison", "version_matrix"}
+AUDIT_KINDS = {"revision_range", "time_incremental_scan", "recent_window_comparison", "branch_comparison", "version_matrix"}
 MAX_BATCH_ITEMS = 1_000
 MAX_BATCH_SPEC_BYTES = 12 * 1024 * 1024
 

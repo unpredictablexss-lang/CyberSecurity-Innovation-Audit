@@ -2,7 +2,7 @@
   "schema_version": 1,
   "declaration": "current detector rule measurement scope",
   "detector_id": "ohscanner.interface.ipc",
-  "detector_version": "0.12.13",
+  "detector_version": "0.12.14",
   "model_version": "oh-ipc-2026.10-v33",
   "family_id": "DATA-06",
   "rules": [

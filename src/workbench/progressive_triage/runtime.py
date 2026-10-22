@@ -14,7 +14,7 @@ from .contracts import content_sha256
 
 
 SUPPORTED_OPERATION_KINDS = {
-    "snapshot", "revision_range", "recent_window_comparison", "branch_comparison", "version_matrix",
+    "snapshot", "revision_range", "time_incremental_scan", "recent_window_comparison", "branch_comparison", "version_matrix",
 }
 
 

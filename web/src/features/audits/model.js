@@ -1,3 +1,7 @@
+export function isTimeRangeOperation(operation) {
+  if (operation?.kind === "time_incremental_scan" || operation?.kind === "recent_window_comparison") return true;
+  return operation?.kind === "revision_range" && Boolean(operation?.spec?.date_selection || operation?.result?.date_selection);
+}
 // Render a task's frozen workflow using its task-level mode when the nested plan predates that field.
 export function auditWorkflowLabel(plan, auditMode = plan?.audit_mode) {
   const mode = auditMode ?? plan?.audit_mode;
@@ -102,8 +106,14 @@ export function auditErrorMessage(error) {
       .filter((message) => typeof message === "string" && message.trim())
     : [];
   if (fieldMessages.length) return `请先修正表单：${fieldMessages[0]}`;
-  if (typeof error?.message === "string" && error.message.trim()) return error.message;
-  if (typeof error === "string" && error.trim()) return error;
+  const raw = typeof error?.message === "string" ? error.message : typeof error === "string" ? error : "";
+  if (raw.includes("earliest selected commit has no baseline parent"))
+    return "当前仓库缺少区间起点的上一提交（常见于浅克隆），无法创建时间增量任务。请先补齐仓库历史；只有单个快照时请使用仓库审计。";
+  if (raw.includes("no commits selected in the requested date interval"))
+    return "所选分支在这个时间区间内没有提交，没有创建任务。请调整时间范围或先同步源码。";
+  if (raw.includes("date selection exceeds 5000 first-parent commits"))
+    return "所选分支的历史超过时间筛选上限，请使用两个明确的提交版本进行比较。";
+  if (raw.trim()) return raw;
   return "审计计划预览失败，请检查必填项和扫描范围后重试。";
 }
 export function datePreviewPayload(values) {

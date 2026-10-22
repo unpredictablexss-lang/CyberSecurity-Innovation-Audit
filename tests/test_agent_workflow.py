@@ -1262,6 +1262,91 @@ class AgentExecutionTests(unittest.TestCase):
         self.assertIn("ASCII letters", message)
         self.assertNotIn(raw_query, message)
 
+    def test_policy_overclaim_is_quarantined_while_source_claims_survive(self):
+        obligations = [
+            {"kind": "callee_and_policy", "description": "Caller authorization policy."},
+            {"kind": "source_fact", "description": "Fixed-source path handling."},
+        ]
+        evidence_text = "if (!CheckPermission(WRITE_CONTACTS)) return ERROR;\nstd::string path = root + filename;"
+        evidence = {"ev-fixed": [evidence_text]}
+        quote_policy = "if (!CheckPermission(WRITE_CONTACTS)) return ERROR;"
+        quote_source = "std::string path = root + filename;"
+        answer = {
+            "summary": "The caller is authorized and a path is concatenated.",
+            "assessment": "likely_true_positive",
+            "supported_claims": [
+                {"claim": "The permission check proves the caller is authorized.",
+                 "obligation_indices": [0],
+                 "citations": [{"evidence_id": "ev-fixed", "quote": quote_policy}]},
+                {"claim": "The fixed source concatenates a filename to the root path.",
+                 "obligation_indices": [1],
+                 "citations": [{"evidence_id": "ev-fixed", "quote": quote_source}]},
+            ],
+            "obligation_reviews": [
+                {"obligation_index": 0, "disposition": "evidence_found",
+                 "citations": [{"evidence_id": "ev-fixed", "quote": quote_policy}]},
+                {"obligation_index": 1, "disposition": "evidence_found",
+                 "citations": [{"evidence_id": "ev-fixed", "quote": quote_source}]},
+            ],
+            "unsupported_claims": [], "unknowns": [], "next_steps": [],
+        }
+        validated, normalization = agent._validate_final_preserving_source_claims(
+            json.dumps(answer), evidence, obligations, source_review_indices=[1],
+            mandatory_unresolved_indices=[0])
+        self.assertEqual(normalization["status"], "applied")
+        self.assertEqual(normalization["quarantined_claim_count"], 1)
+        self.assertEqual(normalization["forced_unresolved_obligation_count"], 1)
+        self.assertEqual(validated["assessment"], "likely_true_positive")
+        self.assertEqual(len(validated["supported_claims"]), 1)
+        self.assertEqual(validated["supported_claims"][0]["obligation_indices"], [1])
+        self.assertEqual(validated["supported_claims"][0]["citations"][0]["quote"], quote_source)
+        self.assertEqual(validated["obligation_reviews"][0], {
+            "obligation_index": 0, "disposition": "unresolved", "citations": []})
+        self.assertEqual(validated["obligation_reviews"][1]["disposition"], "evidence_found")
+        self.assertIn("仍未决", validated["summary"])
+        self.assertEqual(normalization["assessment_downgraded"], False)
+
+        policy_only = {**answer, "assessment": "likely_false_positive",
+            "supported_claims": [answer["supported_claims"][0]],
+            "obligation_reviews": [answer["obligation_reviews"][0], {
+                "obligation_index": 1, "disposition": "unresolved", "citations": []}]}
+        validated, normalization = agent._validate_final_preserving_source_claims(
+            json.dumps(policy_only), evidence, obligations, source_review_indices=[1],
+            mandatory_unresolved_indices=[0])
+        self.assertEqual(validated["assessment"], "needs_more_evidence")
+        self.assertEqual(validated["supported_claims"], [])
+        self.assertEqual(validated["obligation_reviews"][0]["disposition"], "unresolved")
+        self.assertTrue(normalization["assessment_downgraded"])
+
+        # A claim that combines source evidence and an unresolved policy conclusion
+        # is quarantined whole; its text is never reinterpreted as source-only.
+        mixed = {**answer, "supported_claims": [{
+            "claim": "The caller is authorized and the path is concatenated.",
+            "obligation_indices": [0, 1],
+            "citations": [{"evidence_id": "ev-fixed", "quote": quote_policy},
+                          {"evidence_id": "ev-fixed", "quote": quote_source}],
+        }]}
+        validated, normalization = agent._validate_final_preserving_source_claims(
+            json.dumps(mixed), evidence, obligations, source_review_indices=[1],
+            mandatory_unresolved_indices=[0])
+        self.assertEqual(validated["supported_claims"], [])
+        self.assertEqual(validated["assessment"], "needs_more_evidence")
+        self.assertEqual(normalization["quarantined_claim_count"], 1)
+
+        # A false-positive disposition alone must also be downgraded when policy
+        # remains mandatory-unresolved, even if the answer already left it unresolved.
+        suppression_only = {**answer, "assessment": "likely_false_positive",
+            "supported_claims": [],
+            "obligation_reviews": [
+                {"obligation_index": 0, "disposition": "unresolved", "citations": []},
+                {"obligation_index": 1, "disposition": "unresolved", "citations": []},
+            ]}
+        validated, normalization = agent._validate_final_preserving_source_claims(
+            json.dumps(suppression_only), evidence, obligations, source_review_indices=[1],
+            mandatory_unresolved_indices=[0])
+        self.assertEqual(validated["assessment"], "needs_more_evidence")
+        self.assertTrue(normalization["assessment_downgraded"])
+
     def test_policy_claim_rejection_has_a_stable_non_sensitive_error_code(self):
         error = "supported claim cannot close a mandatory-unresolved authorization policy obligation"
         self.assertEqual(agent._validation_error_code(ValueError(error)),

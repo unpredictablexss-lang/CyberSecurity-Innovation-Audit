@@ -16,3 +16,4 @@ export function auditErrorMessage(error: unknown): string;
 export function selectedAuditModeValues(values: any): any;
 
 export function candidateBatchLimit(policy: any, mode: string): number | null;
+export function isTimeRangeOperation(operation: any): boolean;

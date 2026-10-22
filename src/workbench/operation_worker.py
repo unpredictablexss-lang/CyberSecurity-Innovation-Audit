@@ -310,7 +310,7 @@ def main():
                     raise
             else:
                 raise
-        if (task.get("kind") in {"revision_range", "recent_window_comparison",
+        if (task.get("kind") in {"revision_range", "time_incremental_scan", "recent_window_comparison",
                                   "branch_comparison", "version_matrix"}
                 and isinstance(task.get("spec", {}).get("progressive_triage_policy"), dict)
                 and isinstance(result, dict)):

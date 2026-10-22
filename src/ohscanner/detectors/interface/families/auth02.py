@@ -33,4 +33,12 @@ POLICY = {
             repository="openharmony/security_access_token",
         ),
     ),
+    # OpenHarmony multimedia_camera_framework!4873 adds CheckSystemApp as the
+    # first guard in this exact method on OpenHarmony-5.1.0-Release. This
+    # repository-scoped contract ties that gate to session creation.
+    "repository_caller_class_contracts": (
+        ("openharmony/multimedia_camera_framework",
+         "HCameraService::CreateDeferredVideoProcessingSession",
+         "system_app", ("CreateDeferredVideoProcessingSession",)),
+    ),
 }

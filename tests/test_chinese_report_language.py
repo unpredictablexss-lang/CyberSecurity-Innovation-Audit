@@ -10,7 +10,7 @@ class ChineseReportLanguageTests(unittest.TestCase):
         self.assertIn("自然语言内容必须使用简体中文", agent._INSTRUCTIONS)
         self.assertIn("自然语言说明必须使用简体中文", agent._SKEPTIC_INSTRUCTIONS)
         self.assertIn("PoC 的标题", agent._ARTIFACT_INSTRUCTIONS)
-        self.assertEqual(agent.PROMPT_VERSION, "ohscanner-agent-investigation-0.12.0-zh")
+        self.assertEqual(agent.PROMPT_VERSION, "ohscanner-agent-investigation-0.13.0-zh")
 
     def test_artifact_validator_rejects_english_report_prose(self):
         value = {

@@ -194,7 +194,9 @@ export default function AgentAssessment({ result, reviews = [], onSubmit }: { re
     { key: "tools", label: `只读工具记录（${(result.tool_calls || []).length}）`, children: <pre className="raw">{JSON.stringify(result.tool_calls || [], null, 2)}</pre> },
     { key: "trace", label: `模型调用记录（${(result.model_calls || []).length}）`, children: <pre className="raw">{JSON.stringify({ model_usage: result.model_usage, model_calls: result.model_calls }, null, 2)}</pre> },
     { key: "model-text", label: "未核验的模型自由文本", children: <Descriptions bordered size="small" column={1}>
-      <Descriptions.Item label="模型摘要">{modelAnswerRetained ? <ChineseNarrative value={assessment.model_summary_unverified || assessment.summary || "旧结果未记录摘要"} /> : "\u672a\u4fdd\u7559\uff1a\u670d\u52a1\u7aef\u6821\u9a8c\u548c\u4e00\u6b21\u53d7\u9650\u4fee\u590d\u5747\u672a\u901a\u8fc7\u3002"}</Descriptions.Item>
+      <Descriptions.Item label="模型原始摘要">{result.structured_answer_normalization?.status === "applied"
+        ? "未展示：服务端隔离整理了权限等越界结论，原始模型摘要可能含有未核实判断。"
+        : modelAnswerRetained ? <ChineseNarrative value={assessment.model_summary_unverified || assessment.summary || "旧结果未记录摘要"} /> : "\u672a\u4fdd\u7559\uff1a\u670d\u52a1\u7aef\u6821\u9a8c\u548c\u4e00\u6b21\u53d7\u9650\u4fee\u590d\u5747\u672a\u901a\u8fc7\u3002"}</Descriptions.Item>
       <Descriptions.Item label="模型列出的未支持陈述">{renderReportedList(assessment.unsupported_claims, "模型未列出未支持陈述。")}</Descriptions.Item>
       <Descriptions.Item label="模型列出的未知项">{renderReportedList(assessment.unknowns, "模型未列出未知项。")}</Descriptions.Item>
       <Descriptions.Item label="模型建议的下一步">{renderReportedList(assessment.next_steps, "模型未列出后续步骤。")}</Descriptions.Item>
@@ -208,6 +210,7 @@ export default function AgentAssessment({ result, reviews = [], onSubmit }: { re
       </Space>
       {rejectionDescription && <div style={{ marginTop: 8 }}><Text type="danger">{rejectionDescription}</Text></div>}
       {!rejectionDescription && artifactFailureMessage(result.artifact_generation) && <div style={{ marginTop: 8 }}><Text type="secondary">报告 / PoC 草稿未通过引用或格式校验；下方研判记录仍可查看，详情见“限制与失败详情”。</Text></div>}
+      {result.structured_answer_normalization?.status === "applied" && <div style={{ marginTop: 8 }}><Text type="secondary">已保留通过引用校验的源码线索；权限等事项仍待人工核实。</Text></div>}
     </Card>
     <Card size="small" title="智能调查研判报告">
       <Alert type="info" showIcon

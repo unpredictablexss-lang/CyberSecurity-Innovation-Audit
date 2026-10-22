@@ -198,7 +198,7 @@ class IpcPolicy:
         "GetAllCallList", "GetCallState", "GetTokenInfo", "DeleteToken",
         "SetPermission", "GrantPermission", "RevokePermission", "Dump",
         "OpenFile", "DeleteFile", "ReadFile", "WriteFile", "SetAudioParameter",
-        "CreateCameraDevice", "Capture", "SendRequest", "GetDisplaySnapshot",
+        "CreateCameraDevice", "CreateDeferredVideoProcessingSession", "Capture", "SendRequest", "GetDisplaySnapshot",
         "GetRemoteHapTokenInfo", "DeleteRemoteHapTokenInfo", "UpdateRemoteHapTokenInfo",
         "GetReqPermissions", "StartUsingPermissionCallback", "RemovePermissionUsedRecords",
         "GetPermissionUsedRecordsAsync", "IsAllowedUsingPermission", "SetMutePolicy",
@@ -261,6 +261,7 @@ class IpcPolicy:
         ("IsShellCall", "caller_class", "<shell-caller>"),
         ("IsSystemAppCalling", "caller_class", "system_app"),
         ("CheckCallerIsSystemApp", "caller_class", "system_app"),
+        ("CheckSystemApp", "caller_class", "system_app"),
         # Kept identical to the facts a helper summary derives for these two names
         # (`<trusted-uid>` / TOKEN_NATIVE), so the same predicate is one identity
         # whether it is called directly or reached through a local helper.
@@ -276,7 +277,7 @@ class IpcPolicy:
     # is caller-declared (not origin authentication); these records are narrow
     # reviewed facts for operations with source-bound external identity evidence.
     repository_service_account_roles: Tuple[ServiceAccountRole, ...] = ()
-    service_entries: FrozenSet[str] = frozenset({"HCameraService::CreateCameraDevice", "BgContinuousTaskMgr::RequestBackgroundRunningForInner",
+    service_entries: FrozenSet[str] = frozenset({"HCameraService::CreateCameraDevice", "HCameraService::CreateDeferredVideoProcessingSession", "BgContinuousTaskMgr::RequestBackgroundRunningForInner",
         "CallManagerService::StartRtt", "CallManagerService::StopRtt",
         "CallManagerService::GetImsConfig", "CallManagerService::SetImsConfig",
         "CallManagerService::GetImsFeatureValue", "CallManagerService::SetImsFeatureValue",
