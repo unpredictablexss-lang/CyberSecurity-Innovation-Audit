@@ -762,6 +762,22 @@ class AgentPairedInvestigationRequest(AgentInvestigationRequest):
                                pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$")
 
 
+def _agent_policy_child_request(body, *, candidate_id, mode, experiment_id=None):
+    """Keep validated request identity and copy already resolved system budgets.
+
+    Call only after _agent_policy_request: its validated policy supports values
+    (including None and 32768 output tokens) outside legacy HTTP input bounds.
+    Revalidating those internal budgets as client input breaks batch and paired
+    previews. Copy every budget so preview fingerprints match queued specs.
+    """
+    child = AgentInvestigationRequest(
+        job_id=body.job_id, candidate_id=candidate_id, mode=mode,
+        experiment_id=experiment_id, consent_nonce=body.consent_nonce)
+    return child.model_copy(update={key: getattr(body, key) for key in (
+        "max_steps", "max_output_tokens", "max_total_input_tokens",
+        "max_total_output_tokens", "max_total_model_calls", "timeout_seconds")})
+
+
 class AgentBaselineObligationReview(Strict):
     obligation_index: int = Field(ge=0, le=39, strict=True)
     disposition: Literal["evidence_found", "contrary_evidence", "unresolved"]
@@ -2897,11 +2913,8 @@ def install_routes(app: FastAPI, settings, store):
         report = service.read_report(settings, job)
         children = []
         for candidate_id in body.candidate_ids:
-            child = AgentInvestigationRequest(job_id=body.job_id, candidate_id=candidate_id,
-                consent_nonce=body.consent_nonce, mode=body.mode,
-                max_output_tokens=body.max_output_tokens, max_steps=body.max_steps,
-                max_total_input_tokens=body.max_total_input_tokens, max_total_output_tokens=body.max_total_output_tokens,
-                timeout_seconds=body.timeout_seconds)
+            child = _agent_policy_child_request(
+                body, candidate_id=candidate_id, mode=body.mode)
             _, _, candidate, preview = _agent_consent_preview(
                 child, provider, system_policy_sha256=system_policy_sha256)
             children.append({"candidate_id": candidate_id, "file": candidate["file"],
@@ -3051,13 +3064,9 @@ def install_routes(app: FastAPI, settings, store):
     def _agent_pair_previews(body, provider, *, system_policy_sha256=None):
         previews = []
         for mode in ("single_shot", "tool_agent"):
-            child = AgentInvestigationRequest(job_id=body.job_id, candidate_id=body.candidate_id,
-                experiment_id=body.experiment_id, consent_nonce=body.consent_nonce,
-                mode=mode, max_output_tokens=body.max_output_tokens,
-                max_steps=body.max_steps, max_total_input_tokens=body.max_total_input_tokens,
-                max_total_output_tokens=body.max_total_output_tokens,
-                max_total_model_calls=body.max_total_model_calls,
-                timeout_seconds=body.timeout_seconds)
+            child = _agent_policy_child_request(
+                body, candidate_id=body.candidate_id, mode=mode,
+                experiment_id=body.experiment_id)
             job, report, candidate, preview = _agent_consent_preview(
                 child, provider, system_policy_sha256=system_policy_sha256)
             if not preview["agent_execution"]["eligible"]:

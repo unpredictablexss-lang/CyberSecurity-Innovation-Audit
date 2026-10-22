@@ -131,6 +131,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
   const [selected, setSelected] = useState<React.Key[]>([]);
   const [batchOpen, setBatchOpen] = useState(false);
   const [batchBusy, setBatchBusy] = useState(false);
+  const [batchError, setBatchError] = useState("");
   const [snapshotBusy, setSnapshotBusy] = useState(false);
   const [retryBusyId, setRetryBusyId] = useState<string | null>(null);
   const [batchPreview, setBatchPreview] = useState<any>(null);
@@ -329,6 +330,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
   async function previewAgentBatch() {
     const candidateIds = selected.map(String);
     if (batchLimit === null || !candidateIds.length || candidateIds.length > batchLimit) return;
+    setBatchError("");
     setBatchCandidateIds(candidateIds);
     setBatchPreview(null);
     setBatchDisclosureOpened([]);
@@ -341,8 +343,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
       });
       setBatchPreview(preview);
     } catch (e) {
-      message.error(String(e));
-      setBatchOpen(false);
+      setBatchError(e instanceof Error ? e.message : String(e));
     } finally {
       setBatchBusy(false);
     }
@@ -1380,6 +1381,10 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
         onOk={() => void enqueueAgentBatch()}
         onCancel={() => { setBatchOpen(false); setBatchDisclosureOpened([]); setBatchSubmissionApproved(false); }}
       >
+        {batchError && <Alert className="section-gap" type="error" showIcon
+          message="发送内容预览失败，尚未开始 AI 调查"
+          description={batchError}
+          action={<Button size="small" loading={batchBusy} onClick={() => void previewAgentBatch()}>重新生成预览</Button>} />}
         {batchBusy && !batchPreview ? <Spin /> : batchPreview ? <>
           <Alert type="warning" showIcon message={"确认后将为每条候选分别创建一个" + (batchMode === "single_shot" ? "单次模型研判" : "连续工具增强调查") + "任务；下列源码上下文会发送给所示模型端点。模型结论仍是候选，需人工审核。"} />
           <Descriptions className="section-gap" bordered size="small" column={2}>
@@ -1421,7 +1426,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
               ? "我同意将本批次所列候选的源码上下文发送给上述模型进行 AI 初判（详情可按需展开）"
               : "我已逐条展开并检查所有候选的完整外发上下文与工具范围，允许按此预览向模型发送"}
           </Checkbox>
-        </> : <Text>正在生成预览…</Text>}
+        </> : !batchError ? <Text>正在生成预览…</Text> : null}
       </Modal>
       <Modal
         open={caseOpen}
