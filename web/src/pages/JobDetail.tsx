@@ -1,4 +1,4 @@
-import InvestigationPriority from "../features/audits/InvestigationPriority";
+import InvestigationPriority from "../features/audits/InvestigationPriorityPanel";
 import { artifactFailureMessage, structuredAnswerRejection } from "../features/audits/agentValidationMessage.js";
 import { INITIAL_ANALYSIS_LABEL, DEEP_ANALYSIS_LABEL, ANALYSIS_DESCRIPTION, readableAnalysisText } from "../features/workbench/analysisLabels.js";
 import { useCandidateScope } from "../features/audits/CandidateScope";

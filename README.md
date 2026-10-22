@@ -16,6 +16,14 @@
 
 ## 运行
 
+新机器可使用自动部署入口（首次联网安装依赖，之后前台运行，Ctrl+C 停止）：
+
+- Windows：双击根目录 `deploy-windows.cmd`，或运行 `powershell -ExecutionPolicy Bypass -File .\deploy-windows.ps1`。通过 WSL2/Ubuntu 运行，无需 Windows Python/Node 或 Docker Desktop；缺少 WSL 时尝试安装，若 Windows 要求重启，重启后再执行。
+- Ubuntu 22.04+/Debian 12+：运行 `bash deploy-linux.sh`；缺少系统依赖时使用 apt/sudo 自动安装，Node 在项目私有目录安装并校验 SHA-256。
+- 默认访问 `http://localhost:8765`。端口可用 `--port 18867`（Linux）或 `-Port 18867`（Windows）修改。
+- Linux 自动部署的运行环境、数据和目标源码默认放在 `.deploy/`；Windows 存放在 WSL 的 `~/.local/share/ohscanner/windows-目录摘要/`，启动时显示实际路径，避免在 Windows 文件系统存放数据库/锁/虚拟环境。已有本机配置及环境变量仍优先。首次安装需要联网及安装系统依赖的权限。
+- 自测用 `bash deploy-linux.sh --smoke-test` 或 `deploy-windows.ps1 -SmokeTest`：检查页面、资源、真实 Worker 扫描与报告后自动退出，保留独立测试日志。详情见[开发与交付](docs/开发协作与交付指南.md)。
+
 工作台运行于 Python 3.10+ 的 Linux 环境（Windows 可使用 WSL2），并需要 Git、Node 22/npm。运行数据目录和 OpenHarmony 目标源码根目录均从配置读取，不依赖 `/home/audit` 或某个盘符：
 ```bash
 cp config/workbench.example.json config/workbench.local.json
