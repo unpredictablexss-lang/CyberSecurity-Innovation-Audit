@@ -18,7 +18,7 @@ import urllib.request
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--port", type=int, default=8765)
+    parser.add_argument("--port", type=int, default=18765)
     parser.add_argument("--hold-seconds", type=int, default=0)
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]

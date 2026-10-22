@@ -14,7 +14,7 @@ def main():
     parser = argparse.ArgumentParser(description="OHScanner local workbench")
     sub = parser.add_subparsers(dest="command", required=True)
     serve = sub.add_parser("serve")
-    serve.add_argument("--port", type=int, default=8765)
+    serve.add_argument("--port", type=int, default=18765)
     args = parser.parse_args()
     if not 1024 <= args.port <= 65535:
         parser.error("port must be in 1024..65535")

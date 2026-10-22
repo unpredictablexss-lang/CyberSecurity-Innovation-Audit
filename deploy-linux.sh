@@ -4,7 +4,7 @@ set -Eeuo pipefail
 trap 'echo "Deployment failed at line $LINENO. Fix the error above and rerun; data is preserved." >&2' ERR
 ROOT=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 cd "$ROOT"
-PORT=8765
+PORT=18765
 MODE=serve
 while (($#)); do
   case "$1" in
@@ -12,7 +12,7 @@ while (($#)); do
     --setup-only) MODE=setup; shift ;;
     --smoke-test) MODE=smoke; shift ;;
     --start-only) MODE=start; shift ;;
-    -h|--help) echo 'Usage: bash deploy-linux.sh [--port 8765] [--setup-only|--smoke-test|--start-only]'; exit 0 ;;
+    -h|--help) echo 'Usage: bash deploy-linux.sh [--port 18765] [--setup-only|--smoke-test|--start-only]'; exit 0 ;;
     *) echo "Unknown argument: $1" >&2; exit 2 ;;
   esac
 done

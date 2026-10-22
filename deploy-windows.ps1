@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-    [ValidateRange(1024,65535)][int]$Port = 8765,
+    [ValidateRange(1024,65535)][int]$Port = 18765,
     [string]$Distribution = 'Ubuntu',
     [switch]$SetupOnly,
     [switch]$SmokeTest,
