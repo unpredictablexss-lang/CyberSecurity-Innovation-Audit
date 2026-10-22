@@ -40,5 +40,28 @@
       "sha256": "7d51993e32728cda21fe93467f7dc2b9f2edc69a1c9ce3a61bbbbc86a42661fb"
     }
   },
-  "previous_windows_smoke_scope": "WSL-internal only, not Windows browser access"
+  "previous_windows_smoke_scope": "WSL-internal only, not Windows browser access",
+  "v2_package": {
+    "filename": "OHScanner-source-20261022-v2.zip",
+    "source_commit": "9f413ed5930c3aa0b9a8988fd3d5b364a4319339",
+    "bytes": 6913334,
+    "sha256": "bcddbf1dc1b52eec938d05f73f7bf5ab9a59925c4cd908bcf3862b5a8f61d8bb",
+    "host_test_explicit_port": 18873,
+    "result": {
+      "status": "passed",
+      "run_dir": "/home/deepsleep/.local/share/ohscanner/windows-8c0883c96afec91f/smoke-biyipaqb",
+      "commit": "65f3b4fe9b62713f246296bc67e0bbdc9212480c",
+      "worker_running": true,
+      "homepage": true,
+      "static_asset": true,
+      "job_status": "completed",
+      "candidates": 1,
+      "report_sha256": "c4d4e25a55c0266f9806e49482fd1eb8a4aa10134cbf05aa07116d3f8e6965ec",
+      "server_exit_code": 0
+    },
+    "log": "windows_v2_package_host.txt",
+    "log_sha256": "c1b41bf4fc37784b8cb76aefce7f6af2d949f5a7192ee743f79f67f9d2a47d0a",
+    "default_port": 8765,
+    "automatic_port_change": false
+  }
 }

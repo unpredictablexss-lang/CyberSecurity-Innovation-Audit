@@ -24,3 +24,9 @@ Ubuntu 内部 `/api/v1/health` 返回 status=ok、worker_running=true；Windows 
 5. Windows 一键启动的显式端口与新版源码包复验结果见同目录补验日志及 JSON。
 
 当前机器的 Windows 8765 仍由系统保留，不能宣称 Windows 默认 8765 已访问成功；需要由系统释放该端口后再用默认入口。脚本不删除系统保留项。Linux 默认端口成功和 Windows 显式测试端口成功分别记录。
+
+## 新版精简包
+
+`outputs/OHScanner-source-20261022-v2.zip`，6,913,334 bytes，固定源码 `9f413ed5930c3aa0b9a8988fd3d5b364a4319339`；SHA-256 `bcddbf1dc1b52eec938d05f73f7bf5ab9a59925c4cd908bcf3862b5a8f61d8bb`。旧包保留，不覆盖用户已解压数据。ZIP 完整性、包含 Windows/Linux 启动入口、手册/部署/核心默认 8765 一致性检查均通过。
+
+将该 ZIP 解压到新的含空格目录，通过包内 `deploy-windows.cmd -Port 18873 -SmokeTest` 独立重建应用环境/前端，宿主机健康、页面、静态资源与内部 Worker 固定 Git 扫描/报告全部通过，退出 0。复用了此前自动安装的 Ubuntu 系统依赖，没有复用其他目录的 Python venv 或 Node runtime。详见 `windows_v2_package_host.txt` 和 `windows_host_validation.json`；18873 为显式复验端口，交付默认值仍为 8765。
