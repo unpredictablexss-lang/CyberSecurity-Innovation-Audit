@@ -1,0 +1,24 @@
+Get:1 http://security.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+Get:2 http://archive.ubuntu.com/ubuntu noble InRelease [256 kB]
+Ign:3 http://security.ubuntu.com/ubuntu noble-security/main amd64 Packages
+Get:4 http://security.ubuntu.com/ubuntu noble-security/main Translation-en [231 kB]
+Get:5 http://archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+Get:6 http://security.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1222 kB]
+Get:7 http://archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+Get:8 http://archive.ubuntu.com/ubuntu noble/main amd64 Packages [1401 kB]
+Get:9 http://security.ubuntu.com/ubuntu noble-security/universe Translation-en [246 kB]
+Get:10 http://security.ubuntu.com/ubuntu noble-security/restricted amd64 Packages [1713 kB]
+Get:11 http://security.ubuntu.com/ubuntu noble-security/restricted Translation-en [392 kB]
+Get:12 http://security.ubuntu.com/ubuntu noble-security/multiverse amd64 Packages [45.4 kB]
+Get:13 http://security.ubuntu.com/ubuntu noble-security/multiverse Translation-en [12.1 kB]
+Get:3 http://security.ubuntu.com/ubuntu noble-security/main amd64 Packages [1146 kB]
+Err:3 http://security.ubuntu.com/ubuntu noble-security/main amd64 Packages
+  File has unexpected size (1145928 != 1145876). Mirror sync in progress? [IP: 91.189.91.82 80]
+  Hashes of expected file:
+   - Filesize:1145876 [weak]
+   - SHA256:5c919d84956a3cfddd0dad6612eb8035d4f6f2b7e44e9762c1e043a0d8b91234
+   - SHA1:76c096b3b5f19220c120e39f5ec5d5fa0f4c967c [weak]
+   - MD5Sum:143008e6710c190b0d71916c00fa4388 [weak]
+  Release file created at: Thu, 22 Oct 2026 10:28:29 +0000
+Get:14 http://archive.ubuntu.com/ubuntu noble/main Translation-en [513 kB]
+Get:15 http://archive.ubuntu.com/ubuntu noble/universe amd64 Packages [15.0 MB]

@@ -4,3 +4,7 @@
 
 # Vendored third-party rules are kept byte-identical to their upstream (LF).
 rules/cpp/vendor/** text eol=lf
+
+# Keep the recorded deployment log digests stable across Windows/Linux checkouts.
+research/deliveries/deployment_20261022/*.txt text eol=lf
+research/deliveries/deployment_20261022/validation.json text eol=lf

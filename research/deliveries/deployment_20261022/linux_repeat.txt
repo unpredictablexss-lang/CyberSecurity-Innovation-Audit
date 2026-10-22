@@ -1,0 +1,40 @@
+Requirement already satisfied: tree-sitter<1,>=0.23 in ./.deploy/venv/lib/python3.12/site-packages (from -r requirements.txt (line 3)) (0.26.0)
+Requirement already satisfied: tree-sitter-c<1,>=0.23 in ./.deploy/venv/lib/python3.12/site-packages (from -r requirements.txt (line 4)) (0.24.2)
+Requirement already satisfied: tree-sitter-cpp<1,>=0.23 in ./.deploy/venv/lib/python3.12/site-packages (from -r requirements.txt (line 5)) (0.23.4)
+Requirement already satisfied: tree-sitter-javascript==0.25.0 in ./.deploy/venv/lib/python3.12/site-packages (from -r requirements.txt (line 6)) (0.25.0)
+Requirement already satisfied: tree-sitter-typescript==0.23.2 in ./.deploy/venv/lib/python3.12/site-packages (from -r requirements.txt (line 7)) (0.23.2)
+Requirement already satisfied: fastapi==0.143.0 in ./.deploy/venv/lib/python3.12/site-packages (from -r requirements-web.txt (line 2)) (0.143.0)
+Requirement already satisfied: uvicorn==0.54.0 in ./.deploy/venv/lib/python3.12/site-packages (from -r requirements-web.txt (line 3)) (0.54.0)
+Requirement already satisfied: httpx==0.28.1 in ./.deploy/venv/lib/python3.12/site-packages (from -r requirements-web.txt (line 4)) (0.28.1)
+Requirement already satisfied: starlette>=0.46.0 in ./.deploy/venv/lib/python3.12/site-packages (from fastapi==0.143.0->-r requirements-web.txt (line 2)) (1.9.0)
+Requirement already satisfied: pydantic>=2.9.0 in ./.deploy/venv/lib/python3.12/site-packages (from fastapi==0.143.0->-r requirements-web.txt (line 2)) (2.14.1)
+Requirement already satisfied: typing-extensions>=4.8.0 in ./.deploy/venv/lib/python3.12/site-packages (from fastapi==0.143.0->-r requirements-web.txt (line 2)) (4.16.0)
+Requirement already satisfied: typing-inspection>=0.4.2 in ./.deploy/venv/lib/python3.12/site-packages (from fastapi==0.143.0->-r requirements-web.txt (line 2)) (0.4.4)
+Requirement already satisfied: annotated-doc>=0.0.2 in ./.deploy/venv/lib/python3.12/site-packages (from fastapi==0.143.0->-r requirements-web.txt (line 2)) (0.0.5)
+Requirement already satisfied: opentelemetry-api>=1.44.0 in ./.deploy/venv/lib/python3.12/site-packages (from fastapi==0.143.0->-r requirements-web.txt (line 2)) (1.45.1)
+Requirement already satisfied: click>=7.0 in ./.deploy/venv/lib/python3.12/site-packages (from uvicorn==0.54.0->-r requirements-web.txt (line 3)) (8.5.0)
+Requirement already satisfied: h11>=0.8 in ./.deploy/venv/lib/python3.12/site-packages (from uvicorn==0.54.0->-r requirements-web.txt (line 3)) (0.16.0)
+Requirement already satisfied: anyio in ./.deploy/venv/lib/python3.12/site-packages (from httpx==0.28.1->-r requirements-web.txt (line 4)) (4.15.1)
+Requirement already satisfied: certifi in ./.deploy/venv/lib/python3.12/site-packages (from httpx==0.28.1->-r requirements-web.txt (line 4)) (2026.10.19)
+Requirement already satisfied: httpcore==1.* in ./.deploy/venv/lib/python3.12/site-packages (from httpx==0.28.1->-r requirements-web.txt (line 4)) (1.0.9)
+Requirement already satisfied: idna in ./.deploy/venv/lib/python3.12/site-packages (from httpx==0.28.1->-r requirements-web.txt (line 4)) (3.20)
+Requirement already satisfied: annotated-types>=0.6.0 in ./.deploy/venv/lib/python3.12/site-packages (from pydantic>=2.9.0->fastapi==0.143.0->-r requirements-web.txt (line 2)) (0.8.0)
+Requirement already satisfied: pydantic-core==2.50.1 in ./.deploy/venv/lib/python3.12/site-packages (from pydantic>=2.9.0->fastapi==0.143.0->-r requirements-web.txt (line 2)) (2.50.1)
+
+added 77 packages in 4s
+
+> ohscanner-workbench@0.1.0 build
+> tsc --noEmit && node build.mjs
+
+{
+  "status": "passed",
+  "run_dir": "/opt/ohscanner/.deploy/smoke-si_vv7kw",
+  "commit": "4e898f18b1e338cfd75664aeb5d483128d5802dc",
+  "worker_running": true,
+  "homepage": true,
+  "static_asset": true,
+  "job_status": "completed",
+  "candidates": 1,
+  "report_sha256": "a93b078323db511cfc6ef6c55af1c9e38f249014d6955f27c621a31b52e5f5c0",
+  "server_exit_code": 0
+}

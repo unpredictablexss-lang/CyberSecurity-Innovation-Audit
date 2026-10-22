@@ -1,0 +1,147 @@
+{
+  "upstream_main": "bd28c931a0663399e69fcd1951502ef607899bdb",
+  "implementation_commit": "1107a11312907b60d9500d0b9215011ab0b7095d",
+  "date": "2026-10-22",
+  "timezone": "Asia/Shanghai",
+  "platform": "Windows host + independent Ubuntu Base 24.04.3 amd64 WSL2 distributions",
+  "initial_missing": [
+    "python3",
+    "pip",
+    "node",
+    "npm",
+    "git",
+    "curl"
+  ],
+  "ubuntu_base_sha256": "6bc2cde3930ad088b3bb46fa45279e96d25bc3810f209850ecbe4722711874f9",
+  "results": {
+    "linux_clean": {
+      "log": "linux_clean.txt",
+      "log_sha256": "589d102c5d85849c854f5eb647069f4bacd117db4cc23ea97c2a95bc74642cd2",
+      "original_log_sha256": "ce9b789b6e53c6ea77999fe0ae69edee0b54dcdc635b337a7c5c943d27b19880",
+      "result": {
+        "status": "passed",
+        "run_dir": "/opt/ohscanner/.deploy/smoke-schepogl",
+        "commit": "ace8d586264c813a78cc57cdae46cc7dddddc369",
+        "worker_running": true,
+        "homepage": true,
+        "static_asset": true,
+        "job_status": "completed",
+        "candidates": 1,
+        "report_sha256": "a8046d64e16647aa9de0aef6c958358cba3163b301e7dd43ac2ba686d6270ee9",
+        "server_exit_code": 0
+      }
+    },
+    "linux_repeat": {
+      "log": "linux_repeat.txt",
+      "log_sha256": "539e1219c4c7b2560ec12f1fc91c3a51f44b9ad1d75678cddb5cd4b6a07ecef3",
+      "original_log_sha256": "539e1219c4c7b2560ec12f1fc91c3a51f44b9ad1d75678cddb5cd4b6a07ecef3",
+      "result": {
+        "status": "passed",
+        "run_dir": "/opt/ohscanner/.deploy/smoke-si_vv7kw",
+        "commit": "4e898f18b1e338cfd75664aeb5d483128d5802dc",
+        "worker_running": true,
+        "homepage": true,
+        "static_asset": true,
+        "job_status": "completed",
+        "candidates": 1,
+        "report_sha256": "a93b078323db511cfc6ef6c55af1c9e38f249014d6955f27c621a31b52e5f5c0",
+        "server_exit_code": 0
+      }
+    },
+    "windows_clean": {
+      "log": "windows_clean.txt",
+      "log_sha256": "6d263e8510a24768b6d0f4629ca29112f0ca907b27151db1c88d0b6ac695544a",
+      "original_log_sha256": "e9e4c7d1b722fceff6dce1daa26b00a25a0d59b4f6b4ed7496b1e52084f1acc0",
+      "result": {
+        "status": "passed",
+        "run_dir": "/root/.local/share/ohscanner/windows-e859d0fd044f9304/smoke-m6ksd8m8",
+        "commit": "5f02f58d24319ea96fde7cfd5645dd5d0aa9740b",
+        "worker_running": true,
+        "homepage": true,
+        "static_asset": true,
+        "job_status": "completed",
+        "candidates": 1,
+        "report_sha256": "3051b9ff189c0b433a3d807c73ec9a0b41ed05e3163758fc871dd6d16d88fff0",
+        "server_exit_code": 0
+      }
+    },
+    "windows_minimal_package": {
+      "log": "windows_minimal_package.txt",
+      "log_sha256": "ece988a651d06937a8d5dfe3c1c20236b110093fa2c9eae2074d78d816379978",
+      "original_log_sha256": "561ab24bc97989f17052d6abb19de018941e9e136188b7f832021915a828d3b9",
+      "result": {
+        "status": "passed",
+        "run_dir": "/root/.local/share/ohscanner/windows-f812a6618d3af299/smoke-w122l6_y",
+        "commit": "852f8c9b73269d468abdc495508e9427b0117f0f",
+        "worker_running": true,
+        "homepage": true,
+        "static_asset": true,
+        "job_status": "completed",
+        "candidates": 1,
+        "report_sha256": "76cccaf6a66f31e461469b7d2720ac80aa77985ab19dd5f1535ed82c4d7a0343",
+        "server_exit_code": 0
+      }
+    },
+    "linux_minimal_package_after_mirror_retry": {
+      "log": "linux_minimal_package_after_mirror_retry.txt",
+      "log_sha256": "07f3070b16b1a792dac6cf17b64073e87cd7a064dc6ff2e5458d8f129db97995",
+      "original_log_sha256": "470f75511d69e38c42f790a5ba660373e291a211d39853c1fe77ab64ccaa07b3",
+      "result": {
+        "status": "passed",
+        "run_dir": "/opt/ohscanner/.deploy/smoke-4zlxnld_",
+        "commit": "56d2d4271ead68fb8d915fce712c2360f7d8fa8f",
+        "worker_running": true,
+        "homepage": true,
+        "static_asset": true,
+        "job_status": "completed",
+        "candidates": 1,
+        "report_sha256": "80286974484eac9f1eeb50d30adb6bdfc8dd0ca48818d289d487a2f17cb7575c",
+        "server_exit_code": 0
+      }
+    },
+    "linux_minimal_mirror_failure": {
+      "log": "linux_minimal_mirror_failure.txt",
+      "log_sha256": "5bb1305f3a49e6791e1d958f34a389668e7475be66dffec0ed898a3aa0bbbfa9",
+      "original_log_sha256": "5bb1305f3a49e6791e1d958f34a389668e7475be66dffec0ed898a3aa0bbbfa9"
+    },
+    "linux_mirror_index_retry": {
+      "log": "linux_mirror_index_retry.txt",
+      "log_sha256": "6bd5934bcab49d613efb7b121ce13d5ea20501606c705e9a36146421de240def",
+      "original_log_sha256": "6bd5934bcab49d613efb7b121ce13d5ea20501606c705e9a36146421de240def"
+    },
+    "python_targeted": {
+      "log": "python_targeted.txt",
+      "log_sha256": "fc7c141687bcfe2956f929c71e57e4da85ad941a6183214bee080e11a75a2e74",
+      "original_log_sha256": "fc7c141687bcfe2956f929c71e57e4da85ad941a6183214bee080e11a75a2e74"
+    }
+  },
+  "checks": {
+    "frontend_tests": {
+      "total": 190,
+      "failed": 0
+    },
+    "typescript": "passed",
+    "production_build": "passed",
+    "python_targeted": {
+      "total": 72,
+      "failed": 0,
+      "skipped": 1
+    },
+    "zip_crc": "passed",
+    "forbidden_runtime_files": []
+  },
+  "limitations": [
+    "WSL kernel/network shared with host; not a full VM or target-code security sandbox",
+    "Virgin Windows WSL installation/reboot not_run",
+    "Bare metal Linux, Debian, arm64 not_run",
+    "No real LLM or Docker PoC verification",
+    "Extra minimal Linux attempt interrupted after upstream mirror mismatch; retried with authenticated indexes, no signature bypass"
+  ],
+  "package": {
+    "filename": "OHScanner-source-20261022.zip",
+    "bytes": 6908982,
+    "sha256": "01006026a3a923342160dd5e72b2df5c9ad2a2560d897cd1881f74dd89780e86",
+    "zip_members": 943
+  },
+  "log_encoding": "UTF-8, NUL removed, line endings/trailing whitespace normalized; original_log_sha256 binds the untouched workspace originals"
+}
