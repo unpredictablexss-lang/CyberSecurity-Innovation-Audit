@@ -204,7 +204,7 @@ export default function IntelligentAuditPolicySettings() {
         保存后新建的渐进式智能审计和普通 Agent 调查会自动继承这些额度，任务表单不再重复配置；创建任务时会冻结本策略，已有任务不受后续设置修改影响。渐进审计使用任务共享账本；普通 Agent 调查按单任务限制累计用量、请求、工具步骤和时长。标准审计的旧自动分诊 AI 初步分析与 AI 深入追查 已继承单轮输出上限，但还没有累计 Token、请求次数和总时长账本。美元金额只作估算参考，真正账单和账户额度由服务商决定；未进入自动调查范围的候选继续保留人工复核。
       </Paragraph>
       <Space>
-        <Button type="primary" onClick={() => void save()} loading={saving} disabled={saving || (isCustom && !changedLimitsValid)}>保存并应用到之后的新任务</Button>
+        <Button type="primary" onClick={() => void save()} loading={saving} disabled={saving || !Object.keys(limits).length || (isCustom && !changedLimitsValid)}>保存并应用到之后的新任务</Button>
         <Button onClick={() => void load()} disabled={saving}>重新读取</Button>
         {updatedAt && <Text type="secondary">最近保存：{new Date(updatedAt).toLocaleString()}</Text>}
       </Space>
