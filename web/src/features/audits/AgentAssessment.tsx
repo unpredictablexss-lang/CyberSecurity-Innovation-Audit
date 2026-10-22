@@ -5,7 +5,7 @@ import { go } from "../../components";
 import { evidenceLocation, evidenceSourceLocation } from "./agentEvidenceLocation.js";
 import { buildAgentOperationArtifactView } from "../cases/agentReportViewModel.js";
 import { buildEvidenceGraphView } from "../cases/evidenceGraphViewModel.js";
-import { structuredAnswerRejection } from "./agentValidationMessage.js";
+import { artifactFailureMessage, structuredAnswerRejection } from "./agentValidationMessage.js";
 import { agentToolIssues } from "./agentToolIssues.js";
 import ChineseNarrative from "../cases/ChineseNarrative";
 import { agentConfidenceLabel, agentScopeLabel, agentVerdictLabel, agentVerdictReasonLabel, productStatusLabel } from "../workbench/riskLabels.js";
@@ -157,7 +157,7 @@ export default function AgentAssessment({ result, reviews = [], onSubmit }: { re
   const sourceCitationPolicy = typeof result.citation_evidence_policy === "string";
   const modelAnswerRetained = result.model_answer_retained !== false;
   const rejectionDescription = structuredAnswerRejection(
-    result.structured_answer_validation, result.structured_answer_validation_error_code);
+    result.structured_answer_validation, result.structured_answer_validation_error_code, result.validation_diagnostic || result.skeptic_review?.validation_diagnostic);
   const obligationReviews = Array.isArray(assessment.obligation_reviews) ? assessment.obligation_reviews : [];
   const toolIssues = agentToolIssues(result.tool_calls);
   const rawEvidenceGraph = result.evidence_graph || {};
@@ -201,6 +201,7 @@ export default function AgentAssessment({ result, reviews = [], onSubmit }: { re
     <Alert type={verdict.status === "analysis_failed" ? "error" : ["unknown", "needs_more_evidence"].includes(verdict.status) ? "warning" : "info"} showIcon
       message={agentVerdictLabel(verdict.status) || verdictLabels[verdict.status] || "模型尚未形成有效分诊结果"}
       description={`复核范围：${agentScopeLabel(verdict.scope)}；模型置信度：${agentConfidenceLabel(verdict.confidence)}；产品状态：${productStatusLabel(verdict.product_status)}。${agentVerdictReasonLabel(verdict.reason)} 产品漏洞状态仍为 ${productStatusLabel(result.vulnerability_state || "candidate")}，已验证漏洞数 ${result.validated_vulnerability ?? 0}；产品可达性和影响仍需后续证据。`} />
+    {artifactFailureMessage(result.artifact_generation) && <Alert type="warning" showIcon message="报告 / PoC 草稿未通过校验" description={artifactFailureMessage(result.artifact_generation)} />}
     {rejectionDescription && <Alert type="error" showIcon message="模型结构化答复未通过服务端校验" description={rejectionDescription} />}
     {(toolIssues.length > 0 || (result.model_tool_calls_skipped || 0) > 0) && <Alert type="warning" showIcon message={`只读工具有 ${toolIssues.length + (result.model_tool_calls_skipped || 0)} 项未完成，相关证据可能不完整`} description={<List size="small" dataSource={toolIssues} renderItem={(item: any) => <List.Item><Text><Text strong>{toolNameLabels[item.tool] || "其他只读工具"}</Text> · {toolStatusLabels[item.status] || "待核对"} · 错误类型：{toolErrorLabels[item.errorCode] || "其他错误"}：<ChineseNarrative value={item.message} /></Text></List.Item>} footer={(result.model_tool_calls_skipped || 0) > 0 ? `另有 ${result.model_tool_calls_skipped} 个模型请求因工具调用预算耗尽而未执行；对应证据保持未决。` : null} />} />}
     <Alert type="warning" showIcon message="源码引句存在 ≠ 陈述已证实" description={sourceCitationPolicy ? `支持性主张和已判定义务只能引用固定提交中的源码摘录；扫描器义务描述、提交历史只作检索上下文，不能当作源码证明。服务端核对了 ${result.citation_integrity?.citation_count ?? "未知"} 条引句的来源类型和逐字存在性，但仍未验证引句是否在语义上支持模型推理。摘要由服务端从结构化分诊字段生成；模型原始摘要、未支持陈述、未知项和下一步建议仍是未核验文本。` : "这是较早版本的结果，未记录“只能引用源码证据”的策略版本；请人工确认每条引句确实来自固定提交源码，并逐项判断它是否支持模型陈述。摘要和其他模型自由文本均不能当作已验证结论。"} />

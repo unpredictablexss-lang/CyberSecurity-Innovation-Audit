@@ -2254,6 +2254,8 @@ class IndependentSkepticStageTests(unittest.TestCase):
         self.assertEqual(len(fake.payloads), 3)
         self.assertEqual(result["skeptic_review"]["status"], "incomplete")
         self.assertEqual(result["skeptic_review"]["reason_code"], "invalid_skeptic_response")
+        self.assertEqual(result["validation_diagnostic"]["code"], "skeptic_invalid_json")
+        self.assertEqual(result["validation_diagnostic"]["stage"], "skeptic")
         self.assertFalse(result["model_answer_retained"])
         self.assertEqual(result["structured_answer_validation"], "skeptic_incomplete")
         self.assertEqual(result["agent_assessment"]["assessment"], "unknown")
@@ -3064,6 +3066,33 @@ class AgentRouteTests(unittest.TestCase):
                 self.assertEqual(limited.status_code, 200, limited.text)
                 self.assertEqual(limited.json()["report_status"], "ready_with_limitations")
 
+
+    def test_scan_triage_exposes_historical_and_new_failure_diagnostics(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            app = create_app(Settings(root / "data", (root,)))
+            repo = app.state.store.add_repository("openharmony/sample", str(root))
+            job = app.state.store.create_job(repo["id"], {"commit": "c" * 40})
+            with app.state.store.connect() as db:
+                db.execute("UPDATE jobs SET status='completed', report_sha256=? WHERE id=?", ("b"*64, job["id"]))
+            ops = Operations(app.state.store)
+            diagnostics = {"stage":"skeptic", "code":"skeptic_invalid_review", "issues":[]}
+            for candidate, diagnostic in [("historical", None), ("new", diagnostics)]:
+                operation = ops.create("agent_investigation", {"job_id":job["id"],
+                    "report_sha256":"b"*64, "candidate_id":candidate, "mode":"tool_agent"})
+                with app.state.store.connect() as db:
+                    db.execute("UPDATE operations SET status='running' WHERE id=?", (operation["id"],))
+                ops.finish(operation["id"], result={"agent_assessment":{"assessment":"unknown"},
+                    "structured_answer_validation":"skeptic_incomplete",
+                    "structured_answer_validation_error_code":"invalid_skeptic_response",
+                    "validation_diagnostic":diagnostic}, state="completed_with_limitations")
+            with TestClient(app) as client, patch("src.workbench.operations_api._smart_operation_retry_available", return_value=False):
+                response = client.get("/api/v1/scans/" + job["id"] + "/triage")
+            self.assertEqual(response.status_code, 200, response.text)
+            rows = {row["candidate_id"]:row for row in response.json()["items"]}
+            self.assertEqual(rows["historical"]["failure_code"], "invalid_skeptic_response")
+            self.assertEqual(rows["historical"]["validation_status"], "skeptic_incomplete")
+            self.assertEqual(rows["new"]["validation_diagnostic"], diagnostics)
 
     def test_model_enqueue_is_rejected_when_only_human_runtime_obligations_remain(self):
         with tempfile.TemporaryDirectory() as directory:

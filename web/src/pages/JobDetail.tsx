@@ -1,3 +1,4 @@
+import { artifactFailureMessage, structuredAnswerRejection } from "../features/audits/agentValidationMessage.js";
 import { useCandidateScope } from "../features/audits/CandidateScope";
 import { candidateBatchLimit } from "../features/audits/model";
 import React, { useEffect, useMemo, useRef, useState } from "react";
@@ -690,8 +691,8 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
                 { title: "候选", dataIndex: "candidate_id", render: (value: string) => <Text code>{String(value || "").slice(0, 12)}</Text> },
                 { title: "方式", dataIndex: "mode", render: (value: string) => value === "single_shot" ? "AI 分析（单次）" : "AI 追查源码（只读）" },
                 { title: "状态", dataIndex: "status", render: (value: string) => <State value={value} /> },
-                { title: "模型研判", dataIndex: "assessment", render: (value: string) => value || "尚无结果（未知）" },
-                { title: "调查边界", render: (_: unknown, row: any) => row.investigation_limitations?.length ? <Text type="warning">{row.investigation_limitations.join("；")}</Text> : row.result_sha256 ? "未记录额外单次限制" : "尚无结果；候选保持未知" },
+                { title: "模型研判", dataIndex: "assessment", render: (value: string, row: any) => structuredAnswerRejection(row.validation_status, row.failure_code, row.validation_diagnostic) ? <Tag color="error">研判未完成</Tag> : value || "尚无结果（未知）" },
+                { title: "结果 / 失败原因", render: (_: unknown, row: any) => { const failure = structuredAnswerRejection(row.validation_status, row.failure_code, row.validation_diagnostic) || artifactFailureMessage(row.artifact_generation); return failure ? <Text type="danger">{failure}</Text> : row.investigation_limitations?.length ? <Text type="warning">{row.investigation_limitations.join("；")}</Text> : row.result_sha256 ? "调查已结束；未记录额外单次限制" : "尚无结果；候选保持未知"; } },
                 { title: "任务", dataIndex: "id", render: (value: string, row: any) => <Space><Button size="small" onClick={() => go("/tasks/operations/" + value)}>查看</Button>{row.retry_available && <Button size="small" loading={retryBusyId === value} onClick={() => void retryAgentOperation(value)}>重试</Button>}</Space> },
               ]} />}
           </> : auditMode === "static_only" ? <Alert type="info" showIcon
