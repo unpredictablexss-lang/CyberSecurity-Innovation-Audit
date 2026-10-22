@@ -52,7 +52,7 @@ import CandidateActions from "../features/workbench/CandidateActions";
 import ProgressiveQuickScreenAction from "../features/audits/ProgressiveQuickScreenAction";
 import ProgressiveQuickScreenBatchAction from "../features/audits/ProgressiveQuickScreenBatchAction";
 import { requestGate } from "../features/audits/model";
-import { disclosureReviewed, disclosureSelectionMatches } from "../features/audits/egressDisclosure.js";
+import { batchDisclosureReady, disclosureSelectionMatches } from "../features/audits/egressDisclosure.js";
 import { candidateConfidenceColor, candidateConfidenceLabel, candidateSeverityColor, candidateSeverityLabel, analysisStatusLabel, coverageSummaryLabel, groupingBasisLabel, groupingSymbolLabel, obligationDescriptionLabel, obligationKindLabel, obligationStatusLabel, reportLimitationLabel, riskReasonsLabel, scanStageLabel, taskReportStatusLabel, taskTriageStatusLabel, triageStateLabel } from "../features/workbench/riskLabels.js";
 const { Text, Title, Paragraph } = Typography;
 function budgetPhaseSummary(usage: any) {
@@ -141,7 +141,8 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
   const batchLimit = candidateBatchLimit(candidateScope.policy, batchMode);
   const batchPreviewCandidateIds = (batchPreview?.candidates || []).map((item: any) => String(item.candidate_id));
   const batchPreviewMatchesSelection = disclosureSelectionMatches(batchCandidateIds, batchPreviewCandidateIds);
-  const batchDisclosureReviewed = batchPreviewMatchesSelection && disclosureReviewed(batchDisclosureOpened, batchCandidateIds);
+  const batchDisclosureReviewed = batchDisclosureReady({ mode: batchMode,
+    openKeys: batchDisclosureOpened, selectedKeys: batchCandidateIds, previewKeys: batchPreviewCandidateIds });
   const [caseOpen, setCaseOpen] = useState(false);
   const [caseForm] = Form.useForm();
   const [reviewForm] = Form.useForm();
@@ -1401,7 +1402,8 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
                 const next = batchDisclosureOpened.filter((key) => key !== String(item.candidate_id));
                 if (opened.includes(String(item.candidate_id))) next.push(String(item.candidate_id));
                 setBatchDisclosureOpened(next);
-                if (!disclosureReviewed(next, batchCandidateIds)) setBatchSubmissionApproved(false);
+                if (!batchDisclosureReady({ mode: batchMode, openKeys: next,
+                  selectedKeys: batchCandidateIds, previewKeys: batchPreviewCandidateIds })) setBatchSubmissionApproved(false);
               }}
               items={[{ key: String(item.candidate_id), label: "展开该候选实际发送的完整上下文与工具范围", children: <>
                 <Text strong>发送给模型的完整初始上下文（JSON）</Text>
@@ -1414,7 +1416,9 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
           <Checkbox checked={batchSubmissionApproved}
             disabled={!batchDisclosureReviewed}
             onChange={(event) => setBatchSubmissionApproved(event.target.checked)}>
-            我已逐条展开并检查所有候选的完整外发上下文与工具范围，允许按此预览向模型发送
+            {batchMode === "single_shot"
+              ? "我同意将本批次所列候选的源码上下文发送给上述模型进行 AI 初判（详情可按需展开）"
+              : "我已逐条展开并检查所有候选的完整外发上下文与工具范围，允许按此预览向模型发送"}
           </Checkbox>
         </> : <Text>正在生成预览…</Text>}
       </Modal>
