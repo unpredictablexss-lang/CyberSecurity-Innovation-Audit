@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 import shutil
 import subprocess
+import sys
 import tempfile
 import threading
 import time
@@ -124,6 +125,10 @@ class RepositoryImportTests(unittest.TestCase):
             def poll(self):
                 return self.returncode
 
+            def wait(self, timeout=None):
+                self.thread.join(timeout=timeout)
+                return self.returncode
+
             def communicate(self):
                 self.thread.join(timeout=2)
                 self.stderr.close()
@@ -141,6 +146,68 @@ class RepositoryImportTests(unittest.TestCase):
         self.assertEqual(progress[0]["phase"], "receiving_objects")
         self.assertEqual(progress[0]["percent"], 42)
         self.assertEqual(progress[0]["received_bytes"], 1310720)
+
+    def test_real_clone_pipe_queues_scan_without_select(self):
+        from src.workbench.worker import Worker
+
+        self.make_spec_patch.stop()
+        fixture = Path(__file__).parent / "detectors/fixtures/cpp_lifetime/vulnerable_unserialized.cpp"
+        (self.source / "sample.cpp").write_text(fixture.read_text(), encoding="utf-8")
+        git(self.source, "add", ".")
+        git(self.source, "commit", "-qm", "scan and review fixture")
+        self.commit = git(self.source, "rev-parse", "HEAD")
+        self.spec.update(commit=self.commit, detector_ids=["ohscanner.cpp.lifetime"], memory_mb=1024)
+        original = subprocess.Popen
+
+        def local_clone(command, **kwargs):
+            if "clone" in command:
+                command = list(command)
+                command[command.index("--") + 1] = str(self.source)
+                kwargs["env"] = dict(kwargs["env"], GIT_ALLOW_PROTOCOL="file:https")
+            return original(command, **kwargs)
+
+        # Windows select() accepts sockets only. Make any selector use fail on
+        # Linux too, while exercising a real Git child and durable scan queue.
+        with patch("selectors.DefaultSelector", side_effect=OSError(10038, "not a socket")), patch.object(
+                repository_import.subprocess, "Popen", side_effect=local_clone):
+            result = self.run_import()
+        self.assertEqual(result["commit"], self.commit)
+        self.assertEqual(self.store.job(result["scan_job"]["id"])["status"], "queued")
+        Worker(self.settings).run(once=True)
+        job = self.store.job(result["scan_job"]["id"])
+        self.assertIn(job["status"], {"completed", "completed_with_limitations"}, job)
+        report = repository_import.service.read_report(self.settings, job)
+        candidate = repository_import.service.findings(report)[0]
+        with TestClient(create_app(self.settings)) as client:
+            review = client.post(
+                f"/api/v1/scans/{job['id']}/findings/{candidate['id']}/reviews",
+                headers=HEADERS, json={"status": "under_review", "reviewer": "regression",
+                                       "notes": "Imported fixed source", "expected_id": 0})
+        self.assertEqual(review.status_code, 201, review.text)
+
+    def test_silent_clone_timeout_and_callback_error_reap_child(self):
+        original = subprocess.Popen
+        for callback_error in (False, True):
+            children = []
+
+            def child(command, **kwargs):
+                script = ("import os,time; os.write(2, b'Receiving objects: 42% (42/100)\\r'); time.sleep(30)"
+                          if callback_error else "import time; time.sleep(30)")
+                process = original([sys.executable, "-c", script], **kwargs)
+                children.append(process)
+                return process
+
+            def progress(_event):
+                raise RuntimeError("progress persistence failed")
+
+            with self.subTest(callback_error=callback_error), patch.object(
+                    repository_import.subprocess, "Popen", side_effect=child):
+                with self.assertRaises(RuntimeError if callback_error else subprocess.TimeoutExpired):
+                    repository_import._fetch_to_stage(
+                        self.cache / "unused", "fixture", self.branch, self.commit,
+                        3 if callback_error else 0.2, progress=progress)
+            self.assertIsNotNone(children[0].poll())
+            self.assertTrue(children[0].stderr.closed)
 
     def test_success_downloads_fixed_commit_and_queues_static_job_without_checkout(self):
         with patch.object(repository_import, "_fetch_to_stage", side_effect=self.fake_fetch) as fetch:
@@ -270,6 +337,7 @@ class RepositoryImportTests(unittest.TestCase):
                 def poll(self): return self.returncode
                 def terminate(self): self.returncode = -15
                 def communicate(self, timeout=None): return b"", b""
+                def wait(self, timeout=None): return self.returncode
                 def kill(self): self.returncode = -9
             return RunningGit()
         with patch.object(repository_import.subprocess, "Popen", side_effect=start_limited), patch.object(

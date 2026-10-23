@@ -4,7 +4,6 @@ import hashlib
 import os
 from pathlib import Path
 import re
-import selectors
 import shutil
 import signal
 import subprocess
@@ -13,6 +12,7 @@ import uuid
 from urllib.parse import quote
 
 from . import service
+from .pipe_reader import PipeReader
 from .download_locations import ensure_download_dir
 from .source_catalog import approved_clone_url, validate_branch, validate_commit
 
@@ -124,13 +124,13 @@ def _terminate_clone(process):
     except (ProcessLookupError, PermissionError, AttributeError):
         process.terminate()
     try:
-        process.communicate(timeout=2)
+        process.wait(timeout=2)
     except subprocess.TimeoutExpired:
         try:
             os.killpg(process.pid, signal.SIGKILL)
         except (ProcessLookupError, PermissionError, AttributeError):
             process.kill()
-        process.communicate()
+        process.wait()
 
 
 _GIT_PROGRESS = re.compile(
@@ -183,10 +183,9 @@ def _fetch_to_stage(stage, slug, branch, commit, timeout, *, cache_root=None,
     last_phase = None
     stderr_tail = bytearray()
     pending = bytearray()
-    selector = selectors.DefaultSelector()
     stderr_pipe = getattr(process, "stderr", None)
-    if stderr_pipe is not None:
-        selector.register(stderr_pipe, selectors.EVENT_READ)
+    reader = PipeReader(stderr_pipe) if stderr_pipe is not None else None
+    pipe_open = reader is not None
 
     def consume_progress(chunk):
         nonlocal last_progress, last_percent, last_phase
@@ -216,44 +215,49 @@ def _fetch_to_stage(stage, slug, branch, commit, timeout, *, cache_root=None,
                           else "Git 正在处理仓库对象"})
                 last_phase, last_percent, last_progress = phase, percent, now
 
-    while True:
-        if selector.get_map():
-            for key, _ in selector.select(timeout=0.1):
-                try:
-                    chunk = os.read(key.fileobj.fileno(), 4096)
-                except OSError:
-                    chunk = b""
-                if chunk:
+    try:
+        while True:
+            if pipe_open:
+                chunk = reader.read()
+                if chunk is None:
+                    pipe_open = False
+                elif chunk:
                     consume_progress(chunk)
-                else:
-                    selector.unregister(key.fileobj)
-        elif process.poll() is None:
-            time.sleep(0.1)
+            elif process.poll() is None:
+                time.sleep(0.1)
 
-        if process.poll() is not None and not selector.get_map():
-            break
-        elapsed = time.monotonic() - start
-        if elapsed > timeout:
-            failure = subprocess.TimeoutExpired(command, timeout)
-            break
-        if cache_root is not None and elapsed - last_check >= 0.5:
-            last_check = elapsed
-            try:
-                stage_size = _directory_size(stage) if stage.exists() else 0
-                if cache_max_bytes and cache_used_before + stage_size > cache_max_bytes:
-                    failure = OSError("repository cache size quota would be exceeded during download")
-                    break
-                if shutil.disk_usage(cache_root).free < minimum_free_bytes:
-                    failure = OSError("repository cache minimum free-space reserve would be violated during download")
-                    break
-            except OSError as exc:
-                failure = exc
+            if process.poll() is not None and not pipe_open:
                 break
-    selector.close()
-    if failure is not None:
-        _terminate_clone(process)
-        raise failure
-    stderr = process.communicate()[1]
+            elapsed = time.monotonic() - start
+            if elapsed > timeout:
+                failure = subprocess.TimeoutExpired(command, timeout)
+                break
+            if cache_root is not None and elapsed - last_check >= 0.5:
+                last_check = elapsed
+                try:
+                    stage_size = _directory_size(stage) if stage.exists() else 0
+                    if cache_max_bytes and cache_used_before + stage_size > cache_max_bytes:
+                        failure = OSError("repository cache size quota would be exceeded during download")
+                        break
+                    if shutil.disk_usage(cache_root).free < minimum_free_bytes:
+                        failure = OSError("repository cache minimum free-space reserve would be violated during download")
+                        break
+                except OSError as exc:
+                    failure = exc
+                    break
+        if failure is not None:
+            raise failure
+    finally:
+        if process.poll() is None:
+            _terminate_clone(process)
+        if reader is not None:
+            reader.close()
+    # Only the reader owns stderr; communicate() must not race it.
+    if reader is not None:
+        process.wait()
+        stderr = b""
+    else:
+        stderr = process.communicate()[1]
     if pending:
         consume_progress(b"\n")
     if process.returncode:
