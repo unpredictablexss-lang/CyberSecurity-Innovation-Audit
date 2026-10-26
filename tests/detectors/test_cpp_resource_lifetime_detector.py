@@ -61,7 +61,7 @@ class ResourceLifetimeDetectorTests(unittest.TestCase):
 
     def test_identity_and_positive_controls(self) -> None:
         self.assertEqual(self.detector.detector_id, "ohscanner.cpp.resource_lifetime")
-        self.assertEqual(self.detector.version, "0.1.0")
+        self.assertEqual(self.detector.version, "0.3.0")
         double_free, _ = self.run_case("positive_double_free.cpp")
         alias_uaf, _ = self.run_case("positive_alias_uaf.cpp")
         self.assertEqual({item.rule_id for item in double_free.findings}, {"ohcpp-resource-lifetime-double-free-candidate-001"})
@@ -69,7 +69,7 @@ class ResourceLifetimeDetectorTests(unittest.TestCase):
         for run in (double_free, alias_uaf):
             for finding in run.findings:
                 self.assertEqual(finding.candidate_cwe, finding.consequence_cwe)
-                self.assertEqual(finding.rule_version, "0.1.0")
+                self.assertEqual(finding.rule_version, "0.3.0")
                 self.assertEqual(finding.rule_lineage_id, "A-RES-01:ohcpp-resource-lifetime-candidate")
 
     def test_fixed_unrelated_and_unknown_controls(self) -> None:

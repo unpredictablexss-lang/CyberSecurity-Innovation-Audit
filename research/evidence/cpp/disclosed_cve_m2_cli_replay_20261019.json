@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "detector": "ohscanner.known_disclosed_cves",
+  "detector_version": "0.16.0",
+  "execution": "production M2 CLI with explicit --detector selection",
+  "scope": [
+    "png.c",
+    "cJSON.c",
+    "cJSON_Utils.c"
+  ],
+  "vulnerable": {
+    "commit": "aaa265e33b497a26a638a2d79a68b3b8e0663e12",
+    "status": "completed_with_limitations",
+    "parse_status": {
+      "complete": 2,
+      "partial": 1
+    },
+    "detector_status": "blocked",
+    "findings": [
+      {
+        "file": "cJSON.c",
+        "line": 1,
+        "rule_id": "ohknowncve-cjson-cve-2026-67216",
+        "symbol": "CVE-2026-67216",
+        "cwe": "CWE-407"
+      },
+      {
+        "file": "cJSON_Utils.c",
+        "line": 1,
+        "rule_id": "ohknowncve-cjson-cve-2026-67215",
+        "symbol": "CVE-2026-67215",
+        "cwe": "CWE-674"
+      },
+      {
+        "file": "png.c",
+        "line": 1,
+        "rule_id": "ohknowncve-libpng-cve-2026-46675",
+        "symbol": "CVE-2026-46675",
+        "cwe": "CWE-416"
+      }
+    ],
+    "json_report": "research/evidence/cpp/disclosed_cve_m2_cli_replay_20261019/vulnerable.json",
+    "md_report": "research/evidence/cpp/disclosed_cve_m2_cli_replay_20261019/vulnerable.md"
+  },
+  "fixed": {
+    "commit": "fb1309f75f13affdf8ca5c93ab88ba87704e4e49",
+    "status": "completed",
+    "parse_status": {
+      "complete": 3
+    },
+    "detector_status": "completed",
+    "findings": [],
+    "json_report": "research/evidence/cpp/disclosed_cve_m2_cli_replay_20261019/fixed.json",
+    "md_report": "research/evidence/cpp/disclosed_cve_m2_cli_replay_20261019/fixed.md"
+  },
+  "assertions": {
+    "expected_candidates_observed": [
+      "CVE-2026-46675",
+      "CVE-2026-67215",
+      "CVE-2026-67216"
+    ],
+    "fixed_diagnostics": 0,
+    "product_vulnerability_confirmed": false,
+    "partial_parse_is_not_safe": true,
+    "core_profile_vulnerable_candidates": 3,
+    "core_profile_fixed_diagnostics": 0,
+    "with_null_dereference_fixed_control_candidates": 2,
+    "upstream_fixed_sources_used": false
+  },
+  "note": "Synthetic, source-shaped fixtures exercise registered production CLI wiring; source repo identity and product reachability are not asserted.",
+  "source_bundles": {
+    "vulnerable": {
+      "path": "research/evidence/cpp/disclosed_cve_m2_cli_replay_20261019/vulnerable-source.bundle",
+      "sha256": "4B5F0CBC8AA414484E7777A73816C18DE6B314671F94DFB8BCD29B4FADA5C283",
+      "commit": "aaa265e33b497a26a638a2d79a68b3b8e0663e12"
+    },
+    "fixed": {
+      "path": "research/evidence/cpp/disclosed_cve_m2_cli_replay_20261019/fixed-source.bundle",
+      "sha256": "4FEB3349D3A9DCDE551247227BE95848216485088D13B4A7F94E3C29A8322E0C",
+      "commit": "fb1309f75f13affdf8ca5c93ab88ba87704e4e49"
+    }
+  },
+  "profile_replays": {
+    "core_a_profile": {
+      "detectors": [
+        "ohscanner.cpp.bounds",
+        "ohscanner.cpp.integer_bounds",
+        "ohscanner.cpp.resource_lifetime",
+        "ohscanner.known_disclosed_cves"
+      ],
+      "vulnerable_report": "research/evidence/cpp/disclosed_cve_m2_cli_replay_20261019/a-profile-vulnerable.json",
+      "vulnerable_status": "completed_with_limitations; 3 CVE candidates; 2 complete + 1 partial C file",
+      "fixed_report": "research/evidence/cpp/disclosed_cve_m2_cli_replay_20261019/a-profile-fixed.json",
+      "fixed_status": "completed; 0 diagnostics",
+      "observed_candidates": [
+        "CVE-2026-46675",
+        "CVE-2026-67215",
+        "CVE-2026-67216"
+      ],
+      "control_kind": "Synthetic safe/fixed-shape controls only; not verified upstream fixed source for CVE-2026-67215 or CVE-2026-67216, and not an exact libpng fix build for CVE-2026-46675."
+    },
+    "with_null_dereference": {
+      "detectors": [
+        "ohscanner.cpp.bounds",
+        "ohscanner.cpp.integer_bounds",
+        "ohscanner.cpp.resource_lifetime",
+        "ohscanner.cpp.null_dereference",
+        "ohscanner.known_disclosed_cves"
+      ],
+      "vulnerable_report": "research/evidence/cpp/disclosed_cve_m2_cli_replay_20261019/profile-vulnerable.json",
+      "fixed_report": "research/evidence/cpp/disclosed_cve_m2_cli_replay_20261019/profile-fixed.json",
+      "observation": "Adds one generic null candidate to the vulnerable control and two generic null candidates to the fixed control; keep this detector scoped pending current DSoftBus vulnerable/fixed replay."
+    }
+  },
+  "control_kind": "Synthetic safe/fixed-shape controls only; not verified upstream fixed source for CVE-2026-67215 or CVE-2026-67216, and not an exact libpng fix build for CVE-2026-46675."
+}

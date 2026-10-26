@@ -1,0 +1,543 @@
+{
+  "repository": "fixture/cJSON",
+  "commit": "105eaddbf0d0110b07d16bdefc81ffc796e1444a",
+  "git_tree": "3c07134d5a05aa546b15739e32503a2ca192d258",
+  "snapshot_sha256": "c0482c314ead7b9131426e7aa74f1073f734341c2ac56fb9a2578efecb51b3e7",
+  "scope": [
+    {
+      "path": "third_party/cjson/cJSON.c",
+      "blob_oid": "152b2caa479c9f448001652913c980a6dafb82e0",
+      "sha256": "427c72055ae68467b451599f36da074351a5ca53f6e103cd30064e32cf0fffbb",
+      "parse_status": "partial"
+    },
+    {
+      "path": "third_party/cjson/cJSON_Utils.c",
+      "blob_oid": "8fa24f8e9bf452cf1ba49d1325c85423ce742c74",
+      "sha256": "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9",
+      "parse_status": "complete"
+    }
+  ],
+  "detector": "ohscanner.cpp.algorithmic_complexity",
+  "tool_runs": [
+    {
+      "schema_version": 2,
+      "run_id": "git-index:105eaddbf0d0:c0482c314ead:ohscanner.cpp.algorithmic_complexity",
+      "tool": "ohscanner.cpp.algorithmic_complexity",
+      "tool_version": "0.1.0",
+      "target_id": "current-component:fixture/cJSON",
+      "commit": "105eaddbf0d0110b07d16bdefc81ffc796e1444a",
+      "scope_files": 2,
+      "scope_loc": 4681,
+      "status": "blocked",
+      "elapsed_seconds": 0.036968300002627075,
+      "peak_memory_mb": null,
+      "diagnostics": [
+        {
+          "diagnostic_id": "ohscanner.cpp.algorithmic_complexity:de9b19fc4c256fc4",
+          "provider": "ohscanner.cpp.algorithmic_complexity",
+          "evidence_type": "syntax",
+          "file": "third_party/cjson/cJSON_Utils.c",
+          "line": 538,
+          "column": 13,
+          "rule_id": "ohcpp-algorithmic-recursive-lookup-candidate-001",
+          "severity": "unassessed",
+          "message": "Recursive traversal invokes a local loop-based lookup from a loop; multiplicative algorithmic cost is a candidate requiring recurrence and input-control review.",
+          "candidate_cwe": "CWE-674",
+          "confidence": "unassessed",
+          "symbol": "sort_list",
+          "source_sha256": "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9",
+          "consequence_impact": "availability_exhaustion",
+          "consequence_cwe": "CWE-674",
+          "finding_identity_id": null,
+          "occurrence_id": "ohocc:v1:3d9dab1e6e238b1fe567f2f689fa91db6b8843eebbe4347cf657a1c849808837",
+          "finding_identity": {
+            "schema_version": "ohscanner.finding-identity-record.v1",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:partial",
+                "missing:ast_fingerprint",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": "ohocc:v1:3d9dab1e6e238b1fe567f2f689fa91db6b8843eebbe4347cf657a1c849808837",
+              "status": "stable",
+              "basis": {
+                "schema": "ohscanner.finding-occurrence.v1",
+                "repository": "fixture/cJSON",
+                "legacy_diagnostic_id": "ohscanner.cpp.algorithmic_complexity:de9b19fc4c256fc4",
+                "detector_id": "ohscanner.cpp.algorithmic_complexity",
+                "detector_version": "0.1.0",
+                "rule_id": "ohcpp-algorithmic-recursive-lookup-candidate-001",
+                "rule_version": "0.1.0",
+                "file": "third_party/cjson/cJSON_Utils.c",
+                "line": 538,
+                "message": "Recursive traversal invokes a local loop-based lookup from a loop; multiplicative algorithmic cost is a candidate requiring recurrence and input-control review.",
+                "source_blob_oid": "8fa24f8e9bf452cf1ba49d1325c85423ce742c74",
+                "source_sha256": "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9",
+                "byte_start": 14823,
+                "byte_end": 14935
+              },
+              "unknown_reasons": []
+            },
+            "observation": {
+              "legacy_diagnostic_id": "ohscanner.cpp.algorithmic_complexity:de9b19fc4c256fc4",
+              "detector_id": "ohscanner.cpp.algorithmic_complexity",
+              "detector_version": "0.1.0",
+              "rule_id": "ohcpp-algorithmic-recursive-lookup-candidate-001",
+              "rule_version": "0.1.0",
+              "file": "third_party/cjson/cJSON_Utils.c",
+              "line": 538,
+              "message": "Recursive traversal invokes a local loop-based lookup from a loop; multiplicative algorithmic cost is a candidate requiring recurrence and input-control review.",
+              "source_blob_oid": "8fa24f8e9bf452cf1ba49d1325c85423ce742c74",
+              "source_sha256": "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9",
+              "byte_start": 14823,
+              "byte_end": 14935,
+              "identity_quality": "partial",
+              "rule_lineage_id": "A-D3-01:recursive-complexity-candidate",
+              "symbol_identity": null,
+              "ast_fingerprint": null
+            },
+            "source_binding": {
+              "repository": "fixture/cJSON",
+              "commit": "105eaddbf0d0110b07d16bdefc81ffc796e1444a",
+              "snapshot_sha256": "c0482c314ead7b9131426e7aa74f1073f734341c2ac56fb9a2578efecb51b3e7",
+              "profile_id": "light-ast",
+              "detector_id": "ohscanner.cpp.algorithmic_complexity",
+              "detector_version": "0.1.0",
+              "rule_id": "ohcpp-algorithmic-recursive-lookup-candidate-001",
+              "rule_version": "0.1.0",
+              "file": "third_party/cjson/cJSON_Utils.c",
+              "source_blob_oid": "8fa24f8e9bf452cf1ba49d1325c85423ce742c74",
+              "source_sha256": "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9",
+              "byte_start": 14823,
+              "byte_end": 14935,
+              "status": "bound",
+              "verification": "not_performed_by_identity_layer"
+            },
+            "historical_ids": [
+              "ohscanner.cpp.algorithmic_complexity:de9b19fc4c256fc4"
+            ],
+            "backfilled": false,
+            "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+          },
+          "source_archive_binding": null
+        },
+        {
+          "diagnostic_id": "ohscanner.cpp.algorithmic_complexity:035ba4e89e028443",
+          "provider": "ohscanner.cpp.algorithmic_complexity",
+          "evidence_type": "syntax",
+          "file": "third_party/cjson/cJSON_Utils.c",
+          "line": 662,
+          "column": 21,
+          "rule_id": "ohcpp-algorithmic-recursive-lookup-candidate-001",
+          "severity": "unassessed",
+          "message": "Recursive traversal invokes a local loop-based lookup from a loop; multiplicative algorithmic cost is a candidate requiring recurrence and input-control review.",
+          "candidate_cwe": "CWE-674",
+          "confidence": "unassessed",
+          "symbol": "compare_json",
+          "source_sha256": "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9",
+          "consequence_impact": "availability_exhaustion",
+          "consequence_cwe": "CWE-674",
+          "finding_identity_id": null,
+          "occurrence_id": "ohocc:v1:82ac4524f7a4e118a19622d0fb167a52579a509b2ce154d65ca383df10ca3f75",
+          "finding_identity": {
+            "schema_version": "ohscanner.finding-identity-record.v1",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:partial",
+                "missing:ast_fingerprint",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": "ohocc:v1:82ac4524f7a4e118a19622d0fb167a52579a509b2ce154d65ca383df10ca3f75",
+              "status": "stable",
+              "basis": {
+                "schema": "ohscanner.finding-occurrence.v1",
+                "repository": "fixture/cJSON",
+                "legacy_diagnostic_id": "ohscanner.cpp.algorithmic_complexity:035ba4e89e028443",
+                "detector_id": "ohscanner.cpp.algorithmic_complexity",
+                "detector_version": "0.1.0",
+                "rule_id": "ohcpp-algorithmic-recursive-lookup-candidate-001",
+                "rule_version": "0.1.0",
+                "file": "third_party/cjson/cJSON_Utils.c",
+                "line": 662,
+                "message": "Recursive traversal invokes a local loop-based lookup from a loop; multiplicative algorithmic cost is a candidate requiring recurrence and input-control review.",
+                "source_blob_oid": "8fa24f8e9bf452cf1ba49d1325c85423ce742c74",
+                "source_sha256": "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9",
+                "byte_start": 17990,
+                "byte_end": 18097
+              },
+              "unknown_reasons": []
+            },
+            "observation": {
+              "legacy_diagnostic_id": "ohscanner.cpp.algorithmic_complexity:035ba4e89e028443",
+              "detector_id": "ohscanner.cpp.algorithmic_complexity",
+              "detector_version": "0.1.0",
+              "rule_id": "ohcpp-algorithmic-recursive-lookup-candidate-001",
+              "rule_version": "0.1.0",
+              "file": "third_party/cjson/cJSON_Utils.c",
+              "line": 662,
+              "message": "Recursive traversal invokes a local loop-based lookup from a loop; multiplicative algorithmic cost is a candidate requiring recurrence and input-control review.",
+              "source_blob_oid": "8fa24f8e9bf452cf1ba49d1325c85423ce742c74",
+              "source_sha256": "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9",
+              "byte_start": 17990,
+              "byte_end": 18097,
+              "identity_quality": "partial",
+              "rule_lineage_id": "A-D3-01:recursive-complexity-candidate",
+              "symbol_identity": null,
+              "ast_fingerprint": null
+            },
+            "source_binding": {
+              "repository": "fixture/cJSON",
+              "commit": "105eaddbf0d0110b07d16bdefc81ffc796e1444a",
+              "snapshot_sha256": "c0482c314ead7b9131426e7aa74f1073f734341c2ac56fb9a2578efecb51b3e7",
+              "profile_id": "light-ast",
+              "detector_id": "ohscanner.cpp.algorithmic_complexity",
+              "detector_version": "0.1.0",
+              "rule_id": "ohcpp-algorithmic-recursive-lookup-candidate-001",
+              "rule_version": "0.1.0",
+              "file": "third_party/cjson/cJSON_Utils.c",
+              "source_blob_oid": "8fa24f8e9bf452cf1ba49d1325c85423ce742c74",
+              "source_sha256": "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9",
+              "byte_start": 17990,
+              "byte_end": 18097,
+              "status": "bound",
+              "verification": "not_performed_by_identity_layer"
+            },
+            "historical_ids": [
+              "ohscanner.cpp.algorithmic_complexity:035ba4e89e028443"
+            ],
+            "backfilled": false,
+            "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+          },
+          "source_archive_binding": null
+        },
+        {
+          "diagnostic_id": "ohscanner.cpp.algorithmic_complexity:40595a8a1ae78426",
+          "provider": "ohscanner.cpp.algorithmic_complexity",
+          "evidence_type": "syntax",
+          "file": "third_party/cjson/cJSON_Utils.c",
+          "line": 1238,
+          "column": 28,
+          "rule_id": "ohcpp-algorithmic-recursive-lookup-candidate-001",
+          "severity": "unassessed",
+          "message": "Recursive traversal invokes a local loop-based lookup from a loop; multiplicative algorithmic cost is a candidate requiring recurrence and input-control review.",
+          "candidate_cwe": "CWE-674",
+          "confidence": "unassessed",
+          "symbol": "create_patches",
+          "source_sha256": "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9",
+          "consequence_impact": "availability_exhaustion",
+          "consequence_cwe": "CWE-674",
+          "finding_identity_id": null,
+          "occurrence_id": "ohocc:v1:79c829aac51cb44406425ac4eb4882a143c04966e0330cfc4a4343c0d286dfb0",
+          "finding_identity": {
+            "schema_version": "ohscanner.finding-identity-record.v1",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:partial",
+                "missing:ast_fingerprint",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": "ohocc:v1:79c829aac51cb44406425ac4eb4882a143c04966e0330cfc4a4343c0d286dfb0",
+              "status": "stable",
+              "basis": {
+                "schema": "ohscanner.finding-occurrence.v1",
+                "repository": "fixture/cJSON",
+                "legacy_diagnostic_id": "ohscanner.cpp.algorithmic_complexity:40595a8a1ae78426",
+                "detector_id": "ohscanner.cpp.algorithmic_complexity",
+                "detector_version": "0.1.0",
+                "rule_id": "ohcpp-algorithmic-recursive-lookup-candidate-001",
+                "rule_version": "0.1.0",
+                "file": "third_party/cjson/cJSON_Utils.c",
+                "line": 1238,
+                "message": "Recursive traversal invokes a local loop-based lookup from a loop; multiplicative algorithmic cost is a candidate requiring recurrence and input-control review.",
+                "source_blob_oid": "8fa24f8e9bf452cf1ba49d1325c85423ce742c74",
+                "source_sha256": "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9",
+                "byte_start": 33757,
+                "byte_end": 33887
+              },
+              "unknown_reasons": []
+            },
+            "observation": {
+              "legacy_diagnostic_id": "ohscanner.cpp.algorithmic_complexity:40595a8a1ae78426",
+              "detector_id": "ohscanner.cpp.algorithmic_complexity",
+              "detector_version": "0.1.0",
+              "rule_id": "ohcpp-algorithmic-recursive-lookup-candidate-001",
+              "rule_version": "0.1.0",
+              "file": "third_party/cjson/cJSON_Utils.c",
+              "line": 1238,
+              "message": "Recursive traversal invokes a local loop-based lookup from a loop; multiplicative algorithmic cost is a candidate requiring recurrence and input-control review.",
+              "source_blob_oid": "8fa24f8e9bf452cf1ba49d1325c85423ce742c74",
+              "source_sha256": "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9",
+              "byte_start": 33757,
+              "byte_end": 33887,
+              "identity_quality": "partial",
+              "rule_lineage_id": "A-D3-01:recursive-complexity-candidate",
+              "symbol_identity": null,
+              "ast_fingerprint": null
+            },
+            "source_binding": {
+              "repository": "fixture/cJSON",
+              "commit": "105eaddbf0d0110b07d16bdefc81ffc796e1444a",
+              "snapshot_sha256": "c0482c314ead7b9131426e7aa74f1073f734341c2ac56fb9a2578efecb51b3e7",
+              "profile_id": "light-ast",
+              "detector_id": "ohscanner.cpp.algorithmic_complexity",
+              "detector_version": "0.1.0",
+              "rule_id": "ohcpp-algorithmic-recursive-lookup-candidate-001",
+              "rule_version": "0.1.0",
+              "file": "third_party/cjson/cJSON_Utils.c",
+              "source_blob_oid": "8fa24f8e9bf452cf1ba49d1325c85423ce742c74",
+              "source_sha256": "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9",
+              "byte_start": 33757,
+              "byte_end": 33887,
+              "status": "bound",
+              "verification": "not_performed_by_identity_layer"
+            },
+            "historical_ids": [
+              "ohscanner.cpp.algorithmic_complexity:40595a8a1ae78426"
+            ],
+            "backfilled": false,
+            "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+          },
+          "source_archive_binding": null
+        }
+      ],
+      "limitations": [
+        "Static lexical candidates do not establish complexity, attacker control, reachability, or exhaustion.",
+        "At least one source unit is partial or unparsed; absence of a finding is unknown.",
+        "M1 local Git objects pinned by full commit/tree; repository ownership is user-declared.",
+        "Execution is synchronous; hard timeout/memory isolation is not yet implemented.",
+        "Diagnostic does not establish vulnerability, reachability or security impact.",
+        "Coverage incomplete or unsupported; do not infer safety.",
+        "INCOMPLETE COVERAGE: inspected source includes partial/unknown analysis; no safety inference."
+      ],
+      "parsing": [
+        {
+          "file": "third_party/cjson/cJSON.c",
+          "status": "partial",
+          "issues": [
+            "{\"end_line\": 158, \"kind\": \"error\", \"start_line\": 158}",
+            "{\"end_line\": 159, \"kind\": \"error\", \"start_line\": 159}",
+            "{\"end_line\": 160, \"kind\": \"error\", \"start_line\": 160}",
+            "{\"end_line\": 165, \"kind\": \"error\", \"start_line\": 165}",
+            "{\"end_line\": 169, \"kind\": \"error\", \"start_line\": 169}",
+            "{\"end_line\": 173, \"kind\": \"error\", \"start_line\": 173}",
+            "{\"end_line\": 3152, \"kind\": \"missing\", \"start_line\": 3152}",
+            "{\"end_line\": 3169, \"kind\": \"missing\", \"start_line\": 3169}"
+          ],
+          "analysis_status": "partial",
+          "analysis_reason": "detector_model_incomplete"
+        },
+        {
+          "file": "third_party/cjson/cJSON_Utils.c",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "partial",
+          "analysis_reason": "detector_model_incomplete"
+        }
+      ]
+    }
+  ],
+  "coverage": {
+    "schema_version": 1,
+    "detectors": {
+      "ohscanner.cpp.algorithmic_complexity": {
+        "scope_mode": "per_file",
+        "status": "partial",
+        "applicable_files": 2,
+        "analyzed_files": [],
+        "partially_inspected_files": [
+          "third_party/cjson/cJSON.c",
+          "third_party/cjson/cJSON_Utils.c"
+        ],
+        "source_sha256": {
+          "third_party/cjson/cJSON.c": "427c72055ae68467b451599f36da074351a5ca53f6e103cd30064e32cf0fffbb",
+          "third_party/cjson/cJSON_Utils.c": "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9"
+        },
+        "unexamined": [
+          {
+            "file": "third_party/cjson/cJSON.c",
+            "parse_status": "partial",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          },
+          {
+            "file": "third_party/cjson/cJSON_Utils.c",
+            "parse_status": "complete",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          }
+        ],
+        "inspected_files": [
+          "third_party/cjson/cJSON.c",
+          "third_party/cjson/cJSON_Utils.c"
+        ],
+        "not_analyzed_files": [],
+        "coverage_counts": {
+          "complete": 0,
+          "partial": 2,
+          "not_analyzed": 0,
+          "failed": 0
+        },
+        "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+        "evidence_obligations": [
+          {
+            "diagnostic_id": "ohscanner.cpp.algorithmic_complexity:de9b19fc4c256fc4",
+            "file": "third_party/cjson/cJSON_Utils.c",
+            "source_sha256": "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9",
+            "analysis_status": "partial",
+            "source_binding": {
+              "repository": "fixture/cJSON",
+              "commit": "105eaddbf0d0110b07d16bdefc81ffc796e1444a",
+              "snapshot_sha256": "c0482c314ead7b9131426e7aa74f1073f734341c2ac56fb9a2578efecb51b3e7",
+              "profile_id": "light-ast",
+              "detector_id": "ohscanner.cpp.algorithmic_complexity",
+              "detector_version": "0.1.0",
+              "rule_id": "ohcpp-algorithmic-recursive-lookup-candidate-001",
+              "file": "third_party/cjson/cJSON_Utils.c",
+              "source_sha256": "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9"
+            },
+            "consequence_impact": "availability_exhaustion",
+            "consequence_cwe": "CWE-674",
+            "model_version": null,
+            "obligations": [
+              {
+                "kind": "algorithm_model",
+                "description": "Prove the input-size recurrence and establish that repeated lookup multiplies recursive traversal cost.",
+                "status": "unknown"
+              },
+              {
+                "kind": "recursive_depth_bound",
+                "description": "Resolve effective input and recursion-depth limits, including indirect guards.",
+                "status": "unknown"
+              },
+              {
+                "kind": "attacker_control",
+                "description": "Establish control over the compared or expanded data structure and trigger.",
+                "status": "missing"
+              },
+              {
+                "kind": "entry_and_build_context",
+                "description": "Verify the candidate is reachable in the affected product build and configuration.",
+                "status": "missing"
+              },
+              {
+                "kind": "availability_impact",
+                "description": "Reproduce bounded CPU, memory, or stack exhaustion and its process impact.",
+                "status": "missing"
+              }
+            ]
+          },
+          {
+            "diagnostic_id": "ohscanner.cpp.algorithmic_complexity:035ba4e89e028443",
+            "file": "third_party/cjson/cJSON_Utils.c",
+            "source_sha256": "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9",
+            "analysis_status": "partial",
+            "source_binding": {
+              "repository": "fixture/cJSON",
+              "commit": "105eaddbf0d0110b07d16bdefc81ffc796e1444a",
+              "snapshot_sha256": "c0482c314ead7b9131426e7aa74f1073f734341c2ac56fb9a2578efecb51b3e7",
+              "profile_id": "light-ast",
+              "detector_id": "ohscanner.cpp.algorithmic_complexity",
+              "detector_version": "0.1.0",
+              "rule_id": "ohcpp-algorithmic-recursive-lookup-candidate-001",
+              "file": "third_party/cjson/cJSON_Utils.c",
+              "source_sha256": "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9"
+            },
+            "consequence_impact": "availability_exhaustion",
+            "consequence_cwe": "CWE-674",
+            "model_version": null,
+            "obligations": [
+              {
+                "kind": "algorithm_model",
+                "description": "Prove the input-size recurrence and establish that repeated lookup multiplies recursive traversal cost.",
+                "status": "unknown"
+              },
+              {
+                "kind": "recursive_depth_bound",
+                "description": "Resolve effective input and recursion-depth limits, including indirect guards.",
+                "status": "unknown"
+              },
+              {
+                "kind": "attacker_control",
+                "description": "Establish control over the compared or expanded data structure and trigger.",
+                "status": "missing"
+              },
+              {
+                "kind": "entry_and_build_context",
+                "description": "Verify the candidate is reachable in the affected product build and configuration.",
+                "status": "missing"
+              },
+              {
+                "kind": "availability_impact",
+                "description": "Reproduce bounded CPU, memory, or stack exhaustion and its process impact.",
+                "status": "missing"
+              }
+            ]
+          },
+          {
+            "diagnostic_id": "ohscanner.cpp.algorithmic_complexity:40595a8a1ae78426",
+            "file": "third_party/cjson/cJSON_Utils.c",
+            "source_sha256": "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9",
+            "analysis_status": "partial",
+            "source_binding": {
+              "repository": "fixture/cJSON",
+              "commit": "105eaddbf0d0110b07d16bdefc81ffc796e1444a",
+              "snapshot_sha256": "c0482c314ead7b9131426e7aa74f1073f734341c2ac56fb9a2578efecb51b3e7",
+              "profile_id": "light-ast",
+              "detector_id": "ohscanner.cpp.algorithmic_complexity",
+              "detector_version": "0.1.0",
+              "rule_id": "ohcpp-algorithmic-recursive-lookup-candidate-001",
+              "file": "third_party/cjson/cJSON_Utils.c",
+              "source_sha256": "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9"
+            },
+            "consequence_impact": "availability_exhaustion",
+            "consequence_cwe": "CWE-674",
+            "model_version": null,
+            "obligations": [
+              {
+                "kind": "algorithm_model",
+                "description": "Prove the input-size recurrence and establish that repeated lookup multiplies recursive traversal cost.",
+                "status": "unknown"
+              },
+              {
+                "kind": "recursive_depth_bound",
+                "description": "Resolve effective input and recursion-depth limits, including indirect guards.",
+                "status": "unknown"
+              },
+              {
+                "kind": "attacker_control",
+                "description": "Establish control over the compared or expanded data structure and trigger.",
+                "status": "missing"
+              },
+              {
+                "kind": "entry_and_build_context",
+                "description": "Verify the candidate is reachable in the affected product build and configuration.",
+                "status": "missing"
+              },
+              {
+                "kind": "availability_impact",
+                "description": "Reproduce bounded CPU, memory, or stack exhaustion and its process impact.",
+                "status": "missing"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "interpretation": "Candidate evidence only. Local component snapshot; product linkage/build/attacker path remain unknown."
+}
