@@ -1,0 +1,17 @@
+{
+  "commit": "b02aadfc2d801ee30573fcb2d13490298e146fea",
+  "source_path": "dataBusiness/contacts/src/contacts_data_ability.cpp",
+  "source_sha256": "70bb1da2cb107649dd2bb39358aeb56983f613ee0bdd6216d805bbd39c8df383",
+  "source_blob_oid": "32c6a26a9a6c1f4ec3172f45bc3dbe4d3668abe6",
+  "function": "ContactsDataAbility::HandleContactPortrait",
+  "source_line_start": 767,
+  "source_line_end": 797,
+  "extracted_function_sha256": "a988128ed2b52c3aed3d6805dbfbd3f3cdf355e1eeb4c03776a85fcac54a9888",
+  "poc_only_fixed_guard": "Reject slash/backslash and dot/dot-dot components for PortraitFileName, contactId and rawContactId before path construction.",
+  "filesystem_root": "/tmp/ohscanner_contacts_demo_20261021/data/storage",
+  "limitations": [
+    "Harness compiles the pinned vulnerable function with lightweight local dependency stubs; it is not an OpenHarmony product build.",
+    "Fixed behavior is a PoC-only guard comparison because no trusted upstream fixed Contacts commit was found.",
+    "DataShare IPC caller and product permission boundary are not exercised; applicability and product impact remain unknown."
+  ]
+}
