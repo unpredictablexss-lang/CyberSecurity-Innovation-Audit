@@ -295,6 +295,24 @@ class WorkbenchTests(unittest.TestCase):
     def test_data06_source_candidate_and_fixed_retest_reach_finding_detail_api(self):
         ipc_repo = Path(os.environ.get("T74_IPC_GIT", ROOT / "tmp/t71-communication-ipc"))
         source_rel = Path("interfaces/innerkits/cj/src/message_sequence_impl.cpp")
+        required_objects = (
+            f"84d681288793785e8f39f71c824f211edaed8f1e:{source_rel.as_posix()}",
+            f"de3a68cc8b7d6f18017fd261060def0e38dce54a:{source_rel.as_posix()}",
+        )
+        missing_objects = [
+            object_id for object_id in required_objects
+            if subprocess.run(
+                ["git", "-C", str(ipc_repo), "cat-file", "-e", object_id],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                check=False,
+            ).returncode != 0
+        ]
+        if missing_objects:
+            self.skipTest(
+                "requires pinned communication_ipc Git objects in "
+                f"T74_IPC_GIT={ipc_repo}: " + ", ".join(missing_objects)
+            )
         target_repo = self.root / "targets" / "openharmony" / "communication_ipc"
         target_repo.mkdir(parents=True)
         git(target_repo, "init", "-q")
