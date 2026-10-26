@@ -1,0 +1,83 @@
+{
+  "assessment_id": "ark-runtime-detector-evaluation-20261018-v1",
+  "frozen_at": "2026-10-18 Asia/Shanghai",
+  "scanner_commit": "b011ea0cf732e5c07cb9d9fe0ab9ec451e87c5df",
+  "scanner_tree": "f4db05167c5cec007270c782c6bb97711e6414ae",
+  "detector_id": "ohscanner.ark.runtime.type_safety",
+  "detector_version": "0.6.2",
+  "rules": [
+    {
+      "id": "ark.runtime.typedarray-store-type-origin",
+      "version": "0.6.2"
+    },
+    {
+      "id": "ark.runtime.typedarray-allocation-exception-guard",
+      "version": "0.6.2"
+    }
+  ],
+  "model_digest": "662c74d79b75b2a111f7ec0eca4cb819a8b1f092ea3e9f7e6cff63621a3d8a1a",
+  "implementation_sha256": {
+    "model.py": "1c2fa93762f19a9ceb6f17999ba74c447203367d6cb107e130d846b81cd7404e",
+    "detector.py": "058a3ac01acc685d59e74c3057aa1ab0654e704fa7d1d6c9a2ffaeed354ec532",
+    "analysis.py": "4fd9f375725ca7039beb2fe428f176ebe360299ce1f9e105ab4235e80875853d",
+    "syntax.py": "c3616ad6404967927d1a4a98c46257f8df19c3c36990efbae82c859f5108bcf9",
+    "runtime_ir.py": "f3c2c85f086e223cb5897150f7d1e6890bf568599a287c1a6fe6e5411c2a39ca",
+    "type_origin.py": "5ff1ffacbf80f175b75979e6a49cdba4ba70e34bc4736e5d4c48402fb67a3073",
+    "exception_guard.py": "3bb959a1164d43b44bbe0e20a79193d55907278ea83da8b85490bbf2c409437c"
+  },
+  "parser_profile": {
+    "implementation": "tree-sitter C++",
+    "tree_sitter": "0.26.0 (prior audit-pinned evaluation runtime)",
+    "tree_sitter_cpp": "0.23.4 (prior audit-pinned evaluation runtime)",
+    "parser_implementation_sha256": "c3616ad6404967927d1a4a98c46257f8df19c3c36990efbae82c859f5108bcf9"
+  },
+  "build_profile": "assumed:NDEBUG=1;ENABLE_ASM_ASSERT=0;not_product_build_verified",
+  "applicability": "Per rule, exact declared source repository/commit/path/Git blob/source SHA binding plus supported owner/signature/sink and sufficient parser/dependency context; unknown for unbound revisions or unresolved build/dependency context. No generalization to unseen source identity demonstrated.",
+  "scoring_protocol": "Root-cause observations deduplicated by (sample identity, adjudicated root cause); eligible only after applicable execution, complete dual independent labels, third-party adjudication, source identity verification, frozen family/exclusion ledgers, and protocol unchanged since pre-result freeze.",
+  "legacy_nine_rows": "excluded; all 9 not_applicable and unlabeled; never repurpose as performance data",
+  "sample_count_eligible": 0,
+  "reviewer_packet": "not created",
+  "prediction_escrow": "not created",
+  "metrics": "not_estimable",
+  "type_origin_bindings": [
+    {
+      "commit": "830e85b40240677039719fcbf14f721ad3b19050",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "git_blob": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+      "source_sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422"
+    },
+    {
+      "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "git_blob": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e"
+    },
+    {
+      "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "git_blob": "68fb3b0adc4f9062889a861be51b7be90362e37a",
+      "source_sha256": "76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c"
+    }
+  ],
+  "exception_guard_bindings": [
+    {
+      "commit": "c758818dbfd0b146a908d43d21f6ca1706c33783",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "git_blob": "857ad416bc102fcd5d462e9702d2ba7c51f29b6d",
+      "source_sha256": "984e45f2b6ea652c412437be03dda4189549afe4cf77c95713cf0d0c5d361db9"
+    },
+    {
+      "commit": "81ca57487d04ea30cd11c271e86494a4e130f43e",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "git_blob": "3b9de9d915d767d7a67316145451da2446162884",
+      "source_sha256": "4684a1587519e7d141f181b595317db489991a3908e1f1b4ef67513c25d9efd0"
+    },
+    {
+      "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "git_blob": "68fb3b0adc4f9062889a861be51b7be90362e37a",
+      "source_sha256": "76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c"
+    }
+  ],
+  "source_identity_recheck_status": "Frozen binding values reproduced from RuntimeTypeModel; no candidate-source identities were eligible to recheck in this assessment."
+}
