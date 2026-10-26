@@ -1,0 +1,713 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-10-18",
+  "repository": "openharmony/arkcompiler_ets_runtime",
+  "target_commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+  "target_tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+  "model_version": "0.6.2",
+  "model_sha256": "662c74d79b75b2a111f7ec0eca4cb819a8b1f092ea3e9f7e6cff63621a3d8a1a",
+  "profile": {
+    "requested_profile": "C1 audited build/preprocessing profile",
+    "profile_artifact": "build_profile.json",
+    "profile_artifact_sha256": "6aea7ff0d37a726cf6d9e369316dac88f7645dd51de5189cf9aaac8c51525a98",
+    "profile_status": "blocked",
+    "profile_manifest_status": "blocked",
+    "summary": "The reviewed C1 build_profile.json manifest is explicitly blocked: exact compile database, GN args, Ninja graph, target command, product settings and successful preprocessing are unavailable. C3 light-ast is not a build profile.",
+    "comparison_performed": {
+      "preprocessed_output": false,
+      "declarations": "source-level declaration/call context only; profile-selected declarations unavailable",
+      "macros": "unavailable; no exact compile command or macro inventory",
+      "types": "source-level context only; profile-resolved types unavailable",
+      "call_sites": "source-level contexts where recorded; profile-resolved call graph unavailable",
+      "control_flow": "source-level function contexts where recorded; profile-resolved CFG unavailable",
+      "impact_summary": "all 18 changed dependencies remain unknown because complete profile-bound semantic context is unavailable"
+    }
+  },
+  "classification_legend": {
+    "changed": "Evidence establishes that the dependency changes a frozen rule semantic premise under the exact profile.",
+    "unaffected": "Complete exact-profile context establishes that the frozen rule semantic premise is unchanged.",
+    "unknown": "The required exact-profile context or complete semantic chain is unavailable. Source identity drift alone is not a semantic verdict."
+  },
+  "rule_scope": {
+    "frozen_detector": "ohscanner.ark.runtime.type_safety",
+    "frozen_rule_paths": [
+      "type-origin: StoreTypedArrayElement/StoreTypedArrayElementFromStoreIC -> TypedArray type identity and exemplar/token propagation -> same-type creator guards",
+      "allocation/exception: NewTypedArray or NewTypedArraySameType -> allocation result/HClass and exception state -> guarded LoadHClass/use",
+      "caller/sink: Filter and reviewed builtin/runtime wrappers -> typed-array element write/read and caller argument flow"
+    ],
+    "rule_model_modified": false,
+    "tuning_performed": false
+  },
+  "dependency_count": 19,
+  "changed_source_count": 18,
+  "unaffected_count": 1,
+  "unknown_count": 18,
+  "dependencies": [
+    {
+      "index": 1,
+      "kind": "effect_summary",
+      "old": {
+        "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+        "tree": "82af11ced4297818410ccf61906b703d25b69165",
+        "path": "ecmascript/compiler/stub_builder.h",
+        "blob_oid": "b784eb0812c27f11c1bfd8673cda4bf884a6a9cd",
+        "source_sha256": "37757e96a98a20c3598af837d27003912d0f41a6a633e5ec99c04078ef2c8c1d",
+        "bytes": 65907
+      },
+      "new": {
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "path": "ecmascript/compiler/stub_builder.h",
+        "blob_oid": "9e2fbd3ede1da91133dcd936018285e597944515",
+        "source_sha256": "a11ca83c0a8bbe16ea4ce9dabb2ab3aca2ee9c680a95433371e79494e2a92cb0",
+        "bytes": 93596
+      },
+      "expected_blob_oids_match": true,
+      "source_sha256_changed": true,
+      "classification": "unknown",
+      "change_dimensions": {
+        "source_identity": "changed",
+        "syntax_or_declaration": "syntax/API surface; semantic control-flow effect",
+        "semantic_boundary": "IR loop/break/continue construction",
+        "frozen_rule_path": "loop dominance and sink reachability",
+        "build_condition": "unknown: exact reviewed C1 build/preprocessing profile, macro set and preprocessed output unavailable"
+      },
+      "difference_and_impact": "IR wrapper API and control-flow builder may alter the frozen type-origin/exception path; exact effect/CFG cannot be resolved without the product build profile.",
+      "evidence_ref": "dependency-review-20261018.md table row 1",
+      "semantic_limit": "Exact C1 build/preprocessing profile and complete compile-resolved declarations/macros/types/call graph/CFG are unavailable; source drift cannot establish semantic impact or equivalence."
+    },
+    {
+      "index": 2,
+      "kind": "effect_summary",
+      "old": {
+        "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+        "tree": "82af11ced4297818410ccf61906b703d25b69165",
+        "path": "ecmascript/compiler/stub_builder-inl.h",
+        "blob_oid": "8658e6ee729c3b171639772ad3a1ada06442abd0",
+        "source_sha256": "a41ac4bc896fc56c93176b80590620976f0fedd8105bff61f30d9548b0da2520",
+        "bytes": 140690
+      },
+      "new": {
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "path": "ecmascript/compiler/stub_builder-inl.h",
+        "blob_oid": "c0521ab7a55cd63850736c2db8a290115965373c",
+        "source_sha256": "e3e840771be228a2c5e6c15576ecdf3f06175622b5840525520345f1d22d76be",
+        "bytes": 176499
+      },
+      "expected_blob_oids_match": true,
+      "source_sha256_changed": true,
+      "classification": "unknown",
+      "change_dimensions": {
+        "source_identity": "changed",
+        "syntax_or_declaration": "wrapper implementation and declarations",
+        "semantic_boundary": "Alloca/Return/Bind/CallRuntime/CallStub and typed predicates",
+        "frozen_rule_path": "creator/effect summaries and value identity",
+        "build_condition": "unknown: exact reviewed C1 build/preprocessing profile, macro set and preprocessed output unavailable"
+      },
+      "difference_and_impact": "same-named wrappers do not establish equal purity, aliasing, or exception effects; preprocessor-selected declarations are unavailable.",
+      "evidence_ref": "dependency-review-20261018.md table row 2",
+      "semantic_limit": "Exact C1 build/preprocessing profile and complete compile-resolved declarations/macros/types/call graph/CFG are unavailable; source drift cannot establish semantic impact or equivalence."
+    },
+    {
+      "index": 3,
+      "kind": "effect_summary",
+      "old": {
+        "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+        "tree": "82af11ced4297818410ccf61906b703d25b69165",
+        "path": "ecmascript/compiler/stub_builder.cpp",
+        "blob_oid": "8aae4bfa151e8b8dbd58d03a5cd881f3315151c2",
+        "source_sha256": "6a58a43a3bc1dd018acb57bf54b8c85bda5bbf197eedf7f4fd41dd63941799b8",
+        "bytes": 436814
+      },
+      "new": {
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "path": "ecmascript/compiler/stub_builder.cpp",
+        "blob_oid": "c630a6200215705843d11c0dd86c565709e8c6c4",
+        "source_sha256": "978f507daa99982b115f2db4e63ce629c653f011b4b998ac9e20255ab786b25a",
+        "bytes": 542236
+      },
+      "expected_blob_oids_match": true,
+      "source_sha256_changed": true,
+      "classification": "unknown",
+      "change_dimensions": {
+        "source_identity": "changed",
+        "syntax_or_declaration": "control-flow and generated graph semantics",
+        "semantic_boundary": "Jump/Branch/LoopBegin/CheckSuspend/LoopEnd",
+        "frozen_rule_path": "exception path, dominance, and sink reachability",
+        "build_condition": "unknown: exact reviewed C1 build/preprocessing profile, macro set and preprocessed output unavailable"
+      },
+      "difference_and_impact": "builder control-flow methods changed; compiled graph and macro-selected implementation are unavailable.",
+      "evidence_ref": "dependency-review-20261018.md table row 3",
+      "semantic_limit": "Exact C1 build/preprocessing profile and complete compile-resolved declarations/macros/types/call graph/CFG are unavailable; source drift cannot establish semantic impact or equivalence."
+    },
+    {
+      "index": 4,
+      "kind": "effect_summary",
+      "old": {
+        "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+        "tree": "82af11ced4297818410ccf61906b703d25b69165",
+        "path": "ecmascript/compiler/hcr_circuit_builder.h",
+        "blob_oid": "176dd0a5ee320f814049c2b671119515c746380d",
+        "source_sha256": "c43c0a5de7474f763ca1c37e2276e5129e911324c31993c3043d5441f1758c51",
+        "bytes": 16622
+      },
+      "new": {
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "path": "ecmascript/compiler/hcr_circuit_builder.h",
+        "blob_oid": "e66c414a7a739284b474c234e6f90bae0368cd11",
+        "source_sha256": "380940bddd7790a8c65e5297ed0646ff2dd5301b2a1197fa78b3766ab8653497",
+        "bytes": 21419
+      },
+      "expected_blob_oids_match": true,
+      "source_sha256_changed": true,
+      "classification": "unknown",
+      "change_dimensions": {
+        "source_identity": "changed",
+        "syntax_or_declaration": "type predicate implementation",
+        "semantic_boundary": "CircuitBuilder::IsSpecial and IsJSHClass",
+        "frozen_rule_path": "HClass/type identity guard",
+        "build_condition": "unknown: exact reviewed C1 build/preprocessing profile, macro set and preprocessed output unavailable"
+      },
+      "difference_and_impact": "predicate inputs and generated IR differ or move in the source context; build-resolved tagged-value semantics are not available.",
+      "evidence_ref": "dependency-review-20261018.md table row 4",
+      "semantic_limit": "Exact C1 build/preprocessing profile and complete compile-resolved declarations/macros/types/call graph/CFG are unavailable; source drift cannot establish semantic impact or equivalence."
+    },
+    {
+      "index": 5,
+      "kind": "effect_summary",
+      "old": {
+        "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+        "tree": "82af11ced4297818410ccf61906b703d25b69165",
+        "path": "ecmascript/compiler/mcr_circuit_builder.h",
+        "blob_oid": "631911dec663addd62533d6a6808ffe699a6f884",
+        "source_sha256": "a92932e25ab94f020403bdfd30a5848076bcd444e587461b61d3630805de5ba9",
+        "bytes": 26077
+      },
+      "new": {
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "path": "ecmascript/compiler/mcr_circuit_builder.h",
+        "blob_oid": "297a46c06349c0ed7e881ee4475291a41361f743",
+        "source_sha256": "15d10575db365d6f938b1af4832f1afc65ea7bedb52f5685f4e1c411a500ebe0",
+        "bytes": 36875
+      },
+      "expected_blob_oids_match": true,
+      "source_sha256_changed": true,
+      "classification": "unknown",
+      "change_dimensions": {
+        "source_identity": "changed",
+        "syntax_or_declaration": "type predicate implementation",
+        "semantic_boundary": "CircuitBuilder::TaggedObjectIsTypedArray and related tagged predicates",
+        "frozen_rule_path": "TypedArray identity and same-type creator guard",
+        "build_condition": "unknown: exact reviewed C1 build/preprocessing profile, macro set and preprocessed output unavailable"
+      },
+      "difference_and_impact": "type classification directly feeds the frozen identity premise; exact value representation and compile conditions are unresolved.",
+      "evidence_ref": "dependency-review-20261018.md table row 5",
+      "semantic_limit": "Exact C1 build/preprocessing profile and complete compile-resolved declarations/macros/types/call graph/CFG are unavailable; source drift cannot establish semantic impact or equivalence."
+    },
+    {
+      "index": 6,
+      "kind": "effect_summary",
+      "old": {
+        "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+        "tree": "82af11ced4297818410ccf61906b703d25b69165",
+        "path": "ecmascript/compiler/lcr_circuit_builder.cpp",
+        "blob_oid": "af4d27bcd46ea0a4a2980a805dd7de77970ffb56",
+        "source_sha256": "838a127ac98866a44f73ff71b574820b7175b8424a0fbb1fda0dfb3cedfd1739",
+        "bytes": 12359
+      },
+      "new": {
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "path": "ecmascript/compiler/lcr_circuit_builder.cpp",
+        "blob_oid": "a6df4cba87c9a49f09a292648e7ea7d7cad1b24c",
+        "source_sha256": "4575cf4b84cef1046cf617d5328bd1c2c61b5a29f4550b4cbfba5b8ba4d289db",
+        "bytes": 17240
+      },
+      "expected_blob_oids_match": true,
+      "source_sha256_changed": true,
+      "classification": "unknown",
+      "change_dimensions": {
+        "source_identity": "changed",
+        "syntax_or_declaration": "IR wrapper/allocation/load-store implementation",
+        "semantic_boundary": "ReadSp/Alloca/StoreWithoutBarrier/Load",
+        "frozen_rule_path": "creator result, type reads, and value flow",
+        "build_condition": "unknown: exact reviewed C1 build/preprocessing profile, macro set and preprocessed output unavailable"
+      },
+      "difference_and_impact": "allocation and memory operation wrappers changed; no preprocessed call path or build-resolved effect summary is available.",
+      "evidence_ref": "dependency-review-20261018.md table row 6",
+      "semantic_limit": "Exact C1 build/preprocessing profile and complete compile-resolved declarations/macros/types/call graph/CFG are unavailable; source drift cannot establish semantic impact or equivalence."
+    },
+    {
+      "index": 7,
+      "kind": "effect_summary",
+      "old": {
+        "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+        "tree": "82af11ced4297818410ccf61906b703d25b69165",
+        "path": "ecmascript/compiler/circuit_builder.cpp",
+        "blob_oid": "b4bf452cac6bdeb820b78334be98cb3dc11330cb",
+        "source_sha256": "beb2668526a760d30c2fe8ae181a1cd5544a45d4b6bf888d92f96fb10452077c",
+        "bytes": 59182
+      },
+      "new": {
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "path": "ecmascript/compiler/circuit_builder.cpp",
+        "blob_oid": "225f09385632bfc2a6ff20bbdf2bfd8694fcffb6",
+        "source_sha256": "33fac8872f897163ec8261674cad91e8722609e005732a30d675628145974a29",
+        "bytes": 73531
+      },
+      "expected_blob_oids_match": true,
+      "source_sha256_changed": true,
+      "classification": "unknown",
+      "change_dimensions": {
+        "source_identity": "changed",
+        "syntax_or_declaration": "type and memory wrapper implementation",
+        "semantic_boundary": "Arguments/IsJsCOWArray/GetObjectType/StoreHClass/HasConstructorByHClass",
+        "frozen_rule_path": "HClass identity, creator and constructor guard",
+        "build_condition": "unknown: exact reviewed C1 build/preprocessing profile, macro set and preprocessed output unavailable"
+      },
+      "difference_and_impact": "object-type and HClass operations changed; their generated graph and caller conditions cannot be closed.",
+      "evidence_ref": "dependency-review-20261018.md table row 7",
+      "semantic_limit": "Exact C1 build/preprocessing profile and complete compile-resolved declarations/macros/types/call graph/CFG are unavailable; source drift cannot establish semantic impact or equivalence."
+    },
+    {
+      "index": 8,
+      "kind": "effect_summary",
+      "old": {
+        "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+        "tree": "82af11ced4297818410ccf61906b703d25b69165",
+        "path": "ecmascript/compiler/new_object_stub_builder.h",
+        "blob_oid": "f411d72cbca7915e56b9d851beeb57b788e438ac",
+        "source_sha256": "4b2d3586c0df13bdc25a2b029cc6a445c6f6bc1b95349968ca2b221df6779bb4",
+        "bytes": 10540
+      },
+      "new": {
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "path": "ecmascript/compiler/new_object_stub_builder.h",
+        "blob_oid": "ecdf871b20e884e013ce0f26877ef404e4950cb0",
+        "source_sha256": "d84a72bb1a252fb9ea2b8ff01e702c3a0c952681e211d8f1a850f1880217778b",
+        "bytes": 12540
+      },
+      "expected_blob_oids_match": true,
+      "source_sha256_changed": true,
+      "classification": "unknown",
+      "change_dimensions": {
+        "source_identity": "changed",
+        "syntax_or_declaration": "declaration/overload surface",
+        "semantic_boundary": "NewTypedArray/NewTypedArraySameType allocation declarations",
+        "frozen_rule_path": "creator arity, return object identity, allocation exception state",
+        "build_condition": "unknown: exact reviewed C1 build/preprocessing profile, macro set and preprocessed output unavailable"
+      },
+      "difference_and_impact": "creator signatures/declarations changed; without full definition and build-resolved call sites, semantic relation is unknown.",
+      "evidence_ref": "dependency-review-20261018.md table row 8",
+      "semantic_limit": "Exact C1 build/preprocessing profile and complete compile-resolved declarations/macros/types/call graph/CFG are unavailable; source drift cannot establish semantic impact or equivalence."
+    },
+    {
+      "index": 9,
+      "kind": "effect_summary",
+      "old": {
+        "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+        "tree": "82af11ced4297818410ccf61906b703d25b69165",
+        "path": "ecmascript/compiler/builtins/builtins_stubs.cpp",
+        "blob_oid": "715c5d65164369bc93a82aa4a6cc1d19b7970143",
+        "source_sha256": "64263f8d75dae7f7f924d9e34fb7a41e2180ae4e6f73e16f1c139e79987e4e76",
+        "bytes": 33980
+      },
+      "new": {
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "path": "ecmascript/compiler/builtins/builtins_stubs.cpp",
+        "blob_oid": "f9c026f6b732cf090aca9df620c4d79bf7597f3b",
+        "source_sha256": "58f8c8b2183735dd41ef96ceb47d9cd7de0e9e13b76b4a4338f48493d9502e82",
+        "bytes": 35101
+      },
+      "expected_blob_oids_match": true,
+      "source_sha256_changed": true,
+      "classification": "unknown",
+      "change_dimensions": {
+        "source_identity": "changed",
+        "syntax_or_declaration": "caller/wrapper path",
+        "semantic_boundary": "GetCallArg2/ArrayConstructor/MapConstructor builtin wrappers",
+        "frozen_rule_path": "caller argument flow into creator and sink",
+        "build_condition": "unknown: exact reviewed C1 build/preprocessing profile, macro set and preprocessed output unavailable"
+      },
+      "difference_and_impact": "caller wrappers changed; no complete call graph establishes whether the modeled TypedArray path is preserved.",
+      "evidence_ref": "dependency-review-20261018.md table row 9",
+      "semantic_limit": "Exact C1 build/preprocessing profile and complete compile-resolved declarations/macros/types/call graph/CFG are unavailable; source drift cannot establish semantic impact or equivalence."
+    },
+    {
+      "index": 10,
+      "kind": "effect_summary",
+      "old": {
+        "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+        "tree": "82af11ced4297818410ccf61906b703d25b69165",
+        "path": "ecmascript/compiler/builtins/builtins_array_stub_builder.h",
+        "blob_oid": "88e131561f756db9bd9e57b3078df22ac3c34c6a",
+        "source_sha256": "c665d4e13208dc00e809331e13a0135b5ae4c63f9c47f4e99e85dc51eb491ee2",
+        "bytes": 11828
+      },
+      "new": {
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "path": "ecmascript/compiler/builtins/builtins_array_stub_builder.h",
+        "blob_oid": "c9b5a66c12c657533047286ec79406a639fb8232",
+        "source_sha256": "1804426bca64803a2a7b70c63004eb5236718daa075c67d74c68fd5f21ef151c",
+        "bytes": 12190
+      },
+      "expected_blob_oids_match": true,
+      "source_sha256_changed": true,
+      "classification": "unknown",
+      "change_dimensions": {
+        "source_identity": "changed",
+        "syntax_or_declaration": "declaration/wrapper signature surface",
+        "semantic_boundary": "array builtin declarations and wrappers",
+        "frozen_rule_path": "candidate caller boundary and overload selection",
+        "build_condition": "unknown: exact reviewed C1 build/preprocessing profile, macro set and preprocessed output unavailable"
+      },
+      "difference_and_impact": "declaration changes cannot prove unrelatedness to the modeled caller without compile-resolved overload/call-site coverage.",
+      "evidence_ref": "dependency-review-20261018.md table row 10",
+      "semantic_limit": "Exact C1 build/preprocessing profile and complete compile-resolved declarations/macros/types/call graph/CFG are unavailable; source drift cannot establish semantic impact or equivalence."
+    },
+    {
+      "index": 11,
+      "kind": "effect_summary",
+      "old": {
+        "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+        "tree": "82af11ced4297818410ccf61906b703d25b69165",
+        "path": "ecmascript/compiler/call_stub_builder.h",
+        "blob_oid": "f1f44f44679a9a6d648c8dd0182864d4af7c24f7",
+        "source_sha256": "3bcb06509efea7261bdaef4c108e31281275c8eff4cbbda24632d710edc98d21",
+        "bytes": 8168
+      },
+      "new": {
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "path": "ecmascript/compiler/call_stub_builder.h",
+        "blob_oid": "d1fb1b9ef28ff8c928a6e8dfdd9aed67e42ef6aa",
+        "source_sha256": "18af6653e22c36dc1fce30d9b7b7eda9d616084add2b1c6d1faa6d89c6c895ae",
+        "bytes": 9597
+      },
+      "expected_blob_oids_match": true,
+      "source_sha256_changed": true,
+      "classification": "unknown",
+      "change_dimensions": {
+        "source_identity": "changed",
+        "syntax_or_declaration": "call wrapper declarations",
+        "semantic_boundary": "CallCoStubBuilder/CallStubBuilder",
+        "frozen_rule_path": "call boundary, effects, argument/value propagation",
+        "build_condition": "unknown: exact reviewed C1 build/preprocessing profile, macro set and preprocessed output unavailable"
+      },
+      "difference_and_impact": "wrapper signatures changed; selected overload and resulting call effects are unavailable without the exact build context.",
+      "evidence_ref": "dependency-review-20261018.md table row 11",
+      "semantic_limit": "Exact C1 build/preprocessing profile and complete compile-resolved declarations/macros/types/call graph/CFG are unavailable; source drift cannot establish semantic impact or equivalence."
+    },
+    {
+      "index": 12,
+      "kind": "effect_summary",
+      "old": {
+        "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+        "tree": "82af11ced4297818410ccf61906b703d25b69165",
+        "path": "ecmascript/compiler/profiler_operation.h",
+        "blob_oid": "e68a2db48f222945629adb637cd50be8a0f93651",
+        "source_sha256": "ae79f4a797260bcc5f0be6a89737c17321b8e9f0c656c4859416619331e13398",
+        "bytes": 4176
+      },
+      "new": {
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "path": "ecmascript/compiler/profiler_operation.h",
+        "blob_oid": "e68a2db48f222945629adb637cd50be8a0f93651",
+        "source_sha256": "ae79f4a797260bcc5f0be6a89737c17321b8e9f0c656c4859416619331e13398",
+        "bytes": 4176
+      },
+      "expected_blob_oids_match": true,
+      "source_sha256_changed": false,
+      "classification": "unaffected",
+      "change_dimensions": {
+        "source_identity": "unchanged",
+        "syntax_or_declaration": "same blob",
+        "semantic_boundary": "none",
+        "frozen_rule_path": "none",
+        "build_condition": "unknown: exact reviewed C1 build/preprocessing profile, macro set and preprocessed output unavailable"
+      },
+      "difference_and_impact": "Blob identity unchanged; no source drift.",
+      "evidence_ref": "dependency-review-20261018.md table row 12",
+      "semantic_limit": "Exact C1 build/preprocessing profile and complete compile-resolved declarations/macros/types/call graph/CFG are unavailable; source drift cannot establish semantic impact or equivalence."
+    },
+    {
+      "index": 13,
+      "kind": "effect_summary",
+      "old": {
+        "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+        "tree": "82af11ced4297818410ccf61906b703d25b69165",
+        "path": "ecmascript/base/typed_array_helper-inl.h",
+        "blob_oid": "3adadba4324927a18ff715efa99b2aa9cd15bc41",
+        "source_sha256": "ed9bc1df7a3c1a4c30046710a9a28c5d74e2fc0e56e21da1de1d752006635fc4",
+        "bytes": 22732
+      },
+      "new": {
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "path": "ecmascript/base/typed_array_helper-inl.h",
+        "blob_oid": "172fa188b64ed23d0714c4f4cd0ef66bcbb8e1cf",
+        "source_sha256": "ecad66a6acb1a19f4eed9b84ce9f86f565348ad0be8c3411643ebace7a8ee559",
+        "bytes": 22772
+      },
+      "expected_blob_oids_match": true,
+      "source_sha256_changed": true,
+      "classification": "unknown",
+      "change_dimensions": {
+        "source_identity": "changed",
+        "syntax_or_declaration": "type-to-layout implementation",
+        "semantic_boundary": "TypedArrayHelper::GetSizeFromType",
+        "frozen_rule_path": "allocation size/layout and type-width relation",
+        "build_condition": "unknown: exact reviewed C1 build/preprocessing profile, macro set and preprocessed output unavailable"
+      },
+      "difference_and_impact": "the mapping is security-relevant to allocation assumptions; full function diff and build conditions are not sufficient to establish equivalence.",
+      "evidence_ref": "dependency-review-20261018.md table row 13",
+      "semantic_limit": "Exact C1 build/preprocessing profile and complete compile-resolved declarations/macros/types/call graph/CFG are unavailable; source drift cannot establish semantic impact or equivalence."
+    },
+    {
+      "index": 14,
+      "kind": "effect_summary",
+      "old": {
+        "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+        "tree": "82af11ced4297818410ccf61906b703d25b69165",
+        "path": "ecmascript/base/typed_array_helper.cpp",
+        "blob_oid": "17f4b8f50ea126eb646ef011e9b7fa7e461394dc",
+        "source_sha256": "0704698674d39389525de7ccca0941138fc0bb4a84d3acdf0f14544a119558a3",
+        "bytes": 67342
+      },
+      "new": {
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "path": "ecmascript/base/typed_array_helper.cpp",
+        "blob_oid": "bcb422fe67f4e670adcca31fffd4da7e2b3b0b21",
+        "source_sha256": "3c42388b716e82601cee4e43aedddc8ac709fe1363b0753c7efa24745380110d",
+        "bytes": 65211
+      },
+      "expected_blob_oids_match": true,
+      "source_sha256_changed": true,
+      "classification": "unknown",
+      "change_dimensions": {
+        "source_identity": "changed",
+        "syntax_or_declaration": "allocation, validation and copy semantics",
+        "semantic_boundary": "AllocateTypedArrayBuffer/CreateFromTypedArray/ValidateTypedArray/SortCompare",
+        "frozen_rule_path": "creator identity, source type, allocation and exception path",
+        "build_condition": "unknown: exact reviewed C1 build/preprocessing profile, macro set and preprocessed output unavailable"
+      },
+      "difference_and_impact": "multiple modeled semantic boundaries changed; path-sensitive proof under selected product configuration is missing.",
+      "evidence_ref": "dependency-review-20261018.md table row 14",
+      "semantic_limit": "Exact C1 build/preprocessing profile and complete compile-resolved declarations/macros/types/call graph/CFG are unavailable; source drift cannot establish semantic impact or equivalence."
+    },
+    {
+      "index": 15,
+      "kind": "effect_summary",
+      "old": {
+        "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+        "tree": "82af11ced4297818410ccf61906b703d25b69165",
+        "path": "ecmascript/stubs/runtime_stubs.cpp",
+        "blob_oid": "c7ce18a76e25289ee7274354fd85950fa9b17af8",
+        "source_sha256": "0a11c3832d2d4a0b1adf0879a01e1cbde40a62885f2702dff316985838c135a3",
+        "bytes": 199944
+      },
+      "new": {
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "path": "ecmascript/stubs/runtime_stubs.cpp",
+        "blob_oid": "14dc06350881b1fa0fdabeeb8465ae9063224d6c",
+        "source_sha256": "0c390fb329387ff75943089da0e7eecab4bc1df21da1be4f33db969b2bf79a46",
+        "bytes": 243885
+      },
+      "expected_blob_oids_match": true,
+      "source_sha256_changed": true,
+      "classification": "unknown",
+      "change_dimensions": {
+        "source_identity": "changed",
+        "syntax_or_declaration": "runtime wrapper/creator implementation",
+        "semantic_boundary": "TypedArrayCreateSameType and runtime wrappers",
+        "frozen_rule_path": "returned identity, effects and exception state",
+        "build_condition": "unknown: exact reviewed C1 build/preprocessing profile, macro set and preprocessed output unavailable"
+      },
+      "difference_and_impact": "creator wrapper changed; actual selected runtime entry and return/exception behavior are not verified for the product profile.",
+      "evidence_ref": "dependency-review-20261018.md table row 15",
+      "semantic_limit": "Exact C1 build/preprocessing profile and complete compile-resolved declarations/macros/types/call graph/CFG are unavailable; source drift cannot establish semantic impact or equivalence."
+    },
+    {
+      "index": 16,
+      "kind": "effect_summary",
+      "old": {
+        "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+        "tree": "82af11ced4297818410ccf61906b703d25b69165",
+        "path": "ecmascript/js_typed_array.cpp",
+        "blob_oid": "892e376de57c08c768831936503a8e4dac4b39bb",
+        "source_sha256": "e0fa7cb24aae9e3da6ac0bf6ea06972c9419dda83a6647cf3e62d9595997342f",
+        "bytes": 43951
+      },
+      "new": {
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "path": "ecmascript/js_typed_array.cpp",
+        "blob_oid": "098c2a22cae3152af3a59063dda25e145f03bbd7",
+        "source_sha256": "e67c0ce082885efb6fa5894f7a1998a41eb4cddfa2e381c8335497e10e2b9bbe",
+        "bytes": 41859
+      },
+      "expected_blob_oids_match": true,
+      "source_sha256_changed": true,
+      "classification": "unknown",
+      "change_dimensions": {
+        "source_identity": "changed",
+        "syntax_or_declaration": "property/caller/sink behavior",
+        "semantic_boundary": "DefineOwnProperty/OwnPropertyKeys/FastGetPropertyByIndex/FastSetPropertyByIndex",
+        "frozen_rule_path": "TypedArray read/write sink and type conversion",
+        "build_condition": "unknown: exact reviewed C1 build/preprocessing profile, macro set and preprocessed output unavailable"
+      },
+      "difference_and_impact": "surrounding access paths changed; exact call relation and conditional compilation context remain incomplete.",
+      "evidence_ref": "dependency-review-20261018.md table row 16",
+      "semantic_limit": "Exact C1 build/preprocessing profile and complete compile-resolved declarations/macros/types/call graph/CFG are unavailable; source drift cannot establish semantic impact or equivalence."
+    },
+    {
+      "index": 17,
+      "kind": "type_dependency",
+      "old": {
+        "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+        "tree": "82af11ced4297818410ccf61906b703d25b69165",
+        "path": "ecmascript/compiler/new_object_stub_builder.cpp",
+        "blob_oid": "757b8d050d306d349822600deacb295c7a54245e",
+        "source_sha256": "3fd7e99e957fb5b7793cb7c36c01b370208c05645aa93551da6abeecaf2e7198",
+        "bytes": 126036
+      },
+      "new": {
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "path": "ecmascript/compiler/new_object_stub_builder.cpp",
+        "blob_oid": "991ac5ac034a1a027e3200787ec25c55b3f15b69",
+        "source_sha256": "3159eee6989838659438af89353dfd37a890c259f60c3af0195110e016a411e0",
+        "bytes": 151323
+      },
+      "expected_blob_oids_match": true,
+      "source_sha256_changed": true,
+      "classification": "unknown",
+      "change_dimensions": {
+        "source_identity": "changed",
+        "syntax_or_declaration": "creator implementation, layout and guard semantics",
+        "semantic_boundary": "NewTypedArray/NewTypedArraySameType/NewTypedArrayFromCtor",
+        "frozen_rule_path": "HClass/type identity, contentType load width, allocation and result guard",
+        "build_condition": "unknown: exact reviewed C1 build/preprocessing profile, macro set and preprocessed output unavailable"
+      },
+      "difference_and_impact": "existing review notes glue-wrapper HClass reads, INT32 to INT8/LoadPrimitive, StoreHClass and fast-guard changes; each is material to frozen premises, but selected compiled semantics are unavailable.",
+      "evidence_ref": "dependency-review-20261018.md table row 17",
+      "semantic_limit": "Exact C1 build/preprocessing profile and complete compile-resolved declarations/macros/types/call graph/CFG are unavailable; source drift cannot establish semantic impact or equivalence."
+    },
+    {
+      "index": 18,
+      "kind": "exception_guard_dependency",
+      "old": {
+        "commit": "c758818dbfd0b146a908d43d21f6ca1706c33783",
+        "tree": "5d7c18a5d5ccbf48617b3c07ae9353f5f427d07a",
+        "path": "ecmascript/compiler/new_object_stub_builder.cpp",
+        "blob_oid": "05dda56de74949f07a241942be6465beaf94b52a",
+        "source_sha256": "c10e934be1804fe9388d599cba54369eed4ee150b078d04924e0da68a2f43b9e",
+        "bytes": 129325
+      },
+      "new": {
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "path": "ecmascript/compiler/new_object_stub_builder.cpp",
+        "blob_oid": "991ac5ac034a1a027e3200787ec25c55b3f15b69",
+        "source_sha256": "3159eee6989838659438af89353dfd37a890c259f60c3af0195110e016a411e0",
+        "bytes": 151323
+      },
+      "expected_blob_oids_match": true,
+      "source_sha256_changed": true,
+      "classification": "unknown",
+      "change_dimensions": {
+        "source_identity": "changed",
+        "syntax_or_declaration": "exception guard and creator path",
+        "semantic_boundary": "NewTypedArray/NewTypedArraySameType allocation and result-HClass read",
+        "frozen_rule_path": "NewTypedArray(4) to LoadHClass exception-state premise",
+        "build_condition": "unknown: exact reviewed C1 build/preprocessing profile, macro set and preprocessed output unavailable"
+      },
+      "difference_and_impact": "same source path changed relative to the independent c758 binding; no exact profile/CFG proof establishes guard dominance or semantic equivalence.",
+      "evidence_ref": "dependency-review-20261018.md table row 18",
+      "semantic_limit": "Exact C1 build/preprocessing profile and complete compile-resolved declarations/macros/types/call graph/CFG are unavailable; source drift cannot establish semantic impact or equivalence."
+    },
+    {
+      "index": 19,
+      "kind": "exception_guard_dependency",
+      "old": {
+        "commit": "81ca57487d04ea30cd11c271e86494a4e130f43e",
+        "tree": "f0ddee8ee7f74b3f22e45b174ce96a269b2e57a5",
+        "path": "ecmascript/compiler/new_object_stub_builder.cpp",
+        "blob_oid": "05dda56de74949f07a241942be6465beaf94b52a",
+        "source_sha256": "c10e934be1804fe9388d599cba54369eed4ee150b078d04924e0da68a2f43b9e",
+        "bytes": 129325
+      },
+      "new": {
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "path": "ecmascript/compiler/new_object_stub_builder.cpp",
+        "blob_oid": "991ac5ac034a1a027e3200787ec25c55b3f15b69",
+        "source_sha256": "3159eee6989838659438af89353dfd37a890c259f60c3af0195110e016a411e0",
+        "bytes": 151323
+      },
+      "expected_blob_oids_match": true,
+      "source_sha256_changed": true,
+      "classification": "unknown",
+      "change_dimensions": {
+        "source_identity": "changed",
+        "syntax_or_declaration": "exception guard and creator path",
+        "semantic_boundary": "NewTypedArray/NewTypedArraySameType allocation and result-HClass read",
+        "frozen_rule_path": "NewTypedArray(4) to LoadHClass exception-state premise",
+        "build_condition": "unknown: exact reviewed C1 build/preprocessing profile, macro set and preprocessed output unavailable"
+      },
+      "difference_and_impact": "independent 81ca binding is preserved as its own input; the same new source does not substitute for validating this old commit's full compilation context.",
+      "evidence_ref": "dependency-review-20261018.md table row 19",
+      "semantic_limit": "Exact C1 build/preprocessing profile and complete compile-resolved declarations/macros/types/call graph/CFG are unavailable; source drift cannot establish semantic impact or equivalence."
+    }
+  ],
+  "not_covered": [
+    {
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "role": "primary detector source, excluded from the 19 supporting dependencies",
+      "status": "separately_bound; source differs across reviewed commits",
+      "semantic_review": "not reclassified in this supporting-dependency inventory; existing C3 review documents sink/caller changes and parser partial status"
+    },
+    {
+      "item": "product build selection/defines and platform packaging",
+      "status": "not covered",
+      "reason": "exact C1 build profile artifact unavailable"
+    },
+    {
+      "item": "transitive headers/conditional include closure beyond the 19 listed dependencies",
+      "status": "not covered",
+      "reason": "dependency inventory only; no compile database or preprocessor dependency output"
+    },
+    {
+      "item": "runtime reachability, trigger conditions, and CIA impact",
+      "status": "not covered",
+      "reason": "source-only review; no product execution evidence"
+    }
+  ],
+  "input_sha256": {
+    "model_dependency_comparison.json": "c920f31bc6fe4c05d0d64b210b26dacc8b01d277aeb86ca552ddf52ce83f8d2d",
+    "source_evidence.json": "57b1efbf52d643ed75028d34ff00f69231fc73547c7c08fc5580d48533f81e9a",
+    "build_profile.json": "6aea7ff0d37a726cf6d9e369316dac88f7645dd51de5189cf9aaac8c51525a98",
+    "dependency-review-20261018.md": "4588bee86d4f146c9a6e02ef25c45cacb8650f1637235931baaf7736ad3e7dab",
+    "current-run.json": "d66a52203e2de2359047dca7255d2aad29003f8c89df1894a2f8960033334182",
+    "dependency-gated-run-20261018.json": "621b79c95ea7cce456a3bc0223c1603c382fded48d9d362e663f76b345ca5450",
+    "source_drift_review.md": "424a5bea511fb5f49b0338b8647c314856af050d4e80f4e7f4ec10aa026ab83f"
+  },
+  "verification_command": "python3 /mnt/d/openHarmonyScanner/CyberSecurity-Innovation-Audit-c3-review/research/experiments/ark_runtime/c3_20261018/verify_source_drift_inputs.py",
+  "status": "blocked_profile_context",
+  "verification_session": {
+    "command": "wsl.exe -d Ubuntu -- bash -lc 'cd /mnt/d/openHarmonyScanner/CyberSecurity-Innovation-Audit-c3-review && python3 research/experiments/ark_runtime/c3_20261018/verify_source_drift_inputs.py'",
+    "result": "failed_to_start_wsl",
+    "detail": "WSL localhost/network startup error; Git object verification was not refreshed in this session"
+  }
+}

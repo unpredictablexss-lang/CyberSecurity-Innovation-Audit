@@ -1,0 +1,39 @@
+{
+  "pr": 10,
+  "head": "aa79d57a3612c0bc5a04dac7af03c2a086dcddd8",
+  "path": "src/report/vulnerability_report.py",
+  "source_sha256": "235216455ca0a7362f985fe2fe8955fd0b5523f70d085fc6a807ce07ea665a6e",
+  "test": "Minimal in-memory invocation of audited renderer, no network or source edits",
+  "input": {
+    "case": {
+      "root_cwe": "CWE-362",
+      "consequence_cwe": "CWE-416",
+      "evidence_gate": {
+        "target_bound": true,
+        "entry_controlled": true,
+        "reachable_sensitive_operation": true,
+        "exploitation_conditions": true,
+        "security_impact": true,
+        "dynamic_reproduced": true
+      }
+    },
+    "poc": {
+      "poc_state": "stable_reproduced",
+      "patch_revalidation": "passed"
+    },
+    "version_impact": {},
+    "static_evidence": []
+  },
+  "observed": {
+    "report_status": "reportable",
+    "target": {
+      "repository": null,
+      "vulnerable_commit": null,
+      "fixed_commit": null,
+      "scope": []
+    },
+    "binding_status": null,
+    "static_evidence_count": 0
+  },
+  "interpretation": "Renderer trusts caller-supplied boolean assertions; cannot be wired as a source-verifying product evidence gate. This is an integration blocker, not an OH product vulnerability."
+}

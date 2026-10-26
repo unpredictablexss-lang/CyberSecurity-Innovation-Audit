@@ -1,0 +1,49 @@
+{
+  "date": "2026-10-17",
+  "branch": "work/platform-20261017",
+  "base": "6a41dc9b1aa030158e09be6241e2b14341f9256d",
+  "code_commit": "fbfc20b8804200cd69a893afdfc0a9daada0648f",
+  "tests": {
+    "targeted_passed": 28,
+    "root_total": 551,
+    "root_passed": 547,
+    "root_skipped": 4,
+    "failed": 0
+  },
+  "fixed_component": {
+    "repository": "openharmony/commonlibrary_c_utils",
+    "commit": "b807d3dadb7dbb7639fe85b3a5f72da18d318da2",
+    "tree": "52b42d41ed091f7dcae37c4ce3a0d95b6fb1f16d",
+    "snapshot_sha256": "9a87a156afb5c2edc0994539ff43e468c05b39eea7f3b958866e1dae0a1e454d",
+    "source_files": 123,
+    "source_bytes": 1567031,
+    "parse": {
+      "complete": 93,
+      "partial": 30
+    },
+    "non_source_entries": 105,
+    "suggested_detector_versions": {
+      "ohscanner.cpp.lifetime": "0.3.0",
+      "ohscanner.cpp.shared_ptr_race": "0.4.0",
+      "ohscanner.interface.ipc": "0.5.0"
+    },
+    "plan_sha256": "8bb25f2b44ad1a61d642b5edef4dd00eb50cdb5337a1447d44894e6bdb029cf2",
+    "status": "ready_with_limitations",
+    "execution_status": "not_run",
+    "security_assessment": "unknown",
+    "repeat_with_catalog_reordering_identical": true,
+    "independent_reindex_identical": true
+  },
+  "scope_violations": [],
+  "public_api_worker_wired": false,
+  "pushed": false,
+  "merged": false,
+  "vulnerability_validation_performed": false,
+  "local_record_directory": "/home/audit/ohscanner/records/platform-development-20261017",
+  "logs_sha256": {
+    "targeted.log": "2a7435d85fda88db001facfd18c6257f68376cbbfe3c3c87a59c449cac48fd98",
+    "full.log": "ef9beaf624c9ca816ec5d4fb555c999b9efc1ba7fcabc7b594b67ada60f93439",
+    "real-component.log": "870df9fd534bde23832453b86a5070d70369b579d17e6d7bce86edd77532d1e7",
+    "real-component-repeat.log": "0a171f93020433a76dd09545fb430a8ca643eec76d6a092d03dd3a9342e59998"
+  }
+}

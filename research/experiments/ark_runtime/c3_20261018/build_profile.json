@@ -1,0 +1,58 @@
+{
+  "schema": "ark-runtime-build-profile-v1",
+  "repository": "openharmony/arkcompiler_ets_runtime",
+  "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+  "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+  "target": {
+    "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+    "git_blob": "68fb3b0adc4f9062889a861be51b7be90362e37a",
+    "sha256": "76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c"
+  },
+  "profile_status": "blocked",
+  "blockers": [
+    "Exact-source checkout Git metadata cannot currently be read from this Windows host: .git/config is a repo-tooling symlink that Windows Git rejects, and WSL did not start successfully in this session.",
+    "No compile_commands.json, GN args.gn, Ninja build graph, or target-specific command was found in the exact-source checkout or supplied 5.0.2 out tree.",
+    "The supplied OpenHarmony 5.0.2 build attempts failed in hb startup before Ark Runtime compilation because jinja2 is missing on unsupported Ubuntu 24.04.4."
+  ],
+  "compile_database": {
+    "path": null,
+    "entry_match": "exact normalized source path; exactly one match required",
+    "command_source": "GN/Ninja-generated compile_commands.json from the exact source checkout and product output directory",
+    "normalization": [
+      "parse argv as JSON arguments, or parse command with POSIX shlex when argv is absent",
+      "resolve relative compiler, source, include, and response-file paths against compile-command directory",
+      "preserve argument order and all macro/include/target flags",
+      "for digest only, replace checkout and output roots with stable ${SOURCE_ROOT} and ${BUILD_ROOT} prefixes",
+      "do not discard or synthesize defines, include directories, sysroot, target triple, or language flags"
+    ]
+  },
+  "product_configuration": {
+    "target_platform": "unknown",
+    "product": "unknown",
+    "build_target": "unknown",
+    "gn_args": "unknown",
+    "compiler": "unknown",
+    "compiler_version": "unknown",
+    "defines": "unknown",
+    "include_search_paths": "unknown",
+    "generated_headers": "unknown"
+  },
+  "static_build_system_evidence": {
+    "checkout_path": "D:/openHarmonyScanner/openharmony/arkcompiler/ets_runtime",
+    "source_file_sha256_observed": "76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c",
+    "source_file_git_identity": "previous C3 evidence only; current Git metadata recheck blocked",
+    "target_listed_in": "ecmascript/compiler/BUILD.gn (observed source checkout; SHA-256 34f23416b2983f5635c00f881b444c4b15975e7ff8d9657b03ae65847ada103a)",
+    "runtime_targets_in": "BUILD.gn (observed source checkout; SHA-256 8e5f0d4d829578200b75175ea81e8ef2c8370fe4c331ab6a3b255cad95988a89): ark_js_packages, libark_jsruntime",
+    "historical_separate_build_attempt": "openharmony-5.0.2 rk3568 / ark_js_host_linux_tools_packages / is_debug=true / is_asan=true; not this exact commit and not a successful product profile",
+    "previous_build_logs": {
+      "build-fixed-first.log": "f4e88f03ba99e06f08b36d0616cbedd931e5b2657e1e50e35dbc312d08c6ed37b",
+      "build-fixed-host.log": "272c9fd8ec31014fd810839486a6d1f0bb89693433a96f3684e897269b2c48b5"
+    }
+  },
+  "digest": null,
+  "notes": [
+    "This file records an explicit blocked profile; it does not invent a product macro list.",
+    "The tool emits a digest only after source and all compiler-discovered dependencies are present and hashed.",
+    "A preprocessed translation unit is reported only after an actual compiler -E invocation succeeds. Token substitution or parser output is never represented as preprocessing."
+  ]
+}

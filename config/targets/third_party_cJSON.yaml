@@ -1,0 +1,140 @@
+# TargetSnapshot v0: cJSON first reproducible OpenHarmony component probe.
+# Statuses describe the exact commands below, not the entire upstream suite.
+target_id: T1
+project: OpenHarmony
+component: third_party_cJSON
+
+source:
+  repo_url: https://github.com/openharmony/third_party_cJSON
+  upstream: openharmony_third_party_mirror
+  branch_or_tag: master
+  commit: 0c2c9dff82cc85539c8362132d7a5f6bf7d1e748
+  local_path: /home/audit/openharmony-targets/third_party_cJSON
+  license_note: MIT-style license in source LICENSE; preserve notice
+
+scope:
+  language:
+    - C
+  source_paths:
+    - .
+  exclude_paths:
+    - .git
+    - .venv
+    - __pycache__
+    - .cache
+  denominator_policy: "MVP scans all 99 C/C++ source files under repo root, including tests/unity and fuzzing; core library only is cJSON.c and cJSON_Utils.c."
+
+build:
+  status: success
+  mode: host_cmake_single_target
+  command: cmake --build /home/audit/openharmony-targets/third_party_cJSON-build --target cJSON_test -j 4
+  configure_command: cmake -S /home/audit/openharmony-targets/third_party_cJSON -B /home/audit/openharmony-targets/third_party_cJSON-build -G Ninja -DENABLE_CJSON_TEST=ON -DCMAKE_BUILD_TYPE=Debug
+  working_directory: /home/audit/openharmony-audit/CyberSecurity-Innovation-Audit
+  toolchain: Ubuntu 22.04 WSL2; GCC 11.4; CMake 3.22; Ninja 1.10
+  compile_commands_path: unknown
+  log_path: outputs/logs/cjson_target_build.log
+  last_checked_at: 2026-10-03
+  failure_reason: null
+  full_build_status: failed
+  full_build_command: cmake --build /home/audit/openharmony-targets/third_party_cJSON-build -j 4
+  full_build_log_path: outputs/logs/cjson_full_build.log
+  full_build_failure_reason: "tests/unity/src/unity_internals.h requires missing test_fwk.h in standalone checkout"
+  elapsed_time: unknown
+  peak_memory: unknown
+
+test:
+  status: success
+  command: ctest --test-dir /home/audit/openharmony-targets/third_party_cJSON-build -R '^cJSON_test$' --output-on-failure
+  working_directory: /home/audit/openharmony-audit/CyberSecurity-Innovation-Audit
+  log_path: outputs/logs/cjson_test.log
+  normal_input: "Upstream cJSON_test internal test cases; individual input not recorded"
+  expected_result: "1/1 cJSON_test passed"
+  failure_reason: null
+  full_suite_status: blocked
+
+mvp_scan:
+  status: success
+  command: .venv/bin/python -m src.cli scan /home/audit/openharmony-targets/third_party_cJSON --json-out outputs/reports/cjson_candidate.json --md-out outputs/reports/cjson_candidate.md
+  json_report: outputs/reports/cjson_candidate.json
+  markdown_report: outputs/reports/cjson_candidate.md
+  scanned_files: 99
+  scanned_lines: 22377
+  skipped_files: 0
+  candidate_findings: 49
+  core_library_candidates: 26
+  test_candidates: 22
+  fuzzing_candidates: 1
+  core_scope:
+    source_paths: [cJSON.c, cJSON_Utils.c]
+    status: success
+    scanned_files: 2
+    scanned_lines: 4681
+    candidate_findings: 26
+    context_resolved: 26
+    context_unresolved: 0
+    json_report: outputs/reports/cjson_core_context.json
+    markdown_report: outputs/reports/cjson_core_context.md
+
+baseline_tools:
+  clang_tidy:
+    status: not_started
+    command: null
+    warning_count: unknown
+    log_path: null
+  clang_static_analyzer:
+    status: success
+    command: .venv/bin/python -m src.cli baseline-clang /home/audit/openharmony-targets/third_party_cJSON --file cJSON.c --file cJSON_Utils.c --json-out outputs/reports/cjson_clang_baseline.json --md-out outputs/reports/cjson_clang_baseline.md
+    clang_executable: /usr/bin/clang
+    clang_version: Ubuntu clang version 14.0.0-1ubuntu1.1
+    file_count: 2
+    file_exit_codes: {cJSON.c: 0, cJSON_Utils.c: 0}
+    failed_files: 0
+    diagnostic_count: 0
+    warning_count: 0
+    error_count: 0
+    note_count: 0
+    checker_distribution: {}
+    runner_elapsed_seconds: 16.684430009001517
+    json_report: outputs/reports/cjson_clang_baseline.json
+    markdown_report: outputs/reports/cjson_clang_baseline.md
+    performance_sanity:
+      wall_clock: "0:15.96"
+      maximum_rss_kb: 179716
+      exit_status: 0
+    limitation: "No original OpenHarmony compile_commands/flags; zero diagnostics does not prove safety."
+  fuzz:
+    status: not_started
+    existing_target: true
+    entry_file: fuzzing/cjson_read_fuzzer.c
+    command: null
+    log_path: null
+
+triage:
+  status: initial_manual_review
+  sample_size: 10
+  interesting_candidates: 2
+  likely_safe_candidates: 5
+  needs_context_candidates: 3
+  scanner_quality_issues: 0
+  notes: "See https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/143fa63fa479be79fa80ca5f8322c74afecc273c/docs/targets/target_selection.md. No validated vulnerability."
+
+runtime_validation:
+  status: not_started
+  sanitizer: unknown
+  harness: unknown
+  normal_run: unknown
+  trigger_run: unknown
+  outcome: unknown
+  evidence_path: null
+
+notes:
+  assumptions:
+    - "The shallow checkout HEAD matches the pinned OpenHarmony commit."
+    - "Host cJSON_test does not prove the OpenHarmony-integrated full suite."
+  blockers:
+    - "Full build needs test_fwk.h, absent from standalone checkout."
+    - "Original OpenHarmony compile commands/flags are not yet available for the Clang baseline."
+  next_actions:
+    - "Manually review candidate inputs, bounds, and impact in the original component."
+    - "Compare against original OpenHarmony build flags when available."
+    - "Use controlled allocation failure only if the failure path has meaningful security impact."

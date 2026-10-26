@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "provenance": {
+    "kind": "self_authored_synthetic_fixture",
+    "repository": "synthetic/fixture",
+    "commit": "1111111111111111111111111111111111111111",
+    "snapshot_sha256": "cf301aa06fc5ff93c15758ba4f62a04f6f85cd1a2dd28e8261b879816f24a06c",
+    "profile_id": "fixture-no-build",
+    "note": "Fixture metadata only; not a public vulnerability benchmark."
+  },
+  "units": [
+    {
+      "path": "tests/detectors/fixtures/cpp_lifetime/failed_parse_unbalanced.cpp",
+      "sha256": "8aa3600071ed916868ade448c1522e2f86e2f58e41ce05643447a322b3ca962c",
+      "parse_status": "failed",
+      "parse_issues": [
+        "Synthetic unbalanced reset call."
+      ],
+      "fixture_category": "unknown_failed_parse",
+      "expected_observation": "unknown_incomplete_analysis",
+      "language": "cpp"
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_lifetime/fixed_alias_rebind.cpp",
+      "sha256": "f948416968e3180fb4a1a8d25bf1bc9bf2c2c1da12031132d0cd7b2878d9508f",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "fixture_category": "fixed",
+      "expected_observation": "no_candidate_shape",
+      "language": "cpp"
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_lifetime/incomplete_scope_unmodeled_owner.cpp",
+      "language": "cpp",
+      "sha256": "f3bf6615152a531783e1793713098362f9f022d879dcce223efd6a632411a2e1",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "fixture_category": "unknown_incomplete_scope",
+      "expected_observation": "unknown_incomplete_analysis"
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_lifetime/missing_symbol_unresolved_alias.cpp",
+      "language": "cpp",
+      "sha256": "90d3e2f3ba5c7dcd5129f8f68fae47f100daf92b905689a3b3de0345c17b6c41",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "fixture_category": "unknown_missing_symbol",
+      "expected_observation": "unknown_unresolved_rule_symbols"
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_lifetime/not_run_parse_pending.cpp",
+      "language": "cpp",
+      "sha256": "33a5356e3d2feed750a36a42f71a0fd14b01c52cf59cdc361f40aa5097824896",
+      "parse_status": "not_run",
+      "parse_issues": [
+        "Synthetic pending parse state; no parser was executed."
+      ],
+      "fixture_category": "unknown_not_run",
+      "expected_observation": "unknown_incomplete_analysis"
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_lifetime/partial_parse_macro_context.cpp",
+      "sha256": "62e702f71e2836567c233b365e236031b141d8731efa6a35d10d5309c49b4afd",
+      "parse_status": "partial",
+      "parse_issues": [
+        "Macro-controlled reset context is not expanded."
+      ],
+      "fixture_category": "unknown_partial_parse",
+      "expected_observation": "unknown_incomplete_analysis",
+      "language": "cpp"
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_lifetime/safe_shadowed_scope_bindings.cpp",
+      "sha256": "85045fd3030e7e584e5f784f1537f1759e05aa120e0760f972bcca03b0e100af",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "fixture_category": "safe_control_shadowed_bindings",
+      "expected_observation": "no_candidate_shape",
+      "language": "cpp"
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_lifetime/safe_use_before_reset.cpp",
+      "sha256": "a644a7ac6cac38f6cdde0c6f4ddb842c23d8daf230034693a51d47aacf4eb94a",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "fixture_category": "safe_control",
+      "expected_observation": "no_candidate_shape",
+      "language": "cpp"
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_lifetime/unsupported_language_note.js",
+      "language": "js",
+      "sha256": "7e457ee9c8b8f7327e2e3d83f9a180a7c3a98d3f1cfb7e6b8d34fee51a09e90b",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "fixture_category": "not_applicable_no_matching_language",
+      "expected_observation": "not_applicable_no_matching_language"
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_lifetime/vulnerable_conditional_rebind.cpp",
+      "sha256": "b67d1bbf6f04e8aa520b69f3ed2aee16b36f09e626b820e835bb211e7fa4b02c",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "fixture_category": "vulnerable_conditional_rebind",
+      "expected_observation": "candidate_shape",
+      "language": "cpp"
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_lifetime/vulnerable_inside_mutex.cpp",
+      "sha256": "f86d679436b3233060567e51dd4a425183d27311e77c4c928fa0861af97ca4d0",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "fixture_category": "vulnerable_locked_shape",
+      "expected_observation": "candidate_shape",
+      "language": "cpp"
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_lifetime/vulnerable_unserialized.cpp",
+      "sha256": "64559050d0316d71639019191c3171a3d2c63b5b2847582656e919a7ee4f2a1a",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "fixture_category": "vulnerable",
+      "expected_observation": "candidate_shape",
+      "language": "cpp"
+    }
+  ]
+}

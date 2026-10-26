@@ -1,0 +1,49 @@
+{
+  "panel": {
+    "head": "61e6818dfc148805d0905577a7aae516d8a852e4",
+    "branch": "refs/heads/integration/ipc-panel-20261017",
+    "dirty_files": {
+      "src/workbench/operations_api.py": "2cbe3c0010a0978c6a347262b349f1e0d53da352dd6eba4eb59d3a726dda1582",
+      "src/workbench/operations_store.py": "da235b170c96d90807aba8067fd89bbacf4fec1d550b366fa4feab8d63aa571b",
+      "src/workbench/worker.py": "f928c6c6990540958f0ff83339540bcdf7b9d4839033d4a633f7f8ddfab97c98",
+      "tests/test_workbench.py": "4b22ef01f903a4927ee9d5774bd86b27a4b5b4d2a6c276fed2ce33b21ce7e2e8",
+      "tests/test_workbench_operations.py": "2c7788ff6abda574497e3af1406770f488ee523b3e048dc86027e80439af414a",
+      "web/src/features/audits/OperationWorkspace.tsx": "26c7bce4534149aa964af4a2f8df8eb45f1939d6e50cd8f0a3a2a91f25b00e2a"
+    }
+  },
+  "source": {
+    "head": "1f8c7d31478f64cfd8586a46931b628844f96f64",
+    "branch": "refs/heads/integration/cd-admission-20261017",
+    "dirty_files": {
+      "src/ohscanner/git_source.py": "cf868629b0ccd1fbe79a585ec410ceb3ed1184c230c4f1a3925ecb237429d08e",
+      "tests/test_ohscanner_m1.py": "6c87420df7f6a53fb3b02be4542db506c81ce906b6f06b2bf5c4b780ecf040aa"
+    }
+  },
+  "agent": {
+    "head": "1f8c7d31478f64cfd8586a46931b628844f96f64",
+    "branch": "refs/heads/work/agent-llm-20261017",
+    "dirty_files": {
+      "docs/Agent方案与对照实验.md": "0e7d43ba0b830430abfdedb77fd38a2a5d64169a47dcd291579ecb76a6343b7a",
+      "docs/项目现状与下一步.md": "c73f6d98a18f4d2b42c02ed57aa18b2d25822325834da5fae44e7964ed5bc285",
+      "src/workbench/api.py": "54246cb7bbbb741777b26c2c342a84611f087a25d3e17b43ad95a04c58e87857",
+      "src/workbench/operations.py": "4ca0f13a2ab47877f78875d5e25e89264bca73587d1f9ba2da736a0dc85aaf43",
+      "src/workbench/operations_api.py": "6e85443c673b52cfea7a59a1b58d6e299861669d7c5c00120941f287421d6c33",
+      "src/workbench/operations_store.py": "009f04522300a5dc64e529366ebf46f741a63a495c16e86516e4333e0806b9b1",
+      "web/src/features/audits/OperationForms.tsx": "28f0c6d877086d8dd1a8fceb19bcf232cbf6bf70c9a24027214f00ed42e89011",
+      "web/src/features/audits/OperationWorkspace.tsx": "e5b9e5e4b4903191fecd020dce628ae4d825cdcf985e85de5a066ee6ba57935f",
+      "web/src/features/workbench/WorkbenchApp.tsx": "32c8a321363e961449d4700941c1130a77c17bfc4ecae51bdd7b837b2af34206",
+      "web/src/features/workbench/WorkspaceViews.tsx": "2a13bf4f2e3f3613cfdc992c26b63ed6a82ed033df5de042928d37de6528b8e3",
+      "web/src/pages/JobDetail.tsx": "45e84471028594120b996d170ade08adacbe76412afdcddb01f47c7a7487490e",
+      "research/deliveries/agent/agent-investigation-20261017/README.md": "4e8c3ff5423d52cd03758eb40eb4f64846493e8ac9a04fa8c439492847f99742",
+      "research/deliveries/agent/agent-investigation-20261017/experiment_static_to_fake_llm.py": "cc689a5b22ac0c2a400a9538a2e75414e5e0101555380af91a6c24ce81b991bf",
+      "src/workbench/agent.py": "5d20b5ea8b7d2ac350f5e4ded3e9936fc82051ea862d32e61dedcbe0c8610e55",
+      "tests/test_agent_workflow.py": "40a030636bc33551287832b7c0ffe49c948d42625588f526cba2d1dc60e84ce3",
+      "web/src/features/audits/AgentAssessment.tsx": "93e12ebd9f7dd42aec965453213d8ec8ff4f7553cde5f676f7773a37787b07b2"
+    }
+  },
+  "main_base": "e510c99c67f31ec6c73365f9ab749c79ca6ff0a1",
+  "owner_reviewed_base": "cdbb1e5aaecf35ed71a72e3cc57181ec96e62248",
+  "checkpoint": "4b38cad8be48e078144ea7b4f840e9913fd76b57",
+  "integration_branch": "integration/main-reviewed-20261018",
+  "policy": "Frozen selective imports plus owner fixes; original worktrees remain untouched; C/D implementation excluded"
+}

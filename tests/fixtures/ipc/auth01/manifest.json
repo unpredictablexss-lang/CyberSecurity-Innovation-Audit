@@ -1,0 +1,12 @@
+[
+  {
+    "sample_id": "relay_unreviewed_call_safe",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": null,
+    "file": "relay_unreviewed_call_safe.cpp",
+    "split": "design",
+    "variant": "safe",
+    "notes": "An entry with a matched interface-descriptor guard that relays to a call the policy does not model, so no descriptor question is raised about it. AUTH-01 had positive and fixed controls and no safe one; this states the scope of the rule (a relay to a modelled or dispatch-named callee) rather than only its absence."
+  }
+]
