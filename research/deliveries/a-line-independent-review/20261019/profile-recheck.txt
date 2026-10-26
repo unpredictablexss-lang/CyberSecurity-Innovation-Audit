@@ -1,0 +1,6 @@
+curl-fixed.json: report_sha_match=True; snapshot_sha_match=True; ohscanner.cpp.integer_bounds=2,completed; ohscanner.cpp.resource_lifetime=0,completed
+curl-vulnerable.json: report_sha_match=True; snapshot_sha_match=True; ohscanner.cpp.integer_bounds=2,completed; ohscanner.cpp.resource_lifetime=1,completed
+libpng-fixed.json: report_sha_match=True; snapshot_sha_match=True; ohscanner.cpp.integer_bounds=0,blocked; ohscanner.cpp.resource_lifetime=0,blocked
+libpng-vulnerable.json: report_sha_match=True; snapshot_sha_match=True; ohscanner.cpp.integer_bounds=0,blocked; ohscanner.cpp.resource_lifetime=2,blocked
+libtiff-fixed.json: report_sha_match=True; snapshot_sha_match=True; ohscanner.cpp.integer_bounds=0,blocked; ohscanner.cpp.resource_lifetime=0,blocked
+libtiff-vulnerable.json: report_sha_match=True; snapshot_sha_match=True; ohscanner.cpp.integer_bounds=1,blocked; ohscanner.cpp.resource_lifetime=0,blocked

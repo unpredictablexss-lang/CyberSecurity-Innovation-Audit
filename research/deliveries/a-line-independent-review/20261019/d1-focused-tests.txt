@@ -1,0 +1,15 @@
+test_allowlisted_variable_reassigned_after_guard_is_not_safe (tests.detectors.test_cpp_path_safety_detector.CppPathSafetyDetectorTests.test_allowlisted_variable_reassigned_after_guard_is_not_safe) ... ok
+test_call_budget_exhaustion_is_unknown_not_safe (tests.detectors.test_cpp_path_safety_detector.CppPathSafetyDetectorTests.test_call_budget_exhaustion_is_unknown_not_safe) ... ok
+test_canonical_path_and_separator_bounded_root_guard_is_safe (tests.detectors.test_cpp_path_safety_detector.CppPathSafetyDetectorTests.test_canonical_path_and_separator_bounded_root_guard_is_safe) ... ok
+test_canonical_path_prefix_without_separator_boundary_is_not_accepted (tests.detectors.test_cpp_path_safety_detector.CppPathSafetyDetectorTests.test_canonical_path_prefix_without_separator_boundary_is_not_accepted) ... ok
+test_external_field_may_flow_through_ref_summary_and_path_concat_to_delete (tests.detectors.test_cpp_path_safety_detector.CppPathSafetyDetectorTests.test_external_field_may_flow_through_ref_summary_and_path_concat_to_delete) ... ok
+test_literal_basename_allowlist_guard_before_sink_is_safe (tests.detectors.test_cpp_path_safety_detector.CppPathSafetyDetectorTests.test_literal_basename_allowlist_guard_before_sink_is_safe) ... ok
+test_partial_parse_retains_candidate_and_blocked_coverage (tests.detectors.test_cpp_path_safety_detector.CppPathSafetyDetectorTests.test_partial_parse_retains_candidate_and_blocked_coverage) ... ok
+test_path_concatenation_without_file_sink_is_not_reported (tests.detectors.test_cpp_path_safety_detector.CppPathSafetyDetectorTests.test_path_concatenation_without_file_sink_is_not_reported) ... ok
+test_path_sink_without_source_is_not_reported (tests.detectors.test_cpp_path_safety_detector.CppPathSafetyDetectorTests.test_path_sink_without_source_is_not_reported) ... ok
+test_unrelated_same_name_source_and_file_calls_are_not_crossed (tests.detectors.test_cpp_path_safety_detector.CppPathSafetyDetectorTests.test_unrelated_same_name_source_and_file_calls_are_not_crossed) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.057s
+
+OK

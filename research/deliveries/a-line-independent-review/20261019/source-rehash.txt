@@ -1,0 +1,6 @@
+libtiff vulnerable: 2/2 source SHA-256 match pinned Git objects; PASS
+libtiff fixed: 2/2 source SHA-256 match pinned Git objects; PASS
+curl vulnerable: 1/1 source SHA-256 match pinned Git objects; PASS
+curl fixed: 1/1 source SHA-256 match pinned Git objects; PASS
+libpng vulnerable: 4/4 source SHA-256 match pinned Git objects; PASS
+libpng fixed: 4/4 source SHA-256 match pinned Git objects; PASS
