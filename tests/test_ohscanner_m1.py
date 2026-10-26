@@ -166,6 +166,81 @@ class GitObjectIndexTests(unittest.TestCase):
         self.assertEqual(len(sources), 2)
         self.assertEqual(inventory["skipped"][0]["reason"], "non_utf8")
 
+    def test_global_parse_and_ipc_coverage_keep_distinct_denominators(self):
+        from types import SimpleNamespace
+        from src.ohscanner.contracts import DetectorRun, ScanContext
+        from src.ohscanner.detectors.interface.detector import IpcInterfaceDetector
+        from src.ohscanner.frontend import index_sources
+        from src.ohscanner.fixture import snapshot_digest
+
+        (self.repo / "src" / "bridge.ets").unlink()
+        (self.repo / "src" / "b.cpp").write_text("int broken( {\n", encoding="utf-8")
+        (self.repo / "src" / "bridge.js").write_text("export function bridge() {}\n", encoding="utf-8")
+        (self.repo / "src" / "bad.js").write_bytes(b"\xff\xfe")
+        git(self.repo, "add", "-A")
+        git(self.repo, "commit", "-qm", "mixed source coverage")
+        commit = git(self.repo, "rev-parse", "HEAD")
+        _, _, sources, inventory = load_git_sources(self.repo, commit)
+
+        # Force an unavailable grammar result so the test is independent of
+        # which optional Tree-sitter wheels happen to be installed.
+        with patch("src.ohscanner.frontend.script_frontend",
+                   return_value=SimpleNamespace(status="unsupported", error_nodes=0)):
+            units, ast, parsing = index_sources(sources)
+        request = ScanRequest("coverage-test", "fixture/coverage", commit,
+                              snapshot_digest(units), "current-component:fixture/coverage")
+        context = ScanContext(request, units, {"ast": ast})
+        class CoverageIpcDetector(IpcInterfaceDetector):
+            def detect(self, context, units):
+                return DetectorRun(
+                    self.detector_id, self.version, "completed",
+                    analyzed_files=tuple(unit.path for unit in units),
+                    file_outcomes=tuple((unit.path, "complete" if unit.parse_status == "complete"
+                                         else "partial") for unit in units),
+                )
+
+        registry = DetectorRegistry()
+        registry.register(CoverageIpcDetector())
+        _, coverage = run_all_with_coverage(context, registry)
+        ipc = coverage["detectors"][IpcInterfaceDetector.detector_id]
+
+        self.assertEqual(ipc["status"], "partial")
+        self.assertEqual(inventory["tracked_entries"], 5)
+        self.assertEqual(inventory["non_source"], 1)
+        self.assertEqual(inventory["selected_source_files"], 3)
+        self.assertEqual(inventory["binary_or_non_utf8"], 1)
+        self.assertEqual(inventory["skipped"], [{"file": "src/bad.js", "reason": "non_utf8"}])
+        self.assertEqual(inventory["tracked_entries"], inventory["non_source"]
+                         + inventory["selected_source_files"]
+                         + inventory["binary_or_non_utf8"])
+        self.assertEqual(parsing["parsing_status"], {"complete": 1, "partial": 1, "not_run": 1})
+        self.assertEqual(sum(parsing["parsing_status"].values()), inventory["selected_source_files"])
+        self.assertEqual(ipc["applicable_files"], 2)
+        self.assertEqual(sum(ipc["coverage_counts"].values()), ipc["applicable_files"])
+        analyzed = set(ipc["analyzed_files"])
+        partial = set(ipc["partially_inspected_files"])
+        not_analyzed = set(ipc["not_analyzed_files"])
+        self.assertEqual(analyzed, {"src/a.cpp"})
+        self.assertEqual(partial, {"src/b.cpp"})
+        self.assertEqual(not_analyzed, set())
+        self.assertEqual(len(ipc["analyzed_files"]), len(analyzed))
+        self.assertEqual(len(ipc["partially_inspected_files"]), len(partial))
+        self.assertEqual(len(ipc["not_analyzed_files"]), len(not_analyzed))
+        self.assertFalse(analyzed & partial or analyzed & not_analyzed or partial & not_analyzed)
+        self.assertEqual(ipc["coverage_counts"]["complete"], len(analyzed))
+        self.assertEqual(ipc["coverage_counts"]["partial"], len(partial))
+        self.assertEqual(ipc["coverage_counts"]["not_analyzed"], len(not_analyzed))
+        self.assertEqual(ipc["coverage_counts"]["not_analyzed"], 0)
+        self.assertEqual(set(ipc["source_sha256"]), {"src/a.cpp", "src/b.cpp"})
+        self.assertEqual(set(ipc["inspected_files"]), analyzed | partial)
+        self.assertEqual(len(ipc["inspected_files"]), len(analyzed | partial))
+        self.assertEqual(ipc["unexamined"], [{
+            "file": "src/b.cpp", "parse_status": "partial",
+            "reason": "detector_model_incomplete", "analysis_status": "partial",
+        }])
+        self.assertNotIn("src/bridge.js", ipc["source_sha256"])
+        self.assertNotIn("src/bad.js", ipc["source_sha256"])
+
     def test_oversize_file_explicitly_skipped(self):
         (self.repo / "src" / "huge.cpp").write_bytes(b"x" * (1024 * 1024 + 1))
         git(self.repo, "add", "-A")
