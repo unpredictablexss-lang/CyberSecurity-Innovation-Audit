@@ -1,11 +1,13 @@
 """Independent controls for the Reflect.apply pending-exception rule.
 
-These are source-shape controls, not product vulnerability verdicts. The
-normalized fixture preserves the caller/helper/value and Branch/replacement
-relationships found in the pinned upstream source pair.
+These are source-shape controls, not product vulnerability verdicts. The raw
+fixtures are exported from the pinned commits and hash-checked here; a
+separate local official-object-store review verified commit/tree/blob identity
+and ancestry. The normalized fixture preserves the source relationships.
 """
 from dataclasses import replace
-from hashlib import sha1
+from hashlib import sha1, sha256
+from pathlib import Path
 import unittest
 
 from src.ohscanner.contracts import ScanContext, ScanRequest
@@ -22,6 +24,25 @@ NS = "panda::ecmascript::kungfu"
 SHORT_OWNER = "NativeInlineLowering"
 PATH = "ecmascript/compiler/native_inline_lowering.cpp"
 REVISION = "3fc1d0b960e0b1bb5bfe1aad8066bb8c9aa99724"
+RAW_FIXTURES = Path(__file__).parent / "fixtures" / "c12_native_inline_raw"
+
+# These are fetched pinned raw files. Their hashes bind these test inputs to
+# the manifest's expected file identities; they do not prove local git object
+# availability, commit ancestry, or product applicability.
+RAW_IDENTITIES = {
+    "parent_native_inline_lowering.cpp": {
+        "revision": REVISION,
+        "blob": "bdafa81ac797501852f639575d3a30f48b6ff25a",
+        "sha256": "fcf0b9c6371ed348f433f637130fef7ae886d7cc1d241bb072fc37e252f33463",
+        "trigger_line": 1053,
+    },
+    "fixed_native_inline_lowering.cpp": {
+        "revision": "18d8532a200d0c9aa64a6dfe2b146dc841b52bf8",
+        "blob": "df03fdce8a37cf2245577aec23c4c26deeebf02f",
+        "sha256": "6e5a248ec9b82a4955232845f08f02383d6b941caca2c80f0317f4ccba7d33ce",
+        "trigger_line": 1051,
+    },
+}
 
 
 def source(caller=None, helper=None, namespace=NS, owner="NativeInlineLowering",
@@ -70,6 +91,62 @@ def has_candidate(run):
 
 
 class NativeInlineExactRuleTests(unittest.TestCase):
+    def test_pinned_raw_parent_and_fixed_replay(self):
+        from src.ohscanner.detectors.ark_runtime.runtime_exception import (
+            analyze_native_inline_exception_propagation,
+        )
+
+        for name, identity in RAW_IDENTITIES.items():
+            with self.subTest(file=name):
+                raw = (RAW_FIXTURES / name).read_bytes()
+                self.assertEqual(sha256(raw).hexdigest(), identity["sha256"])
+                blob = sha1(b"blob " + str(len(raw)).encode("ascii") + b"\0" + raw).hexdigest()
+                self.assertEqual(blob, identity["blob"])
+                sample = unit(raw.decode("utf-8"), "ecmascript/compiler/native_inline_lowering.cpp")
+                self.assertEqual(sample.parse_status, "complete")
+                run = analyze_native_inline_exception_propagation(sample)
+                if name.startswith("parent_"):
+                    self.assertTrue(has_candidate(run), run)
+                    self.assertEqual(run.observations[0].line, 1053)
+                    self.assertIn("sentinel", run.observations[0].reason)
+                else:
+                    self.assertFalse(has_candidate(run), run)
+                    self.assertIn("fixed_pending_exception_check_control_not_security_verdict",
+                                  run.limitations)
+
+    def test_raw_source_binding_accepts_exact_identity_and_rejects_mutations(self):
+        name = "parent_native_inline_lowering.cpp"
+        identity = RAW_IDENTITIES[name]
+        raw = (RAW_FIXTURES / name).read_bytes()
+        sample = unit(raw.decode("utf-8"), PATH)
+        base = RuntimeTypeModel()
+        model = replace(base, native_exception_bindings=((
+            identity["revision"], PATH, identity["blob"], identity["sha256"]),))
+        ast = parse_source(sample.text, "cpp").to_dict()
+        ctx = ScanContext(
+            ScanRequest("native-exception-raw", base.source_repository, identity["revision"],
+                        snapshot_digest((sample,)), "current-component:" + base.source_repository,
+                        profile_id="light-ast", provenance="git_object"),
+            (sample,), {"ast": {PATH: ast}, "source_blob_oid": {PATH: identity["blob"]}},
+        )
+        detector = ArkRuntimeTypeSafetyDetector(model=model)
+        accepted = detector.detect(ctx, (sample,))
+        self.assertEqual(len(accepted.findings), 1)
+        self.assertEqual(accepted.findings[0].line, 1053)
+        self.assertTrue(all(item.status == "unknown"
+                            for item in accepted.findings[0].evidence_obligations))
+
+        wrong_blob_facts = dict(ctx.shared_facts)
+        wrong_blob_facts["source_blob_oid"] = {PATH: "0" * 40}
+        wrong_blob = detector.detect(replace(ctx, shared_facts=wrong_blob_facts), (sample,))
+        self.assertFalse(wrong_blob.findings)
+        self.assertNotEqual(wrong_blob.status, "complete")
+
+        wrong_revision = detector.detect(
+            replace(ctx, request=replace(ctx.request, commit="a" * 40)), (sample,))
+        self.assertFalse(wrong_revision.findings)
+        self.assertNotEqual(wrong_revision.status, "complete")
+
     def test_parent_binds_reflect_apply_result_to_value_and_replacement_path(self):
         sample = source()
         self.assertEqual(sample.parse_status, "complete")
@@ -186,6 +263,41 @@ class NativeInlineExactRuleTests(unittest.TestCase):
             "}}"
         ).format(owner=SHORT_OWNER)
         self.assertFalse(has_candidate(result(source(helper=helper))))
+
+    def test_equal_operand_order_is_semantically_symmetric(self):
+        # In pinned lcr_circuit_builder.h, Equal routes both operands to an
+        # ICmp EQ. Equality is symmetric, so this checks the same condition.
+        helper = source().text
+        helper = helper.replace("Equal(value, exceptionVal)",
+                                "Equal(exceptionVal, value)")
+        sample = unit(helper, PATH)
+        self.assertTrue(has_candidate(result(sample)))
+
+    def test_not_equal_with_inverted_success_and_exception_edges_is_equivalent(self):
+        # Pinned lcr_circuit_builder.h lowers NotEqual to ICmp NE; the pinned
+        # ReplaceHirWithIfBranch implementation directs `success` and
+        # `exception` state uses accordingly. Reversing the branches restores
+        # the same routing as Equal + (false,true).
+        helper = source().text
+        helper = helper.replace("Equal(value, exceptionVal)",
+                                "NotEqual(value, exceptionVal)")
+        helper = helper.replace(
+            "StateDepend success(ifFalse, builder_.DependRelay(ifFalse, depend));\n"
+            "  StateDepend exception(ifTrue, builder_.DependRelay(ifTrue, depend));",
+            "StateDepend success(ifTrue, builder_.DependRelay(ifTrue, depend));\n"
+            "  StateDepend exception(ifFalse, builder_.DependRelay(ifFalse, depend));")
+        self.assertTrue(has_candidate(result(unit(helper, PATH))))
+
+    def test_equal_with_swapped_success_exception_edges_is_not_same_behavior(self):
+        helper = source().text.replace(
+            "StateDepend success(ifFalse, builder_.DependRelay(ifFalse, depend));\n"
+            "  StateDepend exception(ifTrue, builder_.DependRelay(ifTrue, depend));",
+            "StateDepend success(ifTrue, builder_.DependRelay(ifTrue, depend));\n"
+            "  StateDepend exception(ifFalse, builder_.DependRelay(ifFalse, depend));")
+        run = result(unit(helper, PATH))
+        self.assertFalse(has_candidate(run))
+        self.assertEqual(run.file_outcome, "partial")
+        self.assertIn("native_inline_guard_branch_relation_unknown", run.limitations)
 
     def test_partial_parse_preserves_candidate_and_unknown_parse_obligation(self):
         sample = source(parse_status="partial")

@@ -137,7 +137,7 @@ class ArkRuntimeTypeSafetyDetector:
                 elif rule_id == INDEX_BOUNDS_RULE_ID:
                     result = index_bounds_result(unit, self.model.digest)
                 elif rule_id == NATIVE_EXCEPTION_RULE_ID:
-                    result = analyze_native_inline_exception_propagation(unit)
+                    result = analyze_native_inline_exception_propagation(unit, budget=self.budget)
                 elif rule_id == EXCEPTION_GUARD_RULE_ID:
                     result = analyze_exception_guard(
                         unit, creator_name=self.model.exception_guard_creator[0],
