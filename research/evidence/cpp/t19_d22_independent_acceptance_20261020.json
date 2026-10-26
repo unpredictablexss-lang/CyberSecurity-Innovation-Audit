@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "task": "T19 independent acceptance of D22 libtiff CVE-2025-9900 review",
+  "date": "2026-10-20",
+  "checkout": {
+    "branch": "codex/a-t17-independent-d20-d21-20261020",
+    "head": "d3ebf4c1ccabdba0be674294a438472bbaed37af",
+    "reviewed_d22_commit": "ccce5279d2ca53a97443d0fed0c48c0b068947b8",
+    "d22_commit_checked_out_or_cherry_picked": false
+  },
+  "rule_regression": {
+    "status": "PASS",
+    "scope": "bounded modeled regression only",
+    "detector": "ohscanner.cpp.bounds@0.3.0",
+    "rule": "ohcpp-memory-bounds-pointer-offset-candidate-004@0.1.0",
+    "vulnerable": {
+      "commit": "9dff73bebc5661f2dace6f16e14cf9e857172f4e",
+      "tree": "986499c84247e9a1f49560128bbe7580d8ebea1a",
+      "file_blob": "6c7b5031a1937bb48cc79808a59618d8a4f6237e",
+      "file_sha256": "cf39474735eba839a097a540fbc3f5f17791d6f7496a1800e04dbefc0e7d13e3",
+      "function": "TIFFReadRGBAImageOriented",
+      "original_candidate_line": 621,
+      "finding_count": 1,
+      "fragment_parse": "complete"
+    },
+    "fixed": {
+      "commit": "3e0dcf0ec651638b2bd849b2e6f3124b36890d99",
+      "tree": "77361ef7262189e16a2010b5c333f6b275d17f09",
+      "file_blob": "2774caa0eef24bce2a619d2686a23d59fb5ef9db",
+      "file_sha256": "de1bb87b9c2882c73f1045d9510e30d997afb48c52179a62b647aed4c6cee7d8",
+      "finding_count": 0,
+      "fragment_parse": "complete"
+    },
+    "model_limitation": "Replay models uint32_t as unsigned int; pinned source proves exact-width unsigned uint32_t origin, but does not by itself resolve target integer promotions/rank."
+  },
+  "cve_case": {
+    "status": "PARTIAL/BLOCK",
+    "reason": "Pinned vulnerable/fixed function differential and concrete test-fixture allocation are supported; both whole translation units remain partial and detector-blocked, with no product inclusion/build or production call-path evidence.",
+    "translation_units": {
+      "vulnerable": {"parse": "partial", "parse_issue_count": 6, "detector_status": "blocked", "findings": 0},
+      "fixed": {"parse": "partial", "parse_issue_count": 6, "detector_status": "blocked", "findings": 0},
+      "zero_findings_meaning": "unknown coverage; not safe and not a fixed differential pass"
+    },
+    "fixture": {
+      "path": "tests/fixtures/data_sensitive/cve_2025_9900_read_small_raster.c",
+      "bytes": 1944,
+      "sha256": "6d907f94c1e100936fb4b714d6ee6fea9d6e1f96ecf2a8b04252db5d076337e1",
+      "image_dimensions": "16x16",
+      "allocated_raster_dimensions": "16x1 (safe mode 16x16)",
+      "is_product_caller": false
+    },
+    "capacity_evidence": {
+      "api_contract_documented": true,
+      "specific_fixture_allocation_and_call_present": true,
+      "specific_product_caller_proven": false,
+      "api_contract_alone_allows_case_pass": false
+    }
+  },
+  "official_fix": {
+    "commit": "14da830be4bf4d6d3daafcbd892426aa6c164242",
+    "title": "tif_getimage.c: Fix buffer underflow crash for less raster rows at TIFFReadRGBAImageOriented()",
+    "vulnerable_is_ancestor": true,
+    "fixed_replay_commit": "3e0dcf0ec651638b2bd849b2e6f3124b36890d99",
+    "fixed_descends_from_fix_commit": true,
+    "semantic_change": "Removes the raster + (rheight - img.height) * rwidth base-pointer offset and passes raster, rwidth, rheight to TIFFRGBAImageGet."
+  },
+  "type_evidence": {
+    "header_chain": ["tiffconf.h.in includes <stdint.h>", "tiff.h documents intrinsic fixed-width types", "tiffio.h declares _TIFFRGBAImage.height as uint32_t"],
+    "function_parameters": "rwidth and rheight are uint32_t; raster is uint32_t *",
+    "exact_width_unsigned_origin_verified": true,
+    "target_implementation_typedef_and_integer_promotion_verified": false,
+    "d22_modulo_32bit_claim": "PARTIAL: replay shim models common unsigned-int behavior; headers alone do not prove it for every implementation."
+  },
+  "controls": {
+    "memory_safety_tests": {"command": "python -m unittest tests.detectors.test_cpp_memory_safety_detectors -v", "passed": 20},
+    "unsafe_memory_call_tests": {"command": "python -m unittest tests.detectors.test_cpp_unsafe_memory_call_detector -v", "passed": 12},
+    "coverage_examples": ["unsigned pointer-offset underflow candidate", "guarded unsigned offset quiet", "signed offset quiet", "unrelated unsigned subtraction quiet", "partial parse fails closed"]
+  },
+  "queue": {
+    "a0_verifier_command": "python research/deliveries/cpp/a0_triage_20261019/verify_triage.py",
+    "a0_overall_ok": true,
+    "rows": 345,
+    "unique_ids": 345,
+    "original_statuses": {"not_reproduced": 9, "not_testable": 336},
+    "queue_statuses": {"queued_not_reproduced": 9, "queued_first_batch": 5, "paused_pending_evidence": 331},
+    "source_manifest_entries": 97,
+    "source_manifest_bytes": 4364747,
+    "t13_verifier_command": "python research/evidence/cpp/t13_first_batch/verify_t13_queue.py",
+    "t13_overall_ok": true,
+    "queue_mutated": false
+  },
+  "scope_check": {
+    "command": "python -m scripts.check_change_scope --base 8ec5f56a12e90bba56953b39eb17faa20e154da9 --lane cpp",
+    "violations": 0,
+    "overall_ok": true,
+    "note": "The checker includes the checkout's existing parallel evidence and detector/test work; both newly authored T19 files are within the cpp evidence lane."
+  },
+  "diff_check": {"command": "git diff --check", "result": "clean", "exit_code": 0},
+  "modified_product_files": [],
+  "modified_detector_test_fixture_files": []
+}

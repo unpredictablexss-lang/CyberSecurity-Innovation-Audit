@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "task": "T18 independent review of D21 and D20 status",
+  "date": "2026-10-20",
+  "checkout": {
+    "head": "d3ebf4c1ccabdba0be674294a438472bbaed37af",
+    "branch": "codex/a-t17-independent-d20-d21-20261020",
+    "scope": "evidence-only; detector, test, and fixture files unchanged"
+  },
+  "d21_rule_regression": {
+    "status": "PASS",
+    "qualification": "bounded function-fragment regression only",
+    "detector": "ohscanner.cpp.bounds",
+    "detector_version": "0.3.0",
+    "rule_id": "ohcpp-memory-bounds-pointer-offset-candidate-004",
+    "source": {
+      "repository": "libtiff/libtiff",
+      "vulnerable": {
+        "commit": "9dff73bebc5661f2dace6f16e14cf9e857172f4e",
+        "tree": "986499c84247e9a1f49560128bbe7580d8ebea1a",
+        "path": "libtiff/tif_getimage.c",
+        "blob": "6c7b5031a1937bb48cc79808a59618d8a4f6237e",
+        "sha256": "cf39474735eba839a097a540fbc3f5f17791d6f7496a1800e04dbefc0e7d13e3",
+        "header_blob": "225f3c1bfeabae2b31a5f35fbfd12d14b570dcd8",
+        "header_sha256": "70119b9db897a364821a108ff0adc09f26c20ad9b6d9e943eb376ee3edb6166f",
+        "function_lines": [610, 631],
+        "function_sha256": "fdae36a9e7a21e00392236fda8715cb7dded4a1276210d7d37fe565f0d12b8e9",
+        "finding": {
+          "local_line": 50,
+          "original_file_line": 621,
+          "symbol": "raster",
+          "synthetic_fragment_sha256": "6302a9c9f11f62a244fd3d765f39f1cac87855423cc59d01f51a5e3cc9ce1d06"
+        }
+      },
+      "fixed": {
+        "commit": "3e0dcf0ec651638b2bd849b2e6f3124b36890d99",
+        "tree": "77361ef7262189e16a2010b5c333f6b275d17f09",
+        "path": "libtiff/tif_getimage.c",
+        "blob": "2774caa0eef24bce2a619d2686a23d59fb5ef9db",
+        "sha256": "de1bb87b9c2882c73f1045d9510e30d997afb48c52179a62b647aed4c6cee7d8",
+        "header_blob": "6a7ab2f5b7f6697020dfbcac57f8c2617c4b1074",
+        "header_sha256": "7923903a85c15c047a22bfe52ef1901939d6a7e656c75b814fcb86c6179b120c",
+        "function_lines": [626, 645],
+        "function_sha256": "51617edc21ee5637de99c242a834eebc1341f28315d4ae74a279b775ddd13486",
+        "findings": 0
+      }
+    },
+    "fragment_build": {
+      "field_declaration": "copied from exact commit-matched _TIFFRGBAImage in tiffio.h",
+      "parse": "complete on vulnerable and fixed fragments",
+      "shim": "typedef unsigned int uint32_t; substitutes for system header typedef; full project target ABI/include resolution not independently verified",
+      "hash_binding_note": "Diagnostic source_sha256 identifies synthetic fragment (shim + struct declaration + function), not full source file. Original file and function hashes are separately preserved."
+    },
+    "finding_line_mapping": "local line 50 -> pinned raw source line 621; exact expression confirmed in source",
+    "source_fix": "fixed function removes unchecked offset and calls TIFFRGBAImageGet with raster, rwidth, rheight; dimension handling is added in TIFFRGBAImageGet",
+    "replay_command": "python research/evidence/cpp/d21_libtiff_9900_20261020/replay.py --repo-dir D:/openHarmonyScanner/tmp/libtiff-cve-2025-9900-upstream --output-dir D:/openHarmonyScanner/tmp/t18-d21-replay-output"
+  },
+  "d21_cve_case": {
+    "cve": "CVE-2025-9900",
+    "status": "PARTIAL/BLOCK",
+    "whole_translation_units": {
+      "vulnerable": {"parse": "partial", "detector_status": "blocked", "findings": 0},
+      "fixed": {"parse": "partial", "detector_status": "blocked", "findings": 0}
+    },
+    "missing_evidence": ["product build inclusion", "reachable caller path", "attacker-controlled input", "raster allocation capacity", "runtime impact"],
+    "promotion_supported": false
+  },
+  "d20_cve_case": {
+    "cve": "CVE-2026-33416",
+    "status": "PARTIAL/BLOCK",
+    "basis": "T17 replay recorded all four vulnerable and four fixed fragments and parent translation units as partial with zero findings; no new evidence in T18 changes this result"
+  },
+  "regression_tests": {
+    "command": "python -m unittest tests.detectors.test_cpp_memory_safety_detectors -v",
+    "passed": 20
+  },
+  "queue": {
+    "command": "python research/evidence/cpp/t13_first_batch/verify_t13_queue.py",
+    "verified": true,
+    "unique_ids": 345,
+    "statuses": {"queued_not_reproduced": 9, "queued_first_batch": 5, "paused_pending_evidence": 331},
+    "source_hash_manifest_entries": 97
+  },
+  "a0_queue_crosscheck": {
+    "command": "python research/deliveries/cpp/a0_triage_20261019/verify_triage.py",
+    "verified": true,
+    "unique_ids": 345,
+    "original_statuses": {"not_reproduced": 9, "not_testable": 336}
+  },
+  "diff_check": "clean"
+}

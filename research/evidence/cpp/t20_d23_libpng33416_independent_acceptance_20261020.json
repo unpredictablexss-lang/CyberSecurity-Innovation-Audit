@@ -1,0 +1,360 @@
+{
+  "schema_version": 1,
+  "task": "T20 independent acceptance of D23 and D20 libpng CVE-2026-33416",
+  "date": "2026-10-20",
+  "checkout": "a-t17-d20-d21-20261020",
+  "scope": "evidence-only; detector, tests, fixtures and queue unchanged",
+  "model_regression": {
+    "detector": "ohscanner.cpp.resource_lifetime",
+    "version": "0.4.2",
+    "decision": "NO CHANGE; parser/model limitation reproduced",
+    "replay_command": "python research/evidence/cpp/d20_libpng33416_replay_20261020.py",
+    "replay_result": "completed; script verified exact source SHA-256 before parsing",
+    "source_identity": {
+      "repository": "pnggroup/libpng",
+      "vulnerable": {
+        "commit": "c3e304954a9cfd154bc0dfbfea2b01cd61d6546d",
+        "tree": "e01f5780f93eaa6d74cca003bb39b427c8f1e910"
+      },
+      "fixed": {
+        "commit": "d5515b5b8be3901aac04e5bd8bd5c89f287bcd33",
+        "tree": "a28bb962645843af84063c77f574f6d88da79f76"
+      }
+    },
+    "slices": [
+      {
+        "variant": "vulnerable",
+        "file": "pngset.c",
+        "source_sha256": "9bd59a79669db37b2ecc481439481eb5f49bf77bee0de4b1aba649915609b3d0",
+        "function": "png_set_PLTE",
+        "lines": [
+          740,
+          802
+        ],
+        "fragment_sha256": "bc3f1ce6378e02769c091a34274c5c4ed5d04d3172f42dd0719c9440659e81ee",
+        "tu_parse": "partial",
+        "fragment_parse": "partial",
+        "run_status": "blocked",
+        "findings": 0,
+        "nodes": [
+          {
+            "kind": "error",
+            "type": "ERROR",
+            "line": 740,
+            "columns": [
+              6,
+              12
+            ],
+            "source_text": "void PNGAPI"
+          },
+          {
+            "kind": "error",
+            "type": "ERROR",
+            "line": 770,
+            "columns": [
+              1,
+              42
+            ],
+            "source_text": "#        ifdef PNG_MNG_FEATURES_SUPPORTED"
+          },
+          {
+            "kind": "error",
+            "type": "ERROR",
+            "line": 772,
+            "columns": [
+              1,
+              15
+            ],
+            "source_text": "#        endif"
+          }
+        ]
+      },
+      {
+        "variant": "vulnerable",
+        "file": "pngset.c",
+        "source_sha256": "9bd59a79669db37b2ecc481439481eb5f49bf77bee0de4b1aba649915609b3d0",
+        "function": "png_set_tRNS",
+        "lines": [
+          1145,
+          1212
+        ],
+        "fragment_sha256": "800ba6a5a0ac9db7e8e736564b33e6268d83de19ea59fcc384ac3462af0e2035",
+        "tu_parse": "partial",
+        "fragment_parse": "partial",
+        "run_status": "blocked",
+        "findings": 0,
+        "nodes": [
+          {
+            "kind": "error",
+            "type": "ERROR",
+            "line": 1145,
+            "columns": [
+              6,
+              12
+            ],
+            "source_text": "void PNGAPI"
+          }
+        ]
+      },
+      {
+        "variant": "vulnerable",
+        "file": "png.c",
+        "source_sha256": "0d8e45e9039cf04088764a09dcda7b24695f199288a44e11dba54ebfaca1c730",
+        "function": "png_free_data",
+        "lines": [
+          482,
+          683
+        ],
+        "fragment_sha256": "a7fef2181cd6e81678c8784a995f87f816db6d624314bd28105cf9cd62b46b57",
+        "tu_parse": "partial",
+        "fragment_parse": "partial",
+        "run_status": "blocked",
+        "findings": 0,
+        "nodes": [
+          {
+            "kind": "error",
+            "type": "ERROR",
+            "line": 482,
+            "columns": [
+              6,
+              12
+            ],
+            "source_text": "void PNGAPI"
+          }
+        ]
+      },
+      {
+        "variant": "vulnerable",
+        "file": "pngrtran.c",
+        "source_sha256": "4df05c2e5db00911817d7f125c862524205895f34a65106e016d351f7e6edb53",
+        "function": "png_do_expand_palette",
+        "lines": [
+          4328,
+          4497
+        ],
+        "fragment_sha256": "d7d38e9b5330e19e0b762e5456f6eb22e419b7f33391e57b00a71a66e85be851",
+        "tu_parse": "partial",
+        "fragment_parse": "partial",
+        "run_status": "blocked",
+        "findings": 0,
+        "nodes": [
+          {
+            "kind": "missing",
+            "type": ";",
+            "line": 4447,
+            "column": 35,
+            "source_text": "               PNG_UNUSED(png_ptr)"
+          },
+          {
+            "kind": "missing",
+            "type": ";",
+            "line": 4477,
+            "column": 35,
+            "source_text": "               PNG_UNUSED(png_ptr)"
+          }
+        ]
+      },
+      {
+        "variant": "fixed",
+        "file": "pngset.c",
+        "source_sha256": "d3a203e40b6a6000a7cb78a61e0fd9664b0c39a65d82260efedb0f0184a8bc19",
+        "function": "png_set_PLTE",
+        "lines": [
+          741,
+          813
+        ],
+        "fragment_sha256": "01fd4d8f7a15a786c565e2497549f968d4dd364112c5583c7befa6fc6eb90c9f",
+        "tu_parse": "partial",
+        "fragment_parse": "partial",
+        "run_status": "blocked",
+        "findings": 0,
+        "nodes": [
+          {
+            "kind": "error",
+            "type": "ERROR",
+            "line": 741,
+            "columns": [
+              6,
+              12
+            ],
+            "source_text": "void PNGAPI"
+          },
+          {
+            "kind": "error",
+            "type": "ERROR",
+            "line": 771,
+            "columns": [
+              1,
+              42
+            ],
+            "source_text": "#        ifdef PNG_MNG_FEATURES_SUPPORTED"
+          },
+          {
+            "kind": "error",
+            "type": "ERROR",
+            "line": 773,
+            "columns": [
+              1,
+              15
+            ],
+            "source_text": "#        endif"
+          }
+        ]
+      },
+      {
+        "variant": "fixed",
+        "file": "pngset.c",
+        "source_sha256": "d3a203e40b6a6000a7cb78a61e0fd9664b0c39a65d82260efedb0f0184a8bc19",
+        "function": "png_set_tRNS",
+        "lines": [
+          1156,
+          1235
+        ],
+        "fragment_sha256": "67ea0f850feb4faa08ad63dc13c678265aea344eb26872b2fff1066675f2d162",
+        "tu_parse": "partial",
+        "fragment_parse": "partial",
+        "run_status": "blocked",
+        "findings": 0,
+        "nodes": [
+          {
+            "kind": "error",
+            "type": "ERROR",
+            "line": 1156,
+            "columns": [
+              6,
+              12
+            ],
+            "source_text": "void PNGAPI"
+          }
+        ]
+      },
+      {
+        "variant": "fixed",
+        "file": "png.c",
+        "source_sha256": "29a37cedb5be5597aafa3cab62a223c0accbd6016edfff97386471a6e118100c",
+        "function": "png_free_data",
+        "lines": [
+          482,
+          683
+        ],
+        "fragment_sha256": "a7fef2181cd6e81678c8784a995f87f816db6d624314bd28105cf9cd62b46b57",
+        "tu_parse": "partial",
+        "fragment_parse": "partial",
+        "run_status": "blocked",
+        "findings": 0,
+        "nodes": [
+          {
+            "kind": "error",
+            "type": "ERROR",
+            "line": 482,
+            "columns": [
+              6,
+              12
+            ],
+            "source_text": "void PNGAPI"
+          }
+        ]
+      },
+      {
+        "variant": "fixed",
+        "file": "pngrtran.c",
+        "source_sha256": "6b724ff0047cced71884176296aac10a6fc1d2592477034bbd622222ded3373f",
+        "function": "png_do_expand_palette",
+        "lines": [
+          4352,
+          4521
+        ],
+        "fragment_sha256": "6bd588ad4b56a541b74a74d5530a0369ed8cdd47e0e7a7f390e55fe4aae66946",
+        "tu_parse": "partial",
+        "fragment_parse": "partial",
+        "run_status": "blocked",
+        "findings": 0,
+        "nodes": [
+          {
+            "kind": "missing",
+            "type": ";",
+            "line": 4471,
+            "column": 35,
+            "source_text": "               PNG_UNUSED(png_ptr)"
+          },
+          {
+            "kind": "missing",
+            "type": ";",
+            "line": 4501,
+            "column": 35,
+            "source_text": "               PNG_UNUSED(png_ptr)"
+          }
+        ]
+      }
+    ],
+    "offset_assessment": {
+      "line_numbers": "preserved by newline placeholders outside selected functions",
+      "columns_within_selected_lines": "preserved",
+      "absolute_byte_offsets": "not preserved; omitted lines are replaced by one newline each",
+      "synthetic_rewrites_performed": false
+    },
+    "interpretation": "all 8 executions are partial/blocked/zero-finding; this is inconclusive and does not establish safe or fixed behavior"
+  },
+  "case_status": {
+    "CVE-2026-33416": {
+      "status": "PARTIAL/BLOCK",
+      "source_candidate": "plausible cross-function/cross-file use-after-free candidate",
+      "detector_candidate_demonstrated": false,
+      "fixed_differential_pass": false,
+      "vulnerable_source_relation": [
+        "pngset.c:798 assigns info_ptr->palette = png_ptr->palette",
+        "pngset.c:1178 assigns png_ptr->trans_alpha = info_ptr->trans_alpha",
+        "png.c:653-660 frees/nulls info_ptr->palette when PNG_FREE_PLTE applies",
+        "png.c:517-525 frees/nulls info_ptr->trans_alpha when PNG_FREE_TRNS applies",
+        "pngrtran.c:4906-4907 passes png_ptr->palette and png_ptr->trans_alpha to png_do_expand_palette"
+      ],
+      "fixed_source_relation": "png_set_PLTE and png_set_tRNS allocate/copy separate png_info and png_struct buffers; this source delta is not confirmed by the partial detector replay",
+      "minimum_inputs": {
+        "build_macros": [
+          "PNGAPI/PNGCAPI expansion and calling-convention flags",
+          "PNG_UNUSED definition (including its semicolon expansion)",
+          "PNG_MNG_FEATURES_SUPPORTED active state",
+          "feature macros controlling members and free branches"
+        ],
+        "exact_member_declarations": [
+          "png_info.palette: png_colorp (pnginfo.h:38)",
+          "png_info.trans_alpha: png_bytep (pnginfo.h:141)",
+          "png_struct.palette: png_colorp (pngstruct.h:223)",
+          "png_struct.trans_alpha: png_bytep (pngstruct.h:306)",
+          "typedefs for png_colorp, png_bytep, png_structrp, png_inforp; free_me/valid ownership flags and count fields"
+        ],
+        "call_order_context": [
+          "PLTE/tRNS chunk handling and setter calls",
+          "replacement cleanup through png_free_data",
+          "png_read_update_info and transformation initialization",
+          "row decode path into png_do_expand_palette at pngrtran.c:4906-4907",
+          "fixed independent-copy lifetime behavior"
+        ]
+      }
+    }
+  },
+  "queue": {
+    "rows": 345,
+    "status": "preserved",
+    "verifiers": [
+      {
+        "command": "python research/deliveries/cpp/a0_triage_20261019/verify_triage.py",
+        "result": "pending final command run"
+      },
+      {
+        "command": "python research/evidence/cpp/t13_first_batch/verify_t13_queue.py",
+        "result": "pending final command run"
+      }
+    ]
+  },
+  "independent_validation": {
+    "change_scope": {
+      "command": "python -m scripts.check_change_scope --base 8ec5f56a12e90bba56953b39eb17faa20e154da9 --lane cpp",
+      "result": "pending final command run"
+    },
+    "diff_check": {
+      "command": "git diff --check",
+      "result": "pending final command run"
+    }
+  }
+}
