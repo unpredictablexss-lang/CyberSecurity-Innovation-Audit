@@ -557,7 +557,7 @@
     {
       "id": "C-DEV-DV-API-20261020",
       "kind": "development_and_candidate_refinement",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED_SAME_COMMIT_INDEPENDENT_REPLAY",
       "worktree": "planning worktree; exact base 85eb0948515e777d53996caf8f7ecb4b87897c90",
       "feedback_from": "C-TEST-DV-API-20261020",
       "objective": "Refine the exact-bound DataView API index-width candidate in BuiltinsDataView::GetViewValue and SetViewValue. The source-bound detector currently emits two parent candidates (lines 394 and 455) but no fixed candidates; fixed replay remains partial/unknown in DataViewConstructor, GetViewValue, and SetViewValue. Determine whether any parent candidate represents unsafe arithmetic or whether uint32_t types, nonnegative conversion, element-size limits, view construction invariants, and underlying buffer bounds prove it safe. Improve the model only where exact source evidence permits a narrow sound distinction.",
@@ -601,12 +601,18 @@
       },
       "second_layer_feedback": "Review commit 2f37175fdc1b49edc9157f8b079f35c8b793a873 finds no source-supported uint32 wraparound OOB on these API paths; reconcile against exact source/test matrix and avoid suppressing beyond proven bounds.",
       "tester_baseline_report": "research/deliveries/c-line/dataview_api_independent_baseline_20261020.md",
-      "tester_baseline_commit": "99e5c6e085522b3ace646d5db0f3cc6bf589f4aa"
+      "tester_baseline_commit": "99e5c6e085522b3ace646d5db0f3cc6bf589f4aa",
+      "developer_commit": "76efed37d814ec68b56ebd6a00662efa7d137a4a",
+      "developer_evidence_commit": "f77b3846c57187f9e13cf9493f162d7e1e1e7b21",
+      "developer_report": "research/deliveries/c-line/dataview_api_width_proof_developer_report_20261020.md",
+      "replay_report": "research/deliveries/c-line/dataview_api_width_proof_followup_review_20261020.md",
+      "verification": "Exact parent/fixed replay preserved partial/blocked; pytest tests/detectors/ark_runtime tests/test_runner_applicable_units.py -q: 196 passed, 3 skipped. Exact helper evidence suppresses only the two API candidates; missing or stale helper proof restores both candidates.",
+      "limitations": "Source-level refinement only; fixed zero findings remain partial/blocked and are not a safety verdict. Runtime/product impact and unusual backing-buffer paths remain unknown."
     },
     {
       "id": "C-TEST-DV-API-20261020",
       "kind": "independent_testing",
-      "status": "COMPLETED_INDEPENDENT_BASELINE_AWAITING_DEVELOPER_REPLAY",
+      "status": "COMPLETED_SAME_COMMIT_REPLAY",
       "test_agent": "ark_static_test",
       "feedback_to": "C-DEV-DV-API-20261020",
       "objective": "Independently verify the exact source semantics and detector behavior for DataView GetViewValue/SetViewValue candidates, provide adversarial controls before developer changes, then replay any developer commit and return concrete discrepancies.",
