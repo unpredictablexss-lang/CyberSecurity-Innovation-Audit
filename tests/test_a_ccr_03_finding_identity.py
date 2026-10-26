@@ -112,6 +112,17 @@ class StableIdentityTests(unittest.TestCase):
         unbound = observation(source_blob_oid=None, byte_start=None, byte_end=None)
         self.assertEqual(occurrence_identity(unbound)["status"], "unknown")
 
+    def test_occurrence_requires_nonempty_rule_version(self):
+        for value in (None, ""):
+            with self.subTest(rule_version=value):
+                record = observation(rule_version=value)
+                if value is None:
+                    record.pop("rule_version")
+                occurrence = occurrence_identity(record)
+                self.assertEqual(occurrence["status"], "unknown")
+                self.assertIn("missing:rule_version", occurrence["unknown_reasons"])
+                self.assertEqual(build_identity_record(record)["source_binding"]["status"], "unbound")
+
     def test_line_byte_range_is_exact_utf8_half_open(self):
         text = "alpha\r\n界bc\nlast"
         start, end = line_byte_range(text, 2)
@@ -219,6 +230,39 @@ class RelationTests(unittest.TestCase):
             rule_compatibility="compatible",
         )[0]
         self.assertEqual(explicit["relation"], "persistent_changed_metadata")
+
+    def test_missing_rule_version_never_establishes_compatibility(self):
+        for value in (None, ""):
+            with self.subTest(rule_version=value):
+                before_record = observation(rule_version=value)
+                after_record = observation(rule_version=value)
+                if value is None:
+                    before_record.pop("rule_version")
+                    after_record.pop("rule_version")
+
+                def as_payload(record):
+                    identity = build_identity_record(record)
+                    return {
+                        "schema_version": 2,
+                        "diagnostic_id": record["legacy_diagnostic_id"],
+                        "source_sha256": record["source_sha256"],
+                        "finding_identity_id": identity["stable"]["id"],
+                        "occurrence_id": identity["occurrence"]["id"],
+                        "finding_identity": identity,
+                    }
+
+                relation = compare_findings(
+                    [as_payload(before_record)], [as_payload(after_record)],
+                    before_coverage="complete", after_coverage="complete",
+                )[0]
+                expected_relation = (
+                    "unknown_version_boundary" if value is None else "unknown_identity"
+                )
+                self.assertEqual(relation["relation"], expected_relation)
+                self.assertFalse(relation["relation"].startswith("persistent_"))
+                self.assertEqual(relation["vulnerability_effect"], "unknown")
+                if value is None:
+                    self.assertIn("rule_compatibility:unknown", relation["reasons"])
 
     def test_relation_vocabulary_is_exactly_supported(self):
         self.assertTrue({
