@@ -14,7 +14,7 @@ from .contracts import content_sha256
 
 
 SUPPORTED_OPERATION_KINDS = {
-    "revision_range", "recent_window_comparison", "branch_comparison", "version_matrix",
+    "snapshot", "revision_range", "recent_window_comparison", "branch_comparison", "version_matrix",
 }
 
 
@@ -52,7 +52,8 @@ def build_operation_plan(settings, store, task: dict[str, Any], *,
             endpoint_states.append({"scan_id": scan_id, "state": "unknown",
                                     "reason": "scan_not_complete"})
             continue
-        endpoint_states.append({"scan_id": scan_id, "state": "completed",
+        endpoint_state = job.get("status")
+        endpoint_states.append({"scan_id": scan_id, "state": endpoint_state,
                                 "repository": report.get("repository"),
                                 "commit": report.get("commit"),
                                 "report_sha256": job.get("report_sha256")})
@@ -65,7 +66,8 @@ def build_operation_plan(settings, store, task: dict[str, Any], *,
                 "snapshot_sha256": report.get("snapshot_sha256"),
                 "report_sha256": job.get("report_sha256"),
                 "source_binding_verified": source_binding_valid(report, original),
-                "coverage_status": report.get("status"),
+                "coverage_status": ("partial" if endpoint_state == "completed_with_limitations"
+                                    else report.get("status")),
             })
             observations.append(candidate)
 
@@ -80,6 +82,7 @@ def build_operation_plan(settings, store, task: dict[str, Any], *,
         len(endpoint_states) == len(spec.get("scan_ids", []))
         and all(row.get("state") == "completed" for row in endpoint_states)
     )
+    static_only = spec.get("audit_mode") == "static_only"
     groups = []
     for group in grouped["groups"]:
         item = dict(group)
@@ -94,7 +97,7 @@ def build_operation_plan(settings, store, task: dict[str, Any], *,
         "policy_revision": envelope["revision"],
         "policy_sha256": envelope["policy_sha256"],
         "policy_profile": policy["profile"],
-        "state": ("ranked_waiting_for_authorized_quick_screen"
+        "state": (("ranked_static_only" if static_only else "ranked_waiting_for_authorized_quick_screen")
                   if all_endpoints_complete else "partial_unknown"),
         "endpoint_states": endpoint_states,
         "grouping": {key: value for key, value in grouped.items() if key != "groups"},
@@ -106,6 +109,8 @@ def build_operation_plan(settings, store, task: dict[str, Any], *,
         "limitations": [
             "L0 grouping and L1 ranking are deterministic local planning only.",
             "L2 quick screen and L3 Agent dispatch require a separate task-level consent and are not scheduled by this operation.",
+            *(["This snapshot was authorized as static-only; no model request is permitted from this audit."]
+              if static_only else []),
             "Unselected and unknown observations remain candidates; ranking is not a safety or validity verdict.",
             *([] if all_endpoints_complete else [
                 "One or more fixed endpoints did not produce a completed report; missing endpoint observations remain unknown and are not counted in this ranking."

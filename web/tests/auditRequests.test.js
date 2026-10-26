@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { approvedDetectorIds, researchDetectorIds, datePreviewPayload, defaultRepositoryRevision, includePaths, operationPayload, recentRange, requestGate, snapshotPayload, planPayload, auditErrorMessage, taskAuthorizationPayload, auditWorkflowLabel, selectedAuditModeValues } from "../src/features/audits/model.js";
+import { approvedDetectorIds, researchDetectorIds, datePreviewPayload, defaultRepositoryRevision, includePaths, operationPayload, recentRange, requestGate, snapshotPayload, planPayload, auditErrorMessage, taskAuthorizationPayload, candidateBatchLimit, auditWorkflowLabel, selectedAuditModeValues } from "../src/features/audits/model.js";
 const detectors = [
   { id: "test.cpp", version: "2", kind: "research_candidate", supported_languages: ["cpp"] },
   { id: "test.example", version: "1", kind: "example", supported_languages: ["cpp"] },
@@ -32,7 +32,7 @@ test("date preview excludes detector/scope/budget fields required only for execu
   const fields = { repository_id: "repo", branch: "refs/heads/main", start: "2026-10-15T00:00", end: "2026-10-17T00:00", timezone: "Asia/Shanghai" };
   assert.deepEqual(datePreviewPayload({ ...values, ...fields }), fields);
   assert.deepEqual(operationPayload("date", { ...values, ...fields }, detectors), { ...fields,
-    audit_mode: "standard_review", auto_triage: false, max_triage_candidates: 3,
+    audit_mode: "standard_review", auto_triage: false,
     max_r2_candidates: 0,
     include_paths: ["src", "include"], detector_ids: ["test.cpp"], timeout_seconds: 60, memory_mb: 512 });
   assert.throws(() => datePreviewPayload({ ...fields, end: fields.start }), /结束/);
@@ -89,7 +89,7 @@ test("audit preview errors show field validation and API messages in plain langu
 
 test("task-level authorization binds candidate counts without a platform cumulative cost cap", () => {
   assert.deepEqual(taskAuthorizationPayload({ audit_mode: "standard_review" }), {
-    auto_triage: false, max_triage_candidates: 3, max_r2_candidates: 0,
+    auto_triage: false, max_r2_candidates: 0,
   });
   assert.deepEqual(taskAuthorizationPayload({
     audit_mode: "standard_review", auto_triage: true, max_triage_candidates: 3,
@@ -106,62 +106,29 @@ test("plan preview sends source selection only, with no browser-chosen rule list
   assert.deepEqual(planPayload(values, detectors), { repository_id: "repo", revision: "refs/tags/a", include_paths: ["src", "include"], audit_mode: "standard_review", timeout_seconds: 60, memory_mb: 512 });
 });
 
-test("explicit-only research rules are not silently requested by normal UI flows", () => {
-  assert.deepEqual(approvedDetectorIds([...detectors, { ...detectors[0], id: "test.research-only", default_enabled: false }]), ["test.cpp"]);
+test("every registered research detector is enabled automatically, independent of legacy default flags", () => {
+  assert.deepEqual(approvedDetectorIds([...detectors, { ...detectors[0], id: "test.research-only", default_enabled: false }]), ["test.cpp", "test.research-only"]);
 });
-test("D sensitive exposure rule stays off by default and is sent only after explicit selection", () => {
-  const id = "ohscanner.data.sensitive_exposure";
-  const d = { id, version: "0.17.0", kind: "research_candidate", default_enabled: false,
-    supported_languages: ["c", "cpp"] };
-  assert.deepEqual(approvedDetectorIds([...detectors, d]), ["test.cpp"]);
-  assert.deepEqual(approvedDetectorIds([...detectors, d], [id]), [id, "test.cpp"]);
-  assert.deepEqual(snapshotPayload(values, [...detectors, d], [id]).detector_ids, [id, "test.cpp"]);
-  assert.deepEqual(planPayload(values, [...detectors, d], [id]), {
-    repository_id: "repo", revision: "refs/tags/a", include_paths: ["src", "include"], audit_mode: "standard_review", detector_ids: [id, "test.cpp"], timeout_seconds: 60, memory_mb: 512
-  });
-  assert.throws(() => approvedDetectorIds([...detectors, d], ["test.example"]), /实验规则/);
-});
-
-test("C Ark Runtime rule stays off by default and is sent only after explicit selection", () => {
-  const id = "ohscanner.ark.runtime.type_safety";
-  const c = { id, version: "0.6.2", kind: "research_candidate", default_enabled: false,
-    supported_languages: ["cpp"], admission_reason: "research_only_explicit_selection" };
-  const catalog = [...detectors, c];
-  assert.deepEqual(approvedDetectorIds(catalog), ["test.cpp"]);
-  assert.deepEqual(approvedDetectorIds(catalog, [id]), [id, "test.cpp"]);
-  assert.deepEqual(snapshotPayload(values, catalog, [id]).detector_ids, [id, "test.cpp"]);
-  assert.deepEqual(planPayload(values, catalog, [id]).detector_ids, [id, "test.cpp"]);
-});
-
-test("D disclosed-CVE source rule is sent to preview and scan only after explicit selection", () => {
-  const id = "ohscanner.known_disclosed_cves";
-  const d = { id, version: "0.17.0", kind: "research_candidate", default_enabled: false,
-    supported_languages: ["c", "cpp"] };
-  const catalog = [...detectors, d];
-  assert.deepEqual(approvedDetectorIds(catalog), ["test.cpp"]);
-  assert.deepEqual(approvedDetectorIds(catalog, [id]), [id, "test.cpp"]);
-  assert.deepEqual(snapshotPayload(values, catalog, [id]).detector_ids, [id, "test.cpp"]);
-  assert.deepEqual(planPayload(values, catalog, [id]), {
-    repository_id: "repo", revision: "refs/tags/a", include_paths: ["src", "include"], audit_mode: "standard_review", detector_ids: [id, "test.cpp"], timeout_seconds: 60, memory_mb: 512
-  });
-});
-
-test("explicit full-rules research selects disabled approved rules and freezes that selection", () => {
-  const catalog = [...detectors, { id: "test.null", version: "3", kind: "research_candidate", default_enabled: false, supported_languages: ["cpp"], admission_reason: "weak candidates" }];
-  assert.deepEqual(researchDetectorIds(catalog), ["test.cpp", "test.null"]);
-  const valuesWithResearch = { ...values, full_rules_research: true };
-  assert.deepEqual(snapshotPayload(valuesWithResearch, catalog), {
+test("all registered research rules run by default while examples remain excluded", () => {
+  const disabled = [
+    { id: "ohscanner.data.sensitive_exposure", version: "0.21.17", kind: "research_candidate", default_enabled: false, supported_languages: ["c", "cpp"] },
+    { id: "ohscanner.ark.runtime.type_safety", version: "0.6.2", kind: "research_candidate", default_enabled: false, supported_languages: ["cpp"] },
+    { id: "ohscanner.known_disclosed_cves", version: "0.17.0", kind: "research_candidate", default_enabled: false, supported_languages: ["c", "cpp"] },
+    { id: "ohscanner.cpp.path_traversal", version: "0.3.0", kind: "research_candidate", default_enabled: false, supported_languages: ["cpp"] },
+  ];
+  const catalog = [...detectors, ...disabled];
+  const allIds = ["ohscanner.ark.runtime.type_safety", "ohscanner.cpp.path_traversal",
+    "ohscanner.data.sensitive_exposure", "ohscanner.known_disclosed_cves", "test.cpp"];
+  assert.deepEqual(approvedDetectorIds(catalog), allIds);
+  assert.deepEqual(researchDetectorIds(catalog), allIds);
+  assert.equal(snapshotPayload(values, catalog).detector_ids, undefined);
+  assert.deepEqual(planPayload(values, catalog), {
     repository_id: "repo", revision: "refs/tags/a", include_paths: ["src", "include"],
-    audit_mode: "standard_review", detector_ids: ["test.cpp", "test.null"], timeout_seconds: 60, memory_mb: 512,
+    audit_mode: "standard_review", timeout_seconds: 60, memory_mb: 512,
   });
-  assert.deepEqual(planPayload(valuesWithResearch, catalog), {
-    repository_id: "repo", revision: "refs/tags/a", include_paths: ["src", "include"],
-    audit_mode: "standard_review", detector_ids: ["test.cpp", "test.null"], timeout_seconds: 60, memory_mb: 512,
-  });
-  const ops = operationPayload("date", { ...valuesWithResearch, branch: "main", start: "2026-01-01T00:00:00", end: "2026-01-02T00:00:00", timezone: "UTC" }, catalog);
-  assert.deepEqual(ops.detector_ids, ["test.cpp", "test.null"]);
+  const ops = operationPayload("date", { ...values, branch: "main", start: "2026-01-01T00:00:00", end: "2026-01-02T00:00:00", timezone: "UTC" }, catalog);
+  assert.deepEqual(ops.detector_ids, allIds);
 });
-
 test("repository selection prefers only the server-verified default ref", () => {
   assert.equal(defaultRepositoryRevision([
     { ref: "refs/heads/feature", is_default: false },
@@ -215,11 +182,25 @@ test("all comparison modes serialize consented automatic model review only when 
 test("selected audit mode directly determines whether Agent authorization is included", () => {
   const staticValues = selectedAuditModeValues({ audit_mode: "static_only", auto_triage: true });
   assert.deepEqual(taskAuthorizationPayload(staticValues), {
-    auto_triage: false, max_triage_candidates: 3, max_r2_candidates: 0,
+    auto_triage: false, max_r2_candidates: 0,
   });
   const smartValues = selectedAuditModeValues({ audit_mode: "standard_review", max_triage_candidates: 4,
     auto_r2: true, max_r2_candidates: 2 });
   assert.deepEqual(taskAuthorizationPayload(smartValues), {
     auto_triage: true, max_triage_candidates: 4, max_r2_candidates: 2,
   });
+});
+
+test("new automatic requests defer candidate counts to server policy", () => {
+  assert.deepEqual(taskAuthorizationPayload({ audit_mode: "standard_review", auto_triage: true, auto_r2: true }), { auto_triage: true });
+  assert.deepEqual(taskAuthorizationPayload({ audit_mode: "standard_review", auto_triage: true, auto_r2: false }), { auto_triage: true, max_r2_candidates: 0 });
+});
+
+test("manual batch stage follows current policy including six and zero", () => {
+  const policy = { limits: { quick_screen_groups_per_audit: 30, deep_groups_per_audit: 6 } };
+  assert.equal(candidateBatchLimit(policy, "tool_agent"), 6);
+  assert.equal(candidateBatchLimit(policy, "single_shot"), 30);
+  assert.equal(candidateBatchLimit({ limits: { deep_groups_per_audit: 12 } }, "tool_agent"), 12);
+  assert.equal(candidateBatchLimit({ limits: { deep_groups_per_audit: 0 } }, "tool_agent"), 0);
+  assert.equal(candidateBatchLimit(null, "tool_agent"), null);
 });

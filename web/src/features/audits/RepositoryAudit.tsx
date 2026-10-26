@@ -1,9 +1,10 @@
+import CandidateScope from "./CandidateScope";
 import React, { useEffect, useRef, useState } from "react";
 import { Alert, Button, Card, Checkbox, Collapse, Col, Form, InputNumber, Row, Space, Typography } from "antd";
 import { api } from "../../api";
 import { go, Header } from "../../components";
 import { approvedDetectorIds, defaultRepositoryRevision, snapshotPayload, planPayload, requestGate, taskAuthorizationPayload, selectedAuditModeValues } from "./model";
-import { AuditProps, AuditModeSelector, auditDefaults, RefField, RepositoryField, RuleNotice, ScopeAvailability, ScopeBudget, useRepositoryRefs } from "./AuditFields";
+import { AuditProps, AuditModeSelector, auditDefaults, PolicyBudgetNotice, RefField, RepositoryField, RuleNotice, ScopeAvailability, ScopeBudget, useRepositoryRefs } from "./AuditFields";
 import AuditPlanView from "./AuditPlanView";
 import TaskTriageConsentModal from "./TaskTriageConsentModal";
 
@@ -12,15 +13,9 @@ export default function RepositoryAudit({ repos, detectors, refresh, health }: A
   const repository = Form.useWatch("repository_id", form);
   const selectedRevision = Form.useWatch("revision", form);
   const auditMode = Form.useWatch("audit_mode", form) || "static_only";
-  const autoR2 = Form.useWatch("auto_r2", form) !== false;
-  const maxTriageCandidates = Number(Form.useWatch("max_triage_candidates", form) || 5);
-  const maxR2Candidates = Number(Form.useWatch("max_r2_candidates", form) ?? 3);
   const { refs, error: refsError, loading, loadedFor: refsLoadedFor } = useRepositoryRefs(repository);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const [includeSensitiveExposure, setIncludeSensitiveExposure] = useState(false);
-  const [includeKnownCves, setIncludeKnownCves] = useState(false);
-  const [includeArkRuntime, setIncludeArkRuntime] = useState(false);
   const [plan, setPlan] = useState<any>(null);
   const [consentPreview, setConsentPreview] = useState<any>(null);
   const [consentOpen, setConsentOpen] = useState(false);
@@ -28,14 +23,6 @@ export default function RepositoryAudit({ repos, detectors, refresh, health }: A
   const pendingValues = useRef<any>(null);
   const defaultedRepository = useRef<string | null>(null);
   const provider = health?.capabilities?.agent_provider;
-  const sensitiveExposureId = "ohscanner.data.sensitive_exposure";
-  const knownCvesId = "ohscanner.known_disclosed_cves";
-  const arkRuntimeId = "ohscanner.ark.runtime.type_safety";
-  const explicitIds = [
-    ...(includeSensitiveExposure ? [sensitiveExposureId] : []),
-    ...(includeKnownCves ? [knownCvesId] : []),
-    ...(includeArkRuntime ? [arkRuntimeId] : []),
-  ];
   const invalidate = () => {
     gate.current.invalidate();
     setPlan(null);
@@ -54,12 +41,12 @@ export default function RepositoryAudit({ repos, detectors, refresh, health }: A
   }, [form, refs, refsLoadedFor, repository, selectedRevision]);
 
   let ready = false;
-  try { ready = approvedDetectorIds(detectors, explicitIds).length > 0; } catch { /* blocked */ }
+  try { ready = approvedDetectorIds(detectors).length > 0; } catch { /* blocked */ }
 
   async function createScan(values: any, planned: any) {
     const authorization = taskAuthorizationPayload(values);
     const job = await api("/scans", {
-      ...snapshotPayload(values, detectors, explicitIds),
+      ...snapshotPayload(values, detectors),
       expected_plan_sha256: planned.plan_sha256,
       expected_workflow_sha256: planned.workflow_sha256,
       ...authorization,
@@ -83,7 +70,7 @@ export default function RepositoryAudit({ repos, detectors, refresh, health }: A
         throw new Error("模型服务尚未配置。请先配置模型，或切换到静态审计。");
       }
       const planned = await api("/audit-plans", {
-        ...planPayload(values, detectors, explicitIds),
+        ...planPayload(values, detectors),
         ...authorization,
       });
       if (!gate.current.current(ticket)) return;
@@ -139,10 +126,11 @@ export default function RepositoryAudit({ repos, detectors, refresh, health }: A
       {refsError && <Alert className="section-gap" type="warning" message={refsError} />}
       <Form name="repository-audit" form={form}
         layout="vertical"
-        initialValues={{ ...auditDefaults, audit_mode: "static_only", auto_triage: false, max_triage_candidates: 5, auto_r2: true, max_r2_candidates: 3 }}
+        initialValues={{ ...auditDefaults, audit_mode: "static_only", auto_triage: false, auto_r2: true }}
         onValuesChange={invalidate}
         onFinish={onFinish}>
         <AuditModeSelector />
+        {auditMode === "standard_review" && <PolicyBudgetNotice />}
         <RepositoryField repos={repos} refresh={refresh} onChange={() => {
           defaultedRepository.current = null;
           form.setFieldValue("revision", undefined);
@@ -153,40 +141,12 @@ export default function RepositoryAudit({ repos, detectors, refresh, health }: A
         <Collapse className="audit-options" items={[{ key: "advanced", label: "高级范围与规则设置", children: <>
           <ScopeBudget />
           {auditMode === "standard_review" && provider?.configured && <>
-            <Form.Item name="max_triage_candidates" label="最多自动调查候选数"
-              extra="每个固定版本可设置 1–10,000 条。实际候选数扫描后统计；超过上限或未入选的候选保持待研判。">
-              <InputNumber min={1} max={10000} precision={0} />
-            </Form.Item>
+            <CandidateScope />
             <Form.Item name="auto_r2" valuePropName="checked"
               extra="符合证据条件时，允许模型在固定源码范围内继续只读跨文件追查。">
               <Checkbox>允许深入追查</Checkbox>
             </Form.Item>
-            {autoR2 && <Form.Item name="max_r2_candidates" label="最多深入追查候选数">
-              <InputNumber min={0} max={maxTriageCandidates} precision={0} />
-            </Form.Item>}
           </>}
-          {(detectors.some((d) => d.id === sensitiveExposureId) || detectors.some((d) => d.id === knownCvesId) || detectors.some((d) => d.id === arkRuntimeId)) && <Form.Item label="实验研究规则">
-            <Space direction="vertical">
-              {detectors.some((d) => d.id === sensitiveExposureId) && <Checkbox checked={includeSensitiveExposure} onChange={(event) => {
-                setIncludeSensitiveExposure(event.target.checked); invalidate();
-              }}>D 敏感数据进入日志（实验候选规则；partial / blocked 表示未知）</Checkbox>}
-              {detectors.some((d) => d.id === knownCvesId) && <Checkbox checked={includeKnownCves} onChange={(event) => {
-                setIncludeKnownCves(event.target.checked); invalidate();
-              }}>D 已披露 CVE 组件源码规则（显式研究候选；不代表产品受影响）</Checkbox>}
-              {detectors.some((d) => d.id === arkRuntimeId) && <Checkbox checked={includeArkRuntime} onChange={(event) => {
-                setIncludeArkRuntime(event.target.checked); invalidate();
-              }}>C Ark Runtime TypedArray（绑定源码研究候选；默认关闭）</Checkbox>}
-            </Space>
-          </Form.Item>}
-          {includeSensitiveExposure && <Alert className="section-gap" type="info" showIcon
-            message="D 规则会随本次固定版本扫描运行"
-            description="候选和源码证据会出现在任务详情与 report.json / report.md 中。报告可给出源码级复现步骤和修复建议；静态命中不等于产品漏洞确认，也不会生成可利用产品 PoC。" />}
-          {includeKnownCves && <Alert className="section-gap" type="warning" showIcon
-            message="已披露 CVE 规则只用于源码候选筛查"
-            description="规则不会自动启用。命中表示固定源码包含已知缺陷形态或受影响组件标记；必须另行核对产品构建、可达路径和影响。没有命中、解析不完整或规则未覆盖均不能证明安全。" />}
-          {includeArkRuntime && <Alert className="section-gap" type="info" showIcon
-            message="Ark Runtime 仅进行绑定源码的研究候选扫描"
-            description="只适用于模型登记的仓库、提交和文件 blob；其他版本会保持未分析。partial / blocked 仍表示 unknown，候选不代表产品受影响或漏洞已确认。" />}
           <RuleNotice detectors={detectors} />
         </> }]} />
         <Button className="section-gap" type="primary" htmlType="submit" size="large" loading={busy}

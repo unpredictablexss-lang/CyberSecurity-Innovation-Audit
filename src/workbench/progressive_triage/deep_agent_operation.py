@@ -17,11 +17,31 @@ def progressive_gate(settings, ops, task: dict[str, Any]) -> tuple[dict[str, Any
         raise ValueError("progressive deep Agent is missing its L2/task binding")
     quick_id = spec["progressive_quick_screen_operation_id"]
     quick_task = ops.get(quick_id)
-    if (quick_task.get("kind") != "progressive_quick_screen"
-            or quick_task.get("result_sha256") != spec["progressive_quick_screen_result_sha256"]
+    if (quick_task.get("result_sha256") != spec["progressive_quick_screen_result_sha256"]
             or quick_task.get("status") not in {"completed", "completed_with_limitations"}):
         raise ValueError("the source-bound L2 result is missing, changed, or incomplete")
     quick_result = ops.result(quick_id)
+    if quick_task.get("kind") == "progressive_quick_screen_batch":
+        group_id = spec.get("progressive_quick_screen_batch_group_id")
+        parent_spec = quick_task.get("spec") if isinstance(quick_task.get("spec"), dict) else {}
+        item = next((row for row in parent_spec.get("items", [])
+                     if isinstance(row, dict) and row.get("group_id") == group_id), None)
+        group_result = next((row for row in quick_result.get("groups", [])
+                             if isinstance(row, dict) and row.get("group_id") == group_id), None)
+        quick_spec = item.get("spec") if isinstance(item, dict) else None
+        quick_result = group_result.get("result") if isinstance(group_result, dict) else None
+        if (not isinstance(quick_spec, dict) or not isinstance(group_result, dict)
+                or group_result.get("state") != "completed" or not isinstance(quick_result, dict)
+                or group_result.get("candidate_id") != spec.get("candidate_id")
+                or quick_spec.get("job_id") != spec.get("job_id")
+                or quick_spec.get("candidate_id") != spec.get("candidate_id")):
+            raise ValueError("the requested group has no completed L2 result in this batch")
+    elif quick_task.get("kind") == "progressive_quick_screen":
+        if spec.get("progressive_quick_screen_batch_group_id") is not None:
+            raise ValueError("single-group L2 operation cannot carry a batch group binding")
+        quick_spec = quick_task.get("spec") if isinstance(quick_task.get("spec"), dict) else {}
+    else:
+        raise ValueError("the source-bound L2 operation has an unsupported kind")
     assessment = quick_result.get("quick_screen") if isinstance(quick_result, dict) else None
     if (not isinstance(assessment, dict) or assessment.get("state") != "completed"
             or assessment.get("quick_assessment") != "investigate"):
@@ -29,7 +49,6 @@ def progressive_gate(settings, ops, task: dict[str, Any]) -> tuple[dict[str, Any
     source_binding = quick_result.get("source_binding") if isinstance(quick_result, dict) else None
     if not isinstance(source_binding, dict):
         raise ValueError("L2 result has no fixed source binding")
-    quick_spec = quick_task.get("spec") if isinstance(quick_task.get("spec"), dict) else {}
     quick_group = quick_spec.get("group") if isinstance(quick_spec.get("group"), dict) else {}
     if (quick_spec.get("job_id") != spec.get("job_id")
             or quick_spec.get("candidate_id") != spec.get("candidate_id")
@@ -75,7 +94,18 @@ class BudgetedAgentClient:
         self.group_id = group_id
         self.timeout = getattr(client, "timeout", 45)
         self._call_index = 0
+        self._budget_phase = "deep_agent"
         self.before_request = before_request
+
+    def set_budget_phase(self, request_phase=None):
+        if request_phase in {"structured_repair", "structured_targeted_repair"}:
+            self._budget_phase = "structured_repair"
+        elif request_phase == "skeptic_review":
+            self._budget_phase = "skeptic"
+        elif request_phase == "artifact_generation":
+            self._budget_phase = "report"
+        else:
+            self._budget_phase = "deep_agent"
 
     def create_with_timeout(self, payload, timeout, max_retries=None):
         from ..agent import _usage
@@ -84,8 +114,9 @@ class BudgetedAgentClient:
             self.before_request()
         encoded = json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
         output_cap = payload.get("max_output_tokens")
-        if not isinstance(output_cap, int) or isinstance(output_cap, bool) or output_cap <= 0:
-            raise BudgetError("deep Agent request has no enforceable output-token cap")
+        if output_cap is not None and (
+                not isinstance(output_cap, int) or isinstance(output_cap, bool) or output_cap <= 0):
+            raise BudgetError("deep Agent request has an invalid Provider output-token hint")
         input_reservation = len(encoded) + 1024
         self._call_index += 1
         reservation = self.ledger.reserve(
@@ -93,16 +124,19 @@ class BudgetedAgentClient:
             f"{self.operation_id}:deep:{self._call_index}",
             self.endpoint_id, self.group_id, "deep_agent",
             max_input_tokens=input_reservation,
-            max_output_tokens=output_cap,
+            # The ledger needs a positive estimate for its usage display. This
+            # is not sent to the Provider and is not an enforcement limit.
+            max_output_tokens=output_cap or 4096,
+            phase=self._budget_phase,
         )
         if reservation.get("idempotent_replay"):
             raise BudgetError("prior deep Agent request outcome is unknown; request was not replayed")
         try:
             if self.before_request is not None:
                 self.before_request()
-            remaining = self.ledger.get(self.audit_id)["usage"]["wall_seconds_remaining"] - 1
+            remaining = self.ledger.get(self.audit_id)["usage"]["wall_seconds_remaining"]
             if remaining <= 0:
-                raise BudgetError("deep Agent wall-time budget exhausted before Provider dispatch")
+                raise BudgetError("AI wall-time budget exhausted")
             request_timeout = min(timeout, remaining)
         except Exception:
             self.ledger.settle(reservation["reservation_id"], outcome="known_not_sent")
@@ -113,7 +147,7 @@ class BudgetedAgentClient:
             self.ledger.settle(reservation["reservation_id"], outcome="unknown_outcome")
             raise
         try:
-            usage = _usage(response)
+            usage = _usage(response, allow_partial=True)
         except (TypeError, ValueError):
             self.ledger.settle(reservation["reservation_id"], outcome="unknown_outcome")
             raise BudgetError("Provider usage is missing; reserved budget remains charged conservatively") from None
@@ -122,7 +156,7 @@ class BudgetedAgentClient:
             input_tokens=usage["input_tokens"], output_tokens=usage["output_tokens"],
         )
         if settled.get("status") != "completed":
-            raise BudgetError("Provider usage exceeded the reserved task budget")
+            raise BudgetError("Provider request usage could not be recorded")
         return response
 
 

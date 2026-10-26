@@ -432,7 +432,7 @@ class OperationEndToEndTests(unittest.TestCase):
         provider = SimpleNamespace(configured=True, public={"endpoint_host": "model.example", "model": "review-model"})
 
         def fake_preview(plan, workflow, includes, candidate_limit, nonce, active_provider,
-                         r2_limit=0, *, max_cost_usd=None):
+                         r2_limit=0, *, max_cost_usd=None, system_policy_snapshot=None):
             digest = hashlib.sha256((plan["plan_sha256"] + workflow + nonce).encode()).hexdigest()
             estimate = {"status": "budget_based_upper_estimate", "currency": "USD",
                 "maximum_usd": "0.02", "rate_card_id": "test-card", "rate_source_url": "https://example.invalid/rates",

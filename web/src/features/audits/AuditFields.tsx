@@ -1,10 +1,36 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Alert, AutoComplete, Button, Checkbox, Col, Collapse, Form, Input, InputNumber, Radio, Row, Select, Space, Typography } from "antd";
+import { Alert, AutoComplete, Button, Col, Collapse, Form, Input, InputNumber, Radio, Row, Select, Space, Typography } from "antd";
 import { api } from "../../api";
 import { go } from "../../components";
 import { approvedDetectorIds, requestGate } from "./model";
 const { Text } = Typography;
 export type AuditProps = { repos: any[]; detectors: any[]; refresh: () => Promise<void> };
+const POLICY_PROFILES: Record<string, string> = {
+  economical: "经济", standard: "标准", deep: "深度", custom: "自定义",
+};
+export function PolicyBudgetNotice() {
+  const [policy, setPolicy] = useState<any>(null);
+  const [error, setError] = useState("");
+  useEffect(() => {
+    let active = true;
+    void api("/agent/triage-policy").then((result) => {
+      if (active) setPolicy(result);
+    }).catch((reason) => {
+      if (active) setError(String(reason));
+    });
+    return () => { active = false; };
+  }, []);
+  const limits = policy?.policy?.limits;
+  const description = limits ? <Space direction="vertical" size={2}>
+    <Text>当前默认：单轮输出 {limits.max_output_tokens_per_request ?? "未知"} tokens；单次审计输入/输出 {limits.max_input_tokens_per_audit ?? "未知"}/{limits.max_output_tokens_per_audit ?? "未知"} tokens；模型请求 {limits.max_model_calls_per_audit ?? "未知"} 次；AI 时长 {limits.max_ai_wall_seconds ?? "未知"} 秒。</Text>
+    <Text type="secondary">这里只选择审计范围，不重复填写额度。创建时以授权预览中冻结的服务端策略为准；修改额度请前往 <a href="#/settings/policy">系统设置 → 智能审计策略与资源预算</a>。</Text>
+  </Space> : error
+    ? <Text>无法读取当前默认额度：{error}。授权预览仍会显示本次服务端冻结策略。</Text>
+    : <Text>正在读取系统额度；本任务不提供单独的 Token 配置。创建前会显示服务端冻结策略。</Text>;
+  return <Alert className="section-gap" type={error ? "warning" : "info"} showIcon
+    message={`额度统一由系统设置管理${policy?.policy?.profile ? ` · ${POLICY_PROFILES[policy.policy.profile] || "系统"}策略 · 修订 ${policy.revision}` : ""}`}
+    description={description} />;
+}
 export function AuditModeSelector() {
   return <Form.Item name="audit_mode" label="本次审计方式" className="audit-mode-field">
     <Radio.Group className="audit-mode-options" aria-label="本次审计方式">
@@ -113,20 +139,10 @@ export function ScopeBudget() {
 }
 export function RuleNotice({ detectors }: { detectors: any[] }) {
   let count = 0; try { count = approvedDetectorIds(detectors).length; } catch { /* visible blocking state below */ }
-  const fullRulesResearch = Form.useWatch("full_rules_research");
-  const researchOnly = detectors.filter((d) => d.kind === "research_candidate" && d.default_enabled === false);
-  const nullRule = researchOnly.find((d) => d.id === "ohscanner.cpp.null_dereference");
-  const reason = nullRule?.admission_reason || "该规则仅在明确选择研究模式时启用。";
   return <div className="section-gap">
-    <Form.Item name="full_rules_research" valuePropName="checked" initialValue={false}>
-      <Checkbox>显式启用全规则研究模式（包含默认关闭的弱候选规则）</Checkbox>
-    </Form.Item>
-    {fullRulesResearch ? <Alert showIcon type="warning"
-      message="全规则研究模式：输出为弱候选/待复核"
-      description={`本次启用原因：你已显式选择研究模式。${reason} 当前范围的候选量无法在扫描前精确估算。量级参考：一轮历史全规则试运行报告 546,559 条候选，但原始 run 身份未绑定；本地可核验的另一轮 final run 有 403,360 条 NULL 原始观察（403,359 个唯一 diagnostic ID，run 1696df82…）。两者不是同一轮结果，该数字只作预警，不是本次预测。实际数量会随源码范围和规则版本变化。`}
-    /> : <Alert showIcon type={count ? "info" : "warning"}
-      message={count ? "使用平台当前已批准的普通扫描规则" : "没有可用的已批准规则"}
-      description={count ? "实际规则版本、解析覆盖和未分析范围会保存在任务与报告中。输出仍是待复核候选。全规则研究可在上方显式开启。" : "请刷新系统能力配置后再创建审计。"} />}
+    <Alert showIcon type={count ? "info" : "warning"}
+      message={count ? "静态检测会自动运行当前全部可用规则" : "当前没有可用的静态检测器"}
+      description={count ? "扫描范围、解析覆盖和候选证据会保存在任务与报告中；结果仍需结合源码人工复核。" : "请检查系统能力配置后再创建审计。"} />
   </div>;
 }
 export function ScopeAvailability() {
@@ -134,4 +150,4 @@ export function ScopeAvailability() {
     <p>任务会绑定已登记仓库和固定源码版本；时间或跨版本审计会分别固定所选端点。</p>
     <Button type="link" onClick={() => go("/settings/sources")}>登记仓库或同步在线源码 →</Button></div>;
 }
-export const auditDefaults = { include_text: ".", timeout_seconds: 600, memory_mb: 2048, full_rules_research: false, audit_mode: "standard_review" };
+export const auditDefaults = { include_text: ".", timeout_seconds: 600, memory_mb: 2048, audit_mode: "standard_review" };

@@ -27,7 +27,7 @@ export default function ProgressiveQuickScreenAction({ jobId, candidateId, enabl
       setPreview(value);
     } catch (error) {
       setOpen(false);
-      message.error(String(error));
+      message.error("快速研判操作未能完成，请检查服务状态或任务详情后重试。");
     } finally {
       setLoading(false);
     }
@@ -46,19 +46,19 @@ export default function ProgressiveQuickScreenAction({ jobId, candidateId, enabl
         consent_expires_at: preview.consent_expires_at,
       });
       setOpen(false);
-      message.success("L2 快速研判任务已创建；候选仍保持待复核状态");
+      message.success("快速研判任务已创建；候选仍保持待复核状态");
       if (operation?.id) go("/tasks/operations/" + operation.id);
     } catch (error) {
-      message.error(String(error));
+      message.error("快速研判操作未能完成，请检查服务状态或任务详情后重试。");
     } finally {
       setLoading(false);
     }
   }
 
   return <>
-    <Button size="small" disabled={!enabled} onClick={() => void showPreview()}>L2 快速研判</Button>
+    <Button size="small" disabled={!enabled} onClick={() => void showPreview()}>快速研判</Button>
     <Modal
-      title="L2 快速研判外发预览"
+      title="快速研判源码外发预览"
       open={open}
       width={760}
       confirmLoading={loading}
@@ -70,10 +70,11 @@ export default function ProgressiveQuickScreenAction({ jobId, candidateId, enabl
       destroyOnClose
     >
       {loading && !preview ? <Paragraph>正在从固定扫描版本读取并校验源码…</Paragraph> : preview ? <>
-        <Alert type="warning" showIcon message="仅发送一个脱敏后的固定源码片段，一次模型请求，不启用工具。AI 结果仅作待复核研判，不确认漏洞或误报。" />
+        <Alert type="warning" showIcon message="仅发送一个脱敏后的固定源码片段，一次模型请求，不启用工具。模型意见仅作待复核研判，不确认漏洞或误报。" />
         <Descriptions className="section-gap" bordered size="small" column={2}>
           <Descriptions.Item label="模型端点">{preview.provider?.endpoint_host || preview.provider?.model || "未知"}</Descriptions.Item>
           <Descriptions.Item label="调用与工具">1 次；工具关闭</Descriptions.Item>
+          <Descriptions.Item label="单轮输出上限">{preview.disclosure?.max_output_tokens ?? "未知"} tokens</Descriptions.Item>
           <Descriptions.Item label="原始候选">{candidateId}</Descriptions.Item>
           <Descriptions.Item label="来源报告 SHA-256">{preview.evidence?.[0]?.report_sha256 || "未知"}</Descriptions.Item>
           <Descriptions.Item label="策略版本 / SHA">{preview.progressive_policy?.revision} / {preview.progressive_policy?.policy_sha256}</Descriptions.Item>

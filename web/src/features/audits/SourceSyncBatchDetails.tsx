@@ -83,6 +83,7 @@ export default function SourceSyncBatchDetails({ operation }: Props) {
         revision: original.revision, include_paths: original.include_paths,
         detector_ids: original.detector_ids, audit_mode: "static_only",
         scan_timeout_seconds: original.scan_timeout_seconds, memory_mb: original.memory_mb,
+        destination_dir: original.destination_dir,
       };
       const created = await api("/operations/source-sync/batch", { repositories: [request] });
       message.success("已为该仓库创建重试任务");
@@ -96,6 +97,7 @@ export default function SourceSyncBatchDetails({ operation }: Props) {
       <Descriptions.Item label="本批仓库">{summary.requested ?? rows.length}</Descriptions.Item>
       <Descriptions.Item label="已同步">{summary.succeeded ?? rows.filter((row: any) => ["completed", "completed_with_limitations"].includes(row.status)).length}</Descriptions.Item>
       <Descriptions.Item label="失败">{summary.failed ?? rows.filter((row: any) => row.status === "failed").length}</Descriptions.Item>
+      <Descriptions.Item label="保存位置"><Text code>{operation?.spec?.repositories?.[0]?.destination_dir || "服务器默认源码缓存目录"}</Text></Descriptions.Item>
       <Descriptions.Item label="未开始">{summary.not_started ?? rows.filter((row: any) => row.status === "not_started").length}</Descriptions.Item>
     </Descriptions>
     {retryError && <Alert className="section-gap" type="error" showIcon message="重试任务未创建" description={retryError} />}

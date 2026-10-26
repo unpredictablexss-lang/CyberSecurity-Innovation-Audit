@@ -243,21 +243,21 @@ if os.environ.get("OHSCANNER_TEST_PROVIDER_TRACE"):
                             "line_start": line_number, "line_end": line_number}
                 return self._response({
                     "vulnerability_report": {
-                        "title": "Fixed-source candidate",
-                        "summary": "Synthetic offline draft; product impact remains unknown.",
-                        "root_cause": "The source candidate requires independent review.",
-                        "impact": "Product reachability and impact are unknown.",
-                        "preconditions": ["A product caller reaches the source path."],
-                        "attack_path": ["Caller", "Candidate source path"],
-                        "remediation": "Review the applicable product policy.",
+                        "title": "固定源码候选问题",
+                        "summary": "该离线草案仍需复核，产品影响目前未知。",
+                        "root_cause": "该源码候选问题需要独立复核。",
+                        "impact": "产品入口可达性和实际影响未知。",
+                        "preconditions": ["产品调用方能够到达该源码路径。"],
+                        "attack_path": ["调用方进入候选源码路径"],
+                        "remediation": "复核适用的产品授权策略。",
                         "citations": [citation]},
                     "poc_draft": {
-                        "title": "Offline test draft", "language": "C++",
+                        "title": "离线测试草案", "language": "C++",
                         "code": "// Draft only; do not execute without human review.\n",
-                        "prerequisites": ["Use an isolated local test target."],
-                        "run_steps": ["Review this draft before use."],
-                        "expected_observation": "A human-reviewed test observes the candidate behavior.",
-                        "negative_control": "A permitted control path remains unaffected.",
+                        "prerequisites": ["使用隔离的本地测试目标。"],
+                        "run_steps": ["使用前先由人工复核该草案。"],
+                        "expected_observation": "人工复核的测试能够观察该候选行为。",
+                        "negative_control": "允许的控制路径不应受到影响。",
                         "citations": [citation]},
                 })
 

@@ -78,6 +78,7 @@ function SingleSourceSyncDetails({ operation }: { operation: OperationRecord }) 
         revision: spec.revision, include_paths: spec.include_paths,
         detector_ids: spec.detector_ids, audit_mode: spec.audit_mode || "static_only",
         scan_timeout_seconds: spec.scan_timeout_seconds, memory_mb: spec.memory_mb,
+        destination_dir: spec.destination_dir,
       });
       go("/tasks/operations/" + created.id);
     } catch (error) { setRetryError(String(error)); }
@@ -87,6 +88,7 @@ function SingleSourceSyncDetails({ operation }: { operation: OperationRecord }) 
   return <Card size="small" className="section-gap" title="源码同步与扫描进度">
     <Descriptions bordered size="small" column={{ xs: 1, sm: 1, md: 2 }}>
       <Descriptions.Item label="仓库">{summary.repository}</Descriptions.Item>
+      <Descriptions.Item label="保存位置"><Text code>{operation?.result?.destination_dir || operation?.spec?.destination_dir || "服务器默认源码缓存目录"}</Text></Descriptions.Item>
       <Descriptions.Item label="源码同步">
         <Space wrap><Tag>{summary.syncLabel}</Tag><State value={summary.syncStatus} /></Space>
       </Descriptions.Item>

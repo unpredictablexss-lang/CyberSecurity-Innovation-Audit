@@ -1,0 +1,53 @@
+{
+  "manifest": "/mnt/c/Users/DeepSleep/AppData/Local/Temp/ohscanner-perf-mini-20261021/manifest.json",
+  "rows": [
+    {
+      "label": "local_minimal_fixture",
+      "repository": "fixture/perf-cache",
+      "commit": "48ff11b0cf9c2490c9e8b9686267a91216cff263",
+      "commit_date": null,
+      "exit_code": 0,
+      "failed_shards": 0,
+      "shards": 1,
+      "wall_seconds": 1.6654,
+      "peak_rss_kb": 28160,
+      "cpu_seconds": 0.23889899999999997,
+      "tree_source_files": 3,
+      "tree_source_loc": 3,
+      "report_path": "/mnt/d/openHarmonyScanner/worktrees/c-line-task-tree-20261020/outputs/reports/perf_ast_cache_verified_final/hot_components/local_minimal_fixture.json",
+      "scanned_files": 3,
+      "scanned_bytes": 97,
+      "parse_complete": 2,
+      "parse_partial": 1,
+      "analyzed_files": 2,
+      "unexamined_files": 1,
+      "diagnostic_count": 1,
+      "source_read_seconds": 0.34215494599999374,
+      "ast_parse_seconds": 0.0,
+      "detector_execution_seconds": 8.145900000045003e-05,
+      "report_build_seconds": 0.009084361000020635,
+      "report_render_seconds": 2.1897999999964668e-05,
+      "parse_files": 0,
+      "indexed_files": 3,
+      "ast_cache_hits": 3,
+      "ast_cache_misses": 0,
+      "ast_cache_bypassed": 0,
+      "ast_cache_invalid": 0,
+      "ast_cache_writes": 0,
+      "result_signature": "92af33a836bfba61a62130d9dc9651b22cf9bdf8da3e8e45370dacbd4e499183",
+      "peak_rss_status": "resource.getrusage",
+      "cpu_status": "resource.getrusage",
+      "status": "completed_with_limitations",
+      "detector_status": "partial",
+      "validated_vulnerability": 0,
+      "files_per_second": 1.8,
+      "mb_per_second": 0.0
+    }
+  ],
+  "comparison": {
+    "compared_with": "cold.json",
+    "identical": true,
+    "components": 1,
+    "mismatches": []
+  }
+}

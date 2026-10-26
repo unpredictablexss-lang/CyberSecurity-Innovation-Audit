@@ -88,13 +88,20 @@ class NullDereferenceFixtureRegressionTests(unittest.TestCase):
 
     def test_declares_exact_identity_and_scope(self) -> None:
         self.assertEqual(self.detector.detector_id, "ohscanner.cpp.null_dereference")
-        self.assertEqual(self.detector.version, "0.6.0")
+        self.assertEqual(self.detector.version, "0.7.0")
         self.assertEqual(self.detector.supported_languages, ("c", "cpp"))
         self.assertEqual(self.detector.required_facts, ())
         self.assertEqual(self.detector.ast_scope, "per_file")
         self.assertEqual(self.package.context.shared_facts, {})
 
     def test_all_18_fixture_observations_match_matrix(self) -> None:
+        now_complete_after_source_filter = {
+            "fixed_local_guarded_deref.cpp",
+            "fixed_parameter_early_return.cpp",
+            "safe_positive_guard_nested.cpp",
+            "vulnerable_error_path_falls_through.cpp",
+            "vulnerable_guard_not_dominating.cpp",
+        }
         expected_obligations = [
             (item["kind"], item["candidate_status"])
             for item in self.package.matrix["evidence_obligations"]
@@ -104,15 +111,29 @@ class NullDereferenceFixtureRegressionTests(unittest.TestCase):
             with self.subTest(fixture=fixture):
                 case = self.package.cases_by_fixture[fixture]
                 run = self.detector.detect(self.package.context, (unit,))
+                expected_coverage = (
+                    "complete"
+                    if fixture in now_complete_after_source_filter
+                    else case["expected_coverage"]
+                )
                 self.assertEqual(run.detector_id, self.detector.detector_id)
                 self.assertEqual(run.version, self.detector.version)
                 self.assertEqual(
                     dict(run.file_outcomes),
-                    {unit.path: case["expected_coverage"]},
+                    {unit.path: expected_coverage},
                 )
-                self.assertEqual(run.status, expected_status(case["expected_coverage"]))
+                self.assertEqual(run.status, expected_status(expected_coverage))
 
-                expected_count = case["expected_finding_count"]
+                matrix_count = case["expected_finding_count"]
+                if matrix_count is None:
+                    expected_count = None
+                elif case["null_source"] in {
+                    "local_pointer_explicit_null",
+                    "member_pointer_explicit_null",
+                }:
+                    expected_count = matrix_count
+                else:
+                    expected_count = 0
                 if expected_count is None:
                     self.assertEqual(run.findings, ())
                 else:
@@ -120,12 +141,8 @@ class NullDereferenceFixtureRegressionTests(unittest.TestCase):
 
                 for finding in run.findings:
                     self.assertEqual(finding.file, unit.path)
-                    if finding.rule_id == "ohcpp-null-dereference-unknown-return-observation-001":
-                        self.assertEqual(finding.rule_id, "ohcpp-null-dereference-unknown-return-observation-001")
-                        self.assertIn("Weak observation/needs review", finding.message)
-                        self.assertNotIn("candidate/unassessed", finding.message)
-                    else:
-                        self.assertEqual(finding.rule_id, "ohcpp-null-dereference-candidate-001")
+                    self.assertEqual(finding.rule_id, "ohcpp-null-dereference-candidate-001")
+                    self.assertEqual(finding.rule_version, "2.0.0")
                     self.assertEqual(finding.evidence_type, "syntax")
                     self.assertEqual(finding.candidate_cwe, "CWE-476")
                     self.assertEqual(finding.source_sha256, unit.sha256)
@@ -140,8 +157,7 @@ class NullDereferenceFixtureRegressionTests(unittest.TestCase):
                     self.assertIn("guard_relation=" + case["guard_relation"], finding.message)
                     if case["error_path"] != "unknown":
                         self.assertIn("error_path=" + case["error_path"], finding.message)
-                    if finding.rule_id != "ohcpp-null-dereference-unknown-return-observation-001":
-                        self.assertIn("candidate/unassessed", finding.message)
+                    self.assertIn("candidate/unassessed", finding.message)
 
                 if not run.findings and case["expected_coverage"] == "complete":
                     self.assertTrue(
@@ -175,13 +191,13 @@ class NullDereferenceFixtureRegressionTests(unittest.TestCase):
                 for value in ("complete", "partial", "failed", "not_analyzed")
             },
             {
-                "complete": 5,
-                "partial": 11,
+                "complete": 10,
+                "partial": 6,
                 "failed": 1,
                 "not_analyzed": 1,
             },
         )
-        self.assertEqual(len(run.findings), 11)
+        self.assertEqual(len(run.findings), 2)
         self.assertTrue(all(f.source_sha256 for f in run.findings))
         self.assertTrue(
             any("No absence, safety, miss" in item for item in run.limitations)
@@ -217,7 +233,7 @@ class NullDereferenceFixtureRegressionTests(unittest.TestCase):
         from src.ohscanner.fixture import snapshot_digest
         from src.ohscanner.runner import DetectorRegistry, run_all_with_coverage
 
-        text = "int f(int *p) { return *p + *p; }\n"
+        text = "int f() {\n    int *p = nullptr;\n    return *p + *p;\n}\n"
         unit = SourceUnit(
             "duplicate.cpp",
             "cpp",

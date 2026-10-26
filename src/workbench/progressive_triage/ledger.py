@@ -1,8 +1,4 @@
-"""Transactional task-wide resource reservations for progressive AI triage.
-
-Local token/call/concurrency/step/time controls are enforceable when connected to
-dispatch. USD remains advisory unless Provider-side caps are separately verified.
-"""
+"""Transactional usage accounting and policy enforcement for progressive AI triage."""
 from __future__ import annotations
 
 from contextlib import closing
@@ -71,6 +67,7 @@ class BudgetLedger:
                     idempotency_key TEXT NOT NULL, endpoint_id TEXT NOT NULL,
                     group_id TEXT NOT NULL,
                     stage TEXT NOT NULL CHECK(stage IN ('quick_screen','deep_agent')),
+                    phase TEXT NOT NULL DEFAULT 'deep_agent' CHECK(phase IN ('quick_screen','deep_agent','structured_repair','skeptic','report')),
                     max_input_tokens INTEGER NOT NULL, max_output_tokens INTEGER NOT NULL,
                     status TEXT NOT NULL, actual_input_tokens INTEGER,
                     actual_output_tokens INTEGER, estimated_cost_usd TEXT,
@@ -88,6 +85,10 @@ class BudgetLedger:
                 db.execute("ALTER TABLE triage_dispatch ADD COLUMN quick_assessment TEXT")
             if "deep_operation_id" not in columns:
                 db.execute("ALTER TABLE triage_dispatch ADD COLUMN deep_operation_id TEXT")
+            reservation_columns = {row[1] for row in db.execute("PRAGMA table_info(budget_reservation)")}
+            if "phase" not in reservation_columns:
+                db.execute("ALTER TABLE budget_reservation ADD COLUMN phase TEXT NOT NULL DEFAULT 'deep_agent' CHECK(phase IN ('quick_screen','deep_agent','structured_repair','skeptic','report'))")
+                db.execute("UPDATE budget_reservation SET phase='quick_screen' WHERE stage='quick_screen'")
             db.commit()
 
     def _connect(self):
@@ -119,6 +120,17 @@ class BudgetLedger:
         if strict_cost:
             raise BudgetError("strict USD budget is unavailable without a verified Provider-side cap")
         cost_mode = "advisory_only"
+        # The signed top-level setting is the source of truth for each request.
+        # Keep the original policy hash above, then derive the ledger's effective
+        # reservation ceiling without changing the frozen policy identity.
+        if "request_output_tokens" in policy:
+            limits = dict(policy["limits"])
+            configured_cap = policy["request_output_tokens"]
+            audit_cap = limits["max_output_tokens_per_audit"]
+            limits["max_output_tokens_per_request"] = (
+                min(configured_cap, audit_cap) if configured_cap is not None else audit_cap
+            )
+            policy = {**policy, "limits": limits}
         policy_json = json.dumps(policy, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
         with closing(self._connect()) as db:
             db.execute("BEGIN IMMEDIATE")
@@ -173,7 +185,7 @@ class BudgetLedger:
                 db.rollback()
                 raise BudgetError("audit scheduling has stopped")
             if now - audit["created_at"] >= limits["max_ai_wall_seconds"]:
-                db.execute("UPDATE audit_budget SET status='stopped',stop_reason='time_budget_exhausted' WHERE audit_id=?",
+                db.execute("UPDATE audit_budget SET status='stopped',stop_reason='ai_wall_time_budget_exhausted' WHERE audit_id=?",
                            (audit_id,))
                 db.commit()
                 raise BudgetError("AI wall-time budget exhausted")
@@ -229,13 +241,21 @@ class BudgetLedger:
 
     def reserve(self, audit_id: str, idempotency_key: str, endpoint_id: str,
                 group_id: str, stage: str, *, max_input_tokens: int,
-                max_output_tokens: int) -> dict[str, Any]:
+                max_output_tokens: int, phase: str | None = None,
+                reauthorized_quick_screen: bool = False) -> dict[str, Any]:
         audit_id = self._id(audit_id, "audit ID")
         idempotency_key = self._id(idempotency_key, "idempotency key", 160)
         endpoint_id = self._id(endpoint_id, "endpoint ID")
         group_id = self._id(group_id, "group ID")
         if stage not in {"quick_screen", "deep_agent"}:
             raise BudgetError("unsupported model stage")
+        if phase is None:
+            phase = stage
+        allowed_phases = {"quick_screen"} if stage == "quick_screen" else {
+            "deep_agent", "structured_repair", "skeptic", "report",
+        }
+        if phase not in allowed_phases:
+            raise BudgetError("unsupported model phase for this stage")
         for value, label in ((max_input_tokens, "input reservation"),
                              (max_output_tokens, "output reservation")):
             if not isinstance(value, int) or isinstance(value, bool) or value <= 0:
@@ -251,10 +271,10 @@ class BudgetLedger:
                 "SELECT * FROM budget_reservation WHERE audit_id=? AND idempotency_key=?",
                 (audit_id, idempotency_key),
             ).fetchone()
-            identity = (endpoint_id, group_id, stage, max_input_tokens, max_output_tokens)
+            identity = (endpoint_id, group_id, stage, phase, max_input_tokens, max_output_tokens)
             if prior:
                 prior_identity = (prior["endpoint_id"], prior["group_id"], prior["stage"],
-                                  prior["max_input_tokens"], prior["max_output_tokens"])
+                                  prior["phase"], prior["max_input_tokens"], prior["max_output_tokens"])
                 if prior_identity != identity:
                     db.rollback()
                     raise BudgetConflict("idempotency key reused with different reservation inputs")
@@ -266,7 +286,7 @@ class BudgetLedger:
                 db.rollback()
                 raise BudgetError("audit scheduling has stopped")
             if now - audit["created_at"] >= limits["max_ai_wall_seconds"]:
-                db.execute("UPDATE audit_budget SET status='stopped',stop_reason='time_budget_exhausted' WHERE audit_id=?",
+                db.execute("UPDATE audit_budget SET status='stopped',stop_reason='ai_wall_time_budget_exhausted' WHERE audit_id=?",
                            (audit_id,))
                 db.commit()
                 raise BudgetError("AI wall-time budget exhausted")
@@ -274,6 +294,23 @@ class BudgetLedger:
                 "SELECT status FROM triage_dispatch WHERE audit_id=? AND group_id=? AND stage=? AND endpoint_id=?",
                 (audit_id, group_id, stage, endpoint_id),
             ).fetchone()
+            if reauthorized_quick_screen:
+                if stage != "quick_screen":
+                    db.rollback()
+                    raise BudgetError("fresh quick-screen consent cannot authorize another stage")
+                active = db.execute(
+                    "SELECT 1 FROM budget_reservation WHERE audit_id=? AND group_id=? AND stage='quick_screen' AND status='reserved'",
+                    (audit_id, group_id),
+                ).fetchone()
+                if active:
+                    db.rollback()
+                    raise BudgetError("quick-screen group already has an in-flight request")
+                # Only a new, revalidated consent may retry a finished failed call.
+                # Old reservations and their unknown/billed outcomes stay recorded.
+                if dispatch and dispatch["status"] in {"partial", "known_not_sent"}:
+                    db.execute("UPDATE triage_dispatch SET status='queued' WHERE audit_id=? AND group_id=? AND stage='quick_screen'",
+                               (audit_id, group_id))
+                    dispatch = {"status": "queued"}
             if not dispatch or dispatch["status"] not in {"queued", "running"}:
                 db.rollback()
                 raise BudgetError("group is not queued for this model stage")
@@ -287,30 +324,36 @@ class BudgetLedger:
             if inflight >= limits["max_model_concurrency"]:
                 db.rollback()
                 raise BudgetError("model concurrency budget exhausted")
-            rows = db.execute(
-                "SELECT status,max_input_tokens,max_output_tokens,actual_input_tokens,actual_output_tokens FROM budget_reservation WHERE audit_id=?",
-                (audit_id,),
+            reserved = db.execute(
+                "SELECT status,max_input_tokens,max_output_tokens,actual_input_tokens,actual_output_tokens "
+                "FROM budget_reservation WHERE audit_id=?", (audit_id,),
             ).fetchall()
-            used_calls = used_input = used_output = 0
-            for row in rows:
+            calls = 0
+            input_used = output_used = 0
+            for row in reserved:
                 if row["status"] == "known_not_sent":
                     continue
-                used_calls += 1
-                used_input += row["actual_input_tokens"] if row["actual_input_tokens"] is not None else row["max_input_tokens"]
-                used_output += row["actual_output_tokens"] if row["actual_output_tokens"] is not None else row["max_output_tokens"]
-            if used_calls + 1 > limits["max_model_calls_per_audit"]:
+                calls += 1
+                input_used += (row["actual_input_tokens"] if row["actual_input_tokens"] is not None
+                               else row["max_input_tokens"])
+                output_used += (row["actual_output_tokens"] if row["actual_output_tokens"] is not None
+                                else row["max_output_tokens"])
+            if calls >= limits["max_model_calls_per_audit"]:
                 db.rollback()
-                raise BudgetError("task-wide model-call budget exhausted")
-            if used_input + max_input_tokens > limits["max_input_tokens_per_audit"]:
+                raise BudgetError("model-call budget exhausted")
+            if input_used + max_input_tokens > limits["max_input_tokens_per_audit"]:
                 db.rollback()
-                raise BudgetError("task-wide input-token reservation would exceed budget")
-            if used_output + max_output_tokens > limits["max_output_tokens_per_audit"]:
+                raise BudgetError("input-token budget exhausted")
+            if output_used + max_output_tokens > limits["max_output_tokens_per_audit"]:
                 db.rollback()
-                raise BudgetError("task-wide output-token reservation would exceed budget")
+                raise BudgetError("output-token budget exhausted")
+            if max_output_tokens > limits.get("max_output_tokens_per_request", max_output_tokens):
+                db.rollback()
+                raise BudgetError("per-request output-token limit exceeded")
             reservation_id = uuid.uuid4().hex
             db.execute(
-                "INSERT INTO budget_reservation(reservation_id,audit_id,idempotency_key,endpoint_id,group_id,stage,max_input_tokens,max_output_tokens,status,created_at) VALUES(?,?,?,?,?,?,?,?,?,?)",
-                (reservation_id, audit_id, idempotency_key, endpoint_id, group_id, stage,
+                "INSERT INTO budget_reservation(reservation_id,audit_id,idempotency_key,endpoint_id,group_id,stage,phase,max_input_tokens,max_output_tokens,status,created_at) VALUES(?,?,?,?,?,?,?,?,?,?,?)",
+                (reservation_id, audit_id, idempotency_key, endpoint_id, group_id, stage, phase,
                  max_input_tokens, max_output_tokens, "reserved", now),
             )
             db.execute(
@@ -319,7 +362,7 @@ class BudgetLedger:
             )
             db.commit()
         return {"reservation_id": reservation_id, "audit_id": audit_id,
-                "endpoint_id": endpoint_id, "group_id": group_id, "stage": stage,
+                "endpoint_id": endpoint_id, "group_id": group_id, "stage": stage, "phase": phase,
                 "max_input_tokens": max_input_tokens, "max_output_tokens": max_output_tokens,
                 "status": "reserved", "idempotent_replay": False}
 
@@ -367,14 +410,22 @@ class BudgetLedger:
             elif outcome == "unknown_outcome":
                 # Keep full pre-call reservation: an ambiguous response may have been billed.
                 status, actual_in, actual_out = "unknown_outcome", None, None
-            elif input_tokens > row["max_input_tokens"] or output_tokens > row["max_output_tokens"]:
-                status, actual_in, actual_out = "budget_violation", None, None
-                db.execute(
-                    "UPDATE audit_budget SET status='stopped',stop_reason='provider_usage_exceeded_reservation' WHERE audit_id=?",
-                    (row["audit_id"],),
-                )
             else:
                 status, actual_in, actual_out = "completed", input_tokens, output_tokens
+                audit = db.execute("SELECT policy_json FROM audit_budget WHERE audit_id=?",
+                                   (row["audit_id"],)).fetchone()
+                limits = json.loads(audit["policy_json"])["limits"]
+                totals = db.execute(
+                    "SELECT COALESCE(SUM(CASE WHEN actual_input_tokens IS NULL THEN max_input_tokens ELSE actual_input_tokens END),0), "
+                    "COALESCE(SUM(CASE WHEN actual_output_tokens IS NULL THEN max_output_tokens ELSE actual_output_tokens END),0) "
+                    "FROM budget_reservation WHERE audit_id=? AND status!='known_not_sent' AND reservation_id!=?",
+                    (row["audit_id"], reservation_id),
+                ).fetchone()
+                if (totals[0] + input_tokens > limits["max_input_tokens_per_audit"]
+                        or totals[1] + output_tokens > limits["max_output_tokens_per_audit"]):
+                    status = "budget_violation"
+                    db.execute("UPDATE audit_budget SET status='stopped',stop_reason='provider_usage_exceeded_frozen_budget' WHERE audit_id=?",
+                               (row["audit_id"],))
             db.execute(
                 "UPDATE budget_reservation SET status=?,actual_input_tokens=?,actual_output_tokens=?,estimated_cost_usd=?,finished_at=? WHERE reservation_id=?",
                 (status, actual_in, actual_out, estimated_cost_usd, now, reservation_id),
@@ -469,7 +520,7 @@ class BudgetLedger:
             if not audit:
                 raise BudgetError("audit budget snapshot not found")
             reservations = db.execute(
-                "SELECT status,max_input_tokens,max_output_tokens,actual_input_tokens,actual_output_tokens FROM budget_reservation WHERE audit_id=?",
+                "SELECT stage,phase,status,max_input_tokens,max_output_tokens,actual_input_tokens,actual_output_tokens FROM budget_reservation WHERE audit_id=?",
                 (audit_id,),
             ).fetchall()
             dispatches = db.execute(
@@ -478,13 +529,28 @@ class BudgetLedger:
         policy = json.loads(audit["policy_json"])
         limits = policy["limits"]
         calls = used_in = used_out = inflight = 0
+        usage_by_phase = {}
         for row in reservations:
+            phase = row["phase"] or ("quick_screen" if row["stage"] == "quick_screen" else "deep_agent")
+            phase_usage = usage_by_phase.setdefault(phase, {
+                "model_calls_allocated": 0, "model_calls_in_flight": 0,
+                "model_calls_completed": 0, "model_calls_unknown": 0,
+                "input_tokens_allocated": 0, "output_tokens_allocated": 0,
+            })
             if row["status"] == "known_not_sent":
                 continue
             calls += 1
             inflight += int(row["status"] == "reserved")
-            used_in += row["actual_input_tokens"] if row["actual_input_tokens"] is not None else row["max_input_tokens"]
-            used_out += row["actual_output_tokens"] if row["actual_output_tokens"] is not None else row["max_output_tokens"]
+            input_tokens = row["actual_input_tokens"] if row["actual_input_tokens"] is not None else row["max_input_tokens"]
+            output_tokens = row["actual_output_tokens"] if row["actual_output_tokens"] is not None else row["max_output_tokens"]
+            used_in += input_tokens
+            used_out += output_tokens
+            phase_usage["model_calls_allocated"] += 1
+            phase_usage["model_calls_in_flight"] += int(row["status"] == "reserved")
+            phase_usage["model_calls_completed"] += int(row["status"] == "completed")
+            phase_usage["model_calls_unknown"] += int(row["status"] in {"unknown_outcome", "budget_violation"})
+            phase_usage["input_tokens_allocated"] += input_tokens
+            phase_usage["output_tokens_allocated"] += output_tokens
         elapsed = max(0, int(self._now() - audit["created_at"]))
         return {
             "audit_id": audit_id, "policy_sha256": audit["policy_sha256"],
@@ -501,6 +567,10 @@ class BudgetLedger:
                 "max_model_calls": limits["max_model_calls_per_audit"],
                 "max_input_tokens": limits["max_input_tokens_per_audit"],
                 "max_output_tokens": limits["max_output_tokens_per_audit"],
+                "max_output_tokens_per_request": limits.get("max_output_tokens_per_request"),
+                "max_wall_seconds": limits["max_ai_wall_seconds"],
+                "cumulative_usage_limits_enforced": True,
+                "by_phase": usage_by_phase,
             },
             "cost": {
                 "policy_max_cost_usd": limits["max_cost_usd"],

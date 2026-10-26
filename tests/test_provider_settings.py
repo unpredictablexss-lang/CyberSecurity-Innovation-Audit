@@ -34,6 +34,28 @@ class ProviderSettingsStoreTests(unittest.TestCase):
             self.assertEqual(config.api_key, "private-test-key")
             self.assertNotIn("private-test-key", json.dumps(config.public))
 
+    def test_chat_protocol_round_trips_and_legacy_config_defaults_to_responses(self):
+        with tempfile.TemporaryDirectory() as temp, patch.dict(os.environ, {}, clear=True):
+            data_dir = Path(temp) / "data"
+            write_settings({"api_protocol": "openai-chat-completions",
+                            "base_url": "https://api.example.invalid", "model": "chat-model",
+                            "proxy_url": "", "api_key": "test-key"}, data_dir)
+            loaded = read_settings(data_dir)
+            self.assertEqual(loaded["api_protocol"], "openai-chat-completions")
+            self.assertEqual(agent.ProviderConfig.from_env(data_dir).provider,
+                             "openai-chat-completions")
+
+            legacy_dir = Path(temp) / "legacy"
+            legacy_dir.mkdir()
+            (legacy_dir / "agent-provider.json").write_text(json.dumps({
+                "base_url": "https://api.example.invalid/v1", "model": "legacy-model",
+                "proxy_url": "", "api_key": "legacy-key",
+            }), encoding="utf-8")
+            if os.name == "posix":
+                os.chmod(legacy_dir / "agent-provider.json", 0o600)
+            self.assertEqual(read_settings(legacy_dir)["api_protocol"], "openai-responses")
+            self.assertEqual(agent.ProviderConfig.from_env(legacy_dir).provider, "openai-responses")
+
     def test_environment_provider_is_authoritative_over_local_file(self):
         with tempfile.TemporaryDirectory() as temp:
             data_dir = Path(temp) / "data"
@@ -41,11 +63,13 @@ class ProviderSettingsStoreTests(unittest.TestCase):
                             "proxy_url": "", "api_key": "file-secret"}, data_dir)
             os.chmod(data_dir / "agent-provider.json", 0o644)
             with patch.dict(os.environ, {
+                    "OHSCANNER_LLM_API_PROTOCOL": "openai-chat-completions",
                     "OHSCANNER_LLM_BASE_URL": "https://env.example.invalid/v1",
                     "OHSCANNER_LLM_MODEL": "env-model",
                     "OHSCANNER_LLM_API_KEY": "env-secret"}, clear=True):
                 config = agent.ProviderConfig.from_env(data_dir)
             self.assertTrue(config.configured)
+            self.assertEqual(config.provider, "openai-chat-completions")
             self.assertEqual(config.model, "env-model")
             self.assertEqual(config.endpoint_host, "env.example.invalid")
             self.assertEqual(config.api_key, "env-secret")
@@ -104,11 +128,13 @@ class ProviderSettingsApiTests(unittest.TestCase):
                 self.assertNotIn("api_key", status.json())
                 self.assertIsNone(status.json()["last_provider_check"])
                 saved = client.post("/api/v1/agent/provider-settings", headers=headers, json={
+                    "api_protocol": "openai-chat-completions",
                     "base_url": "https://api.example.invalid/v1", "model": "test-model",
                     "proxy_url": "", "api_key": "private-test-key"})
                 self.assertEqual(saved.status_code, 200, saved.text)
                 self.assertTrue(saved.json()["configured"])
                 self.assertTrue(saved.json()["api_key_configured"])
+                self.assertEqual(saved.json()["api_protocol"], "openai-chat-completions")
                 self.assertNotIn("private-test-key", saved.text)
                 self.assertNotIn("api_key", saved.json())
                 with patch("src.workbench.agent.provider_connectivity_check", return_value={
@@ -130,6 +156,7 @@ class ProviderSettingsApiTests(unittest.TestCase):
                 self.assertEqual(investigation_status["last_provider_check"]["endpoint_host"], "api.example.invalid")
                 self.assertNotIn("private-test-key", json.dumps(investigation_status))
                 self.assertEqual(refreshed["last_provider_check"]["model"], "test-model")
+                self.assertEqual(refreshed["api_protocol"], "openai-chat-completions")
                 self.assertEqual(refreshed["last_provider_check"]["endpoint_host"], "api.example.invalid")
                 self.assertNotIn("api_key", refreshed["last_provider_check"])
                 check_file = root / "data" / "agent-provider-check.json"

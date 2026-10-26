@@ -115,6 +115,19 @@ class RepositoryManagementTests(unittest.TestCase):
         self.assertNotIn("path", response.text)
         self.assertIsNone(result["repository_size_estimate_bytes"])
 
+    def test_source_sync_preflight_reports_selected_destination_without_creating_it(self):
+        destination = self.root / "selected-downloads"
+        response = self.client.post("/api/v1/operations/source-sync/preview",
+            headers={"X-OHScanner-Client": "workbench-v1"}, json={"repositories": [{
+                "repository": "openharmony/sample", "url": "https://github.com/openharmony/sample.git",
+                "destination_dir": str(destination), "timeout_seconds": 60}]})
+        self.assertEqual(response.status_code, 200, response.text)
+        row = response.json()["repositories"][0]
+        self.assertEqual(row["destination_dir"], str(destination))
+        self.assertTrue(row["eligible"])
+        self.assertFalse(destination.exists())
+        self.assertFalse((self.settings.data_dir / "download-locations.json").exists())
+
     def test_source_sync_preflight_blocks_same_name_cache_from_another_source(self):
         target = self.settings.data_dir / "repo-cache" / "sample"
         init_repo(target)

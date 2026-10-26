@@ -37,17 +37,24 @@ class OwnerIntegrationTests(unittest.TestCase):
     def test_automatic_plan_is_frozen_and_worker_matches_cli(self):
         plan = self.plan()
         static_plan = {key: value for key, value in plan.items()
-                       if key not in {'audit_mode', 'workflow_sha256', 'workflow'}}
+                       if key not in {'audit_mode', 'workflow_sha256', 'workflow',
+                                      'progressive_triage_policy'}}
         self.assertEqual(plan['audit_mode'], 'standard_review')
         self.assertEqual(plan['workflow']['triage_stage'], 'user_authorized_candidate_batch')
         self.assertEqual(plan['selection_mode'], 'automatic')
-        self.assertEqual(len(plan['suggested_detector_ids']), 8)
+        self.assertIn('ohscanner.cpp.null_dereference', plan['suggested_detector_ids'])
+        self.assertIn('ohscanner.cpp.path_traversal', plan['suggested_detector_ids'])
+        self.assertIn('ohscanner.ark.runtime.type_safety', plan['suggested_detector_ids'])
+        self.assertIn('ohscanner.data.sensitive_exposure', plan['suggested_detector_ids'])
+        self.assertIn('ohscanner.known_disclosed_cves', plan['suggested_detector_ids'])
         self.assertEqual(plan['execution_status'], 'not_run')
         null = next(d for d in plan['detectors'] if d['id']=='ohscanner.cpp.null_dereference')
-        self.assertEqual(null['reason_codes'], ['explicit_selection_required'])
+        self.assertEqual(null['decision'], 'planned')
         self.assertIn('partial.cpp', [f['file'] for f in plan['parse_limitations']])
         job = self.scan(expected_plan_sha256=plan['plan_sha256'])
         self.assertEqual(job['spec']['audit_plan'], static_plan)
+        self.assertEqual(job['spec']['progressive_triage_policy'],
+                         plan['progressive_triage_policy'])
         self.assertEqual(job['spec']['plan_sha256'], plan['plan_sha256'])
         self.assertEqual(job['spec']['audit_mode'], 'standard_review')
         self.assertEqual(job['spec']['workflow_sha256'], plan['workflow_sha256'])
@@ -67,6 +74,24 @@ class OwnerIntegrationTests(unittest.TestCase):
         self.assertEqual(report['validated_vulnerability'], 0)
         for item in service.findings(report):
             self.assertTrue(item['evidence']['obligations'])
+
+    def test_new_single_and_multi_endpoint_disclosures_follow_candidate_policy(self):
+        from src.workbench.progressive_triage.policy import PolicyStore, build_policy
+        from src.workbench.operations_api import TaskTriageOptions, _preview_operation_triage
+        with patch.dict(os.environ, {"OHSCANNER_LLM_MODEL": "test", "OHSCANNER_LLM_API_KEY": "fake-key"}):
+            plan = self.plan(auto_triage=True)
+            self.assertEqual(plan["workflow"]["candidate_limit_per_authorized_batch"], 30)
+            self.assertEqual(plan["workflow"]["conditional_r2_candidate_limit"], 6)
+            PolicyStore(self.settings.data_dir).update(build_policy("deep"), 0)
+            plan = self.plan(auto_triage=True)
+            self.assertEqual(plan["workflow"]["candidate_limit_per_authorized_batch"], 100)
+            self.assertEqual(plan["workflow"]["conditional_r2_candidate_limit"], 20)
+            spec = service.make_spec(self.store.repository(self.repo_id), self.commit, ["."], None, 300, 2048)
+            body = TaskTriageOptions(auto_triage=True)
+            preview = _preview_operation_triage(self.settings, body, [spec, spec])
+            self.assertEqual((body.max_triage_candidates, body.max_r2_candidates), (100, 20))
+            self.assertEqual(len(preview["scans"]), 2)
+            self.assertTrue(all(item["manifest"]["candidate_selection"]["authorized_candidate_count"] == 100 for item in preview["scans"]))
 
     def test_task_level_triage_consent_is_bound_and_revocable(self):
         with patch.dict("os.environ", {
@@ -226,7 +251,7 @@ if os.environ.get("OHSCANNER_TEST_PROVIDER_TRACE"):
                     {"obligation_index": index, "disposition": "unresolved", "citations": []}
                     for index in range(len(obligations))
                 ],
-                "unsupported_claims": [], "unknowns": ["Product reachability"],
+                "unsupported_claims": [], "unknowns": ["产品入口是否可达尚未确认"],
                 "next_steps": ["Review the fixed source and runtime path."],
             }
             return {
@@ -308,8 +333,7 @@ if os.environ.get("OHSCANNER_TEST_PROVIDER_TRACE"):
         candidate = next(item for item in service.findings(report)
                          if item["file"] == "lifetime.cpp")
         payload = {"job_id": job["id"], "candidate_id": candidate["id"],
-                   "mode": "tool_agent", "max_steps": 2,
-                   "max_output_tokens": 1200}
+                   "mode": "tool_agent", "max_steps": 2}
         provider_env = {
             "OHSCANNER_LLM_BASE_URL": "https://api.xiaomimimo.com/v1",
             "OHSCANNER_LLM_MODEL": "mimo-v2.6-pro",
@@ -322,6 +346,8 @@ if os.environ.get("OHSCANNER_TEST_PROVIDER_TRACE"):
             self.assertEqual(preview_response.status_code, 200, preview_response.text)
             preview = preview_response.json()
             self.assertTrue(preview["agent_execution"]["eligible"], preview)
+            self.assertEqual(preview["budgets"]["max_output_tokens_per_request"],
+                             preview["budgets"]["max_output_tokens"])
             created = self.client.post(
                 "/api/v1/operations/agent-investigations",
                 json={**payload, "source_submission_approved": True,
@@ -386,17 +412,17 @@ if os.environ.get("OHSCANNER_TEST_TOOL_TRACE"):
             elif schema_name == "ohscanner_candidate_artifacts":
                 value = {
                     "vulnerability_report": {
-                        "title": "Fixed-source candidate report",
-                        "summary": "Evidence is incomplete; product reachability remains unknown.",
-                        "root_cause": "The source path requires human review.",
-                        "impact": "Product impact is unknown.", "preconditions": [],
-                        "attack_path": [], "remediation": "Review the applicable product policy.",
+                        "title": "固定源码候选报告",
+                        "summary": "证据尚不完整，产品入口是否可达仍未知。",
+                        "root_cause": "源码路径需要人工复核。",
+                        "impact": "目前无法确定产品影响范围。", "preconditions": [],
+                        "attack_path": [], "remediation": "复核适用的产品策略。",
                         "citations": [],
                     },
                     "poc_draft": {
-                        "title": "Evidence-gated local test draft", "language": "",
+                        "title": "经证据门控的本地测试草案", "language": "",
                         "code": "", "prerequisites": [], "run_steps": [],
-                        "expected_observation": "Evidence is insufficient for a test draft.",
+                        "expected_observation": "当前证据不足以形成测试草案。",
                         "negative_control": "", "citations": [],
                     },
                 }
@@ -408,13 +434,13 @@ if os.environ.get("OHSCANNER_TEST_TOOL_TRACE"):
                         if isinstance(item, dict)],
                 }
             else:
-                value = {"summary": "Synthetic source review; human/runtime evidence is still required.",
+                value = {"summary": "模拟源码调查；仍需人工或运行时证据。",
                     "assessment": "needs_more_evidence", "supported_claims": [],
                     "obligation_reviews": [
                         {"obligation_index": index, "disposition": "unresolved", "citations": []}
                         for index in range(len(obligations))],
-                    "unsupported_claims": [], "unknowns": ["Product reachability"],
-                    "next_steps": ["Review the fixed source and validate the runtime path."]}
+                    "unsupported_claims": [], "unknowns": ["产品入口是否可达尚未确认"],
+                    "next_steps": ["复核固定源码并验证运行时调用路径。"]}
                 phase = "structured_review"
                 trace_extra = {}
             with open(trace_path, "a", encoding="utf-8") as trace:
@@ -982,6 +1008,9 @@ if os.environ.get("OHSCANNER_TEST_TOOL_TRACE"):
                     job["id"], saved_job["report_sha256"])[0]
                 queued = operations.smart_triage_operations(batch["id"])
                 self.assertTrue(queued)
+                frozen_limit = saved_job["spec"]["progressive_triage_policy"]["policy"]["limits"]["max_output_tokens_per_request"]
+                self.assertTrue(all(item["spec"]["max_output_tokens"] == frozen_limit
+                                    for item in queued))
                 self.assertEqual(saved_job["status"], "completed_with_limitations")
                 self.assertTrue(all(item["status"] == "queued" for item in queued))
 
@@ -1161,6 +1190,8 @@ if os.environ.get("OHSCANNER_TEST_TOOL_TRACE"):
                     selected_candidate = next(item for item in candidates
                                               if item["id"] == r2["spec"]["candidate_id"])
                     self.assertEqual(r2["spec"]["mode"], "tool_agent")
+                    self.assertEqual(r2["spec"]["max_output_tokens"],
+                                     self.store.job(job["id"])["spec"]["progressive_triage_policy"]["policy"]["limits"]["max_output_tokens_per_request"])
                     self.assertFalse(r2["spec"]["continuous_investigation"])
                     self.assertGreater(r2["spec"]["max_steps"], 0)
                     self.assertEqual(r2["spec"]["r1_result_sha256"], parent["result_sha256"])
@@ -1472,7 +1503,7 @@ if os.environ.get("OHSCANNER_TEST_TOOL_TRACE"):
         self.assertEqual(r.status_code, 422)
         self.assertEqual(self.store.jobs(), [])
 
-    def test_c_is_explicit_research_only_while_d_requires_explicit_selection(self):
+    def test_default_scan_includes_all_research_candidates_and_explicit_subsets_still_work(self):
         c_id = 'ohscanner.ark.runtime.type_safety'
         plan = self.plan(detector_ids=[c_id])
         self.assertEqual(plan['selection_mode'], 'explicit')
@@ -1482,8 +1513,8 @@ if os.environ.get("OHSCANNER_TEST_TOOL_TRACE"):
         d_id = 'ohscanner.data.sensitive_exposure'
         automatic = self.plan()
         d_row = next(row for row in automatic['detectors'] if row['id'] == d_id)
-        self.assertEqual(d_row['decision'], 'skipped')
-        self.assertIn('explicit_selection_required', d_row['reason_codes'])
+        self.assertEqual(d_row['decision'], 'planned')
+        self.assertIn(d_id, automatic['suggested_detector_ids'])
         # Unknown-source fallback should preserve a name-based finding through
         # the same API -> Worker -> report path, without changing its status.
         (self.repo/'sensitive.cpp').write_text('''void logCredential(const char *password) {

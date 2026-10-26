@@ -55,6 +55,7 @@ export default function Repositories({
   const [onlinePreview, setOnlinePreview] = useState<any>(null);
   const [onlineImportBusy, setOnlineImportBusy] = useState(false);
   const [onlineOperation, setOnlineOperation] = useState<any>(null);
+  const [onlineDestinationDir, setOnlineDestinationDir] = useState("");
 
   const loadCatalog = async () => {
     setCatalogLoading(true);
@@ -111,6 +112,7 @@ export default function Repositories({
     try {
       const operation = await api("/operations/repository-import-scans", {
         ...pinnedRepositoryImportRequest(onlinePreview),
+        destination_dir: onlineDestinationDir.trim() || null,
       });
       setOnlineOperation(operation);
       setOnlinePreview(null);
@@ -190,6 +192,7 @@ export default function Repositories({
         <Alert type="info" showIcon
           message="搜索 GitCode 上公开列出的 OpenHarmony 代码仓库"
           description="这是 GitCode 组织目录元数据，不能独立证明仓库身份。选择仓库后会先预览默认分支的完整 Commit；确认后按该 Commit 下载并自动排入静态扫描，不执行检出脚本、构建或子模块获取。"
+          action={<Button type="link" onClick={() => document.getElementById("source-sync-panel")?.scrollIntoView({ behavior: "smooth", block: "start" })}>只下载源码并选择保存位置</Button>}
         />
         <Space className="section-gap" wrap>
           <Input.Search allowClear value={onlineQuery} onChange={(event) => setOnlineQuery(event.target.value)}
@@ -395,7 +398,11 @@ export default function Repositories({
       >
         {onlinePreview && <>
           <Alert type="warning" showIcon message="确认后将下载所选代码版本并自动创建静态扫描任务"
-            description="不会扫描可变分支。服务端会在下载后再次核对 Commit 和 Tree；目录来源是 GitCode 公开组织元数据，不代表独立身份认证。" />
+            description="下载保存在运行 OHScanner 的服务端目录，不是浏览器下载目录。服务端会在下载后再次核对 Commit 和 Tree；目录来源是 GitCode 公开组织元数据，不代表独立身份认证。" />
+          <Form.Item className="section-gap" label="源码保存位置（可选）" extra="留空使用服务端默认源码缓存。Windows 系统示例：D:\OpenHarmony；Ubuntu 示例：/home/audit/OpenHarmony；WSL 示例：/mnt/d/OpenHarmony。当前 WSL 服务会自动转换 Windows 盘符路径。">
+            <Input value={onlineDestinationDir} onChange={(event) => setOnlineDestinationDir(event.target.value)}
+              placeholder="例如 /mnt/d/OpenHarmony 或 D:\OpenHarmony" />
+          </Form.Item>
           <Typography.Paragraph className="section-gap">默认分支：<Text code>{onlinePreview.default_branch}</Text></Typography.Paragraph>
           <Typography.Paragraph>Commit：<Text code copyable>{onlinePreview.commit}</Text></Typography.Paragraph>
           <Typography.Paragraph>提交时间：{onlinePreview.commit_date || "目录未提供"}</Typography.Paragraph>

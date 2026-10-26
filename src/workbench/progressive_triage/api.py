@@ -24,6 +24,7 @@ class PolicyUpdate(BaseModel):
     profile: Literal["economical", "standard", "deep", "custom"]
     limits: dict[str, Any] | None = None
     family_quotas: bool | None = None
+    request_output_tokens: int | None = Field(default=5000, ge=128, le=65536, strict=True)
 
 
 def _public_state(state: dict[str, Any]) -> dict[str, Any]:
@@ -37,7 +38,10 @@ def _public_state(state: dict[str, Any]) -> dict[str, Any]:
         "integration": {
             "grouping_and_ranking": "connected_to_multi_endpoint_operation_results",
             "worker_enforcement": "l2_l3_fixed_source_consent_and_parent_budget_gate",
-            "quick_screen_executor": "independent_explicit_consent_operation",
+            "quick_screen_executor": "task_level_explicit_consent_batch_and_individual_explicit_consent",
+            "quick_screen_batch_max_items": 1_000,
+            "quick_screen_batch_execution": "sequential_shared_task_budget_stop_on_cancel_or_gate",
+            "deep_agent_executor": "task_level_explicit_scope_consent_sequential_existing_agent_with_shared_budget",
             "task_budget_ledger": "shared_across_fixed_endpoints_for_l2_and_l3",
             "billing_hard_cap": False,
             "all_candidates_preserved": True,
@@ -60,7 +64,12 @@ def install_routes(app, data_dir) -> PolicyStore:
     @app.put("/api/v1/agent/triage-policy")
     def update_triage_policy(body: PolicyUpdate):
         try:
-            policy = build_policy(body.profile, body.limits, body.family_quotas)
+            current_policy = store.read()["policy"]
+            kwargs = ({"request_output_tokens": body.request_output_tokens}
+                      if "request_output_tokens" in body.model_fields_set else
+                      {"request_output_tokens": current_policy["request_output_tokens"]}
+                      if "request_output_tokens" in current_policy else {})
+            policy = build_policy(body.profile, body.limits, body.family_quotas, **kwargs)
             state = store.update(policy, body.expected_revision)
         except PolicyRevisionConflict as error:
             raise HTTPException(status_code=409, detail=str(error)) from error

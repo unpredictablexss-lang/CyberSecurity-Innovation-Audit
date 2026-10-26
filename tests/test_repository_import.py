@@ -155,6 +155,19 @@ class RepositoryImportTests(unittest.TestCase):
         self.assertEqual(self.store.job(result["scan_job"]["id"])["spec"]["commit"], self.commit)
         self.assertEqual(result["source_provenance"].startswith("GitCode public"), True)
 
+    def test_selected_destination_is_used_and_registered_for_the_queued_scan(self):
+        destination = self.base / "chosen-downloads"
+        spec = {**self.spec, "destination_dir": str(destination)}
+        with patch.object(repository_import, "_fetch_to_stage", side_effect=self.fake_fetch):
+            result = repository_import.import_and_queue_scan(self.settings, self.store, spec)
+        target = destination / "openharmony" / "fixture" / self.commit
+        self.assertTrue(target.is_dir())
+        self.assertEqual(result["destination_dir"], str(destination))
+        self.assertEqual(self.store.job(result["scan_job"]["id"])["repository_id"],
+                         result["repository"]["id"])
+        self.assertIn(destination, self.settings.target_roots)
+        self.assertEqual(result["scan_job"]["status"], "queued")
+
     def test_exact_cache_hit_queues_scan_without_fetch(self):
         with patch.object(repository_import, "_fetch_to_stage", side_effect=self.fake_fetch):
             first = self.run_import()
@@ -474,12 +487,17 @@ class RepositoryImportTests(unittest.TestCase):
         preview = {"name": "openharmony/fixture", "slug": "fixture", "default_branch": "main",
                    "commit": "1" * 40, "preview_sha256": "2" * 64, "catalog_sha256": "3" * 64,
                    "size_kib": 64}
+        selected_destination = self.base / "api-selected-downloads"
         with patch("src.workbench.operations_api.validate_preview", return_value=preview):
             response = client.post("/api/v1/operations/repository-import-scans", headers=HEADERS,
                                    json={"slug": "fixture", "branch": "main", "commit": "1" * 40,
-                                         "preview_sha256": "2" * 64})
+                                         "preview_sha256": "2" * 64,
+                                         "destination_dir": str(selected_destination)})
         self.assertEqual(response.status_code, 201, response.text)
         self.assertEqual(response.json()["kind"], "repository_import_scan")
+        imported = Operations(self.store).get(response.json()["id"])
+        self.assertEqual(imported["spec"]["destination_dir"], str(selected_destination))
+        self.assertFalse(selected_destination.exists(), "API preview/queue must not create the selected directory")
         legacy = client.post("/api/v1/operations/source-sync", headers=HEADERS,
                              json={"repository": "openharmony/fixture",
                                    "url": "https://gitcode.com/openharmony/fixture.git"})

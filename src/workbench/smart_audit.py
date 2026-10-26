@@ -795,10 +795,21 @@ def _authorization_is_current(settings, store, job, provider):
         snapshot.get("consent_nonce"), provider,
         snapshot.get("r2_candidate_limit", 0),
         max_cost_usd=(snapshot.get("cost_budget") or {}).get("maximum_usd"),
+        system_policy_snapshot=job["spec"].get("progressive_triage_policy"),
     )
     if not refreshed.get("eligible") or refreshed.get("consent_sha256") != record["consent_sha256"]:
         return record, "task-level consent digest no longer matches the current plan"
     return record, None
+
+
+def _frozen_request_output_limit(audit_spec):
+    policy_snapshot = audit_spec.get("progressive_triage_policy")
+    limits = (policy_snapshot.get("policy", {}).get("limits", {})
+              if isinstance(policy_snapshot, dict) else {})
+    value = limits.get("max_output_tokens_per_request", 3000)
+    if not isinstance(value, int) or isinstance(value, bool):
+        value = 3000
+    return min(3000, max(128, value))
 
 
 def enqueue_authorized_triage(settings, store, ops, job):
@@ -859,12 +870,13 @@ def enqueue_authorized_triage(settings, store, ops, job):
                       + "; no Agent operation was queued. Narrow the source scope or create separately reviewed smaller audits."),
             "r2_status": "not_requested",
         })
+    request_output_limit = _frozen_request_output_limit(spec)
     preview_spec = {
         **agent.bounded_agent_spec({"mode": "single_shot",
-                                    "max_output_tokens": 3000,
+                                    "max_output_tokens": request_output_limit,
                                     "no_cumulative_token_ceiling": True}),
         "mode": "single_shot",
-        "max_output_tokens": 3000,
+        "max_output_tokens": request_output_limit,
         "max_request_context_tokens": 65536,
         "max_request_context_bytes": agent.MAX_SMART_REQUEST_CONTEXT_BYTES,
         "request_timeout_seconds": 45,
@@ -1053,6 +1065,7 @@ def enqueue_authorized_r2_followups(settings, store, ops, batch_id):
     if batch.get("r2_status") != "awaiting_r1":
         return batch
     job = store.job(batch["audit_id"])
+    request_output_limit = _frozen_request_output_limit(job.get("spec", {}))
     authorization = store.triage_authorization(job["id"])
     if authorization is None:
         return batch
@@ -1110,7 +1123,11 @@ def enqueue_authorized_r2_followups(settings, store, ops, batch_id):
     selected = eligible[:limit] if not auth_error else []
     selected_ids = {item[0]["id"] for item in selected}
     r2_preview_spec = {
-        **agent.bounded_agent_spec({"mode": "tool_agent"}),
+        **agent.bounded_agent_spec({"mode": "tool_agent",
+                                    "max_output_tokens": request_output_limit,
+                                    "no_cumulative_token_ceiling": True}),
+        "max_output_tokens": request_output_limit,
+        "no_cumulative_token_ceiling": True,
         "provider_request_timeout_seconds": 45, "max_provider_retries": 1,
         "continuous_investigation": False,
         "include_paths": list(job.get("spec", {}).get("include_paths", [])),

@@ -20,11 +20,25 @@ function sourceLines(preview: any) {
   return [];
 }
 
+function knowledgePreviews(preview: any) {
+  if (Array.isArray(preview?.arms)) {
+    return preview.arms.map((arm: any) => ({ mode: arm.mode, retrieval: arm.preview?.knowledge_retrieval }))
+      .filter((item: any) => item.retrieval);
+  }
+  const direct = preview?.knowledge_retrieval;
+  return direct ? [{ mode: null, retrieval: direct }] : [];
+}
+
+const PROFILE_LABELS: Record<string, string> = {
+  economical: "经济", standard: "标准", deep: "深度", custom: "自定义",
+};
+
 export default function TaskTriageConsentModal({ open, preview, loading = false, onCancel, onConfirm }: {
   open: boolean; preview: any; loading?: boolean; onCancel: () => void; onConfirm: () => void;
 }) {
   const endpoints = endpointsFor(preview);
   const evidence = sourceLines(preview);
+  const knowledge = knowledgePreviews(preview);
   const consentExpiry = preview?.expires_at || preview?.consent?.expires_at;
   const provider = preview?.provider || endpoints[0]?.provider || {};
   const progressive = preview?.progressive_policy || null;
@@ -50,10 +64,10 @@ export default function TaskTriageConsentModal({ open, preview, loading = false,
         <Descriptions.Item label="模型服务">{provider.endpoint_host || provider.destination_host || provider.destination || "目的地未知"}</Descriptions.Item>
         <Descriptions.Item label="模型">{provider.model || "未知"}</Descriptions.Item>
         {progressive && <>
-          <Descriptions.Item label="渐进策略">{progressive.policy?.profile || "unknown"} · 修订 {progressive.revision ?? "unknown"}</Descriptions.Item>
+          <Descriptions.Item label="渐进策略">{PROFILE_LABELS[progressive.policy?.profile] || "未知"} · 修订 {progressive.revision ?? "未知"}</Descriptions.Item>
           <Descriptions.Item label="策略摘要 SHA-256">{short(progressive.policy_sha256)}</Descriptions.Item>
           <Descriptions.Item label="本次本地排序名额" span={2}>
-            {progressive.policy?.limits?.quick_screen_groups_per_audit ?? "未知"} 个候选组；只用于 L0/L1 计划排序，L2/L3 调度与任务级模型额度尚未接入。
+            {progressive.policy?.limits?.quick_screen_groups_per_audit ?? "未知"} 个候选组；后续 L2/L3 会继承这里的冻结策略和共享模型预算。
           </Descriptions.Item>
         </>}
         {endpoints.map((item: any, index: number) => {
@@ -73,6 +87,9 @@ export default function TaskTriageConsentModal({ open, preview, loading = false,
               {Number.isInteger(r2Cap) && r2Cap > 0 ? "；符合条件时最多 " + r2Cap + " 条深入追查" : ""}
               <div><Text type="secondary">精确候选总数在扫描后统计；未入选项保留待复核。</Text></div>
             </Descriptions.Item>
+          <Descriptions.Item label="系统额度策略">
+            {PROFILE_LABELS[manifest.system_policy?.profile] || "系统设置"} · 修订 {manifest.system_policy?.revision ?? "未知"} · 单轮输出最多 {manifest.system_policy?.max_output_tokens_per_request ?? manifest.budgets?.r1_max_output_tokens_per_request ?? "未知"} tokens
+          </Descriptions.Item>
             <Descriptions.Item label="源码范围" span={2}>
               {paths.length ? paths.join("、") : "当前审计纳入范围"}
             </Descriptions.Item>
@@ -82,7 +99,7 @@ export default function TaskTriageConsentModal({ open, preview, loading = false,
           {consentExpiry || "服务端未提供固定到期时间；任务创建时会重验来源、模型和范围摘要，绑定项变化会拒绝创建。"}
         </Descriptions.Item>
       </Descriptions>}
-      <Alert type="info" showIcon message="调查费用与取消" description="平台不设本次调查累计 Token、请求次数、工具调用、总时长或费用上限；每次请求仍受单次上下文/输出限制和服务商超时约束。实际账单与账户配额由服务商决定，任务运行期间可以随时取消。自动研判候选数量仍受本次授权范围限制。" />
+      <Alert type="info" showIcon message="额度继承、调查费用与取消" description="单轮输出上限从系统设置中冻结的策略继承，不需要为本任务重复填写。此旧自动分诊流程尚未接入累计 Token、请求次数和调查时长账本；费用按服务商实际计费与账户额度执行。任务运行期间可随时取消。" />
       {!eligible && <Alert type="error" showIcon message={preview?.reason || "当前无法生成可用的授权预览；没有任务会被创建。"} />}
       <Collapse items={[{ key: "details", label: "查看将发送给模型的内容与技术详情", children: <>
         <Typography.Paragraph type="secondary">
@@ -99,6 +116,27 @@ export default function TaskTriageConsentModal({ open, preview, loading = false,
               <Typography.Paragraph key={citation.id || citationIndex} type="secondary">{citation.label || citation.title || citation.path || String(citation)}</Typography.Paragraph>)}
           </div>)}
         </Space> : <Text type="secondary">本接口没有返回扫描后的精确源码摘录。</Text>}
+        {knowledge.length > 0 && <div className="section-gap">
+          <Text strong>将发送的 CVE / PoC / Harness 参考资料</Text>
+          <Typography.Paragraph type="secondary">
+            每个 R1/R2 使用同一候选的本地 BM25 检索结果。资料是结项包中的不可信类比信息，不证明当前候选、不满足当前源码证据义务，也不能作为当前漏洞结论的引用。授权摘要绑定语料 SHA-256 和实际片段；语料变化后需重新预览。
+          </Typography.Paragraph>
+          {knowledge.map(({ mode, retrieval }: any, groupIndex: number) => <div key={mode || groupIndex} className="section-gap">
+            {mode && <Text strong>{mode === "single_shot" ? "R1 单轮研判" : "R2 工具调查"}</Text>}
+            <Descriptions size="small" column={1}>
+              <Descriptions.Item label="检索状态">{retrieval.status} · 索引文件 {retrieval.indexed_files ?? 0}</Descriptions.Item>
+              <Descriptions.Item label="语料 SHA-256">{retrieval.corpus_sha256 || "不可用"}</Descriptions.Item>
+            </Descriptions>
+            {Array.isArray(retrieval.references) && retrieval.references.length
+              ? <Space direction="vertical" style={{ width: "100%" }}>{retrieval.references.map((item: any, index: number) => <div key={item.path + ":" + item.start_line + ":" + index}>
+                <Text strong>{item.path}:{item.start_line}{item.end_line !== item.start_line ? "-" + item.end_line : ""}</Text>
+                <div><Text type="secondary">{item.summary}</Text></div>
+                <div><Text type="secondary">文件 SHA-256：{item.sha256}</Text></div>
+                <pre className="raw">{item.excerpt}</pre>
+              </div>)}</Space>
+              : <Text type="secondary">{retrieval.status === "no_match" ? "没有匹配片段；按现有流程继续。" : "语料为空或不可用；按现有流程继续。"}</Text>}
+          </div>)}
+        </div>}
         {endpoints.map((item: any, index: number) => {
           const manifest = item.manifest || {};
           return <div key={"manifest-" + index} className="section-gap">
@@ -107,8 +145,8 @@ export default function TaskTriageConsentModal({ open, preview, loading = false,
               <li key={lineIndex}>{line.replace(/\bR1\b/g, "初步调查").replace(/\bR2\b/g, "深入追查")}</li>)}</ul>
             <Descriptions size="small" column={1}>
               <Descriptions.Item label="候选超限处理">超过每个版本的授权上限时，未入选候选保持待研判，不会视为安全。</Descriptions.Item>
-              <Descriptions.Item label="单次输出 Token 限制">{manifest.per_candidate_budgets?.r1?.max_output_tokens_per_request == null ? "由本次授权的有限 Token 预算约束" : String(manifest.per_candidate_budgets.r1.max_output_tokens_per_request) + " tokens"}；单次超时 {manifest.per_candidate_budgets?.r1?.provider_request_timeout_seconds || "未知"} 秒</Descriptions.Item>
-              {manifest.per_candidate_budgets?.r2 && <Descriptions.Item label="深入追查输出 Token 限制">{manifest.per_candidate_budgets.r2.max_output_tokens_per_request == null ? "由本次授权的有限 Token 预算约束" : String(manifest.per_candidate_budgets.r2.max_output_tokens_per_request) + " tokens"}；单次超时 {manifest.per_candidate_budgets.r2.provider_request_timeout_seconds} 秒</Descriptions.Item>}
+              <Descriptions.Item label="单次输出长度">{manifest.per_candidate_budgets?.r1?.max_output_tokens_per_request == null ? "由模型服务商和模型决定" : String(manifest.per_candidate_budgets.r1.max_output_tokens_per_request) + " tokens"}；单次超时 {manifest.per_candidate_budgets?.r1?.provider_request_timeout_seconds || "未知"} 秒</Descriptions.Item>
+              {manifest.per_candidate_budgets?.r2 && <Descriptions.Item label="深入追查单次输出长度">{manifest.per_candidate_budgets.r2.max_output_tokens_per_request == null ? "由模型服务商和模型决定" : String(manifest.per_candidate_budgets.r2.max_output_tokens_per_request) + " tokens"}；单次超时 {manifest.per_candidate_budgets.r2.provider_request_timeout_seconds} 秒</Descriptions.Item>}
               <Descriptions.Item label="扫描计划 SHA-256">{item.plan_sha256 || manifest.binding?.plan_sha256 || "未返回"}</Descriptions.Item>
               <Descriptions.Item label="工作流 SHA-256">{item.workflow_sha256 || manifest.binding?.workflow_sha256 || "未返回"}</Descriptions.Item>
               <Descriptions.Item label="授权摘要 SHA-256">{item.consent_sha256 || "未返回"}</Descriptions.Item>

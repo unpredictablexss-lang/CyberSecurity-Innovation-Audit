@@ -28,28 +28,19 @@ export function defaultRepositoryRevision(refs) {
 }
 // Request builders match the existing strict /api/v1 request schemas.
 export function approvedDetectorIds(detectors, explicitIds = []) {
-  const approved = detectors.filter((d) => d.kind === "research_candidate" && d.default_enabled !== false &&
-    typeof d.id === "string" && typeof d.version === "string" && d.version.length &&
-    Array.isArray(d.supported_languages) && d.supported_languages.length);
-  const availableExperimental = new Set(detectors.filter((d) =>
-    d.kind === "research_candidate" && d.default_enabled === false &&
-    typeof d.id === "string" && typeof d.version === "string" && d.version.length &&
-    Array.isArray(d.supported_languages) && d.supported_languages.length).map((d) => d.id));
-  if (!Array.isArray(explicitIds) || explicitIds.some((id) => !availableExperimental.has(id)))
-    throw new Error("显式选择包含不可用的实验规则，请刷新能力配置。");
-  const ids = [...approved.map((d) => d.id), ...explicitIds].sort();
-  if (!ids.length) throw new Error("当前没有可用的已批准研究规则，请查看系统设置。");
-  if (new Set(ids).size !== ids.length) throw new Error("规则配置出现重复身份，请刷新能力配置。");
-  return ids;
-}
-export function researchDetectorIds(detectors) {
   const candidates = detectors.filter((d) => d.kind === "research_candidate" &&
     typeof d.id === "string" && typeof d.version === "string" && d.version.length &&
     Array.isArray(d.supported_languages) && d.supported_languages.length);
   const ids = candidates.map((d) => d.id).sort();
-  if (!ids.length) throw new Error("当前没有可用于全规则研究的已批准规则。");
+  if (!Array.isArray(explicitIds) || explicitIds.some((id) => !ids.includes(id)))
+    throw new Error("规则配置包含不可用的检测器，请刷新能力配置。");
+  if (!ids.length) throw new Error("当前没有可用的静态检测器，请查看系统设置。");
   if (new Set(ids).size !== ids.length) throw new Error("规则配置出现重复身份，请刷新能力配置。");
+  if (new Set(explicitIds).size !== explicitIds.length) throw new Error("规则配置出现重复身份，请刷新能力配置。");
   return ids;
+}
+export function researchDetectorIds(detectors) {
+  return approvedDetectorIds(detectors);
 }
 export function includePaths(value = ".") {
   const paths = String(value).split(/[\n,]/).map((p) => p.trim()).filter(Boolean);
@@ -68,7 +59,7 @@ function common(values, detectors, explicitIds = []) {
       !Number.isInteger(memory) || memory < 256 || memory > 8192)
     throw new Error("执行预算超出允许范围。");
   return { repository_id: values.repository_id, include_paths: includePaths(values.include_text),
-    detector_ids: values.full_rules_research ? researchDetectorIds(detectors) : approvedDetectorIds(detectors, explicitIds),
+    detector_ids: approvedDetectorIds(detectors, explicitIds),
     timeout_seconds: timeout, memory_mb: memory };
 }
 export function snapshotPayload(values, detectors, explicitIds = []) {
@@ -89,14 +80,16 @@ export function planPayload(values, detectors, explicitIds = []) {
 export function taskAuthorizationPayload(values) {
   const enabled = (values?.audit_mode || "standard_review") === "standard_review" &&
     values?.auto_triage === true;
-  const maxCandidates = Number(values?.max_triage_candidates || 3);
-  const maxR2 = enabled && values?.auto_r2 === true
-    ? Math.min(Number(values?.max_r2_candidates ?? 2), maxCandidates) : 0;
-  return {
-    auto_triage: enabled,
-    max_triage_candidates: maxCandidates,
-    max_r2_candidates: maxR2,
-  };
+  const payload = { auto_triage: enabled };
+  if (values?.max_triage_candidates != null)
+    payload.max_triage_candidates = Number(values.max_triage_candidates);
+  if (!enabled || values?.auto_r2 !== true) payload.max_r2_candidates = 0;
+  else if (values?.max_r2_candidates != null) {
+    const deep = Number(values.max_r2_candidates);
+    payload.max_r2_candidates = payload.max_triage_candidates == null
+      ? deep : Math.min(deep, payload.max_triage_candidates);
+  }
+  return payload;
 }
 // Product-facing mode controls whether this operation creates Agent work.
 export function selectedAuditModeValues(values) {
@@ -168,4 +161,10 @@ export function recentRange(days, timezone, now = new Date()) {
 export function requestGate() {
   let sequence = 0;
   return { next: () => ++sequence, invalidate: () => { sequence++; }, current: (id) => id === sequence };
+}
+
+export function candidateBatchLimit(policy, mode) {
+  const key = mode === "tool_agent" ? "deep_groups_per_audit" : "quick_screen_groups_per_audit";
+  const value = policy?.limits?.[key];
+  return Number.isInteger(value) && value >= 0 && value <= 1000 ? value : null;
 }

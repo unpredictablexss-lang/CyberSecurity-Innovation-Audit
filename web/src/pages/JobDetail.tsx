@@ -1,4 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
+import { artifactFailureMessage, structuredAnswerRejection } from "../features/audits/agentValidationMessage.js";
+import { useCandidateScope } from "../features/audits/CandidateScope";
+import { candidateBatchLimit } from "../features/audits/model";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Alert,
   Button,
@@ -45,12 +48,21 @@ import { api, artifact, terminal } from "../api";
 import { State, Hash, go, CodeView, Header, labels } from "../components";
 import AuditPlanView from "../features/audits/AuditPlanView";
 import SourceEvidence from "../SourceEvidence";
+import CandidateIdentifiers, { candidateSourceKey, reportCandidateIndex } from "../features/workbench/CandidateIdentifiers";
 import CandidateActions from "../features/workbench/CandidateActions";
 import ProgressiveQuickScreenAction from "../features/audits/ProgressiveQuickScreenAction";
+import ProgressiveQuickScreenBatchAction from "../features/audits/ProgressiveQuickScreenBatchAction";
 import { requestGate } from "../features/audits/model";
-import { disclosureReviewed, disclosureSelectionMatches } from "../features/audits/egressDisclosure.js";
+import { batchDisclosureReady, disclosureSelectionMatches } from "../features/audits/egressDisclosure.js";
 import { candidateConfidenceColor, candidateConfidenceLabel, candidateSeverityColor, candidateSeverityLabel, analysisStatusLabel, coverageSummaryLabel, groupingBasisLabel, groupingSymbolLabel, obligationDescriptionLabel, obligationKindLabel, obligationStatusLabel, reportLimitationLabel, riskReasonsLabel, scanStageLabel, taskReportStatusLabel, taskTriageStatusLabel, triageStateLabel } from "../features/workbench/riskLabels.js";
 const { Text, Title, Paragraph } = Typography;
+function budgetPhaseSummary(usage: any) {
+  const labels: Record<string, string> = { quick_screen: "L2", deep_agent: "L3", structured_repair: "结构修复", skeptic: "Skeptic", report: "报告草案" };
+  const rows = Object.entries(usage?.by_phase || {}) as [string, any][];
+  const summary = rows.filter(([, value]) => value.model_calls_allocated > 0)
+    .map(([phase, value]) => `${labels[phase] || phase} ${value.model_calls_allocated}`).join(" · ");
+  return summary || "尚无模型请求";
+}
 function HighConfidenceCandidateReason({ risk, jobId }: { risk: any; jobId: string }) {
   if (risk?.risk_tier !== "high_confidence_candidate") return null;
   const signal = risk.agent_signal || {};
@@ -93,7 +105,10 @@ function HighConfidenceCandidateReason({ risk, jobId }: { risk: any; jobId: stri
 export default function JobDetail({ id, initialTab = "findings", candidateId, sourceFile, sourceLine, health }: { id: string; initialTab?: string; candidateId?: string; sourceFile?: string; sourceLine?: number; health?: any }) {
   const [job, setJob] = useState<any>(null);
   const [report, setReport] = useState<any>(null);
+  const identifierIndex = useMemo(() => reportCandidateIndex(report), [report]);
   const [triageSummary, setTriageSummary] = useState<any>(null);
+  const [progressiveTriage, setProgressiveTriage] = useState<any>(null);
+  const [progressiveStatus, setProgressiveStatus] = useState<any>(null);
   const [riskSummary, setRiskSummary] = useState<any>(null);
   const [selectedRisk, setSelectedRisk] = useState<any>(null);
   const [coverageSummary, setCoverageSummary] = useState<any>(null);
@@ -123,9 +138,12 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
   const [batchSubmissionApproved, setBatchSubmissionApproved] = useState(false);
   const [batchCandidateIds, setBatchCandidateIds] = useState<string[]>([]);
   const [batchMode, setBatchMode] = useState<"single_shot" | "tool_agent">("single_shot");
+  const candidateScope = useCandidateScope();
+  const batchLimit = candidateBatchLimit(candidateScope.policy, batchMode);
   const batchPreviewCandidateIds = (batchPreview?.candidates || []).map((item: any) => String(item.candidate_id));
   const batchPreviewMatchesSelection = disclosureSelectionMatches(batchCandidateIds, batchPreviewCandidateIds);
-  const batchDisclosureReviewed = batchPreviewMatchesSelection && disclosureReviewed(batchDisclosureOpened, batchCandidateIds);
+  const batchDisclosureReviewed = batchDisclosureReady({ mode: batchMode,
+    openKeys: batchDisclosureOpened, selectedKeys: batchCandidateIds, previewKeys: batchPreviewCandidateIds });
   const [caseOpen, setCaseOpen] = useState(false);
   const [caseForm] = Form.useForm();
   const [reviewForm] = Form.useForm();
@@ -168,22 +186,39 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
         setJob(j);
         setEvents(e);
         const triageRequest = api("/scans/" + id + "/triage");
+        const progressiveRequest = api("/scans/" + id + "/progressive-triage?offset=0&limit=50");
+        const loadProgressiveStatus = async (plan: any) => {
+          const auditId = plan?.state === "planned_by_parent_operation" ? plan.parent_operation_id
+            : plan?.state !== "not_available" && j.report_sha256 ? id : null;
+          if (!auditId) return null;
+          try {
+            const [usage, groups] = await Promise.all([
+              api("/audits/" + auditId + "/ai-usage"),
+              api("/audits/" + auditId + "/triage-groups?offset=0&limit=50"),
+            ]);
+            return { ...usage, groups: groups.groups, group_total: groups.group_total };
+          } catch { return null; }
+        };
         if (j.report_sha256) {
-          const [r, triage, risks, coverage] = await Promise.all([
+          const [r, triage, risks, coverage, progressive] = await Promise.all([
             api("/scans/" + id + "/report"),
             triageRequest,
             api("/scans/" + id + "/risks?limit=100"),
             api("/scans/" + id + "/coverage"),
+            progressiveRequest,
           ]);
+          const progressiveState = await loadProgressiveStatus(progressive);
           if (live) {
             setReport(r); setTriageSummary(triage);
             setRiskSummary(risks); setCoverageSummary(coverage);
+            setProgressiveTriage(progressive); setProgressiveStatus(progressiveState);
           }
         } else {
-          const triage = await triageRequest;
+          const [triage, progressive] = await Promise.all([triageRequest, progressiveRequest]);
           if (live) {
             setReport(null); setTriageSummary(triage);
             setRiskSummary(null); setCoverageSummary(null);
+            setProgressiveTriage(progressive); setProgressiveStatus(null);
           }
         }
         if (terminal.has(j.status) && timer) clearInterval(timer);
@@ -293,7 +328,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
   }, [job?.id, candidateId]);
   async function previewAgentBatch() {
     const candidateIds = selected.map(String);
-    if (!candidateIds.length || candidateIds.length > 5) return;
+    if (batchLimit === null || !candidateIds.length || candidateIds.length > batchLimit) return;
     setBatchCandidateIds(candidateIds);
     setBatchPreview(null);
     setBatchDisclosureOpened([]);
@@ -491,6 +526,47 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
         />
       </Card>
       <AuditPlanView plan={{ ...job.spec.audit_plan, base_commit: job.spec.base_commit }} auditMode={job.spec.audit_mode} />
+      {progressiveTriage && progressiveTriage.state !== "not_available" && <Card className="section-gap" title="渐进式审计 · L0-L3 计划与进度">
+        <Alert className="section-gap" type="info" showIcon
+          message={progressiveTriage.state === "planned_by_parent_operation" ? "候选排序由父审计统一计算" : progressiveTriage.state === "awaiting_static_report" ? "等待固定版本静态报告" : progressiveTriage.state === "ranked_static_only" ? "静态审计：仅本地归并和排序，不会调用模型" : "L0/L1 本地计划；所有原始候选继续保留"}
+          description={progressiveTriage.state === "planned_by_parent_operation" ? "这是多端点审计中的一个固定端点；跨版本分组和候选范围请查看父审计计划。" : "分组和优先级只决定人工复核顺序与后续授权入口，不会把候选判为误报、安全或已确认漏洞。"} />
+        {progressiveTriage.state !== "planned_by_parent_operation" && job.spec?.audit_mode !== "static_only" &&
+          <div className="section-gap"><ProgressiveQuickScreenBatchAction auditOperationId={id}
+            enabled={Boolean(progressiveTriage.ranking?.selected_group_count)
+              && (progressiveStatus?.groups || progressiveTriage.groups || []).some((row: any) => row.ranking?.selected
+                && ["not_scheduled", "not_started_candidate"].includes(row.quick_screen_state || "not_scheduled"))} /></div>}
+        {progressiveTriage.grouping && <Descriptions size="small" column={{ xs: 1, md: 3 }}>
+          <Descriptions.Item label="原始候选">{progressiveTriage.original_observation_count ?? "未知"}</Descriptions.Item>
+          <Descriptions.Item label="根因/重复组">{progressiveTriage.grouping.group_count ?? "未知"}</Descriptions.Item>
+          <Descriptions.Item label="快筛预算选中组">{progressiveTriage.ranking?.selected_group_count ?? "未知"}</Descriptions.Item>
+        </Descriptions>}
+        {progressiveStatus && <Descriptions className="section-gap" size="small" column={{ xs: 1, md: 3 }}>
+          <Descriptions.Item label="当前阶段">{progressiveStatus.phase}</Descriptions.Item>
+          <Descriptions.Item label="L2 完成 / L3 完成">{progressiveStatus.phase_counts?.quick_screen_completed ?? 0} / {progressiveStatus.phase_counts?.deep_agent_completed ?? 0}</Descriptions.Item>
+          <Descriptions.Item label="模型请求 / 在途">{progressiveStatus.budget?.usage ? `${progressiveStatus.budget.usage.model_calls_allocated} / ${progressiveStatus.budget.usage.model_calls_in_flight}` : "尚未开始"}</Descriptions.Item>
+          <Descriptions.Item label="按阶段调用数">{budgetPhaseSummary(progressiveStatus.budget?.usage)}</Descriptions.Item>
+          <Descriptions.Item label="输入 / 输出 Token">{progressiveStatus.budget?.usage ? `${progressiveStatus.budget.usage.input_tokens_allocated} / ${progressiveStatus.budget.usage.output_tokens_allocated}` : "尚未开始"}</Descriptions.Item>
+          <Descriptions.Item label="停止原因">{progressiveStatus.stop_reason || "无"}</Descriptions.Item>
+          <Descriptions.Item label="确认漏洞数">{progressiveStatus.validated_vulnerability ?? 0}</Descriptions.Item>
+        </Descriptions>}
+        {Array.isArray(progressiveTriage.groups) && <Table size="small" rowKey="group_id"
+          dataSource={progressiveTriage.groups} pagination={{ pageSize: 8 }} scroll={{ x: 720 }} columns={[
+            { title: "计划组", dataIndex: "group_id", render: (value: string) => <Text code>{value}</Text> },
+            { title: "候选观察", render: (_: unknown, row: any) => row.member_candidate_ids?.length ?? 0 },
+            { title: "优先级", render: (_: unknown, row: any) => row.ranking?.rank ?? "未知" },
+            { title: "L1 / L2 快筛", render: (_: unknown, row: any) => {
+              const current = progressiveStatus?.groups?.find((item: any) => item.group_id === row.group_id);
+              const state = current?.quick_screen_state;
+              return <Space><Tag color={row.ranking?.selected ? "blue" : undefined}>{row.ranking?.selected ? "优先复核" : "保留候选"}</Tag>
+                {state && <Tag color={state === "completed" ? "green" : state === "running" ? "processing" : state === "unknown" || state === "partial" ? "orange" : undefined}>{state}</Tag>}</Space>;
+            } },
+            { title: "L3 深查", render: (_: unknown, row: any) => {
+              const current = progressiveStatus?.groups?.find((item: any) => item.group_id === row.group_id);
+              return current?.deep_agent_state ? <Tag color={current.deep_agent_state === "completed" ? "green" : current.deep_agent_state === "running" ? "processing" : current.deep_agent_state === "unknown" || current.deep_agent_state === "partial" ? "orange" : undefined}>{current.deep_agent_state}</Tag> : <Tag>未授权/未排队</Tag>;
+            } },
+            { title: "选择原因", render: (_: unknown, row: any) => (row.ranking?.reason_codes || []).join("、") || "未选" },
+          ]} locale={{ emptyText: "暂无可排序候选；不代表源码安全。" }} />}
+      </Card>}
       {job && <Card className="section-gap" title="审计阶段进度">
         <Row gutter={18}>
           <Col xs={24} md={8}><Descriptions size="small" column={1} title="静态扫描">
@@ -535,7 +611,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
             { title: "未研判候选", value: riskSummary?.triage_counts?.not_triaged ?? "未知" },
             { title: "人工验证漏洞", value: riskSummary?.validated_vulnerability ?? "未知" },
           ].map((x) => <Col xs={12} sm={8} xl={4} key={x.title}><Card size="small"><Statistic {...x} /></Card></Col>)}</Row>
-          <Table size="small" rowKey="candidate_id" pagination={false}
+          <Table size="small" rowKey="candidate_id" pagination={false} scroll={{ x: 1500 }}
             dataSource={(riskSummary?.items || []).slice(0, 20)}
             columns={[
               { title: "可信程度", render: (_: unknown, row: any) =>
@@ -543,7 +619,10 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
               { title: "危害等级（初判）", render: (_: unknown, row: any) =>
                   <Tag color={candidateSeverityColor(row.severity)}>{candidateSeverityLabel(row.severity)}</Tag> },
               { title: "候选", dataIndex: "candidate_id", render: (value: string) => <Text code>{String(value).slice(0, 12)}</Text> },
-              { title: "规则", dataIndex: "rule_id" },
+              { title: "规则 / CWE / CVE", width: 300, render: (_: unknown, row: any) => <>
+                  <div>{row.rule_id}</div>
+                  <CandidateIdentifiers candidate={row} related={identifierIndex.get(candidateSourceKey(row))} />
+                </> },
               { title: "位置", render: (_: unknown, row: any) => row.file + ":" + row.line },
               { title: "研判", render: (_: unknown, row: any) => triageStateLabel(row.triage?.state) },
               { title: "下一步", render: (_: unknown, row: any) => riskReasonsLabel(row.reasons) },
@@ -612,8 +691,8 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
                 { title: "候选", dataIndex: "candidate_id", render: (value: string) => <Text code>{String(value || "").slice(0, 12)}</Text> },
                 { title: "方式", dataIndex: "mode", render: (value: string) => value === "single_shot" ? "AI 分析（单次）" : "AI 追查源码（只读）" },
                 { title: "状态", dataIndex: "status", render: (value: string) => <State value={value} /> },
-                { title: "模型研判", dataIndex: "assessment", render: (value: string) => value || "尚无结果（未知）" },
-                { title: "调查边界", render: (_: unknown, row: any) => row.investigation_limitations?.length ? <Text type="warning">{row.investigation_limitations.join("；")}</Text> : row.result_sha256 ? "未记录额外单次限制" : "尚无结果；候选保持未知" },
+                { title: "模型研判", dataIndex: "assessment", render: (value: string, row: any) => structuredAnswerRejection(row.validation_status, row.failure_code, row.validation_diagnostic) ? <Tag color="error">研判未完成</Tag> : value || "尚无结果（未知）" },
+                { title: "结果 / 失败原因", render: (_: unknown, row: any) => { const failure = structuredAnswerRejection(row.validation_status, row.failure_code, row.validation_diagnostic) || artifactFailureMessage(row.artifact_generation); return failure ? <Text type="danger">{failure}</Text> : row.investigation_limitations?.length ? <Text type="warning">{row.investigation_limitations.join("；")}</Text> : row.result_sha256 ? "调查已结束；未记录额外单次限制" : "尚无结果；候选保持未知"; } },
                 { title: "任务", dataIndex: "id", render: (value: string, row: any) => <Space><Button size="small" onClick={() => go("/tasks/operations/" + value)}>查看</Button>{row.retry_available && <Button size="small" loading={retryBusyId === value} onClick={() => void retryAgentOperation(value)}>重试</Button>}</Space> },
               ]} />}
           </> : auditMode === "static_only" ? <Alert type="info" showIcon
@@ -677,14 +756,18 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
                       ]} />
                     <Button
                       type="primary"
-                      disabled={!selected.length || selected.length > 5 || !job?.report_sha256 || !agentProvider?.configured}
+                      disabled={batchLimit === null || !selected.length || selected.length > batchLimit || !job?.report_sha256 || !agentProvider?.configured}
                       onClick={() => void previewAgentBatch()}
                     >
-                      查看发送内容（{selected.length}/5）
+                      查看发送内容（{selected.length}/{batchLimit ?? "读取中"}）
                     </Button>
                   </Space>
+                  <Typography.Paragraph type="secondary">本次批量范围：{batchLimit === null ? "正在读取设置" : `最多 ${batchLimit} 条候选`}，与系统设置一致。
+                    <a href="#/settings/policy"> 修改候选范围</a>{candidateScope.error && `；读取失败：${candidateScope.error}`}
+                  </Typography.Paragraph>
                   <Table<any>
                     rowKey="id"
+                    scroll={{ x: 1600 }}
                     dataSource={items}
                     rowSelection={{
                       selectedRowKeys: selected,
@@ -708,13 +791,14 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
                         ),
                       },
                       {
-                        title: "规则 / CWE 候选",
+                        title: "规则 / CWE / CVE 候选",
+                        width: 320,
                         render: (_: any, f: any) => (
                           <>
                             {f.rule_id === "ohcpp-null-dereference-unknown-return-observation-001" &&
                               <Tag color="gold">弱候选 · 待复核</Tag>}
                             <Text code>{f.rule_id}</Text>
-                            <div className="muted">{f.candidate_cwe}</div>
+                            <div><CandidateIdentifiers candidate={f} /></div>
                           </>
                         ),
                       },
@@ -1043,7 +1127,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
               message={<Space wrap>
                 <Tag color="gold">规则候选 · 尚未确认</Tag>
                 <Text code>{detail.rule_id}</Text>
-                {detail.candidate_cwe && <Tag>{detail.candidate_cwe}</Tag>}
+                <CandidateIdentifiers candidate={detail} />
                 <Tag color={candidateSeverityColor(detail.risk_presentation?.severity)}>
                   {candidateSeverityLabel(detail.risk_presentation?.severity)} · 初判
                 </Tag>
@@ -1063,7 +1147,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
             >
               <Descriptions size="small" column={2} bordered>
                 <Descriptions.Item label="风险身份">
-                  {detail.risk_assessment.identifier} · {(detail.risk_assessment.cwe || []).join(" / ")}
+                  <CandidateIdentifiers candidate={detail} />
                 </Descriptions.Item>
                 {detail.risk_assessment.mapping_basis && <Descriptions.Item label="CVE 映射依据" span={2}>
                   {detail.risk_assessment.mapping_basis}
@@ -1302,7 +1386,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
             <Descriptions.Item label="模型端点">{batchPreview.provider?.endpoint_host || "未显示"}</Descriptions.Item>
             <Descriptions.Item label="候选数">{batchPreview.candidate_count}</Descriptions.Item>
             <Descriptions.Item label="请求次数语义">{batchMode === "single_shot" ? "每候选恰好 1 次 Provider 请求" : "无平台累计模型调用上限，直到终止条件"}</Descriptions.Item>
-            <Descriptions.Item label="每请求输出上限">{batchPreview.aggregate_budget?.max_output_tokens_per_provider_request ?? "未知"} tokens</Descriptions.Item>
+            <Descriptions.Item label="每请求输出上限">{batchPreview.aggregate_budget?.max_output_tokens_per_provider_request == null ? "无本地上限，由模型服务商决定" : String(batchPreview.aggregate_budget.max_output_tokens_per_provider_request) + " tokens"}</Descriptions.Item>
             <Descriptions.Item label="单次 Provider 请求超时">{batchPreview.aggregate_budget?.provider_request_timeout_seconds ?? 45} 秒</Descriptions.Item>
             <Descriptions.Item label="累计 Token / 费用 / 总时长">{batchMode === "single_shot" ? "单次请求；按所选模式限制为一次" : "平台不设累计上限；Provider 账户计费与额度适用"}</Descriptions.Item>
             <Descriptions.Item label="整批预算费用最高估算（非硬上限）">{batchPreview.aggregate_budget_cost_estimate
@@ -1319,7 +1403,8 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
                 const next = batchDisclosureOpened.filter((key) => key !== String(item.candidate_id));
                 if (opened.includes(String(item.candidate_id))) next.push(String(item.candidate_id));
                 setBatchDisclosureOpened(next);
-                if (!disclosureReviewed(next, batchCandidateIds)) setBatchSubmissionApproved(false);
+                if (!batchDisclosureReady({ mode: batchMode, openKeys: next,
+                  selectedKeys: batchCandidateIds, previewKeys: batchPreviewCandidateIds })) setBatchSubmissionApproved(false);
               }}
               items={[{ key: String(item.candidate_id), label: "展开该候选实际发送的完整上下文与工具范围", children: <>
                 <Text strong>发送给模型的完整初始上下文（JSON）</Text>
@@ -1332,7 +1417,9 @@ export default function JobDetail({ id, initialTab = "findings", candidateId, so
           <Checkbox checked={batchSubmissionApproved}
             disabled={!batchDisclosureReviewed}
             onChange={(event) => setBatchSubmissionApproved(event.target.checked)}>
-            我已逐条展开并检查所有候选的完整外发上下文与工具范围，允许按此预览向模型发送
+            {batchMode === "single_shot"
+              ? "我同意将本批次所列候选的源码上下文发送给上述模型进行 AI 初判（详情可按需展开）"
+              : "我已逐条展开并检查所有候选的完整外发上下文与工具范围，允许按此预览向模型发送"}
           </Checkbox>
         </> : <Text>正在生成预览…</Text>}
       </Modal>

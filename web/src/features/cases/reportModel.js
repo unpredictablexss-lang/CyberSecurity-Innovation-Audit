@@ -26,6 +26,6 @@ export function caseReportOperationScopeLabel(scope = {}) {
 
 export function caseReportAgentFeedbackBoundary(reviews = []) {
   return reviews.length
-    ? "以下是绑定到该 Agent 操作的人工分诊反馈；它不等于盲评准确率，也不是漏洞真值。"
-    : "该 Agent 操作没有登记人工分诊反馈；不能据此推断模型有效或无效。";
+    ? "以下是绑定到该智能调查操作的人工研判反馈；它不等于盲评准确率，也不是漏洞真值。"
+    : "该智能调查操作没有登记人工分诊反馈；不能据此推断模型有效或无效。";
 }

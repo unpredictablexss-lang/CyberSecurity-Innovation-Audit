@@ -1,0 +1,11 @@
+{
+  "entries": [
+    {
+      "label": "local_minimal_fixture",
+      "commit": "48ff11b0cf9c2490c9e8b9686267a91216cff263",
+      "repository": "fixture/perf-cache",
+      "repo_dir": "perf-corpus/component"
+    }
+  ],
+  "schema_version": 1
+}

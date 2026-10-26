@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "benchmark_status": "partial_not_independent_holdout",
+  "run_time": "2026-10-22T05:04:34+08:00",
+  "code_commit": "a3ae034bc8c1015da9f4a34c458ab344410b6dcf",
+  "base_main_commit": "cfc5aec8fc5bbf7dbad0a5a64b0f5dbb6dc13fba",
+  "implementation_versions": {
+    "policy": "progressive-triage-v1",
+    "grouping": "source-bound-groups-v1",
+    "ranking": "evidence-family-rank-v1"
+  },
+  "component_scale_fixture": {
+    "fixture": "tests.test_progressive_triage.test_500_observations_keep_all_members_and_apply_budget_with_family_coverage",
+    "data_origin": "synthetic test records, not OpenHarmony findings",
+    "runtime_environment": "WSL Ubuntu 22.04, Python 3.10.12",
+    "identity_binding": {
+      "repository": "open-harmony/example",
+      "commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "snapshot_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "source_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    },
+    "input_observations": 500,
+    "unique_groups": 100,
+    "retained_candidate_members": 500,
+    "selection_limit": 30,
+    "selected_groups": 30,
+    "selected_family_buckets": [
+      "cpp_memory_safety",
+      "ipc_authorization",
+      "script_api",
+      "sensitive_data"
+    ],
+    "selected_count_by_family": {
+      "cpp_memory_safety": 9,
+      "ipc_authorization": 8,
+      "script_api": 7,
+      "sensitive_data": 6
+    },
+    "run_1_runtime_ms": 13.769,
+    "run_2_runtime_ms": 12.623,
+    "run_1_result_sha256": "ffb8a8af61c27e4cba02930ed8629364c9edd4b32a25025eebe35f11e6304b0b",
+    "run_2_result_sha256": "ffb8a8af61c27e4cba02930ed8629364c9edd4b32a25025eebe35f11e6304b0b",
+    "deterministic_across_two_runs": true,
+    "model_calls": 0,
+    "interpretation": "demonstrates deterministic grouping/ranking scale behavior for this synthetic fixture only; does not measure vulnerability recall, precision, or production performance"
+  },
+  "existing_historical_pairs_not_replayed_in_this_run": [
+    {
+      "sample_id": "arkcompiler_ets_runtime-jsarray-sort-oob-2025-02",
+      "repository": "openharmony/arkcompiler_ets_runtime",
+      "weakness": "CWE-787",
+      "root_cause_group": "oob_write",
+      "label_status": "advisory_confirmed",
+      "evidence_level": "patch_and_advisory",
+      "runtime_replay_status": "not_run"
+    },
+    {
+      "sample_id": "c_utils-singleton-uaf-2026-01",
+      "repository": "openharmony/commonlibrary_c_utils",
+      "weakness": "CWE-416",
+      "root_cause_group": "lifetime_uaf",
+      "label_status": "patch_confirmed",
+      "evidence_level": "patch_and_issue",
+      "runtime_replay_status": "not_run"
+    },
+    {
+      "sample_id": "communication_dsoftbus_null_deref_001",
+      "repository": "openharmony/communication_dsoftbus",
+      "weakness": "CWE-476",
+      "root_cause_group": "null_deref",
+      "label_status": "historical_candidate",
+      "evidence_level": "patch_and_advisory",
+      "runtime_replay_status": "not_run"
+    },
+    {
+      "sample_id": "kernel_liteos_a-getgroups-oob-2025-03",
+      "repository": "openharmony/kernel_liteos_a",
+      "weakness": "CWE-125",
+      "root_cause_group": "concurrency_race",
+      "label_status": "advisory_confirmed",
+      "evidence_level": "patch_and_advisory",
+      "runtime_replay_status": "not_run"
+    }
+  ],
+  "real_provider_smoke": {
+    "record": "verification.json",
+    "status": "completed",
+    "provider_model_calls": 1,
+    "synthetic_code_snippets": 3,
+    "usage_tokens": 412,
+    "is_application_agent_e2e": false,
+    "is_independent_label": false
+  },
+  "browser_e2e": {
+    "policy_route_loaded": true,
+    "route": "/#/settings/policy",
+    "navigation_method": "direct_route",
+    "tab_click_save_and_audit_flows": "not_run"
+  },
+  "measured_metrics": {
+    "precision": null,
+    "recall": null,
+    "false_positive_rate": null,
+    "token_savings_vs_agent_baseline": null,
+    "provider_invoice_cost_usd": null,
+    "reason": "no independent holdout labels, paired Agent baseline, or invoice reconciliation"
+  },
+  "validated_vulnerability": 0,
+  "limitations": [
+    "the 500-record fixture is synthetic and only validates component behavior",
+    "the four historical positive cases were not replayed for this result and do not provide negative controls",
+    "the real MiMo call validates one adapter request, not the application's consented L2/L3 workflow",
+    "three audit-mode browser end-to-end flows and independent vulnerable/fixed/safe holdout remain outstanding",
+    "no precision/recall, cost-saving, or product-vulnerability claim is supported by these data"
+  ]
+}

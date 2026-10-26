@@ -17,6 +17,30 @@ from .quick_screen import (
     run_quick_screen,
 )
 from .ranking import rank_groups
+from ..store import Store
+
+
+_OUTPUT_UNSET = object()
+
+
+def _request_output_cap(policy: dict[str, Any], fallback=_OUTPUT_UNSET):
+    if "request_output_tokens" in policy:
+        return policy["request_output_tokens"]
+    if fallback is not _OUTPUT_UNSET:
+        return fallback
+    return min(MAX_RESPONSE_TOKENS,
+               policy["limits"].get("max_output_tokens_per_request", MAX_RESPONSE_TOKENS))
+
+
+def _reservation_output_cap(policy: dict[str, Any], request_output_tokens):
+    limits = policy["limits"]
+    total = limits["max_output_tokens_per_audit"]
+    if request_output_tokens is not None:
+        return min(total, request_output_tokens)
+    calls = max(1, limits["max_model_calls_per_audit"])
+    average = (total + calls - 1) // calls
+    legacy = limits.get("max_output_tokens_per_request", MAX_RESPONSE_TOKENS)
+    return min(total, max(legacy, average))
 
 
 def prepare_quick_screen(settings, store, job_id: str, candidate_id: str,
@@ -154,19 +178,55 @@ def prepare_quick_screen(settings, store, job_id: str, candidate_id: str,
         ranking = {"decisions": [plan_decision], "plan_sha256": parent_plan_sha256}
         selected = plan_decision
     else:
-        policy_state = PolicyStore(settings.data_dir).read()
-        policy = validate_policy(policy_state["policy"])
-        policy_sha256 = policy_envelope(policy)["policy_sha256"]
-        if policy_sha256 != policy_state["policy_sha256"]:
-            raise ValueError("progressive triage policy changed while preparing quick-screen consent")
-        policy_revision = policy_state["revision"]
         audit_operation_id = job_id
-        ranking = rank_groups([group], policy["limits"]["quick_screen_groups_per_audit"],
-                              family_quotas=policy["family_quotas"])
-        selected = next((row for row in ranking["decisions"]
-                         if row["group_id"] == group["group_id"]), None)
+        frozen_policy = job.get("spec", {}).get("progressive_triage_policy")
+        if isinstance(frozen_policy, dict):
+            if job.get("spec", {}).get("audit_mode") == "static_only":
+                raise ValueError("static-only audit cannot schedule an AI quick screen")
+            policy = validate_policy(frozen_policy.get("policy"))
+            policy_sha256 = policy_envelope(policy)["policy_sha256"]
+            if (frozen_policy.get("policy_sha256") != policy_sha256
+                    or not isinstance(frozen_policy.get("revision"), int)):
+                raise ValueError("snapshot progressive policy is invalid")
+            policy_revision = frozen_policy["revision"]
+            from .runtime import build_operation_plan
+            snapshot_plan = build_operation_plan(settings, store, {
+                "kind": "snapshot",
+                "spec": {"progressive_triage_policy": frozen_policy,
+                         "audit_mode": job.get("spec", {}).get("audit_mode", "standard_review"),
+                         "scan_ids": [job_id]},
+            })
+            matches = [item for item in snapshot_plan["groups"]
+                       if any(isinstance(member, dict)
+                              and member.get("candidate_id") == candidate_id
+                              and member.get("repository") == report["repository"]
+                              and member.get("commit") == report["commit"]
+                              and member.get("report_sha256") == job["report_sha256"]
+                              for member in item.get("members", []))]
+            if len(matches) != 1:
+                raise ValueError("candidate is not uniquely present in the fixed snapshot plan")
+            planned_group = matches[0]
+            selected = next((row for row in snapshot_plan["ranking"]["decisions"]
+                             if row.get("group_id") == planned_group.get("group_id")), None)
+            group = {**planned_group, "representative_candidate_id": candidate_id}
+            parent_plan_sha256 = content_sha256(snapshot_plan)
+            ranking = {"decisions": [selected], "plan_sha256": parent_plan_sha256}
+        else:
+            policy_state = PolicyStore(settings.data_dir).read()
+            policy = validate_policy(policy_state["policy"])
+            policy_sha256 = policy_envelope(policy)["policy_sha256"]
+            if policy_sha256 != policy_state["policy_sha256"]:
+                raise ValueError("progressive triage policy changed while preparing quick-screen consent")
+            policy_revision = policy_state["revision"]
+            ranking = rank_groups([group], policy["limits"]["quick_screen_groups_per_audit"],
+                                  family_quotas=policy["family_quotas"])
+            selected = next((row for row in ranking["decisions"]
+                             if row["group_id"] == group["group_id"]), None)
     if not selected or not selected["selected"]:
         raise ValueError("local evidence ranking did not select this candidate for quick screen")
+    request_timeout = min(MAX_REQUEST_SECONDS, policy["limits"]["max_ai_wall_seconds"])
+    request_output_tokens = _request_output_cap(
+        policy, getattr(provider, "request_output_tokens", agent.DEFAULT_AGENT_OUTPUT_TOKENS))
     authorization = {
         "authorized": True,
         "audit_mode": "intelligent",
@@ -179,7 +239,8 @@ def prepare_quick_screen(settings, store, job_id: str, candidate_id: str,
         "model": provider.model,
     }
     # Validate the request before showing a consent screen, not after the user submits it.
-    build_quick_screen_request(group, evidence, authorization, provider.fingerprint, provider.model)
+    build_quick_screen_request(group, evidence, authorization, provider.fingerprint, provider.model,
+                               max_output_tokens=request_output_tokens)
     expires_at = consent_expires_at or (
         datetime.now(timezone.utc) + timedelta(minutes=10)).isoformat()
     try:
@@ -191,6 +252,7 @@ def prepare_quick_screen(settings, store, job_id: str, candidate_id: str,
     manifest = {
         "consent_nonce": consent_nonce,
         "consent_expires_at": expires_at,
+        "request_output_tokens": getattr(provider, "request_output_tokens", agent.DEFAULT_AGENT_OUTPUT_TOKENS),
         "quick_screen_version": QUICK_SCREEN_VERSION,
         "prompt_version": PROMPT_VERSION,
         "group": group,
@@ -226,8 +288,8 @@ def prepare_quick_screen(settings, store, job_id: str, candidate_id: str,
         "disclosure": {
             "model_calls": 1,
             "tools_enabled": False,
-            "max_output_tokens": 512,
-            "timeout_seconds": 90,
+            "max_output_tokens": request_output_tokens,
+            "timeout_seconds": request_timeout,
             "source_excerpt_count": 1,
             "source_excerpt_bytes": len(excerpt.encode("utf-8")),
             "source_excerpt": excerpt,
@@ -240,7 +302,7 @@ def prepare_quick_screen(settings, store, job_id: str, candidate_id: str,
 
 def execute_quick_screen(settings, task: dict[str, Any], provider=None, ops=None) -> dict[str, Any]:
     """Run one pre-authorized quick-screen request; unknown outcomes stay unknown."""
-    from ..agent import ProviderConfig
+    from ..agent import ProviderConfig, ResponsesClient
 
     spec = task.get("spec") if isinstance(task.get("spec"), dict) else {}
     provider = provider or ProviderConfig.from_env(settings.data_dir)
@@ -288,11 +350,14 @@ def execute_quick_screen(settings, task: dict[str, Any], provider=None, ops=None
             or provider.model != spec.get("authorization", {}).get("model")
             or not isinstance(manifest, dict)
             or content_sha256(manifest) != spec.get("consent_sha256")
+            or manifest.get("prompt_version") != PROMPT_VERSION
             or manifest.get("group") != spec.get("group")
             or manifest.get("evidence") != spec.get("evidence")
             or manifest.get("consent_expires_at") != expires_at
             or manifest.get("provider_fingerprint") != provider.fingerprint
             or manifest.get("model") != provider.model
+            or manifest.get("prompt_version") != PROMPT_VERSION
+            or manifest.get("quick_screen_version") != QUICK_SCREEN_VERSION
             or not isinstance(manifest.get("fixed_source"), dict)
             or manifest.get("audit_operation_id") != audit_operation_id
             or manifest.get("fixed_source", {}).get("repository") != spec.get("authorization", {}).get("repository")
@@ -308,9 +373,13 @@ def execute_quick_screen(settings, task: dict[str, Any], provider=None, ops=None
     try:
         policy_snapshot = spec["progressive_policy"]
         policy = validate_policy(policy_snapshot["policy"])
+        request_output_tokens = _request_output_cap(
+            policy, manifest.get("request_output_tokens", _OUTPUT_UNSET))
         if (policy_snapshot["policy_sha256"] != policy_envelope(policy)["policy_sha256"]
                 or manifest.get("policy") != policy
-                or manifest.get("policy_revision") != policy_snapshot["revision"]):
+                or manifest.get("policy_revision") != policy_snapshot["revision"]
+                or ("request_output_tokens" in manifest
+                    and manifest["request_output_tokens"] != request_output_tokens)):
             raise ValueError("quick-screen policy snapshot changed")
         if audit_operation_id != spec.get("job_id"):
             plan_decision = next((row for row in parent_plan["ranking"]["decisions"]
@@ -320,6 +389,36 @@ def execute_quick_screen(settings, task: dict[str, Any], provider=None, ops=None
             if (not plan_decision or plan_decision.get("selected") is not True
                     or manifest.get("ranking") != expected_ranking):
                 raise ValueError("quick-screen candidate is not selected by its frozen parent L1 ranking")
+        elif manifest.get("audit_parent_plan_sha256"):
+            job_store = Store(settings.data_dir)
+            job = job_store.job(spec.get("job_id"))
+            frozen_policy = job.get("spec", {}).get("progressive_triage_policy")
+            if (not isinstance(frozen_policy, dict)
+                    or frozen_policy != spec.get("progressive_policy")
+                    or job.get("spec", {}).get("audit_mode") == "static_only"):
+                raise ValueError("snapshot policy changed or does not authorize intelligent review")
+            from .runtime import build_operation_plan
+            snapshot_plan = build_operation_plan(settings, job_store, {
+                "kind": "snapshot",
+                "spec": {"progressive_triage_policy": frozen_policy,
+                         "audit_mode": job.get("spec", {}).get("audit_mode", "standard_review"),
+                         "scan_ids": [job["id"]]},
+            })
+            plan_digest = content_sha256(snapshot_plan)
+            if manifest.get("audit_parent_plan_sha256") != plan_digest:
+                raise ValueError("snapshot L0/L1 plan changed after consent")
+            plan_group = next((item for item in snapshot_plan["groups"]
+                               if item.get("group_id") == spec["group"].get("group_id")), None)
+            plan_decision = next((row for row in snapshot_plan["ranking"]["decisions"]
+                                  if row.get("group_id") == spec["group"].get("group_id")), None)
+            expected_group = ({**plan_group,
+                               "representative_candidate_id": spec.get("candidate_id")}
+                              if plan_group else None)
+            expected_ranking = {"decisions": [plan_decision], "plan_sha256": plan_digest}
+            if (not plan_group or spec.get("group") != expected_group
+                    or not plan_decision or plan_decision.get("selected") is not True
+                    or manifest.get("ranking") != expected_ranking):
+                raise ValueError("quick-screen candidate is not selected by its frozen snapshot L1 ranking")
         else:
             ranking = rank_groups([spec["group"]], policy["limits"]["quick_screen_groups_per_audit"],
                                   family_quotas=policy["family_quotas"])
@@ -335,6 +434,7 @@ def execute_quick_screen(settings, task: dict[str, Any], provider=None, ops=None
         payload, _ = build_quick_screen_request(
             spec["group"], spec["evidence"], spec["authorization"],
             provider.fingerprint, provider.model,
+            max_output_tokens=request_output_tokens,
         )
     except (KeyError, TypeError, ValueError) as error:
         return {"state": "quick_unknown", "reason_code": "request_preflight:" + str(error),
@@ -348,24 +448,23 @@ def execute_quick_screen(settings, task: dict[str, Any], provider=None, ops=None
     from .ledger import BudgetError, BudgetLedger
     ledger = None
     reservation = None
-    timeout_seconds = MAX_REQUEST_SECONDS
+    timeout_seconds = min(MAX_REQUEST_SECONDS, policy["limits"]["max_ai_wall_seconds"])
     try:
         ledger = BudgetLedger(settings.data_dir / "progressive-triage-budget.sqlite3")
         audit_id = audit_operation_id
         policy_snapshot = spec["progressive_policy"]
         ledger.create_audit(audit_id, policy, policy_snapshot["policy_sha256"])
-        budget_before = ledger.get(audit_id)
-        seconds_remaining = budget_before["usage"]["wall_seconds_remaining"]
-        if seconds_remaining <= 2:
-            raise BudgetError("insufficient wall-time budget for another Provider request")
-        timeout_seconds = min(MAX_REQUEST_SECONDS, seconds_remaining - 2)
+        remaining = ledger.get(audit_id)["usage"]["wall_seconds_remaining"]
+        timeout_seconds = min(timeout_seconds, max(1, remaining))
         group_id = spec["group"]["group_id"]
         ledger.dispatch_group(audit_id, group_id, spec["job_id"], "quick_screen",
                               evidence_gate="ranked_and_selected")
         reservation = ledger.reserve(
-            audit_id, audit_id + ":" + group_id + ":quick_screen",
+            audit_id, audit_id + ":quick:" + spec["consent_sha256"],
             spec["job_id"], group_id, "quick_screen",
-            max_input_tokens=input_reservation, max_output_tokens=MAX_RESPONSE_TOKENS,
+            max_input_tokens=input_reservation,
+            max_output_tokens=_reservation_output_cap(policy, request_output_tokens),
+            reauthorized_quick_screen=True,
         )
         if reservation.get("idempotent_replay"):
             return {"state": "quick_unknown", "reason_code": "prior_request_outcome_not_replayed",
@@ -379,10 +478,13 @@ def execute_quick_screen(settings, task: dict[str, Any], provider=None, ops=None
         return {"state": "quick_unknown", "reason_code": "budget_gate:" + str(error),
                 "vulnerability_state": "candidate", "validated_vulnerability": 0,
                 "budget": budget}
+    # Configuration binds consent; transport is a separate client, not the config.
+    client = ResponsesClient(provider, timeout=timeout_seconds, max_retries=0) if isinstance(provider, ProviderConfig) else provider
     result = run_quick_screen(
-        provider, spec["group"], spec["evidence"], spec["authorization"],
+        client, spec["group"], spec["evidence"], spec["authorization"],
         provider_fingerprint=provider.fingerprint, model=provider.model,
         timeout_seconds=timeout_seconds,
+        max_output_tokens=request_output_tokens,
     )
     try:
         if result.get("state") == "completed":
@@ -396,7 +498,8 @@ def execute_quick_screen(settings, task: dict[str, Any], provider=None, ops=None
                           "reason_code": "provider_usage_exceeded_reserved_budget",
                           "validated_vulnerability": 0}
         else:
-            ledger.settle(reservation["reservation_id"], outcome="unknown_outcome")
+            outcome = "known_not_sent" if result.get("failure", {}).get("request_outcome") == "not_sent" else "unknown_outcome"
+            ledger.settle(reservation["reservation_id"], outcome=outcome)
         budget_snapshot = ledger.get(audit_operation_id)
     except BudgetError as error:
         budget_snapshot = {"state": "settlement_unknown", "reason": str(error)}
@@ -415,6 +518,6 @@ def execute_quick_screen(settings, task: dict[str, Any], provider=None, ops=None
         "limitations": [
             "L2 quick screen is model triage only; source reachability and vulnerability validity remain unconfirmed.",
             "USD remains advisory because no verified Provider-side hard cap is configured.",
-            "The ledger shares task-level budgets across fixed endpoints; L3 requires a separate, explicit consent and is not auto-scheduled.",
+            "The ledger enforces the frozen task token, request-count, concurrency, group-count, and elapsed-time limits across fixed endpoints; L3 still needs separate explicit consent.",
         ],
     }

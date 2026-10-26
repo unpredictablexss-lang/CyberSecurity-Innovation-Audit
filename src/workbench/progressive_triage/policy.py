@@ -1,8 +1,4 @@
-"""Versioned policy presets and protected local persistence.
-
-The values here are policy defaults. They are not enforcement until an audit task
-freezes and the Worker consumes the policy snapshot in a later integration phase.
-"""
+"""Versioned policy presets and protected local persistence."""
 
 from __future__ import annotations
 
@@ -35,14 +31,19 @@ class PolicyStoreError(PolicyError):
 _LIMIT_BOUNDS = {
     "quick_screen_groups_per_audit": (1, 10_000),
     "deep_groups_per_audit": (0, 1_000),
-    "max_tool_steps_per_group": (1, 32),
+    "max_tool_steps_per_group": (1, 12),
     "max_model_concurrency": (1, 8),
     "max_model_calls_per_audit": (1, 10_000),
     "max_input_tokens_per_audit": (1_024, 2_000_000),
     "max_output_tokens_per_audit": (256, 500_000),
+    "max_output_tokens_per_request": (128, 3_000),
     "max_ai_wall_seconds": (60, 14_400),
 }
+_LEGACY_LIMIT_BOUNDS = {key: value for key, value in _LIMIT_BOUNDS.items()
+                        if key != "max_output_tokens_per_request"}
+_LEGACY_LIMIT_BOUNDS["max_tool_steps_per_group"] = (1, 32)
 _LIMIT_KEYS = frozenset((*_LIMIT_BOUNDS, "max_cost_usd"))
+_LEGACY_LIMIT_KEYS = frozenset((*_LEGACY_LIMIT_BOUNDS, "max_cost_usd"))
 _COST_RE = re.compile(r"^(?:0|[1-9]\d{0,5})(?:\.\d{1,8})?$")
 _STORAGE_SCHEMA = 1
 _MAX_STORE_BYTES = 4 * 1024 * 1024
@@ -50,7 +51,7 @@ _MAX_HISTORY = 10_000
 
 
 def _limits(*, quick, deep, steps, concurrency, calls, input_tokens,
-            output_tokens, seconds, cost):
+            output_tokens, request_output_tokens, seconds, cost):
     return {
         "quick_screen_groups_per_audit": quick,
         "deep_groups_per_audit": deep,
@@ -59,6 +60,7 @@ def _limits(*, quick, deep, steps, concurrency, calls, input_tokens,
         "max_model_calls_per_audit": calls,
         "max_input_tokens_per_audit": input_tokens,
         "max_output_tokens_per_audit": output_tokens,
+        "max_output_tokens_per_request": request_output_tokens,
         "max_ai_wall_seconds": seconds,
         "max_cost_usd": cost,
     }
@@ -69,21 +71,24 @@ PRESETS = {
     "economical": {
         "limits": _limits(
             quick=10, deep=2, steps=6, concurrency=1, calls=40,
-            input_tokens=100_000, output_tokens=20_000, seconds=900, cost="5.00",
+            input_tokens=100_000, output_tokens=20_000, request_output_tokens=512,
+            seconds=900, cost="5.00",
         ),
         "family_quotas": True,
     },
     "standard": {
         "limits": _limits(
             quick=30, deep=6, steps=8, concurrency=2, calls=120,
-            input_tokens=400_000, output_tokens=100_000, seconds=1_800, cost="25.00",
+            input_tokens=400_000, output_tokens=100_000, request_output_tokens=1_200,
+            seconds=1_800, cost="25.00",
         ),
         "family_quotas": True,
     },
     "deep": {
         "limits": _limits(
             quick=100, deep=20, steps=12, concurrency=3, calls=500,
-            input_tokens=2_000_000, output_tokens=500_000, seconds=5_400, cost="100.00",
+            input_tokens=2_000_000, output_tokens=500_000, request_output_tokens=2_000,
+            seconds=5_400, cost="100.00",
         ),
         "family_quotas": True,
     },
@@ -100,14 +105,16 @@ def _strict_int(value: Any, name: str) -> int:
     return value
 
 
-def _validate_limits(value: Any) -> dict[str, Any]:
+def _validate_limits(value: Any, *, legacy: bool = False) -> dict[str, Any]:
     if not isinstance(value, dict):
         raise PolicyError("limits must be an object")
-    if set(value) != _LIMIT_KEYS:
-        missing = sorted(_LIMIT_KEYS - set(value))
-        extra = sorted(set(value) - _LIMIT_KEYS)
+    allowed_keys = _LEGACY_LIMIT_KEYS if legacy else _LIMIT_KEYS
+    bounds = _LEGACY_LIMIT_BOUNDS if legacy else _LIMIT_BOUNDS
+    if set(value) != allowed_keys:
+        missing = sorted(allowed_keys - set(value))
+        extra = sorted(set(value) - allowed_keys)
         raise PolicyError(f"invalid limit fields (missing={missing}, extra={extra})")
-    result = {key: _strict_int(value[key], key) for key in _LIMIT_BOUNDS}
+    result = {key: _strict_int(value[key], key) for key in bounds}
     cost = value["max_cost_usd"]
     if not isinstance(cost, str) or not _COST_RE.fullmatch(cost):
         raise PolicyError("max_cost_usd must be a non-negative decimal string")
@@ -119,16 +126,17 @@ def _validate_limits(value: Any) -> dict[str, Any]:
         raise PolicyError("max_cost_usd must be greater than 0 and no more than 1000")
     if result["deep_groups_per_audit"] > result["quick_screen_groups_per_audit"]:
         raise PolicyError("deep group limit cannot exceed quick-screen group limit")
-    if result["max_model_calls_per_audit"] < (
-        result["quick_screen_groups_per_audit"] + result["deep_groups_per_audit"]
-    ):
-        raise PolicyError("model-call limit must cover at least one call for each selected group")
+    if not legacy and result["max_output_tokens_per_request"] > result["max_output_tokens_per_audit"]:
+        raise PolicyError("per-request output limit cannot exceed the per-audit output limit")
     result["max_cost_usd"] = cost
     return result
 
 
+_OUTPUT_UNSET = object()
+
+
 def build_policy(profile: str = "standard", limits: dict[str, Any] | None = None,
-                 family_quotas: bool | None = None) -> dict[str, Any]:
+                 family_quotas: bool | None = None, *, request_output_tokens=_OUTPUT_UNSET) -> dict[str, Any]:
     """Create a strict, JSON-safe policy snapshot from a preset or custom values."""
     if profile not in PROFILES:
         raise PolicyError("profile must be economical, standard, deep, or custom")
@@ -146,7 +154,7 @@ def build_policy(profile: str = "standard", limits: dict[str, Any] | None = None
         resolved_family_quotas = preset["family_quotas"]
     if not isinstance(resolved_family_quotas, bool):
         raise PolicyError("family_quotas must be a boolean")
-    return {
+    result = {
         "policy_version": POLICY_VERSION,
         "profile": profile,
         "limits": resolved_limits,
@@ -155,6 +163,12 @@ def build_policy(profile: str = "standard", limits: dict[str, Any] | None = None
         "consent_required": True,
     }
 
+    if request_output_tokens is not _OUTPUT_UNSET:
+        if request_output_tokens is not None and (type(request_output_tokens) is not int or not 128 <= request_output_tokens <= 65536):
+            raise PolicyError("单次输出额度必须为 128–65536 的整数或不设本地上限")
+        result["request_output_tokens"] = request_output_tokens
+    return result
+
 
 def validate_policy(value: Any) -> dict[str, Any]:
     """Validate a stored policy, rejecting unknown fields and unsafe coercions."""
@@ -162,15 +176,25 @@ def validate_policy(value: Any) -> dict[str, Any]:
         "policy_version", "profile", "limits", "family_quotas",
         "preserve_all_candidates", "consent_required",
     }
-    if not isinstance(value, dict) or set(value) != expected:
+    if not isinstance(value, dict) or set(value) not in (expected, expected | {"request_output_tokens"}):
         raise PolicyError("policy fields do not match the supported schema")
+    if value["policy_version"] == "progressive-triage-v1":
+        if value["preserve_all_candidates"] is not True or value["consent_required"] is not True:
+            raise PolicyError("legacy policy safety requirements are invalid")
+        legacy_limits = _validate_limits(value["limits"], legacy=True)
+        if not isinstance(value["family_quotas"], bool):
+            raise PolicyError("family_quotas must be a boolean")
+        if value["profile"] not in PROFILES:
+            raise PolicyError("legacy policy profile is unsupported")
+        return {**value, "limits": legacy_limits}
     if value["policy_version"] != POLICY_VERSION:
         raise PolicyError("unsupported policy version")
     if value["preserve_all_candidates"] is not True:
         raise PolicyError("preserving every original candidate is mandatory")
     if value["consent_required"] is not True:
         raise PolicyError("task-level consent is mandatory")
-    return build_policy(value["profile"], value["limits"], value["family_quotas"])
+    return build_policy(value["profile"], value["limits"], value["family_quotas"],
+                        request_output_tokens=value.get("request_output_tokens", _OUTPUT_UNSET))
 
 
 def policy_envelope(policy: dict[str, Any]) -> dict[str, Any]:
@@ -323,3 +347,24 @@ class PolicyStore:
             raise PolicyStoreError("policy settings could not be replaced atomically") from error
         finally:
             os.close(lock_fd)
+
+
+def apply_task_candidate_scope(body, policy):
+    """Resolve omitted new-task scope from policy; preserve explicit legacy consent."""
+    if not body.auto_triage:
+        return
+    limits = policy["limits"]
+    supplied = body.model_fields_set
+    if "max_triage_candidates" not in supplied:
+        if limits["quick_screen_groups_per_audit"] == 0:
+            raise PolicyError("系统设置的初步分析范围为 0；请先调整候选范围或使用静态审计")
+        object.__setattr__(body, "max_triage_candidates", limits["quick_screen_groups_per_audit"])
+    if "max_r2_candidates" not in supplied:
+        object.__setattr__(body, "max_r2_candidates", min(
+            limits["deep_groups_per_audit"], body.max_triage_candidates))
+
+
+def manual_candidate_batch_limit(policy, mode):
+    """Manual candidate items share the configured stage scope, not a fixed five."""
+    key = "deep_groups_per_audit" if mode == "tool_agent" else "quick_screen_groups_per_audit"
+    return policy["limits"][key]

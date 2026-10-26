@@ -8,7 +8,7 @@ import ts from "typescript";
 function loadSummaryBuilder() {
   const componentPath = resolve(dirname(fileURLToPath(import.meta.url)),
     "../src/features/audits/OperationWorkspace.tsx");
-  const source = readFileSync(componentPath, "utf8");
+  const source = readFileSync(componentPath, "utf8").replace(/\r\n/g, "\n");
   const start = source.indexOf("export function buildRecentWindowSummary");
   const end = source.indexOf("\n}\n\nfunction RecentWindowSummary", start);
   assert.ok(start >= 0 && end > start, "the task-detail summary helper should stay in OperationWorkspace");

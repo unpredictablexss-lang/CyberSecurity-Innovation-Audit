@@ -14,6 +14,7 @@ import time
 from urllib.parse import quote, unquote, urlsplit
 from zoneinfo import ZoneInfo
 from . import service
+from .download_locations import ensure_download_dir, normalize_download_dir
 from .store import TERMINAL
 from .operations_store import Operations
 from .source_identity import repository_source_id
@@ -68,7 +69,7 @@ def range_plan(settings, store, repository_id, baseline, endpoint, includes, det
 
 
 
-def multimode_triage_preview(scan_specs, body, provider, nonces):
+def multimode_triage_preview(scan_specs, body, provider, nonces, system_policy_snapshot=None):
     """Build a separately consented, immutable source-egress preview per endpoint."""
     from .agent import audit_task_consent_preview
     if body.get("audit_mode") != "standard_review" or not body.get("auto_triage"):
@@ -84,7 +85,8 @@ def multimode_triage_preview(scan_specs, body, provider, nonces):
         )
         preview = audit_task_consent_preview(
             spec["audit_plan"], workflow, spec["include_paths"], max_candidates,
-            nonce, provider, max_r2
+            nonce, provider, max_r2,
+            system_policy_snapshot=system_policy_snapshot,
         )
         if not preview.get("eligible"):
             raise ValueError("endpoint automatic triage unavailable: " + preview.get("reason", "unknown"))
@@ -108,14 +110,19 @@ def bind_multimode_triage(settings, scan_specs, body):
     provider = ProviderConfig.from_env(settings.data_dir)
     if not provider.configured:
         raise ValueError("model provider not configured; static endpoint scans remain available")
+    from .progressive_triage.policy import PolicyStore
+    stored_policy = PolicyStore(settings.data_dir).read()
+    policy_snapshot = {"revision": stored_policy["revision"], "policy": stored_policy["policy"],
+                       "policy_sha256": stored_policy["policy_sha256"]}
     nonces = [row.get("consent_nonce") if isinstance(row, dict) else None for row in approvals]
-    previews = multimode_triage_preview(scan_specs, body, provider, nonces)
+    previews = multimode_triage_preview(scan_specs, body, provider, nonces, policy_snapshot)
     enriched = []
     for spec, approval, preview in zip(scan_specs, approvals, previews):
         if approval.get("consent_sha256") != preview["consent_sha256"]:
             raise ValueError("endpoint consent expired: source, model, policy or provider changed")
         enriched.append({
             **spec, "audit_mode": "standard_review",
+            "progressive_triage_policy": policy_snapshot,
             "workflow_sha256": preview["workflow_sha256"],
             "max_r2_candidates": body.get("max_r2_candidates", 0),
             "max_cost_usd": None,
@@ -163,21 +170,27 @@ def enqueue_branch_comparison(settings, store, ops, body):
 
 def source_sync_preflight(settings, entries):
     """Describe a bounded source-sync plan without network access or filesystem writes."""
-    cache_root = settings.data_dir / "repo-cache"
-    base = cache_root.resolve(strict=False)
-    volume_path = cache_root if cache_root.exists() else settings.data_dir
-    free_bytes = shutil.disk_usage(volume_path).free
     results = []
+    available_by_destination = {}
     for entry in entries:
         name = entry["name"]
         url = approved_url(entry["url"])
         expected = "/" + name + (".git" if urlsplit(url).path.endswith(".git") else "")
         if urlsplit(url).path != expected:
             raise ValueError("repository URL path must match the approved repository name")
+        base = Path(normalize_download_dir(settings, entry.get("destination_dir")))
+        volume_path = base
+        while not volume_path.exists() and volume_path != volume_path.parent:
+            volume_path = volume_path.parent
+        if not volume_path.is_dir():
+            raise ValueError("下载目录的最近已存在父目录不是目录")
+        free_bytes = shutil.disk_usage(volume_path).free
+        available_by_destination[str(base)] = free_bytes
         source_id = repository_source_id(url)
         target = base / name.split("/", 1)[1]
         row = {
-            "repository": name, "source_id": source_id,
+            "repository": name, "source_id": source_id, "destination_dir": str(base),
+            "available_disk_bytes": free_bytes,
             "action": "fetch" if target.exists() else "clone",
             "cache_state": "present" if target.exists() else "absent",
             "current_head": None, "remote_ref_count": None,
@@ -186,7 +199,7 @@ def source_sync_preflight(settings, entries):
             "eligible": True, "reason": "",
         }
         if target.is_symlink() or target.resolve(strict=False).parent != base:
-            row.update(eligible=False, cache_state="unsafe_path", reason="缓存目录安全校验失败")
+            row.update(eligible=False, cache_state="unsafe_path", reason="目标仓库目录安全校验失败")
         elif target.exists():
             try:
                 checked = service.check_repository(settings, str(target))
@@ -194,7 +207,7 @@ def source_sync_preflight(settings, entries):
                 cached_sources = {repository_source_id(value) for value in urls if value.strip()}
                 if not cached_sources or cached_sources != {source_id}:
                     row.update(eligible=False, cache_state="source_conflict",
-                               reason="缓存目录已绑定到不同或未知的源码地址，拒绝混合同名仓库")
+                               reason="该目录已绑定到不同或未知的源码地址，拒绝混合同名仓库")
                 else:
                     refs = service.revisions({"path": str(checked)})
                     row["remote_ref_count"] = len(refs)
@@ -203,7 +216,7 @@ def source_sync_preflight(settings, entries):
                     except (OSError, ValueError, subprocess.TimeoutExpired):
                         row["current_head"] = None
             except (OSError, ValueError, subprocess.TimeoutExpired):
-                row.update(eligible=False, cache_state="unusable", reason="现有缓存不是可用的 Git 仓库")
+                row.update(eligible=False, cache_state="unusable", reason="现有目录不是可用的 Git 仓库")
         if free_bytes <= SOURCE_SYNC_MIN_FREE_BYTES:
             row.update(eligible=False, reason="可用磁盘空间不足，系统需要保留至少 512 MiB")
         results.append(row)
@@ -211,15 +224,15 @@ def source_sync_preflight(settings, entries):
         "eligible": all(row["eligible"] for row in results),
         "repositories": results,
         "repository_count": len(results),
-        "available_disk_bytes": free_bytes,
+        "available_disk_bytes": min(available_by_destination.values(), default=0),
         "minimum_free_disk_bytes": SOURCE_SYNC_MIN_FREE_BYTES,
         "repository_size_estimate_bytes": None,
         "limitations": [
-            "预览不会访问 Git 服务器或创建任务；仓库下载大小未知，下载期间仍会检查磁盘余量。",
+            "预览不会访问 Git 服务器或创建目录；仓库下载大小未知，下载期间仍会检查磁盘余量。",
+            "下载路径位于运行 OHScanner 的服务器；WSL 可使用 /mnt/d/... 或 D:\\... 形式的 Windows 盘符路径。",
             "目录中的组织名称和 source ID 用于定位来源，不证明官方身份或镜像关系。",
         ],
     }
-
 
 def date_selection(settings, store, repository_id, branch, start, end, timezone):
     zone = ZoneInfo(timezone)
@@ -521,8 +534,7 @@ def _sync_source_batch_item(settings, store, ops, task, entry, index, total):
     if urlsplit(url).path != expected:
         raise ValueError("repository URL path must match the approved repository name")
 
-    base = (settings.data_dir / "repo-cache").resolve()
-    base.mkdir(parents=True, exist_ok=True)
+    base = Path(ensure_download_dir(settings, entry.get("destination_dir")))
     target = base / name.split("/", 1)[1]
     if target.is_symlink() or target.resolve(strict=False).parent != base:
         raise ValueError("unsafe repository cache path")
@@ -614,6 +626,7 @@ def _sync_source_batch_item(settings, store, ops, task, entry, index, total):
         scan_error = type(exc).__name__ + ": " + str(exc)[:500]
     return {
         "repository": name,
+        "destination_dir": str(base),
         "source_id": repository_source_id(url),
         "repository_id": repo["id"],
         "status": "completed_with_limitations" if scan_error else "completed",
@@ -835,10 +848,19 @@ def execute(settings, store, ops, task):
         result["status"] = ("completed" if result.get("state") == "completed"
                             else "completed_with_limitations")
         return result
+    if kind == "progressive_quick_screen_batch":
+        from .progressive_triage.quick_screen_batch import execute_quick_screen_batch
+        return execute_quick_screen_batch(settings, store, ops, task)
+    if kind == "progressive_deep_agent_batch":
+        from .progressive_triage.deep_agent_batch import execute_progressive_deep_agent_batch
+        return execute_progressive_deep_agent_batch(settings, store, ops, task)
     if kind == "version_candidate_comparison":
         from .joint_candidate_comparison_runtime import execute_joint_comparison
         return execute_joint_comparison(settings, store, ops, task)
     if kind == "validation":
+        if spec.get("harness_id") in {"cpp_lifetime_unique_ptr_alias", "cpp_shared_ptr_delayed_singleton"}:
+            from .validation_cpp import execute as execute_cpp_validation
+            return execute_cpp_validation(settings, ops, task)
         from .validation import execute_validation
         return execute_validation(settings, store, ops, task)
     reports = wait_reports(settings, store, spec["scan_ids"])

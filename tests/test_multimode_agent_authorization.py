@@ -40,7 +40,8 @@ class MultiEndpointAuthorizationTests(unittest.TestCase):
         self.tmp.cleanup()
 
     @staticmethod
-    def fake_preview(plan, workflow, paths, candidates, nonce, provider, r2, *, max_cost_usd=None):
+    def fake_preview(plan, workflow, paths, candidates, nonce, provider, r2, *, max_cost_usd=None,
+                    system_policy_snapshot=None):
         digest = hashlib.sha256((plan["plan_sha256"] + workflow + nonce).encode()).hexdigest()
         return {"eligible": True, "consent_sha256": digest, "consent_nonce": nonce,
                 "manifest": {"binding": {"plan_sha256": plan["plan_sha256"],
@@ -50,6 +51,10 @@ class MultiEndpointAuthorizationTests(unittest.TestCase):
                                          "r2_max_model_calls": None,
                                          "local_cumulative_token_budget": "none",
                                          "local_cumulative_usd_budget": "none"},
+                             "system_policy": {
+                                 "revision": (system_policy_snapshot or {}).get("revision"),
+                                 "policy_sha256": (system_policy_snapshot or {}).get("policy_sha256"),
+                             },
                              "candidate_limit": candidates, "r2_candidate_limit": r2,
                              "consent_nonce": nonce}}
 
@@ -78,6 +83,8 @@ class MultiEndpointAuthorizationTests(unittest.TestCase):
                              scan["triage_authorization"]["consent_sha256"])
             self.assertEqual(auth["snapshot"]["binding"]["plan_sha256"],
                              scan["plan_sha256"])
+            self.assertEqual(job["spec"]["progressive_triage_policy"]["policy_sha256"],
+                             auth["snapshot"]["system_policy"]["policy_sha256"])
             self.assertEqual(job["spec"]["max_cost_usd"], None)
             self.assertFalse(auth["revoked"])
 
