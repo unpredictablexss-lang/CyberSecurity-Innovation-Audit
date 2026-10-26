@@ -1,0 +1,41 @@
+{
+  "schema_version": "a-path-detector-replay-v1",
+  "purpose": "Detector engineering replay only; this is not a production scan, an independent validation dataset, or a product vulnerability determination.",
+  "scanner_base": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+  "detector": {
+    "id": "ohscanner.cpp.path_traversal",
+    "version": "0.1.0-research",
+    "rule_id": "ohcpp-path-traversal-candidate-001"
+  },
+  "source": {
+    "repository": "openharmony/applications_contacts_data",
+    "reported_commit": "341cc3bf41b48e9a5f278dd088f40a2041d2f1c9",
+    "reported_tree": "2054824c04bb403eeea128a9262edfb3001efa4f",
+    "path": "dataBusiness/contacts/src/contacts_data_ability.cpp",
+    "local_path": "D:/openHarmonyScanner/openharmony/applications/standard/contacts_data/dataBusiness/contacts/src/contacts_data_ability.cpp",
+    "local_byte_length": 85339,
+    "local_sha256": "c9d1f03da5994f32b6af7254ba505eb616713209222f48f1f91117c4827201b6",
+    "binding_note": "Local source bytes match the existing T1 source SHA-256 and byte length. The nested Windows .git metadata could not be read; commit/tree attribution is copied from the T1 manifest, not independently re-read from Git in this replay."
+  },
+  "execution": {
+    "method": "direct Python detector API call",
+    "command": "python inline harness constructing SourceUnit and ScanContext, then CppPathTraversalDetector.detect",
+    "request_provenance": "fixture",
+    "parse_status": "complete (caller-supplied; no compiler/parser run)",
+    "status": "blocked",
+    "finding_count": 5,
+    "findings": [
+      {"line": 792, "sink": "DeleteFile", "cwe": "CWE-22"},
+      {"line": 793, "sink": "DeleteFile", "cwe": "CWE-22"},
+      {"line": 797, "sink": "DeleteFile", "cwe": "CWE-22"},
+      {"line": 811, "sink": "open", "cwe": "CWE-22"},
+      {"line": 822, "sink": "open", "cwe": "CWE-22"}
+    ],
+    "limitations": [
+      "Lexical same-translation-unit analysis does not establish control-flow dominance, full C++ types, caller reachability, permission checks, filesystem resolution, symlink safety, or CIA impact.",
+      "FileUtils::DeleteFile is an explicit typed API model; its cross-file implementation was not loaded into this run.",
+      "Other external image/file wrappers remained unresolved, so coverage status stayed blocked.",
+      "The new detector is not registered in catalog.py, so this is not evidence that normal CLI/default profile scans execute it."
+    ]
+  }
+}

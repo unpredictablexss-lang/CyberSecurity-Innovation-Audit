@@ -1,0 +1,128 @@
+{
+  "schema_version": "cpp-path-traversal-dev-fixtures-v1",
+  "purpose": "Detector implementation regression only; fixtures are not product reproductions, independent labels, or vulnerability determinations.",
+  "provenance": {
+    "kind": "self_authored_synthetic_fixtures",
+    "scanner_base_commit": "1c21ac60890fca0ce6be5d50d82e4757dd5e4623"
+  },
+  "exact_source_control": {
+    "source_repository": "openharmony/applications_contacts_data",
+    "commit": "341cc3bf41b48e9a5f278dd088f40a2041d2f1c9",
+    "tree": "2054824c04bb403eeea128a9262edfb3001efa4f",
+    "path": "dataBusiness/contacts/src/contacts_data_ability.cpp",
+    "git_blob_sha1": "c93e950725adc93276916b3c96c5ac7a5bb5b6b7",
+    "source_sha256": "c9d1f03da5994f32b6af7254ba505eb616713209222f48f1f91117c4827201b6",
+    "source_byte_length": 85339,
+    "excerpt_lines": [
+      770,
+      892
+    ],
+    "excerpt_fixture": "contacts_exact_excerpt.cpp",
+    "excerpt_sha256": "a0ec386bcb07e2c587fba6d3ef8dff46130ae953e517269ac4abaeda0235cddf",
+    "note": "Exact Git-object line excerpt used only as a detector development control. Candidate outputs do not establish product exploitability."
+  },
+  "cases": [
+    {
+      "fixture": "contacts_exact_excerpt.cpp",
+      "category": "positive",
+      "byte_length": 5028,
+      "sha256": "a0ec386bcb07e2c587fba6d3ef8dff46130ae953e517269ac4abaeda0235cddf",
+      "parse_status": "complete",
+      "note": "Exact Git-object excerpt used for scanner development; not a product reproduction."
+    },
+    {
+      "fixture": "positive_read.cpp",
+      "category": "positive",
+      "byte_length": 296,
+      "sha256": "fc1a3fb0c80d46409e2666b3dd0a52af8edc109cdad2dc3c3732ebbdcbae1f8c",
+      "parse_status": "complete"
+    },
+    {
+      "fixture": "positive_write_delete.cpp",
+      "category": "positive",
+      "byte_length": 396,
+      "sha256": "8163e26df487bfaab3134dfc9e9e747736e3de321355e9eb665d872b073ac953",
+      "parse_status": "complete"
+    },
+    {
+      "fixture": "bounded_return_helper.cpp",
+      "category": "positive",
+      "byte_length": 427,
+      "sha256": "6cc2adf91a94f8a906519a045f6b3a34b336b449c315958bf20837203c9c0fe4",
+      "parse_status": "complete"
+    },
+    {
+      "fixture": "fixed_basename.cpp",
+      "category": "fixed",
+      "byte_length": 391,
+      "sha256": "1dbb37c2d1a4a628ae1015f012d38f8ffdec0ac898625c99fe6857fe79d37a58",
+      "parse_status": "complete"
+    },
+    {
+      "fixture": "fixed_canonical_containment.cpp",
+      "category": "fixed",
+      "byte_length": 570,
+      "sha256": "0100c29ca6615a2d5ba66995f88a310f9f25f5853c1ba1a86f2c16c4951828aa",
+      "parse_status": "complete"
+    },
+    {
+      "fixture": "fixed_literal_allowlist.cpp",
+      "category": "fixed",
+      "byte_length": 395,
+      "sha256": "7f10f6248e80d6132cbedd25b41c1270d4032db0637f63960b9769e56c61296f",
+      "parse_status": "complete"
+    },
+    {
+      "fixture": "unrelated_same_api_name.cpp",
+      "category": "unrelated",
+      "byte_length": 261,
+      "sha256": "46ca03d2c8367a16953b07ba5dbe4ed60015a67864ae185260630850b2f38ef2",
+      "parse_status": "complete"
+    },
+    {
+      "fixture": "no_file_sink.cpp",
+      "category": "safe",
+      "byte_length": 270,
+      "sha256": "533accaf44467224c0e0a61cdfc698dd0380b62107897b5f0986d72384c6ae70",
+      "parse_status": "complete"
+    },
+    {
+      "fixture": "cross_function_unknown.cpp",
+      "category": "unknown",
+      "byte_length": 552,
+      "sha256": "460aa8767803f6cf6bf3b7b24b550689d6584a2db682d79e2a3278b8c85ad8b6",
+      "parse_status": "complete"
+    },
+    {
+      "fixture": "external_wrapper_unknown.cpp",
+      "category": "unknown",
+      "byte_length": 309,
+      "sha256": "4d419fa41e18ec611818476e70c2401c35edd8ff109fbb1c2e22c853be60efa1",
+      "parse_status": "complete"
+    },
+    {
+      "fixture": "partial_parse.cpp",
+      "category": "unknown",
+      "byte_length": 250,
+      "sha256": "5331f75ecf77380d18b4a83b8b80a622a8ed956192f0037994c2a4c05ed5fadf",
+      "parse_status": "partial"
+    },
+    {
+      "fixture": "macro_unknown.cpp",
+      "category": "unknown",
+      "byte_length": 298,
+      "sha256": "0d6880fa9a8bfc7f0bed7e8bac37abbbcbe7fe25368bccccc68217bdad54627d",
+      "parse_status": "complete"
+    }
+  ],
+  "source_replay_reference": {
+    "source_repository": "openharmony/applications_contacts_data",
+    "commit": "341cc3bf41b48e9a5f278dd088f40a2041d2f1c9",
+    "tree": "2054824c04bb403eeea128a9262edfb3001efa4f",
+    "path": "dataBusiness/contacts/src/contacts_data_ability.cpp",
+    "git_blob_sha1": "c93e950725adc93276916b3c96c5ac7a5bb5b6b7",
+    "source_sha256": "c9d1f03da5994f32b6af7254ba505eb616713209222f48f1f91117c4827201b6",
+    "source_byte_length": 85339,
+    "note": "The pinned source was analyzed in a separate local replay. Third-party source contents are not included in this fixture package."
+  }
+}

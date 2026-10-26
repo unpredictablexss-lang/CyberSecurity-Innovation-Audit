@@ -54,3 +54,9 @@ Targeted regression:
 python3 -m unittest tests.detectors.test_cpp_shared_ptr_race_detector -v
 python3 -m unittest discover -s tests/detectors -q
 ```
+
+## C/C++ path traversal detector (research candidate)
+
+`ohscanner.cpp.path_traversal` models a narrow source-to-file-operation flow from typed `DataShareValuesBucket` string accessors through same-translation-unit assignments and a bounded set of file sinks. It includes direct libc sinks and an explicit `Contacts::FileUtils::DeleteFile` receiver-type model used by the Contacts source excerpt. This explicit API model is not a general method-name sink rule. It is not registered in the shared catalog; production selection requires an owner-reviewed catalog/profile change.
+
+Findings remain partial CWE-22 candidates. The model does not prove caller reachability, permission checks, data control, filesystem resolution, symlink containment, wrapper behavior outside the explicit model, or CIA impact. Cross-function/external flow, macros, overloaded functions and partial parsing remain blocked/unknown. See `tests/detectors/test_cpp_path_traversal_detector.py` and its hash-bound fixtures for positive/fixed/safe/unrelated/unknown controls.
