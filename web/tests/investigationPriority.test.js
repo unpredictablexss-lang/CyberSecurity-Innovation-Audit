@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { topInvestigationGroups, selectedInvestigationCandidates } from "../src/features/audits/investigationPriority.js";
+import { topInvestigationGroups, selectedInvestigationCandidates } from "../src/features/audits/investigationPriorityUtils.js";
 const group = (id, eligible=true, auto=true) => ({group_id:id,auto_select:auto,representative:{candidate_id:id,eligible,auto_select:auto},members:[{candidate_id:id,eligible}]});
 test("top selection respects configured deep cap and excludes failed or deferred groups",()=>{
  const rows=[group("failed",false,false),group("defer",true,false),...Array.from({length:8},(_,i)=>group(String(i)))];

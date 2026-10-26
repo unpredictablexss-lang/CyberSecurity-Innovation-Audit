@@ -3,7 +3,7 @@ import { Alert, Button, InputNumber, List, Select, Space, Table, Tag, Typography
 import { api } from "../../api";
 import { go } from "../../components";
 import ChineseNarrative from "../cases/ChineseNarrative";
-import { topInvestigationGroups, selectedInvestigationCandidates } from "./investigationPriority.js";
+import { topInvestigationGroups, selectedInvestigationCandidates } from "./investigationPriorityUtils.js";
 const { Text } = Typography;
 const assessmentLabels: Record<string,string> = {likely_true_positive:"倾向真实候选", likely_false_positive:"倾向误报", needs_more_evidence:"需要更多证据", unknown:"尚不明确"};
 const colors: Record<string,string> = {investigate:"red", supplement:"blue", human_review:"purple", defer:"default", incomplete:"error", pending:"processing"};
