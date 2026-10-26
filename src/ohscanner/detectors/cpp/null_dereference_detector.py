@@ -24,6 +24,9 @@ from src.ohscanner.contracts import (
 RULE_ID = "ohcpp-null-dereference-candidate-001"
 RULE_VERSION = "1.2.0"
 RULE_LINEAGE_ID = "A-NULL-01:ohcpp-null-dereference-candidate"
+WEAK_RETURN_RULE_ID = "ohcpp-null-dereference-unknown-return-observation-001"
+WEAK_RETURN_RULE_VERSION = "0.1.0"
+WEAK_RETURN_RULE_LINEAGE_ID = "A-NULL-RETURN-OBSERVATION-01:unknown-return-nullability"
 MAX_UNIT_BYTES = 1024 * 1024
 MAX_TOTAL_BYTES = 32 * 1024 * 1024
 _CONTROL_WORDS = frozenset({"if", "for", "while", "switch", "catch", "return", "sizeof", "do", "else"})
@@ -323,6 +326,30 @@ def _is_call_expression(value: str) -> bool:
     return bool(re.match(r"~?[A-Za-z_]\w*(?:::[A-Za-z_]\w*)*\s*(?:<[^;]*>)?\s*\(", value.strip()))
 
 
+def _return_nullability(masked: str, expression: str) -> str:
+    call = re.match(r"~?([A-Za-z_]\w*(?:::[A-Za-z_]\w*)*)(?:<[^;]*>)?\s*\(", expression.strip())
+    if not call:
+        return "unknown"
+    name = call.group(1).split("::")[-1]
+    marker = re.compile(
+        r"(?:\b_Nullable\b|\b__nullable\b|\bnullable\b|"
+        r"annotate\s*\(\s*\"nullable\"\s*\))",
+        re.IGNORECASE,
+    )
+    declarations = []
+    for match in re.finditer(r"\b" + re.escape(name) + r"\s*\([^;{}]*\)\s*(?:;|\{)", masked):
+        start = max(
+            masked.rfind(";", 0, match.start()),
+            masked.rfind("{", 0, match.start()),
+            masked.rfind("}", 0, match.start()),
+        ) + 1
+        header = masked[start:match.start()]
+        if "=" in header or re.search(r"\b(?:return|co_return|if|while|for|switch)\b", header):
+            continue
+        declarations.append(marker.search(masked[start:match.end()]) is not None)
+    return "explicit_nullable" if declarations and all(declarations) else "unknown"
+
+
 def _parameter_sources(unit: SourceUnit, function: _FunctionShape, unsupported: List[UnsupportedShape]) -> Tuple[NullSource, ...]:
     sources: List[NullSource] = []
     cursor = 0
@@ -346,7 +373,17 @@ def _parameter_sources(unit: SourceUnit, function: _FunctionShape, unsupported: 
         raw_pointer = "*" in raw_param and not function_pointer
         if not (raw_pointer or smart_pointer):
             continue
-        nullability = "unknown" if smart_pointer else "may_be_null"
+        explicit_nullable = bool(re.search(
+            r"(?:\b_Nullable\b|\b__nullable\b|\bnullable\b|"
+            r"annotate\s*\(\s*\"nullable\"\s*\))",
+            raw_param,
+            re.IGNORECASE,
+        ))
+        nullability = (
+            "unknown" if smart_pointer else
+            "explicit_nullable" if explicit_nullable else
+            "may_be_null"
+        )
         sources.append(NullSource(name, "parameter", name_position, nullability, (param_start, param_start + len(raw_param)), f"param:{unit.path}:{function.span.start}:{name}", unit.path, unit.sha256, raw_param.strip()))
     return tuple(sources)
 
@@ -409,8 +446,10 @@ def _local_and_return_sources(unit: SourceUnit, function: _FunctionShape, masked
         if _is_nothrow_allocation(rhs):
             continue
         if (has_pointer_declarator or known_pointer) and _is_call_expression(rhs):
-            sources.append(NullSource(name, "return_value", absolute_name, "unknown", (statement_start, function.body.start + match.end() + 1), f"return:{unit.path}:{function.span.start}:{name}", unit.path, unit.sha256, prefix.strip()))
-            unsupported.append(UnsupportedShape("alias", (statement_start, function.body.start + match.end() + 1), "cross_function_alias; unresolved_function_return_nullability; function_return_nullability_unknown", unit.path, unit.sha256))
+            nullability = _return_nullability(masked, rhs)
+            sources.append(NullSource(name, "return_value", absolute_name, nullability, (statement_start, function.body.start + match.end() + 1), f"return:{unit.path}:{function.span.start}:{name}", unit.path, unit.sha256, prefix.strip()))
+            if nullability == "unknown":
+                unsupported.append(UnsupportedShape("alias", (statement_start, function.body.start + match.end() + 1), "cross_function_alias; unresolved_function_return_nullability; function_return_nullability_unknown", unit.path, unit.sha256))
     return tuple(sources)
 
 
@@ -774,29 +813,29 @@ def _evaluate_guard(source: NullSource, sink: DereferenceSink, guards: Sequence[
         return _GuardEvaluation("unknown", "not_applicable", matching[0] if matching else None)
     if not matching:
         return _GuardEvaluation(
-            "not_dominating" if "exception" in function_kinds else "none",
+            "unknown" if "exception" in function_kinds else "none",
             "exception_unmodeled" if "exception" in function_kinds else "not_applicable",
             None,
         )
     for guard in matching:
         branch_start, branch_end = guard.branch_spans[0]
         if guard.condition == "non_null" and branch_start <= sink.position < branch_end and not _rebind_between(masked, _symbol_base(source.symbol, aliases), guard.guard_span[0], sink.position):
-            return _GuardEvaluation("dominating", "positive_guard_only", guard)
+            return _GuardEvaluation("unknown", "lexical_protecting_positive_guard_pattern", guard)
         if guard.condition == "null" and len(guard.branch_spans) > 1:
             else_start, else_end = guard.branch_spans[1]
             if else_start <= sink.position < else_end:
-                return _GuardEvaluation("dominating", "else_branch_only", guard)
+                return _GuardEvaluation("unknown", "lexical_protecting_else_branch_pattern", guard)
         if guard.condition == "null" and guard.returns_on_null_path and sink.position >= branch_end and not _rebind_between(masked, _symbol_base(source.symbol, aliases), branch_end, sink.position):
-            return _GuardEvaluation("dominating", "early_return", guard)
+            return _GuardEvaluation("unknown", "lexical_protecting_early_return_pattern", guard)
     for guard in matching:
         branch_start, branch_end = guard.branch_spans[0]
         if guard.condition == "null" and not guard.returns_on_null_path and sink.position >= branch_end and not (
             len(guard.branch_spans) > 1 and guard.branch_spans[1][0] <= sink.position < guard.branch_spans[1][1]
         ):
-            return _GuardEvaluation("not_dominating", "error_branch_falls_through", guard)
+            return _GuardEvaluation("unknown", "lexical_error_branch_falls_through", guard)
     return _GuardEvaluation(
-        "not_dominating",
-        "exception_unmodeled" if "exception" in function_kinds else "not_applicable",
+        "unknown",
+        "exception_unmodeled" if "exception" in function_kinds else "guard_relation_unresolved_without_cfg",
         matching[0],
     )
 
@@ -810,12 +849,18 @@ def _source_role(source: NullSource) -> str:
         return "local_pointer_explicit_null"
     if source.kind == "parameter" and source.nullability == "may_be_null":
         return "parameter_may_be_null"
+    if source.kind == "parameter" and source.nullability == "explicit_nullable":
+        return "parameter_explicit_nullable"
     if source.kind == "member" and source.nullability == "explicit_null":
         return "member_pointer_explicit_null"
     if source.kind == "member" and source.nullability == "unknown":
         return "member_pointer_unknown"
     if source.kind == "return_value":
-        return "function_return_value_unknown_nullability"
+        return (
+            "function_return_value_explicit_nullable"
+            if source.nullability == "explicit_nullable"
+            else "function_return_value_unknown_nullability"
+        )
     if source.kind == "parameter":
         return "parameter_may_be_null"
     return source.kind + "_" + source.nullability
@@ -887,7 +932,7 @@ def _finding_identity(
 
 class NullDereferenceDetector:
     detector_id = "ohscanner.cpp.null_dereference"
-    version = "0.2.0"
+    version = "0.4.0"
     supported_languages = ("c", "cpp")
     required_facts = ()
     ast_scope = "per_file"
@@ -981,18 +1026,24 @@ class NullDereferenceDetector:
                         continue
                     if _short_circuit_guarded(source, sink, masked, aliases):
                         continue
-                    if source.nullability in ("explicit_null", "may_be_null") or source.kind == "return_value":
+                    if source.nullability in ("explicit_null", "explicit_nullable", "may_be_null") or source.kind == "return_value":
                         emit = True
                     else:
                         emit = bool(_span_candidates(unsupported, sink.position, sink.position + 1) or function_unsupported)
                     if not emit:
                         continue
                     evaluation = _evaluate_guard(source, sink, guards, function_unsupported, masked, aliases)
-                    if evaluation.relation == "dominating":
+                    if evaluation.error_path.startswith("lexical_protecting_"):
+                        unknown_reasons.append("guard_dominance_unknown_without_compile_context")
                         continue
                     line, column = _line_column(unit.text, sink.position)
-                    message = (
+                    weak_unknown_return = source.kind == "return_value" and source.nullability == "unknown"
+                    message_prefix = (
+                        "Weak observation/needs review; unknown return nullability is not a strong source: "
+                        if weak_unknown_return else
                         "Bounded same-function NULL-dereference candidate/unassessed: "
+                    )
+                    message = message_prefix + (
                         f"null_source={_source_role(source)}; sink={sink.shape}; "
                         f"guard_relation={evaluation.relation}; error_path={evaluation.error_path}; "
                         "syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact."
@@ -1004,15 +1055,15 @@ class NullDereferenceDetector:
                         file=unit.path,
                         line=line,
                         column=column,
-                        rule_id=RULE_ID,
+                        rule_id=WEAK_RETURN_RULE_ID if weak_unknown_return else RULE_ID,
                         message=message,
                         evidence_type="syntax",
                         candidate_cwe="CWE-476",
                         symbol=source.symbol,
                         evidence_obligations=_OBLIGATIONS,
                         source_sha256=unit.sha256,
-                        rule_version=RULE_VERSION,
-                        rule_lineage_id=RULE_LINEAGE_ID,
+                        rule_version=WEAK_RETURN_RULE_VERSION if weak_unknown_return else RULE_VERSION,
+                        rule_lineage_id=WEAK_RETURN_RULE_LINEAGE_ID if weak_unknown_return else RULE_LINEAGE_ID,
                         symbol_identity=symbol_identity,
                         ast_fingerprint=ast_fingerprint,
                         identity_quality=identity_quality,
@@ -1026,7 +1077,7 @@ class NullDereferenceDetector:
                         elif source.kind == "member":
                             unknown_reasons.append("type_system_unknown")
                     if evaluation.relation == "unknown":
-                        unknown_reasons.append("guard_dominance_unknown")
+                        unknown_reasons.append("guard_dominance_unknown_without_compile_context")
 
             unit_findings.sort(key=lambda item: (item[0], item[1].message))
             findings.extend(finding for _, finding in unit_findings)

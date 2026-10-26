@@ -49,8 +49,8 @@ _APPROVED = {
         "factory": NullDereferenceDetector,
         "kind": "research_candidate",
         "default_enabled": False,
-        "admission_reason": "explicit_selection_required: unknown-return nullability produces broad weak candidates; review a bounded scope first",
-        "summary": "A: narrow same-function C/C++ null-source/deref candidate; default unassessed",
+        "admission_reason": "explicit_selection_required: unknown-return nullability is a weak observation and may produce broad candidate volumes; use bounded research scope",
+        "summary": "A: bounded same-function NULL candidates plus separately identified weak unknown-return observations; default disabled",
     },
     "ohscanner.cpp.resource_lifetime": {
         "factory": CppResourceLifetimeDetector,

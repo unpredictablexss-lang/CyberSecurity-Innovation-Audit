@@ -374,7 +374,7 @@ def build_report(repo: Path) -> dict:
         "change_request_id": "A-NULL-02",
         "detector_identity": {
             "detector_id": "ohscanner.cpp.null_dereference",
-            "version": "0.2.0",
+            "version": "0.4.0",
             "rule_id": null_model.RULE_ID,
             "rule_version": null_model.RULE_VERSION,
             "rule_lineage_id": null_model.RULE_LINEAGE_ID,

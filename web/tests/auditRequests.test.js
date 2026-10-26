@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { approvedDetectorIds, datePreviewPayload, includePaths, operationPayload, recentRange, requestGate, snapshotPayload, planPayload } from "../src/features/audits/model.js";
+import { approvedDetectorIds, researchDetectorIds, datePreviewPayload, includePaths, operationPayload, recentRange, requestGate, snapshotPayload, planPayload } from "../src/features/audits/model.js";
 const detectors = [
   { id: "test.cpp", version: "2", kind: "research_candidate", supported_languages: ["cpp"] },
   { id: "test.example", version: "1", kind: "example", supported_languages: ["cpp"] },
@@ -56,4 +56,19 @@ test("plan preview sends source selection only, with no browser-chosen rule list
 
 test("explicit-only research rules are not silently requested by normal UI flows", () => {
   assert.deepEqual(approvedDetectorIds([...detectors, { ...detectors[0], id: "test.research-only", default_enabled: false }]), ["test.cpp"]);
+});
+test("explicit full-rules research selects disabled approved rules and freezes that selection", () => {
+  const catalog = [...detectors, { id: "test.null", version: "3", kind: "research_candidate", default_enabled: false, supported_languages: ["cpp"], admission_reason: "weak candidates" }];
+  assert.deepEqual(researchDetectorIds(catalog), ["test.cpp", "test.null"]);
+  const valuesWithResearch = { ...values, full_rules_research: true };
+  assert.deepEqual(snapshotPayload(valuesWithResearch, catalog), {
+    repository_id: "repo", revision: "refs/tags/a", include_paths: ["src", "include"],
+    detector_ids: ["test.cpp", "test.null"], timeout_seconds: 60, memory_mb: 512,
+  });
+  assert.deepEqual(planPayload(valuesWithResearch, catalog), {
+    repository_id: "repo", revision: "refs/tags/a", include_paths: ["src", "include"],
+    detector_ids: ["test.cpp", "test.null"],
+  });
+  const ops = operationPayload("date", { ...valuesWithResearch, branch: "main", start: "2026-01-01T00:00:00", end: "2026-01-02T00:00:00", timezone: "UTC" }, catalog);
+  assert.deepEqual(ops.detector_ids, ["test.cpp", "test.null"]);
 });

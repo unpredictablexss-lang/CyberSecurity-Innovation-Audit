@@ -1,0 +1,427 @@
+{
+  "a_null_02_controls": {
+    "after": {
+      "by_rule_id": {
+        "ohcpp-null-dereference-candidate-001": 5,
+        "ohcpp-null-dereference-unknown-return-observation-001": 1
+      },
+      "raw_observation_rows": 6,
+      "weak_unknown_return_observations": 1
+    },
+    "after_rows": [
+      {
+        "file": "research/tests/a_null_02_controls/fixtures/positive_error_path_falls_through.cpp",
+        "line": 10,
+        "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=parameter_may_be_null; sink=member_dereference; guard_relation=unknown; error_path=lexical_error_branch_falls_through; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+        "rule_id": "ohcpp-null-dereference-candidate-001",
+        "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+        "rule_version": "1.2.0"
+      },
+      {
+        "file": "research/tests/a_null_02_controls/fixtures/positive_local_null_read.cpp",
+        "line": 3,
+        "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=local_pointer_explicit_null; sink=unary_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+        "rule_id": "ohcpp-null-dereference-candidate-001",
+        "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+        "rule_version": "1.2.0"
+      },
+      {
+        "file": "research/tests/a_null_02_controls/fixtures/positive_member_default_initializer.cpp",
+        "line": 8,
+        "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=member_pointer_explicit_null; sink=member_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+        "rule_id": "ohcpp-null-dereference-candidate-001",
+        "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+        "rule_version": "1.2.0"
+      },
+      {
+        "file": "research/tests/a_null_02_controls/fixtures/positive_parameter_unguarded.cpp",
+        "line": 6,
+        "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=parameter_may_be_null; sink=member_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+        "rule_id": "ohcpp-null-dereference-candidate-001",
+        "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+        "rule_version": "1.2.0"
+      },
+      {
+        "file": "research/tests/a_null_02_controls/fixtures/positive_reference_alias.cpp",
+        "line": 7,
+        "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=parameter_may_be_null; sink=member_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+        "rule_id": "ohcpp-null-dereference-candidate-001",
+        "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+        "rule_version": "1.2.0"
+      },
+      {
+        "file": "research/tests/a_null_02_controls/fixtures/positive_return_value_unknown.cpp",
+        "line": 9,
+        "message": "Weak observation/needs review; unknown return nullability is not a strong source: null_source=function_return_value_unknown_nullability; sink=member_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+        "rule_id": "ohcpp-null-dereference-unknown-return-observation-001",
+        "rule_lineage_id": "A-NULL-RETURN-OBSERVATION-01:unknown-return-nullability",
+        "rule_version": "0.1.0"
+      }
+    ],
+    "before": {
+      "by_rule_id": {
+        "ohcpp-null-dereference-candidate-001": 6
+      },
+      "raw_observation_rows": 6,
+      "weak_unknown_return_observations": 0
+    },
+    "before_rows": [
+      {
+        "file": "research/tests/a_null_02_controls/fixtures/positive_error_path_falls_through.cpp",
+        "line": 10,
+        "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=parameter_may_be_null; sink=member_dereference; guard_relation=not_dominating; error_path=error_branch_falls_through; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+        "rule_id": "ohcpp-null-dereference-candidate-001",
+        "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+        "rule_version": "1.2.0"
+      },
+      {
+        "file": "research/tests/a_null_02_controls/fixtures/positive_local_null_read.cpp",
+        "line": 3,
+        "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=local_pointer_explicit_null; sink=unary_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+        "rule_id": "ohcpp-null-dereference-candidate-001",
+        "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+        "rule_version": "1.2.0"
+      },
+      {
+        "file": "research/tests/a_null_02_controls/fixtures/positive_member_default_initializer.cpp",
+        "line": 8,
+        "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=member_pointer_explicit_null; sink=member_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+        "rule_id": "ohcpp-null-dereference-candidate-001",
+        "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+        "rule_version": "1.2.0"
+      },
+      {
+        "file": "research/tests/a_null_02_controls/fixtures/positive_parameter_unguarded.cpp",
+        "line": 6,
+        "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=parameter_may_be_null; sink=member_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+        "rule_id": "ohcpp-null-dereference-candidate-001",
+        "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+        "rule_version": "1.2.0"
+      },
+      {
+        "file": "research/tests/a_null_02_controls/fixtures/positive_reference_alias.cpp",
+        "line": 7,
+        "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=parameter_may_be_null; sink=member_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+        "rule_id": "ohcpp-null-dereference-candidate-001",
+        "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+        "rule_version": "1.2.0"
+      },
+      {
+        "file": "research/tests/a_null_02_controls/fixtures/positive_return_value_unknown.cpp",
+        "line": 9,
+        "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=function_return_value_unknown_nullability; sink=member_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+        "rule_id": "ohcpp-null-dereference-candidate-001",
+        "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+        "rule_version": "1.2.0"
+      }
+    ],
+    "control_manifest_sha256": "7d03d7a4f8907dedcb71ce25da4c596150a31950bb2e65f1cc0667dee78b68ba",
+    "coverage_after": {
+      "by_status": {
+        "complete": 13,
+        "partial": 6
+      },
+      "files": 19,
+      "partial_files": [
+        "research/tests/a_null_02_controls/fixtures/fixed_alias_early_return.cpp",
+        "research/tests/a_null_02_controls/fixtures/fixed_else_branch.cpp",
+        "research/tests/a_null_02_controls/fixtures/fixed_error_path_multistatement.cpp",
+        "research/tests/a_null_02_controls/fixtures/positive_error_path_falls_through.cpp",
+        "research/tests/a_null_02_controls/fixtures/positive_return_value_unknown.cpp",
+        "research/tests/a_null_02_controls/fixtures/safe_guarded_alias.cpp"
+      ]
+    },
+    "coverage_before": {
+      "by_status": {
+        "complete": 18,
+        "partial": 1
+      },
+      "files": 19,
+      "partial_files": [
+        "research/tests/a_null_02_controls/fixtures/positive_return_value_unknown.cpp"
+      ]
+    },
+    "fixture_count": 19
+  },
+  "after": {
+    "by_rule_id": {
+      "ohcpp-null-dereference-candidate-001": 9,
+      "ohcpp-null-dereference-unknown-return-observation-001": 2
+    },
+    "raw_observation_rows": 11,
+    "weak_unknown_return_observations": 2
+  },
+  "after_rows": [
+    {
+      "file": "research/tests/a_null_01/fixtures/unknown_cross_function_alias.cpp",
+      "line": 9,
+      "message": "Weak observation/needs review; unknown return nullability is not a strong source: null_source=function_return_value_unknown_nullability; sink=member_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+      "rule_id": "ohcpp-null-dereference-unknown-return-observation-001",
+      "rule_lineage_id": "A-NULL-RETURN-OBSERVATION-01:unknown-return-nullability",
+      "rule_version": "0.1.0"
+    },
+    {
+      "file": "research/tests/a_null_01/fixtures/unknown_exception_destructor.cpp",
+      "line": 11,
+      "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=smart_pointer_value_unknown_nullability; sink=member_dereference; guard_relation=unknown; error_path=exception_unmodeled; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+      "rule_id": "ohcpp-null-dereference-candidate-001",
+      "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+      "rule_version": "1.2.0"
+    },
+    {
+      "file": "research/tests/a_null_01/fixtures/unknown_indirect_call.cpp",
+      "line": 8,
+      "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=parameter_may_be_null; sink=indirect_call_argument; guard_relation=unknown; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+      "rule_id": "ohcpp-null-dereference-candidate-001",
+      "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+      "rule_version": "1.2.0"
+    },
+    {
+      "file": "research/tests/a_null_01/fixtures/unknown_macro.cpp",
+      "line": 4,
+      "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=parameter_may_be_null; sink=macro_expanded_unary_dereference; guard_relation=unknown; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+      "rule_id": "ohcpp-null-dereference-candidate-001",
+      "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+      "rule_version": "1.2.0"
+    },
+    {
+      "file": "research/tests/a_null_01/fixtures/unknown_template.cpp",
+      "line": 8,
+      "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=member_pointer_unknown; sink=dependent_unary_dereference; guard_relation=unknown; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+      "rule_id": "ohcpp-null-dereference-candidate-001",
+      "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+      "rule_version": "1.2.0"
+    },
+    {
+      "file": "research/tests/a_null_01/fixtures/vulnerable_error_path_falls_through.cpp",
+      "line": 10,
+      "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=parameter_may_be_null; sink=member_dereference; guard_relation=unknown; error_path=lexical_error_branch_falls_through; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+      "rule_id": "ohcpp-null-dereference-candidate-001",
+      "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+      "rule_version": "1.2.0"
+    },
+    {
+      "file": "research/tests/a_null_01/fixtures/vulnerable_guard_not_dominating.cpp",
+      "line": 10,
+      "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=parameter_may_be_null; sink=member_dereference; guard_relation=unknown; error_path=guard_relation_unresolved_without_cfg; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+      "rule_id": "ohcpp-null-dereference-candidate-001",
+      "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+      "rule_version": "1.2.0"
+    },
+    {
+      "file": "research/tests/a_null_01/fixtures/vulnerable_local_null.cpp",
+      "line": 7,
+      "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=local_pointer_explicit_null; sink=unary_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+      "rule_id": "ohcpp-null-dereference-candidate-001",
+      "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+      "rule_version": "1.2.0"
+    },
+    {
+      "file": "research/tests/a_null_01/fixtures/vulnerable_member_pointer.cpp",
+      "line": 9,
+      "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=member_pointer_explicit_null; sink=member_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+      "rule_id": "ohcpp-null-dereference-candidate-001",
+      "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+      "rule_version": "1.2.0"
+    },
+    {
+      "file": "research/tests/a_null_01/fixtures/vulnerable_parameter.cpp",
+      "line": 6,
+      "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=parameter_may_be_null; sink=member_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+      "rule_id": "ohcpp-null-dereference-candidate-001",
+      "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+      "rule_version": "1.2.0"
+    },
+    {
+      "file": "research/tests/a_null_01/fixtures/vulnerable_return_value.cpp",
+      "line": 9,
+      "message": "Weak observation/needs review; unknown return nullability is not a strong source: null_source=function_return_value_unknown_nullability; sink=member_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+      "rule_id": "ohcpp-null-dereference-unknown-return-observation-001",
+      "rule_lineage_id": "A-NULL-RETURN-OBSERVATION-01:unknown-return-nullability",
+      "rule_version": "0.1.0"
+    }
+  ],
+  "base_revision": "f8e3a0ad7463f216db4be7502bd8a19eec545908",
+  "before": {
+    "by_rule_id": {
+      "ohcpp-null-dereference-candidate-001": 11
+    },
+    "raw_observation_rows": 11,
+    "weak_unknown_return_observations": 0
+  },
+  "before_rows": [
+    {
+      "file": "research/tests/a_null_01/fixtures/unknown_cross_function_alias.cpp",
+      "line": 9,
+      "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=function_return_value_unknown_nullability; sink=member_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+      "rule_id": "ohcpp-null-dereference-candidate-001",
+      "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+      "rule_version": "1.2.0"
+    },
+    {
+      "file": "research/tests/a_null_01/fixtures/unknown_exception_destructor.cpp",
+      "line": 11,
+      "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=smart_pointer_value_unknown_nullability; sink=member_dereference; guard_relation=not_dominating; error_path=exception_unmodeled; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+      "rule_id": "ohcpp-null-dereference-candidate-001",
+      "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+      "rule_version": "1.2.0"
+    },
+    {
+      "file": "research/tests/a_null_01/fixtures/unknown_indirect_call.cpp",
+      "line": 8,
+      "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=parameter_may_be_null; sink=indirect_call_argument; guard_relation=unknown; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+      "rule_id": "ohcpp-null-dereference-candidate-001",
+      "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+      "rule_version": "1.2.0"
+    },
+    {
+      "file": "research/tests/a_null_01/fixtures/unknown_macro.cpp",
+      "line": 4,
+      "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=parameter_may_be_null; sink=macro_expanded_unary_dereference; guard_relation=unknown; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+      "rule_id": "ohcpp-null-dereference-candidate-001",
+      "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+      "rule_version": "1.2.0"
+    },
+    {
+      "file": "research/tests/a_null_01/fixtures/unknown_template.cpp",
+      "line": 8,
+      "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=member_pointer_unknown; sink=dependent_unary_dereference; guard_relation=unknown; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+      "rule_id": "ohcpp-null-dereference-candidate-001",
+      "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+      "rule_version": "1.2.0"
+    },
+    {
+      "file": "research/tests/a_null_01/fixtures/vulnerable_error_path_falls_through.cpp",
+      "line": 10,
+      "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=parameter_may_be_null; sink=member_dereference; guard_relation=not_dominating; error_path=error_branch_falls_through; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+      "rule_id": "ohcpp-null-dereference-candidate-001",
+      "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+      "rule_version": "1.2.0"
+    },
+    {
+      "file": "research/tests/a_null_01/fixtures/vulnerable_guard_not_dominating.cpp",
+      "line": 10,
+      "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=parameter_may_be_null; sink=member_dereference; guard_relation=not_dominating; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+      "rule_id": "ohcpp-null-dereference-candidate-001",
+      "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+      "rule_version": "1.2.0"
+    },
+    {
+      "file": "research/tests/a_null_01/fixtures/vulnerable_local_null.cpp",
+      "line": 7,
+      "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=local_pointer_explicit_null; sink=unary_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+      "rule_id": "ohcpp-null-dereference-candidate-001",
+      "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+      "rule_version": "1.2.0"
+    },
+    {
+      "file": "research/tests/a_null_01/fixtures/vulnerable_member_pointer.cpp",
+      "line": 9,
+      "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=member_pointer_explicit_null; sink=member_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+      "rule_id": "ohcpp-null-dereference-candidate-001",
+      "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+      "rule_version": "1.2.0"
+    },
+    {
+      "file": "research/tests/a_null_01/fixtures/vulnerable_parameter.cpp",
+      "line": 6,
+      "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=parameter_may_be_null; sink=member_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+      "rule_id": "ohcpp-null-dereference-candidate-001",
+      "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+      "rule_version": "1.2.0"
+    },
+    {
+      "file": "research/tests/a_null_01/fixtures/vulnerable_return_value.cpp",
+      "line": 9,
+      "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=function_return_value_unknown_nullability; sink=member_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+      "rule_id": "ohcpp-null-dereference-candidate-001",
+      "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+      "rule_version": "1.2.0"
+    }
+  ],
+  "coverage_after": {
+    "by_status": {
+      "complete": 5,
+      "failed": 1,
+      "not_analyzed": 1,
+      "partial": 11
+    },
+    "files": 18,
+    "partial_files": [
+      "research/tests/a_null_01/fixtures/fixed_local_guarded_deref.cpp",
+      "research/tests/a_null_01/fixtures/fixed_parameter_early_return.cpp",
+      "research/tests/a_null_01/fixtures/safe_positive_guard_nested.cpp",
+      "research/tests/a_null_01/fixtures/unknown_cross_function_alias.cpp",
+      "research/tests/a_null_01/fixtures/unknown_exception_destructor.cpp",
+      "research/tests/a_null_01/fixtures/unknown_indirect_call.cpp",
+      "research/tests/a_null_01/fixtures/unknown_macro.cpp",
+      "research/tests/a_null_01/fixtures/unknown_template.cpp",
+      "research/tests/a_null_01/fixtures/vulnerable_error_path_falls_through.cpp",
+      "research/tests/a_null_01/fixtures/vulnerable_guard_not_dominating.cpp",
+      "research/tests/a_null_01/fixtures/vulnerable_return_value.cpp"
+    ]
+  },
+  "coverage_before": {
+    "by_status": {
+      "complete": 10,
+      "failed": 1,
+      "not_analyzed": 1,
+      "partial": 6
+    },
+    "files": 18,
+    "partial_files": [
+      "research/tests/a_null_01/fixtures/unknown_cross_function_alias.cpp",
+      "research/tests/a_null_01/fixtures/unknown_exception_destructor.cpp",
+      "research/tests/a_null_01/fixtures/unknown_indirect_call.cpp",
+      "research/tests/a_null_01/fixtures/unknown_macro.cpp",
+      "research/tests/a_null_01/fixtures/unknown_template.cpp",
+      "research/tests/a_null_01/fixtures/vulnerable_return_value.cpp"
+    ]
+  },
+  "fixture_regression_matrix_sha256": "0c5f3c64159b40e23286c48c037e97344d5aea363283a40eb2e5391f3ac8ec38",
+  "fixture_snapshot_sha256": "8f881c60dc49784191bef602bd1574dec02f5bf78adf6515a3bd0be9d6c1f81c",
+  "identity_reclassifications": [
+    {
+      "after_message": "Weak observation/needs review; unknown return nullability is not a strong source: null_source=function_return_value_unknown_nullability; sink=member_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+      "after_rule_id": "ohcpp-null-dereference-unknown-return-observation-001",
+      "before_rule_id": "ohcpp-null-dereference-candidate-001",
+      "file": "research/tests/a_null_01/fixtures/unknown_cross_function_alias.cpp",
+      "line": 9
+    },
+    {
+      "after_message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=smart_pointer_value_unknown_nullability; sink=member_dereference; guard_relation=unknown; error_path=exception_unmodeled; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+      "after_rule_id": "ohcpp-null-dereference-candidate-001",
+      "before_rule_id": "ohcpp-null-dereference-candidate-001",
+      "file": "research/tests/a_null_01/fixtures/unknown_exception_destructor.cpp",
+      "line": 11
+    },
+    {
+      "after_message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=parameter_may_be_null; sink=member_dereference; guard_relation=unknown; error_path=lexical_error_branch_falls_through; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+      "after_rule_id": "ohcpp-null-dereference-candidate-001",
+      "before_rule_id": "ohcpp-null-dereference-candidate-001",
+      "file": "research/tests/a_null_01/fixtures/vulnerable_error_path_falls_through.cpp",
+      "line": 10
+    },
+    {
+      "after_message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=parameter_may_be_null; sink=member_dereference; guard_relation=unknown; error_path=guard_relation_unresolved_without_cfg; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+      "after_rule_id": "ohcpp-null-dereference-candidate-001",
+      "before_rule_id": "ohcpp-null-dereference-candidate-001",
+      "file": "research/tests/a_null_01/fixtures/vulnerable_guard_not_dominating.cpp",
+      "line": 10
+    },
+    {
+      "after_message": "Weak observation/needs review; unknown return nullability is not a strong source: null_source=function_return_value_unknown_nullability; sink=member_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+      "after_rule_id": "ohcpp-null-dereference-unknown-return-observation-001",
+      "before_rule_id": "ohcpp-null-dereference-candidate-001",
+      "file": "research/tests/a_null_01/fixtures/vulnerable_return_value.cpp",
+      "line": 9
+    }
+  ],
+  "limitations": [
+    "This compares self-authored historical controls, not independently labelled product data.",
+    "Raw observation rows are retained; the comparison does not estimate precision or recall.",
+    "The current version reclassifies unknown-return observations and reports lexical guard coverage as partial; it does not prove return nullability or CFG dominance."
+  ],
+  "schema_version": "ohscanner.a-null-03-pinned-before-after-v1",
+  "working_tree_detector_version": "0.4.0"
+}

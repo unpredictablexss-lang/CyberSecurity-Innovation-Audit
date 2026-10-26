@@ -1,4 +1,5 @@
 export function approvedDetectorIds(detectors: any[]): string[];
+export function researchDetectorIds(detectors: any[]): string[];
 export function includePaths(value?: unknown): string[];
 export function snapshotPayload(values: any, detectors: any[]): any;
 export function datePreviewPayload(values: any): any;

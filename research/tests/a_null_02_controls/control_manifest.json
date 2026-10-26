@@ -3,7 +3,7 @@
   "change_request_id": "A-NULL-02",
   "detector": {
     "detector_id": "ohscanner.cpp.null_dereference",
-    "detector_version": "0.2.0",
+    "detector_version": "0.4.0",
     "rule_id": "ohcpp-null-dereference-candidate-001",
     "rule_version": "1.2.0"
   },
@@ -203,10 +203,10 @@
     {
       "fixture": "positive_error_path_falls_through.cpp",
       "category": "positive",
-      "expected_coverage": "complete",
+      "expected_coverage": "partial",
       "expected_finding_count": 1,
-      "guard_relation": "not_dominating",
-      "error_path": "error_branch_falls_through"
+      "guard_relation": "unknown",
+      "error_path": "lexical_error_branch_falls_through"
     },
     {
       "fixture": "positive_return_value_unknown.cpp",
@@ -219,26 +219,26 @@
     {
       "fixture": "fixed_error_path_multistatement.cpp",
       "category": "fixed",
-      "expected_coverage": "complete",
+      "expected_coverage": "partial",
       "expected_finding_count": 0,
-      "guard_relation": "dominating",
-      "error_path": "early_return"
+      "guard_relation": "unknown",
+      "error_path": "lexical_protecting_early_return_pattern"
     },
     {
       "fixture": "fixed_else_branch.cpp",
       "category": "fixed",
-      "expected_coverage": "complete",
+      "expected_coverage": "partial",
       "expected_finding_count": 0,
-      "guard_relation": "dominating",
-      "error_path": "else_branch_only"
+      "guard_relation": "unknown",
+      "error_path": "lexical_protecting_else_branch_pattern"
     },
     {
       "fixture": "fixed_alias_early_return.cpp",
       "category": "fixed",
-      "expected_coverage": "complete",
+      "expected_coverage": "partial",
       "expected_finding_count": 0,
-      "guard_relation": "dominating",
-      "error_path": "early_return"
+      "guard_relation": "unknown",
+      "error_path": "lexical_protecting_early_return_pattern"
     },
     {
       "fixture": "fixed_local_rebind_nonnull.cpp",
@@ -267,10 +267,10 @@
     {
       "fixture": "safe_guarded_alias.cpp",
       "category": "safe",
-      "expected_coverage": "complete",
+      "expected_coverage": "partial",
       "expected_finding_count": 0,
-      "guard_relation": "dominating",
-      "error_path": "early_return"
+      "guard_relation": "unknown",
+      "error_path": "lexical_protecting_early_return_pattern"
     },
     {
       "fixture": "safe_reference_to_local.cpp",

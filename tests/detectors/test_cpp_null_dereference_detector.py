@@ -88,7 +88,7 @@ class NullDereferenceFixtureRegressionTests(unittest.TestCase):
 
     def test_declares_exact_identity_and_scope(self) -> None:
         self.assertEqual(self.detector.detector_id, "ohscanner.cpp.null_dereference")
-        self.assertEqual(self.detector.version, "0.2.0")
+        self.assertEqual(self.detector.version, "0.4.0")
         self.assertEqual(self.detector.supported_languages, ("c", "cpp"))
         self.assertEqual(self.detector.required_facts, ())
         self.assertEqual(self.detector.ast_scope, "per_file")
@@ -120,7 +120,12 @@ class NullDereferenceFixtureRegressionTests(unittest.TestCase):
 
                 for finding in run.findings:
                     self.assertEqual(finding.file, unit.path)
-                    self.assertEqual(finding.rule_id, "ohcpp-null-dereference-candidate-001")
+                    if finding.rule_id == "ohcpp-null-dereference-unknown-return-observation-001":
+                        self.assertEqual(finding.rule_id, "ohcpp-null-dereference-unknown-return-observation-001")
+                        self.assertIn("Weak observation/needs review", finding.message)
+                        self.assertNotIn("candidate/unassessed", finding.message)
+                    else:
+                        self.assertEqual(finding.rule_id, "ohcpp-null-dereference-candidate-001")
                     self.assertEqual(finding.evidence_type, "syntax")
                     self.assertEqual(finding.candidate_cwe, "CWE-476")
                     self.assertEqual(finding.source_sha256, unit.sha256)
@@ -135,7 +140,8 @@ class NullDereferenceFixtureRegressionTests(unittest.TestCase):
                     self.assertIn("guard_relation=" + case["guard_relation"], finding.message)
                     if case["error_path"] != "unknown":
                         self.assertIn("error_path=" + case["error_path"], finding.message)
-                    self.assertIn("candidate/unassessed", finding.message)
+                    if finding.rule_id != "ohcpp-null-dereference-unknown-return-observation-001":
+                        self.assertIn("candidate/unassessed", finding.message)
 
                 if not run.findings and case["expected_coverage"] == "complete":
                     self.assertTrue(
@@ -169,8 +175,8 @@ class NullDereferenceFixtureRegressionTests(unittest.TestCase):
                 for value in ("complete", "partial", "failed", "not_analyzed")
             },
             {
-                "complete": 10,
-                "partial": 6,
+                "complete": 5,
+                "partial": 11,
                 "failed": 1,
                 "not_analyzed": 1,
             },

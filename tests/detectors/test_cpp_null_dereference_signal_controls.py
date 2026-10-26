@@ -109,15 +109,26 @@ class NullDereferenceSignalControlTests(unittest.TestCase):
                 self.assertEqual(len(run.findings), case["expected_finding_count"])
                 for finding in run.findings:
                     self.assertEqual(finding.source_sha256, unit.sha256)
-                    self.assertEqual(finding.rule_version, "1.2.0")
-                    self.assertEqual(
-                        finding.rule_lineage_id,
-                        "A-NULL-01:ohcpp-null-dereference-candidate",
-                    )
+                    if fixture == "positive_return_value_unknown.cpp":
+                        self.assertEqual(finding.rule_id, "ohcpp-null-dereference-unknown-return-observation-001")
+                        self.assertEqual(finding.rule_version, "0.1.0")
+                        self.assertEqual(
+                            finding.rule_lineage_id,
+                            "A-NULL-RETURN-OBSERVATION-01:unknown-return-nullability",
+                        )
+                        self.assertIn("Weak observation/needs review", finding.message)
+                    else:
+                        self.assertEqual(finding.rule_id, "ohcpp-null-dereference-candidate-001")
+                        self.assertEqual(finding.rule_version, "1.2.0")
+                        self.assertEqual(
+                            finding.rule_lineage_id,
+                            "A-NULL-01:ohcpp-null-dereference-candidate",
+                        )
                     self.assertTrue(finding.symbol_identity)
                     self.assertRegex(finding.ast_fingerprint, r"^[0-9a-f]{64}$")
                     self.assertEqual(finding.identity_quality, "complete")
-                    self.assertIn("candidate/unassessed", finding.message)
+                    if fixture != "positive_return_value_unknown.cpp":
+                        self.assertIn("candidate/unassessed", finding.message)
                     self.assertIn(
                         "guard_relation=" + case["guard_relation"],
                         finding.message,
@@ -133,6 +144,8 @@ class NullDereferenceSignalControlTests(unittest.TestCase):
                     joined = "\n".join(run.limitations).lower()
                     self.assertIn("not a safe verdict", joined)
                     self.assertNotIn("is safe", joined)
+                    if case["expected_coverage"] == "partial":
+                        self.assertIn("guard_dominance_unknown_without_compile_context", joined)
 
     def test_combined_controls_keep_candidates_and_negative_controls_quiet(self) -> None:
         run = self.detector.detect(self.context, self.units)
@@ -143,7 +156,7 @@ class NullDereferenceSignalControlTests(unittest.TestCase):
                 state: sum(value == state for value in outcomes.values())
                 for state in ("complete", "partial", "failed", "not_analyzed")
             },
-            {"complete": 18, "partial": 1, "failed": 0, "not_analyzed": 0},
+            {"complete": 13, "partial": 6, "failed": 0, "not_analyzed": 0},
         )
         self.assertEqual(len(run.findings), 6)
         positive_paths = {
@@ -181,7 +194,59 @@ class NullDereferenceSignalControlTests(unittest.TestCase):
         )
         fixed_run = self.detector.detect(make_context((fixed,)), (fixed,))
         self.assertEqual(fixed_run.findings, ())
-        self.assertEqual(dict(fixed_run.file_outcomes), {fixed.path: "complete"})
+        self.assertEqual(dict(fixed_run.file_outcomes), {fixed.path: "partial"})
+        self.assertTrue(
+            any("guard_dominance_unknown_without_compile_context" in item for item in fixed_run.limitations)
+        )
+
+    def test_unknown_return_is_separate_weak_observation_and_nullable_annotation_is_explicit(self) -> None:
+        returned = make_unit(
+            "controls/unknown_return_observation.cpp",
+            "struct Item { int id; };\n"
+            "Item *Lookup();\n"
+            "int read() { Item *item = Lookup(); return item->id; }\n",
+        )
+        returned_run = self.detector.detect(make_context((returned,)), (returned,))
+        self.assertEqual(len(returned_run.findings), 1)
+        finding = returned_run.findings[0]
+        self.assertEqual(finding.rule_id, "ohcpp-null-dereference-unknown-return-observation-001")
+        self.assertEqual(finding.rule_version, "0.1.0")
+        self.assertIn("Weak observation/needs review", finding.message)
+        self.assertIn("function_return_value_unknown_nullability", finding.message)
+
+        nullable = make_unit(
+            "controls/explicit_nullable_parameter.cpp",
+            "struct Item { int id; };\n"
+            "int read(Item *_Nullable item) { return item->id; }\n",
+        )
+        nullable_run = self.detector.detect(make_context((nullable,)), (nullable,))
+        self.assertEqual(len(nullable_run.findings), 1)
+        self.assertEqual(nullable_run.findings[0].rule_id, "ohcpp-null-dereference-candidate-001")
+        self.assertIn("parameter_explicit_nullable", nullable_run.findings[0].message)
+
+        annotated_return = make_unit(
+            "controls/explicit_nullable_return.cpp",
+            "struct Item { int id; };\n"
+            "Item *_Nullable Lookup();\n"
+            "int read() { Item *item = Lookup(); return item->id; }\n",
+        )
+        annotated_run = self.detector.detect(make_context((annotated_return,)), (annotated_return,))
+        self.assertEqual(len(annotated_run.findings), 1)
+        self.assertEqual(annotated_run.findings[0].rule_id, "ohcpp-null-dereference-candidate-001")
+        self.assertIn("function_return_value_explicit_nullable", annotated_run.findings[0].message)
+
+        same_name_decoy = make_unit(
+            "controls/same_name_nullable_decoy.cpp",
+            "struct Item { int id; };\n"
+            "Item *_Nullable Lookup(int);\n"
+            "Item *Lookup(double);\n"
+            "int read() { Item *item = Lookup(1); return item->id; }\n",
+        )
+        decoy_run = self.detector.detect(make_context((same_name_decoy,)), (same_name_decoy,))
+        self.assertEqual(len(decoy_run.findings), 1)
+        self.assertEqual(decoy_run.findings[0].rule_id, "ohcpp-null-dereference-unknown-return-observation-001")
+        self.assertIn("Weak observation/needs review", decoy_run.findings[0].message)
+        self.assertIn("function_return_value_unknown_nullability", decoy_run.findings[0].message)
 
     def test_partial_failed_and_not_analyzed_fail_closed_without_safety_claims(self) -> None:
         partial_text = "int partial_read(int *p) {\n    return *p;\n}\n"
