@@ -1,0 +1,170 @@
+{
+  "schema_version": "1.0",
+  "task": "T70 independent IPC path/oracle review",
+  "date": "2026-10-20",
+  "scanner_baseline": {
+    "sha": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "origin_main_freshness": "unknown; fetch failed; cached origin/main is not proof of freshness"
+  },
+  "source_anchor": {
+    "repository": "openharmony/communication_ipc",
+    "commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "tree": "125ecbfa21f430f2f977f0026ab97b70cd27a726",
+    "object_store": "D:/openHarmonyScanner/worktrees/ipc-source-pin-20261020",
+    "hashes": [
+      {
+        "path": "ipc/native/src/core/framework/source/ipc_object_stub.cpp",
+        "blob": "22c3a682c20fd350b318cad17a6d621206e65ba7",
+        "sha256": "554a27bf335d0048373c326f3f9bddea9ba134b73bf8dca622d6c80b644656bb",
+        "lines": "174-181, 439-477"
+      },
+      {
+        "path": "ipc/native/src/core/framework/source/ipc_object_proxy.cpp",
+        "blob": "4701faa882a030d0f34772d4b85b432b0be87e1e",
+        "sha256": "4d1e24129bec4a642047fb6187f63b40a1b17c1f1740f7b816f7691890b92157",
+        "lines": "188-193"
+      },
+      {
+        "path": "ipc/native/src/core/invoker/source/binder_invoker.cpp",
+        "blob": "4a5cd7530835659a0f9fad523c0f14c4c25570dd",
+        "sha256": "02c4e27beb57955df2afd3f836c1f38929f519b3d400f080a45a6f91e6210e4c",
+        "lines": "1525-1532"
+      },
+      {
+        "path": "ipc/native/src/core/framework/source/ipc_process_skeleton.cpp",
+        "blob": "516fd9efd0ab405cbd0c8a985f9f203478fc4d52",
+        "sha256": "cdffaaf0054da5c80d64c0cec6ef287c9c24e432bc50a49d3288336715910366",
+        "lines": "~268"
+      },
+      {
+        "path": "interfaces/innerkits/ipc_core/include/ipc_types.h",
+        "blob": "1465e1e51f46c564e47a2fd9fd410175047f7913",
+        "sha256": "656bb739c9262eed524ca8a4550d64cf1ad0f627c261a3fa97a829136c891077",
+        "lines": "41, 80"
+      },
+      {
+        "path": "test/unittest/common/ipc_object_stub_unittest.cpp",
+        "blob": "1bf3ead278c351f2411ef5e1669333b8091ba18e",
+        "sha256": "1652c75bd68e929f21d73c5ca5263aa9e829478e1a6bdb4f2d4ba202d1ba33bc",
+        "coverage": "direct helper success ~103-117; SendRequest 001-004 test other codes"
+      },
+      {
+        "path": "test/unittest/ipc/native/core/ipc_object_stub_unittest.cpp",
+        "blob": "2854f033f6217df54571997e9d1cfec886e30ce3",
+        "sha256": "614f2bf9eb33e14d1f28bfe07fb2d649016c86762a14df7df76523e1167f4e50",
+        "coverage": "mocked WriteInt32 failure ~344-359"
+      },
+      {
+        "path": "test/unittest/ipc/native/core/ipc_process_skeleton_unittest.cpp",
+        "blob": "7a786b343bc12c68eb1f34200be34e60ff03937a",
+        "sha256": "90ef24d2ab263c600c1f4d31ee9a4a25a7043273e9ea52d3c4fd8e611fabacd9",
+        "coverage": "PingService true/false mocked in GetProxyObject tests ~611-665"
+      },
+      {
+        "path": "test/fuzztest/ipc/native/core/ipcobjectstub_fuzzer/ipcobjectstub008_fuzzer/ipcobjectstub008_fuzzer.cpp",
+        "blob": "5aafb181adeacf6f4040b6d1c825a09b4825739f",
+        "sha256": "4176c559ae6e957670b5e0a60b3e96334ee658c7f2c90e9315e4121f451e2182",
+        "coverage": "direct handler fuzz call ~19-29"
+      },
+      {
+        "path": "test/fuzztest/ipc/native/core/binderinvoker_fuzzer/binderinvoker002_fuzzer/binderinvoker002_fuzzer.cpp",
+        "blob": "b14b82b86e19c2be4c9dd92bf3dea1197a768eca",
+        "sha256": "b7b3ef216bb91cb6158e943060ad91d5f054345a45bcb4d6554246d2f96da46f",
+        "coverage": "arbitrary handle PingService fuzz call ~76-85; no valid driver oracle"
+      }
+    ],
+    "hashes_recomputed_from_immutable_objects": true,
+    "product_build_identity_proven": false
+  },
+  "path": "PING_TRANSACTION -> IPCObjectStub::SendRequest -> DBinderPingTransaction -> reply int32 / transport return",
+  "overlap": {
+    "with": "D70",
+    "same_path": true,
+    "challenge": "Fixed ERR_NONE reply holds only if reply.WriteInt32 succeeds. Intended observable effect is a transport liveness result; no OnRemoteRequest callback is dispatched. But ‘no effect’ is too broad: an authorized holder may learn whether a handle responds. That is intended framework ping behavior absent evidence of a sensitive unauthorized target.",
+    "feedback_sent": "Asked D70 to distinguish helper, dispatcher and driver; characterize liveness disclosure; compare unknown code and recording stub controls."
+  },
+  "source_conclusions": {
+    "entry": "IPCObjectStub::SendRequest switches PING_TRANSACTION directly to DBinderPingTransaction. Handler ignores code/data/option and caller identity, writes ERR_NONE; write failure returns IPC_STUB_WRITE_PARCEL_ERR, otherwise ERR_NONE.",
+    "framework_caller": "BinderInvoker::PingService sends empty parcel and PING_TRANSACTION for handle; IPCProcessSkeleton calls it for REGISTRY_HANDLE while acquiring a new registry proxy.",
+    "proxy_control": "PING_TRANSACTION is packed '_PNG' (0x5f504e47), above MAX_TRANSACTION_ID 0x00ffffff; ordinary IPCObjectProxy::SendRequest rejects it before transport. This does not prove raw Binder driver transactions impossible.",
+    "unknowns": "Raw driver caller/handle policy, cross-process handle transfer, target sensitivity, UID/PID/token checks, kernel behavior and product transport are not closed."
+  },
+  "caller_permission_matrix": [
+    {
+      "case": "framework registry ping",
+      "input": "empty parcel; TF_IMAGE",
+      "expect": "success iff BinderInvoker SendRequest returns ERR_NONE; caller ignores reply int",
+      "status": "source-supported intended caller"
+    },
+    {
+      "case": "public IPCObjectProxy::SendRequest(PING)",
+      "expect": "IPC_PROXY_INVALID_CODE_ERR before driver",
+      "status": "source-level negative control"
+    },
+    {
+      "case": "caller without handle / invalid handle",
+      "expect": "transport failure and no stub callback",
+      "status": "must verify on matching product/kernel"
+    },
+    {
+      "case": "unprivileged caller with a transferred valid handle",
+      "expect": "compare public API rejection versus controlled low-level transport; record caller UID/PID/token and outcome",
+      "status": "permission and exposure unknown; do not treat handle possession as unauthorized by itself"
+    },
+    {
+      "case": "payload/options variations",
+      "input": "empty, malformed, bounded non-empty payload and sync/async options",
+      "expect": "if dispatched, same result/reply and no application state change",
+      "status": "unit oracle only; wire parser coverage is separate"
+    }
+  ],
+  "oracle": {
+    "status": "design_only_not_executed",
+    "preconditions": "Matching IPC source/build and product config, actual Binder driver, two controlled processes, recorded stub and documented handle transfer/permission rules.",
+    "positive": "Live valid registry object: transaction returns ERR_NONE, reply is exactly one int32 ERR_NONE, recording OnRemoteRequest count/state unchanged.",
+    "negative_controls": [
+      "Unknown code below MAX_TRANSACTION_ID dispatches to recording OnRemoteRequest and increments count; PING does not.",
+      "Public proxy PING returns IPC_PROXY_INVALID_CODE_ERR without transport.",
+      "No-handle and stale-handle attempts fail without callback, compared with same caller holding a valid handle.",
+      "Privileged intended holder versus low-privilege valid-handle holder: any differing access is only a liveness disclosure until sensitive target/policy violation is demonstrated.",
+      "Mock WriteInt32 failure returns IPC_STUB_WRITE_PARCEL_ERR; this is not remotely attacker-controlled evidence."
+    ],
+    "observables": [
+      "driver/transport reachability",
+      "return/error",
+      "reply length and decoded int32",
+      "OnRemoteRequest invocation count",
+      "stub state before/after",
+      "caller UID/PID/token",
+      "handle validity and origin"
+    ],
+    "falsifier": "Proxy rejects the code; driver denies callers without a handle; holders are authorized to observe liveness; no sensitive unauthorized effect exists.",
+    "not_proven": "No product test or liveness-confidentiality impact was executed or established."
+  },
+  "coverage": {
+    "dispatch": "No SendRequest unit case covers PING; existing SendRequestTest001-004 cover descriptor, refcount, dump, proto only.",
+    "handler": "Unit directly invokes handler and checks ERR_NONE, not reply bytes; separate mock directly checks reply-write failure.",
+    "fuzz": "ipcobjectstub008 calls handler directly with generated code; binderinvoker002 calls PingService with arbitrary handle and no valid driver/result oracle.",
+    "caller": "GetProxyObject tests mock PingService result; not actual transport.",
+    "integration": "Reviewed tests do not demonstrate external reachability, permissions, handle distribution or driver liveness confidentiality; product binary not run."
+  },
+  "candidate_assessment": {
+    "confirmed": 0,
+    "reportable": 0,
+    "new_ids": [],
+    "result": "No candidate. Source-bound mechanism is intended liveness probe; unauthorized caller, sensitive target, or violated policy/security effect not proven.",
+    "possible_followup": "If a product owner identifies a sensitive service whose valid handle is available to a lower-privilege principal contrary to policy, run the oracle and then reassess; do not create a detector rule on current evidence."
+  },
+  "product_dependency": {
+    "status": "unavailable_not_run",
+    "required": "Build/runtime matching IPC bbb92db… and matching product manifest/kernel plus device Binder driver; establish actual API/driver entry and handle/permission policy.",
+    "evidence": "Provenance-bound product binary, with/without-handle caller observations, UID/PID/token, result/reply/callback/state. Test oracle is not product proof."
+  },
+  "actions": {
+    "code_changed": false,
+    "tests_changed": false,
+    "poc_run": false,
+    "product_tests_run": false,
+    "source_review_only": true
+  }
+}

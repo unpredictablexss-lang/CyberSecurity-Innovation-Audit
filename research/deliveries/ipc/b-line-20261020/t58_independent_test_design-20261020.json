@@ -1,0 +1,141 @@
+{
+  "task_id": "T58",
+  "date": "2026-10-20",
+  "mode": "independent_test_design_and_counterreview",
+  "read_only": true,
+  "product_code_modified": false,
+  "poc_or_product_test_run": false,
+  "source_anchor": {
+    "repository": "openharmony/communication_ipc",
+    "commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "commit_tree": "125ecbfa21f430f2f977f0026ab97b70cd27a726",
+    "local_raw_files_match_target_blobs": true,
+    "binding_note": "The local IPC checkout Git metadata is unusable (.git/config read errors), so local commit identity was not asserted. For each listed file, the raw SHA-256 was computed locally and the blob ID resolved from the previously fetched exact target commit object database; the file bytes match the target blob."
+  },
+  "route": {
+    "name": "IPCObjectProxy::GetInterfaceDescriptor -> SendRequestInner(INTERFACE_TRANSACTION) -> IPCObjectStub::SendRequest -> DBinderSearchDescriptor -> reply.ReadString16",
+    "source_files": [
+      {
+        "path": "ipc/native/src/core/framework/source/ipc_object_proxy.cpp",
+        "sha256": "4d1e24129bec4a642047fb6187f63b40a1b17c1f1740f7b816f7691890b92157",
+        "target_blob": "4701faa882a030d0f34772d4b85b432b0be87e1e",
+        "relevant_lines": "266-291; SendRequestInner at 221-245"
+      },
+      {
+        "path": "ipc/native/src/core/framework/source/ipc_object_stub.cpp",
+        "sha256": "554a27bf335d0048373c326f3f9bddea9ba134b73bf8dca622d6c80b644656bb",
+        "target_blob": "22c3a682c20fd350b318cad17a6d621206e65ba7",
+        "relevant_lines": "183-192; SendRequest switch at 439-475"
+      },
+      {
+        "path": "test/unittest/ipc/native/core/ipc_object_stub_unittest.cpp",
+        "sha256": "614f2bf9eb33e14d1f28bfe07fb2d649016c86762a14df7df76523e1167f4e50",
+        "target_blob": "2854f033f6217df54571997e9d1cfec886e30ce3",
+        "relevant_lines": "361-397"
+      },
+      {
+        "path": "test/unittest/ipc/native/core/ipc_object_proxy_unittest.cpp",
+        "sha256": "b19d5b58a422ed548086cb4e3f8f351a85d829fc74971537093d367832878b06",
+        "target_blob": "9bb068620bb26c7c96455b71cf575560c81f4790",
+        "relevant_lines": "205-263"
+      },
+      {
+        "path": "test/fuzztest/ipc/native/mock/ipcobjectstubmock_fuzzer/ipcobjectstubmock001_fuzzer/ipcobjectstubmock001_fuzzer.cpp",
+        "sha256": "b4bc60b02e4801538b42207ec4f047eb75129fb39e1d204b7804e0f47731064f",
+        "target_blob": "32ce9db004e2b3353af4663a30f91dd36ada28b3",
+        "relevant_lines": "109-123"
+      },
+      {
+        "path": "test/fuzztest/ipc/native/mock/ipcobjectstubmock_fuzzer/ipcobjectstubmock004_fuzzer/ipcobjectstubmock004_fuzzer.cpp",
+        "sha256": "b31867bde73318a4a3bc33a7da714c4b2a18fa82a705b0035bff202fba7980d0",
+        "target_blob": "3059036558fce9328a1a6e2af0e552f29b106fc0",
+        "relevant_lines": "116-143"
+      }
+    ]
+  },
+  "security_effect_assessment": {
+    "candidate_count": 0,
+    "finding_status": "no_candidate",
+    "reason": "The stub derives the response solely from its own GetObjectDescriptor() and writes that UTF-16 descriptor. The proxy helper is a documented metadata query; a non-empty cached interfaceDesc_ is returned locally, otherwise a nonzero handle sends INTERFACE_TRANSACTION and caches the reply. No sensitive state mutation, authorization change, arbitrary caller data reflection, or security consequence is established. Access to the remote object handle/transport remains a precondition; disclosure of that object's interface identifier is the intended effect."
+  },
+  "independent_counterreview_of_D57": {
+    "D57_claim_challenged": "An untrusted query can cause an INTERFACE_TRANSACTION dispatch and receive a descriptor; candidate excluded because the returned value is public interface metadata and no sensitive effect is shown.",
+    "checks": [
+      {
+        "question": "Can request data select or inject the returned descriptor?",
+        "source_result": "No in this handler: DBinderSearchDescriptor ignores code/data/option, calls GetObjectDescriptor() on this stub, and writes that value to reply. Proxy sends an empty data parcel."
+      },
+      {
+        "question": "Does malformed or rejected input produce a distinct security effect?",
+        "source_result": "No input parser exists on this route. Malformed/extra request bytes therefore do not alter the descriptor source. A failed reply WriteString16 returns IPC_STUB_WRITE_PARCEL_ERR; proxy SendRequestInner failure returns an empty string. Neither path mutates state. These expected cases should be explicit negative controls, not vulnerability evidence."
+      },
+      {
+        "question": "Is there a security-relevant caller distinction?",
+        "source_result": "No caller UID/PID/permission branch is present in this handler. A handle-zero proxy returns empty without dispatch; a transport error returns empty. Successfully holding a usable remote-object handle is the relevant boundary."
+      },
+      {
+        "question": "Do current tests validate the complete proxy-to-stub lifecycle?",
+        "source_result": "No. Stub unit tests call DBinderSearchDescriptor directly and mock WriteString16 success/failure. Proxy tests cover cache, handle zero, dead remote, and a success path with a mocked invoker plus mocked ReadString16; they do not dispatch into a real IPCObjectStub. ipcobjectstubmock001 fuzzes the helper directly; ipcobjectstubmock004 invokes SendRequest over random data and a code list including INTERFACE_TRANSACTION but asserts no response invariant."
+      }
+    ],
+    "D57_feedback": "The 0-candidate conclusion is supported. Keep the path as a semantic/integration test gap only. Do not classify the absence of an auth check or the intended descriptor reply as a vulnerability without separate evidence that the descriptor is sensitive and that a caller lacking the expected object access can reach the route."
+  },
+  "minimum_oracle_matrix": [
+    {
+      "case": "positive_uncached",
+      "setup": "Create a real IPCObjectStub with a unique UTF-16 descriptor and a nonzero proxy handle with empty interfaceDesc_; connect proxy SendRequestInner to the stub's public SendRequest using a test invoker seam.",
+      "expected": "GetInterfaceDescriptor returns exactly the stub's descriptor; the captured transaction code is INTERFACE_TRANSACTION; no bytes from request data influence the value."
+    },
+    {
+      "case": "malformed_or_extra_request_data_control",
+      "setup": "At the dispatcher seam, submit INTERFACE_TRANSACTION with empty, truncated, and unrelated parcel bytes.",
+      "expected": "Same stub descriptor and success result, since this handler does not parse request data; no state change. This is a robustness control, not a claimed security bug."
+    },
+    {
+      "case": "reply_write_rejection_negative",
+      "setup": "Inject a test-only reply writer failure at DBinderSearchDescriptor.",
+      "expected": "IPC_STUB_WRITE_PARCEL_ERR; proxy returns empty descriptor; no state change. Existing direct helper test covers the write failure only at helper level."
+    },
+    {
+      "case": "invalid_handle_negative",
+      "setup": "Proxy handle is zero and interfaceDesc_ is empty.",
+      "expected": "Empty descriptor and no SendRequest invocation. Existing proxy test covers this local branch."
+    },
+    {
+      "case": "cached_descriptor_control",
+      "setup": "Proxy interfaceDesc_ already contains a nonempty cached descriptor.",
+      "expected": "Returns cached descriptor without dispatch. Existing proxy test covers this local branch; include a send-count assertion if it is part of the joined oracle."
+    },
+    {
+      "case": "wrong_code_control",
+      "setup": "Dispatch an adjacent unknown code to the same stub.",
+      "expected": "Does not enter DBinderSearchDescriptor and does not return the descriptor; default OnRemoteRequest result applies."
+    }
+  ],
+  "coverage_and_test_gap": {
+    "unit": "IPCObjectStubUnitTest::DBinderSearchDescriptorTest001/002 test only helper write success/failure; IPCObjectProxyUnitTest::GetInterfaceDescriptorTest001-004 test cache/zero handle/dead proxy/mocked success. No existing test joins the proxy request to a real stub dispatcher and validates descriptor origin end to end.",
+    "fuzz": "ipcobjectstubmock001 calls DBinderSearchDescriptor directly with mocked writer; ipcobjectstubmock004 calls IPCObjectStub::SendRequest for random payloads and a fixed code list including INTERFACE_TRANSACTION but has no assertions for transaction routing, descriptor value, cache, or caller result. Fuzzing therefore exercises some route code but is not an oracle for the lifecycle invariant.",
+    "integration": "No current evidence of a product integration test that binds an IPCObjectProxy to an IPCObjectStub over Binder/DBinder transport for this route."
+  },
+  "production_entry_and_boundary": {
+    "api_entry": "IPCObjectProxy::GetInterfaceDescriptor; if cache empty and handle nonzero, invokes SendRequestInner(false, INTERFACE_TRANSACTION,...).",
+    "dispatch_effect": "IPCObjectStub::SendRequest switch maps INTERFACE_TRANSACTION directly to DBinderSearchDescriptor; helper returns this object's GetObjectDescriptor() in reply.",
+    "caller_boundary": "Requires a proxy/remote-object handle and functioning selected invoker/transport; handler itself has no caller-specific permission check.",
+    "test_not_poc": "The proposed test seam would connect API proxy through real product dispatcher/stub code in a unit-test process. It would not establish cross-process reachability, product handle-acquisition policy, or confidentiality classification of descriptors."
+  },
+  "build_and_run_feasibility": {
+    "status": "design_only_no_go_for_execution_now",
+    "reason": "The available IPC checkout's .git/config is unreadable/invalid, so no trustworthy local checkout HEAD can be reported. Earlier environment audit found no matching target product build context with usable IPC source root/build.ninja/args.gn and OHOS sysroot; C-line artifacts reference a missing /src tree and mismatched/missing dependencies. No relevant prebuilt unit binary is available in the current IPC tree inventory. The earlier C-line compiler presence does not make its source/build configuration a matching runnable target.",
+    "minimum_dependencies": [
+      "Clean product source lock containing IPC commit bbb92dbb2f52aca54ab268307c9476ac1802f3ff plus matching manifest and dependency revisions",
+      "Valid source root and generated GN build.ninja/args.gn for the same product configuration",
+      "Matching OHOS clang/sysroot and GN/Ninja dependencies (bounds_checking_function, c_utils, ffrt, googletest/gmock, hilog, hitrace, samgr)",
+      "Build targets IpcObjectStubUnitTest and IPCObjectProxyUnitTest; add a test-only invoker bridge or equivalent deterministic seam that invokes the real stub SendRequest"
+    ],
+    "execution_status": "No build/test command run for the IPC product target; oracle is design only."
+  },
+  "next_feedback_gate": {
+    "to_D57": "Confirm the source pin and no-candidate boundary. If retaining the route, classify it as benign metadata behavior and keep candidate_count=0; do not let test coverage absence raise confidence. T58's only actionable gap is a deterministic proxy-to-stub semantic regression, contingent on a matching build tree.",
+    "to_owner": "D57 and T58 selected the same path; this counterreview closes their overlap as 0 security candidates. Next parallel scout should choose a distinct unreviewed effect only if the task tree shows one; do not force a new IPC finding from this test gap."
+  }
+}

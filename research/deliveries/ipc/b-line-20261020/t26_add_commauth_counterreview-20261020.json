@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "task_id": "T26",
+  "title": "Independent counterreview of DBINDER_ADD_COMMAUTH to AddAuthInfo",
+  "review_status": "target_ipc_route_bound_external_softbus_identity_unverified_no_candidate_promoted",
+  "reviewed_at": "2026-10-20",
+  "reviewer_independence": "Inspected source and tests independently; did not use D25 findings as an oracle.",
+  "target": {
+    "repository": "openharmony/communication_ipc",
+    "required_commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "available_checkout_commit": "5903fd5f7332a427cb3f6915b0202ee5c76c63b5",
+    "binding_status": "bound_for_ipc_route_by_independent_D25_raw_pins_and_matching_local_SHA256",
+    "reason": "The independent D25 report fetched immutable raw files at the required commit and provided SHA-256/Git blob bindings. T26 independently inspected the local checkout and its SHA-256 values match D25 for ipc_object_stub.cpp, dbinder_databus_invoker.cpp, dbinder_base_invoker_process.h and ipc_process_skeleton.cpp. D25 additionally binds databus_socket_listener.cpp and session object files. The target-paired SoftBus implementation and deployed build remain unbound."
+  },
+  "source_files": [
+    {
+      "path": "ipc/native/src/core/framework/source/ipc_object_stub.cpp",
+      "sha256": "554a27bf335d0048373c326f3f9bddea9ba134b73bf8dca622d6c80b644656bb"
+    },
+    {
+      "path": "ipc/native/src/core/dbinder/source/dbinder_databus_invoker.cpp",
+      "sha256": "378776e256a8438c5bb28c57acc39172b3376512907718e813b71406b7251217"
+    },
+    {
+      "path": "ipc/native/src/core/dbinder/include/dbinder_base_invoker_process.h",
+      "sha256": "bcd53526774d44fa4d86b21f94a4b3dd3239a8fbc923c5a8d0ba28e6f2aa49e9"
+    },
+    {
+      "path": "ipc/native/src/core/dbinder/source/databus_socket_listener.cpp",
+      "sha256": "dce80ace50af9f18a0e003f0bd49cdf6b4ba22a4012fe51df2a4bbb8456acb3b",
+      "git_blob_from_D25": "7a01e036427e45385b02605a403dbca35b318aab"
+    },
+    {
+      "path": "ipc/native/src/core/framework/source/ipc_process_skeleton.cpp",
+      "sha256": "cdffaaf0054da5c80d64c0cec6ef287c9c24e432bc50a49d3288336715910366"
+    },
+    {
+      "path": "test/unittest/common/ipc_object_stub_unittest.cpp",
+      "sha256": "1652c75bd68e929f21d73c5ca5263aa9e829478e1a6bdb4f2d4ba202d1ba33bc"
+    },
+    {
+      "path": "test/fuzztest/ipc/native/core/ipcobjectstub_fuzzer/ipcobjectstub004_fuzzer/ipcobjectstub004_fuzzer.cpp",
+      "sha256": "b4f2b5c3440c06dbb9ad897017ad2325f5e8a8fd27409006a788b1fb9102da25"
+    },
+    {
+      "path": "test/fuzztest/ipc/native/core/ipcprocessskeleton_fuzzer/ipcprocessskeleton005_fuzzer/ipcprocessskeleton005_fuzzer.cpp",
+      "sha256": "ae0020350bec89d0b5ee527c58e5e44aa8fadf32a29376b8ef23bd266b5d5d11"
+    }
+  ],
+  "route_review": {
+    "transport_gate": {
+      "status": "supported_in_available_source",
+      "evidence": [
+        "DBinderBaseInvoker<T>::ProcessTransaction translates incoming objects, saves prior caller context, calls CheckAndSetCallerInfo(listenFd, tr->cookie), installs ACTIVE_INVOKER, dispatches the transaction, then restores prior status and caller context.",
+        "DBinderDatabusInvoker::CheckAndSetCallerInfo obtains the session by socket/listenFd; uses peerPid, peerUid, tokenId and deviceId from DBinderSessionObject; requires IPCProcessSkeleton::QueryAppInfoToStubIndex to match registered peer identity and stubIndex before SetCallerInfo.",
+        "IPCObjectStub::DBinderAddCommAuth rejects local Binder calls, obtains the DBinder databus invoker, rejects GetCallerUid() >= ALLOWED_UID (10000), and only then calls AddAuthInfo."
+      ],
+      "source_locations": [
+        "ipc/native/src/core/dbinder/include/dbinder_base_invoker_process.h:91-135",
+        "ipc/native/src/core/dbinder/source/dbinder_databus_invoker.cpp:808-840",
+        "ipc/native/src/core/framework/source/ipc_object_stub.cpp:299-320",
+        "ipc/native/src/core/framework/source/ipc_process_skeleton.cpp:1656-1674"
+      ]
+    },
+    "d25_independent_delta_review": {
+      "status": "verified_against_T26_findings",
+      "confirmed_counterevidence": [
+        "D25 target pins confirm ProcessTransaction calls CheckAndSetCallerInfo before target stub dispatch; a failure returns without dispatch. This covers DBINDER_ADD_COMMAUTH on this receive path.",
+        "D25 target pins confirm CheckAndSetCallerInfo requires a preexisting appInfoToStubIndex_ tuple/stubIndex entry whose socket is zero or the current socket.",
+        "D25 target pins confirm ServerOnBind/OnReceiveNewConnection requires a preexisting CommAuthInfo match for service-name-derived pid/uid and networkId before attaching the accepted session.",
+        "D25 target pins confirm GetPidAndUidFromServiceName parses the peer name in IPC code but does not authenticate it there; trust depends on SoftBus and product integration."
+      ],
+      "hash_comparison": {
+        "status": "matching_for_all_T26_route_files_in_D25_source_set",
+        "matched_target_paths": [
+          "ipc/native/src/core/framework/source/ipc_object_stub.cpp",
+          "ipc/native/src/core/dbinder/source/dbinder_databus_invoker.cpp",
+          "ipc/native/src/core/framework/source/ipc_process_skeleton.cpp",
+          "ipc/native/src/core/dbinder/include/dbinder_base_invoker_process.h",
+          "ipc/native/src/core/dbinder/source/databus_socket_listener.cpp"
+        ],
+        "method": "Compared T26 local SHA-256 values with the D25 immutable-raw target commit SHA-256 values; all five match. D25 also supplies target Git blob IDs."
+      },
+      "reviewer_additions": [
+        "T26 verified the unit/fuzzer coverage boundary: existing tests mock the gate or directly call helpers, so they do not prove the real SoftBus identity binding or end-to-end tuple poisoning invariant.",
+        "T26 independently confirms parcel values are not compared with the current caller tuple inside AddAuthInfo; that local fact alone does not bypass the pre-dispatch mapping check or prove a later different socket can pass it."
+      ],
+      "remaining_questions": [
+        "Whether SoftBus PeerSocketInfo.name is authenticated and bound to a remote OS principal.",
+        "Whether a third-party app can cause the required preexisting CommAuthInfo and appInfoToStubIndex_ entry, or access an admitted uid below 10000.",
+        "Whether victim deviceId/pid/uid/tokenId/stubIndex tuple and socket constraints can be satisfied by an unrelated endpoint in the target product."
+      ]
+    },
+    "caller_uid": {
+      "status": "conditioned_on_session_registration",
+      "evidence": "GetCallerUid returns DBinderDatabusInvoker::callerUid_; normal inbound transaction processing sets that field from the resolved DBinderSessionObject peerUid after QueryAppInfoToStubIndex succeeds, and restores the previous caller context after dispatch.",
+      "limits": "The upstream establishment/authentication of DBinderSessionObject peerUid and product trust semantics of UID < 10000 are not established by this checkout alone. Do not describe UID as kernel-attested without that evidence."
+    },
+    "allowed_uid": {
+      "status": "threshold_verified_semantics_unknown",
+      "value": 10000,
+      "evidence": "The source and unit test define ALLOWED_UID=10000 and use the strict rejection condition uid >= ALLOWED_UID. This establishes a numeric gate, not the product policy meaning or the trustworthiness of the session peerUid."
+    },
+    "parcel_fields": {
+      "status": "directly_trusted_after_limited_validation",
+      "fields": ["remotePid:uint32", "remoteUid:uint32", "remoteDeviceId:string", "stubIndex:uint64", "tokenId:uint32"],
+      "evidence": "AddAuthInfo reads these fields directly. It rejects an illegal/empty device ID, and when stubIndex is zero it resolves this stub's index (or errors if still zero). It does not compare the supplied remote PID/UID/token/device ID to the current DBinder caller context. AttachOrUpdateAppAuthInfo return value controls IncStrongRef only; the transaction returns ERR_NONE otherwise."
+    },
+    "state_effect_and_consumers": {
+      "status": "source_supported",
+      "evidence": [
+        "AttachOrUpdateAppAuthInfo keys appInfoToStubIndex_ by deviceId + pid + uid + tokenId, then maps stubIndex to socketId.",
+        "A non-null stub also causes CommAuthInfo insertion/update keyed by remote object and peer identity; QueryCommAuthInfo can return its token ID.",
+        "Inbound databus CheckAndSetCallerInfo later requires the same registered peer tuple and stubIndex before assigning caller context."
+      ],
+      "security_boundary": "A forged AppAuthInfo field would alter future identity authorization only if an attacker can reach AddAuthInfo through a session accepted by the low-UID gate and can make the affected identity tuple relevant to a later session. The local source review does not establish that attacker capability or a concrete unauthorized operation."
+    }
+  },
+  "test_coverage_review": {
+    "unit": [
+      "ipc_object_stub_unittest.cpp SendRequestTest016 exercises DBINDER_ADD_COMMAUTH via mocked IsLocalCalling=false and mocked GetCallerUid=ALLOWED_UID-1; it verifies the threshold allow branch, not genuine peer identity provenance.",
+      "AddAuthInfo tests cover malformed/empty input and stub-index fallback behavior, but invoke AddAuthInfo directly and do not test field-to-caller binding or downstream impersonation.",
+      "ipc_process_skeleton_unittest covers AttachOrUpdateAppAuthInfo state operations; it does not establish the full transaction, transport, and caller-identity chain."
+    ],
+    "fuzz": [
+      "ipcobjectstub004_fuzzer directly calls DBinderAddCommAuth; ipcobjectstub003_fuzzer directly calls AddAuthInfo. These exercise parcel/path robustness without actual databus transport identity setup.",
+      "ipcprocessskeleton005_fuzzer directly mutates AppAuthInfo through AttachOrUpdateAppAuthInfo and detach operations; no integrated authorization oracle is evident from source inspection."
+    ],
+    "execution": "No tests or PoCs were run, per task instructions."
+  },
+  "candidate_assessment": {
+    "count": 0,
+    "status": "insufficient",
+    "finding": null,
+    "rationale": "The five files covering T26's IPC route hash-match D25's immutable raw target commit pins. The field mismatch possibility is real: AddAuthInfo does not compare parcel identity fields with the current caller tuple, and the inserted appInfo entry uses socketId 0, which QueryAppInfoToStubIndex treats as a wildcard for socket matching. However, the target receive path gates dispatch through CheckAndSetCallerInfo and an already registered identity/stubIndex/socket mapping; new socket acceptance also requires a preexisting CommAuthInfo tuple. The peer UID used by the low-UID gate is parsed from SoftBus PeerSocketInfo.name in IPC code, while authentication and OS-principal binding are external to these IPC sources and not pinned to the target build. The required low-UID caller reachability, victim tuple/stubIndex control and concrete unauthorized downstream action are not established. This is not promoted as a vulnerability candidate."
+  },
+  "required_follow_up": [
+    "Bind the target-paired SoftBus implementation/build revision and establish whether PeerSocketInfo.name is authenticated and maps to an OS UID; then establish whether a remote endpoint below UID 10000 can create the inbound session.",
+    "Establish whether the AddAuthInfo sender can choose a victim's stubIndex and whether zero-index fallback changes the relevant victim-stub binding.",
+    "Verify the later QueryAppInfoToStubIndex match uses the exact identity tuple and accepted socket semantics needed for an unrelated peer to exploit any inserted tuple.",
+    "If target code is materially identical, test the specific invariant that an accepted low-UID peer cannot register an unrelated identity tuple that a later inbound databus transaction can successfully use."
+  ]
+}

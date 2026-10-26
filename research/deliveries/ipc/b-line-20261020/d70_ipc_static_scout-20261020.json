@@ -1,0 +1,122 @@
+{
+  "schema": "ohscanner.b-ipc.d70-static-scout.v1",
+  "task": "D70",
+  "review_date": "2026-10-20",
+  "mode": "read_only_static",
+  "execution": {
+    "scanner_main_cached": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "scanner_origin_main_cached": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "fetch_origin_main": "failed: GitHub port 443 unavailable",
+    "remote_freshness": "unknown; cached SHA is not asserted to be latest",
+    "product_code_changed": false,
+    "scanner_code_or_tests_changed": false,
+    "tests_or_poc_run": false
+  },
+  "target": {
+    "repository": "openharmony/communication_ipc",
+    "commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "tree": "125ecbfa21f430f2f977f0026ab97b70cd27a726",
+    "source_object_store": "D:/openHarmonyScanner/worktrees/ipc-source-pin-20261020",
+    "binding_method": "For each source, read exact commit:path bytes from the immutable Git object store; recompute Git blob SHA-1 and SHA-256."
+  },
+  "task_tree_check": {
+    "plan": "research/deliveries/b-line-development-test-plan-20261020.md",
+    "previously_covered_or_excluded": [
+      "D9/D54 and GET_PROTO_INFO reply/session paths",
+      "DUMP_TRANSACTION",
+      "death-recipient/obituary",
+      "DBinder reference/session/listen/lifecycle/cleanup",
+      "SYSPROPS_TRANSACTION",
+      "descriptor route",
+      "REMOVE_SESSION_NAME",
+      "ADD_COMMAUTH",
+      "binder offset/read-object",
+      "duplicate/root attribution"
+    ],
+    "chosen_route": "PING_TRANSACTION -> IPCObjectStub::DBinderPingTransaction -> reply.WriteInt32(ERR_NONE)",
+    "novelty_basis": "The task-tree route reviews do not have a PING_TRANSACTION -> DBinderPingTransaction entry. PING appears in dispatch excerpts and adjacent fuzzers, but those incidental mentions are not a prior route assessment. This is a single-route review, not a whole-tree scan."
+  },
+  "source_bindings": [
+    {
+      "path": "ipc/native/src/core/framework/source/ipc_object_stub.cpp",
+      "lines": "174-180, 439-475",
+      "git_blob": "22c3a682c20fd350b318cad17a6d621206e65ba7",
+      "sha256": "554a27bf335d0048373c326f3f9bddea9ba134b73bf8dca622d6c80b644656bb",
+      "relevant_source": "DBinderPingTransaction writes only ERR_NONE and returns IPC_STUB_WRITE_PARCEL_ERR if reply serialization fails. SendRequest dispatches PING_TRANSACTION directly to this helper."
+    },
+    {
+      "path": "ipc/native/src/core/invoker/source/binder_invoker.cpp",
+      "lines": "1525-1532",
+      "git_blob": "4a5cd7530835659a0f9fad523c0f14c4c25570dd",
+      "sha256": "02c4e27beb57955df2afd3f836c1f38929f519b3d400f080a45a6f91e6210e4c",
+      "relevant_source": "BinderInvoker::PingService builds empty data/reply parcels, sends PING_TRANSACTION for a handle with TF_IMAGE, and returns whether the transport result is ERR_NONE. This is the concrete framework caller found in the audited IPC source."
+    },
+    {
+      "path": "interfaces/innerkits/ipc_core/include/ipc_types.h",
+      "lines": "39-45, 78-81",
+      "git_blob": "1465e1e51f46c564e47a2fd9fd410175047f7913",
+      "sha256": "656bb739c9262eed524ca8a4550d64cf1ad0f627c261a3fa97a829136c891077",
+      "relevant_source": "Defines PING_TRANSACTION as packed _PNG and MAX_TRANSACTION_ID as 0x00ffffff."
+    },
+    {
+      "path": "ipc/native/src/core/framework/source/ipc_object_proxy.cpp",
+      "lines": "188-192",
+      "git_blob": "4701faa882a030d0f34772d4b85b432b0be87e1e",
+      "sha256": "4d1e24129bec4a642047fb6187f63b40a1b17c1f1740f7b816f7691890b92157",
+      "relevant_source": "Public proxy SendRequest rejects codes above MAX_TRANSACTION_ID except DUMP_TRANSACTION before SendRequestInner; PING_TRANSACTION is outside the ordinary transaction range."
+    },
+    {
+      "path": "test/unittest/common/ipc_object_stub_unittest.cpp",
+      "lines": "103-116",
+      "git_blob": "1bf3ead278c351f2411ef5e1669333b8091ba18e",
+      "sha256": "1652c75bd68e929f21d73c5ca5263aa9e829478e1a6bdb4f2d4ba202d1ba33bc",
+      "relevant_source": "DBinderPingTransactionTest001 directly invokes the helper with code=0 and asserts ERR_NONE; it does not dispatch through SendRequest or assert reply contents."
+    },
+    {
+      "path": "test/unittest/ipc/native/core/ipc_object_stub_unittest.cpp",
+      "lines": "344-358",
+      "git_blob": "2854f033f6217df54571997e9d1cfec886e30ce3",
+      "sha256": "614f2bf9eb33e14d1f28bfe07fb2d649016c86762a14df7df76523e1167f4e50",
+      "relevant_source": "Mocked WriteInt32 failure directly invokes the helper and asserts IPC_STUB_WRITE_PARCEL_ERR."
+    },
+    {
+      "path": "test/fuzztest/ipc/native/core/ipcobjectstub_fuzzer/ipcobjectstub008_fuzzer/ipcobjectstub008_fuzzer.cpp",
+      "lines": "19-30, 88-95",
+      "git_blob": "5aafb181adeacf6f4040b6d1c825a09b4825739f",
+      "sha256": "4176c559ae6e957670b5e0a60b3e96334ee658c7f2c90e9315e4121f451e2182",
+      "relevant_source": "Fuzzer invokes DBinderPingTransaction directly with a fuzzed code and empty parcels; this exercises helper robustness, not transaction dispatch/transport."
+    }
+  ],
+  "route": {
+    "entry_and_caller": "The concrete caller is framework BinderInvoker::PingService(handle), which sends the special code through the invoker path. IPCObjectStub::SendRequest dispatches that code to DBinderPingTransaction when a Binder request reaches a stub. No application-facing Ping helper was found in the examined IPC sources.",
+    "transport_and_privilege_boundary": "The observed framework sender is BinderInvoker and the receiving helper sits after Binder transaction delivery in IPCObjectStub. Product driver authorization and whether any particular app/service can obtain and probe an arbitrary handle are outside these source files. The ordinary IPCObjectProxy::SendRequest API rejects this special code because it exceeds MAX_TRANSACTION_ID; the exposed transaction constant alone does not establish a reachable caller path.",
+    "attacker_controlled_input": "The helper does not read request parcel data, code, caller UID/PID, or token. An external sender able to deliver the transaction can at most request the fixed reply status; no attacker-controlled value reaches a sensitive sink.",
+    "guards_and_dominance": [
+      "At proxy API level, the code-range rejection dominates SendRequestInner for PING_TRANSACTION.",
+      "The framework BinderInvoker::PingService internal path is a separate sender and is not governed by IPCObjectProxy::SendRequest's code-range check.",
+      "After stub dispatch matches PING_TRANSACTION, the only helper branch is reply.WriteInt32 success/failure; no identity or request-data guard is present, but no state-changing operation follows."
+    ],
+    "sink_and_effect": "reply.WriteInt32(ERR_NONE) allows an internal sender to classify the transaction as successfully handled; write failure returns IPC_STUB_WRITE_PARCEL_ERR. No state mutation, privilege change, resource allocation, or attacker-controlled output is present in this helper.",
+    "strongest_counterexample": "Even if a caller could deliver PING_TRANSACTION without the ordinary proxy guard, the only response is the fixed ERR_NONE status. The public generic proxy path blocks the code, the concrete source caller is framework health checking, and the helper neither reads request contents nor changes state. Any generic object-existence/liveness inference would require separate evidence that an untrusted caller can obtain an arbitrary target handle and reach this special transaction, which is not established here.",
+    "existing_test_coverage": {
+      "unit_positive": "common/ipc_object_stub_unittest.cpp directly calls DBinderPingTransaction with code=0 and asserts ERR_NONE; it does not verify dispatch, public API reachability, or reply payload value.",
+      "unit_write_failure": "ipc/native/core/ipc_object_stub_unittest.cpp mocks WriteInt32=false and asserts IPC_STUB_WRITE_PARCEL_ERR; it directly calls the helper.",
+      "fuzzer": "ipcobjectstub008 fuzzer directly calls the helper with a fuzzed code; it does not exercise transaction delivery or BinderInvoker.",
+      "integration": "No test in the reviewed target source was found covering public caller -> PING dispatch -> Binder delivery -> reply end-to-end. No tests were executed in this scout."
+    }
+  },
+  "unknowns": [
+    "Whether any product-specific service, vendor wrapper, custom invoker, or driver path exposes PING probing to an untrusted caller.",
+    "Whether a product uses the BinderInvoker::PingService result for a security-sensitive decision; the audited helper itself only returns fixed success/error status.",
+    "Freshness of scanner origin/main because this turn's fetch failed."
+  ],
+  "verdict": {
+    "mechanism": "fixed status reply for PING_TRANSACTION",
+    "candidate_count": 0,
+    "confirmed_candidates": 0,
+    "conditional_candidates": 0,
+    "reportable": false,
+    "reason": "Caller reachability for an untrusted principal is not established and the pinned helper has no specific security-sensitive effect. This remains a harmless framework liveness response under the reviewed source, not a vulnerability candidate."
+  },
+  "feedback_for_T70": "Challenge whether a real untrusted caller can reach PING despite IPCObjectProxy::SendRequest rejecting the special code; if not, treat helper unit/fuzzer reachability as insufficient. Also check whether the product assigns security-sensitive meaning to BinderInvoker::PingService's ERR_NONE result."
+}

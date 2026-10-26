@@ -1,0 +1,173 @@
+{
+  "schema_version": "1.0",
+  "task_id": "T68",
+  "title": "Independent pinned-pair DBinder ingress, AEAD, D9 bounds, and D54 waiter oracle",
+  "reviewed_at_local": "2026-10-20 Asia/Shanghai",
+  "role": "independent test/integration oracle designer; read-only source and artifact review",
+  "scope": {
+    "source_or_product_code_changed": false,
+    "tests_or_product_build_run": false,
+    "poc_device_or_network_experiment_run": false,
+    "candidate_ids_created": 0,
+    "candidate_count_changed": false,
+    "candidate_disposition": "D9 remains insufficient/parked; D54-R1 remains conditional/insufficient; zero confirmed or reportable; D55/T56 merged into D54-R1",
+    "why_no_execution": "No matching product IPC source root or executable is available, and a test against another build would not answer the pinned-pair question. This artifact defines a falsifiable future integration oracle only."
+  },
+  "source_and_build_binding": {
+    "scanner_baseline": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "origin_main_freshness": "stale_or_unknown; latest fetch attempt failed to connect to github.com:443; no latest-main claim",
+    "frozen_manifest": {
+      "path": "D:/openHarmonyScanner/openharmony-manifest-current-20261018.xml",
+      "sha256": "52f528dada321a140a29be2d55ef9053fda818cbdca93758425f1a6286d55",
+      "ipc": "5903fd5f7332a427cb3f6915b0202ee5c76c63b5",
+      "dsoftbus": "7743b679f6c3599e21bea4e4b1564422668e3643",
+      "dsoftbus_tree": "d386e20f8074e037f330a5df11e99fc66ed155d0",
+      "meaning": "Verified immutable source lock, not evidence of a product binary built from this pair."
+    },
+    "ipc_candidate_analysis_anchor": {
+      "commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+      "meaning": "Independent source analysis anchor; T65 verifies all four relevant D9/D54 IPC files byte-identical to manifest IPC 5903, but full tree equality is false."
+    },
+    "product_build_gate": {
+      "status": "NO_GO",
+      "evidence": "T65 audit: IPC source tree and matching test/fuzzer executable absent; compile database records cwd /src/out/rk3568 while /src is empty; no build provenance binds surviving artifacts to the manifest pair.",
+      "execution_allowed_by_this_oracle": false,
+      "minimum_unblock": "Materialize a clean complete source tree from frozen manifest, verify candidate file hashes, create fresh build metadata at an existing root, record GN dependency graph/toolchain/args and build identity, and provide dedicated matching integration binaries. Do not reuse stale compile DB paths."
+    },
+    "pinned_paths_relevant": [
+      "IPC dbinder/dbinder_service/src/dbinder_service.cpp",
+      "IPC dbinder/dbinder_service/src/socket/dbinder_remote_listener.cpp",
+      "IPC dbinder/dbinder_service/src/dbinder_service_stub.cpp",
+      "IPC dbinder/c/include/dbinder_types.h",
+      "SoftBus core/transmission/trans_channel/proxy/src/softbus_proxychannel_listener.c",
+      "SoftBus core/transmission/common/src/trans_proxy_process_data.c",
+      "SoftBus core/transmission/trans_channel/common/src/trans_inner.c"
+    ]
+  },
+  "oracle_principles": [
+    "Run only in an isolated, instrumented test environment with synthetic local test identities; no production device, external peer, or real user data.",
+    "Use the exact manifest pair and verify commit/tree/blob or SHA-256 for candidate source files before compiling. Preserve build graph and artifact hashes.",
+    "Separate source behavior, channel delivery, authorization/reachability, memory-safety effects, and security consequence. A helper-level unit test cannot prove listener reachability or product impact.",
+    "The test peer must be an endpoint authorized to possess the session key. Do not model arbitrary off-path packet forging as possible on an AES-GCM route.",
+    "Treat replay behavior as unknown until a repeated authenticated frame is observed at the exact DBinder-selected route; crypto sequence/nonce use alone does not establish freshness policy.",
+    "A failure to reproduce under one route/configuration is bounded to that tested pair/configuration and does not imply all transports are safe."
+  ],
+  "experiment_matrix": [
+    {
+      "id": "T68-R1-route-peer-identity",
+      "question": "Does the product-selected DBinder listener actually receive the ordinary non-AUTH SoftBus proxy route reviewed by D66, and what authenticated peer/session identity accompanies that ingress?",
+      "setup": "Build exact manifest pair with trace-only test instrumentation. Exercise real DBinder session open and public listener callback using two isolated test peers with distinct synthetic device/session identities. Record actual channel type, appType, isEncrypt, session key/channel association, listener/socket/session IDs, peerSessionName, peerDeviceId/networkId and any independently verified remote principal credentials. Do not infer identity binding from string propagation.",
+      "cases": [
+        "Peer A opens a permitted DBinder session and sends one valid baseline transaction; prove callback to parser to expected handler.",
+        "Peer B opens its own permitted session and sends baseline; prove whether it reaches a distinct or shared process listener/context.",
+        "Use locally generated synthetic peer names with intentionally mismatched embedded UID/PID claims where protocol allows; record which handshake/authorization stage rejects or accepts and the credential source used for comparison.",
+        "Exercise configured channel variants only when product configuration selects them; label every untested variant unknown."
+      ],
+      "expected_observables": [
+        "Exact selected transport/channel path and whether proxy AES-GCM is on the actual DBinder receive route.",
+        "Whether listener gets socket/session identity and whether IPC callback carries it onward (source currently indicates socket argument is logged but not included in parsed message).",
+        "Concrete principal-binding checks or explicit absence in exercised route; accepted peer must be distinguished from arbitrary network sender.",
+        "Full request-to-handler trace with event IDs and no security-sensitive payloads."
+      ],
+      "falsifiers_and_limits": "If the route is not the reviewed proxy path, D66 AES-GCM properties cannot be applied. If peer/session identity is cryptographically authenticated but not bound to remote OS UID/PID, state exactly that distinction. Merely observing source name metadata or successful handshake does not prove an OS-principal binding.",
+      "status": "not executed; route and peer-principal behavior unknown"
+    },
+    {
+      "id": "T68-R2-d9-malformed-device-id-asan",
+      "question": "Can a valid authenticated endpoint deliver a malformed fixed-size DeviceIdInfo through the true listener/session route, and does subsequent GET_PROTO_INFO cause a read beyond the enclosing SessionInfo allocation or a security-relevant effect?",
+      "setup": "In test-only isolated process, use real listener ingress and a synthetic authenticated test peer. Register a valid stub and correctly NUL-terminated serviceName so the normal session gates pass. Mutate only fromDeviceId/toDeviceId bytes in DeviceIdInfo. Enable ASan plus allocator redzones and deterministic object/layout logging; observe both subobject and enclosing allocation boundaries. Route GET_PROTO_INFO through the real proxy/stub to an explicitly controlled test caller. Capture returned bytes only into a test buffer and classify recipient principal.",
+      "cases": [
+        "Valid terminated device IDs: control; no sanitizer error and expected descriptor response.",
+        "fromDeviceId all nonzero through DEVICEID_LENGTH+1; toDeviceId valid, then inverse; determine subsequent-field termination and whether scan stays within sizeof(SessionInfo).",
+        "Boundary variants: terminator at last allowed byte, first following byte zero, first following byte nonzero with later terminator, and no terminator before enclosing allocation end; each input remains within the fixed wire struct size.",
+        "Malformed DeviceIdInfo paired with invalid/unregistered stub; expected session reject and no GET_PROTO_INFO handler/parcel serialization.",
+        "Malformed DeviceIdInfo paired with invalid serviceName termination/length; expected reject before session attach and no handler.",
+        "Successful session followed by GET_PROTO_INFO from a non-attacker test principal; establish who receives data and whether any bytes beyond intended device ID are serialized."
+      ],
+      "expected_observables": [
+        "Ingress accepted/rejected, session attach state, GET_PROTO_INFO handler entry, exact source field read boundary, enclosing allocation size, and ASan report including access address/stack if any.",
+        "Whether MessageParcel::WriteString continues into adjacent struct members, terminates early, emits data, or faults; response bytes and recipient principal.",
+        "Whether the result is a subobject overread only, allocation-boundary overread, crash/availability effect, or disclosure to an untrusted principal."
+      ],
+      "falsifiers_and_limits": "A missing NUL check alone confirms a source defect but not heap OOB, crash, disclosure, or attacker impact. If the scan stays within SessionInfo or only returns intended metadata to an authorized caller, do not claim D9 security impact. Invalid stub/service controls must not reach the sink. Never read or disclose unrelated process memory; use synthetic adjacent bytes and sanitizer-only bounds observations.",
+      "status": "not executed; allocation-boundary, reachability, recipient, and impact unknown"
+    },
+    {
+      "id": "T68-R3-aead-integrity-duplicate-reorder",
+      "question": "On the actual DBinder-selected transport, are modified ciphertext/tag rejected, and are exact duplicated or reordered valid authenticated frames rejected as stale before listener delivery?",
+      "setup": "Use an isolated test transport/key controlled by two harness endpoints and instrument the precise SoftBus decrypt-to-listener boundary. Generate baseline frames through the normal sender to retain valid AEAD tags; mutate only test copies. Do not attempt key extraction or external-network injection.",
+      "cases": [
+        "Unmodified valid frame: expected authentication success and exactly one listener delivery.",
+        "Flip one ciphertext bit while retaining original tag; expected AEAD reject, zero listener deliveries, no waiter/session state change.",
+        "Flip one tag bit; same expected reject and no state change.",
+        "Replay exact previously accepted frame with same seq/tag after first delivery; observe decrypt result, replay/freshness gate, and listener count.",
+        "Send two valid generated frames in reversed order; observe whether each decrypts and whether receiver enforces monotonicity, duplicate detection, or only AEAD authenticity.",
+        "Send a new valid authenticated frame with a chosen application reply seq from the authorized test endpoint; distinguish endpoint-crafted payload from ciphertext replay."
+      ],
+      "expected_observables": [
+        "Packet sequence, auth/decrypt return code, listener callback count, replay/freshness decision point, and downstream state delta.",
+        "Source/configuration evidence that this is the product-selected channel, not just a proxy unit harness."
+      ],
+      "falsifiers_and_limits": "AES-GCM failure on mutation refutes unauthenticated modification only for the exercised route. Acceptance at decrypt does not itself establish harmful replay; rejection at listener may come from a higher gate. A valid key endpoint's ability to create a new frame is not proof of cross-peer reachability.",
+      "status": "not executed; exact DBinder route and freshness/replay behavior unknown"
+    },
+    {
+      "id": "T68-R4-d54-ab-waiter-correlation",
+      "question": "Can one valid DBinder peer frame wake/detach a different live pending waiter by seq alone, and does that produce reproducible user-visible availability or integrity impact?",
+      "setup": "Instrument real request registration, reply/error dispatch, MakeSessionByReplyMessage, WakeupThreadByStub and DetachThreadLockInfo in a two-peer test process. Use barriers to hold waiters A/B live concurrently. Assign and record seqA/seqB, originating peer/session/networkId, stub, waiter result, session attach, and caller-visible return. First test same-session behavior, then cross-session only if route R1 proves the peers can reach the same listener context. Generate frames through authorized endpoints; separately test exact replay per R3.",
+      "cases": [
+        "A and B live; reply seqA with matching A stub/serviceName from A: only A should wake and receive expected session.",
+        "A and B live; reply seqB from A (wrong waiter): record whether B wakes/detaches, whether its own stub/session remains absent, and whether caller sees bounded/retryable failure.",
+        "Same pair for REMOTE_ERROR: correct seqA, wrong live seqB, unknown seq, detached seq, duplicate error, and late error after timeout.",
+        "Success reply with wrong/unregistered stub, invalid serviceName or zero stubIndex: expected no session attach; record separately whether seq-only wake still occurs.",
+        "Valid response for one peer carrying the other peer's active seq; only run after R1 shows shared targetability and preserve peer/session identity evidence.",
+        "Reverse arrival order and timeout/close controls to test whether seq reuse/wrap or waiter teardown changes the result."
+      ],
+      "expected_observables": [
+        "For every case: waiter A/B ready flag and return status, map membership before/after, detach count, session/stub association, peer/networkId, and API-visible result.",
+        "Whether mismatched seq wake is confined to same authenticated session or crosses peer/session boundaries.",
+        "Repeatability and recovery/retry behavior; do not equate one negotiation failure with material denial of service."
+      ],
+      "falsifiers_and_limits": "A helper-only direct WakeupThreadByStub call proves only local map semantics. No cross-peer reportability if sessions cannot target a shared listener or a peer cannot learn/target a live seq. A bounded retryable error with no integrity, persistence, or availability consequence leaves D54-R1 insufficient. Error path shares the same seq-only root and must not create a second ID.",
+      "status": "not executed; cross-peer active-seq targetability and impact unknown"
+    },
+    {
+      "id": "T68-R5-reject-controls",
+      "question": "Do existing stub, serviceName, and session controls reject malformed success replies before mutation, and do error replies have the same or fewer gates?",
+      "setup": "Run as part of R2/R4 with instrumented real ingress and snapshots of session/waiter state immediately before and after each transaction.",
+      "cases": [
+        "Unregistered stub and mismatched registered stub for a success reply.",
+        "serviceName missing NUL, inconsistent declared length, empty/invalid value.",
+        "Zero stubIndex; existing/terminated session control; failed attach control.",
+        "Corresponding REMOTE_ERROR with unknown/active seq and no valid stub/device/session fields.",
+        "Timeout/late/duplicate message after waiter detach."
+      ],
+      "expected_observables": [
+        "Exact reject gate and return value; no session mutation when the gate fails.",
+        "For error path, whether waiter wake/detach occurs despite absent session/stub checks; caller-visible outcome and scope."
+      ],
+      "falsifiers_and_limits": "A successful reject control narrows only the success-session path; it does not imply error replies have equivalent gates. State may be process-local and transient. No security claim without demonstrated remote delivery and consequence.",
+      "status": "not executed; controlled product behavior unknown"
+    }
+  ],
+  "decision_rules": {
+    "D9": "Keep insufficient/parked unless exact pinned-pair ingress plus ASan or equally decisive bounds instrumentation proves access beyond the enclosing allocation (or another concrete fault), and the path establishes a relevant attacker-controlled peer and concrete CIA effect/recipient. Subobject boundary absence alone is not promotion evidence.",
+    "D54_R1": "Keep conditional/insufficient unless exact pinned-pair runtime proves an authorized but attacker-controlled peer can target another live waiter's seq at the real listener and yields repeatable material availability/integrity consequence. Merge REMOTE_ERROR sibling under the same root; do not duplicate candidate.",
+    "AEAD": "Do not claim off-path tampering for the tested AES-GCM route if mutations are rejected. Evaluate duplicates/reordering separately as freshness behavior. Distinguish malicious valid-key endpoint frames from replayed ciphertext.",
+    "build_gate": "No source-level or harness result substitutes for the exact pair product build. Current T65 gate remains NO_GO."
+  },
+  "safety_and_scope": {
+    "only_synthetic_test_peers_and_payloads": true,
+    "external_network_or_real_device_used": false,
+    "production_data_or_memory_disclosure_attempted": false,
+    "product_source_or_build_modified": false,
+    "product_tests_executed": false,
+    "test_execution_claimed": false,
+    "candidate_added_or_promoted": false
+  },
+  "artifact_integrity": {
+    "path": "research/deliveries/ipc/b-line-20261020/t68_pinned_pair_oracle-20261020.json",
+    "validated_as_json": true,
+    "sha256": null
+  }
+}

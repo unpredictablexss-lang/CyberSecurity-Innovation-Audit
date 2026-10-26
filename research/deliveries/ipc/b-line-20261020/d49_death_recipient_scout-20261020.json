@@ -1,0 +1,207 @@
+{
+  "schema": "ohscanner.bline-death-recipient-scout.v1",
+  "task": "D49",
+  "verified_at_utc": "2026-10-19T22:08:02Z",
+  "scope": {
+    "repository": "openharmony/communication_ipc",
+    "target_commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "target_tree": "125ecbfa21f430f2f977f0026ab97b70cd27a726",
+    "route": "IPCObjectProxy death-recipient registration/removal -> Binder BR_DEAD_BINDER / BR_CLEAR_DEATH_NOTIFICATION or DBinder obituary callbacks",
+    "read_only": true,
+    "tests_run": false,
+    "poc_run": false,
+    "product_code_changed": false
+  },
+  "source_binding": {
+    "method": "Fetched immutable raw.githubusercontent.com files from target commit; recomputed SHA-256 and Git blob OIDs from exact response bytes.",
+    "files": [
+      {
+        "path": "ipc/native/src/core/framework/source/ipc_object_proxy.cpp",
+        "bytes": 49196,
+        "sha256": "4d1e24129bec4a642047fb6187f63b40a1b17c1f1740f7b816f7691890b92157",
+        "git_blob": "4701faa882a030d0f34772d4b85b432b0be87e1e"
+      },
+      {
+        "path": "ipc/native/src/core/invoker/source/binder_invoker.cpp",
+        "bytes": 69765,
+        "sha256": "02c4e27beb57955df2afd3f836c1f38929f519b3d400f080a45a6f91e6210e4c",
+        "git_blob": "4a5cd7530835659a0f9fad523c0f14c4c25570dd"
+      },
+      {
+        "path": "ipc/native/src/core/framework/source/ipc_process_skeleton.cpp",
+        "bytes": 64744,
+        "sha256": "cdffaaf0054da5c80d64c0cec6ef287c9c24e432bc50a49d3288336715910366",
+        "git_blob": "516fd9efd0ab405cbd0c8a985f9f203478fc4d52"
+      },
+      {
+        "path": "ipc/native/src/core/framework/include/ipc_process_skeleton.h",
+        "bytes": 12933,
+        "sha256": "02e7a822c88a4dafbdb4c52ad629fb4ad66ba019a26a6d363df5a890f0262fab",
+        "git_blob": "b31071270fb548f8f0c1d5d45bf861b1af02f254"
+      },
+      {
+        "path": "interfaces/innerkits/ipc_core/include/ipc_object_proxy.h",
+        "bytes": 14218,
+        "sha256": "58a825867d11664f7f8716c53e46d6c852eaeaae6da2770ea6b70a9b0fa2c73c",
+        "git_blob": "71e128907c3842441c9fe856472ceb5479263eea"
+      },
+      {
+        "path": "ipc/native/src/core/dbinder/source/dbinder_databus_invoker.cpp",
+        "bytes": 41140,
+        "sha256": "378776e256a8438c5bb28c57acc39172b3376512907718e813b71406b7251217",
+        "git_blob": "83450463d6d39f3a327ffa3dccccf0d8c957757d"
+      },
+      {
+        "path": "dbinder/dbinder_service/src/dbinder_service_stub.cpp",
+        "bytes": 17074,
+        "sha256": "6583b7b212eb8230ae234c54666bb1c9bdcffed898a3799d096d573a0422b9f2",
+        "git_blob": "11927a9291886f56211a3c775122b2462d6f1ddd"
+      },
+      {
+        "path": "dbinder/dbinder_service/src/dbinder_service.cpp",
+        "bytes": 59699,
+        "sha256": "ac762ad0345451a605fffcd430d933161eb20aedd7b83479753b9be8384fa1cf",
+        "git_blob": "fb7f0b92f1f842f10f35f14917c553d3bb38ee9e"
+      },
+      {
+        "path": "dbinder/dbinder_service/src/dbinder_death_recipient.cpp",
+        "bytes": 2080,
+        "sha256": "343fb2d7c086462c7d8cc0a69486062f9dc6594138693668a20fa2bfab083324",
+        "git_blob": "aad98ab9e58c8fdd33f77ccb7e36fa4e47415cbb"
+      },
+      {
+        "path": "dbinder/dbinder_service/src/dbinder_sa_death_recipient.cpp",
+        "bytes": 1486,
+        "sha256": "ca50f6ad521d3d69932b6dc404738290d96bb5035ed7937a1eb42a8582ab5257",
+        "git_blob": "51eb5d56816c828708688b30c4594940b7652309"
+      },
+      {
+        "path": "test/unittest/ipc/native/core/ipc_object_proxy_unittest.cpp",
+        "bytes": 49535,
+        "sha256": "b19d5b58a422ed548086cb4e3f8f351a85d829fc74971537093d367832878b06",
+        "git_blob": "9bb068620bb26c7c96455b71cf575560c81f4790"
+      },
+      {
+        "path": "test/unittest/ipc/native/core/binder_invoker_unittest.cpp",
+        "bytes": 109102,
+        "sha256": "7e47188383efed39d93f2e778655e46a9a1f6244d8945bc2ce46f866507373de",
+        "git_blob": "a641a53a63fadfe2df244977157f1e9653f1db99"
+      },
+      {
+        "path": "test/unittest/dbinder_service/dbinder_service_stub_unittest.cpp",
+        "bytes": 54381,
+        "sha256": "9371d0333fb03679e3fbddbdf0f7891944752483c0c3cc0d3a87c965877f7da5",
+        "git_blob": "62f7c305e9ae37fc7106d95422fae7462e66ae99"
+      },
+      {
+        "path": "test/unittest/dbinder_service/dbinder_service_death_recipient_unittest.cpp",
+        "bytes": 5780,
+        "sha256": "a3ddcdbca06b14baeb95c91a4f5b1256068d227b8b4358a6c452c5f412797938",
+        "git_blob": "a5e32dd19c2a7f3bd7678c9adbe8905ace2233af"
+      },
+      {
+        "path": "test/fuzztest/ipc/native/core/ipcobjectproxy_fuzzer/ipcobjectproxy002_fuzzer/ipcobjectproxy002_fuzzer.cpp",
+        "bytes": 2796,
+        "sha256": "750d1f4432ab04c8207da7b2fc7178532e9a89bcca62efaee8614e4bf90b3d93",
+        "git_blob": "02a3586952490502274eb845fa6bb71b7ae881ef"
+      },
+      {
+        "path": "test/fuzztest/ipc/native/core/dbinderservicestub_fuzzer/dbinderservicestub001_fuzzer/dbinderservicestub001_fuzzer.cpp",
+        "bytes": 5731,
+        "sha256": "715ae17dc0a5d1fbf3e5eb857c28f1f4b8a90a5cf40c9916ae82e2d91a613f6f",
+        "git_blob": "792a3c1fac215d280784e0962bc15e28d5123cda"
+      },
+      {
+        "path": "test/fuzztest/ipc/native/core/dbinderservicestub_fuzzer/dbinderservicestub002_fuzzer/dbinderservicestub002_fuzzer.cpp",
+        "bytes": 6543,
+        "sha256": "bd1e43b56df81445f8d5cc671d9d20d9aaaad484d1bc6a690cd857cca4fb1e6d",
+        "git_blob": "1c67eac3a27fdddccf72b6ebf8ee227bb25ff6b5"
+      },
+      {
+        "path": "test/fuzztest/ipc/native/core/binderinvoker_fuzzer/binderinvoker003_fuzzer/binderinvoker003_fuzzer.cpp",
+        "bytes": 3656,
+        "sha256": "476b8b300e66335d7a3f4cd3d7c0e486520ce3031493fcc208b117e799620867",
+        "git_blob": "a63313c2ce427016f22e89808f833f628c0deafb"
+      },
+      {
+        "path": "test/fuzztest/dbinder_service/noticeservicedie_fuzzer/noticeservicedie_fuzzer.cpp",
+        "bytes": 1692,
+        "sha256": "9af2d4fbc5375dafd9a0305c413b583b85998502979a438208aa302af2394001",
+        "git_blob": "3a39b73c031e9adc0a9bd2519b0eeab71110424a"
+      }
+    ]
+  },
+  "findings": [
+    {
+      "id": "D49-F1",
+      "claim": "Binder death delivery keeps the raw cookie-backed proxy alive across obituary callbacks, and callback iteration runs without IPCObjectProxy::mutex_.",
+      "evidence": [
+        "ipc_object_proxy.cpp:494-530: AddDeathRecipient validates, appends under recursive mutex, registers only for first recipient on a Binder handle; registration failure pops the just-added entry.",
+        "binder_invoker.cpp:236-268: successful BC_REQUEST_DEATH_NOTIFICATION flush increments the proxy strong ref; failure returns false without the increment.",
+        "binder_invoker.cpp:650-685: BR_DEAD_BINDER reads cookie, checks object registration, AttemptIncStrongRef protects SendObituary, then drops the temporary strong ref and sends BC_DEAD_BINDER_DONE.",
+        "ipc_object_proxy.cpp:578-622: SendObituary swaps recipients_ under lock, unlocks before state changes and callbacks, marks object dead, clears refresh recipients and asks invoker to remove notification before callbacks. Reentrant Add is rejected by dead flag; callback sees sptr recipient copied from swapped vector."
+      ],
+      "assessment": "No static lifetime/UAF gap found in this path. The driver-owned registration ref and event-time AttemptIncStrongRef are separate protections; Binder-driver ordering/semantics are not independently asserted here."
+    },
+    {
+      "id": "D49-F2",
+      "claim": "DBinder session close obtains a strong proxy from QueryObject before SendObituary; the server-side death-recipient callback promotes its weak remote to a strong object, snapshots the stored recipient, then detaches recipient and callback-proxy entries under their respective locks.",
+      "evidence": [
+        "dbinder_databus_invoker.cpp:614-651: client-side close queries proxy handles, QueryObject returns sptr, detaches session state, then invokes SendObituary when subscribed (else sets dead).",
+        "dbinder_death_recipient.cpp:24-60: OnRemoteDied rejects null/failed promotion, holds sptr<IRemoteObject>, queries stored death recipient, attempts RemoveDeathRecipient, then detaches death-recipient and callback-proxy entries.",
+        "dbinder_service.cpp:1283-1321: recipient and callback maps use locks; Query returns sptr values; erase removes map ownership."
+      ],
+      "assessment": "Callbacks do not run while the proxy recipient mutex or DBinderService map mutex is held. OnRemoteDied is entered after SendObituary has set proxy dead; RemoveDeathRecipient therefore returns false, but SendObituary already swapped/cleared the callback vector, and map erase follows. This is consistent cleanup, not a missing-removal bug."
+    },
+    {
+      "id": "D49-R1",
+      "claim": "DBinderServiceStub::AddDbinderDeathRecipient calls IPCObjectProxy::AddDeathRecipient before obtaining DBinderService and inserting the deathRecipients_/noticeProxy_ bookkeeping. If service lookup, AttachDeathRecipient, or AttachCallbackProxy fails, the method returns an error without rolling back the proxy's newly appended DbinderDeathRecipient; failures after the first map insertion may also leave partial bookkeeping until object death or a later path clears it.",
+      "evidence": [
+        "dbinder_service_stub.cpp:200-239: order is AddDeathRecipient -> GetInstance -> AttachDeathRecipient -> AttachCallbackProxy, with early returns and no rollback in latter failure branches.",
+        "ipc_object_proxy.cpp:494-530: recipients_ stores the recipient before DBinder-special handle returns true; one callback registration is bypassed for a DBINDER_HANDLE_BASE proxy.",
+        "dbinder_service.cpp:1283-1321: maps are independently inserted/erased and protected by different mutexes.",
+        "ipc_object_proxy.cpp:188-192, 973-1009: public SendRequest rejects codes above MAX_TRANSACTION_ID; DBINDER_OBITUARY_TRANSACTION is sent by AddDbinderDeathRecipient via SendLocalRequest, after QueryCallbackStub(this) deduplication. This identifies the helper route and bounds why direct public repeat is not evidence of repeated server ADD."
+      ],
+      "reachability_counterexample": "Normal IPCObjectProxy::AddDeathRecipient is serialized on its recursive mutex. Its AddDbinderDeathRecipient checks IPCProcessSkeleton::QueryCallbackStub(this) and returns true without another transaction if a callback stub already exists. Thus repeated ordinary API calls on one proxy do not repeatedly enter the server ADD handler. Distinct proxy identities are normally resolved through process object lookup, but that canonicalization is not used as proof that every duplicate route is impossible. The tested path for repeated ADD is direct fuzz invocation of the DBinderServiceStub method with a reused parcel, not evidence of attacker-controlled production transaction reachability. No Binder driver, application SDK policy, or unpaired SoftBus behavior is inferred.",
+      "assessment": "Conditional partial-failure residue only. The mutation-before-commit order is real, but no ordinary-app or remote-peer path to force duplicate ADD/attach failure on the same object, and no material security impact from extra callback state, is established. Keep out of second-layer security candidate set unless reachability and consequence are supplied."
+    }
+  ],
+  "existing_test_review": {
+    "unit_tests": [
+      "IPCObjectProxy AddDeathRecipient001-006 and RemoveDeathRecipient001-004 cover null/dead/duplicate-list/register-failure/DBINDER-handle and refresh-list conditions; they do not drive SendObituary with reentrant callbacks or prove callback strong-ref lifetime.",
+      "BinderInvoker AddDeathRecipientTest001-007 and RemoveDeathRecipientTest001-005 exercise command buffer/flush/driver-status failures; OnBinderDiedTest001-004 cover null/invalid/zero-ref/failed AttemptIncStrongRef. No unit test in these files asserts the complete BR_DEAD_BINDER -> obituary -> CLEAR_DONE lifecycle.",
+      "DBinderServiceStub ProcessDeathRecipientTest001-004 test malformed or unknown parcel/process-type cases; no complete successful ADD/REMOVE bookkeeping or rollback-after-second-insert failure test is present.",
+      "dbinder_service_death_recipient_unittest.cpp covers DbinderDeathRecipient null remote/service, missing map recipient, detach failures and normal cleanup; it does not force concurrent death and NotifyServiceDie or validate partial ADD rollback."
+    ],
+    "fuzz_tests": [
+      "ipcobjectproxy002_fuzzer calls AddDeathRecipient and RemoveDeathRecipient on newly created proxies, and InvokeListenThread; it does not synthesize obituary events or callback reentrancy.",
+      "dbinderservicestub001_fuzzer invokes ProcessDeathRecipient and AddDbinderDeathRecipient with malformed/default or dead proxy data.",
+      "dbinderservicestub002_fuzzer directly repeats AddDbinderDeathRecipient with the same callbackProxy/data, including an intermediate DetachDeathRecipient, then exercises remove paths; this can cover helper-level duplicate state but bypasses the ordinary client API's QueryCallbackStub early return and has no asserted leak/security oracle.",
+      "binderinvoker003_fuzzer exercises RemoveDeathRecipientIV; noticeservicedie_fuzzer exercises NoticeServiceDie with fuzzed names/device identifiers, not kernel Binder dead-cookie or callback lifetime."
+    ],
+    "tests_run": false
+  },
+  "test_oracle_if_followed_up": {
+    "purpose": "Determine whether the DBinder add-order residue is reachable and externally meaningful, and lock down cleanup only if a valid failure interleaving exists.",
+    "unit_sequence": [
+      "Arrange a DBinderServiceStub and one valid callback proxy; force AddDeathRecipient to succeed, then force GetInstance/AttachDeathRecipient/AttachCallbackProxy failure one at a time.",
+      "Observe proxy recipient count, IPCProcessSkeleton callback-stub mapping, DBinderService deathRecipients_ and noticeProxy_ after each failure; require no newly-added recipient or map entry remains after an ADD error, or document an intentional owner that guarantees cleanup.",
+      "Then exercise the real public proxy AddDeathRecipient twice concurrently/sequentially for the same DBinder proxy; require at most one ADD transaction and one server-side registration due QueryCallbackStub deduplication.",
+      "If a production path can submit repeated ADD for the identical callback object, force that path and a subsequent remote-death callback; require exactly one effective cleanup and no callback/map growth after the operation settles."
+    ],
+    "expected_current_result": "Direct helper-level failure injection may expose residue; ordinary API repeated-call control should be deduplicated. A security finding requires a supported caller route plus measurable cross-principal effect, persistent unbounded accumulation, or material availability consequence."
+  },
+  "candidate_decision": {
+    "confirmed_candidate_count": 0,
+    "conditional_observation_count": 1,
+    "observation_id": "D49-R1",
+    "verdict": "insufficient_for_security_finding",
+    "reason": "Binder path has coherent strong-ref protection and unlocked callback iteration. DBinder callbacks use strong promotion and independently locked state maps. A real DBinder ADD partial-failure residue exists in the helper implementation, but duplicate/attach-failure reachability from a supported ordinary caller and security impact are unproven; direct fuzz-helper invocation is not production reachability evidence."
+  },
+  "limitations": [
+    "Source files are bound to IPC commit bbb92dbb2f52aca54ab268307c9476ac1802f3ff. The local full OpenHarmony IPC checkout was older and is not used as target-version proof.",
+    "Binder kernel-driver callback ordering/ownership semantics are not inferred beyond the explicit strong-reference operations in this source.",
+    "No paired SoftBus revision/build was used to infer DBinder close callback triggerability or remote-peer transaction behavior.",
+    "No tests or PoCs were run; only immutable source and test/fuzz source were inspected."
+  ]
+}

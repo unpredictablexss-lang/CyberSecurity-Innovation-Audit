@@ -1,0 +1,223 @@
+{
+  "schema": "ohscanner.b-ipc.t52-dump-transaction-counterreview.v1",
+  "task": "T52",
+  "verified_at_utc": "2026-10-19T22:14:09Z",
+  "target": {
+    "repository": "openharmony/communication_ipc",
+    "commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "tree": "125ecbfa21f430f2f977f0026ab97b70cd27a726",
+    "scope": "Independent review of D51 DUMP_TRANSACTION route; no tests or PoC run; no product changes"
+  },
+  "route_reconstruction": {
+    "flow": [
+      "IPCObjectProxy::Dump(fd,args) serializes fd and string16 args, then calls SendRequestInner(false,DUMP_TRANSACTION,...)",
+      "IPCObjectStub::SendRequest dispatches DUMP_TRANSACTION to DBinderDumpTransaction before generic SendRequestInner/OnRemoteRequest",
+      "DBinderDumpTransaction accepts only IPCSkeleton::IsLocalCalling() and caller UID 0, SHELL_UID(2000), or HIDUMPER_SERVICE_UID(1212); otherwise returns ERR_NONE without calling OnRemoteDump",
+      "OnRemoteDump reads the transferred fd, reads string16 vector, invokes virtual Dump(fd,args) if both are valid, and closes the received fd on either valid-fd path"
+    ],
+    "identity": "The route checks caller UID only, plus local transport classification. It does not check caller PID/token or per-object dump permission in this generic IPC layer. On the normal local Binder path, the UID is caller identity, not data supplied in the request Parcel; exact kernel/driver identity integrity is outside this IPC source pin.",
+    "target_selection": "The caller selects the target object by invoking Dump on an IPCObjectProxy/reference it already holds. No separate service-name lookup or service-wide DUMP routing was found in these methods.",
+    "output": "No reply Parcel content is produced by the generic OnRemoteDump handler. The subclass receives the transferred fd and args and may write arbitrary diagnostics to that fd; the base IPCObjectStub::Dump only logs and returns. Sensitivity and argument authorization are therefore service-specific and unreviewed here.",
+    "fd_lifecycle": "OnRemoteDump closes the received fd after argument parsing / virtual Dump. If the fd is invalid it returns IPC_STUB_INVALID_DATA_ERR. The normal helper writes a file descriptor and argument vector. This does not establish all serialization/driver behavior."
+  },
+  "independent_challenges_to_d51": [
+    {
+      "claim": "The ordinary application can invoke DUMP_TRANSACTION through the public typed helper.",
+      "result": "Confirmed as a public native API route: IRemoteObject declares virtual Dump(fd,args) with @since 9, and IPCObjectProxy overrides and implements it via SendRequestInner(DUMP_TRANSACTION). The target ipc_single map does not list IPCObjectProxy::Dump by that symbol name, but this does not negate the public base virtual interface established by the API header. Even when available to an ordinary app, the receiver-side gate rejects its ordinary UID.",
+      "confidence": "high for public API declaration, helper implementation, and receiver gate; target product packaging still not independently built"
+    },
+    {
+      "claim": "Special transaction guard blocks DUMP_TRANSACTION.",
+      "result": "Refuted for DUMP_TRANSACTION. IPCObjectProxy::SendRequest explicitly exempts DUMP_TRANSACTION from its > MAX_TRANSACTION_ID rejection, and IPCObjectProxy::Dump directly calls private SendRequestInner. The special-code guard is relevant to other special transactions, not this route.",
+      "confidence": "high"
+    },
+    {
+      "claim": "No caller authorization exists.",
+      "result": "Refuted for ordinary app callers in the reviewed code. There is a strict local-calling + UID allowlist check for 0, 2000, and 1212 before parsing the fd or invoking virtual Dump. The code does not separately validate token ID or PID, but no evidence shows an ordinary app can forge the Binder caller UID; kernel/driver spoofing is outside scope.",
+      "confidence": "high within IPC source; product identity plumbing not independently pinned"
+    },
+    {
+      "claim": "The dump output is a concrete sensitive disclosure.",
+      "result": "Not established. The IPC base class returns no content; concrete Dump overrides can write different content to caller-supplied fd. No target-product service implementation, policy, or sensitive output was tied to this IPC commit/build pairing. Authorized shell/hidumper/root callers may intentionally receive service diagnostics.",
+      "confidence": "high that generic layer is insufficient to prove effect; service effects unknown"
+    }
+  ],
+  "candidate_decision": {
+    "confirmed_candidate_count": 0,
+    "conditional_candidate_count": 0,
+    "verdict": "No supported ordinary-app security candidate. The typed route exists, but the IPC receiver rejects ordinary app UID before reading dump arguments or invoking the service override. A separate threat model involving compromised/authorized shell or hidumper would require a specific service override, policy violation, and product-level caller path; none is demonstrated here.",
+    "strongest_counterexample": "A caller with UID 0, 2000, or 1212 can reach service-specific Dump implementations over local Binder. The output may be sensitive for a particular service, and this generic layer has no token check or per-object policy. This is an authorized-identity/service-policy question rather than evidence of ordinary-app reachability; the target service and intended shell/hidumper policy are not bound here."
+  },
+  "source_bindings": [
+    {
+      "path": "ipc/native/src/core/framework/source/ipc_object_stub.cpp",
+      "sha256": "554a27bf335d0048373c326f3f9bddea9ba134b73bf8dca622d6c80b644656bb",
+      "git_blob": "22c3a682c20fd350b318cad17a6d621206e65ba7",
+      "lines": {
+        "base_Dump": [
+          125,
+          130
+        ],
+        "OnRemoteDump_fd_args_close": [
+          158,
+          171
+        ],
+        "DBinderDumpTransaction_gate": [
+          208,
+          217
+        ],
+        "SendRequest_dispatch": [
+          439,
+          483
+        ]
+      }
+    },
+    {
+      "path": "ipc/native/src/core/framework/source/ipc_object_proxy.cpp",
+      "sha256": "4d1e24129bec4a642047fb6187f63b40a1b17c1f1740f7b816f7691890b92157",
+      "git_blob": "4701faa882a030d0f34772d4b85b432b0be87e1e",
+      "lines": {
+        "typed_Dump_helper": [
+          139,
+          146
+        ],
+        "generic_SendRequest_special_guard": [
+          188,
+          221
+        ]
+      }
+    },
+    {
+      "path": "ipc/native/src/core/invoker/source/binder_invoker.cpp",
+      "sha256": "02c4e27beb57955df2afd3f836c1f38929f519b3d400f080a45a6f91e6210e4c",
+      "git_blob": "4a5cd7530835659a0f9fad523c0f14c4c25570dd",
+      "lines": {
+        "transaction_receive_and_target_dispatch": [
+          990,
+          1028
+        ],
+        "binder_transaction_frame": [
+          1111,
+          1131
+        ]
+      }
+    },
+    {
+      "path": "interfaces/innerkits/ipc_core/include/ipc_object_proxy.h",
+      "sha256": "58a825867d11664f7f8716c53e46d6c852eaeaae6da2770ea6b70a9b0fa2c73c",
+      "git_blob": "71e128907c3842441c9fe856472ceb5479263eea",
+      "lines": {
+        "Dump_override_declaration": [
+          92,
+          92
+        ]
+      }
+    },
+    {
+      "path": "interfaces/innerkits/ipc_single/libipc_single_map",
+      "sha256": "8e05e1b217ed5b42ad83fbf38d31ca33241302a5c2b49cf927fd66b868bd049a",
+      "git_blob": "0bab69a423e5127f4b2e7b0d0ba87f0eb3772d9b",
+      "lines": {
+        "stub_Dump_exports": [
+          62,
+          65
+        ],
+        "proxy_exports_reviewed": [
+          80,
+          193
+        ]
+      },
+      "note": "Map has IPCObjectStub::Dump and OnRemoteDump entries; no IPCObjectProxy::Dump symbol-name entry was found. This is evidence about this version map, not all SDK/public-base virtual ABI routes."
+    },
+    {
+      "path": "test/unittest/ipc/native/core/ipc_object_stub_unittest.cpp",
+      "sha256": "614f2bf9eb33e14d1f28bfe07fb2d649016c86762a14df7df76523e1167f4e50",
+      "git_blob": "2854f033f6217df54571997e9d1cfec886e30ce3",
+      "lines": {
+        "OnRemoteDump_tests": [
+          305,
+          344
+        ],
+        "DBinderDumpTransaction_tests": [
+          395,
+          508
+        ]
+      }
+    },
+    {
+      "path": "test/unittest/ipc/native/core/ipc_object_proxy_unittest.cpp",
+      "sha256": "b19d5b58a422ed548086cb4e3f8f351a85d829fc74971537093d367832878b06",
+      "git_blob": "9bb068620bb26c7c96455b71cf575560c81f4790",
+      "lines": {
+        "dump_specific_test": null
+      },
+      "note": "The fetched target test file had no matches for DUMP_TRANSACTION/IPCObjectProxy::Dump; no claim of route-level proxy test coverage."
+    },
+    {
+      "path": "interfaces/innerkits/ipc_core/include/iremote_object.h",
+      "sha256": "ae151e961c8ad5b79b7ea7a8ccb23e0ba488eff62fc87cec4afb8589d1077ea2",
+      "git_blob": "a734277347cd7236ffbcea07a8f810e15d6324b8",
+      "lines": {
+        "Dump_API_since_9": [
+          161,
+          171
+        ]
+      }
+    },
+    {
+      "path": "ipc/native/src/core/framework/source/ipc_skeleton.cpp",
+      "sha256": "9b6302bc0367ad2687fdada93e027954fd09699b9ef933f2bf5989a7096e45adb",
+      "git_blob": "5e3bf5f6296a6879bf18c4ce82ad203146df9d99",
+      "lines": {
+        "GetCallingUid_and_local_invoker": [
+          137,
+          148
+        ],
+        "IsLocalCalling": [
+          258,
+          265
+        ]
+      }
+    },
+    {
+      "path": "ipc/native/src/core/dbinder/source/dbinder_databus_invoker.cpp",
+      "sha256": "378776e256a8438c5bb28c57acc39172b3376512907718e813b71406b7251217",
+      "git_blob": "83450463d6d39f3a327ffa3dccccf0d8c957757d",
+      "lines": {
+        "IsLocalCalling_false": [
+          802,
+          805
+        ]
+      }
+    },
+    {
+      "path": "test/fuzztest/ipc/native/core/ipcobjectstub_fuzzer/ipcobjectstub008_fuzzer/ipcobjectstub008_fuzzer.cpp",
+      "sha256": "4176c559ae6e957670b5e0a60b3e96334ee658c7f2c90e9315e4121f451e2182",
+      "git_blob": "5aafb181adeacf6f4040b6d1c825a09b4825739f",
+      "lines": {
+        "direct_DBinderDumpTransaction_fuzz_call": "bound file; method invocation reviewed"
+      }
+    }
+  ],
+  "test_review": {
+    "existing_tests": [
+      "ipc_object_stub_unittest.cpp: OnRemoteDumpTest001/002 exercise invalid fd and valid fd/args handling.",
+      "ipc_object_stub_unittest.cpp: DBinderDumpTransactionTest001-005 exercise mocked local/remote status and UID values including 0, SHELL_UID, HIDUMPER_SERVICE_UID, and UID_TEST. These are method-level mocked tests; they do not validate kernel-supplied identity or a complete client-to-service Binder route.",
+      "No DUMP-specific test was found in ipc_object_proxy_unittest.cpp; no end-to-end app-UID denial test was established."
+    ],
+    "tests_run": false,
+    "test_gap": "A test-only oracle should create/obtain a target Binder proxy, call the typed Dump helper with a valid fd/args as an ordinary app UID, and assert: receiver returns without ReadFileDescriptor/virtual Dump, no bytes are written, and fd remains safely owned by sender; then run controls for UID 0/2000/1212 and DBinder transport to confirm intended behavior and fd cleanup. Add output-policy checks only for a specifically selected, target-paired service override."
+  },
+  "limitations": [
+    "IPC source and version-map bytes are bound to the immutable target commit; no paired product service manifest, product SDK binary, or runtime build was supplied for this review.",
+    "UID allowlist policy intent and kernel Binder identity authenticity are not independently proved from this IPC repository.",
+    "No subclass Dump output was classified as sensitive; effects vary by service and product revision.",
+    "No tests, fuzzers, or PoCs were run."
+  ],
+  "d51_cross_review": {
+    "artifact": "d51_dump_transaction_scout-20261020.json",
+    "result": "Independent source hashes match the immutable target for the additional IPCSkeleton, DBinder invoker, IRemoteObject public API header, and fuzz harness. D51's dispatch, identity and impact conclusions match T52. T52 strengthens the route analysis by independently binding the public API-since-9 base Dump declaration and confirms the test fuzz harness is direct helper invocation, not an app-to-service reachability proof.",
+    "discrepancies": [],
+    "candidate_count_after_cross_review": 0
+  }
+}

@@ -1,0 +1,176 @@
+{
+  "schema_version": 1,
+  "task_id": "T30",
+  "title": "Independent counter-review: DBinder INCREFS/DECREFS and session-close ref cleanup",
+  "reviewed_at_utc": "2026-10-19T21:15:00Z",
+  "scope": {
+    "repository": "openharmony/communication_ipc",
+    "target_commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "read_only": true,
+    "tests_or_poc_run": false,
+    "product_code_changed": false
+  },
+  "source_binding": {
+    "method": "Independently fetched immutable raw.githubusercontent.com commit URLs; recomputed SHA-256 and Git blob IDs from downloaded bytes.",
+    "files": [
+      {
+        "path": "ipc/native/src/core/framework/source/ipc_object_stub.cpp",
+        "bytes": 29851,
+        "sha256": "554a27bf335d0048373c326f3f9bddea9ba134b73bf8dca622d6c80b644656bb",
+        "git_blob": "22c3a682c20fd350b318cad17a6d621206e65ba7"
+      },
+      {
+        "path": "ipc/native/src/core/dbinder/include/dbinder_base_invoker_process.h",
+        "bytes": 19306,
+        "sha256": "bcd53526774d44fa4d86b21f94a4b3dd3239a8fbc923c5a8d0ba28e6f2aa49e9",
+        "git_blob": "111cbfc11be5c3e4d090a6ef9152e93b8f25b804"
+      },
+      {
+        "path": "ipc/native/src/core/dbinder/source/dbinder_databus_invoker.cpp",
+        "bytes": 41140,
+        "sha256": "378776e256a8438c5bb28c57acc39172b3376512907718e813b71406b7251217",
+        "git_blob": "83450463d6d39f3a327ffa3dccccf0d8c957757d"
+      },
+      {
+        "path": "ipc/native/src/core/framework/source/ipc_process_skeleton.cpp",
+        "bytes": 64744,
+        "sha256": "cdffaaf0054da5c80d64c0cec6ef287c9c24e432bc50a49d3288336715910366",
+        "git_blob": "516fd9efd0ab405cbd0c8a985f9f203478fc4d52"
+      },
+      {
+        "path": "ipc/native/src/core/framework/source/ipc_thread_skeleton.cpp",
+        "bytes": 11436,
+        "sha256": "393ab2f501def549428374f8e3ceefab6e12df91118672272cc915c4d01bb4e1",
+        "git_blob": "0206b248dc57065721c1712b251d2edaaee79476"
+      },
+      {
+        "path": "ipc/native/src/core/dbinder/include/dbinder_base_invoker_define.h",
+        "bytes": 9929,
+        "sha256": "dbea8dced551f18820cbf0bbb21e838d32a793dc23c359122cd33ca295341b4f",
+        "git_blob": "c4de1915c7b4798b031dd10c0584079af04c70fe"
+      }
+    ]
+  },
+  "comparison_with_d29": {
+    "artifact": "d29_dbinder_ref_scout-20261020.json",
+    "agreement": [
+      "Receive caller tuple and cookie/stubIndex are checked against server-held mapping before handler dispatch.",
+      "INCREFS updates an identity/stubIndex mapping and does not add a new strong ref at that handler.",
+      "DECREFS releases only after DetachAppAuthInfo atomically removes the exact tuple/stubIndex/socket relation.",
+      "Server-close removal serializes with DECREFS through appAuthMutex_; under the same relation, only the winner receives/removes that mapping."
+    ],
+    "correction_or_open_question": [
+      "D29 treats objectMutex_ as a close-vs-request serialization mechanism. The mutex is a member of DBinderBaseInvoker, while IPCThreadSkeleton::GetCurrent is backed by pthread TLS and GetRemoteInvoker returns the current thread skeleton’s invoker. Server/client shutdown callbacks obtain the invoker via GetRemoteInvoker from the callback thread; ProcessTransaction runs on IPC worker threads. Thus each thread can hold a distinct invoker and distinct objectMutex_. This source does not establish cross-thread serialization.",
+      "Caller info fields are therefore not shared between distinct worker thread invokers; however the same fact means the per-instance object mutex does not serialize close cleanup against a request worker."
+    ]
+  },
+  "route_findings": [
+    {
+      "claim": "DBINDER_INCREFS_TRANSACTION and DBINDER_DECREFS_TRANSACTION dispatch to the dedicated handlers when CONFIG_IPC_SINGLE is off.",
+      "source": "ipc/native/src/core/framework/source/ipc_object_stub.cpp",
+      "location": "455-458",
+      "verdict": "confirmed"
+    },
+    {
+      "claim": "OnMessageAvailable rejects invalid outer lengths; HasCompletePackage requires magic, bounded size, complete package and CheckTransactionData. ProcessTransaction then calls CheckAndSetCallerInfo before TargetStubSendRequest resolves cookie to a stub and invokes SendRequest.",
+      "source": "ipc/native/src/core/dbinder/source/dbinder_databus_invoker.cpp; ipc/native/src/core/dbinder/include/dbinder_base_invoker_process.h",
+      "location": "dbinder_databus_invoker.cpp:333-360,1091-1110; dbinder_base_invoker_process.h:83-105",
+      "verdict": "confirmed"
+    },
+    {
+      "claim": "CheckAndSetCallerInfo uses PID/UID/device/token from the current session and cookie stubIndex; it requires the appAuth relation socket to be 0 or equal to current socket before setting caller state.",
+      "source": "ipc/native/src/core/dbinder/source/dbinder_databus_invoker.cpp; ipc/native/src/core/framework/source/ipc_process_skeleton.cpp",
+      "location": "dbinder_databus_invoker.cpp:808-839; ipc_process_skeleton.cpp:1634+ (target-specific function location in D29)",
+      "verdict": "confirmed"
+    },
+    {
+      "claim": "DBinderDecRefsTransaction calls DecStrongRef only if DetachAppAuthInfo succeeds; DetachAppAuthInfo checks exact identity, stubIndex, and socketId under appAuthMutex_.",
+      "source": "ipc/native/src/core/framework/source/ipc_object_stub.cpp; ipc/native/src/core/framework/source/ipc_process_skeleton.cpp",
+      "location": "ipc_object_stub.cpp:265-296; DetachAppAuthInfo target function",
+      "verdict": "confirmed"
+    },
+    {
+      "claim": "OnDatabusSessionServerSideClosed removes socket-bound mappings and later drops one strong ref per returned stubIndex.",
+      "source": "ipc/native/src/core/dbinder/source/dbinder_databus_invoker.cpp; ipc/native/src/core/framework/source/ipc_process_skeleton.cpp",
+      "location": "dbinder_databus_invoker.cpp:655-676; ipc_process_skeleton.cpp:1598-1631",
+      "verdict": "confirmed"
+    },
+    {
+      "claim": "IPCThreadSkeleton is thread-local and GetRemoteInvoker returns the invoker stored on the current thread skeleton; objectMutex_ is a member of each DBinderBaseInvoker instance.",
+      "source": "ipc/native/src/core/framework/source/ipc_thread_skeleton.cpp; ipc/native/src/core/dbinder/include/dbinder_base_invoker_define.h",
+      "location": "ipc_thread_skeleton.cpp:42-44,54-75,204-240; dbinder_base_invoker_define.h:171",
+      "verdict": "confirmed"
+    },
+    {
+      "claim": "Shutdown callbacks look up an invoker through GetRemoteInvoker, while request handling uses the worker-thread invoker and its TargetStubSendRequest lock.",
+      "source": "ipc/native/src/core/dbinder/source/databus_socket_listener.cpp; ipc/native/src/core/dbinder/include/dbinder_base_invoker_process.h",
+      "location": "databus_socket_listener.cpp:89-100,107-132; dbinder_base_invoker_process.h:42-80",
+      "verdict": "confirmed_source_routes; actual SoftBus callback thread identity/order not established"
+    }
+  ],
+  "single_conditional_candidate": {
+    "candidate_id": "T30-R1",
+    "title": "Socket-close vs in-flight DBinder INCREFS can potentially bypass intended per-instance serialization",
+    "status": "conditional_concurrency_candidate_not_confirmed",
+    "confidence": "medium_low",
+    "mechanism": "A same-socket DBINDER_INCREFS transaction may pass CheckAndSetCallerInfo, then be delayed before DBinderIncRefsTransaction mutates the appAuth map. A SoftBus close callback may remove the socket-bound relation and drop its bootstrap strong ref. If the already-gated request later executes INCREFS, AttachOrUpdateAppAuthInfo can reinsert a socket-bound relation with no matching IncStrongRef (the handler passes stub=nullptr). Since the callback and worker thread can have distinct TLS invokers/objectMutex_ instances, source-level locking does not serialize these steps. A later connection may refresh the relation, and subsequent close/DECREFS could potentially decrement an unmatched reference or expose a stale relation.",
+    "counterevidence_and_limits": [
+      "The complete schedule has not been demonstrated on a running target; callback threading/ordering is delegated to SoftBus, whose target pairing/runtime behavior is unverified.",
+      "The bootstrap route establishes an initial stub relation and strong ref before remote traffic; connection dispatch is gated by existing CommAuth and tuple/stubIndex mapping.",
+      "No assertion that stale mapping necessarily yields UAF or stable over-decrement: existing references may remain, relation update may alter close behavior, and object lifetime has other holders.",
+      "No product build binding, unit test, concurrency test, PoC, or runtime evidence was obtained."
+    ],
+    "recommended_disposition": "Keep one low-confidence candidate in the second-layer queue as a narrow concurrency question; do not label a confirmed vulnerability. Required next evidence: demonstrate callbacks and process workers can execute concurrently on distinct invokers on the target, then build a deterministic ordering proof showing unmatched relation/refcount or a concrete lifetime violation."
+  },
+  "test_boundary": {
+    "target_pinned_tests_inspected": true,
+    "tests_not_run": true,
+    "unit_tests": [
+      {
+        "path": "test/unittest/ipc/native/core/ipc_object_stub_unittest.cpp",
+        "sha256": "614f2bf9eb33e14d1f28bfe07fb2d649016c86762a14df7df76523e1167f4e50",
+        "cases": [
+          "DBinderIncRefsTransactionTest001-003",
+          "DBinderDecRefsTransactionTest001-002"
+        ],
+        "coverage": "Handler-level success and early-error branches; no session-close race or interleaving assertion found by case inventory."
+      },
+      {
+        "path": "test/unittest/ipc/native/core/dbinder_databus_invoker_unittest.cpp",
+        "sha256": "0806a5463a9cc95cbfd4aaddd50435959333f187b5076c1d302478324c383712",
+        "cases": [
+          "OnDatabusSessionServerSideClosedTest001"
+        ],
+        "coverage": "Only null process-skeleton guard identified by test name; not a live relation/refcount race test."
+      },
+      {
+        "path": "test/unittest/ipc/native/core/ipc_process_skeleton_unittest.cpp",
+        "sha256": "90ef24d2ab263c600c1f4d31ee9a4a25a7043273e9ea52d3c4fd8e611fabacd9",
+        "cases": [
+          "DetachAppAuthInfoBySocketIdTest001-004"
+        ],
+        "coverage": "Map removal success/mismatch/empty cases; no concurrency."
+      }
+    ],
+    "fuzzers": [
+      {
+        "path": "test/fuzztest/ipc/native/core/ipcobjectstub_fuzzer/ipcobjectstub004_fuzzer/ipcobjectstub004_fuzzer.cpp",
+        "sha256": "b4f2b5c3440c06dbb9ad897017ad2325f5e8a8fd27409006a788b1fb9102da25",
+        "coverage": "Calls INCREFS/DECREFS with fuzzed inputs; not a concurrent lifecycle harness."
+      },
+      {
+        "path": "test/fuzztest/ipc/native/core/dbinderdatabusinvoker_fuzzer/dbinderdatabusinvoker002_fuzzer/dbinderdatabusinvoker002_fuzzer.cpp",
+        "sha256": "0641a54915661d88fe682a539091a20ff681c686593d9b0d26f459bcb7a5d027",
+        "coverage": "Calls server-side close callback with fuzzed socket input; no close-vs-inflight transaction ordering."
+      }
+    ]
+  },
+  "summary": {
+    "confirmed_high_confidence_candidates": 0,
+    "conditional_candidates": 1,
+    "tests_or_poc_run": false,
+    "product_code_changed": false,
+    "product_build_binding": "not_verified",
+    "next_step": "Independent runtime or deterministic concurrency validation of SoftBus close callback threading and the check-to-handler interval; do not promote absent that evidence."
+  }
+}

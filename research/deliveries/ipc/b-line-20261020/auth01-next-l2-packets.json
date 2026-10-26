@@ -1,0 +1,173 @@
+{
+  "schema": "ohscanner.ipc-auth01-next-l2-packets.v1",
+  "purpose": "Pinned-source candidate evidence for later L2 review; not vulnerability validation.",
+  "source": {
+    "repository": "openharmony/communication_ipc",
+    "commit": "5903fd5f7332a427cb3f6915b0202ee5c76c63b5",
+    "git_tree": "0f7129fc37dcc38a0abd6c0ebdd5cbd1ff30d4ac",
+    "snapshot_sha256": "4a77a83643aecdef6214af80b1472ff8ebf1050eb4f48fa0b0935c4791babb9d",
+    "report_file": "communication-ipc-integrated.json",
+    "detector_id": "ohscanner.interface.ipc",
+    "detector_version": "0.12.12",
+    "validated_vulnerability_count": 0,
+    "product_manifest_locked": false
+  },
+  "selection": {
+    "candidate_count": 1,
+    "max_allowed": 2,
+    "precision_recall_claimed": false,
+    "reason": "One remaining candidate met the source-binding and route-evidence bar. No independent labeled holdout is available."
+  },
+  "packets": [
+    {
+      "candidate_id": "ohscanner.interface.ipc:769b6c1f4853e5f5",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "detector_version": "0.12.12",
+      "rule_version": null,
+      "repository": "openharmony/communication_ipc",
+      "source_commit": "5903fd5f7332a427cb3f6915b0202ee5c76c63b5",
+      "source_tree": "0f7129fc37dcc38a0abd6c0ebdd5cbd1ff30d4ac",
+      "snapshot_sha256": "4a77a83643aecdef6214af80b1472ff8ebf1050eb4f48fa0b0935c4791babb9d",
+      "file": "ipc/native/src/core/dbinder/source/dbinder_callback_stub.cpp",
+      "line": 118,
+      "symbol": "DBinderCallbackStub::ProcessProto",
+      "reported_byte_range_half_open": [
+        4360,
+        4420
+      ],
+      "reported_byte_excerpt": "    return ProcessData(uid, pid, sessionName, data, reply);\n",
+      "verified_git_blob_oid": "05dceaa7ec0df2f19c3b45b7f1f90ef54b98031d",
+      "verified_source_sha256": "167272c97c4796ec90f63db7089c3308c19f1dae8f07785339a38c645f82ca16",
+      "source_binding_verified": true,
+      "identity": {
+        "stable_status": "unknown",
+        "stable_id": null,
+        "stable_unknown_reasons": [
+          "identity_quality:unknown",
+          "missing:ast_fingerprint",
+          "missing:rule_lineage_id",
+          "missing:symbol_identity"
+        ],
+        "occurrence_status": "unknown",
+        "occurrence_id": null,
+        "occurrence_unknown_reasons": [
+          "missing:rule_version"
+        ],
+        "outer_binding": "bound",
+        "identity_record_binding": "unbound"
+      },
+      "parse_and_coverage": {
+        "candidate_file_language": "cpp",
+        "candidate_file_parse_status": "partial",
+        "detector_coverage_status": "partial",
+        "applicable_files": 660,
+        "analyzed_files": 442,
+        "source_parse_counts": {
+          "complete": 442,
+          "not_run": 37,
+          "partial": 218
+        },
+        "note": "Candidate source file parse status is partial; detector coverage is partial."
+      },
+      "scanner_observation": {
+        "message": "AUTH-01 candidate: IPC entry reaches a handler resolved in the scanned sources without interface-descriptor validation: DBinderCallbackStub::ProcessData Entry=DBinderCallbackStub::OnRemoteRequest [entry-source=ipc/native/src/core/dbinder/source/dbinder_callback_stub.cpp]; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((166, 'switch entry'), (96, 'uid < 0 => False'), (96, 'pid < 0 => False'), (101, 'IPCProcessSkeleton::GetCurrent() == nullptr => False'), (106, 'object == nullptr => False'), (113, 'sessionName.empty() => False'))",
+        "candidate_cwe": "CWE-441",
+        "consequence_impact": "boundary_bypass",
+        "confidence": "unassessed",
+        "modeled_path": "((166, 'switch entry'), (96, 'uid < 0 => False'), (96, 'pid < 0 => False'), (101, 'IPCProcessSkeleton::GetCurrent() == nullptr => False'), (106, 'object == nullptr => False'), (113, 'sessionName.empty() => False'))"
+      },
+      "verified_source_excerpts": [
+        {
+          "file": "ipc/native/src/core/dbinder/source/dbinder_callback_stub.cpp",
+          "start_line": 160,
+          "end_line": 178,
+          "git_blob_oid": "05dceaa7ec0df2f19c3b45b7f1f90ef54b98031d",
+          "sha256": "167272c97c4796ec90f63db7089c3308c19f1dae8f07785339a38c645f82ca16",
+          "text": "160: int32_t DBinderCallbackStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply,\n161:     MessageOption &option)\n162: {\n163:     int32_t result = ERR_NONE;\n164:     ZLOGI(LOG_LABEL, \"code:%{public}u\", code);\n165:     switch (code) {\n166:         case GET_PROTO_INFO: {\n167:             result = ProcessProto(code, data, reply, option);\n168:             break;\n169:         }\n170:         default: {\n171:             ZLOGI(LOG_LABEL, \"unknown code:%{public}u\", code);\n172:             result = DBINDER_CALLBACK_ERR;\n173:             break;\n174:         }\n175:     }\n176: \n177:     return result;\n178: }"
+        },
+        {
+          "file": "ipc/native/src/core/dbinder/source/dbinder_callback_stub.cpp",
+          "start_line": 91,
+          "end_line": 158,
+          "git_blob_oid": "05dceaa7ec0df2f19c3b45b7f1f90ef54b98031d",
+          "sha256": "167272c97c4796ec90f63db7089c3308c19f1dae8f07785339a38c645f82ca16",
+          "text": "91: int32_t DBinderCallbackStub::ProcessProto(uint32_t code, MessageParcel &data, MessageParcel &reply,\n92:     MessageOption &option)\n93: {\n94:     int uid = IPCSkeleton::GetCallingUid();\n95:     int pid = IPCSkeleton::GetCallingPid();\n96:     if (uid < 0 || pid < 0) {\n97:         ZLOGE(LOG_LABEL, \"uid or pid err\");\n98:         DfxReportFailEvent(DbinderErrorCode::RPC_DRIVER, RADAR_GET_UID_OR_PID_FAIL, __FUNCTION__);\n99:         return DBINDER_SERVICE_PROCESS_PROTO_ERR;\n100:     }\n101:     if (IPCProcessSkeleton::GetCurrent() == nullptr) {\n102:         ZLOGE(LOG_LABEL, \"IPCProcessSkeleton GetCurrent is null\");\n103:         return ERR_NULL_OBJECT;\n104:     }\n105:     sptr<IRemoteObject> object = IPCProcessSkeleton::GetCurrent()->GetSAMgrObject();\n106:     if (object == nullptr) {\n107:         ZLOGE(LOG_LABEL, \"get sa object is null\");\n108:         DfxReportFailEvent(DbinderErrorCode::RPC_DRIVER, RADAR_GET_SA_OBJECT_NULL, __FUNCTION__);\n109:         return DBINDER_CALLBACK_READ_OBJECT_ERR;\n110:     }\n111:     IPCObjectProxy *samgr = reinterpret_cast<IPCObjectProxy *>(object.GetRefPtr());\n112:     std::string sessionName = samgr->GetSessionNameForPidUid(uid, pid);\n113:     if (sessionName.empty()) {\n114:         ZLOGE(LOG_LABEL, \"grans session name failed\");\n115:         DfxReportFailEvent(DbinderErrorCode::RPC_DRIVER, RADAR_GET_SESSION_NAME_FAIL, __FUNCTION__);\n116:         return DBINDER_SERVICE_WRONG_SESSION;\n117:     }\n118:     return ProcessData(uid, pid, sessionName, data, reply);\n119: }\n120: \n121: int32_t DBinderCallbackStub::ProcessData(int uid, int pid, const std::string &sessionName, MessageParcel &data,\n122:     MessageParcel &reply)\n123: {\n124:     MessageParcel authData;\n125:     MessageParcel authReply;\n126:     MessageOption authOption;\n127:     if (!authData.WriteUint32(pid) || !authData.WriteUint32(uid) || !authData.WriteString(localDeviceID_) ||\n128:         !authData.WriteUint64(stubIndex_) || !authData.WriteUint32(tokenId_)) {\n129:         ZLOGE(LOG_LABEL, \"write to MessageParcel fail\");\n130:         DfxReportFailEvent(DbinderErrorCode::RPC_DRIVER, RADAR_ERR_INVALID_DATA, __FUNCTION__);\n131:         return ERR_INVALID_DATA;\n132:     }\n133:     IRemoteInvoker *dbinderInvoker = IPCThreadSkeleton::GetRemoteInvoker(IRemoteObject::IF_PROT_DATABUS);\n134:     if (dbinderInvoker == nullptr) {\n135:         ZLOGE(LOG_LABEL, \"no databus thread and invoker\");\n136:         DfxReportFailEvent(DbinderErrorCode::RPC_DRIVER, RADAR_RPC_DATABUS_INVOKER_ERR, __FUNCTION__);\n137:         return RPC_DATABUS_INVOKER_ERR;\n138:     }\n139:     int err = dbinderInvoker->SendRequest(handle_, DBINDER_ADD_COMMAUTH, authData, authReply, authOption);\n140:     if (err != ERR_NONE) {\n141:         ZLOGE(LOG_LABEL, \"send auth info to remote fail\");\n142:         DfxReportFailEvent(DbinderErrorCode::RPC_DRIVER, RADAR_BINDER_CALLBACK_AUTHCOMM_ERR, __FUNCTION__);\n143:         return BINDER_CALLBACK_AUTHCOMM_ERR;\n144:     }\n145:     ZLOGI(LOG_LABEL, \"send to stub ok! stubIndex:%{public}\" PRIu64 \" peerDevice:%{public}s localDeviceID:%{public}s \"\n146:         \"serviceName:%{public}s uid:%{public}d pid:%{public}d tokenId:%{public}u sessionName:%{public}s\",\n147:         stubIndex_, IPCProcessSkeleton::ConvertToSecureString(deviceID_).c_str(),\n148:         IPCProcessSkeleton::ConvertToSecureString(localDeviceID_).c_str(), serviceName_.c_str(), uid, pid, tokenId_,\n149:         sessionName.c_str());\n150:     if (!reply.WriteUint32(IRemoteObject::IF_PROT_DATABUS) || !reply.WriteUint64(stubIndex_) ||\n151:         !reply.WriteString(serviceName_) || !reply.WriteString(deviceID_) || !reply.WriteString(localDeviceID_) ||\n152:         !reply.WriteString(sessionName) || !reply.WriteUint32(tokenId_)) {\n153:         ZLOGE(LOG_LABEL, \"write to parcel fail\");\n154:         DfxReportFailEvent(DbinderErrorCode::RPC_DRIVER, RADAR_ERR_INVALID_DATA, __FUNCTION__);\n155:         return ERR_INVALID_DATA;\n156:     }\n157:     return 0;\n158: }"
+        },
+        {
+          "file": "ipc/native/src/core/framework/source/ipc_object_stub.cpp",
+          "start_line": 393,
+          "end_line": 410,
+          "git_blob_oid": "22c3a682c20fd350b318cad17a6d621206e65ba7",
+          "sha256": "554a27bf335d0048373c326f3f9bddea9ba134b73bf8dca622d6c80b644656bb",
+          "text": "393: int IPCObjectStub::SendRequestInner(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)\n394: {\n395:     int result = ERR_NONE;\n396:     std::unique_lock<std::recursive_mutex> lockGuard(serialRecursiveMutex_, std::defer_lock);\n397:     if (serialInvokeFlag_) {\n398:         lockGuard.lock();\n399:     }\n400: #ifdef ENABLE_IPC_TRACE\n401:     bool isTraceEnable = IPCTrace::IsEnabled();\n402:     if (isTraceEnable) {\n403:         IPCTrace::Start(GenOnRemoteRequestTraceInfo(code));\n404:     }\n405: #endif\n406:     auto start = std::chrono::steady_clock::now();\n407:     lastRequestTime_ = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::milliseconds>(\n408:         start.time_since_epoch()).count());\n409:     result = OnRemoteRequest(code, data, reply, option);\n410:     auto finish = std::chrono::steady_clock::now();"
+        },
+        {
+          "file": "ipc/native/src/core/framework/source/ipc_object_stub.cpp",
+          "start_line": 439,
+          "end_line": 477,
+          "git_blob_oid": "22c3a682c20fd350b318cad17a6d621206e65ba7",
+          "sha256": "554a27bf335d0048373c326f3f9bddea9ba134b73bf8dca622d6c80b644656bb",
+          "text": "439: int IPCObjectStub::SendRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)\n440: {\n441:     switch (code) {\n442:         case PING_TRANSACTION:\n443:             return DBinderPingTransaction(code, data, reply, option);\n444:         case INTERFACE_TRANSACTION:\n445:             return DBinderSearchDescriptor(code, data, reply, option);\n446:         case SYNCHRONIZE_REFERENCE:\n447:             return DBinderSearchRefCount(code, data, reply, option);\n448:         case DUMP_TRANSACTION:\n449:             return DBinderDumpTransaction(code, data, reply, option);\n450:         case GET_PROTO_INFO:\n451:             return ProcessProto(code, data, reply, option);\n452: #ifndef CONFIG_IPC_SINGLE\n453:         case INVOKE_LISTEN_THREAD:\n454:             return DBinderInvokeListenThread(code, data, reply, option);\n455:         case DBINDER_INCREFS_TRANSACTION:\n456:             return DBinderIncRefsTransaction(code, data, reply, option);\n457:         case DBINDER_DECREFS_TRANSACTION:\n458:             return DBinderDecRefsTransaction(code, data, reply, option);\n459:         case DBINDER_ADD_COMMAUTH:\n460:             return DBinderAddCommAuth(code, data, reply, option);\n461:         case GET_SESSION_NAME:\n462:             return DBinderGetSessionName(code, data, reply, option);\n463:         case GET_GRANTED_SESSION_NAME:\n464:             return DBinderGetGrantedSessionName(code, data, reply, option);\n465:         case GET_SESSION_NAME_PID_UID:\n466:             return DBinderGetSessionNameForPidUid(code, data, reply, option);\n467:         case GET_PID_UID:\n468:             return DBinderGetPidUid(code, data, reply, option);\n469:         case REMOVE_SESSION_NAME:\n470:             return DBinderRemoveSessionName(code, data, reply, option);\n471:         case CLEAR_DBINDER_SERVICE_STATE:\n472:             return DBinderClearServiceState(code, data, reply, option);\n473: #endif\n474:         default:\n475:             return SendRequestInner(code, data, reply, option);\n476:     }\n477:     return ERR_NONE;"
+        },
+        {
+          "file": "ipc/native/src/core/framework/source/ipc_object_stub.cpp",
+          "start_line": 299,
+          "end_line": 321,
+          "git_blob_oid": "22c3a682c20fd350b318cad17a6d621206e65ba7",
+          "sha256": "554a27bf335d0048373c326f3f9bddea9ba134b73bf8dca622d6c80b644656bb",
+          "text": "299: int IPCObjectStub::DBinderAddCommAuth(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)\n300: {\n301:     if (IPCSkeleton::IsLocalCalling()) {\n302:         ZLOGE(LABEL, \"DBINDER_ADD_COMMAUTH is not supported in ipc communication, desc:%{public}s\",\n303:             remoteDescriptor_.c_str());\n304:         return IPC_STUB_INVALID_DATA_ERR;\n305:     }\n306: \n307:     DBinderDatabusInvoker *invoker = reinterpret_cast<DBinderDatabusInvoker *>(\n308:         IPCThreadSkeleton::GetRemoteInvoker(IRemoteObject::IF_PROT_DATABUS));\n309:     if (invoker == nullptr) {\n310:         ZLOGE(LABEL, \"get dbinder databus invoker failed\");\n311:         return IPC_STUB_INVALID_DATA_ERR;\n312:     }\n313: \n314:     uid_t uid = invoker->GetCallerUid();\n315:     if (uid >= ALLOWED_UID) {\n316:         ZLOGE(LABEL, \"DBINDER_ADD_COMMAUTH unauthenticated user, desc:%{public}s, uid:%{public}u\",\n317:             remoteDescriptor_.c_str(), uid);\n318:         return IPC_STUB_INVALID_DATA_ERR;\n319:     }\n320:     return AddAuthInfo(data, reply, code);\n321: }"
+        }
+      ],
+      "entry_dispatch_path": {
+        "source_facts": [
+          "DBinderCallbackStub derives from IPCObjectStub (ipc/native/src/core/dbinder/include/dbinder_callback_stub.h:24).",
+          "Its OnRemoteRequest switches GET_PROTO_INFO to ProcessProto (dbinder_callback_stub.cpp:160-168).",
+          "ProcessProto checks caller UID/PID, current skeleton, service-manager object and sessionName, then calls ProcessData (dbinder_callback_stub.cpp:94-118).",
+          "ProcessData serializes PID, UID, local device ID, stub index and token ID, then sends DBINDER_ADD_COMMAUTH (dbinder_callback_stub.cpp:121-143).",
+          "IPCObjectStub::SendRequest routes GET_PROTO_INFO through virtual ProcessProto; ProcessProto is virtual and overridden, so base dispatch may enter the same implementation without OnRemoteRequest (ipc_object_stub.cpp:439-475; ipc_object_stub.h:191).",
+          "Receiver DBINDER_ADD_COMMAUTH handler rejects local IPC and caller UID >= ALLOWED_UID before AddAuthInfo (ipc_object_stub.cpp:299-320)."
+        ],
+        "review_hypothesis": "Potential relay into protocol auth-info flow without a descriptor comparison visible in this route; receiver UID gate and protocol/session semantics may constrain it. No cross-interface effect is established."
+      },
+      "observed_guards_and_controls": {
+        "guards": [
+          "Negative UID/PID, null skeleton/object, and empty session are rejected (callback_stub.cpp:94-117).",
+          "Parcel writes and unavailable databus invoker are rejected (callback_stub.cpp:127-137).",
+          "Receiver rejects local calls and UID >= ALLOWED_UID before AddAuthInfo (ipc_object_stub.cpp:299-320).",
+          "No explicit descriptor compare is visible in the callback route."
+        ],
+        "authorization_gate": "Receiver gate uses databus invoker caller UID; source alone does not establish UID provenance, policy completeness, or product configuration."
+      },
+      "second_layer_obligations": [
+        "Determine whether GET_PROTO_INFO is descriptor-bound and where that invariant is enforced.",
+        "Establish whether a caller can confuse descriptor identity while retaining a valid session.",
+        "Validate provenance and policy meaning of receiver UID and ALLOWED_UID.",
+        "Confirm actual dispatch route and any checks before ProcessProto.",
+        "Identify concrete effect beyond the auth handshake/session metadata update."
+      ],
+      "unknowns": [
+        "Whether a wrong descriptor can reach this method or matters to its protocol semantics.",
+        "Whether session lookup binds the peer to the expected interface.",
+        "Whether receiver UID is transport-authenticated and the intended ALLOWED_UID policy.",
+        "Product reachability, object registration, and external caller control.",
+        "Stable and occurrence identity are both unknown."
+      ],
+      "excluded_candidates": [
+        "a184f5535a3ef73b (NAPI): excluded because the modeled path requires DUMP_TRANSACTION, while IPCObjectStub::SendRequest handles that code through DBinderDumpTransaction before generic OnRemoteRequest (ipc_object_stub.cpp:439-475).",
+        "1ae68a66948e0021 (ANI): excluded because the cited sink is AniError::ThrowError on failed JS method invocation, not an observed request handler effect.",
+        "Death-recipient diagnostics e5c3a944e38716fd, 2dc3665b93253dce, 2f37f269ff85f764 share one dispatcher and child-operation route; lower route diversity."
+      ],
+      "selection_status": "Source binding independently passed, but not eligible for an independent L2 packet: this observation is the same ProcessProto -> ProcessData -> DBINDER_ADD_COMMAUTH operation/effect already represented by AUTH-02 candidate ohscanner.interface.ipc:be13fd9ad5bb5f78.",
+      "independent_review": {
+        "binding_status": "pass",
+        "route_diversity_status": "duplicate_effect",
+        "reviewer": "independent T4 source-binding reviewer",
+        "duplicate_of": "ohscanner.interface.ipc:be13fd9ad5bb5f78",
+        "duplicate_basis": "Both reach the same DBinderCallbackStub::ProcessProto -> ProcessData operation and the same dbinderInvoker->SendRequest(handle_, DBINDER_ADD_COMMAUTH, ...) at dbinder_callback_stub.cpp:139; this candidate is the upstream call site at line 118.",
+        "path_correction": "IPCObjectStub::SendRequest handles GET_PROTO_INFO with a direct virtual ProcessProto dispatch. The diagnostic's OnRemoteRequest entry wording is not established for that base dispatch route; the derived OnRemoteRequest switch is a separate path to ProcessProto.",
+        "l2_decision": "Do not send as a separate L2 candidate; cross-reference the existing AUTH-02 review instead.",
+        "reviewer_source_binding_checks": "Candidate matched exactly once in baseline and integrated reports; file/rule/line, Git blob OID, source SHA-256, half-open byte range/excerpt, commit/tree/snapshot and all cited excerpt hashes matched."
+      }
+    }
+  ]
+}

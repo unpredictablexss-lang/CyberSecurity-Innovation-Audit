@@ -1,0 +1,162 @@
+{
+  "schema_version": 1,
+  "task_id": "T45",
+  "title": "Second-layer blind review of T30-R1 DBinder raw-pointer lifetime candidate",
+  "reviewed_at_utc": "2026-10-20",
+  "scope": {
+    "repository": "openharmony/communication_ipc",
+    "target_commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "method": "Read-only synthesis and counterexample audit of immutable raw-source bindings recorded by D29, T30, T33, D41 and T42.",
+    "tests_run": false,
+    "poc_run": false,
+    "product_code_changed": false
+  },
+  "candidate": {
+    "candidate_id": "T30-R1",
+    "claim_under_review": "After a DBinder worker passes its caller tuple gate and QueryStubByIndex returns a raw IPCObjectStub pointer, a shutdown callback on a distinct TLS-selected invoker may drop the socket relation's last strong reference before/during SendRequest; per-invoker objectMutex_ and index erase may not protect the already copied pointer.",
+    "candidate_status": "conditional_concurrency_candidate_not_confirmed",
+    "overall_assessment": "insufficient_for_vulnerability_confirmation",
+    "risk_assessment": "Low-confidence conditional memory-lifetime risk. The source supports a structurally plausible raw-pointer window and a possible last-ref path, but does not establish concurrent product scheduling, a last-reference instance, post-destruction access, attacker-controlled triggering, or material impact. Do not label this a confirmed UAF."
+  },
+  "source_binding": {
+    "binding_basis": "Immutable target-commit raw-file SHA-256 and Git blob IDs independently recorded in T30/T33; D41/T42 hashes match the relevant source set.",
+    "files": [
+      {"path":"ipc/native/src/core/dbinder/include/dbinder_base_invoker_process.h","sha256":"bcd53526774d44fa4d86b21f94a4b3dd3239a8fbc923c5a8d0ba28e6f2aa49e9","git_blob":"111cbfc11be5c3e4d090a6ef9152e93b8f25b804"},
+      {"path":"ipc/native/src/core/dbinder/include/dbinder_base_invoker_define.h","sha256":"dbea8dced551f18820cbf0bbb21e838d32a793dc23c359122cd33ca295341b4f","git_blob":"c4de1915c7b4798b031dd10c0584079af04c70fe"},
+      {"path":"ipc/native/src/core/dbinder/include/dbinder_base_invoker_interface.h","sha256":"a6bc9bf8368c97dd8abc95a5f016a200a1cf7910b496cfad3dc829bf5ec43f91","git_blob":"0ae2740d169ce773c40701ed5430b7c76c93472e"},
+      {"path":"ipc/native/src/core/dbinder/source/dbinder_databus_invoker.cpp","sha256":"378776e256a8438c5bb28c57acc39172b3376512907718e813b71406b7251217","git_blob":"83450463d6d39f3a327ffa3dccccf0d8c957757d"},
+      {"path":"ipc/native/src/core/dbinder/source/databus_socket_listener.cpp","sha256":"dce80ace50af9f18a0e003f0bd49cdf6b4ba22a4012fe51df2a4bbb8456acb3b","git_blob":"7a01e036427e45385b02605a403dbca35b318aab"},
+      {"path":"ipc/native/src/core/framework/source/ipc_process_skeleton.cpp","sha256":"cdffaaf0054da5c80d64c0cec6ef287c9c24e432bc50a49d3288336715910366","git_blob":"516fd9efd0ab405cbd0c8a985f9f203478fc4d52"},
+      {"path":"ipc/native/src/core/framework/source/ipc_object_stub.cpp","sha256":"554a27bf335d0048373c326f3f9bddea9ba134b73bf8dca622d6c80b644656bb","git_blob":"22c3a682c20fd350b318cad17a6d621206e65ba7"},
+      {"path":"ipc/native/src/core/framework/source/ipc_thread_skeleton.cpp","sha256":"393ab2f501def549428374f8e3ceefab6e12df91118672272cc915c4d01bb4e1","git_blob":"0206b248dc57065721c1712b251d2edaaee79476"}
+    ],
+    "supporting_artifacts": [
+      "d29_dbinder_ref_scout-20261020.json",
+      "t30_dbinder_ref_counterreview-20261020.json",
+      "t33_raw_pointer_counterreview-20261020.json",
+      "d41_test_seam_feasibility-20261020.json",
+      "t42_lifetime_counterreview-20261020.json"
+    ]
+  },
+  "dimension_assessment": {
+    "source_binding_and_local_mechanism": {
+      "verdict": "supported",
+      "evidence": [
+        {"source":"ipc/native/src/core/dbinder/include/dbinder_base_invoker_process.h","location":"TargetStubSendRequest, lines 53-80 per T33/T42","finding":"The function locks this invoker's objectMutex_, stores QueryStubByIndex(cookie) as auto* and calls SendRequest through that raw pointer. No temporary sptr or explicit IncStrongRef occurs between lookup and call. The lock remains held for the call."},
+        {"source":"ipc/native/src/core/framework/source/ipc_process_skeleton.cpp","location":"QueryStubByIndex lines 994-1009 and EraseStubIndex lines 1044-1057 per T33","finding":"The shared map lock protects lookup only and is released before returning. EraseStubIndex prevents later lookup but does not revoke a copied pointer."},
+        {"source":"ipc/native/src/core/dbinder/source/dbinder_databus_invoker.cpp","location":"OnDatabusSessionServerSideClosed lines 655-675 per T33/T42","finding":"Socket relations are detached and associated stub references are decremented on close."}
+      ],
+      "qualification": "This proves a source-level lifetime window conditional on concurrent execution and a final reference decrement; it does not prove a use-after-free occurs."
+    },
+    "reachability_and_caller_gate": {
+      "verdict": "insufficient",
+      "supported_facts": [
+        "ProcessTransaction calls CheckAndSetCallerInfo before TargetStubSendRequest; the caller tuple is derived from active DBinder session state and checked against server-maintained app-auth mapping plus cookie/stubIndex and socket relation (D29/T30 immutable source review).",
+        "The candidate is therefore not an unauthenticated arbitrary local call path; it concerns a request on an established/authorized DBinder session."
+      ],
+      "unknowns": [
+        "Whether an untrusted ordinary application can establish or control the relevant peer session in the target product.",
+        "Whether that authorized peer can cause the exact request/close sequence, and whether session shutdown is attacker-triggerable rather than ordinary lifecycle behavior."
+      ]
+    },
+    "thread_scheduling_and_locking": {
+      "verdict": "insufficient",
+      "supported_facts": [
+        "IPCThreadSkeleton is held in pthread TLS; objectMutex_ is a non-static per-invoker member. Distinct worker and callback threads can therefore have distinct locks (T30/T33/T42).",
+        "ServerOnShutdown obtains the invoker through the current callback thread's skeleton; request handling uses the worker path (T33/T42)."
+      ],
+      "active_counterexamples": [
+        "If SoftBus invokes ServerOnShutdown on the same TLS thread that processes the transaction, both paths may use the same invoker/mutex and serialize.",
+        "Even on distinct threads, the transaction may finish SendRequest before close, or close may complete before lookup; those schedules do not produce the claimed window."
+      ],
+      "missing_evidence": "No target-paired SoftBus callback-thread provenance, happens-before guarantee, or runtime overlap evidence is recorded. Source callbacks alone do not establish scheduling."
+    },
+    "last_strong_reference": {
+      "verdict": "insufficient",
+      "supported_facts": [
+        "Session relation creation increments a strong reference; socket close decrements once per removed socket-bound relation (T33/T42).",
+        "If that decrement is the final strong reference, final-release cleanup erases the stub index (T33/T42)."
+      ],
+      "active_counterexamples": [
+        "A caller-held sptr, service-owned sptr, another live session relation, or any unrelated strong owner prevents this close from being the last release.",
+        "The source audit does not enumerate the strong-reference distribution for a concrete service stub at the proposed overlap point."
+      ],
+      "missing_evidence": "Target runtime/refcount instrumentation proving this socket relation is the only strong reference at the scheduled close."
+    },
+    "post_destruction_access": {
+      "verdict": "insufficient",
+      "supported_facts": [
+        "A copied raw pointer is not made safe by later map erase; the index lock does not pin object lifetime (T33/T42).",
+        "T33 notes the source comment warns not to use the stub after SendRequest because DBINDER_DECREFS can itself destroy it; this supports lifecycle sensitivity but is not evidence of a concurrent invalid access."
+      ],
+      "active_counterexamples": [
+        "Close-before-lookup erases the index first; QueryStubByIndex returns null and SendRequest is skipped.",
+        "A surviving strong owner prevents destruction.",
+        "Destruction may occur only after SendRequest returns, or execution may not touch invalid object state after a destructor marker."
+      ],
+      "missing_evidence": "A controlled target-paired runtime showing destructor/OnLastStrongRef before the worker's subsequent SendRequest access, with sanitizer or safe instrumentation evidence. Refcount zero or index erase alone is not enough."
+    },
+    "attacker_control_and_security_impact": {
+      "verdict": "insufficient",
+      "source_level_effect_if_proven": "A genuine post-destruction virtual/member access could cause a service crash or memory-safety violation; the current evidence does not show that access or any corruption primitive.",
+      "unknowns": [
+        "Whether a remote peer can reliably trigger the shutdown/request overlap.",
+        "Whether a crash, corruption, cross-principal effect, or only benign teardown results.",
+        "Whether the affected stub is privileged or whether the effect is isolated to the session/service."
+      ],
+      "conclusion": "No attacker-controlled exploitable effect is established. Do not assert UAF, DoS, or privilege impact from source possibility alone."
+    },
+    "target_product_and_softbus_pairing": {
+      "verdict": "refuted_as_currently_proven_product_claim",
+      "evidence": "D27/T28 and D41 report no immutable product lock pairing IPC bbb92dbb2f52aca54ab268307c9476ac1802f3ff with a SoftBus revision. Frozen manifest snapshots pair older IPC 5903fd5f7332a427cb3f6915b0202ee5c76c63b5 with other SoftBus commits; active manifest floats revisions.",
+      "qualification": "This refutes the claim that the current record proves a target product deployment/pairing; it does not refute that some product may use the source."
+    },
+    "existing_test_coverage": {
+      "verdict": "supported_gap",
+      "evidence": [
+        "T42 inventory: IPCObjectStub handler tests cover branches, close-handler unit/fuzz tests exercise shutdown in isolation, and ProcessSkeleton attach/detach fuzz tests do not coordinate a gated transaction with close.",
+        "No identified test pauses after non-null raw QueryStubByIndex and before SendRequest while a distinct callback-thread invoker closes the same socket relation."
+      ],
+      "qualification": "This is an inventory-based gap report, not a fresh exhaustive test search or test execution. No tests/PoC were run for this review."
+    }
+  },
+  "overall_verdict": {
+    "mechanism_assessment": "supported",
+    "product_vulnerability_assessment": "insufficient",
+    "confirmed_or_reportable": false,
+    "conditional_candidate_count": 1,
+    "confidence": "low",
+    "go_no_go": {
+      "vulnerability_claim": "NO-GO: do not report or promote T30-R1 as a confirmed UAF/vulnerability.",
+      "production_fix": "NO-GO: do not change production ownership/locking based only on this source-level possibility.",
+      "evidence_gathering": "GO only when a target-paired product build/runtime becomes available; implement a test-only seam and run the bounded oracle below before deciding whether a fix is warranted."
+    }
+  },
+  "minimum_proof_requirements": {
+    "required_product_material": [
+      "Immutable product manifest/build lock pairing exact IPC, SoftBus and c_utils commits.",
+      "Matching OHOS compiler, sysroot, generated args.gn/build.ninja and resolved IPC test target.",
+      "SoftBus callback implementation or runtime evidence identifying shutdown callback thread and proving possible overlap with the request worker."
+    ],
+    "minimum_deterministic_oracle": {
+      "test_only_seam": "Barrier immediately after non-null QueryStubByIndex returns and before SendRequest; do not hold the stub map lock at the seam.",
+      "candidate_schedule": [
+        "Drive the real request through CheckAndSetCallerInfo and pause the worker at the seam.",
+        "Prove by instrumentation that the socket relation is the only strong reference, then use a distinct TLS invoker thread to close the same socket and wait for final release/destructor/index erase.",
+        "Release the worker and observe whether SendRequest begins/accesses object state after destruction using a target sanitizer or safe instrumentation."
+      ],
+      "required_controls": [
+        "Close-before-lookup: lookup returns null and SendRequest is not entered.",
+        "Unrelated strong owner: close does not destroy the object during the request window.",
+        "Same-thread callback or serialized request-before-close: no concurrent destruction during SendRequest.",
+        "No destruction marker or no post-destruction access: retain insufficient; do not treat refcount zero/index erase alone as confirmation."
+      ]
+    },
+    "go_criteria": "Only if paired product evidence establishes a distinct-thread overlap, the socket relation is the last strong ref, and controlled instrumentation shows a subsequent SendRequest access after destruction may this advance to a test-confirmed memory-safety defect and then a minimal fix proposal."
+  },
+  "review_limits": [
+    "No tests or PoCs run; no product code changed.",
+    "Assessment is bounded to immutable source bindings recorded in the cited D29/T30/T33/D41/T42 artifacts; no inference about unpaired SoftBus internals is made.",
+    "No complete inventory of all application/service sptr owners is available from the reviewed source slices."
+  ]
+}

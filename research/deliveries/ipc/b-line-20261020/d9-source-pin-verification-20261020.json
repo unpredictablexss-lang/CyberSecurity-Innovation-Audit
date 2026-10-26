@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0",
+  "checked_at_utc": "2026-10-20T00:56:27Z",
+  "scanner_main": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+  "target_ipc_commit": {
+    "sha": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "tree": "125ecbfa21f430f2f977f0026ab97b70cd27a726",
+    "commit_time": "2026-09-14T14:09:31+08:00",
+    "subject": "!2570 merge master into master",
+    "author": "openharmony_ci <openharmony_ci@noreply.gitcode.com>",
+    "fetched_from": "https://github.com/openharmony/communication_ipc.git",
+    "github_page": "https://github.com/openharmony/communication_ipc/commit/bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "exact_sha_fetch": "success",
+    "gitcode_gitee_exact_sha_fetch": "not our ref",
+    "object_store": "D:/openHarmonyScanner/worktrees/ipc-source-pin-20261020"
+  },
+  "local_raw_equality": [
+    {
+      "sha256": "ac762ad0345451a605fffcd430d933161eb20aedd7b83479753b9be8384fa1cf",
+      "path": "dbinder/dbinder_service/src/dbinder_service.cpp",
+      "matches_local_bytes": true,
+      "blob": "fb7f0b92f1f842f10f35f14917c553d3bb38ee9e"
+    },
+    {
+      "sha256": "787a37914ec1e1d760144803ed25a2aaddb60139651a691326bb1bd038f1df62",
+      "path": "dbinder/dbinder_service/src/socket/dbinder_remote_listener.cpp",
+      "matches_local_bytes": true,
+      "blob": "7a6240778b2e7c1b52c4d9148d849b9cef5e01e5"
+    },
+    {
+      "sha256": "6583b7b212eb8230ae234c54666bb1c9bdcffed898a3799d096d573a0422b9f2",
+      "path": "dbinder/dbinder_service/src/dbinder_service_stub.cpp",
+      "matches_local_bytes": true,
+      "blob": "11927a9291886f56211a3c775122b2462d6f1ddd"
+    },
+    {
+      "sha256": "0ed05e8e4c1b92560ceb1de17fcc790d8cff8173ff4159a0c116caea16984341",
+      "path": "dbinder/c/include/dbinder_types.h",
+      "matches_local_bytes": true,
+      "blob": "c533e33cc0280c04c57564fc58d6f0cf09fc1c0f"
+    }
+  ],
+  "product_snapshot": {
+    "manifest": "source-manifest-resolved-20261019.xml",
+    "ipc_revision": "5903fd5f7332a427cb3f6915b0202ee5c76c63b5",
+    "dsoftbus_revision": "7743b679f6c3599e21bea4e4b1564422668e3643",
+    "matching_build_outputs": [
+      "out-gn-20261019-retry3/rk3568/build.ninja",
+      "out-gn-20261019-retry3/rk3568/args.gn"
+    ],
+    "ipc_project_source_present": false,
+    "ipc_source_tree_difference_vs_target": [
+      ".gitattributes",
+      "interfaces/innerkits/cj/include/remote_object_impl.h",
+      "interfaces/innerkits/cj/include/remote_proxy_holder_impl.h",
+      "ipc/native/src/core/dbinder/include/dbinder_error_code.h"
+    ],
+    "dbinder_error_code_diff": "event name strings only",
+    "dbinder_candidate_files_identical": true,
+    "compile_database": {
+      "path": "out-gn-20261019-retry3/rk3568/compile_commands.json",
+      "entries": 234245,
+      "recorded_directory": "/src/out/rk3568",
+      "usable_from_current_location": false,
+      "reason": "Recorded /src build root does not exist in current WSL mount; IPC source project is also absent.",
+      "path_matches_with_dbinder_term": 116
+    }
+  },
+  "validation": {
+    "candidate_source_provenance": "verified for the listed IPC files against target commit",
+    "candidate_product_integration": "not run",
+    "blocker": "D9/D54 IPC source pin is verified. Matching product runtime/build proof remains unavailable: the C-line build metadata was generated at absent /src, its IPC project source is absent, and the declared DSoftBus pin 7743 is not present in fetched GitHub/Gitee master objects.",
+    "next": "Reassess whether an isolated test/build can use the exact source and compatible product lock without mutating the c-line worktree."
+  },
+  "dsoftbus_pin_check": {
+    "manifest_revision": "7743b679f6c3599e21bea4e4b1564422668e3643",
+    "exact_sha_fetch_github": "not our ref",
+    "exact_sha_fetch_gitee": "not our ref",
+    "github_master_head": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+    "gitee_master_head": "ccb1a86fff03a6b2de19d39b90a81351ced5acd6",
+    "target_present_in_fetched_master_objects": false,
+    "local_checkout_git_config_bytes": 0,
+    "conclusion": "Transport source/authentication guarantee remains unbound to verifiable target source."
+  },
+  "dsoftbus_probe_object_store": "D:/openHarmonyScanner/worktrees/dsoftbus-source-pin-20261020"
+}

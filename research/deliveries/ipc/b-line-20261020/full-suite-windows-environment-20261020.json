@@ -1,0 +1,39 @@
+{
+  "schema": "ohscanner.full-suite-environment-result.v1",
+  "date": "2026-10-20",
+  "scanner_commit": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+  "worktree": "b-ipc-integration-20261020",
+  "command": "python -m unittest discover -s tests -q",
+  "runtime": {
+    "platform": "Windows",
+    "python": "Anaconda Python 3.13.9",
+    "repository_guide_environment": "Ubuntu 22.04 WSL2, Python 3.10"
+  },
+  "result": {
+    "tests": 944,
+    "failures": 3,
+    "errors": 19,
+    "skipped": 60,
+    "elapsed_seconds": 35.515,
+    "acceptance": false
+  },
+  "failure_examples": [
+    {"test": "test_agent_workflow", "reason": "FastAPI is not installed in this interpreter"},
+    {"test": "test_workbench", "reason": "fcntl is unavailable on Windows"},
+    {"test": "test_runner_collects_fake_clang_diagnostics", "reason": "Windows cannot execute the fake POSIX clang script (WinError 193)"},
+    {"test": "test_git_blobs_are_read_in_one_bounded_batch", "reason": "Windows newline translation produced CRLF where the fixture asserted LF"},
+    {"test": "test_index_real_commit_objects_and_language_parse_state", "reason": "optional ArkTS grammar unavailable; parser returned not_run where fixture expects complete"}
+  ],
+  "b_line_targeted_results": {
+    "ipc_suite": "352 passed, 47 skipped",
+    "owner_ipc_suite": "12 passed",
+    "t7_identity_suite": "21 passed, 1 skipped",
+    "d5_rule_version_tests": "2 passed against integration; baseline red was 2 expected failures",
+    "d3_coverage_invariant": "1 passed"
+  },
+  "raw_output": {
+    "path": "%TEMP%/ohscanner-b-fulltests-20261020.log",
+    "sha256": "911b8740114bda6e9b11395ad387337aa6a7888fcecd77b93054f0232a6bad30"
+  },
+  "next_step": "This Windows-only run was superseded for acceptance by the successful WSL2 run in full-suite-final-replay-20261020.json."
+}

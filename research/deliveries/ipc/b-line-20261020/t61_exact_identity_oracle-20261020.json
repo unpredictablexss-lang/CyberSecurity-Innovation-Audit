@@ -1,0 +1,113 @@
+{
+  "task": "T61 exact observation identity multiplicity oracle",
+  "date": "2026-10-20",
+  "result": "NO_DUPLICATE_FINAL_FINDING_REPRODUCED; TEST_GAP_AND_ROOT_KEY_BOUNDARY_REVIEWED",
+  "worktrees": {
+    "plan": "D:/openHarmonyScanner/worktrees/b-ipc-plan-20261020",
+    "production_detector": "D:/openHarmonyScanner/worktrees/b-ipc-integration-20261020"
+  },
+  "oracle": {
+    "method": "Temporary in-memory C++ SourceUnit fixtures passed through production Interpreter.run() and IpcInterfaceDetector.detect(); no repository files or tests modified.",
+    "identity_compared": [
+      "rule",
+      "file",
+      "line",
+      "symbol",
+      "root_key"
+    ],
+    "same_sink_two_branch_paths": {
+      "fixture": "two branch-specific request reads converge at one memcpy sink (sample source line 13)",
+      "raw_observations_before_run_dedup": 2,
+      "distinct_full_identities_before_run_dedup": 1,
+      "final_findings": 1,
+      "final_identity": [
+        "ipc.parcel.copy-range",
+        "synthetic.cpp",
+        13,
+        "Fixture_flow::OnRemoteRequest",
+        [
+          "synthetic.cpp",
+          "Fixture_flow::OnRemoteRequest"
+        ]
+      ]
+    },
+    "two_independent_sinks": {
+      "fixture": "two memcpy calls on distinct source lines (8 and 9)",
+      "raw_observations_before_run_dedup": 2,
+      "distinct_full_identities_before_run_dedup": 2,
+      "final_findings": 2,
+      "final_identities": [
+        [
+          "ipc.parcel.copy-range",
+          "synthetic.cpp",
+          8,
+          "Fixture_flow::OnRemoteRequest",
+          [
+            "synthetic.cpp",
+            "Fixture_flow::OnRemoteRequest"
+          ]
+        ],
+        [
+          "ipc.parcel.copy-range",
+          "synthetic.cpp",
+          9,
+          "Fixture_flow::OnRemoteRequest",
+          [
+            "synthetic.cpp",
+            "Fixture_flow::OnRemoteRequest"
+          ]
+        ]
+      ]
+    }
+  },
+  "existing_test_assertions": {
+    "finding_rule_set_helper": "tests/test_ipc_data_flow_rules.py:47 returns {finding.rule_id for finding in run.findings}; this collapses both rule identity and multiplicity.",
+    "narrow_count_tests": "Some tests do assert findings/counts (e.g. tests/test_ipc_data_flow_rules.py:686-716 and tests/test_ipc_multidispatch_guard_matrix.py:104-106), but no focused two-branch/same-sink versus two-sink identity oracle was found.",
+    "command": "python -m pytest -q tests/test_ipc_data_flow_rules.py tests/test_ipc_multidispatch_guard_matrix.py",
+    "output": "111 passed in 0.36s"
+  },
+  "production_identity_dedup": {
+    "location": "src/ohscanner/detectors/interface/analysis.py:3295-3298",
+    "dedup_key": [
+      "file",
+      "line",
+      "rule",
+      "symbol"
+    ],
+    "behavior": "setdefault keeps the first path observation for each key; same-sink branch multiplicity is removed before DetectorFinding conversion, while distinct sink lines remain distinct findings."
+  },
+  "root_key_boundary": {
+    "observation_root_key": "(root.file, root.qualified)",
+    "dedup_key_includes_root": false,
+    "synthetic_multi_root_oracle": {
+      "fixture": "Two allowlisted entry roots Foo::OnRemoteRequest and Bar::OnRemoteRequest call one source-backed Helper::copy(MessageParcel&) containing one DATA-01 sink.",
+      "raw_observations": 2,
+      "raw_root_keys": [
+        [
+          "synthetic_multi_root.cpp",
+          "Foo::OnRemoteRequest"
+        ],
+        [
+          "synthetic_multi_root.cpp",
+          "Bar::OnRemoteRequest"
+        ]
+      ],
+      "final_findings": 1,
+      "retained_root_key": [
+        "synthetic_multi_root.cpp",
+        "Foo::OnRemoteRequest"
+      ],
+      "result": "The final coalescer discards one distinct root attribution for the same helper sink. The fixture uses a synthetic IpcPolicy with both helper callers explicitly allowlisted; it proves the coalescing behavior, not that an actual product configuration necessarily reaches this exact multi-root shape."
+    },
+    "assessment": "Confirmed synthetic root-attribution loss, separate from duplicate findings. In the same-root branch case duplicate raw path observations are correctly reduced to one final finding; in this two-root case both observations have the same sink key but different root_key, and one is dropped.",
+    "recommended_test": "Add a focused same-helper/multiple-root contract oracle that asserts one sink location but preserves both root provenance records (e.g. aggregated provenance), or document deliberate first-root-only semantics. Keep sink multiplicity separate from root provenance."
+  },
+  "classification": {
+    "duplicate_finding_bug": false,
+    "test_gap": true,
+    "root_attribution_loss": true,
+    "raw_emit_multiplicity": "Observed: two branch states emit same sink identity, then run() coalesces them correctly.",
+    "overall": "The T59 concern is not an externally reproduced duplicate finding. It identifies an oracle weakness in rule-id-set tests. Separately, a synthetic multi-root shared-helper fixture confirms that root_key is omitted from coalescing and one root attribution is lost. This is an evidence/provenance contract issue; do not conflate it with duplicate sink findings or upgrade it to a security candidate."
+  },
+  "scope": "Read-only. No code, fixtures, or tests were changed. JSON evidence only."
+}

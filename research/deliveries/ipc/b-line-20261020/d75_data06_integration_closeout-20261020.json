@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "task": "D75 DATA-06 integration closeout",
+  "date": "2026-10-20",
+  "status": "metadata_and_fixture_gaps_fixed; IPC_suite_passed; scope_clean",
+  "worktree": "D:\\openHarmonyScanner\\worktrees\\b-ipc-integration-20261020",
+  "base_head": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+  "working_tree_dirty": true,
+  "initial_failures": [
+    {
+      "test": "RuleControlCoverageTests.test_every_catalogued_rule_has_a_positive_control",
+      "cause": "DATA-06 had no positive fixture row."
+    },
+    {
+      "test": "RuleControlCoverageTests.test_every_family_has_positive_fixed_and_safe_controls",
+      "cause": "DATA-06 had no fixture directory or positive/fixed/safe controls."
+    },
+    {
+      "test": "FamilyRegistryTests.test_ids_cwes_and_fixture_directories_are_well_formed",
+      "cause": "REVIEWED_CWE had no DATA-06 entry."
+    },
+    {
+      "test": "IpcRuleVersionTests.test_explicit_version_map_covers_every_ipc_rule_and_fails_closed",
+      "cause": "Test expected 19 consequence rules and omitted the new rule version."
+    },
+    {
+      "test": "IpcHoldoutContractTests.test_every_declared_rule_family_is_explicitly_unmeasured_until_real_holdout_exists",
+      "cause": "Test incorrectly equated current registry with an immutable historical manifest that predates DATA-06."
+    }
+  ],
+  "fixes": [
+    "Added DATA-06 synthetic positive, fixed, and safe source controls plus family manifest. Test harness binds those fixture units to the exact repository and relative source path required by the narrow rule; the generic fixtures retain their existing identity.",
+    "Added a pinned positive candidate line/token in test_ipc_family_depth.py; updated reviewed family CWE table and explicit rule-version baseline/count in test_ipc_family_matrix.py and test_ipc_rule_versions.py.",
+    "Reworked holdout contract test to pin the historical 2026-10-18 manifest SHA-256 and its historical family IDs, preserve its original unmeasured state and detector identity, and read a separate current declaration for DATA-06 with measurement_status=not_run and no count/metric fields.",
+    "The historical holdout manifest itself was not modified. T74 test code was not edited."
+  ],
+  "holdout_identity": {
+    "path": "research/evidence/interface/ipc/high_recall_holdout_20261018/manifest.json",
+    "sha256_before_and_after": "314c97104ba19a0f9dda06359449708728a50c9bf9c7a5f89bb7e95bb3886e0d",
+    "family_set_remains_historical": true,
+    "current_data06_measurement": "not_run; no holdout cases; no precision/recall/count asserted"
+  },
+  "current_data06_declaration": {
+    "path": "research/evidence/interface/ipc/current_rule_measurement_20261020.json",
+    "sha256": "fe53e43d79405b66aa1bc35c3cff8f64c1909c450d8d7523a689cdb582be0351",
+    "rule": "ipc.parcel.array-allocation-width",
+    "rule_version": "0.1.0",
+    "measurement_status": "not_run"
+  },
+  "validation": {
+    "targeted_suite": {
+      "command": "python -m pytest -q tests/test_ipc_family_depth.py tests/test_ipc_family_matrix.py tests/test_ipc_rule_versions.py tests/test_ipc_holdout_contract.py tests/test_ipc_t74_cj_array_bounds_integration_challenge.py",
+      "result": "44 passed in 1.23s"
+    },
+    "full_ipc_suite": {
+      "command": "$testFiles = Get-ChildItem tests -File -Filter 'test_ipc*.py' | ForEach-Object { $_.FullName }; python -m pytest -q @testFiles",
+      "result": "368 passed, 47 skipped in 2.74s; 415 total. Parent independently reports the same 415 run with zero failures."
+    },
+    "scope_check": {
+      "requested_alias": "origin/main",
+      "resolved_full_sha": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+      "command": "python scripts/check_change_scope.py --base db77164fdc2af0da02e4d3efc056d84694fd68e8 --lane ipc",
+      "result": "exit 0; violations=[]",
+      "note": "The script rejects symbolic refs and requires a full SHA; origin/main resolves to the provided base SHA."
+    },
+    "diff_check": {
+      "command": "git diff --check",
+      "result": "clean; exit 0"
+    }
+  },
+  "provenance": {
+    "tracked_diff_binary_sha256": "3f50a4f40e70615afaf94780039887e5a42c2aff13f17fa61aaee682c485e621",
+    "tracked_diff_bytes": 106072,
+    "file_sha256": {
+      "src/ohscanner/detectors/interface/ffi_array_bounds.py": "fc44c96ac584c28d4ac0106b9a4e7125a7ab71cd0d8b280a7cc3ff75a062a173",
+      "src/ohscanner/detectors/interface/families/data06.py": "a277339ae772c42a9465fc3b2063f8c80326ef770ea939598769c7ae4214074b",
+      "src/ohscanner/detectors/interface/detector.py": "b1540d4a145b93cbc291329a10467c0f6ae47aa40217adb67c8ad12a0d8ce80a",
+      "src/ohscanner/detectors/interface/models.py": "bf8dcdf22e00b721951d7f2200ac40569afdd875e11c95edf418144e957b908f",
+      "tests/test_ipc_family_depth.py": "e011a5beb688cb48942886fc32e24db128619682897084dca696f9cc0e7511b5",
+      "tests/test_ipc_family_matrix.py": "d49b4f5e0a13c8625a1f265048a1e18962ed9bb60448c194b98a5c9fd490d2d1",
+      "tests/test_ipc_rule_versions.py": "77c1899b4084845c8c26a52827297626bba9ee9b3bc8f7032437f53381f72c03",
+      "tests/test_ipc_holdout_contract.py": "b4adb16884df5a54930b84d51d835bfa7c9ac43f21d7879c1881295a16dc6553",
+      "research/evidence/interface/ipc/high_recall_holdout_20261018/manifest.json": "314c97104ba19a0f9dda06359449708728a50c9bf9c7a5f89bb7e95bb3886e0d",
+      "research/evidence/interface/ipc/current_rule_measurement_20261020.json": "fe53e43d79405b66aa1bc35c3cff8f64c1909c450d8d7523a689cdb582be0351",
+      "tests/fixtures/ipc/data06/manifest.json": "877895ef76fde026d1f1faa232c08092a7e6ea3001aa8fb023f5feb8b8ed41f4",
+      "tests/fixtures/ipc/data06/cj_array_allocation_width_positive.cpp": "66efee636f05cb448c8b5a1c4c528580e656f029fc1c5b8192ee94aa88bc10a5",
+      "tests/fixtures/ipc/data06/cj_array_allocation_width_fixed.cpp": "d91996f02c5f174c1679f1685569bfd07650fd768054608a1591188fee5c1f92",
+      "tests/fixtures/ipc/data06/cj_array_allocation_width_safe.cpp": "67f33506b2c128c3fb83b9749292e1bdb088523593fb6cfcf9a7d07c72cf1689"
+    },
+    "tracked_hash_scope_note": "The tracked diff hash excludes untracked prototype/fixture/report files; those are independently bound above where relevant. T74 untracked test/manifest are not included in the listed hashes because this lane did not edit them."
+  },
+  "limits": [
+    "The DATA-06 fixture controls are synthetic rule-design evidence, not holdout labels.",
+    "Source-level vulnerable/fixed observations do not establish product build inclusion, deployed FFI caller reachability, or runtime impact.",
+    "No holdout metrics were computed or changed."
+  ],
+  "actions": false
+}

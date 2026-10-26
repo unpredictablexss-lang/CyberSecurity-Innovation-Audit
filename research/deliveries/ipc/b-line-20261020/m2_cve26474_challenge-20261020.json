@@ -1,0 +1,122 @@
+{
+  "schema_version": 1,
+  "task": "M2 independent challenge review: CVE-2025-26474",
+  "review_date": "2026-10-20",
+  "status": "source_root_cause_supported_with_reachability_and_product_limitations",
+  "scope": {
+    "repository": "https://gitee.com/openharmony/communication_ipc.git",
+    "vulnerable_revision": "84d681288793785e8f39f71c824f211edaed8f1e",
+    "fix_commit": "de3a68cc8b7d6f18017fd261060def0e38dce54a",
+    "reviewed_file": "interfaces/innerkits/cj/src/message_sequence_impl.cpp",
+    "actions": [
+      "Fetched and inspected the two named public Git objects from the official Gitee repository.",
+      "Read-only source and official bulletin review; no code, tests, or holdout data changed."
+    ],
+    "not_performed": ["detector execution", "runtime PoC", "product image validation", "holdout scoring"]
+  },
+  "official_evidence": {
+    "bulletin": {
+      "url": "https://lists.openatom.io/hyperkitty/list/security@openharmony.io/thread/TQNJ4QHLM23SAULGUN26MM2XBBK5L2MW/",
+      "claims": {
+        "cve": "CVE-2025-26474",
+        "component": "communication_ipc",
+        "weakness": "improper input validation",
+        "attacker": "local attacker",
+        "impact": "information disclosure in specific scenarios",
+        "severity": "Low",
+        "cvss_3_1": 3.3,
+        "affected_release": "OpenHarmony-v5.0.3-Release / communication_ipc 5.0.3.x"
+      },
+      "limits": "The bulletin does not name CJ_ReadRemoteObjectArray, establish a concrete caller/path, or describe the disclosed data."
+    },
+    "fix_commit": {
+      "url": "https://gitee.com/openharmony/communication_ipc/commit/de3a68cc8b7d6f18017fd261060def0e38dce54a",
+      "subject": "fix security issue of cj",
+      "parent": "84d681288793785e8f39f71c824f211edaed8f1e",
+      "tree": "611835efd3112027f067b587146a2c2bbd38b47e"
+    },
+    "vulnerable_tree": "80fb756221eac67a9f6a9a9506eb763e380d9c55"
+  },
+  "confirmed_root_cause": {
+    "count_source": "CJ_ReadRemoteObjectArray reads arrayLength directly from nativeParcel_->ReadInt32(); it rejects arrayLength <= 0, but has no independent count cap. It is parcel-derived and attacker-controlled when an untrusted parcel reaches this deserializer.",
+    "guard": "CheckReadLength((size_t)arrayLength, BYTE_SIZE_32) checks read-position validity and that count and count*4 do not exceed remaining parcel bytes. This bounds the count against parcel bytes for a 4-byte unit; it does not constrain the allocation to the number of bytes subsequently written.",
+    "underallocation": {
+      "type_buffer": "malloc(arrayLength) requests N bytes for int32_t[N], which requires 4*N bytes.",
+      "id_buffer": "malloc(arrayLength) requests N bytes for int64_t[N], which requires 8*N bytes.",
+      "writes": "The loop runs N times and writes type[i] and id[i], respectively 4-byte and 8-byte stores, after each ReadRemoteObject().",
+      "conclusion": "The requested object sizes are undersized by factors of 4 and 8. For counts where allocator usable storage does not absorb the mismatch, indexed writes exceed the requested heap objects. The count/remaining-byte guard does not establish allocation/write safety."
+    },
+    "fix_delta": "The named fix uses malloc(sizeof(int32_t) * arrayLength) and malloc(sizeof(int64_t) * arrayLength), and checks ReadRemoteObject() for null before dereferencing. This aligns directly with the allocation-size defect and is strong source-level corroboration.",
+    "root_cause_count": 1,
+    "classification": "undersized heap allocation followed by count-indexed out-of-bounds writes (CWE-122 / CWE-787 candidate mechanism); do not count the adjacent null dereference as a second confirmed CVE root cause without separate evidence."
+  },
+  "prerequisites_and_reachability": {
+    "explicit_prerequisites": [
+      "A valid MessageSequenceImpl instance with non-null nativeParcel_.",
+      "The FFIData lookup for the supplied instance id succeeds.",
+      "The execution path invokes FfiRpcMessageSequenceImplReadRemoteObjectArray / CJ_ReadRemoteObjectArray on a parcel containing a positive count and enough remaining bytes to pass CheckReadLength.",
+      "The parcel read loop reaches the count-indexed stores; null ReadRemoteObject results would instead trigger a null dereference in the vulnerable revision."
+    ],
+    "source_reachability": "The FFI wrapper directly forwards to CJ_ReadRemoteObjectArray after a successful FFIData lookup. This proves a callable component path, not that a remote/local attacker can cause a particular product service to invoke it with attacker-controlled parcel contents.",
+    "impact_boundary": "The official bulletin supports local information disclosure in specific scenarios. Source and patch support a memory corruption mechanism; they do not by themselves show which bytes/capabilities are disclosed, reliable exploitation, arbitrary code execution, or product-wide reachability.",
+    "null_object_note": "The vulnerable dereference value->IsProxyObject() has no null check, and the fix handles null. This is a real adjacent crash hazard if ReadRemoteObject returns null, but official material reviewed here does not establish it as the disclosure root cause."
+  },
+  "strongest_counterarguments": [
+    {
+      "point": "CheckReadLength rejects counts whose 4-byte representation exceeds remaining parcel bytes.",
+      "resolution": "This is a real input/remaining-data guard, but the write loop performs N objects' typed stores after allocating only N bytes. The guard is not an allocation-size check and does not dominate a correctly sized allocation."
+    },
+    {
+      "point": "Small malloc requests may receive allocator size-class slack, so a small N need not corrupt adjacent chunks in every allocator/build.",
+      "resolution": "This limits concrete exploitability for some N/allocator combinations; it does not change the source-level mismatch. Product allocator behavior and a corruption-triggering reachable N were not tested, so dynamic impact remains unverified."
+    },
+    {
+      "point": "The vulnerable function initializes res.len to zero and does not set it, while the fix sets it to arrayLength; a consumer honoring len could ignore the returned arrays.",
+      "resolution": "This is a meaningful downstream-use uncertainty. However, the under-sized allocations and per-element writes execute inside the function before it returns, independently of whether the caller later consumes len. It limits claims about returned-array use, not the local write-bound defect."
+    },
+    {
+      "point": "The bulletin describes information disclosure, while the visible defect is an out-of-bounds write and adjacent null dereference.",
+      "resolution": "The official bulletin establishes the CVE impact category but does not explain the causal chain. Treat the mapping from this memory-safety defect to disclosure as strongly patch-correlated but not independently demonstrated at product runtime."
+    }
+  ],
+  "current_b_ipc_detector_fit": {
+    "detector": "ohscanner.interface.ipc",
+    "version": "0.12.12",
+    "source": "worktrees/c-line-task-tree-20261020/src/ohscanner/detectors/interface/detector.py",
+    "language_scope": ["c", "cpp"],
+    "assessment": "No directly matching current B/IPC rule is established. Its parcel bounds rules model parcel-derived reads/writes and length flows; this case requires allocation-size-to-indexed-typed-store reasoning in a CJ FFI implementation. The guard exists, so a simplistic missing-length-validation rule would mischaracterize the source. Do not mark this as a true positive for current B/IPC absent an explicit rule mapping and a detector prediction on the pinned source.",
+    "rule_mapping": null,
+    "scoring": "not_run"
+  },
+  "candidate_decision": {
+    "source_root_cause": "supported",
+    "official_cve_identity_and_impact": "supported_by_official_bulletin",
+    "specific_source_to_cve_causality": "strongly_correlated_but_not_fully_proven",
+    "product_reachability": "unknown",
+    "runtime_exploitability": "not_run",
+    "holdout_label": "source_positive_candidate; not a scored detector positive",
+    "only_confirmed_root_cause": "count-sized allocations for typed arrays followed by per-element writes"
+  },
+  "recommended_follow_up": [
+    {
+      "lane": "D",
+      "task": "Assess a general C/C++ bounds rule for allocation-size expressions versus indexed write element width/count, including malloc(count) paired with typed T[count] stores. Use this pinned vulnerable/fixed pair plus safe controls; preserve the CheckReadLength guard and report allocation/write mismatch rather than generic missing validation. Do not alter the current holdout until the rule identity and source scope are frozen.",
+      "priority": "high"
+    },
+    {
+      "lane": "T",
+      "task": "Create an isolated component-level harness or focused source test to explore counts around allocator size-class boundaries and null ReadRemoteObject behavior, comparing the pinned vulnerable and fixed revisions. Record allocator/platform assumptions; do not infer product exploitability from the harness.",
+      "priority": "medium"
+    },
+    {
+      "lane": "B",
+      "task": "Record this candidate as not applicable to the current narrow IPC detector unless its declared scope is expanded to include FFI allocation/write bounds; if expanded, use an explicit new rule mapping and run only after detector identity is bound.",
+      "priority": "medium"
+    }
+  ],
+  "review_sources": [
+    "https://lists.openatom.io/hyperkitty/list/security@openharmony.io/thread/TQNJ4QHLM23SAULGUN26MM2XBBK5L2MW/",
+    "https://gitee.com/openharmony/communication_ipc.git",
+    "https://gitee.com/openharmony/communication_ipc/commit/de3a68cc8b7d6f18017fd261060def0e38dce54a"
+  ]
+}

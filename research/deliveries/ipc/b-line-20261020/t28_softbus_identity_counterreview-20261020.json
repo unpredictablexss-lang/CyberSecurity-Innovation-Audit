@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "task_id": "T28",
+  "title": "Independent counterreview: SoftBus identity provenance and DBINDER_ADD_COMMAUTH gates",
+  "reviewed_at_utc": "2026-10-20T05:20:00Z",
+  "scope": {
+    "read_only": true,
+    "tests_or_poc_run": false,
+    "code_changed": false,
+    "max_candidates": 1,
+    "candidate_count": 0
+  },
+  "review_basis": {
+    "scout": "d25_add_commauth_scout-20261020.json",
+    "prior_counterreview": "t26_add_commauth_counterreview-20261020.json",
+    "independent_pin_review": "d27_softbus_identity_pin-20261020.json",
+    "target_ipc_commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "target_ipc_route_bound_by": "D25 immutable raw file hashes; T26 independently matched five route-file SHA-256 values",
+    "product_build_pairing": "not established"
+  },
+  "independent_findings": {
+    "peer_name_to_uid_pid": {
+      "ipc_side": "Target-bound IPC ServerOnBind passes PeerSocketInfo.name to GetPidAndUidFromServiceName; parser only strips prefix/splits/parses numeric uid/pid. It does not authenticate the service name.",
+      "softbus_side_local_snapshot_only": "PeerSocketInfo.name is populated from sessionNode->info.peerSessionName; session initialization copies channel->peerSessionName, while common AppInfo initialization copies the supplied peerSessionName into peerData.sessionName.",
+      "classification": "unknown_not_proven_authenticated_and_not_proven_spoofable",
+      "reason": "The DSoftBus source used for this trace is not pinned to the product build containing IPC bbb92. Flow from a protocol/session field to the callback name establishes provenance in that local snapshot, not attacker control or lack of authentication. D27 likewise found no target-paired OS-principal verification evidence."
+    },
+    "connection_and_comm_auth_gate": {
+      "target_bound_behavior": "OnReceiveNewConnection constructs an AppAuthInfo from parsed peer pid/uid and networkId, requires QueryCommAuthInfo to find an existing authorization, obtains its tokenId, then creates and attaches the DBinderSessionObject and updates the existing authorization socket mapping. Failure rejects connection setup.",
+      "interpretation": "This is a real pre-existing authorization gate, but its trust strength depends on the provenance of the tuple and CommAuthInfo registration. It does not independently prove the parsed UID/PID are bound to a remote OS process."
+    },
+    "low_uid_inbound_session": {
+      "target_bound_behavior": "DBINDER_ADD_COMMAUTH rejects local IPC, then requires the databus invoker callerUid < ALLOWED_UID (10000). Normal ProcessTransaction invokes CheckAndSetCallerInfo before stub dispatch; that resolves session peer fields and requires QueryAppInfoToStubIndex for deviceId/pid/uid/tokenId/stubIndex with socketId either zero or the current socket.",
+      "classification": "conditioned_on_preexisting_registered_session_tuple",
+      "unknowns": [
+        "Whether an ordinary app can establish or impersonate an admitted peer UID below 10000 in the target product.",
+        "Whether the target-paired SoftBus authenticates and binds the peer session name to remote OS UID/PID before ServerOnBind.",
+        "Who can create the initial CommAuthInfo/AppAuthInfo records in the deployed product and whether that actor is trusted."
+      ]
+    },
+    "add_auth_tuple_and_socket_zero": {
+      "target_bound_behavior": "AddAuthInfo reads remotePid, remoteUid, remoteDeviceId, stubIndex, tokenId from parcel, validates nonempty/legal deviceId, resolves zero stubIndex to the current stub's index, and stores an AppAuthInfo with socketId=0.",
+      "wildcard_semantics": "QueryAppInfoToStubIndex accepts an entry when the stored socketId is zero or equals the current socket. The zero value is therefore a socket-match wildcard for an already-present tuple and stubIndex entry.",
+      "security_limit": "The wildcard does not itself create an inbound socket or bypass OnReceiveNewConnection's CommAuthInfo lookup. Nor does it bypass the pre-dispatch QueryAppInfoToStubIndex check: the current caller's session tuple and transaction cookie/stubIndex must already match. A parcel-selected tuple may mutate future mapping state, but the reviewed evidence does not show a caller can supply a victim tuple and relevant stubIndex, pass the initial gate, and cause an unauthorized downstream operation."
+    }
+  },
+  "d27_delta_review": {
+    "agreement": [
+      "No immutable product manifest/build record pairs target IPC bbb92 with an exact DSoftBus revision.",
+      "Active manifest floats both projects; frozen snapshots pair IPC 5903fd5 with DSoftBus 78e7835 or 7743b67, not target IPC bbb92.",
+      "The local DSoftBus trace exposes peerSessionName as PeerSocketInfo.name but does not prove either authenticated OS-principal binding or spoofability.",
+      "No candidate should be promoted absent a closed, target-paired reachability and effect chain."
+    ],
+    "independent_checks": [
+      "Re-read IPC listener parser, new-connection gate, caller-context gate, AddAuthInfo tuple storage, and QueryAppInfoToStubIndex wildcard condition in the local IPC checkout; their source SHA-256 values match the D25 immutable target pins for the cited route files.",
+      "Recomputed local snapshot SHA-256 for the five DSoftBus files cited by D27; each matched D27's listed SHA-256. This only verifies the inspected local bytes and does not authenticate target pairing.",
+      "Compared both frozen manifest snapshot project revisions: neither contains target IPC commit bbb92. The snapshots are evidence of non-pairing, not substitutes for the target product lock."
+    ],
+    "clarification": "Use 'unknown/unproven' for peer-name authenticity and attacker control. Do not infer 'spoofable' merely because the IPC parser does not authenticate the string, and do not infer 'authenticated' merely because SoftBus has device/auth-channel state."
+  },
+  "candidate_assessment": {
+    "confirmed_or_l2_candidates": 0,
+    "verdict": "insufficient evidence; conditional authorization-state concern only",
+    "closed_reachable_chain": false,
+    "reason": "The tuple is trusted after limited local validation and socketId=0 is a real wildcard, but the remote identity source, low-UID session reachability, caller control of victim tuple/stubIndex, and unauthorized downstream effect are not established on the target-paired product. Existing CommAuth and pre-dispatch caller mapping gates are material blockers to claiming a closed chain."
+  },
+  "source_and_manifest_evidence": [
+    {
+      "artifact": "d27_softbus_identity_pin-20261020.json",
+      "claim": "Target build dependency is unpinned; frozen manifests pair different IPC commits; local SoftBus metadata flow is not proof of authentication or spoofability."
+    },
+    {
+      "artifact": "D25 source pins in d25_add_commauth_scout-20261020.json",
+      "paths": [
+        "ipc/native/src/core/dbinder/source/databus_socket_listener.cpp",
+        "ipc/native/src/core/dbinder/source/dbinder_databus_invoker.cpp",
+        "ipc/native/src/core/framework/source/ipc_object_stub.cpp",
+        "ipc/native/src/core/framework/source/ipc_process_skeleton.cpp",
+        "ipc/native/src/core/dbinder/include/dbinder_base_invoker_process.h"
+      ]
+    },
+    {
+      "artifact": "openharmony-manifest-fixed.xml",
+      "sha256": "701683246a8b4393e61cdb75132d76aacc9e53f6f663d37e386bbd535511fbee",
+      "ipc_revision": "5903fd5f7332a427cb3f6915b0202ee5c76c63b5",
+      "dsoftbus_revision": "78e7835a3673fb41399c6c2f5e86c578530046a3"
+    },
+    {
+      "artifact": "openharmony-manifest-current-20261018.xml",
+      "sha256": "52f528dada321a140a29be2d55ef9053fda818cbdca93758425f1a25f6286d55",
+      "ipc_revision": "5903fd5f7332a427cb3f6915b0202ee5c76c63b5",
+      "dsoftbus_revision": "7743b679f6c3599e21bea4e4b1564422668e3643"
+    }
+  ],
+  "remaining_blockers": [
+    "Exact target product manifest/lock and resolved GN/build record binding communication_ipc bbb92 to an immutable communication_dsoftbus revision.",
+    "For that exact paired SoftBus source: trace peerSessionName from receive protocol/authentication through PeerSocketInfo.name callback and identify any check binding embedded UID/PID to authenticated remote process credentials.",
+    "Evidence whether a third-party app can establish the required low-UID session/CommAuth authorization and make a victim tuple/stubIndex mapping affect an unauthorized operation."
+  ],
+  "next_step": "Keep the candidate count at zero. When a target product lock/build record is available, re-run this narrow identity-boundary review against the exact paired SoftBus commit; if name spoofability, low-UID reachability, tuple control, and concrete effect all close, submit at most one candidate for second-layer review."
+}

@@ -1,0 +1,878 @@
+{
+  "schema": "ohscanner.bline-product-source-review.v1",
+  "verified_at_utc": "2026-10-19T22:14:00Z",
+  "scanner_repo": {
+    "branch": "main",
+    "sha": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "verification": "This turn, git fetch origin --prune succeeded after one transient 443 timeout; origin/main, integration HEAD, and plan HEAD are db77164fdc2af0da02e4d3efc056d84694fd68e8."
+  },
+  "product_repo": {
+    "repository": "openharmony/communication_ipc",
+    "branch": "master",
+    "sha": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "tree": "125ecbfa21f430f2f977f0026ab97b70cd27a726",
+    "master_merge_scope": "CJ FFI version script; no candidate dispatch paths touched by the anchor merge.",
+    "limitations": [
+      "Local product workspace .git/config is inaccessible; product object DB does not contain the current master commit.",
+      "GitHub compare from historical source anchor 5903fd5f7332a427cb3f6915b0202ee5c76c63b5 returned 404.",
+      "Review is bounded to named paths and routes, not a whole-tree scanner run."
+    ]
+  },
+  "reviewed_changes": [
+    {
+      "commit": "cf07495fac470276a174091a13ce51730152bacd",
+      "path": "ipc/native/src/taihe/src/ohos.rpc.rpc.impl.cpp",
+      "effect": "Checks jsObjRef_.has_value() before callback dereference.",
+      "assessment": "Defensive empty-optional handling; does not add descriptor validation or a new dispatch-to-effect route."
+    },
+    {
+      "commit": "5743ca7039a32a1e9ec16dad0bd5aabdd1be3b30",
+      "path": "ipc/native/src/taihe/src/ohos.rpc.rpc.impl.cpp",
+      "effect": "Uses optional.value() following a prior presence check.",
+      "assessment": "No independent candidate."
+    },
+    {
+      "commit": "6e11a60de24916ddfb0cd848ef1c56da1b833926",
+      "path": "ipc/native/src/core/dbinder/source/dbinder_callback_stub.cpp",
+      "effect": "Candidate-path change is duplicate log-prefix cleanup; separate MessageSequence file addition did not establish a new dispatch-to-effect route.",
+      "assessment": "No new high-signal candidate."
+    },
+    {
+      "commit": "7e2dc05cc6552841c76d9a504db4ff017523d0e9",
+      "path": "ipc/native/src/napi_common/source/napi_remote_object.cpp",
+      "effect": "static_cast/log formatting only.",
+      "assessment": "No behavior change."
+    }
+  ],
+  "candidate_outcome": {
+    "new_candidates": 0,
+    "disposition": "No source-bound new candidate passed the gate; do not increase static output or send an L2 packet this round.",
+    "existing_overlap": "Taihe callback observation 1831439990fdf6c8 remains on the same path; the optional guard is counterevidence/hardening, not an independent finding.",
+    "next_gate": "Resume only when a fresh pinned source route/effect is distinguishable and independently source-bound; then T-line verifies binding and dedup before L2."
+  },
+  "independent_review": {
+    "static_candidates": "No new source-bound candidate; limited to named patches and current master raw source window.",
+    "test_review": {
+      "taihe": {
+        "sha256": "2527026b8a744f9fb1ae4d9af98e991386ec07887af4310f2309c57a1674ba08",
+        "old_candidate": "1831439990fdf6c8",
+        "path": "ipc/native/src/taihe/src/ohos.rpc.rpc.impl.cpp",
+        "finding_line": 231,
+        "byte_range": "[14244,14314)",
+        "blob": "2c2e6db30c858b41b4166267df3f2b07794bc869"
+      },
+      "ani": {
+        "sha256": "ea3b46ff312b9526974c8020b26a4a030f95192ec2e914f6ec6bdd248765648a",
+        "old_candidate": "1ae68a66948e0021",
+        "path": "ipc/native/src/ani/rpc/src/rpc_ani_class.cpp",
+        "finding_line": 153,
+        "byte_range": "[5408,5466)",
+        "blob": "6b3b9f54148e1dc3b39f364dd71a30e910a7dd88"
+      },
+      "limitations": [
+        "GitHub API was rate-limited for this independent reviewer; current commit/tree metadata came from the already verified anchor.",
+        "No fresh whole-tree scanner execution occurred, so do not claim zero newly reportable findings across the full product tree.",
+        "Old raw URL returned 404 and local product Git config could not be read; old blob checkout could not be independently reconstructed. Hash/blob equality was checked against the D5 integrated report binding."
+      ],
+      "conclusion": "Independent reviewer recomputed whole-file bytes for Taihe and ANI source files at the current anchor; both hashes and Git blob OIDs match D5 integrated report bindings, confirming those files have no content delta from the prior scanned snapshot. No new source-bound candidate was established; this is not a whole-tree scanner rerun or a zero-new-finding claim.",
+      "core_dump_transaction": {
+        "blob": "22c3a682c20fd350b318cad17a6d621206e65ba7",
+        "candidate": "5501bf2ba361596d",
+        "guard": "Local caller and UID in {0, 2000, 1212} required before OnRemoteDump.",
+        "base_effect": "Base Dump implementation only logs and returns; concrete output effect depends on subclass override.",
+        "disposition": "Already reviewed; do not resend to L2 without new evidence. No full-tree scan performed.",
+        "sha256": "554a27bf335d0048373c326f3f9bddea9ba134b73bf8dca622d6c80b644656bb",
+        "old_l2": "Existing auth02 review refuted the narrow missing-caller-authorization claim; concrete subclass/output, product policy, reachability/confused deputy remain unknown.",
+        "route": "IPCObjectStub::SendRequest (448-450) -> DBinderDumpTransaction (211-216) -> OnRemoteDump (158-171) -> virtual Dump(fd,args);",
+        "source_range": "[5592,5629)",
+        "path": "ipc/native/src/core/framework/source/ipc_object_stub.cpp"
+      },
+      "d6_cross_review": {
+        "source_files": [
+          {
+            "matches": "D5 integrated report source binding",
+            "sha256": "6583b7b212eb8230ae234c54666bb1c9bdcffed898a3799d096d573a0422b9f2",
+            "blob": "11927a9291886f56211a3c775122b2462d6f1ddd",
+            "path": "dbinder/dbinder_service/src/dbinder_service_stub.cpp"
+          },
+          {
+            "matches": "D5 integrated report source binding",
+            "sha256": "167272c97c4796ec90f63db7089c3308c19f1dae8f07785339a38c645f82ca16",
+            "blob": "05dceaa7ec0df2f19c3b45b7f1f90ef54b98031d",
+            "path": "ipc/native/src/core/dbinder/source/dbinder_callback_stub.cpp"
+          }
+        ],
+        "reviewer_conclusion": "D6 zero-new-candidate conclusion is reasonable only for reviewed paths against prior observations; do not generalize to a whole-tree zero finding claim.",
+        "death_recipient": {
+          "add": "2dc3665b93253dce",
+          "l2": "Not previously sent to L2 due low route diversity; source-binding now passes. A narrow second-layer review may assess identity binding/abuse impact; absence of local descriptor/auth compare is not by itself a vulnerability.",
+          "remove": "2f37f269ff85f764",
+          "entry": "e5c3a944e38716fd",
+          "effect": "Existing D5 AUTH-01 observations: DBINDER_OBITUARY_TRANSACTION -> ProcessDeathRecipient; ADD/REMOVE on callback proxy/death recipient. Current source binding independently verified; no new finding."
+        },
+        "callback": {
+          "disposition": "ProcessProto -> ProcessData -> DBINDER_ADD_COMMAUTH duplicates existing operation/effect; no new candidate.",
+          "auth01": [
+            "769b6c1f4853e5f5",
+            "1c15c945a529931b"
+          ],
+          "auth02": "be13fd9ad5bb5f78"
+        }
+      }
+    },
+    "static_scout": {
+      "paths_reviewed": [
+        {
+          "path": "DBinderCallbackStub::ProcessProto -> ProcessData -> SendRequest(DBINDER_ADD_COMMAUTH)",
+          "disposition": "Duplicates existing AUTH-02 be13fd9ad5bb5f78 effect."
+        },
+        {
+          "path": "DBinderServiceStub::OnRemoteRequest -> ProcessDeathRecipient -> Add/RemoveDbinderDeathRecipient",
+          "disposition": "Already appears in integrated report as 2dc3665b93253dce and 2f37f269ff85f764; no current-master candidate upgrade."
+        }
+      ],
+      "follow_up": "Precise current-master blob binding for death-recipient route before deciding whether an independent test/L2 packet is warranted.",
+      "limitations": [
+        "No full master-tree traversal.",
+        "For death-recipient route, could not independently bind current bbb92 file blob/OID, SHA-256 and byte range because GitHub API rate limit and Git 443 failure blocked retrieval/metadata cross-check.",
+        "Do not claim current master whole-tree has zero new findings."
+      ],
+      "new_source_bound_candidates": 0
+    },
+    "l2_death_recipient": {
+      "reviewer": "independent sub-agent",
+      "disposition": "Not a confirmed vulnerability and not a new scanner development task; keep existing candidate state unchanged pending the narrow missing evidence.",
+      "support": "OnRemoteRequest dispatches by transaction code; ProcessDeathRecipient dispatches processType ADD/REMOVE; each reads a non-null remote object and modifies callback/death-recipient state; no local descriptor/UID/PID/session check was observed in that path.",
+      "counterevidence": "Normal ADD creates local callback stub; REMOVE retrieves prior stub from current process IPCProcessSkeleton; maps are keyed by remote object with duplicate insertion rejected; death callback cleans mappings; ProcessProto performs session and UID/PID checks, but obituary route does not call it.",
+      "claim": "If a requester can invoke DBINDER_OBITUARY_TRANSACTION and submit a remote object, this local path does not bind caller/object to the current stub session and could affect callback/death-recipient bookkeeping.",
+      "status": "complete",
+      "impact": "Potential callback-notification/lifecycle interference if cross-identity call is reachable; no evidence of data disclosure, privileged action, or DoS.",
+      "unknowns": [
+        "Who can obtain/call the DBinder stub and whether transport binds peer/session.",
+        "Whether remote-object parcel capability constrains cross-session/peer ownership.",
+        "Whether attacker can submit another caller callback stub and alter mappings."
+      ],
+      "verdict": "insufficient",
+      "candidate_ids": [
+        "e5c3a944e38716fd",
+        "2dc3665b93253dce",
+        "2f37f269ff85f764"
+      ],
+      "t8_conclusion": "Independent T8 agrees insufficient. Normal client protocol creates and sends a callback stub keyed by IPCObjectProxy*; REMOVE retrieves the prior local stub. Server mappings use remote-object keys, reject duplicate insertion, and cleanup death recipients. ProcessProto checks are not applied to obituary; this neither proves external access control nor attacker reachability.",
+      "supporting_files": [
+        {
+          "path": "ipc/native/src/core/framework/source/ipc_object_proxy.cpp",
+          "sha256": "4d1e24129bec4a642047fb6187f63b40a1b17c1f1740f7b816f7691890b92157"
+        },
+        {
+          "path": "ipc/native/src/core/framework/source/ipc_process_skeleton.cpp",
+          "sha256": "cdffaaf0054da5c80d64c0cec6ef287c9c24e432bc50a49d3288336715910366",
+          "blob": "516fd9efd0ab405cbd0c8a985f9f203478fc4d52"
+        },
+        {
+          "path": "ipc/native/src/core/dbinder/source/dbinder_death_recipient.cpp",
+          "sha256": "343fb2d7c086462c7d8cc0a69486062f9dc6594138693668a20fa2bfab083324",
+          "blob": "aad98ab9e58c8fdd33f77ccb7e36fa4e47415cbb"
+        }
+      ]
+    },
+    "d6_cross_review": {
+      "source_files": [
+        {
+          "path": "dbinder/dbinder_service/src/dbinder_service_stub.cpp",
+          "sha256": "6583b7b212eb8230ae234c54666bb1c9bdcffed898a3799d096d573a0422b9f2",
+          "blob": "11927a9291886f56211a3c775122b2462d6f1ddd",
+          "matches": "D5 integrated report source binding"
+        },
+        {
+          "path": "ipc/native/src/core/dbinder/source/dbinder_callback_stub.cpp",
+          "sha256": "167272c97c4796ec90f63db7089c3308c19f1dae8f07785339a38c645f82ca16",
+          "blob": "05dceaa7ec0df2f19c3b45b7f1f90ef54b98031d",
+          "matches": "D5 integrated report source binding"
+        }
+      ],
+      "death_recipient": {
+        "entry": "e5c3a944e38716fd",
+        "add": "2dc3665b93253dce",
+        "remove": "2f37f269ff85f764",
+        "effect": "Existing D5 AUTH-01 observations: DBINDER_OBITUARY_TRANSACTION -> ProcessDeathRecipient; ADD/REMOVE on callback proxy/death recipient. Independently bound; no new finding.",
+        "l2": "Not previously L2-reviewed due low route diversity; narrow review now completed with insufficient verdict."
+      },
+      "callback": {
+        "auth01": [
+          "769b6c1f4853e5f5",
+          "1c15c945a529931b"
+        ],
+        "auth02": "be13fd9ad5bb5f78",
+        "disposition": "ProcessProto -> ProcessData -> DBINDER_ADD_COMMAUTH duplicates existing operation/effect; no new candidate."
+      },
+      "reviewer_conclusion": "D6 zero-new-candidate conclusion is reasonable only for reviewed paths against prior observations; do not generalize to whole-tree zero."
+    }
+  },
+  "d7_t9_route_recheck": {
+    "verified_at_utc": "2026-10-19T19:35:02Z",
+    "scanner": {
+      "origin_main": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+      "fetch": "success",
+      "integration_head_matches": true,
+      "plan_head_matches": true
+    },
+    "product_anchors": {
+      "communication_ipc_master": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+      "systemabilitymgr_samgr_master": "ffeb925dc593e90e0769c5f7215f00df284d0200"
+    },
+    "route_review": {
+      "candidate_ids": [
+        "e5c3a944e38716fd",
+        "2dc3665b93253dce",
+        "2f37f269ff85f764"
+      ],
+      "verdict": "insufficient",
+      "new_candidates": 0,
+      "local_object_type_boundary": "MessageParcel::ReadRemoteObject returns the original non-proxy object after QueryDBinderCallbackProxy miss; the handler then reinterpret_casts after only a null check. Existing unit tests can inject a local IPCObjectStub and receive ADD/REMOVE error, but this does not establish external serialized-byte reachability or memory corruption.",
+      "transport_boundary": "Inbound DBinderBaseInvoker rejects Binder/Handle object forms, accepts remote-handle form, then validates session peer PID/UID/device/token and transaction stub index before dispatch. This protects the inbound DBinder route; it must not be conflated with the local default Binder SendLocalRequest path or described as an in-handler peer identity check.",
+      "normal_lifecycle": "IPCObjectProxy creates and stores the callback stub locally for ADD; REMOVE retrieves that per-proxy stored stub. A local SAMGR snapshot showed CheckGetRemoteSAPermission and DBinder stub acquisition keyed by service/device/requester PID/UID, but SAMGR source content was not independently SHA/blob-bound in this route review; do not treat that gate as product-commit-verified.",
+      "impact": "No reachable cross-identity object submission, type confusion consequence, memory safety impact, or concrete effect on another caller was established. Keep the finding as an insufficient L2 triage result and do not create a development task.",
+      "independent_test_review": "Local IPCObjectStub synthetic parcel case errors; normal IPCObjectProxy add/remove succeeds. Existing fuzzer mock returns IPCObjectProxy and cannot establish a remote Binder object capability. Query miss returns null in IPCProcessSkeleton tests."
+    },
+    "test_review_source_bindings": [
+      {
+        "path": "ipc/native/src/core/framework/source/message_parcel.cpp",
+        "sha256": "2f4d216c9a54534840b8c6ac7d81b9627fd9271bd9009b5289eb9a6ee0ce6349",
+        "blob": "e43990117d2f5aaaf5162bac9f488055bf37f9d4"
+      },
+      {
+        "path": "dbinder/dbinder_service/src/dbinder_service_stub.cpp",
+        "sha256": "6583b7b212eb8230ae234c54666bb1c9bdcffed898a3799d096d573a0422b9f2",
+        "blob": "11927a9291886f56211a3c775122b2462d6f1ddd"
+      }
+    ],
+    "scope_limit": "Named DBinder death-recipient, inbound transaction, parcel conversion, and local SAMGR snapshot only; no whole-tree scan and no claim of zero findings across communication_ipc."
+  },
+  "d8_t10_routes": {
+    "verified_at_utc": "2026-10-19T19:42:44Z",
+    "scanner_sha": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "product_sha": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "scanner_revalidation": {
+      "fetch_attempt_this_turn": "An initial fetch timed out after 21 seconds; retry and a later independent fetch succeeded.",
+      "current_remote_tip_verified": true,
+      "verified_sha": "db77164fdc2af0da02e4d3efc056d84694fd68e8"
+    },
+    "static_scout": {
+      "route": "DBinderSoftbusClient::DBinderGrantPermission -> DBinderService::CreateDatabusName / DBinderRemoteListener::StartListener",
+      "new_candidates": 0,
+      "verdict": "insufficient",
+      "facts": "The wrapper updates refcounts by socketName and invokes dynamically loaded Softbus permission APIs. Verified production callers derive UID/PID internally or use the process UID/PID with fixed OWN_SESSION_NAME.",
+      "limits": "No proof of external control over arbitrary UID/PID/socketName, permission bypass, cross-identity effect, or observable impact from refcount failure. SAMGR gate is cross-repository and not bound to this communication_ipc commit. ProcessProto overlaps existing candidate ca88225a02a0fe72.",
+      "next_path": "Source-bind Softbus inbound OnBytesReceived(socket,data) -> AddAsynMessageTask -> OnRemoteInvokerMessage; determine whether fromDeviceId binds to authenticated socket peer/session, then trace SA load and authorization. Unused socket parameter alone is not evidence of spoofing."
+    },
+    "test_scout_dump_route": {
+      "route": "IPCObjectProxy::Dump -> IPCObjectStub::SendRequest -> DBinderDumpTransaction -> OnRemoteDump -> virtual Dump(fd,args)",
+      "disposition": "Not a new candidate; duplicates previously reviewed AUTH-02 candidate 5501bf2ba361596d and its L2 refutation of the narrow missing-caller-authorization claim.",
+      "verdict": "insufficient for any new claim",
+      "facts": "IPCObjectStub requires local caller and UID 0/2000/1212 before reading parcel/dispatch. Base Dump only logs; subclass output and sensitive effect were not reviewed. Databus FD methods cannot carry a real file descriptor.",
+      "limits": "No real cross-process Binder integration repro; do not infer all Dump subclasses are harmless or secure.",
+      "source_bindings": [
+        {
+          "path": "ipc/native/src/core/framework/source/ipc_object_stub.cpp",
+          "sha256": "554a27bf335d0048373c326f3f9bddea9ba134b73bf8dca622d6c80b644656bb",
+          "blob": "22c3a682c20fd350b318cad17a6d621206e65ba7"
+        },
+        {
+          "path": "ipc/native/src/core/framework/source/ipc_object_proxy.cpp",
+          "sha256": "4d1e24129bec4a642047fb6187f63b40a1b17c1f1740f7b816f7691890b92157",
+          "blob": "4701faa882a030d0f34772d4b85b432b0be87e1e"
+        },
+        {
+          "path": "ipc/native/src/core/dbinder/source/dbinder_databus_invoker.cpp",
+          "sha256": "378776e256a8438c5bb28c57acc39172b3376512907718e813b71406b7251217",
+          "blob": "83450463d6d39f3a327ffa3dccccf0d8c957757d"
+        },
+        {
+          "path": "test/unittest/ipc/native/core/ipc_object_stub_unittest.cpp",
+          "sha256": "614f2bf9eb33e14d1f28bfe07fb2d649016c86762a14df7df76523e1167f4e50",
+          "blob": "2854f033f6217df54571997e9d1cfec886e30ce3"
+        }
+      ]
+    },
+    "test_scout_grant_route_preliminary": {
+      "status": "T10 complete; API/export reachability remains insufficient for ordinary third-party app exploitability",
+      "route": "IPCSkeleton::GetContextObject / IPCObjectProxy::GetSessionNameForPidUid -> special GET_SESSION_NAME_PID_UID -> IPCObjectStub::DBinderGetSessionNameForPidUid -> GetSessionNameForPidUid -> CreateSessionName -> DBinderGrantPermission -> SoftBus GrantTransPermission",
+      "concern": "The special-code branch may bypass ordinary SystemAbilityManagerStub authorization. Server-side IsSamgrCall checks a host process flag, while the handler accepts remoteUid/remotePid from parcel except when remotePid equals the actual caller PID.",
+      "downstream_gate": "SoftBus GrantPermissionInner checks the caller token for native SAMGR dynamic permission and AddDynamicPermission records the supplied uid/pid/name. The security effect of granting a requested target pair, actual proxy accessibility to ordinary apps, and downstream identity enforcement remain unresolved.",
+      "verdict": "source-supported conditional resource-exhaustion vector; insufficient for ordinary-app vulnerability claim",
+      "effect": "A successful grant inserts a unique sessionName into SoftBus process-wide dynamic permission list, with DYNAMIC_PERMISSION_MAX_SIZE=100; once full, later legitimate grants fail. The entry records the caller-supplied UID/PID. IPC-side session map increments its name refcount and calls grant API.",
+      "limits": "No evidence that ordinary third-party apps can link/export/use the IPC core innerkits method or obtain a context proxy in deployed product configuration; no live device/build integration reproducer. Unit tests use mocks and do not prove app reachability or pool exhaustion.",
+      "dedup": "Shares DBinderGrantPermission sink with existing candidate ca88225a02a0fe72 via GET_PROTO_INFO -> ProcessProto, but T10 identified a distinct special-code entry and caller-controlled UID/PID route. Treat as a separate conditional abuse vector only if caller reachability and a distinct security impact are confirmed; do not add a second scanner diagnostic solely for the shared sink.",
+      "communication_ipc_source_bindings": [
+        {
+          "path": "ipc/native/src/core/framework/source/ipc_skeleton.cpp",
+          "sha256": "9b6302bc0367ad2687fdda93e027954fd09699b9ef933f2bf5989a7096e45adb",
+          "blob": "5e3bf5f6296a6879bf18c4ce82ad203146df9d99"
+        },
+        {
+          "path": "interfaces/innerkits/ipc_core/include/ipc_skeleton.h",
+          "sha256": "53186fdf072521ac6eb0769e7b5efded5481d82ebb18e855f6ad90ab78527dfb",
+          "blob": "b27b76456e9333d86726bf3272fa191034f0be63"
+        },
+        {
+          "path": "ipc/native/src/core/framework/source/ipc_object_proxy.cpp",
+          "sha256": "4d1e24129bec4a642047fb6187f63b40a1b17c1f1740f7b816f7691890b92157",
+          "blob": "4701faa882a030d0f34772d4b85b432b0be87e1e"
+        },
+        {
+          "path": "interfaces/innerkits/ipc_core/include/ipc_object_proxy.h",
+          "sha256": "58a825867d11664f7f8716c53e46d6c852eaeaae6da2770ea6b70a9b0fa2c73c",
+          "blob": "71e128907c3842441c9fe856472ceb5479263eea"
+        },
+        {
+          "path": "ipc/native/src/core/invoker/source/binder_invoker.cpp",
+          "sha256": "02c4e27beb57955df2afd3f836c1f38929f519b3d400f080a45a6f91e6210e4c",
+          "blob": "4a5cd7530835659a0f9fad523c0f14c4c25570dd"
+        },
+        {
+          "path": "ipc/native/src/core/framework/source/ipc_object_stub.cpp",
+          "sha256": "554a27bf335d0048373c326f3f9bddea9ba134b73bf8dca622d6c80b644656bb",
+          "blob": "22c3a682c20fd350b318cad17a6d621206e65ba7"
+        },
+        {
+          "path": "ipc/native/src/core/framework/source/ipc_process_skeleton.cpp",
+          "sha256": "cdffaaf0054da5c80d64c0cec6ef287c9c24e432bc50a49d3288336715910366",
+          "blob": "516fd9efd0ab405cbd0c8a985f9f203478fc4d52"
+        },
+        {
+          "path": "ipc/native/src/core/dbinder/source/dbinder_softbus_client.cpp",
+          "sha256": "01d83f57fafc2c206039d74a90e9a21cbd16bd7813a3d501b704e3642c9de87b",
+          "blob": "7b4bcd7525d01bee078d26ea80ce7ee4c1e86bef"
+        },
+        {
+          "path": "ipc/native/src/core/dbinder/source/dbinder_callback_stub.cpp",
+          "sha256": "167272c97c4796ec90f63db7089c3308c19f1dae8f07785339a38c645f82ca16",
+          "blob": "05dceaa7ec0df2f19c3b45b7f1f90ef54b98031d"
+        },
+        {
+          "path": "interfaces/innerkits/ipc_core/include/ipc_types.h",
+          "sha256": "656bb739c9262eed524ca8a4550d64cf1ad0f627c261a3fa97a829136c891077",
+          "blob": "1465e1e51f46c564e47a2fd9fd410175047f7913"
+        },
+        {
+          "path": "test/unittest/ipc/native/core/ipc_object_stub_unittest.cpp",
+          "sha256": "614f2bf9eb33e14d1f28bfe07fb2d649016c86762a14df7df76523e1167f4e50",
+          "blob": "2854f033f6217df54571997e9d1cfec886e30ce3"
+        },
+        {
+          "path": "test/unittest/ipc/native/core/dbinder_softbus_client_additional_unittest.cpp",
+          "sha256": "bdd82a2e13fd523d41b40f3ba8cfec37cf6b46c9b46bf215492dcc1ac47071dd",
+          "blob": "2b786ec2db07a9370ef3132cbf064c75730f2c50"
+        },
+        {
+          "path": "test/unittest/common/ipc_object_proxy_unittest.cpp",
+          "sha256": "2f471552fb52e65ca09f801feefe33f61da6b8fbfeee41f003e1142b8413b1fe",
+          "blob": "2cbcc2dbe02b99272e031f53536233b77ddae12c"
+        }
+      ],
+      "dsoftbus_anchor": "openharmony/communication_dsoftbus@0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+      "dsoftbus_source_bindings": [
+        {
+          "path": "sdk/transmission/session/src/client_trans_socket_manager.c",
+          "sha256": "d1b35c3701b25262084862b5f91b9ef479b2f49ff39464cdfb55caefc9570ea5",
+          "blob": "a2e9cc491eedad98d3b0c85c896a69701cffbac8",
+          "local_byte_equal": false
+        },
+        {
+          "path": "sdk/transmission/ipc/standard/src/trans_server_proxy_standard.cpp",
+          "sha256": "867c34fd9cd490789cd4d6d5343c653ef125aa146a40c5589858fab36166c7e3",
+          "blob": "6f21b18a146e0f3e9c259b9105d1ac3fde6fbd4b",
+          "local_byte_equal": true
+        },
+        {
+          "path": "core/frame/standard/init/src/softbus_server_stub.cpp",
+          "sha256": "00b57796d645b1df94e6911db895da1f2db5f9e1274c2052f1579815583a0a69",
+          "blob": "d1d7de568807c17c50a178d50f0560ef24fbcd7a",
+          "local_byte_equal": false
+        },
+        {
+          "path": "core/common/security/permission/standard/softbus_permission.cpp",
+          "sha256": "284ec0fdccb6be9c3634ff345536bdccd6c97f0753b246d2f08a0aa041eeb009",
+          "blob": "3c3938c96c327a9f96972f6bce94bcff92b46896",
+          "local_byte_equal": true
+        },
+        {
+          "path": "core/common/security/permission/common/permission_entry.c",
+          "sha256": "ef5e7ff4a3abf27b1ce6d6c401f74f0f9f456edd334671ab05da9b5babfccf86",
+          "blob": "42a87b225c099bf60b1b13be7e09d36c7ca2e9ce",
+          "local_byte_equal": true
+        },
+        {
+          "path": "sdk/transmission/session/src/client_trans_socket_service.c",
+          "sha256": "c234a82aa2ad95d03bc547941d922ae6c86b79fb104ba20c656a0d10e9366fba",
+          "blob": "a506f255c138cc9c2176206b5f5f17318f146c40",
+          "local_byte_equal": true
+        },
+        {
+          "path": "core/frame/standard/init/src/if_softbus_server.cpp",
+          "sha256": "63c83fd55d4370b3eba118134dec54a847e1acfa942c2420034d3ae01af01fae",
+          "blob": "e7e27ebf45eefd53ffd275ec5aac7d59fdc918ab",
+          "local_byte_equal": true
+        }
+      ],
+      "required_tests": [
+        "Verify ordinary platform client can obtain the registry object and reach the public/internal proxy method or raw transaction in built product configuration.",
+        "Verify the permission entry's uid/pid controls authorization for a subsequent peer session and whether another principal can use the granted name.",
+        "Check existing IPC and SoftBus tests for arbitrary uid/pid pair negative cases; construct a non-destructive test only if it can be safely isolated."
+      ],
+      "l2_final": {
+        "verdict": "source-supported conditional resource-exhaustion effect; ordinary third-party app reachability insufficient; not a confirmed app vulnerability.",
+        "checks": [
+          "Public IPCObjectProxy::GetSessionNameForPidUid writes caller-supplied uid/pid and directly calls SendRequestInner with GET_SESSION_NAME_PID_UID; generic SendRequest rejects codes above MAX_TRANSACTION_ID.",
+          "The receiving special handler requires local calling plus receiver-process IsSamgrCall flag, rejects only remotePid equal to actual caller PID, then uses parcel uid/pid to create session name and request grant. IsSamgrCall is receiver process state, not caller UID/token ACL.",
+          "SoftBus dynamic permission list is one process-global list capped at 100. Capacity is checked before duplicate lookup; full pool rejects subsequent grants including duplicate retries. Entries preserve requested uid/pid and later permission checks match the exact pair. Existing entries are not deleted by pool-full failure; cleanup uses remove/delete or service restart.",
+          "SoftBus grant checks the calling IPC token then consumes parcel uid/pid/name. This review did not independently bind the policy implementation/product SAMGR identity, so does not assume the token always passes."
+        ],
+        "existing_test_coverage": "Reviewed IPC stub handler/gate tests, helper mock tests, DBinder softbus client refcount mocks, and DSoftBus permission parameter tests. No 100-entry boundary test, arbitrary-pair end-to-end IPC-to-SoftBus integration, token-gate integration, or ordinary-app reachability test. No test or PoC run.",
+        "minimum_missing_evidence": [
+          "Target product build/export/policy evidence that an unprivileged app can obtain a usable registry proxy, invoke this helper, and reach this special dispatch.",
+          "Authorized isolated integration evidence that the service token passes the SoftBus gate and pool saturation causes an observable failure for a new legitimate pair, with normal cleanup restoring service."
+        ],
+        "no_action": "Do not promote a scanner finding, claim ordinary app exploitability, duplicate a detector solely due to shared DBinderGrantPermission sink, or run an attack PoC."
+      },
+      "t13_app_reachability": {
+        "verdict": "refuted for the standard pinned GN/export surface; custom product SDK/symbol-map variants remain unknown",
+        "scope": "communication_ipc@bbb92dbb2f52aca54ab268307c9476ac1802f3ff; ordinary third-party direct call to IPCObjectProxy::GetSessionNameForPidUid",
+        "basis": "ipc_single/BUILD.gn uses libipc_single_map; that version script does not export GetSessionNameForPidUid and local:* hides remaining symbols. ipc_core uses libipc_single.z.so. Header visibility and inner-kit bundle listing do not prove dynamic-link reachability. Generic SendRequest rejects the special code above MAX_TRANSACTION_ID.",
+        "source_bindings": [
+          {
+            "path": "interfaces/innerkits/ipc_single/libipc_single_map",
+            "sha256": "8e05e1b217ed5b42ad83fbf38d31ca33241302a5c2b49cf927fd66b868bd049a",
+            "blob": "0bab69a423e5127f4b2e7b0d0ba87f0eb3772d9b"
+          },
+          {
+            "path": "interfaces/innerkits/ipc_single/BUILD.gn",
+            "sha256": "331ba3ea500d4b89216aab1c749a2b4eeade0a671701d3285f4dc4c986116227",
+            "blob": "797626221f2bcc113fd60c10a2410290f2ed4685"
+          },
+          {
+            "path": "interfaces/innerkits/ipc_core/BUILD.gn",
+            "sha256": "a0215d55f3b4277dbcd62f9f0c42941e2c7cfe9b3aec34dbaf35f4ca8fcbf333",
+            "blob": "fcc114be4923335cb09a0ea00751b2dbfcae9726"
+          },
+          {
+            "path": "bundle.json",
+            "sha256": "ddb49a0b230e8f8c0101871977e427aef4465dd2745dafbf66ec83c2857c54ab",
+            "blob": "274094d8b65f4f2f9710c4e428226f34bcba9d19"
+          }
+        ],
+        "limits": "No app SDK package build/link/run was performed. Product customization can change the standard symbol-map boundary."
+      },
+      "t15_independent_review": {
+        "verdict": "refuted for ordinary app reachability through the standard pinned GN/export surface; static linking, custom SDK, vendor wrappers, or modified exports remain unknown",
+        "independence": "Re-read and rebound pinned raw source independently of T13",
+        "facts": [
+          "ipc_core/BUILD.gn installs the ipc_single shared library under platformsdk.",
+          "ipc_single/BUILD.gn attaches libipc_single_map as version script; map has local:* and does not export IPCObjectProxy::GetSessionNameForPidUid.",
+          "Generic IPCObjectProxy::SendRequest rejects codes above 0x00ffffff except DUMP_TRANSACTION; GET_SESSION_NAME_PID_UID is packed as _GSP and exceeds the maximum.",
+          "The helper exists and directly invokes SendRequestInner, but is not in the standard shared-library export surface. The stub special route additionally has CONFIG_IPC_SINGLE and IsLocalCalling/IsSamgrCall constraints."
+        ],
+        "tested": "No real app build/link/run or PoC."
+      }
+    }
+  },
+  "d9_softbus_inbound_candidate": {
+    "status": "T11 and L2 support source-level OOB read candidate; no confirmed runtime impact or finding lifecycle promotion",
+    "scanner_last_verified_sha": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "scanner_remote_tip_verified_this_turn": true,
+    "product_repository": "openharmony/communication_ipc",
+    "product_commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "candidate_identity": null,
+    "claim": "A fixed-size inbound DHandleEntryTxRx contains a wire-controlled fromDeviceId[65] field. OnBytesReceived copies the full frame and checks total size and head.len but does not validate NUL termination; OnRemoteInvokerMessage passes the field to a std::string C-string constructor. A frame without a terminator in/beyond the field may cause an out-of-bounds read.",
+    "scope": "CWE-125 candidate only; no claim of crash, disclosure, privilege bypass, or exploitability.",
+    "source_bindings": [
+      {
+        "path": "dbinder/dbinder_service/src/socket/dbinder_remote_listener.cpp",
+        "sha256": "787a37914ec1e1d760144803ed25a2aaddb60139651a691326bb1bd038f1df62",
+        "blob": "7a6240778b2e7c1b52c4d9148d849b9cef5e01e5"
+      },
+      {
+        "path": "interfaces/innerkits/libdbinder/include/dbinder_service.h",
+        "sha256": "91b12a0e4e210a8963b93526a3c7b613159f062fda9f4a7e45a49c69145b49f1",
+        "blob": "6573df5b8cf508d9c6637e30670f42cc679a611c"
+      },
+      {
+        "path": "dbinder/dbinder_service/src/dbinder_service.cpp",
+        "sha256": "ac762ad0345451a605fffcd430d933161eb20aedd7b83479753b9be8384fa1cf",
+        "blob": "fb7f0b92f1f842f10f35f14917c553d3bb38ee9e"
+      },
+      {
+        "path": "interfaces/innerkits/libdbinder/include/dbinder_service_stub.h",
+        "sha256": "f1dd51acdcc1493be8b5b1fbee3aa0c03cb15c50ff4f149cfae4f6e9cb090bf3",
+        "blob": "8f882759d840d312d547bd3502ab137f49bb186e"
+      },
+      {
+        "path": "interfaces/innerkits/libdbinder/include/rpc_system_ability_callback.h",
+        "sha256": "b85347a61366028845926e87d095b8a8696d433bb793357f27cb33baaa12347b",
+        "blob": "f984c0373fab68149f38f534c425ff44a75c2a4d"
+      },
+      {
+        "path": "test/unittest/dbinder_service/dbinder_remote_listener_unittest.cpp",
+        "sha256": "51d44447d691818715e5a58679955650234e82b4123123c99231c05f0b3d3e10",
+        "blob": "b6d619a56f57b85b3b36f180ce97b88976797230"
+      },
+      {
+        "path": "test/unittest/dbinder_service/dbinder_service_unittest.cpp",
+        "sha256": "c679ab2181e5dd321912b92d594f39c19217a77496586cc16e475036f96d2e50",
+        "blob": "57520993d14f14c8ff9867157b936635382bea1a"
+      },
+      {
+        "path": "test/fuzztest/dbinder_service/dbinderremotelistener/dbinderremotelistener002_fuzzer/dbinderremotelistener002_fuzzer.cpp",
+        "sha256": "dbb006172387356c1373129d0dc1bfdb1b30a782128d21813e251a9995a8d72d",
+        "blob": "e75a3a753091135dc4370033a9b3dc3a966dc34b"
+      }
+    ],
+    "facts": {
+      "on_bytes_received_lines": "99-126",
+      "remote_invoker_conversion_line": 789,
+      "field_declaration": "DEVICEID_LENGTH=64; char fromDeviceId[65]",
+      "standard_64_bit_layout": "fromDeviceId offset 52; sizeof(DHandleEntryTxRx)=408, as calculated from pinned field declarations and validated with a synthetic layout-level ASan probe; product ABI/integration remains unverified",
+      "normal_writer": "Production source caps ID length at 64 and writes a NUL at index length.",
+      "existing_test_coverage": "Listener unit tests cover null, length, head.len and valid calls; service invoker tests zero-fill the struct and only set the first fromDeviceId char; listener fuzzer does not populate fromDeviceId/toDeviceId with controlled unterminated bytes. A synthetic layout ASan probe ran this turn; no product integration test ran."
+    },
+    "separate_peer_binding_observation": "OnBytesReceived discards socket peer identity after framing checks; fromDeviceId later supplies network-id routing. No distinct cross-peer authorization/effect established; do not merge with the C-string OOB candidate.",
+    "independent_t11": {
+      "verdict": "supported source-level OOB read candidate; network-reachable conditional; concrete crash/disclosure impact insufficient",
+      "key_path": "OnRemoteInvokerMessage first checks/amends the SA id; on an invalid-SA branch it calls SendReplyMessageToRemote, whose SendDataReply converts fromDeviceId to std::string before any valid-SA/IsDistributedSystemAbility gate. The normal path also converts it for remote SA load/reply processing.",
+      "tests": "No unit/fuzzer specifically supplies controlled non-NUL fromDeviceId through the inbound callback. Existing error-path test messages are zero-filled and terminate the field. No sanitizer or product execution was performed.",
+      "peer_identity": "Socket peer mapping exists at bind but callback does not compare it to message fromDeviceId. This is distinct from the OOB claim; authorization bypass and cross-device effect remain unproven."
+    },
+    "impact_verified": "Potential out-of-bounds read during string construction only; crash, disclosure, and downstream SA behavior remain unverified.",
+    "l2_status": "L2 verdict supported for source-level out-of-bounds read only; process crash, disclosure, and exploitability remain unproven.",
+    "sanitizer_probe": {
+      "artifact": "d9_unterminated_device_id_asan_probe.cpp",
+      "sha256": "242756b1b3bccbc7a342f56c6c296c56a0db47d2dc86667e6576794d957beeaa",
+      "scope": "Synthetic layout-level probe reproducing the pinned struct field declaration, 64-bit offsets, std::make_shared allocation, and implicit const-char* to std::string construction. It does not call product OnBytesReceived/OnRemoteInvokerMessage and is not a product integration test.",
+      "compile": "wsl clang++ -std=c++17 -fsanitize=address -O1 -g -fno-omit-frame-pointer <artifact> -o /tmp/d9_unterminated_device_id_asan_probe",
+      "valid_control": "Terminator at fromDeviceId[64]; process exits 0 under ASan.",
+      "unterminated_case": "All DHandleEntryTxRx bytes are 0x41; ASan reports heap-buffer-overflow in strlen while std::string constructs from fromDeviceId; READ size 357 immediately beyond a 424-byte make_shared allocation. Exit 1 expected.",
+      "result": "Confirms layout-level memory read boundary failure for this exact declaration/conversion pattern, not network reachability, product execution, crash classification, or information disclosure."
+    },
+    "scanner_finding_lifecycle": "No new scanner diagnostic ID assigned; keep the source-bound candidate and L2 result separate from generated scanner findings until the normal D/T gate is run.",
+    "next_gate": "If a product integration harness can be built, add a fixed-baseline test through actual OnBytesReceived and invalid-SA error-reply path. Keep candidate at source-supported OOB until product path reproduction and threat impact are established; do not implement detector rule yet.",
+    "t14_product_harness": {
+      "verdict": "integration ASan feasible in design but blocked pending pinned source object, OHOS toolchain/sysroot, and generated product build config",
+      "local_product_tree": "D:/openHarmonyScanner/openharmony/foundation/communication/ipc",
+      "local_product_head": "5903fd5f7332a427cb3f6915b0202ee5c76c63b",
+      "pinned_product_commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+      "build_targets": [
+        "//foundation/communication/ipc/test/unittest/dbinder_service:DBinderRemoteListenerUnitTest",
+        "//foundation/communication/ipc/test/unittest/dbinder_service:DBinderServiceUnitTest",
+        "//foundation/communication/ipc/test/fuzztest/dbinder_service/dbinderremotelistener/dbinderremotelistener002_fuzzer:DBinderRemoteListener002FuzzTest"
+      ],
+      "existing_coverage": "Listener unit test calls OnBytesReceived but has no controlled unterminated field or async-result assertion. Service unit test covers invalid-SA reply separately with mocked SoftBus SendBytes. The fuzzer calls the listener without intentionally constraining fromDeviceId to non-NUL and does not join the async invalid-SA reply path.",
+      "environment": "WSL has generic /usr/bin/clang++, and repository GN/Ninja prebuilts exist; no OHOS clang/sysroot was found. out/rk3568 has only build logs, no build.ninja or args.gn. Product integration test was not built or run.",
+      "local_source_binding_recheck": [
+        {
+          "path": "dbinder/dbinder_service/src/socket/dbinder_remote_listener.cpp",
+          "sha256": "787a37914ec1e1d760144803ed25a2aaddb60139651a691326bb1bd038f1df62",
+          "blob": "7a6240778b2e7c1b52c4d9148d849b9cef5e01e5"
+        },
+        {
+          "path": "dbinder/dbinder_service/src/dbinder_service.cpp",
+          "sha256": "ac762ad0345451a605fffcd430d933161eb20aedd7b83479753b9be8384fa1cf",
+          "blob": "fb7f0b92f1f842f10f35f14917c553d3bb38ee9e"
+        },
+        {
+          "path": "test/unittest/dbinder_service/dbinder_remote_listener_unittest.cpp",
+          "sha256": "51d44447d691818715e5a58679955650234e82b4123123c99231c05f0b3d3e10",
+          "blob": "b6d619a56f57b85b3b36f180ce97b88976797230"
+        },
+        {
+          "path": "test/unittest/dbinder_service/dbinder_service_unittest.cpp",
+          "sha256": "c679ab2181e5dd321912b92d594f39c19217a77496586cc16e475036f96d2e50",
+          "blob": "57520993d14f14c8ff9867157b936635382bea1a"
+        }
+      ],
+      "test_design": "After pin/toolchain/build config are available, add a test-only DBinderServiceUnitTest that invokes actual OnBytesReceived with fixed-size invalid-SA input, compares NUL-at-64 control against unterminated field/tail, waits for FFRT with condition_variable, observes mocked SendBytes, and runs ASan. Expected product-boundary OOB at C-string use site; control reaches error reply. Not run.",
+      "tool_execution": {
+        "gn": "Direct invocation of repository prebuilts/build-tools/linux-x86/bin/gn --version returned 2026 (47b40ef4).",
+        "ninja": "Direct invocation of repository prebuilts/build-tools/linux-x86/bin/ninja --version returned 1.13.2.",
+        "host_clang": "WSL /usr/bin/clang++ is Debian clang 21.1.8 targeting x86_64-pc-linux-gnu; not an OHOS cross compiler.",
+        "correction": "An independent audit initially described GN/Ninja as missing; direct execution proves both binaries are present and runnable. An old build log's failure is stale and does not establish current absence.",
+        "remaining_blockers": [
+          "OHOS clang/LLVM and target sysroot not found in prebuilts.",
+          "out/rk3568 has no args.gn or build.ninja.",
+          "Local IPC checkout HEAD is 5903fd5f7332a427cb3f6915b0202ee5c76c63b5; WSL git cannot resolve pinned commit bbb92dbb2f52aca54ab268307c9476ac1802f3ff in that object database."
+        ]
+      }
+    }
+  },
+  "next_iteration": {
+    "static_scout": "D17/T18 completed with zero new candidates. D19/T20 verified the normal Parcel::ReadRemoteObject offset guard for local c_utils commit 7a9af..., but could not bind that dependency to the target IPC commit because the active manifest floats master and frozen snapshots use IPC 5903fd.... Next: request/locate the exact product manifest/build lock for the target IPC build; keep the guard conclusion conditional meanwhile.",
+    "independent_test": "D19/T20 completed; c_utils unit/fuzz cover generic offset checks but no IPC ReadRemoteObject missing-offset integration case or full Binder-driver receive test was identified. Next independent validation requires exact target build manifest/lock; don't infer driver behavior.",
+    "candidate_limit": 1,
+    "current_status": "D17/T18 and D19/T20 complete with zero new candidates. D9 product integration remains blocked on pinned product source object, OHOS toolchain/sysroot, and generated build config. Latest scanner origin/main was fetched successfully at db77164fdc2af0da02e4d3efc056d84694fd68e8."
+  },
+  "d17_binder_transaction_review": {
+    "artifact": "d17_binder_transaction_scout-20261020.json",
+    "candidate_count": 0,
+    "route": "Binder BR_TRANSACTION[_SEC_CTX] -> BinderInvoker::OnTransaction/Transaction -> Parcel offsets/object decode -> IPCObjectStub",
+    "independent_review": "T18 independently rebound three pinned IPC source files and found the normal MessageParcel::ReadRemoteObject -> Parcel::ReadObject path fails closed on missing/misaligned object offsets before unmarshalling. Binder driver validation remains external and unpinned.",
+    "limitation": "Parcel::ReadObject/CheckOffsets code is from the local commonlibrary_c_utils tree; exact product dependency revision still needs manifest pinning."
+  },
+  "d19_t20_cutils_dependency_review": {
+    "verdict": "0 candidates; Parcel offset guard is verified for local c_utils commit 7a9af76276aca8f53347fb89c07850e014905521, but that commit cannot be proven to be the dependency paired with target IPC commit bbb92dbb2f52aca54ab268307c9476ac1802f3ff.",
+    "active_manifest": {
+      "path": "openharmony/.repo/manifests/ohos/ohos.xml",
+      "sha256": "a7c829c419d79c696483bca56fe5ab0aae54aca0a1b0c2067be5b322fd2e472e",
+      "blob": "2f40f5bad44246621f1b2f423816b251226b148a",
+      "c_utils_revision": "master",
+      "ipc_revision": "master"
+    },
+    "frozen_manifest_snapshots": [
+      {
+        "path": "D:/openHarmonyScanner/openharmony-manifest-fixed.xml",
+        "sha256": "701683246a8b4393e61cdb75132d76aacc9e53f6f663d37e386bbd535511fbee",
+        "blob": "9e973878fcb5164ba3f0becb0fe28ea0ed3af0a4",
+        "c_utils_revision": "7a9af76276aca8f53347fb89c07850e014905521",
+        "ipc_revision": "5903fd5f7332a427cb3f6915b0202ee5c76c63b5"
+      },
+      {
+        "path": "D:/openHarmonyScanner/openharmony-manifest-current-20261018.xml",
+        "sha256": "52f528dada321a140a29be2d55ef9053fda818cbdca93758425f1a25f6286d55",
+        "blob": "a0c401b8b408a5a71795eca7dc37469b7f31e8f0",
+        "c_utils_revision": "7a9af76276aca8f53347fb89c07850e014905521",
+        "ipc_revision": "5903fd5f7332a427cb3f6915b0202ee5c76c63b5"
+      }
+    ],
+    "local_checkout": {
+      "c_utils_head": "7a9af76276aca8f53347fb89c07850e014905521",
+      "ipc_head": "5903fd5f7332a427cb3f6915b0202ee5c76c63b5",
+      "parcel_cpp_sha256": "f4296edd47f32475d6bb2b8c8a615ecc6f87fe3de2495cbef75cc59d326aac23",
+      "parcel_cpp_blob": "097bb3b44179ee382ee9ebb65aeb8ad25a66bbdf",
+      "parcel_h_sha256": "25d5bca322bfbca84d362b6914856b2b197dea81f3212e9c135356f9c2de2c42",
+      "parcel_h_blob": "882fac69ad5b6e2b8b680343f2bbfd8aa365019e"
+    },
+    "t20_guard_review": "MessageParcel::ReadRemoteObject -> Parcel::ReadObject -> CheckOffsets returns before unmarshalling on missing/misaligned offsets and insufficient object size; this dominates the later UnFlattenDBinderObject PTR branch on the normal API path.",
+    "test_coverage": "c_utils unit tests cover empty/missing offset failures and valid ReadObject cases; c_utils fuzz exercises CheckOffsets/ReadObject. IPC binderinvoker001 fuzz builds transaction/offset inputs; binderinvoker006/007 call UnflattenObject/UnFlattenDBinderObject directly and bypass the outer gate. No focused IPC ReadRemoteObject missing-offset unit test or full kernel Binder integration test identified. No tests run.",
+    "limitations": [
+      "The active .repo manifest floats both projects at master.",
+      "Frozen manifest snapshots map c_utils 7a9af... with IPC 5903fd..., not target IPC bbb92...",
+      "Local c_utils source identity is verified, but its exact pairing with the target IPC pin is not."
+    ],
+    "next_evidence": "Provide the exact product manifest/lock used to build target IPC commit bbb92..., plus resolved GN dependency graph or build record proving the c_utils revision and Parcel source root."
+  },
+  "d21_t22_remove_session_name_review": {
+    "candidate_count": 0,
+    "verdict": "No confirmed ordinary-app candidate on reviewed path; conditional review only if helper/raw transaction becomes app-reachable.",
+    "scout_artifact": "d21_remove_session_scout-20261020.json",
+    "independent_review_artifact": "t22_remove_session_review-20261020.json",
+    "feedback": "T22 corrected scope: BinderInvoker::IsLocalCalling is always true and only distinguishes local Binder from remote Databus; IsSamgrCall is receiver process state, not caller authentication. Handler lacks caller/name-owner check, but ordinary SendRequest rejects the special code and local ipc_single symbol map did not export the helper.",
+    "limitation": "ipc_object_stub.cpp source SHA matches the reviewed target binding, but proxy, process skeleton, invoker, export map, SDK build metadata, and SoftBus product pairing are not bound to target commit bbb92dbb2f52aca54ab268307c9476ac1802f3ff. No tests run and no product code changed.",
+    "next": "D23 bind exact target source blobs and product ABI/build surface; T24 independently re-check reachability and counterevidence. Preserve 0 confirmed candidates until evidence closes.",
+    "d23_t24_status": "Target source files and export/build metadata now byte-bound from immutable raw commit; independent D23/T24 hashes match.",
+    "conditional_l2_candidate_count": 1,
+    "confirmed_ordinary_app_vulnerability": false,
+    "standard_surface": "Pinned libipc_single version map does not export IPCObjectProxy::RemoveSessionName; ordinary SendRequest rejects REMOVE_SESSION_NAME special code. Header-public declaration alone is not ABI reachability.",
+    "remaining_unknown": "No deployed SDK/library symbol table, product build lock, app reachability or end-to-end cross-caller effect evidence; SoftBus dependency semantics are not paired to target build."
+  },
+  "d23_t24_remove_session_name_pin_review": {
+    "scout_artifact": "d23_remove_session_pin-20261020.json",
+    "independent_review_artifact": "t24_remove_session_counterreview-20261020.json",
+    "confirmed_candidate_count": 0,
+    "conditional_l2_candidate_count": 1,
+    "source_pins": "D23 and T24 independently fetched immutable target raw and matched hashes for proxy, process skeleton, BinderInvoker, ipc_single map/GN, ipc_core GN, and proxy header.",
+    "independent_feedback": "T24 hashes and map/export verdict agree; clarified that platformsdk metadata is not proof of shipped SDK, SoftBus refcount/async behavior is not build-paired, and absent local refcount still delegates backend removal.",
+    "verdict": "Standard pinned SDK surface has no established app route. Keep one conditional ownership-check claim for alternate ABI/raw injection only; do not report as ordinary-app vulnerability.",
+    "next": "Continue with DBINDER_ADD_COMMAUTH via D25 static scout and T26 independent counterreview. Product build pairing remains an explicit limitation."
+  },
+  "d25_t26_add_commauth_review": {
+    "scout_artifact": "d25_add_commauth_scout-20261020.json",
+    "independent_review_artifact": "t26_add_commauth_counterreview-20261020.json",
+    "confirmed_candidate_count": 0,
+    "conditional_risk": "AddAuthInfo trusts parcel identity fields without comparing them to current caller tuple; socketId=0 mapping later acts as wildcard. Exploitability would require passing pre-dispatch tuple/stubIndex/socket gate and existing CommAuthInfo/new-socket gate, plus attacker control of a victim tuple.",
+    "independent_feedback": "T26 matched five relevant IPC SHA-256 values to D25 immutable target pins and confirmed the gates. IPC parsing does not authenticate the SoftBus peer service-name identity; this trust dependency remains unbound.",
+    "test_coverage": "Existing unit/fuzz mostly mocks gates or directly invokes helpers; no end-to-end SoftBus peer identity to post-registration tuple-use test identified. No tests run.",
+    "limitation": "No exact target-paired SoftBus revision/build, proof of ordinary/remote UID<10000 session reachability, victim tuple/stubIndex control, or concrete unauthorized downstream operation.",
+    "next": "D27 bind target-paired SoftBus identity provenance; T28 independently challenge gates and conditional mapping impact."
+  },
+  "d27_t28_softbus_identity_review": {
+    "scout_artifact": "d27_softbus_identity_pin-20261020.json",
+    "independent_review_artifact": "t28_softbus_identity_counterreview-20261020.json",
+    "confirmed_candidate_count": 0,
+    "dependency_pairing": "No target product lock/build record pairs IPC bbb92 with immutable SoftBus revision; active manifest floats both; frozen snapshots use IPC 5903fd with DSoftBus 78e7835 or 7743b67.",
+    "identity_verdict": "PeerSocketInfo.name flows from session peer name in local unpinned SoftBus source; authenticity and spoofability are both unknown. IPC parser alone only parses UID/PID.",
+    "independent_feedback": "T28 confirmed socketId=0 is a socket wildcard for an existing tuple/stubIndex, but it does not bypass preexisting CommAuth new-socket gate or pre-dispatch caller mapping gate.",
+    "next": "D29/T30 inspect DBinder INCREFS/DECREFS refcount and session-close cleanup using IPC target-pinned source."
+  },
+  "d29_t30_dbinder_ref_review": {
+    "scout_artifact": "d29_dbinder_ref_scout-20261020.json",
+    "independent_review_artifact": "t30_dbinder_ref_counterreview-20261020.json",
+    "confirmed_candidate_count": 0,
+    "conditional_candidates": [
+      {
+        "status": "conditional_concurrency_candidate_not_confirmed",
+        "confidence": "low",
+        "id": "T30-R1",
+        "claim": "If a worker has passed CheckAndSetCallerInfo and QueryStubByIndex returns a raw stub pointer, a shutdown callback on another TLS-selected invoker instance may drop the last strong reference before/during SendRequest; per-instance objectMutex_ does not serialize the threads and the request path does not acquire a temporary strong reference."
+      }
+    ],
+    "independent_feedback": "T30 confirmed caller-map gate and exact detach semantics but corrected any assumed cross-thread lock serialization: IPCThreadSkeleton is TLS and objectMutex_ is per invoker instance. appAuthMutex_ serializes map operations but not gate-to-handler interval.",
+    "limitations": "No target runtime scheduling proof, product/SoftBus callback thread pairing, concrete object lifetime violation or stable attacker-visible impact. Existing tests/fuzz do not cover close-vs-inflight transaction interleaving. No tests/PoC run.",
+    "next": "D35/T36 audit INVOKE_LISTEN_THREAD session bootstrap; preserve T30-R1 for second-layer review and reopen product test only with exact toolchain/build lock.",
+    "late_increfs_stale_row": "Secondary state only: the row is tied to a closed socket, does not itself create CommAuthInfo or authorize a new session, and is not the primary candidate mechanism.",
+    "t32_test_seam": "Place barrier after raw QueryStubByIndex returns and before SendRequest; close-before-lookup is fail-closed control. T32 found OHOS clang/sysroot, args.gn/build.ninja and target product pairing unavailable.",
+    "independent_t33_review": {
+      "artifact": "t33_raw_pointer_counterreview-20261020.json",
+      "sha256": "622951d341d37f840ed19b25b8095b884494457591c3e9193f8228abdc5282b1",
+      "verdict": "Agrees: raw pointer returned after QueryStubByIndex is not backed by a temporary strong ref; different TLS invoker mutexes do not serialize close against worker; stub index erase cannot invalidate copied pointer.",
+      "confirmed_candidates": 0,
+      "conditional_candidates": 1,
+      "limits": "No target-paired runtime proof of callback-worker overlap or last-reference condition; no SendRequest-time destruction or impact observed."
+    },
+    "test_feasibility_status": "T32 says deterministic test design is feasible with barrier after raw QueryStubByIndex and before SendRequest; current execution blocked by missing OHOS clang/sysroot, args.gn/build.ninja, and target IPC/SoftBus product pairing.",
+    "t33_second_review_status": "T33 independently confirmed the raw pointer is not protected by a temporary strong ref after QueryStubByIndex; cross-thread close may drop last ref, but callback overlap and last-ref runtime conditions remain unproven."
+  },
+  "d35_t36_invoke_listen_review": {
+    "scout_artifact": "d35_invoke_listen_scout-20261020.json",
+    "independent_review_artifact": "t36_invoke_listen_counterreview-20261020.json",
+    "confirmed_or_reportable_candidates": 0,
+    "key_gate": "Local Binder caller with caller UID < 10000 before payload parsing; ordinary app UIDs ordinarily fail this path.",
+    "feedback": "Two production call contexts converge on the same privileged local Binder handler. Success registers listener/index/auth/ref before the outer synchronous reply is sent. T36 corrected AddAuthInfo duplicate conditions for socketId=0 and noted AddStubByIndex reuses the same stub index.",
+    "residual_observation": "Distinct-name CreateSoftbusServer calls overwrite current socket/name without explicit old listener Shutdown; whether old sockets persist or untrusted peers can trigger this is unknown and not an L2 candidate.",
+    "next": "D37/T38 audit GET_SESSION_NAME and GET_PID_UID data disclosure with API/export/reachability gates."
+  },
+  "d37_t38_session_name_privacy_review": {
+    "scout_artifact": "d37_session_pid_scout-20261020.json",
+    "independent_review_artifact": "t38_session_pid_counterreview-20261020.json",
+    "source_disclosure": "GetSessionName is public/exported, sends special code through SendRequestInner, and returns target service uid/pid encoded in DBinder session name.",
+    "intended_use": "T38 confirms API level 9 documented DBinder lifecycle query used by DBinderDatabusInvoker::GetSessionForProxy; any holder of the target proxy can call it.",
+    "vulnerability_candidate_count": 0,
+    "disposition": "Do not promote: no evidence UID/PID are protected in this context or that the intended API creates material security impact. Reopen only if product API policy proves a confidentiality boundary and ordinary app access.",
+    "get_pid_uid": "No typed export found; generic public SendRequest special-code guard blocks standard app route.",
+    "next": "D39/T40 audit GET_GRANTED_SESSION_NAME grant side effect and receiver/caller identity boundary."
+  },
+  "d39_t40_granted_session_name_review": {
+    "scout_artifact": "d39_granted_session_scout-20261020.json",
+    "independent_review_artifact": "t40_granted_session_counterreview-20261020.json",
+    "source_pin": "D39 bound nine immutable target files, including DBinderSoftbusClient grant/refcount and shutdown cleanup source; T40 independently bound the core dispatch/export route and used D39's pinned adjacent lifecycle finding for review.",
+    "confirmed_candidate_count": 0,
+    "conditional_observation": {
+      "id": "D39-R1",
+      "claim": "Each successful exported GET_SESSION_NAME call makes the target service ask SAMGR to grant that service's own fixed UID/PID session name. IPC mapSessionRefCount increments once per grant. RemoveSessionName decrements only through client/server socket shutdown callbacks, not per query; repeated queries or failed/incomplete lifecycles may leave extra same-name IPC references.",
+      "counterevidence": "A normal successful databus socket lifecycle may pair a grant with one shutdown removal. Local unpinned DSoftBus deduplicates same-name grants, and no unique-slot exhaustion or cross-subject authorization effect is evidenced.",
+      "limitations": "Ordinary third-party SDK access policy, exact target-paired SoftBus behavior, persistent permission effect, and material attacker-observable impact remain unbound.",
+      "status": "conditional_lifecycle_observation_only"
+    },
+    "independent_feedback": "T40 agrees no closed ordinary-app-to-cross-subject grant chain; it flags the same-name grant/refcount mismatch for D39 follow-up, with no per-query cleanup shown. Backend semantics and impact remain unknown.",
+    "verdict": "0 confirmed or reportable candidates; do not promote D39-R1 absent ordinary-app reachability plus a concrete persistent/material effect.",
+    "next": "D41/T42 and D43/T44 lifecycle/test and adjacent cleanup work is summarized in d41_test_seam_feasibility-20261020.json, t42_lifetime_counterreview-20261020.json and d43_dbinder_cleanup_static_scan-20261020.json; T44 independent counterreview is in progress."
+  },
+  "d41_t42_t30_r1_feasibility_review": {
+    "scout_artifact": "d41_test_seam_feasibility-20261020.json",
+    "independent_review_artifact": "t42_lifetime_counterreview-20261020.json",
+    "confirmed_candidate_count": 0,
+    "conditional_candidates": ["T30-R1"],
+    "independent_feedback": "T42 did not find a temporary strong ref, shared cross-thread mutex, or index erase behavior that closes the lookup-before-close window. Close-before-lookup returns null; same-thread serialization and an unrelated strong owner are valid refuting controls.",
+    "test_oracle": "Barrier after successful QueryStubByIndex and before SendRequest; exercise a distinct TLS invoker close/last-ref schedule, observe destruction and instrumented access; include close-before-lookup, unrelated strong owner, and request-before-close controls.",
+    "execution_status": "not_run",
+    "blockers": ["No target product lock pairs IPC bbb92... with SoftBus.", "No OHOS clang/sysroot or generated out/rk3568 args.gn/build.ninja was available in T32/D41 inventory.", "Callback overlap, last-reference condition, and concrete dynamic impact remain unproved."],
+    "verdict": "Source-level possible race remains one low-confidence conditional candidate; 0 confirmed. Do not implement a production fix or claim UAF without target runtime proof."
+  },
+  "d43_t44_dbinder_cleanup_scan": {
+    "scout_artifact": "d43_dbinder_cleanup_static_scan-20261020.json",
+    "independent_review_artifact": "t44_cleanup_counterreview-20261020.json",
+    "d43_confirmed_candidates": 0,
+    "d43_new_conditional_candidates": 0,
+    "conditional_observations_reused": ["INCREFS versus socket close timing (D29/T30/T33)", "INVOKE_LISTEN_THREAD failure cleanup (D35/T36)", "same-name grant refcount (D39/T40)"],
+    "d43_verdict": "No new high-confidence issue; observations lack closed attacker reachability and concrete effect.",
+    "independent_review_artifact": "t44_cleanup_counterreview-20261020.json",
+    "t44_verdict": "Independent raw-source re-fetch matched six overlapping D43 pins. Zero new confirmed and zero new conditional candidates; all three lifecycle observations remain bounded and unproven for ordinary-app reachability/material effect.",
+    "t44_feedback": "INCREFS exact row removal prevents duplicate decrement but does not prove the already-known pass-gate/close schedule; late INCREFS has no demonstrated live-session consequence. INVOKE_LISTEN_THREAD late failure has no immediate rollback, but requires local Binder UID<10000 and no harmful residual/reachability is shown. GET_SESSION_NAME increments same-name IPC count but acts for the service's own Binder identity; backend pairing and impact remain unknown.",
+    "confirmed_or_new_conditional_candidates": 0,
+    "status": "completed_static_review_no_new_candidate"
+  },
+  "t45_t46_second_layer_reviews": {
+    "t45_artifact": "t45_second_layer_t30_r1-20261020.json",
+    "t45_candidate": "T30-R1",
+    "t45_verdict": "source_mechanism_supported_but_product_vulnerability_insufficient",
+    "t45_confirmed_candidates": 0,
+    "t45_conditional_candidates": 1,
+    "t45_go_gates": ["target-paired product evidence", "distinct-thread callback overlap", "socket relation proven last strong ref", "controlled evidence of post-destruction SendRequest access"],
+    "t46_artifact": "t46_granted_session_l2_review-20261020.json",
+    "t46_candidate": "D39-R1",
+    "t46_verdict": "insufficient_for_security_finding",
+    "t46_confirmed_candidates": 0,
+    "t46_conditional_observations": 1,
+    "t46_feedback": "GET_SESSION_NAME grants the service's own UID/PID and increments same-name IPC refcount; GET itself does not create a socket, and shutdown callbacks perform removal. Ordinary-app SDK/proxy reachability, exact target SoftBus semantics, and material effect remain unbound.",
+    "t46_reopen_gates": ["shipped SDK/API policy and app proxy route", "exact paired SoftBus authorization/removal semantics", "concrete externally observable effect under realistic trigger limits"],
+    "status": "completed_second_layer_review_no_confirmed_candidate"
+  },
+  "d47_product_proof_matrix": {
+    "artifact": "d47_target_product_proof_matrix-20261020.json",
+    "sha256": "80BA91E2749B98F892C27EEFCC8231FE281EF15E1173847237D9B01F2781BF24",
+    "status": "completed",
+    "next": "Request PM1 product build/manifest lock and PM2 shipped SDK/proxy policy when available; while external artifacts are outstanding, continue source-only review of an independent IPC death-recipient/obituary lifecycle route (D49/T50)."
+  },
+  "d49_t50_death_recipient_obituary_review": {
+    "scout_artifact": "d49_death_recipient_scout-20261020.json",
+    "independent_review_artifact": "t50_death_recipient_counterreview-20261020.json",
+    "source_bindings": "D49 bound target implementation and test sources; T50 independently re-fetched implementation files and matched hashes for the key ADD/recipient path.",
+    "confirmed_candidates": 0,
+    "conditional_security_candidates": 0,
+    "conditional_observation": {
+      "id": "D49-R1/T50-R1",
+      "claim": "DBinderServiceStub::AddDbinderDeathRecipient adds a recipient to IPCObjectProxy::recipients_ before service bookkeeping inserts; a later AttachDeathRecipient or AttachCallbackProxy failure returns without rolling that recipient back, retaining a strong recipient and callback work for the callback proxy lifetime.",
+      "counterevidence": "Public helper deduplicates an existing callback stub and serializes repeated proxy AddDeathRecipient; generic SendRequest rejects the special _DOT transaction code, while SendLocalRequest and AddDbinderDeathRecipient are private. Direct helper fuzzing does not prove production reachability. Proxy/death cleanup eventually clears recipients; no permanent leak shown.",
+      "impact_status": "No supported ordinary caller route, cross-principal effect, or material availability impact established.",
+      "status": "source_observation_only_not_security_candidate"
+    },
+    "other_lifecycle_verdict": "Binder BR_DEAD_BINDER path holds reference protection through callbacks; callbacks are invoked outside recipient lock. DBinder close queries a strong proxy, promotes weak remote references and clears notification/maps; no confirmed lifecycle gap found.",
+    "test_oracle": "For direct isolated helper failure injection, assert every post-registration error removes the newly added proxy recipient and both maps; public duplicate API control should emit at most one ADD. This is a future regression oracle only; tests were not run.",
+    "verdict": "0 confirmed; 0 conditional security candidates. Keep D49-R1 as source-only observation; do not send as a vulnerability candidate absent supported route and material impact."
+  },
+  "d51_t52_dump_transaction_review": {
+    "scout_artifact": "d51_dump_transaction_scout-20261020.json",
+    "independent_review_artifact": "t52_dump_transaction_counterreview-20261020.json",
+    "source_binding": "D51 matched nine target raw file hashes; T52 independently matched dispatch/gate/export and added independent pins for IPCSkeleton, DBinder invoker, IRemoteObject header and fuzz harness.",
+    "confirmed_candidates": 0,
+    "conditional_candidates": 0,
+    "route": "Public IPCObjectProxy/IRemoteObject::Dump API and DUMP_TRANSACTION route exist; generic SendRequest also exempts the transaction code, but receiver validates local Binder and caller UID 0, 2000, or 1212 before parsing dump args or calling virtual Dump. Other UIDs and databus callers are rejected.",
+    "counterreview": "T52 agrees on the receiver gate and zero ordinary-app candidate. It clarifies Dump is public API since API 9; typed API reachability does not bypass the receiver-side gate. Sensitive output from a specific privileged service would require a separate product/service policy review.",
+    "test_review": "Existing tests/fuzz exercise mocked UID/transport gates, dump parsing and fd handling; no end-to-end product or kernel identity execution was run.",
+    "verdict": "0 confirmed, 0 conditional candidates; no ordinary-app path to a concrete security effect established.",
+    "status": "completed_static_review_no_candidate"
+  },
+  "b_ipc_detector_integration_worktree": {
+    "scanner_repository": "unpredictablexss-lang/CyberSecurity-Innovation-Audit",
+    "base_commit": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "integration_worktree": "D:/openHarmonyScanner/worktrees/b-ipc-integration-20261020",
+    "integration_head": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "dirty_lane_changes": [
+      "D1: request-derived Parcel copy-range dataflow and local pointer/reference alias invalidation in interface analysis plus tests",
+      "D2: relay descriptor guard correction for wrong-interface comparisons, with negative and positive fixture",
+      "T5: per-sink multi-dispatch descriptor guard matrix fixture/tests",
+      "T1: IPC rule-version map and finding binding test from the separate test worktree selectively copied into the allowed tests/test_ipc_* path"
+    ],
+    "scope_check": {
+      "command": "python -m scripts.check_change_scope --base db77164fdc2af0da02e4d3efc056d84694fd68e8 --lane ipc",
+      "result": "passed; violations=[]"
+    },
+    "tests": {
+      "focused_ipc_command": "python -m unittest discover -s tests -p test_ipc_*.py -q",
+      "focused_ipc_result": "354 tests; 1 skipped; 0 failed (WSL Ubuntu /home/deepsleep/ohscanner-venv Python 3.12.3)",
+      "full_suite_command": "python -m unittest discover -s tests -q",
+      "full_suite_result": "1153 tests; 12 skipped; 1 failure after 180.577s in test_ohscanner_m15.OfflineGitTests.test_promisor_clone_never_fetches_missing_blob",
+      "full_suite_failure": "Offline promisor test expected missing_local_git_object but Git emitted lazy-fetch-disabled / could not fetch 99f03229978b82e47f959696536b16f6208361c4; unrelated to IPC detector diff, and external GitHub fetch was unavailable in this turn.",
+      "scope_gate": "All current integration dirty paths pass the IPC allowlist scope checker."
+    },
+    "out_of_scope_parallel_item": {
+      "task": "D3 source coverage contract test",
+      "worktree": "D:/openHarmonyScanner/worktrees/b-d3-source-coverage-20261020",
+      "changed_path": "tests/test_ohscanner_m1.py",
+      "scope_status": "outside IPC lane allowlist/shared-owner-only; preserved in its own worktree, not copied into integration",
+      "focused_result": "The new test_global_parse_and_ipc_coverage_keep_distinct_denominators passed once under WSL Python 3.12.3; scope/ownership still prevents moving its shared-file edit through the IPC lane."
+    },
+    "full_suite_cross_environment": "Windows Anaconda Python 3.13 run is non-authoritative (missing fastapi/fcntl, host clang incompatibility, CRLF/toolchain errors); WSL venv full suite is the better evidence above.",
+    "review_status": "Independent D1 and D2/T5 code reviews are in progress; do not treat dirty worktree changes as accepted or merge-ready.",
+    "remote_freshness": "The latest successful remote fetch remains the prior db77164... check; this turn's git fetch origin main failed to connect to github.com:443. Local origin/main still equals worktree HEAD, but current upstream freshness is unverified.",
+    "product_tests_or_pocs": "No OpenHarmony product runtime tests/PoCs run; this entry concerns OHScanner detector unit/integration tests."
+  }
+}

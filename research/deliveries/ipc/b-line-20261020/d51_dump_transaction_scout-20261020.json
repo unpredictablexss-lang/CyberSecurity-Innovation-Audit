@@ -1,0 +1,60 @@
+{
+  "task_id": "D51",
+  "title": "DUMP_TRANSACTION static reachability and impact audit",
+  "date": "2026-10-20",
+  "scope": {
+    "repository": "openharmony/communication_ipc",
+    "commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "mode": "read-only static source review",
+    "tests_run": false,
+    "poc_run": false,
+    "product_changes": false
+  },
+  "source_binding": {
+    "method": "For every listed file, local source bytes were SHA-256 compared with raw.githubusercontent.com at the immutable commit URL; all comparisons matched.",
+    "files": [
+      {"path": "ipc/native/src/core/framework/source/ipc_object_stub.cpp", "sha256": "554A27BF335D0048373C326F3F9BDDEA9BA134B73BF8DCA622D6C80B644656BB"},
+      {"path": "ipc/native/src/core/framework/source/ipc_object_proxy.cpp", "sha256": "4D1E24129BEC4A642047FB6187F63B40A1B17C1F1740F7B816F7691890B92157"},
+      {"path": "ipc/native/src/core/framework/source/ipc_skeleton.cpp", "sha256": "9B6302BC0367AD2687FDDA93E027954FD09699B9EF933F2BF5989A7096E45ADB"},
+      {"path": "ipc/native/src/core/invoker/source/binder_invoker.cpp", "sha256": "02C4E27BEB57955DF2AFD3F836C1F38929F519B3D400F080A45A6F91E6210E4C"},
+      {"path": "ipc/native/src/core/dbinder/source/dbinder_databus_invoker.cpp", "sha256": "378776E256A8438C5BB28C57ACC39172B3376512907718E813B71406B7251217"},
+      {"path": "interfaces/innerkits/ipc_core/include/iremote_object.h", "sha256": "AE151E961C8AD5B79B7EA7A8CCB23E0BA488EFF62FC87CEC4AFB8589D1077EA2"},
+      {"path": "interfaces/innerkits/ipc_core/include/ipc_object_proxy.h", "sha256": "58A825867D11664F7F8716C53E46D6C852EAEAAE6DA2770EA6B70A9B0FA2C73C"},
+      {"path": "test/unittest/ipc/native/core/ipc_object_stub_unittest.cpp", "sha256": "614F2BF9EB33E14D1F28BFE07FB2D649016C86762A14DF7DF76523E1167F4E50"},
+      {"path": "test/fuzztest/ipc/native/core/ipcobjectstub_fuzzer/ipcobjectstub008_fuzzer/ipcobjectstub008_fuzzer.cpp", "sha256": "4176C559AE6E957670B5E0A60B3E96334EE658C7F2C90E9315E4121F451E2182"}
+    ]
+  },
+  "analysis": {
+    "dispatch": {
+      "finding": "IPCObjectStub::SendRequest switches DUMP_TRANSACTION to DBinderDumpTransaction. DBinderDumpTransaction gates before OnRemoteDump; only an accepted invocation reaches virtual Dump(fd,args).",
+      "evidence": ["ipc_object_stub.cpp:439-475", "ipc_object_stub.cpp:208-217", "ipc_object_stub.cpp:158-171"]
+    },
+    "caller_gates": {
+      "finding": "Both conditions must pass: IPCSkeleton::IsLocalCalling() must be true and GetCallingUid() must equal 0, SHELL_UID 2000, or HIDUMPER_SERVICE_UID 1212. Non-local calls or every other UID return ERR_NONE immediately, before reading the parcel FD or calling Dump. This is a UID/local-transport allowlist, not an AccessToken permission check; PID/token are not consulted by this gate.",
+      "identity_evidence": ["ipc_object_stub.cpp:56-57", "ipc_object_stub.cpp:208-217", "ipc_skeleton.cpp:137-148", "ipc_skeleton.cpp:258-265"],
+      "transport_evidence": ["binder_invoker.cpp:1714-1717 (BinderInvoker::IsLocalCalling returns true)", "dbinder_databus_invoker.cpp:802-805 (DBinderDatabusInvoker::IsLocalCalling returns false)"],
+      "uid_evidence": "BinderInvoker::GetCallerUid returns callerUid_ or invokerInfo_.uid (binder_invoker.cpp:1623-1629). IPCSkeleton gets that active-invoker value for local calls; GetCallingUid returns -1 for non-local calls. No caller-controlled parcel UID is read."
+    },
+    "target_and_output": {
+      "finding": "The transaction is dispatched on the selected IPCObjectStub/proxy handle; it has no separate target selector in this transaction. IPCObjectProxy::Dump writes the caller-provided FD and UTF-16 argument vector to the Parcel and synchronously sends DUMP_TRANSACTION (ipc_object_proxy.cpp:139-146). The interface exposes Dump(fd,args) since API 9 (iremote_object.h:161-171; ipc_object_proxy.h:80-94). No reply Parcel fields are written by OnRemoteDump. The receiver can write through the received FD in its virtual Dump implementation. The base IPCObjectStub::Dump only logs descriptor/FD/arg count and returns ERR_NONE (ipc_object_stub.cpp:116-121). Concrete service Dump output is service-specific and is not proven sensitive by this IPC-core audit.",
+      "cleanup": "When the gate passes, OnRemoteDump reads the received FD, reads a UTF-16 string vector, invokes Dump only if parsing succeeds, and closes a valid received FD after either parse success or failure. Invalid FD returns IPC_STUB_INVALID_DATA_ERR. When the caller gate fails, this helper is never entered; no FD is read or handed to Dump."
+    },
+    "public_route_and_reachability": {
+      "finding": "A typed public native helper exists: IPCObjectProxy::Dump. Therefore the special transaction is not unreachable solely because generic SendRequest filters special codes. The helper does not alter caller identity, and its receiver-side UID/local gate still blocks ordinary app UIDs. The IPC API exposes the helper but this does not establish app permission to use the Binder identity of UID 0, shell, or hidumper.",
+      "product_limit": "No exact deployed product image, system-service Dump policy inventory, or target service allowlist was in scope. The core gate is shared, and no claim is made about unpaired service implementations or platform authorization outside these pinned IPC sources."
+    },
+    "existing_coverage": {
+      "unit_tests": "ipc_object_stub_unittest.cpp:394-508 has DBinderDumpTransactionTest001-005. Tests include invalid FD for allowed identity, non-local call returning ERR_NONE, UID 123 returning ERR_NONE, shell UID reaching parcel FD parsing, and an additional positive/invalid-FD path. These are mock/unit coverage; they do not establish product runtime behavior.",
+      "fuzz": "ipcobjectstub008_fuzzer.cpp directly invokes DBinderDumpTransactionFuzzTest with generated code and a constructed stub. This is a parser/branch fuzz harness, not proof of ordinary-app reachability, and was not run."
+    }
+  },
+  "candidate_disposition": {
+    "confirmed_candidates": 0,
+    "conditional_candidates": 0,
+    "reason": "The ordinary-app route fails the receiver-side local Binder UID allowlist before any target Dump handler or FD write is reached. No concrete sensitive output or privilege effect accessible to an ordinary caller was established. Privileged dump output may contain service-specific diagnostics, but caller reachability and impact are outside this IPC-core gate and remain unproven here.",
+    "strongest_counterexample_to_candidate": "UID 123 with IsLocalCalling=true is explicitly exercised by the unit test and returns ERR_NONE without reaching parcel parsing. Any non-local DBinder call is also denied before OnRemoteDump even if the remote caller's UID would otherwise be allowlisted.",
+    "reopen_conditions": ["A target product configuration showing the gate is bypassed or replaced for app caller traffic", "A pinned product service with sensitive Dump output plus evidence an ordinary app can invoke it as one of the allowlisted local UIDs", "A concrete FD/identity confusion in the exact target transport that invalidates the caller UID assumption"]
+  },
+  "second_layer_question": "Independently verify that the pinned UID/local-transport gate executes for every Binder and DBinder DUMP_TRANSACTION route before virtual Dump, and determine whether any supported ordinary-app path changes the effective Binder caller UID to 0, 2000, or 1212. Do not treat arbitrary service Dump output as an IPC-core vulnerability absent a pinned service and demonstrated app reachability. Candidate count should remain zero unless both access and material impact are concretely proven.",
+  "next_step": "T52 independent counterreview should attempt to falsify the UID/local gate, check any app-facing wrapper route and target product service policy, and either affirm 0 candidates or identify missing immutable source evidence."
+}

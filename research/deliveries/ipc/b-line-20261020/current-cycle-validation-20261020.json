@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.0",
+  "task": "current B/IPC integration regression replay",
+  "date": "2026-10-20",
+  "scanner_commit": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+  "live_main_evidence": "main-live-api-verification-20261020.json",
+  "fetch": "git fetch origin main failed: GitHub port 443 unavailable; live GitHub API branch ref verified same SHA",
+  "worktree": "D:/openHarmonyScanner/worktrees/b-ipc-integration-20261020",
+  "existing_dirty_changes_preserved": true,
+  "validation": [
+    {
+      "command": "python -m pytest -q tests/test_ipc_data_flow_rules.py tests/test_ipc_multidispatch_guard_matrix.py",
+      "result": "111 passed",
+      "elapsed_seconds": 0.34
+    },
+    {
+      "command": "python -m unittest discover -s tests -p 'test_ipc_*.py' -q",
+      "result": "409 run; 47 skipped; 0 failures",
+      "elapsed_seconds": 1.394
+    },
+    {
+      "command": "python scripts/check_change_scope.py --base db77164fdc2af0da02e4d3efc056d84694fd68e8 --lane ipc",
+      "result": "19 paths checked; violations=[]"
+    },
+    {
+      "command": "git diff --check",
+      "result": "clean"
+    }
+  ],
+  "full_suite": "not rerun this cycle; prior WSL full suite has 1 unrelated M15 promisor-Git failure recorded in full-suite-final-replay-20261020.json",
+  "production_build": "not run; T65 product build gate remains NO-GO",
+  "interpretation": "These regressions cover current IPC scanner branch tests, not frozen product integration or holdout precision/recall.",
+  "runtime": {
+    "platform": "Windows",
+    "python": "3.13.9",
+    "distribution": "Anaconda",
+    "pytest": "8.4.2"
+  }
+}

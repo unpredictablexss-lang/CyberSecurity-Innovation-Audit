@@ -1,0 +1,53 @@
+{
+  "title": "B/IPC D5 rule-version fixed-source replay summary",
+  "date": "2026-10-20",
+  "baseline_code_commit": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+  "integrated_changes": "D1+D2+D5 uncommitted integration worktree",
+  "source": {
+    "repository": "openharmony/communication_ipc",
+    "commit": "5903fd5f7332a427cb3f6915b0202ee5c76c63b5",
+    "git_tree": "0f7129fc37dcc38a0abd6c0ebdd5cbd1ff30d4ac",
+    "snapshot_sha256": "4a77a83643aecdef6214af80b1472ff8ebf1050eb4f48fa0b0935c4791babb9d"
+  },
+  "reports": {
+    "pre_d5_integrated": {
+      "file": "communication-ipc-integrated.json",
+      "sha256": "33bec41efd974e564fcb3e0afaebbc0ca789e83da86c038f903e71d66bc273ad"
+    },
+    "d5_integrated": {
+      "file": "communication-ipc-d5-integrated.json",
+      "sha256": "d4a9799af8c95afde89f0d0c0ac2a441eb4cc0a357a62b0849d3c30eb8ca1816"
+    }
+  },
+  "comparison": {
+    "same_source_and_scope": true,
+    "source_parsing_equal": true,
+    "detector_coverage_equal": true,
+    "diagnostic_observations_equal_excluding_identity_metadata": true,
+    "before_count": 14,
+    "after_count": 14,
+    "added_diagnostic_ids": [],
+    "removed_diagnostic_ids": []
+  },
+  "d5_identity_effect": {
+    "occurrence_ids_present": 14,
+    "occurrence_ids_unique": true,
+    "source_bindings_bound": 14,
+    "occurrence_statuses": [
+      "stable"
+    ],
+    "stable_ids_present": 0,
+    "stable_statuses": [
+      "unknown"
+    ],
+    "rule_versions": [
+      "1.0.0"
+    ]
+  },
+  "limits": [
+    "Observation equality is only for this fixed component snapshot and ignores identity metadata.",
+    "Stable identity remains unknown; occurrence IDs are exact observation identities, not cross-version same-finding proof.",
+    "No accuracy, precision/recall, product vulnerability, or safety claim.",
+    "The D5 report is generated from an uncommitted integration worktree based on the last verified main SHA; a fresh remote main fetch is still required."
+  ]
+}

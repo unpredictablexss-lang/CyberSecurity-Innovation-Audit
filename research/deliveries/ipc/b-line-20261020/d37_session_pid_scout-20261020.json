@@ -1,0 +1,98 @@
+{
+  "schema": "ohscanner.bline-session-pid-scout.v1",
+  "task": "D37",
+  "verified_at_utc": "2026-10-19T22:14:00Z",
+  "scope": {
+    "repository": "openharmony/communication_ipc",
+    "target_commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "tree": "125ecbfa21f430f2f977f0026ab97b70cd27a726",
+    "reviewed_routes": [
+      "GET_SESSION_NAME",
+      "GET_PID_UID"
+    ],
+    "read_only": true,
+    "tests_run": false,
+    "product_code_changed": false
+  },
+  "source_binding": {
+    "method": "Immutable raw.githubusercontent.com paths for target commit; SHA-256 and Git blob values cross-checked against prior pinned source records where available. Exact source binding is not a deployed product build lock.",
+    "files": [
+      {
+        "path": "ipc/native/src/core/framework/source/ipc_object_stub.cpp",
+        "bytes": 29851,
+        "sha256": "554a27bf335d0048373c326f3f9bddea9ba134b73bf8dca622d6c80b644656bb",
+        "git_blob": "22c3a682c20fd350b318cad17a6d621206e65ba7"
+      },
+      {
+        "path": "ipc/native/src/core/framework/source/ipc_object_proxy.cpp",
+        "bytes": 49196,
+        "sha256": "4d1e24129bec4a642047fb6187f63b40a1b17c1f1740f7b816f7691890b92157",
+        "git_blob": "4701faa882a030d0f34772d4b85b432b0be87e1e"
+      },
+      {
+        "path": "ipc/native/src/core/framework/source/ipc_process_skeleton.cpp",
+        "bytes": 64744,
+        "sha256": "cdffaaf0054da5c80d64c0cec6ef287c9c24e432bc50a49d3288336715910366",
+        "git_blob": "516fd9efd0ab405cbd0c8a985f9f203478fc4d52"
+      },
+      {
+        "path": "interfaces/innerkits/ipc_core/include/ipc_object_proxy.h",
+        "bytes": 14218,
+        "sha256": "58a825867d11664f7f8716c53e46d6c852eaeaae6da2770ea6b70a9b0fa2c73c",
+        "git_blob": "71e128907c3842441c9fe856472ceb5479263eea"
+      },
+      {
+        "path": "interfaces/innerkits/ipc_single/libipc_single_map",
+        "bytes": 13953,
+        "sha256": "8e05e1b217ed5b42ad83fbf38d31ca33241302a5c2b49cf927fd66b868bd049a",
+        "git_blob": "0bab69a423e5127f4b2e7b0d0ba87f0eb3772d9b"
+      },
+      {
+        "path": "interfaces/innerkits/ipc_single/BUILD.gn",
+        "bytes": 6593,
+        "sha256": "331ba3ea500d4b89216aab1c749a2b4eeade0a671701d3285f4dc4c986116227",
+        "git_blob": "797626221f2bcc113fd60c10a2410290f2ed4685"
+      },
+      {
+        "path": "interfaces/innerkits/ipc_core/BUILD.gn",
+        "bytes": 1836,
+        "sha256": "a0215d55f3b4277dbcd62f9f0c42941e2c7cfe9b3aec34dbaf35f4ca8fcbf333",
+        "git_blob": "fcc114be4923335cb09a0ea00751b2dbfcae9726"
+      }
+    ],
+    "target_tree_caveat": "Pinned file bytes do not establish which SDK package or product binary is deployed."
+  },
+  "route_findings": {
+    "GET_SESSION_NAME": {
+      "dispatch": "IPCObjectStub::SendRequest switches GET_SESSION_NAME to DBinderGetSessionName before ordinary OnRemoteRequest dispatch (ipc_object_stub.cpp approximately lines 439-475).",
+      "handler_guard": "DBinderGetSessionName only requires IPCSkeleton::IsLocalCalling(); it does not require IsSamgrCall or compare caller UID/PID with an authorized identity. Binder local-transport predicate is not an app authorization check.",
+      "data_flow": "Handler calls this stub's GetSessionName(). That obtains the process SAMGR proxy and calls IPCObjectProxy::GetGrantedSessionName(). SAMGR-side GetGrantedSessionName uses IPCSkeleton::GetCallingPid()/GetCallingUid() for the requesting service process, constructs DBINDER_SOCKET_NAME_PREFIX + uid + '_' + pid via CreateSessionName, and returns it. Thus a caller of the public helper receives a session-name string derived from the target service process UID/PID, rather than the original Binder caller identity or an arbitrary parcel-supplied identity.",
+      "proxy_route": "IPCObjectProxy::GetSessionName() directly invokes SendRequestInner(false, GET_SESSION_NAME, ...) and reads the reply string; ordinary public SendRequest's transaction-code guard is bypassed by this typed helper.",
+      "api_export": "GetSessionName is declared public in ipc_object_proxy.h and explicitly listed in libipc_single_map global exports. ipc_single BUILD.gn selects this map as version_script; ipc_core is installed in platformsdk. The standard SDK/ABI route therefore does not exclude ordinary app-linked native callers.",
+      "sensitivity": "The returned DBinder session name incorporates the target service process UID and PID. This can expose service-process identity metadata to an ordinary app that already holds an IPCObjectProxy to that stub. No evidence in this bounded source review establishes that the metadata is security-sensitive in the target product, exploitable impact beyond information disclosure, or whether another supported API already reveals the same values.",
+      "candidate": {
+        "id": "D37-C1",
+        "status": "conditional_low_severity_information_disclosure_candidate_for_second_layer_review",
+        "confidence": "medium_for_data_flow_and_standard_native_API_reachability; low_for_security_impact",
+        "claim": "A standard-exported IPCObjectProxy::GetSessionName sends a local special transaction accepted without caller identity authorization; the reply is a DBinder name embedding the target service process UID/PID. Ordinary native apps holding a proxy can therefore retrieve those process identifiers.",
+        "candidate_count": 1,
+        "promotion_gate": "Second layer must decide whether target service UID/PID is protected information and materially unavailable to ordinary app callers, and whether the call is intended to be callable by any holder of a proxy. Do not report as confirmed vulnerability absent that impact assessment."
+      }
+    },
+    "GET_PID_UID": {
+      "dispatch": "IPCObjectStub::SendRequest switches GET_PID_UID to DBinderGetPidUid.",
+      "handler_guard": "Requires IsLocalCalling() and IsSamgrCall(); latter indicates receiver process registry/SAMGR state, not authenticated caller identity.",
+      "response": "Writes the receiving process getpid() and getuid() to reply.",
+      "public_reachability": "No typed IPCObjectProxy helper for GET_PID_UID was found in the pinned header/source; the public generic SendRequest rejects special transaction values above MAX_TRANSACTION_ID (except DUMP_TRANSACTION). GET_PID_UID is not in the ipc_single export map. No standard ordinary-app route to this handler was found in reviewed source.",
+      "candidate_count": 0
+    }
+  },
+  "independent_review_requests_for_T38": [
+    "Verify nested Binder caller identity at SAMGR: the pid/uid used by GetGrantedSessionName must be the target service process identity, not the original app identity.",
+    "Verify ordinary app possession of an IPCObjectProxy to a typical system service and whether GetSessionName is part of the published platformsdk/native API contract.",
+    "Assess whether the returned DBinder session name (UID_PID) is materially sensitive and whether the same service PID/UID is available through supported APIs, logs, or service discovery.",
+    "For GET_PID_UID, independently confirm the absence of a public helper/export and that generic SendRequest code-range validation blocks direct invocation before transport; distinguish IsSamgrCall receiver-state from caller authorization.",
+    "Do not infer deployed-product impact from source/SDK metadata alone; state any remaining product-build pairing gap."
+  ],
+  "overall_verdict": "One low-severity, conditional metadata-disclosure candidate for GET_SESSION_NAME is retained for second-layer review because the standard native helper is exported and returns target service UID/PID encoded as a session name. GET_PID_UID has no ordinary-app route found. No tests, PoC, or product code changes were made."
+}

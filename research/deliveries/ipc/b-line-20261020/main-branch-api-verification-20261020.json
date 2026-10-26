@@ -1,0 +1,61 @@
+{
+  "schema": "ohscanner.branch-verification.v1",
+  "verified_at_utc": "2026-10-19T18:59:44Z",
+  "requested_branch": "main",
+  "endpoint": "https://api.github.com/repos/unpredictablexss-lang/CyberSecurity-Innovation-Audit/branches/main",
+  "remote": {
+    "commit": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "tree": "8c5a296d8304d98193a29a4695aaf61ca0c0996c"
+  },
+  "local_worktrees": {
+    "b-ipc-plan-20261020": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "b-ipc-integration-20261020": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "b-d1-data01-20261020": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "b-d2-auth01-20261020": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "b-t1-data01-test-20261020": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "origin/main_tracking_ref": "db77164fdc2af0da02e4d3efc056d84694fd68e8"
+  },
+  "git_fetch": {
+    "command": "git fetch origin --prune",
+    "result": "succeeded",
+    "error": null
+  },
+  "latest_fetch_retry": {
+    "verified_at_utc": "2026-10-19T23:16:33Z",
+    "result": "succeeded",
+    "command": "git fetch origin main",
+    "error": null,
+    "tracking_ref_after_retry": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "fetch_head": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "integration_head": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "integration_vs_origin_main": "0 0"
+  },
+  "verification_history": [
+    {
+      "verified_at_utc": "2026-10-19T18:31:09Z",
+      "method": "GitHub API read of branches/main",
+      "git_fetch": "failed: could not connect to github.com port 443"
+    },
+    {
+      "verified_at_utc": "2026-10-19T18:41:17Z",
+      "method": "GitHub API read followed by git fetch origin --prune",
+      "git_fetch": "succeeded"
+    },
+    {
+      "verified_at_utc": "2026-10-19T18:59:44Z",
+      "method": "GitHub API read after final fetch retry",
+      "remote_sha": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+      "git_fetch": "failed transiently; tracking ref remained equal to API SHA"
+    },
+    {
+      "verified_at_utc": "2026-10-19T23:16:33Z",
+      "method": "git fetch origin main",
+      "remote_sha": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+      "fetch_head": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+      "integration_head": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+      "integration_vs_origin_main": "0 0",
+      "git_fetch": "succeeded"
+    }
+  ],
+  "interpretation": "The prior final retry failed transiently. A subsequent successful git fetch origin main confirmed that integration HEAD, FETCH_HEAD, and origin/main all match db77164fdc2af0da02e4d3efc056d84694fd68e8; integration is neither ahead nor behind main."
+}

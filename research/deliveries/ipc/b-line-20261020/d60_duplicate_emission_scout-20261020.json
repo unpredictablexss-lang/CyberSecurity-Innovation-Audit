@@ -1,0 +1,59 @@
+{
+  "task": "D60",
+  "date": "2026-10-20",
+  "scope": {
+    "worktree": "D:/openHarmonyScanner/worktrees/b-ipc-integration-20261020",
+    "files": [
+      "src/ohscanner/detectors/interface/analysis.py",
+      "src/ohscanner/detectors/interface/detector.py",
+      "tests/test_ipc_data_flow_rules.py",
+      "research/deliveries/ipc/b-line-20261020/t59_candidate_quality_audit-20261020.json"
+    ],
+    "mode": "read-only source review; temporary in-memory synthetic ScanContext; no repo source/test edits"
+  },
+  "result": {
+    "disposition": "T59-1 is partially supported at the raw emit layer but is not a duplicate-final-finding defect for same-root/same-source identities: two path visits do call emit, then Interpreter.run coalesces them before returning.",
+    "rule": "ipc.parcel.copy-range",
+    "family": "DATA-01",
+    "source_file": "synthetic.cpp",
+    "source_line": 6,
+    "sink_symbol": "Fixture_flow::OnRemoteRequest",
+    "root_identity": ["synthetic.cpp", "Fixture_flow::OnRemoteRequest"],
+    "raw_emit_count_for_identity": 2,
+    "final_finding_count_for_identity": 1,
+    "identity_key_used_by_final_coalescer": ["file", "line", "rule", "symbol"],
+    "different_sink_control": {
+      "sink_lines": [6, 7],
+      "raw_emit_count_per_sink": 2,
+      "final_findings": 2
+    }
+  },
+  "evidence": [
+    {
+      "location": "src/ohscanner/detectors/interface/analysis.py:941-960",
+      "observation": "emit appends one Observation per visit; it does not coalesce at the call site. In the witness, both branch states reach the same DATA-01 memcpy line, with traces through code == 1 => True and code == 1 => False, and each appends the same rule/file/line/symbol/root identity."
+    },
+    {
+      "location": "src/ohscanner/detectors/interface/analysis.py:3295-3298",
+      "observation": "Interpreter.run builds unique with setdefault keyed by (obs.file, obs.line, obs.rule, obs.symbol), then returns only those values. Consequently the two raw path observations yield one final finding. The distinct sink line is a distinct key and remains a separate finding."
+    },
+    {
+      "location": "src/ohscanner/detectors/interface/detector.py:124-148",
+      "observation": "DetectorFinding objects are constructed directly from the coalesced observations returned by analysis.run()."
+    }
+  ],
+  "minimal_synthetic_witness": {
+    "setup": "Standard IPC fixture-shaped Stub::OnRemoteRequest with an accepted descriptor guard. Branch: if (code == 1) { data.ReadInt32(); } else { data.ReadInt32(); data.ReadInt32(); }. After the merge, one line contains char dst[8]; int n=data.ReadInt32(); const char *p=data.ReadBuffer(8); memcpy(dst,p,n);.",
+    "raw_emit_traces": [
+      "line 6; data.ReadInterfaceToken() != GetDescriptor() => False; code == 1 => True",
+      "line 6; data.ReadInterfaceToken() != GetDescriptor() => False; code == 1 => False"
+    ],
+    "final_identity": ["ipc.parcel.copy-range", "synthetic.cpp", 6, "Fixture_flow::OnRemoteRequest", ["synthetic.cpp", "Fixture_flow::OnRemoteRequest"]]
+  },
+  "reproduction": {
+    "method": "Monkeypatched Interpreter.emit in a transient Python process to collect raw emit events; invoked IpcInterfaceDetector.detect with a synthetic SourceUnit/ScanContext built in memory. No temporary source files or controlled repository files were written.",
+    "observed": "Single sink: 2 raw emits, 1 final finding. Two-sink control on lines 6 and 7: 2 raw emits per sink, 2 final findings."
+  },
+  "caveat": "The coalescing key omits root identity. This answers the requested same-root path-fanout question but does not establish whether observations for the same sink reached from distinct entry roots should remain separately attributable; that is a separate identity-granularity review. The existing rules_for helper's rule-id set still cannot assert multiplicity, although current run-level coalescing protects the witnessed case.",
+  "recommendation": "Do not schedule a candidate coalescing code fix from T59-1. Ask T61 to assert exact final identity multiplicity (same sink once; distinct sink twice) as a regression oracle. Separately decide whether root belongs in the final coalescing identity and test a shared-helper/multi-root case if root-specific evidence is required."
+}

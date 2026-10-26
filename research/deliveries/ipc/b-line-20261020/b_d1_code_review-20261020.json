@@ -1,0 +1,35 @@
+{
+  "review_id": "B-D1-independent-code-review-20261020",
+  "reviewer": "b_d1_independent_review",
+  "base_commit": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+  "worktree": "D:\\openHarmonyScanner\\worktrees\\b-ipc-integration-20261020",
+  "scope": [
+    "src/ohscanner/detectors/interface/analysis.py request-derived copy-range tracking changes",
+    "tests/test_ipc_data_flow_rules.py added request length mutation and alias regressions"
+  ],
+  "verdict": "No high-confidence unsound safe/refuted outcome identified in reviewed paths; one concrete candidate-precision regression found.",
+  "findings": [
+    {
+      "id": "D1-R1",
+      "severity": "P2",
+      "category": "false_positive_candidate_precision",
+      "file": "src/ohscanner/detectors/interface/analysis.py",
+      "line": 2759,
+      "summary": "A merely local, unused alias invalidates a proven allocation/copy bound at declaration.",
+      "detail": "Both non-const reference aliases and address aliases call invalidate_request_value immediately, although no write or call through the alias has occurred. The following safe handler therefore produces ipc.parcel.copy-range: `int n=data.ReadInt32(); if(n<=0)return -1; char *dst=new char[n]; int *p=&n; const char *src=data.ReadBuffer(n); memcpy(dst,src,n);`. A reference alias has the same result. This needlessly turns a proved exact-capacity copy into a candidate, reducing the precision the static layer is intended to preserve. Invalidation should be deferred until a mutating use/escape, or otherwise distinguish a local non-escaping alias from a mutation channel.",
+      "reproduction": "In the integration worktree, import rules_for from tests.test_ipc_data_flow_rules and evaluate the snippets above; both returned {'ipc.parcel.copy-range'}.",
+      "confidence": "high"
+    }
+  ],
+  "coverage_notes": [
+    "Reviewed path-state copying and bounded joins for request aliases/pointer aliases, local reference/address alias creation, pointer rebinding and write-through invalidation, compound/update assignments, helper/unresolved-call mutation handling, new-array capacity matching, and parser function extraction of non-const reference parameters.",
+    "Existing tests exercise direct rebinding, increment/decrement, explicit address calls, resolved reference/pointer mutators, local aliases used for mutation, pointer rebind, pointer writes, and shadowing. The suite does not currently exercise a non-const alias that is declared but never used; that uncovered the precision regression.",
+    "No concrete branch-join or partial-parse unsound safe/refuted case was demonstrated in this read-only review. Unsupported or ambiguous alias forms generally invalidate facts conservatively, which can add candidates but did not yield a demonstrated false-safe result."
+  ],
+  "verification": {
+    "command": "python -m pytest -q tests/test_ipc_data_flow_rules.py",
+    "result": "52 passed in 0.83s",
+    "additional_probe": "Two direct rules_for probes for unused writable pointer and reference aliases both emitted ipc.parcel.copy-range.",
+    "files_modified_by_reviewer": false
+  }
+}

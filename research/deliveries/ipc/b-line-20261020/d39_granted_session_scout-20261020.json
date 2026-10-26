@@ -1,0 +1,82 @@
+{
+  "schema": "ohscanner.bline-granted-session-scout.v1",
+  "task": "D39",
+  "verified_at_utc": "2026-10-19T21:44:44Z",
+  "scope": {
+    "repository": "openharmony/communication_ipc",
+    "target_commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "target_tree": "125ecbfa21f430f2f977f0026ab97b70cd27a726",
+    "route": "GET_GRANTED_SESSION_NAME -> IPCObjectStub::DBinderGetGrantedSessionName -> GetGrantedSessionName -> CreateSessionName -> DBinderSoftbusClient::DBinderGrantPermission",
+    "read_only": true,
+    "tests_run": false,
+    "poc_run": false,
+    "product_code_changed": false
+  },
+  "source_binding": {
+    "method": "Fetched immutable raw.githubusercontent.com files for target commit; SHA-256 and Git blob OIDs recomputed from exact bytes.",
+    "files": [
+      {"path":"ipc/native/src/core/framework/source/ipc_object_stub.cpp","bytes":29851,"sha256":"554a27bf335d0048373c326f3f9bddea9ba134b73bf8dca622d6c80b644656bb","git_blob":"22c3a682c20fd350b318cad17a6d621206e65ba7"},
+      {"path":"ipc/native/src/core/framework/source/ipc_object_proxy.cpp","bytes":49196,"sha256":"4d1e24129bec4a642047fb6187f63b40a1b17c1f1740f7b816f7691890b92157","git_blob":"4701faa882a030d0f34772d4b85b432b0be87e1e"},
+      {"path":"ipc/native/src/core/framework/source/ipc_skeleton.cpp","bytes":10711,"sha256":"9b6302bc0367ad2687fdda93e027954fd09699b9ef933f2bf5989a7096e45adb","git_blob":"5e3bf5f6296a6879bf18c4ce82ad203146df9d99"},
+      {"path":"ipc/native/src/core/framework/source/ipc_process_skeleton.cpp","bytes":64744,"sha256":"cdffaaf0054da5c80d64c0cec6ef287c9c24e432bc50a49d3288336715910366","git_blob":"516fd9efd0ab405cbd0c8a985f9f203478fc4d52"},
+      {"path":"ipc/native/src/core/dbinder/source/databus_socket_listener.cpp","bytes":11425,"sha256":"dce80ace50af9f18a0e003f0bd49cdf6b4ba22a4012fe51df2a4bbb8456acb3b","git_blob":"7a01e036427e45385b02605a403dbca35b318aab"},
+      {"path":"ipc/native/src/core/dbinder/source/dbinder_softbus_client.cpp","bytes":14649,"sha256":"01d83f57fafc2c206039d74a90e9a21cbd16bd7813a3d501b704e3642c9de87b","git_blob":"7b4bcd7525d01bee078d26ea80ce7ee4c1e86bef"},
+      {"path":"interfaces/innerkits/ipc_core/include/ipc_object_proxy.h","bytes":14218,"sha256":"58a825867d11664f7f8716c53e46d6c852eaeaae6da2770ea6b70a9b0fa2c73c","git_blob":"71e128907c3842441c9fe856472ceb5479263eea"},
+      {"path":"interfaces/innerkits/ipc_single/libipc_single_map","bytes":13953,"sha256":"8e05e1b217ed5b42ad83fbf38d31ca33241302a5c2b49cf927fd66b868bd049a","git_blob":"0bab69a423e5127f4b2e7b0d0ba87f0eb3772d9b"},
+      {"path":"interfaces/innerkits/ipc_single/BUILD.gn","bytes":6593,"sha256":"331ba3ea500d4b89216aab1c749a2b4eeade0a671701d3285f4dc4c986116227","git_blob":"797626221f2bcc113fd60c10a2410290f2ed4685"}
+    ]
+  },
+  "route_analysis": {
+    "receiver_guard": {
+      "code": "DBinderGetGrantedSessionName requires IPCSkeleton::IsLocalCalling() and IPCObjectStub::IsSamgrCall().",
+      "semantics": "IsLocalCalling distinguishes local Binder transport from remote Databus; it does not authorize a caller identity. IsSamgrCall reads the receiving process ProcessSkeleton::GetSamgrFlag(), not the incoming caller UID/PID. Therefore the handler is restricted to a stub in a SAMGR-marked receiver process, but this predicate is not an ACL on the requestor.",
+      "effect": "The generic stub special-code switch dispatches GET_GRANTED_SESSION_NAME to this handler."
+    },
+    "identity_provenance": {
+      "code": "GetGrantedSessionName reads IPCSkeleton::GetCallingPid() and GetCallingUid(), then calls CreateSessionName(uid,pid).",
+      "semantics": "These values are the kernel/Binder caller identity for the current transaction, obtained through the active IPC invoker. When the intended nested path is a service stub calling its SAMGR proxy, SAMGR sees that service process UID/PID, not the original app that earlier called the service. If a direct local app-to-SAMGR transaction existed, SAMGR would see that app's UID/PID.",
+      "name": "DBINDER_SOCKET_NAME_PREFIX + decimal uid + '_' + decimal pid",
+      "grant_target": "In the intended GetSessionName nested call, the granted SoftBus name maps to the requesting service's own process identity. No parcel-supplied UID/PID are accepted on this path."
+    },
+    "samgr_proxy_and_export": {
+      "proxy": "IPCObjectStub::GetSessionName obtains IPCProcessSkeleton::GetCurrent()->GetSAMgrObject(), requires a proxy object, and calls IPCObjectProxy::GetGrantedSessionName().",
+      "typed_get_granted_helper": "Declared in ipc_object_proxy.h but absent from pinned libipc_single_map; the ipc_core GN target is a prebuilt symlink to libipc_single.z.so, which is built with this version map. No standard exported typed helper for direct ordinary-app invocation was established.",
+      "generic_route": "IPCObjectProxy::GetGrantedSessionName uses SendRequestInner with the special transaction directly. Public generic SendRequest enforces the special-code limit; prior pinned D8/T13/T15 evidence found no ordinary generic route for special session-management codes.",
+      "indirect_app_route": "The distinct IPCObjectProxy::GetSessionName helper is declared and exported in libipc_single_map. A caller holding a proxy to a service stub can issue GET_SESSION_NAME; that service stub then makes the nested SAMGR call described above. This causes the target service to request/grant its own DBinder session name. It is a supported DBinder lifecycle operation and does not grant the caller's UID/PID under this chain.",
+      "ordinary_app_qualification": "A proxy holder can reach the exported GetSessionName code path in the pinned native inner-kit ABI. Whether a third-party app can link this platformsdk inner-kit in the shipped product is not proven by source metadata. Direct access to the internal GetGrantedSessionName helper is not exported in the standard map."
+    }
+  },
+  "grant_and_cleanup_accounting": {
+    "ipc_grant": "Each successful GET_SESSION_NAME request that reaches the service's GetSessionName causes one nested GET_GRANTED_SESSION_NAME; the SAMGR-side handler calls CreateSessionName once, which calls DBinderSoftbusClient::DBinderGrantPermission once.",
+    "ipc_refcount": "In the IPC SoftBus client, each grant for an existing socketName increments mapSessionRefCount_[socketName] once and calls the dynamically loaded SoftBus grant function; a first grant inserts count 1 and calls it. This is per unique sessionName key, so repeated requests do not allocate a new IPC map key per call.",
+    "remove": "DBinderRemovePermission decrements the same name's IPC refcount once per RemoveSessionName transaction; it invokes the backend SoftBus remove only when the count reaches zero (or below).",
+    "teardown_call_sites": [
+      "DatabusSocketListener::ServerOnShutdown calls RemoveSessionName once per callback after obtaining the invoker.",
+      "DatabusSocketListener::ClientOnShutdown calls RemoveSessionName once per callback after obtaining the invoker.",
+      "Both funnel through IPCProcessSkeleton::RemoveSoftbusServer, which snapshots sessionName_ and sends exactly one IPCObjectProxy::RemoveSessionName(sessionName) call. Repository search found no other production call site of RemoveSoftbusServer in the reviewed IPC source scope."
+    ],
+    "matching": "A GET_SESSION_NAME request alone is not paired with a RemoveSessionName call. The usual successful DBinder setup obtains the name before InvokeListenThread and later a socket shutdown callback removes once for the relevant process session; one shutdown does not mechanically replay or count all earlier GET requests. Repeated name queries that do not proceed to a corresponding databus lifecycle can therefore leave extra IPC refcounts. Exact one-GET-to-one-socket correspondence across retries, listener reuse, and failed setup was not established from this route review.",
+    "softbus_backend": "IPC's pinned DBinderSoftbusClient source passes uid, pid and socketName to dynamically resolved DBinderGrantPermission, and passes socketName to DBinderRemovePermission. The available separate local DSoftBus source delegates these to ClientGrantPermission -> ServerIpcGrantPermission and ClientRemovePermission -> ServerIpcRemovePermission. No target product manifest/build lock pairs a DSoftBus revision with IPC bbb92..., so backend permission storage/deduplication/authorization semantics are not claimed as target-product facts."
+  },
+  "candidate_decision": {
+    "confirmed_candidate_count": 0,
+    "conditional_observation_count": 1,
+    "observation_id": "D39-R1",
+    "claim": "A caller that can reach the exported GetSessionName helper may cause a target service to request a grant for that service's own uid_pid name. Repeated requests not followed by a databus lifecycle can increment SAMGR's same-name IPC refcount without a matching shutdown decrement, potentially keeping the service's own dynamic name permission reference alive longer than intended.",
+    "why_not_a_vulnerability_finding": "The route's identity is the target service, not the app; only one same-name IPC map entry is shown; DSoftBus backend semantics are not target-paired; no evidence shows the residual grant lets an untrusted caller impersonate the service, access another UID/PID, bypass an authorization check, exhaust a bounded permission table, or cause material impact. This is a lifecycle/refcount question for T40/L2, not a confirmed cross-subject authorization flaw.",
+    "ordinary_app_path": "Indirect exported GetSessionName route exists for a proxy holder, but third-party package/API policy and typical system-service proxy availability in the target product remain unbound. Direct GetGrantedSessionName helper is absent from the standard version map.",
+    "verdict": "insufficient_for_security_finding; retain only one conditional observation for independent T40 challenge; do not send as confirmed vulnerability"
+  },
+  "t40_rebuttal_points": [
+    "Can an ordinary third-party app in the target product link the exported inner-kit GetSessionName helper and obtain a proxy to a stub whose DBinderGetSessionName accepts the transaction?",
+    "Does every successful GetSessionName trigger a distinct server listener/socket and exactly one shutdown removal, or can repeated queries/retries/failures accumulate IPC refcounts without sockets?",
+    "Does a retained same-name refcount have any authorization effect beyond keeping the service's own name registration/permission alive; can another identity exploit it or is it only self-identity availability?",
+    "Confirm target-paired DSoftBus permission implementation: whether grants are deduplicated by name, whether repeated same-name grants consume bounded slots, and what exact authorization the UID/PID/name tuple enforces.",
+    "Consider stress feasibility only after defining a concrete external effect; don't infer integer-overflow/DoS from the signed counter without a realistic call rate and observable impact."
+  ],
+  "limitations": [
+    "IPC code is immutably bound to target commit bbb92dbb2f52aca54ab268307c9476ac1802f3ff, but no product lock/build record proves the deployed SDK or DSoftBus pairing.",
+    "The local OpenHarmony checkout is at IPC 5903fd5f7332a427cb3f6915b0202ee5c76c63b5; matching target raw file hashes above were independently fetched, but local unrelated dependency sources are not thereby target-paired.",
+    "No tests, dynamic experiments, or PoCs were run."
+  ]
+}

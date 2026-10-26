@@ -1,0 +1,180 @@
+{
+  "schema_version": "1.0",
+  "task": "T65_product_build_gate_audit",
+  "checked_at_local": "2026-10-20 Asia/Shanghai (DSoftBus object follow-up)",
+  "scanner_baseline": {
+    "repo": "D:/openHarmonyScanner/worktrees/b-ipc-integration-20261020",
+    "head": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "origin_main_cached": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "fetch_command": "git -C D:/openHarmonyScanner/worktrees/b-ipc-integration-20261020 fetch origin main",
+    "fetch_result": "failed: unable to connect to github.com:443",
+    "freshness": "stale_or_unknown; local baseline only",
+    "product_code_modified": false
+  },
+  "source_pin_evidence": {
+    "input": "D:/openHarmonyScanner/worktrees/b-ipc-plan-20261020/research/deliveries/ipc/b-line-20261020/d9-source-pin-verification-20261020.json",
+    "target_ipc": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "target_dsoftbus": "7743b679f6c3599e21bea4e4b1564422668e3643",
+    "product_snapshot_manifest": "source-manifest-resolved-20261019.xml",
+    "product_snapshot_ipc": "5903fd5f7332a427cb3f6915b0202ee5c76c63b5",
+    "ipc_target_matches_product_lock": false,
+    "ipc_candidate_files_match_target": true,
+    "full_ipc_tree_match_proven": false,
+    "dsoftbus_manifest_revision": "7743b679f6c3599e21bea4e4b1564422668e3643",
+    "dsoftbus_exact_sha_fetch_github_and_gitee": "exact object resolved from manifest-synced repo object store; refs/remotes/gitcode/master and FETCH_HEAD also point to target",
+    "dsoftbus_checkout_git_config_bytes": 0,
+    "dsoftbus_exact_source_checkout_verified": false,
+    "interpretation": "Frozen manifest SHA locks IPC 5903 + DSoftBus 7743; DSoftBus commit/tree and refs are verified. IPC target bbb92 is an independent analysis anchor; all four D9/D54 relevant candidate files are byte-identical in manifest IPC 5903 and target bbb92, though the full IPC commit/tree differs. Candidate source provenance and manifest pair lock are therefore verified at the relevant-file level. No evidence binds surviving product build outputs to this pair because the source/build root is missing.",
+    "dsoftbus_object_verified": true,
+    "dsoftbus_object_store": "D:/openHarmonyScanner/openharmony/.repo/project-objects/communication_dsoftbus.git",
+    "dsoftbus_tree": "d386e20f8074e037f330a5df11e99fc66ed155d0",
+    "dsoftbus_commit_metadata": {
+      "parents": [
+        "f4e45bab8925e761c8a4694fc695d0ecbed5b80d",
+        "83b112ef7b3abd6c9248f8f615af8d92e2fcafa8"
+      ],
+      "author": "openharmony_ci <openharmony_ci@noreply.gitcode.com>",
+      "author_date": "2026-10-17T21:34:36+08:00",
+      "subject": "!12629 merge master into master"
+    },
+    "dsoftbus_tree_object_exists": true,
+    "dsoftbus_commit_reachability": "verified commit/tree; also reported dangling in shared object store, while sibling manifest project gitdir has current master ref and FETCH_HEAD at this commit",
+    "frozen_manifest": {
+      "path": "D:/openHarmonyScanner/openharmony-manifest-current-20261018.xml",
+      "sha256": "52f528dada321a140a29be2d55ef9053fda818cbdca93758425f1a25f6286d55",
+      "ipc_revision": "5903fd5f7332a427cb3f6915b0202ee5c76c63b5",
+      "dsoftbus_revision": "7743b679f6c3599e21bea4e4b1564422668e3643",
+      "meaning": "Verifiable source lock for the pair; does not prove the build outputs were produced from that pair."
+    },
+    "ipc_target_is_independent_anchor": true,
+    "ipc_candidate_provenance": "All four D9/D54 candidate source files compare byte-for-byte between IPC target bbb92 and manifest-locked IPC 5903; see ipc_candidate_cross_pin_bytes below. This proves relevant candidate file provenance, not whole-tree commit equality.",
+    "ipc_candidate_cross_pin_bytes": [
+      {
+        "path": "dbinder/dbinder_service/src/dbinder_service.cpp",
+        "same_bytes_in_manifest_ipc_5903_and_target_ipc_bbb92": true,
+        "byte_length": 59699,
+        "sha256": "ac762ad0345451a605fffcd430d933161eb20aedd7b83479753b9be8384fa1cf"
+      },
+      {
+        "path": "dbinder/dbinder_service/src/socket/dbinder_remote_listener.cpp",
+        "same_bytes_in_manifest_ipc_5903_and_target_ipc_bbb92": true,
+        "byte_length": 14480,
+        "sha256": "787a37914ec1e1d760144803ed25a2aaddb60139651a691326bb1bd038f1df62"
+      },
+      {
+        "path": "dbinder/dbinder_service/src/dbinder_service_stub.cpp",
+        "same_bytes_in_manifest_ipc_5903_and_target_ipc_bbb92": true,
+        "byte_length": 17074,
+        "sha256": "6583b7b212eb8230ae234c54666bb1c9bdcffed898a3799d096d573a0422b9f2"
+      },
+      {
+        "path": "dbinder/c/include/dbinder_types.h",
+        "same_bytes_in_manifest_ipc_5903_and_target_ipc_bbb92": true,
+        "byte_length": 2734,
+        "sha256": "0ed05e8e4c1b92560ceb1de17fcc790d8cff8173ff4159a0c116caea16984341"
+      }
+    ],
+    "manifest_candidate_file_contents_match_target": true,
+    "dsoftbus_project_gitdir": "D:/openHarmonyScanner/openharmony/.repo/projects/foundation/communication/dsoftbus.git",
+    "dsoftbus_manifest_ref_and_fetch_head": "refs/remotes/gitcode/master and FETCH_HEAD resolve to 7743b679f6c3599e21bea4e4b1564422668e3643",
+    "dsoftbus_source_pin_in_manifest_pair_verified": true
+  },
+  "inventory": {
+    "wsl_distribution": "Ubuntu",
+    "product_tree": "/home/deepsleep/c-line-c1-profile-20261018",
+    "ipc_source_roots_checked": [
+      "/home/deepsleep/c-line-c1-profile-20261018/openharmony/foundation/communication/ipc",
+      "/home/deepsleep/c-line-c1-profile-20261018/foundation/communication/ipc",
+      "/src/openharmony/foundation/communication/ipc"
+    ],
+    "ipc_source_root_status": "not present",
+    "candidate_source_filenames_found_under_product_tree": [],
+    "source_mount": {
+      "path": "/src",
+      "exists": true,
+      "contents_at_checked_depth": "empty"
+    },
+    "build_artifacts": [
+      {
+        "path": "/home/deepsleep/c-line-c1-profile-20261018/out-gn-20261019-retry3/rk3568/build.ninja",
+        "exists": true,
+        "product_args": "/home/deepsleep/c-line-c1-profile-20261018/out-gn-20261019-retry3/rk3568/args.gn",
+        "compile_database": "/home/deepsleep/c-line-c1-profile-20261018/out-gn-20261019-retry3/rk3568/compile_commands.json",
+        "compile_database_entries": 234245,
+        "sample_compile_database_directory": "/src/out/rk3568",
+        "exact_recorded_cwd_exists": false,
+        "ipc_source_project_present": false,
+        "note": "This is valid surviving metadata in the C-line checkout, but its captured absolute /src build/source root is no longer mounted."
+      },
+      {
+        "path": "/home/deepsleep/c-line-c1-profile-20261018/out-gn-release-20261019/rk3568/build.ninja",
+        "exists": true,
+        "matching_ipc_and_dsoftbus_source_lock_proven": false,
+        "matching_test_binary_found": false
+      }
+    ],
+    "compile_database_ipc_records": {
+      "query": "entries with dbinder in file path",
+      "count": 116,
+      "recorded_directory": "/src/out/rk3568",
+      "usable_from_current_mount": false
+    },
+    "ipc_related_executable_inventory": {
+      "searched_output_roots": [
+        "/home/deepsleep/c-line-c1-profile-20261018/out-gn-20261019-retry3/rk3568",
+        "/home/deepsleep/c-line-c1-profile-20261018/out-gn-release-20261019/rk3568"
+      ],
+      "matching_executable_files": [],
+      "fuzz_path_metadata_files_exist": true,
+      "fuzz_path_metadata_are_executables": false,
+      "ipc_test_or_fuzzer_binary_available": false
+    },
+    "toolchain": {
+      "ohos_clang_references_present_in_compile_database": true,
+      "toolchain_alone_sufficient": false,
+      "reason": "A compiler reference does not restore the absent recorded source/build root, IPC source tree, exact dependency source lock, or matching target binary."
+    }
+  },
+  "feasibility": {
+    "matching_reproducible_target_integration_path": false,
+    "status": "NO_GO",
+    "safe_reproduction_command": null,
+    "why_no_exact_command": "The required source pins and D9/D54 candidate file bytes are now verified, but no physical IPC source/build root or matching test executable is available. The surviving compile database records cwd /src/out/rk3568 while /src is empty; no matching product build provenance can be recovered from these artifacts. Therefore there is no safe reproducible command for the required end-to-end product test in the current environment.",
+    "product_integration_scope_required": "ASan-enabled integration test entering through public OnBytesReceived, exercising asynchronous reply/session setup and reaching OnRemoteRequest(GET_PROTO_INFO); include terminated-ID controls, malformed DeviceIdInfo cases, and invalid stub/serviceName rejects.",
+    "existing_harness_scope": "Existing IPC unit/fuzzer source or helper-level tests do not establish the end-to-end listener-to-async-reply-to-session-to-GET_PROTO_INFO product path. No matching executable is present in checked output roots."
+  },
+  "no_go_reasons": [
+    "The frozen manifest source pair is verified as IPC 5903 + DSoftBus 7743, and the D9/D54 candidate source files are byte-identical between IPC 5903 and the independent bbb92 analysis anchor. The remaining gap is that no surviving build provenance proves the checked artifacts were compiled from this exact manifest/source pair.",
+    "The C-line IPC source directory and candidate production source files are absent; the recorded /src mount is empty, so no valid source/build root is available for replay.",
+    "The compile database records cwd /src/out/rk3568, which does not exist. Its 116 DBinder source records cannot be replayed from the current mount.",
+    "No DBinder or IPC test/fuzzer executable exists in the checked retry3 or release output roots; fuzz *_path.txt files are metadata only.",
+    "No end-to-end ASan evidence exercises public OnBytesReceived through asynchronous reply/session setup to OnRemoteRequest(GET_PROTO_INFO), so product integration impact is unverified.",
+    "The latest origin/main fetch failed during this audit, so scanner baseline freshness remains stale/unknown; this is separate from the product build/test gate."
+  ],
+  "minimum_unblock_conditions": [
+    "Materialize the frozen manifest pair (IPC 5903 + DSoftBus 7743) in a complete source tree with a stable, existing root; verify the four candidate IPC file hashes against the recorded cross-pin evidence.",
+    "Generate fresh product build metadata at that root rather than reusing compile_commands.json with /src cwd; preserve manifest, GN args, toolchain/sysroot identity, and target source graph.",
+    "Confirm the GN target/source list includes the manifest-pinned DBinder implementation and a dedicated integration test; build with the matching OHOS clang/sysroot and ASan configuration.",
+    "Run the end-to-end test cases listed under product_integration_scope_required and preserve exact commands, binary hash, test output, and sanitizer output as evidence."
+  ],
+  "safety_and_scope": {
+    "product_tree_modified": false,
+    "build_outputs_overwritten": false,
+    "dependencies_substituted": false,
+    "harness_misrepresented_as_product_validation": false,
+    "remote_fetch_attempted": true,
+    "static_candidate_added": false
+  },
+  "product_source_lock_and_candidate_file_provenance": {
+    "manifest_sha256": "52f528dada321a140a29be2d55ef9053fda818cbdca93758425f1a25f6286d55",
+    "locked_pair": {
+      "ipc": "5903fd5f7332a427cb3f6915b0202ee5c76c63b5",
+      "dsoftbus": "7743b679f6c3599e21bea4e4b1564422668e3643"
+    },
+    "independent_ipc_analysis_anchor": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "candidate_file_comparison": "all four listed D9/D54 source files are byte-identical across the two IPC commits",
+    "full_ipc_tree_equality": false,
+    "build_from_locked_pair_proven": false,
+    "integration_test_evidence_present": false
+  }
+}

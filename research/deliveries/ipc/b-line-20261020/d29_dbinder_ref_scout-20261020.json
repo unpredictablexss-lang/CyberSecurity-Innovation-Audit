@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "task_id": "D29",
+  "title": "DBinder INCREFS/DECREFS and stub lifetime audit",
+  "scope": "Read-only audit of the immutable communication_ipc commit bbb92dbb2f52aca54ab268307c9476ac1802f3ff, limited to DBINDER_INCREFS_TRANSACTION/DBINDER_DECREFS_TRANSACTION dispatch, the DBinderBaseInvoker::ProcessTransaction receive gate, caller identity tuple, app-auth map/refcount bookkeeping, and server-side session close cleanup. No code changes, tests, or PoCs.",
+  "verdict": {
+    "candidate_count": 0,
+    "status": "no_high_confidence_candidate_on_reviewed_path",
+    "confidence": "medium_high",
+    "reason": "The receive path validates a caller identity and stub index against the per-process app-auth map before dispatch. The session bootstrap records the initial app/stub relation and takes one strong reference; INCREFS updates the live socket association; DECREFS removes the exact relation atomically and drops a strong reference only when that removal succeeds. Server-side socket close removes all relations for that socket under the same map lock and drops one reference for each removed relation. An in-flight transaction racing close could plausibly re-add stale state after cleanup, but this source-only review did not establish an attacker-controlled schedule, durable impact, or a reproducible violation, so it is not promoted as a finding.",
+    "not_a_product_validation": "The source is pinned to the requested upstream commit, but deployed product build pairing is not established by this task."
+  },
+  "pin": {
+    "repository": "openharmony/communication_ipc",
+    "requested_commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "acquisition": "Raw source files fetched by immutable commit URL; SHA-256 and Git blob IDs recomputed from downloaded bytes.",
+    "files": [
+      {
+        "path": "ipc/native/src/core/framework/source/ipc_object_stub.cpp",
+        "sha256": "554a27bf335d0048373c326f3f9bddea9ba134b73bf8dca622d6c80b644656bb",
+        "git_blob": "22c3a682c20fd350b318cad17a6d621206e65ba7",
+        "bytes": 29851
+      },
+      {
+        "path": "ipc/native/src/core/dbinder/include/dbinder_base_invoker_process.h",
+        "sha256": "bcd53526774d44fa4d86b21f94a4b3dd3239a8fbc923c5a8d0ba28e6f2aa49e9",
+        "git_blob": "111cbfc11be5c3e4d090a6ef9152e93b8f25b804",
+        "bytes": 19306
+      },
+      {
+        "path": "ipc/native/src/core/dbinder/source/dbinder_databus_invoker.cpp",
+        "sha256": "378776e256a8438c5bb28c57acc39172b3376512907718e813b71406b7251217",
+        "git_blob": "83450463d6d39f3a327ffa3dccccf0d8c957757d",
+        "bytes": 41140
+      },
+      {
+        "path": "ipc/native/src/core/framework/source/ipc_process_skeleton.cpp",
+        "sha256": "cdffaaf0054da5c80d64c0cec6ef287c9c24e432bc50a49d3288336715910366",
+        "git_blob": "516fd9efd0ab405cbd0c8a985f9f203478fc4d52",
+        "bytes": 64744
+      },
+      {
+        "path": "ipc/native/src/core/framework/source/ipc_object_proxy.cpp",
+        "sha256": "4d1e24129bec4a642047fb6187f63b40a1b17c1f1740f7b816f7691890b92157",
+        "git_blob": "4701faa882a030d0f34772d4b85b432b0be87e1e",
+        "bytes": 49196
+      }
+    ],
+    "product_build_binding": "not_verified"
+  },
+  "state_model": {
+    "identity_key": "deviceId + decimal(pid) + decimal(uid) + decimal(tokenId)",
+    "stub_relation_key": "identity_key + stubIndex, with socketId as the current session binding",
+    "receive_authorization": "CheckAndSetCallerInfo takes PID/UID/deviceId/tokenId from the current DBinderSessionObject, combines them with the transaction cookie (stubIndex) and socketId, then QueryAppInfoToStubIndex requires a matching relation whose socket is either 0 or the current socket. Only on success does it set DBinder caller-info fields.",
+    "initial_registration": "InvokerDataBusThread adds the peer identity/stubIndex with socketId 0 and the local stub pointer; it calls IncStrongRef(this) only when AttachOrUpdateAppAuthInfo reports a newly added CommAuthInfo. The socketId 0 entry allows the first accepted data-bus session to pass the query gate.",
+    "increfs": "DBinderIncRefsTransaction rejects local Binder calls, derives the tuple from the invoker's already validated caller info, and AttachOrUpdateAppAuthInfo updates the map relation to the active listenFd. This call supplies stub=nullptr, so this update does not acquire another stub strong reference.",
+    "decrefs": "DBinderDecRefsTransaction builds the same tuple and calls DetachAppAuthInfo. Under appAuthMutex_, that operation erases only when both stubIndex and socketId match; it returns false otherwise. IPCObjectStub calls DecStrongRef(this) only after a successful erase.",
+    "session_close": "OnDatabusSessionServerSideClosed calls DetachAppAuthInfoBySocketId, which holds appAuthMutex_ while removing CommAuthInfo and each map entry bound to the closing socket, returning one stubIndex per removed relation. The callback then takes objectMutex_, queries each surviving stub, and DecStrongRef(this) once per returned relation."
+  },
+  "evidence": [
+    {
+      "claim": "The two special transaction codes dispatch to their dedicated handlers.",
+      "source": "ipc/native/src/core/framework/source/ipc_object_stub.cpp",
+      "location": "IPCObjectStub::SendRequest, around lines 432-463",
+      "detail": "DBINDER_INCREFS_TRANSACTION and DBINDER_DECREFS_TRANSACTION each dispatch to the corresponding DBinder handler when CONFIG_IPC_SINGLE is not defined."
+    },
+    {
+      "claim": "Transactions pass the caller-map gate before the target stub handler is invoked.",
+      "source": "ipc/native/src/core/dbinder/include/dbinder_base_invoker_process.h",
+      "location": "DBinderBaseInvoker<T>::ProcessTransaction, lines 82-135; TargetStubSendRequest, lines 42-79",
+      "detail": "ProcessTransaction calls CheckAndSetCallerInfo(listenFd, tr->cookie) before dispatch. TargetStubSendRequest then resolves tr->cookie to a registered stub under objectMutex_ and invokes SendRequest. Caller state is restored after request processing and on the allocator failure exits after it was set."
+    },
+    {
+      "claim": "Caller tuple and stub relation are checked against server-maintained session data.",
+      "source": "ipc/native/src/core/dbinder/source/dbinder_databus_invoker.cpp; ipc/native/src/core/framework/source/ipc_process_skeleton.cpp",
+      "location": "CheckAndSetCallerInfo, around lines 753-782; QueryAppInfoToStubIndex(AppAuthInfo), around lines 1531-1548",
+      "detail": "PID, UID, device ID and token ID come from the active DBinderSessionObject, not from the transaction parcel. The cookie supplies stubIndex. Query requires a tuple/stubIndex match and socketId either zero or equal to the active socket."
+    },
+    {
+      "claim": "The bootstrap route registers the peer relation and pins the stub before later transactions use it.",
+      "source": "ipc/native/src/core/framework/source/ipc_object_stub.cpp; ipc/native/src/core/framework/source/ipc_process_skeleton.cpp",
+      "location": "InvokerDataBusThread, around lines 600-650; AttachOrUpdateAppAuthInfo, around lines 1379-1420",
+      "detail": "The validated INVOKE_LISTEN_THREAD setup obtains a stub index, inserts an appAuth relation using socketId 0, and IncStrongRef(this) only when a new CommAuthInfo is inserted. The socket-zero relation is explicitly accepted by QueryAppInfoToStubIndex and later updated to the active socket by INCREFS."
+    },
+    {
+      "claim": "DECREFS is idempotent with respect to a concurrent close removal for the same tuple/stub/socket relation.",
+      "source": "ipc/native/src/core/framework/source/ipc_object_stub.cpp; ipc/native/src/core/framework/source/ipc_process_skeleton.cpp",
+      "location": "DBinderDecRefsTransaction, around lines 246-277; DetachAppAuthInfo, around lines 1421-1455",
+      "detail": "The strong reference is released only when DetachAppAuthInfo atomically finds the app tuple, stubIndex and matching socketId and erases that map entry. A racing removal that already took the entry makes the later detach return false."
+    },
+    {
+      "claim": "Server-side session cleanup owns the socket-bound relation removal and associated strong-ref release.",
+      "source": "ipc/native/src/core/dbinder/source/dbinder_databus_invoker.cpp; ipc/native/src/core/framework/source/ipc_process_skeleton.cpp",
+      "location": "OnDatabusSessionServerSideClosed, around lines 607-628; DetachAppAuthInfoBySocketId, around lines 1477-1509",
+      "detail": "Cleanup removes socket-bound entries under appAuthMutex_ and returns their stub indices. The invoker holds objectMutex_ while resolving surviving stub pointers and dropping one strong reference per removed relation."
+    }
+  ],
+  "review_limits": [
+    "A transaction that passes CheckAndSetCallerInfo before a socket-close callback and mutates appAuth state after that callback could create an ordering-sensitive stale relation; this scout did not prove the schedule, impact, or attacker control. T30 should seek a deterministic lifecycle proof before treating it as a finding.",
+    "The per-invoker caller-info fields are mutable. This review did not establish whether one DBinderDatabusInvoker instance can process concurrent transactions, so no identity-race finding is claimed. T30 should verify invoker thread ownership if it considers this point.",
+    "Source-level checks do not prove product build inclusion or runtime SoftBus callback ordering."
+  ],
+  "t30_counterreview_questions": [
+    "Can the incoming INVOKE_LISTEN_THREAD bootstrap be reached only through its local Binder and UID < ALLOWED_UID guard, and does its tuple/stubIndex relation precede remote transaction arrival?",
+    "Can a same-socket stale transaction pass CheckAndSetCallerInfo, then reinsert an appAuth entry after OnDatabusSessionServerSideClosed has removed that socket's entries? Establish ordering and user-visible/resource impact; otherwise classify as an unproven race.",
+    "Can two concurrent ProcessTransaction calls share a DBinderDatabusInvoker instance and interleave GetCallerInfo/CheckAndSetCallerInfo/SetCallerInfo/restore? Inspect ownership and thread dispatch; do not infer from mutable fields alone.",
+    "For one peer identity/stubIndex, verify duplicate INCREFS is idempotent and does not create additional strong refs, while distinct identity entries produce corresponding bootstrap strong refs and close decrements.",
+    "Confirm close cleanup and DECREFS cannot both decrement for one exact map entry; DetachAppAuthInfo and DetachAppAuthInfoBySocketId are expected to serialize through appAuthMutex_."
+  ],
+  "next_step": "T30 independent counter-review of the bootstrap path, caller-state ownership, duplicate relation/refcount accounting, and close/DECREFS interleavings; keep candidate count at zero unless it establishes a deterministic, reachable violation."
+}

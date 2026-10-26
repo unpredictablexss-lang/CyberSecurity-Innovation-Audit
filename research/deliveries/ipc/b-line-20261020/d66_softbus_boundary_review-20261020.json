@@ -1,0 +1,210 @@
+{
+  "schema_version": "1.0",
+  "task_id": "D66",
+  "title": "Independent boundary review for D9 and D54-R1: SoftBus identity, authentication, integrity, replay, and waiter reachability",
+  "reviewed_at_utc": "2026-10-20",
+  "scope": {
+    "read_only": true,
+    "network_poc_run": false,
+    "code_changed": false,
+    "new_candidate_ids_created": 0,
+    "candidate_cap": 1
+  },
+  "freshness": {
+    "fetch_attempt": "git fetch origin main failed: could not connect to github.com:443",
+    "local_head": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "locally_visible_origin_main": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "ahead_behind": "0 0",
+    "origin_freshness": "unknown; ref is the locally cached value and was not refreshed this review",
+    "target_ipc_commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "target_ipc_pin_evidence": "d9-source-pin-verification-20261020.json",
+    "dsoftbus_exact_object": {
+      "repository_object_store": "D:/openHarmonyScanner/openharmony/.repo/project-objects/communication_dsoftbus.git",
+      "object_type": "commit",
+      "commit": "7743b679f6c3599e21bea4e4b1564422668e3643",
+      "tree": "d386e20f8074e037f330a5df11e99fc66ed155d0",
+      "commit_time": "2026-10-17T21:34:36+08:00",
+      "subject": "!12629 merge master into master",
+      "availability": "exact dangling object found and read directly from local Git object database; not a reachable branch ref",
+      "pairing": "The frozen manifest D:/openHarmonyScanner/openharmony-manifest-current-20261018.xml (SHA-256 52f528dada321a140a29be2d55ef9053fda818cbdca93758425f1a6286d55; independently read in this review) pairs IPC 5903fd5f7332a427cb3f6915b0202ee5c76c63b with DSoftBus 7743. The four D9/D54 candidate IPC files are byte-identical between IPC 5903 and target bbb92. This establishes an exact immutable source pair for the relevant files, though no build record establishes the built product artifacts."
+    }
+  },
+  "evidence_reviewed": [
+    {
+      "artifact": "d27_softbus_identity_pin-20261020.json",
+      "contribution": "D27 was written before the exact DSoftBus object was recovered. Its unpinned-local-source limitation is superseded by the exact 7743 object review recorded in this D66 artifact. The product/build pairing caveat remains: the immutable manifest pairs 7743 with IPC 5903, not the full target IPC bbb92 tree."
+    },
+    {
+      "artifact": "t28_softbus_identity_counterreview-20261020.json",
+      "contribution": "T28 correctly found that its inspected local source did not prove peer-name authenticity/spoofability. D66 now rechecks the exact 7743 commit: peerSessionName is propagated from auth/session protocol fields to PeerSocketInfo.name, while the inspected CheckUidAndPid compares local caller credentials to a local session-server record, not a remote peer OS principal. This still does not settle whether authenticated channel integrity prevents external modification."
+    },
+    {
+      "artifact": "d9-source-pin-verification-20261020.json",
+      "contribution": "Pins D9/D54 candidate IPC source files to bbb92 by Git blob and SHA-256. Its earlier note that DSoftBus 7743 was unavailable from inspected remotes is superseded by this D66 review, which found and read the exact dangling commit in the product-object store. Product pairing is still limited: the immutable manifest pairs DSoftBus 7743 with IPC 5903, and no full bbb92+7743 build record is present."
+    },
+    {
+      "artifact": "b-line-development-test-plan-20261020.md#D53/T54/D9/T26/D54/T55/D55/T56",
+      "contribution": "Records D9 second-layer insufficient verdict, T26 integration-test no-go, D53/T54 ingress and peer-correlation trace, D54/T55 sequence-only wake analysis, D55/T56 error sibling review, and their remaining unknowns. Relevant plan entries are near lines 787-799."
+    },
+    {
+      "artifact": "d9_unterminated_device_id_asan_probe.cpp",
+      "contribution": "A layout-level sanitizer probe models the C-string conversion but explicitly is not a product integration test and does not exercise SoftBus ingress, product build configuration, or the complete listener-to-consumer chain."
+    }
+  ],
+  "source_level_review": {
+    "D9": {
+      "source_pin": {
+        "repository": "openharmony/communication_ipc",
+        "commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+        "files": [
+          {
+            "path": "dbinder/dbinder_service/src/dbinder_service.cpp",
+            "sha256": "ac762ad0345451a605fffcd430d933161eb20aedd7b83479753b9be8384fa1cf",
+            "blob": "fb7f0b92f1f842f10f35f14917c553d3bb38ee9e"
+          },
+          {
+            "path": "dbinder/dbinder_service/src/dbinder_service_stub.cpp",
+            "sha256": "6583b7b212eb8230ae234c54666bb1c9bdcffed898a3799d096d573a0422b9f2",
+            "blob": "11927a9291886f56211a3c775122b2462d6f1ddd"
+          },
+          {
+            "path": "dbinder/c/include/dbinder_types.h",
+            "sha256": "0ed05e8e4c1b92560ceb1de17fcc790d8cff8173ff4159a0c116caea16984341",
+            "blob": "c533e33cc0280c04c57564fc58d6f0cf09fc1c0f"
+          }
+        ]
+      },
+      "mechanism_assessment": "The pinned IPC receive path copies a fixed-size DHandleEntryTxRx and fixed-size DeviceIdInfo without proving NUL termination of the device-id arrays; the reply session path copies DeviceIdInfo and the GET_PROTO_INFO consumer passes device-id arrays to MessageParcel::WriteString, which consumes C strings. This is a source-level unterminated-string root and remains worth a targeted product test.",
+      "transport_boundary": "The pinned IPC receive path copies a fixed-size DBinder message and queues it without binding message device-id fields to the callback socket identity. Exact SoftBus 7743 source is now pinned and paired by immutable manifest with IPC 5903; relevant IPC candidate files are identical to bbb92. The ordinary SoftBus proxy data path encrypts non-AUTH channels and verifies AES-GCM tags before listener delivery, so an off-path network attacker cannot be assumed able to alter DBinder frames on that route. An authenticated endpoint with the session key can still produce its own payload. The DBinder route, replay policy, auth-name-to-remote-principal binding, and actual built product remain unverified.",
+      "impact_and_reachability_unknowns": [
+        "Whether the deployed DBinder route is the reviewed ordinary proxy data-channel path (or another route) and whether product configuration enables the shown AEAD path.",
+        "Whether auth-channel transport protects SRC_BUS_NAME/DST_BUS_NAME end-to-end, and whether the peer UID/PID encoded in a DBinder service name is bound to the remote OS principal rather than merely checked as a local caller at the sending endpoint.",
+        "Whether authenticated SoftBus peers may create a DBinder session to the target listener and deliver a malformed fixed-size frame under the product threat model.",
+        "Whether the proxy sequence handling rejects replayed frames; the reviewed receive path authenticates packet contents but did not establish duplicate/freshness checks.",
+        "Whether malformed device IDs pass real listener/session/stub/serviceName gates and cause an overread beyond the relevant product allocation with a concrete crash/disclosure; the layout probe is not product evidence."
+      ],
+      "verdict": "conditional / insufficient for a security finding; retain as a source-bound mechanism for the one targeted product experiment, not as a confirmed or externally reachable vulnerability"
+    },
+    "D54_R1": {
+      "source_pin": {
+        "repository": "openharmony/communication_ipc",
+        "commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+        "dbinder_service_cpp_sha256": "ac762ad0345451a605fffcd430d933161eb20aedd7b83479753b9be8384fa1cf",
+        "remote_listener_cpp_sha256": "787a37914ec1e1d760144803ed25a2aaddb60139651a691326bb1bd038f1df62"
+      },
+      "mechanism_assessment": "GetSeqNumber is a process-local monotonically incremented uint32 (wraps at max). Pending ThreadLockInfo is keyed by seqNumber and stores networkId. Both OnRemoteErrorMessage and OnRemoteReplyMessage look up, wake, and detach by reply seqNumber alone. The success path attempts MakeSessionByReplyMessage first, but its valid-stub/session-name checks do not correlate the reply with the pending waiter networkId or expected peer. The error path directly wakes/detaches without those session checks. SoftBus 7743 ordinary proxy data channels use AEAD, so this IPC gap does not imply off-path frame forgery; an authenticated peer endpoint may still create a valid message with a chosen seq if it can reach the session listener.",
+      "impact_and_reachability_unknowns": [
+        "Whether the target DBinder sessions use the reviewed proxy AEAD channel, another channel type, or product-specific non-encrypted configuration.",
+        "Whether an authenticated peer endpoint can establish a DBinder session to the same listener and submit a crafted reply/error frame; AEAD does not prevent the endpoint possessing the key from crafting its own valid payload.",
+        "Whether the process-local monotonically allocated seq is observable/guessable by that peer at the necessary time and whether it can target an active waiter associated with another networkId.",
+        "Whether replayed frames are rejected by the exact channel path; the reviewed proxy decrypt call chain did not show freshness tracking.",
+        "Whether premature wake/detach reproducibly yields failed negotiation or a security-relevant cross-subject effect in the target product."
+      ],
+      "verdict": "conditional / insufficient; retain only as D54-R1, one low-confidence product-verification candidate, with D55/T56 error handling merged into the same root"
+    }
+  },
+  "second_layer_verdict_recheck": {
+    "D9": "Exact DSoftBus 7743 source is now recovered and pinned, and the frozen manifest pairs it with IPC 5903; the candidate IPC paths are byte-identical to bbb92. The ordinary proxy path provides AES-GCM integrity for non-AUTH channels before delivery, narrowing the attack model to a valid session endpoint on that route. The auth-name remote OS-principal binding, actual DBinder route, replay handling, built product, and concrete out-of-bounds effect remain open. Keep insufficient.",
+    "D54_R1": "Exact pinned SoftBus narrows the issue: ordinary proxy packets receive AES-GCM verification, so cross-peer injection from an off-path network attacker is not supported on that route. IPC still ignores socket/networkId at waiter correlation; a connected authenticated peer can potentially craft a valid payload with a chosen seq, but DBinder session reachability, cross-network targetability, replay policy, and product effect remain unproven. Keep conditional/insufficient.",
+    "new_high_confidence_candidates": 0,
+    "confirmed_candidates": 0,
+    "do_not_infer": [
+      "Do not infer spoofability from the IPC listener lacking a second authentication check or from peerSessionName being protocol metadata alone.",
+      "Do not infer remote app UID/PID authentication from device identity, auth-channel callbacks, or the local CheckUidAndPid check.",
+      "Do not infer DBinder reply-frame integrity or anti-replay from generic auth-layer AES-GCM/sequence APIs without proving the exact data-channel call chain and freshness policy.",
+      "Do not treat the exact 7743 DSoftBus object as a full target product build pairing: the manifest pairs it with IPC 5903; target IPC bbb92 candidate files match, but no bbb92+7743 build record exists.",
+      "Do not infer product reachability from a synthetic layout probe, unit/helper tests, or floating master."
+    ]
+  },
+  "build_blocker_classification": {
+    "is_code_layer_sufficient_but_only_build_blocked": false,
+    "reason": "The immutable source pair relevant to the candidate code is now available (manifest IPC 5903 + DSoftBus 7743; candidate IPC files match bbb92), and the SoftBus proxy path supplies AES-GCM integrity. Remaining gaps include the actual DBinder route/configuration, peer-name-to-remote-principal binding, replay freshness, authorized-peer reachability, concrete effects, and product build/runtime evidence. Therefore this is not merely a build blocker.",
+    "T26_status": "no-go for a precise product integration test/build: no paired source/build root and executable matching target; existing unit/fuzzer sources do not cover the listener-to-async-reply-to-session-to-consumer lifecycle."
+  },
+  "single_minimal_unblocking_experiment_design": {
+    "name": "paired-product two-peer DBinder ingress and waiter correlation integration test",
+    "preconditions": [
+      "Use the frozen manifest pair IPC 5903 + DSoftBus 7743, verify the four D9/D54 IPC source files against target bbb92 blobs, and preserve resolved GN/build outputs and the actual DBinder-selected channel type/configuration.",
+      "Build the DBinder listener/session path with ASan and controlled authenticated peers; instrument peer session name/identity, the AEAD verify result, packet sequence/freshness handling, and listener socket/network mapping."
+    ],
+    "oracle": "With a live waiter A and distinct waiter B (different networkId where possible), deliver valid, wrong-seq, unknown, late, duplicate, and replayed reply/error frames from an authenticated peer A and a distinct authenticated peer B through the product-selected SoftBus channel. Record peer session/name/networkId, AEAD result, replay/freshness result, which waiter wakes/detaches, returned negotiation status, and session mutation. In the same test target, deliver terminated-ID controls and single-/double-unterminated IDs through real ingress and GET_PROTO_INFO; record ASan bounds behavior and rejected stub/serviceName controls. Include unauthenticated/off-path tamper controls. This is one controlled lab integration matrix, not an Internet PoC.",
+    "decision_rule": "Only promote one candidate if the exact paired source proves the applicable peer authentication boundary, the test demonstrates a peer can reach the relevant frame path under the product threat model, and an independently reproducible concrete effect differs from valid/unauthenticated/replay controls. Otherwise keep both parked/insufficient."
+  },
+  "review_conclusion": {
+    "unutilized_fixed_evidence_closes_softbus_identity_or_replay": false,
+    "unutilized_fixed_evidence_closes_waiter_external_reachability": false,
+    "current_disposition": "D9 conditional/insufficient; D54-R1 conditional/insufficient; exact DSoftBus 7743 source is now available and narrows the unknowns, but does not close remote UID/PID binding or DBinder frame integrity/anti-replay; D55/T56 remain same root; zero confirmed and zero new high-confidence candidates.",
+    "minimum_next_evidence": "The exact DSoftBus source object and immutable IPC 5903+DSoftBus 7743 manifest pair now exist; D9/D54 IPC candidate files are byte-identical to target bbb92. The one remaining highest-value experiment is a built, product-selected DBinder listener integration matrix under that pair, demonstrating which peer/channel can deliver frames, AEAD/replay decisions, waiter cross-correlation, and D9 ASan impact. Keep both candidates insufficient until that oracle is run and the remote-name identity boundary is fully explained."
+  },
+  "dsoftbus_pinned_source_review": {
+    "commit": "7743b679f6c3599e21bea4e4b1564422668e3643",
+    "tree": "d386e20f8074e037f330a5df11e99fc66ed155d0",
+    "binding": "Git commit/tree/blob object IDs were read directly from the local bare project-object database; source objects are immutable and exact, but the commit is dangling and product build pairing with target IPC bbb92 is not established.",
+    "files": [
+      {
+        "path": "core/transmission/trans_channel/auth/src/trans_auth_message.c",
+        "blob": "c2c4ae6b51d038e9a20927aaa4965381b6c02347",
+        "review": "Auth-channel JSON message writes SRC_BUS_NAME/DST_BUS_NAME and reads remote SRC_BUS_NAME into appInfo.peerData.sessionName."
+      },
+      {
+        "path": "core/transmission/trans_channel/common/src/trans_channel_common.c",
+        "blob": "78b1275db1db8890c3a6f40fd3f7728f28f29798",
+        "review": "Copies param.peerSessionName into appInfo.peerData.sessionName; initializes appInfo encryption metadata (AES-GCM-256), but that alone does not bind the name to a remote OS UID/PID."
+      },
+      {
+        "path": "core/transmission/trans_channel/auth/src/trans_auth_manager.c",
+        "blob": "4826ca70240cc88b5b68dee746b95df6e3dbd631",
+        "review": "Auth-channel callback exposes peerData.sessionName as ChannelInfo.peerSessionName and sets ChannelInfo.isEncrypt=false; this is a specific auth-channel callback setting, not proof that DBinder data channels lack protection."
+      },
+      {
+        "path": "sdk/transmission/session/src/client_trans_session_callback.c",
+        "blob": "ada523c3f69e344f08ce3dc4f89d296e16e76ec0",
+        "review": "Copies ChannelInfo.peerSessionName into session info."
+      },
+      {
+        "path": "sdk/transmission/session/src/client_trans_session_manager.c",
+        "blob": "ed0e9be5f248097d234f2bca9c441ffa52773913",
+        "review": "ClientGetPeerSocketInfoById returns stored peerSessionName as PeerSocketInfo.name and peerDeviceId as networkId."
+      },
+      {
+        "path": "core/transmission/session/src/trans_session_manager.c",
+        "blob": "689980add1a74a28d0f08b909e1bfe4ea83cba98",
+        "review": "CheckUidAndPid requires local session server sessionName, uid, and pid to match calling credentials; the inspected function is a local caller/session-server check, not remote peer process credential binding."
+      },
+      {
+        "path": "core/authentication/src/auth_session_key.c",
+        "blob": "0569ee21db9bf2a3ccfd10c020b3c0d45c01cc50",
+        "review": "Auth-layer EncryptData/DecryptData call SoftBusEncryptDataWithSeq/SoftBusDecryptDataWithSeq and use AES-GCM key material. The reviewed call sites establish an authenticated-encryption mechanism for this auth-layer data path; they do not by themselves prove DBinder reply frames use it or reject valid replayed ciphertext."
+      },
+      {
+        "path": "core/authentication/src/auth_tcp_connection.c",
+        "blob": "4ebfed85e1d3405874157821c2bfd7b125968728",
+        "review": "AuthPostChannelData packs module/flag/seq/len and calls SocketPostBytes with the raw data; this API does not itself encrypt/authenticate auth-channel metadata. Any lower transport/link protection must be checked separately."
+      },
+      {
+        "path": "core/transmission/trans_channel/proxy/src/softbus_proxychannel_listener.c",
+        "blob": "66775e05d59ccbccb908e41f3981800ff7c0ad57",
+        "review": "Normal proxy channels set ChannelInfo.isEncrypt when appType != APP_TYPE_AUTH; this includes the ordinary non-auth data-channel class, subject to the actual DBinder route using this channel."
+      },
+      {
+        "path": "core/transmission/common/src/trans_proxy_process_data.c",
+        "blob": "93e8d72bf89a308c92bd72b050dbc8d918b19ba2",
+        "review": "Proxy transmit encrypts with SoftBusEncryptDataWithSeq using PacketHead.seq; TransProxyDecryptPacketData passes received packet seq to SoftBusDecryptDataWithSeq, so modified ciphertext/tag is rejected on this path."
+      },
+      {
+        "path": "core/transmission/trans_channel/common/src/trans_inner.c",
+        "blob": "0e95d604f16cb5b3ce048415d800e723d61066c4",
+        "review": "Proxy receive calls decrypt with packet header seq, then length-checks and delivers plaintext to the session listener. No monotonic/duplicate freshness check was found in this reviewed call chain before listener delivery; do not generalize to unreviewed channel types."
+      }
+    ],
+    "revised_boundary_findings": {
+      "peer_name_provenance": "The name is a peerSessionName/sessionName protocol value surfaced by session metadata; D66 found no inspected check that independently compares the embedded remote UID/PID to remote OS credentials.",
+      "peer_name_attacker_control": "not proven. Auth-channel JSON/protocol origin does not imply unauthenticated remote control; the protected handshake/session transport and server permission path must be evaluated as a whole.",
+      "device_authentication": "auth subsystem provides session keys and encrypted auth data; this authenticates/protects a channel where those exact APIs are used, but it is not evidence that name UID/PID is bound to a remote process principal.",
+      "integrity": "For the reviewed ordinary proxy data-channel path, SoftBus marks non-AUTH channels encrypted and uses AES-GCM SoftBusEncryptDataWithSeq/SoftBusDecryptDataWithSeq keyed by PacketHead.seq before delivering to the listener. This is strong source evidence against unauthenticated network modification on that route, and means a valid endpoint possessing the session key can still construct malicious DBinder payloads. The exact DBinder deployment route/build remains to be verified.",
+      "anti_replay": "The reviewed proxy receive path uses packet seq as an input to authenticated decryption but did not show a freshness/duplicate rejection check before listener delivery. Because nonce/sequence use alone is not an anti-replay policy, replay behavior remains open for the precise channel and platform configuration.",
+      "product_pairing": "immutable DSoftBus source is now available and its manifest association to IPC 5903 is known; full product build pairing with target IPC bbb92 remains unproven.",
+      "peer_name_to_os_principal": "The sender-side auth setup calls AuthGetUidAndPidBySessionName for its local myData.sessionName, and local CheckUidAndPid matches a registered local server to calling UID/PID. The auth message carries SRC_BUS_NAME/DST_BUS_NAME; the receiver parses remote SRC_BUS_NAME as peerData.sessionName. This gives evidence that a local opener is checked against a local registered session on its own endpoint, but the reviewed receive path does not independently bind the remote name UID/PID to remote OS credentials. AuthPostChannelData itself hands the auth-channel payload to SocketPostBytes without encryption at that API; whether the surrounding authenticated link protects integrity/authenticity is not closed here."
+    }
+  }
+}

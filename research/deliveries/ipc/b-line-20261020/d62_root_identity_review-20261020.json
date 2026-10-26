@@ -1,0 +1,173 @@
+{
+  "task": "D62",
+  "date": "2026-10-20",
+  "mode": "read-only source and evidence review; no code or tests changed",
+  "inputs": {
+    "D60": "research/deliveries/ipc/b-line-20261020/d60_duplicate_emission_scout-20261020.json",
+    "T61": "research/deliveries/ipc/b-line-20261020/t61_exact_identity_oracle-20261020.json",
+    "production_worktree": "D:/openHarmonyScanner/worktrees/b-ipc-integration-20261020"
+  },
+  "result": {
+    "disposition": "CONFIRMED_SYNTHETIC_ROOT_ATTRIBUTION_OMISSION; CONTRACT_MISMATCH_NOT_ESTABLISHED; NOT_A_DUPLICATE_SINK_FINDING; PRODUCT_SHARED_HELPER_UNKNOWN",
+    "root_is": "per-entry provenance for an observation, not currently part of the public stable finding identity contract",
+    "bug_class": "Confirmed implementation behavior loses a distinct synthetic root attribution. Whether this is a contract mismatch or intentional sink-level aggregation is unresolved because the reviewed public schema/identity contract does not require root provenance and no explicit first-root-only contract was found.",
+    "must_not_conflate": [
+      "Same root, two branch/path observations at one sink are intentionally coalesced to one sink finding.",
+      "Two distinct roots reaching one source-backed helper sink produce one sink finding but currently retain only one root's attribution."
+    ]
+  },
+  "contract_review": {
+    "analysis_observation": {
+      "location": "src/ohscanner/detectors/interface/analysis.py:221-235",
+      "fields": [
+        "family",
+        "rule",
+        "file",
+        "line",
+        "symbol",
+        "message",
+        "trace",
+        "root_key",
+        "entry_grade",
+        "dispatch_note",
+        "impact",
+        "descriptor_identity"
+      ],
+      "meaning": "root_key is explicit per-observation provenance; it identifies the active entry root as (root.file, root.qualified)."
+    },
+    "interpreter_run_dedup": {
+      "location": "src/ohscanner/detectors/interface/analysis.py:3295-3298",
+      "key": [
+        "file",
+        "line",
+        "rule",
+        "symbol"
+      ],
+      "behavior": "setdefault keeps the first observation; trace, root_key, entry_grade, dispatch_note, impact basis, and descriptor identity are not part of the key or merged into the retained value."
+    },
+    "public_finding": {
+      "locations": [
+        "src/ohscanner/detectors/interface/detector.py:124-148",
+        "src/ohscanner/contracts.py:118-142"
+      ],
+      "behavior": "DetectorFinding is constructed from the retained observation's sink fields, message, and obligations. root_key itself is not serialized as a finding field. Entry grade and root path can affect the generated dispatch/build-membership evidence obligations, so first-root-wins can change the review evidence presented."
+    },
+    "layered_identity_contract": {
+      "locations": [
+        "src/ohscanner/identity.py:33-38",
+        "src/ohscanner/identity.py:72-96",
+        "src/ohscanner/identity.py:198-213"
+      ],
+      "behavior": "Stable semantic identity is repository + rule_lineage_id + symbol_identity + ast_fingerprint; occurrence identity describes a source occurrence. Root is not a required identity component and IPC findings do not presently export a root provenance set.",
+      "implication": "Do not add root to semantic finding identity merely to preserve attribution; that would incorrectly create separate findings for one shared sink. Preserve a sink-level finding with a set of root provenance records."
+    }
+  },
+  "root_lifecycle": {
+    "establishment": {
+      "location": "src/ohscanner/detectors/interface/analysis.py:3165-3195",
+      "summary": "_entry_roots collects eligible allowlisted IPC dispatchers, named inner/service/transport entries and unique source-index dispatch bindings. It deduplicates roots by (file, qualified function). Test-only roots are skipped and recorded."
+    },
+    "walk_and_emit": {
+      "locations": [
+        "src/ohscanner/detectors/interface/analysis.py:3198-3203",
+        "src/ohscanner/detectors/interface/analysis.py:941-960",
+        "src/ohscanner/detectors/interface/analysis.py:2058-2062"
+      ],
+      "summary": "run iterates roots in discovered function/index order, sets self.root for each walk, and direct/helper analysis emits an Observation carrying the active root. Source-backed helper bodies are walked with the caller root retained. Multiple roots can therefore create distinct observations at the same helper sink."
+    },
+    "resolution_boundary": {
+      "locations": [
+        "src/ohscanner/detectors/interface/analysis.py:962-994",
+        "src/ohscanner/detectors/interface/analysis.py:996-1013"
+      ],
+      "same_file": "Resolution prefers a unique matching owner/name in the current file. Ambiguous matches stay unresolved.",
+      "cross_file": "Ordinary helper resolution requires an explicitly qualified callee, a matching owner (or its supported short owner form), and a unique definition; receiver calls on unknown objects are not resolved. Delegated service calls require a source-backed typed/singleton receiver and a unique target.",
+      "scope_note": "The T61 shared-helper oracle uses two explicitly allowlisted roots and one source-backed helper in one synthetic source file. It proves coalescer behavior for that supported shape; it does not show an actual product component has a helper shared by multiple roots. A cross-file variant may be reachable only through the bounded qualified/delegated resolution paths and was not independently demonstrated in T61."
+    }
+  },
+  "strongest_counterexample": {
+    "fixture": "T61 synthetic_multi_root_oracle: Foo::OnRemoteRequest and Bar::OnRemoteRequest both call one Helper::copy(MessageParcel&) containing one DATA-01 sink; both roots are explicitly allowlisted.",
+    "observed": {
+      "raw_observations": 2,
+      "root_keys": [
+        [
+          "synthetic_multi_root.cpp",
+          "Foo::OnRemoteRequest"
+        ],
+        [
+          "synthetic_multi_root.cpp",
+          "Bar::OnRemoteRequest"
+        ]
+      ],
+      "same_sink_key": [
+        "sink file",
+        "sink line",
+        "ipc.parcel.copy-range",
+        "Helper::copy"
+      ],
+      "final_findings": 1,
+      "retained_root": [
+        "synthetic_multi_root.cpp",
+        "Foo::OnRemoteRequest"
+      ]
+    },
+    "why_strong": "Both roots are distinct and explicitly selected, both traverse the same source-backed helper sink, while the sink identity is identical. The final record cannot tell that a second entry path was analyzed; current setdefault order chooses which root's path/obligations survive.",
+    "most_material_consequence_example": "If two otherwise same-key roots have different entry grades (allowlist versus dispatch), the dropped root may carry the dispatch evidence obligation; if one root is a test-only source path and another is product-like, root-derived build-membership evidence may likewise depend on traversal order. This is a contract-level counterexample, not proof either shape exists in product."
+  },
+  "assessment": {
+    "is_root_part_of_source_observation_identity": "The implementation records root_key as provenance on each source observation, so yes for provenance/coverage attribution. The public finding identity/schema reviewed does not make root a required semantic or occurrence identity component.",
+    "is_loss_bug_or_expected_aggregation": "Sink-level aggregation is expected. Loss of distinct root provenance is confirmed behavior, but a confirmed contract mismatch is NOT established: the public schema/identity contract does not require root attribution, and no explicit decision documents first-root-only semantics. This needs an owner decision on whether root provenance must survive aggregation.",
+    "actual_product_shared_helper": "unknown; the synthetic witness is not product reachability evidence, and no product call graph was audited for this exact many-roots-to-one-helper topology.",
+    "security_impact": "None established. This affects potential evidence fidelity/review obligations only if root-specific obligations are required; no contract violation or vulnerability is proven."
+  },
+  "minimal_fix_design": {
+    "preferred": "Keep the coalescing key (file,line,rule,symbol) for one sink finding, but aggregate provenance on collision. Add an immutable root-provenance collection to Observation (or an internal grouped observation) containing distinct root_key, entry_grade, dispatch_note, and root-derived evidence flags; union it deterministically when the sink key collides.",
+    "public_contract": "If downstream reviewers need the data, expose a versioned optional provenance array/sidecar field on DetectorFinding/report output. Keep legacy diagnostic IDs and semantic finding identity unchanged. Preserve existing single-root behavior and avoid fabricating path-specific trace equivalence; retain one deterministic representative trace and explicitly mark/omit trace as complete for all roots.",
+    "obligations": "Derive obligations from the aggregate of contributing roots: include dispatch/build-membership obligations whenever any contributing root requires them. Do not let whichever root happens to be visited first decide the obligations.",
+    "fallback_if_schema_change_deferred": "Internally merge root-derived obligations and add a focused test; document that only representative trace is retained. This fixes review gating but still leaves root names unavailable to external consumers.",
+    "avoid": "Do not add root_key to the dedup key as a first fix: it would turn one shared sink into multiple findings, increase candidate counts, produce duplicate alerts, and alter public compatibility. Do not union branch traces blindly into one path trace."
+  },
+  "compatibility_and_count_effects": {
+    "preferred_aggregate": "No finding-count increase: two-root fixture remains one sink finding. Existing single-root output is unchanged. New optional provenance is additive; schema/version consumers need unknown-field tolerance or a versioned sidecar.",
+    "root_in_key_alternative": "Would increase count from 1 to 2 in T61 multi-root synthetic case and generally duplicate sink alerts across roots; may alter stable/occurrence identity and downstream suppression/grouping. Not recommended.",
+    "unrelated_existing_semantics": "Current run-level behavior also selects one representative message/trace and may select root-derived evidence obligations by root iteration order. Root aggregation should avoid changing distinct sink line/rule identities."
+  },
+  "recommended_regression_oracle": {
+    "same_root_branch_paths": "Two branch observations at one sink, same root: one finding, one distinct provenance root.",
+    "two_roots_shared_helper": "Two roots with distinct root keys reach one same-file helper sink: one finding, provenance includes both roots exactly once; obligations are unioned independent of root order.",
+    "cross_file_supported_case": "Unique explicitly-qualified helper in a second file reached by two roots: same aggregation assertion, if the parser fixture can exercise current supported resolution.",
+    "order_independence": "Reverse root/function order: sink count, provenance set and obligations remain identical; representative trace is either canonicalized or explicitly scoped to its root.",
+    "negative_controls": [
+      "two distinct sink lines remain two findings",
+      "ambiguous overload helper remains unresolved per current behavior",
+      "unresolved receiver call does not gain cross-file provenance",
+      "product reachability is not asserted by synthetic oracle"
+    ]
+  },
+  "source_evidence": [
+    {
+      "location": "d60_duplicate_emission_scout-20261020.json",
+      "fact": "same-root duplicate path emissions coalesce to one sink finding; different sink lines remain separate"
+    },
+    {
+      "location": "t61_exact_identity_oracle-20261020.json",
+      "fact": "synthetic two-root shared helper yields two raw observations, one final finding, and only Foo root retained; actual product shared-helper shape explicitly unproven"
+    },
+    {
+      "location": "src/ohscanner/detectors/interface/analysis.py:221-235",
+      "fact": "Observation explicitly stores root_key and entry metadata"
+    },
+    {
+      "location": "src/ohscanner/detectors/interface/analysis.py:3295-3298",
+      "fact": "dedup key omits root and first observation wins"
+    },
+    {
+      "location": "src/ohscanner/detectors/interface/detector.py:124-148",
+      "fact": "finding obligations are made from the retained observation; root_key itself is not exported"
+    },
+    {
+      "location": "src/ohscanner/contracts.py:118-142",
+      "fact": "public DetectorFinding schema has optional layered identity but no root-provenance field"
+    }
+  ]
+}

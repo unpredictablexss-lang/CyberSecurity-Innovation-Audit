@@ -1,0 +1,74 @@
+{
+  "schema": "ohscanner.ipc-d5-identity-crosswalk.v1",
+  "date": "2026-10-20",
+  "purpose": "Additive identity metadata crosswalk for previously source-bound AUTH-01/AUTH-02 L2 packets after D5; prior model assessments are unchanged.",
+  "baseline_code_commit": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+  "source": {
+    "repository": "openharmony/communication_ipc",
+    "commit": "5903fd5f7332a427cb3f6915b0202ee5c76c63b5",
+    "git_tree": "0f7129fc37dcc38a0abd6c0ebdd5cbd1ff30d4ac",
+    "snapshot_sha256": "4a77a83643aecdef6214af80b1472ff8ebf1050eb4f48fa0b0935c4791babb9d"
+  },
+  "d5_report": {
+    "file": "communication-ipc-d5-integrated.json",
+    "sha256": "d4a9799af8c95afde89f0d0c0ac2a441eb4cc0a357a62b0849d3c30eb8ca1816"
+  },
+  "reviewed_or_triaged_candidates": [
+    {
+      "candidate_id": "ohscanner.interface.ipc:ca88225a02a0fe72",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "rule_version": "1.0.0",
+      "occurrence_id": "ohocc:v1:5066d57d1cccd8f2bfb78d49d8444f310aa0844f9debc33f1776903dcf98c57e",
+      "source_binding_status": "bound",
+      "stable_identity_status": "unknown",
+      "source_sha256": "6583b7b212eb8230ae234c54666bb1c9bdcffed898a3799d096d573a0422b9f2",
+      "scanner_lifecycle_changed": false
+    },
+    {
+      "candidate_id": "ohscanner.interface.ipc:1831439990fdf6c8",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "rule_version": "1.0.0",
+      "occurrence_id": "ohocc:v1:a4f1588a50774dd7167564f4eb9309adfaeea86495e9c8097665416422f1bbb4",
+      "source_binding_status": "bound",
+      "stable_identity_status": "unknown",
+      "source_sha256": "2527026b8a744f9bb1ae4d9af98e991386ec07887af4310f2309c57a1674ba08",
+      "scanner_lifecycle_changed": false
+    },
+    {
+      "candidate_id": "ohscanner.interface.ipc:be13fd9ad5bb5f78",
+      "rule_id": "ipc.auth.missing",
+      "rule_version": "1.0.0",
+      "occurrence_id": "ohocc:v1:e1ae05614f5ff57a0b6511a118db533537e1932b433f8ad0974269e2a1b9ed16",
+      "source_binding_status": "bound",
+      "stable_identity_status": "unknown",
+      "source_sha256": "167272c97c4796ec90f63db7089c3308c19f1dae8f07785339a38c645f82ca16",
+      "scanner_lifecycle_changed": false
+    },
+    {
+      "candidate_id": "ohscanner.interface.ipc:5501bf2ba361596d",
+      "rule_id": "ipc.auth.missing",
+      "rule_version": "1.0.0",
+      "occurrence_id": "ohocc:v1:10f226f902d1a43223954dab02bca08cee7a97037984a86a88938d9e22bf7f37",
+      "source_binding_status": "bound",
+      "stable_identity_status": "unknown",
+      "source_sha256": "554a27bf335d0048373c326f3f9bddea9ba134b73bf8dca622d6c80b644656bb",
+      "scanner_lifecycle_changed": false
+    },
+    {
+      "candidate_id": "ohscanner.interface.ipc:769b6c1f4853e5f5",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "rule_version": "1.0.0",
+      "occurrence_id": "ohocc:v1:41b55a18fa964f38dd73a714d78156d134de4483410598d37e888fd793b4a5b9",
+      "source_binding_status": "bound",
+      "stable_identity_status": "unknown",
+      "source_sha256": "167272c97c4796ec90f63db7089c3308c19f1dae8f07785339a38c645f82ca16",
+      "scanner_lifecycle_changed": false
+    }
+  ],
+  "limitations": [
+    "This crosswalk does not establish semantic stable identity; stable IDs remain unknown.",
+    "Occurrence IDs identify exact source-bound observations in this run, not cross-version same-finding identity.",
+    "No L2 conclusion or scanner candidate lifecycle changed.",
+    "Other AUTH-01 candidates have not been source-bound or reviewed."
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "task_id": "T24",
+  "title": "Independent REMOVE_SESSION_NAME reachability counterreview",
+  "reviewed_at_utc": "2026-10-19T21:00:00Z",
+  "scope": {
+    "requested_commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "focus": ["BinderInvoker vs DBinderDatabusInvoker locality", "receiver SAMGR flag", "ordinary SendRequest code guard", "proxy method export", "SAMGR registry proxy acquisition boundary", "SoftBus permission refcount and async removal", "product SDK/build metadata"],
+    "read_only": true,
+    "tests_run": false,
+    "poc_run": false,
+    "product_code_changed": false
+  },
+  "source_binding": {
+    "method": "Independently requested immutable raw.githubusercontent.com URLs at the requested commit and recomputed UTF-8 byte length and SHA-256; compared critical results with local source. This binds listed files only, not a deployed product build.",
+    "requested_commit_available_in_local_object_database": false,
+    "local_checkout_head": "5903fd5f7332a427cb3f6915b0202ee5c76c63b5",
+    "files": [
+      {"path":"ipc/native/src/core/framework/source/ipc_object_proxy.cpp","bytes":49196,"sha256":"4d1e24129bec4a642047fb6187f63b40a1b17c1f1740f7b816f7691890b92157","local_file_matches":true},
+      {"path":"ipc/native/src/core/framework/source/ipc_process_skeleton.cpp","bytes":64744,"sha256":"cdffaaf0054da5c80d64c0cec6ef287c9c24e432bc50a49d3288336715910366","local_file_matches":true},
+      {"path":"ipc/native/src/core/invoker/source/binder_invoker.cpp","bytes":69765,"sha256":"02c4e27beb57955df2afd3f836c1f38929f519b3d400f080a45a6f91e6210e4c","local_file_matches":true},
+      {"path":"interfaces/innerkits/ipc_single/libipc_single_map","bytes":13953,"sha256":"8e05e1b217ed5b42ad83fbf38d31ca33241302a5c2b49cf927fd66b868bd049a","local_file_matches":true},
+      {"path":"interfaces/innerkits/ipc_single/BUILD.gn","sha256":"331ba3ea500d4b89216aab1c749a2b4eeade0a671701d3285f4dc4c986116227","D23_raw_hash_crosscheck":"matches"},
+      {"path":"interfaces/innerkits/ipc_core/BUILD.gn","sha256":"a0215d55f3b4277dbcd62f9f0c42941e2c7cfe9b3aec34dbaf35f4ca8fcbf333","D23_raw_hash_crosscheck":"matches"},
+      {"path":"interfaces/innerkits/ipc_core/include/ipc_object_proxy.h","bytes":14218,"sha256":"58a825867d11664f7f8716c53e46d6c852eaeaae6da2770ea6b70a9b0fa2c73c","local_file_matches":true}
+    ]
+  },
+  "candidate_assessment": {
+    "confirmed_ordinary_app_candidates": 0,
+    "conditional_second_layer_candidates": 1,
+    "status": "ordinary_app_route_not_established; conditional ownership-check concern retained",
+    "confidence": "high for pinned source/standard export-map facts; medium for standard app unreachability; low for deployed product exploitability",
+    "conditional_claim": "If an ordinary app can call IPCObjectProxy::RemoveSessionName through an alternate deployed export/custom SDK, or inject REMOVE_SESSION_NAME below IPCObjectProxy::SendRequest, and can address the SAMGR registry proxy, it could ask the SAMGR-side handler to remove a chosen nonempty session permission. The handler does not validate name ownership or bind it to the original IPC caller. No such standard app route was established.",
+    "impact": "Conditional availability effect to a matching DBinder permission/session; the internal refcount may be decremented, and when it reaches zero the SoftBus remove function is called. Cross-caller impact requires target name/refcount match and an actual reachable request."
+  },
+  "independent_findings": [
+    {
+      "claim": "Binder locality guard is transport classification, not caller authorization.",
+      "evidence": "Pinned BinderInvoker::IsLocalCalling returns true unconditionally. Pinned local DBinderDatabusInvoker::IsLocalCalling returns false (its file was read locally but its bytes were not included in the raw pin set). Thus the handler rejects remote Databus but accepts any Binder transport transaction that reaches it; caller identity is not authenticated by this check.",
+      "implication": "Do not treat IsLocalCalling as a defense against an ordinary local app or as caller identity."
+    },
+    {
+      "claim": "IsSamgrCall checks receiver-process state, not the transaction caller.",
+      "evidence": "IPCObjectStub::IsSamgrCall reads ProcessSkeleton::GetSamgrFlag. The pinned IPCProcessSkeleton::SetRegistryObject sets that flag after successful invoker registry-object registration. This identifies the process handling the request as context manager/SAMGR; it does not compare the Binder caller UID/PID/token with a permitted caller.",
+      "implication": "If raw transaction reachability exists, the pair of guards does not establish caller/name ownership."
+    },
+    {
+      "claim": "The standard IPCObjectProxy::SendRequest path blocks REMOVE_SESSION_NAME before transport.",
+      "evidence": "Pinned proxy source checks `code != DUMP_TRANSACTION && code > MAX_TRANSACTION_ID` and returns IPC_PROXY_INVALID_CODE_ERR. REMOVE_SESSION_NAME is a special code above MAX_TRANSACTION_ID. The internal RemoveSessionName helper calls private SendRequestInner directly and uses TF_ASYNC.",
+      "implication": "An app invoking generic public SendRequest cannot submit this code through this path; the lifecycle helper bypasses the guard internally."
+    },
+    {
+      "claim": "The C++ method is header-public but absent from the pinned libipc_single export map.",
+      "evidence": "Pinned ipc_object_proxy.h declares public `int RemoveSessionName(const std::string&)`. Independently downloaded pinned libipc_single_map (13953 bytes, SHA-256 above) contains local wildcard/global sections but no `IPCObjectProxy::RemoveSessionName` symbol. Pinned ipc_single/BUILD.gn selects this file as version_script. Pinned ipc_core/BUILD.gn is a prebuilt wrapper sourced from libipc_single.z.so, tagged/installed in platformsdk.",
+      "implication": "The standard pinned ipc_single/ipc_core linker surface does not export the helper despite the public source declaration. The SDK tag shows intended platform SDK packaging, not proof of a delivered SDK package or every custom/vendor ABI."
+    },
+    {
+      "claim": "Located production use is process lifecycle cleanup against SAMGR registry proxy.",
+      "evidence": "Pinned IPCProcessSkeleton::RemoveSoftbusServer calls GetSAMgrObject(), casts the returned IRemoteObject to IPCObjectProxy, then calls RemoveSessionName(sessionName). The helper sends with TF_ASYNC; completion is not confirmed synchronously to the caller.",
+      "implication": "This supports an internal lifecycle use. It does not establish an untrusted app callsite."
+    },
+    {
+      "claim": "SoftBus removal uses a local name refcount and may invoke backend removal at zero or when the name is absent locally.",
+      "evidence": "Local DBinderSoftbusClient source decrements mapSessionRefCount_ under permissionMutex_; at <=0 it erases and invokes the dynamically loaded remove function; if the name is absent it also calls the remove function. This dependency file was not part of the pinned raw source list and therefore its pairing/version is unverified.",
+      "implication": "Possible effect is conditional on runtime backend semantics and the actual process-local counter/name. Do not infer cross-caller exploitability from the sink alone."
+    },
+    {
+      "claim": "Ordinary apps can potentially obtain SAMGR services through public system-ability APIs, but this does not bypass the missing helper export or SendRequest guard by itself.",
+      "evidence": "No product SDK/API metadata, app dependency manifest, or deployed binary symbol table was present in the searched local workspace. Source review alone cannot determine app policy or whether a particular registry proxy is obtainable. Even if a proxy is obtainable, a normally linked caller lacks the helper symbol in the standard pinned export surface and generic SendRequest rejects the code.",
+      "implication": "SAMGR proxy acquisition remains a product-level unknown, but is not sufficient alone to make the route reachable."
+    }
+  ],
+  "product_metadata_and_pairing": {
+    "standard_source_build_surface": "Pinned GN metadata establishes ipc_core as a platformsdk wrapper backed by libipc_single and the pinned version map. This is a source-level build contract only.",
+    "deployed_sdk_metadata_found": false,
+    "deployed_library_or_symbol_table_found": false,
+    "exact_product_manifest_build_lock_found": false,
+    "ipc_commit_and_softbus_dependency_pairing_proven": false,
+    "ipc_commit_and_c_utils_pairing_proven": false,
+    "unknowns": ["Whether shipped/custom SDKs add/export the helper", "Whether app policy permits acquisition/use of SAMGR registry proxies", "Whether any alternate raw-transaction API can bypass SendRequest", "Resolved target manifest/build graph and exact SoftBus/c_utils versions", "Runtime SoftBus permission behavior for a SAMGR-originated asynchronous removal"]
+  },
+  "d23_difference_review": {
+    "opened_after_independent_analysis": true,
+    "agreement": ["D23 raw hashes for proxy/process skeleton/BinderInvoker/map/BUILD/header independently match this review's raw downloads or local files", "map omits RemoveSessionName", "ipc_core is packaged via platformsdk wrapper", "BinderInvoker IsLocalCalling and receiver SAMGR flag do not authenticate transaction caller", "ordinary standard SendRequest rejects the special code", "no ordinary-app candidate is confirmed; exact build/product binding remains unknown"],
+    "misses_or_refinements": ["D23 identifies source-level platformsdk installation/tag metadata but does not establish presence/content of a deployed SDK package; this review searched the local workspace and found no such SDK or installed library/symbol table.", "The SoftBus client refcount/async sink semantics are not among D23's pinned file list and remain dependency-source observations without exact target pairing.", "SAMGR proxy acquisition cannot be resolved from the available product metadata; even if possible, it does not on its own bypass both the absent exported helper and generic SendRequest's code check."],
+    "omissions_found_in_t24": ["Explicitly separates receiver-side IsSamgrCall from caller authorization, correcting any reading that the two receive guards authenticate the origin.", "Explicitly records async completion uncertainty and that a missing local refcount entry still delegates removal to SoftBus."]
+  },
+  "verdict": {
+    "candidate_count_for_second_layer": 1,
+    "ordinary_app_vulnerability_confirmed": false,
+    "recommendation": "Keep only one conditional second-layer item pending product ABI/raw-injection evidence; do not report as an ordinary app vulnerability. Standard pinned IPC export map and public SendRequest guard strongly counter the standard SDK route.",
+    "next_evidence": ["Target product SDK library and symbol table or full SDK build outputs", "Target product manifest/resolved GN graph and exact SoftBus dependency revision", "Concrete ordinary-app API/callsite proving registry proxy plus helper/raw transaction reachability", "If reachable, controlled non-owner effect evidence for a different active session name"]
+  },
+  "limitations": ["No tests or PoCs run.", "The requested IPC commit is source-file-bound for listed files, but not the whole-tree checkout here.", "SoftBus source is locally observed and not cryptographically bound to the requested product build.", "No deployed product SDK, binary or build lock was found in available local workspace search."]
+}

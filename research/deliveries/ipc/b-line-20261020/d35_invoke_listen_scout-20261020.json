@@ -1,0 +1,46 @@
+{
+  "schema": "ohscanner.bline-invoke-listen-scout.v1",
+  "task": "D35",
+  "verified_at_utc": "2026-10-19T21:52:00Z",
+  "product_pin": {
+    "repository": "openharmony/communication_ipc",
+    "commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "tree": "125ecbfa21f430f2f977f0026ab97b70cd27a726",
+    "source_access": "Local IPC checkout is at 5903fd5 and target commit object is absent from its object DB. Exact raw.githubusercontent.com files for target commit were fetched. ipc_object_stub.cpp SHA/blob match the previously established target pin. Other file hashes below are computed from retrieved raw bytes.",
+    "scope_limit": "Bounded route review only; no whole-tree claim. No tests, fuzzing, PoC, or product code edits."
+  },
+  "source_files": [
+    {"path":"ipc/native/src/core/framework/source/ipc_object_stub.cpp","bytes":29851,"sha256":"554a27bf335d0048373c326f3f9bddea9ba134b73bf8dca622d6c80b644656bb","git_blob":"22c3a682c20fd350b318cad17a6d621206e65ba7","url":"https://raw.githubusercontent.com/openharmony/communication_ipc/bbb92dbb2f52aca54ab268307c9476ac1802f3ff/ipc/native/src/core/framework/source/ipc_object_stub.cpp"},
+    {"path":"ipc/native/src/core/dbinder/source/dbinder_databus_invoker.cpp","bytes":41140,"sha256":"378776e256a8438c5bb28c57acc39172b3376512907718e813b71406b7251217","git_blob":"83450463d6d39f3a327ffa3dccccf0d8c957757d","url":"https://raw.githubusercontent.com/openharmony/communication_ipc/bbb92dbb2f52aca54ab268307c9476ac1802f3ff/ipc/native/src/core/dbinder/source/dbinder_databus_invoker.cpp"},
+    {"path":"ipc/native/src/core/framework/source/ipc_process_skeleton.cpp","bytes":64744,"sha256":"cdffaaf0054da5c80d64c0cec6ef287c9c24e432bc50a49d3288336715910366","git_blob":"516fd9efd0ab405cbd0c8a985f9f203478fc4d52","url":"https://raw.githubusercontent.com/openharmony/communication_ipc/bbb92dbb2f52aca54ab268307c9476ac1802f3ff/ipc/native/src/core/framework/source/ipc_process_skeleton.cpp"},
+    {"path":"ipc/native/src/core/framework/source/ipc_object_proxy.cpp","bytes":49196,"sha256":"4d1e24129bec4a642047fb6187f63b40a1b17c1f1740f7b816f7691890b92157","git_blob":"4701faa882a030d0f34772d4b85b432b0be87e1e","url":"https://raw.githubusercontent.com/openharmony/communication_ipc/bbb92dbb2f52aca54ab268307c9476ac1802f3ff/ipc/native/src/core/framework/source/ipc_object_proxy.cpp"},
+    {"path":"dbinder/c/src/dbinder_service.c","bytes":29015,"sha256":"32c5da61d932a394fb83161f0df108334b3aaded6b772d2e5579051f563d1c57","git_blob":"5ba7331c23a8d5a1c530529cd1794eb03adc23f1","url":"https://raw.githubusercontent.com/openharmony/communication_ipc/bbb92dbb2f52aca54ab268307c9476ac1802f3ff/dbinder/c/src/dbinder_service.c"},
+    {"path":"ipc/native/c/rpc/src/rpc_process_skeleton.c","bytes":15925,"sha256":"211c7de7f98b1b67bf32fa085f8ab6af28daab9980b1ab0996d0a7e790527e3f","git_blob":"a7991d5d49df7197fd6340fe22631e1d1eb4f02d","url":"https://raw.githubusercontent.com/openharmony/communication_ipc/bbb92dbb2f52aca54ab268307c9476ac1802f3ff/ipc/native/c/rpc/src/rpc_process_skeleton.c"}
+  ],
+  "route": {
+    "dispatch": "IPCObjectStub::SendRequest special-cases INVOKE_LISTEN_THREAD and invokes DBinderInvokeListenThread before application OnRemoteRequest handling (ipc_object_stub.cpp:408-445).",
+    "caller_gate": "DBinderInvokeListenThread obtains IPCSkeleton::GetCallingUid(); requires IPCSkeleton::IsLocalCalling() and uid < ALLOWED_UID (10000), otherwise rejects. This is a local Binder transaction gate. Binder calling uid is sourced from the local Binder transaction credentials, not the parcel fields. Ordinary app UIDs at/above 10000 fail before parsing payload.",
+    "parcel": "InvokerThread reads DATABUS_TYPE. InvokerDataBusThread reads deviceId, remotePid, remoteUid, remoteDeviceId, sessionName, remoteTokenId. It validates both device IDs as nonempty and <= DEVICEID_LENGTH and sessionName nonempty; it does not compare payload UID/PID/token/device identity with local Binder caller identity. Those fields describe the remote databus peer; their trust depends on upstream DBinder invitation/authentication flow, but ordinary apps cannot reach this special transaction via the reviewed local gate.",
+    "socket_setup": "CreateSoftbusServer(sessionName) rejects empty names, reuses matching active name, otherwise starts DatabusSocketListener::StartServerListener(name), saves listenSocketId_/sessionName_, and spawns a databus thread. The sessionName originates in the parcel. There is no syntax/namespace check in this IPC method beyond nonempty; ordinary caller gate is the relevant reachability restriction.",
+    "state_and_ref_order": "After listener setup, AddStubByIndex(this) occurs. Then response writes stubIndex, sessionName, deviceId, self token. Only after all writes succeed does it form AppAuthInfo(remotePid,remoteUid,remoteTokenId,socketId=0,stubIndex,this,remoteDeviceId); AttachOrUpdateAppAuthInfo is called and IncStrongRef(this) follows only when it returns true. Thus no auth/ref is attached before reply completion.",
+    "error_cleanup": "Invalid type/data and missing skeleton reject early. Listener startup failure returns. If AddStubByIndex fails, no explicit RemoveSoftbusServer rollback occurs (but this is after listener is started). If reply serialization fails after AddStubByIndex, it returns without removing stub index or listener. AttachOrUpdateAppAuthInfo false does not fail transaction and does not IncStrongRef; its implementation returns false for null/duplicate socket auth. Successful later object teardown erases stub index and detaches app auth. No compensating rollback was found in these immediate error branches. This is a conditional state-cleanup observation, not a reportable ordinary-app vulnerability under the caller gate.",
+    "production_callsites": [
+      "DBinderDatabusInvoker::GetSessionForProxy writes DATABUS_TYPE plus local device ID, peer pid/uid, remote device ID, proxy session name, and token, then invokes IPCObjectProxy::InvokeListenThread; validates reply stubIndex and constructs connect session (dbinder_databus_invoker.cpp:84-128; ipc_object_proxy.cpp InvokeListenThread around line 805).",
+      "C DBinder service OnRemoteInvokerDataBusMessage obtains local device ID and invokes C InvokerListenThread for a received DATABUS_TYPE invitation; it checks reply index/name and returns them to remote sender (dbinder_service.c:486-536).",
+      "DBinderDatabusInvoker::ConnectRemoteObject2Session separately attaches peer AppAuthInfo and takes a strong ref after successful distributed-session setup (dbinder_databus_invoker.cpp:862-887); this is distinct from INVOKE_LISTEN_THREAD receiver-side AttachOrUpdateAppAuthInfo."
+    ]
+  },
+  "candidate_assessment": {
+    "candidate_count": 0,
+    "verdict": "No closed ordinary-caller path. The pre-parse UID gate excludes ordinary app UIDs from the effect. No candidate promoted.",
+    "conditional_observation": "Privileged local Binder callers can choose sessionName and remote identity parcel fields; AddStub/listener state may be left behind on later setup/response errors. No ordinary-app reachability, stable impact, or product-level exploit evidence was established.",
+    "confidence": "high for the source route and gate; no exploit claim"
+  },
+  "t36_counterreview_points": [
+    "Verify that IPCSkeleton::GetCallingUid in this dispatch is kernel-derived local Binder caller identity and cannot be parcel-forged; test ordinary app UID boundary 9999/10000 only if exact product build is available.",
+    "Independently verify no non-local/remote transport can dispatch this special SendRequest path while satisfying IsLocalCalling().",
+    "Challenge whether UID<10000 includes any app-controlled principal in the target product identity model; require target-specific UID policy evidence before asserting ordinary-app exclusion.",
+    "Inspect failure rollback: StartServerListener succeeds then AddStubByIndex fails; AddStub succeeds then reply Write* fails. Determine if stale listener/stub state is externally triggerable and has bounded resource impact by an allowed caller.",
+    "Confirm C and C++ production callsite payload provenance and whether peer UID/PID/token values are authenticated upstream; do not treat caller-supplied remote fields as kernel caller identity."
+  ]
+}

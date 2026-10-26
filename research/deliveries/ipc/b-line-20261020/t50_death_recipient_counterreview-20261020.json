@@ -1,0 +1,65 @@
+{
+  "schema": "ohscanner.bline-death-recipient-counterreview.v1",
+  "task": "T50",
+  "reviewed_at_utc": "2026-10-19T22:20:00Z",
+  "scope": {
+    "repository": "openharmony/communication_ipc",
+    "target_commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "target_tree": "125ecbfa21f430f2f977f0026ab97b70cd27a726",
+    "reviewed_artifact": "d49_death_recipient_scout-20261020.json",
+    "mode": "independent read-only counter-review against immutable raw target sources",
+    "tests_run": false,
+    "poc_run": false,
+    "product_code_changed": false,
+    "unpaired_dependency_semantics_used": false
+  },
+  "source_revalidation": {
+    "method": "Fetched raw.githubusercontent.com files at the immutable target commit and independently recomputed SHA-256 over UTF-8 response bytes; checked D49 source hashes where overlapping.",
+    "files": [
+      {"path":"dbinder/dbinder_service/src/dbinder_service_stub.cpp","bytes":17074,"sha256":"6583b7b212eb8230ae234c54666bb1c9bdcffed898a3799d096d573a0422b9f2","d49_hash_match":true},
+      {"path":"dbinder/dbinder_service/src/dbinder_service.cpp","bytes":59699,"sha256":"ac762ad0345451a605fffcd430d933161eb20aedd7b83479753b9be8384fa1cf","d49_hash_match":true},
+      {"path":"dbinder/dbinder_service/src/dbinder_death_recipient.cpp","bytes":2080,"sha256":"343fb2d7c086462c7d8cc0a69486062f9dc6594138693668a20fa2bfab083324","d49_hash_match":true},
+      {"path":"ipc/native/src/core/framework/source/ipc_object_proxy.cpp","bytes":49196,"sha256":"4d1e24129bec4a642047fb6187f63b40a1b17c1f1740f7b816f7691890b92157","d49_hash_match":true},
+      {"path":"interfaces/innerkits/ipc_core/include/ipc_object_proxy.h","bytes":14218,"sha256":"58a825867d11664f7f8716c53e46d6c852eaeaae6da2770ea6b70a9b0fa2c73c","d49_hash_match":true},
+      {"path":"interfaces/innerkits/ipc_core/include/ipc_types.h","sha256":"not independently rehashed; inspected immutable source for transaction constant and limit"},
+      {"path":"test/unittest/dbinder_service/dbinder_service_stub_unittest.cpp","bytes":54381,"sha256":"9371d0333fb03679e3fbddbdf0f7891944752483c0c3cc0d3a87c965877f7da5","d49_hash_match":true},
+      {"path":"test/fuzztest/ipc/native/core/dbinderservicestub_fuzzer/dbinderservicestub002_fuzzer/dbinderservicestub002_fuzzer.cpp","sha256":"bd1e43b56df81445f8d5cc671d9d20d9aaaad484d1bc6a690cd857cca4fb1e6d","re_fetched":false,"note":"D49 immutable source pin reviewed; not re-fetched in this counter-review"}
+    ]
+  },
+  "point_reviews": [
+    {
+      "id":"T50-R1",
+      "topic":"DBinder duplicate ADD / partial failure residue",
+      "source_evidence":[
+        {"file":"dbinder/dbinder_service/src/dbinder_service_stub.cpp","lines":"185-219","observation":"ADD reads a strong sptr remote object, casts it to IPCObjectProxy, constructs a new DbinderDeathRecipient, and calls callbackProxy->AddDeathRecipient before DBinderService::GetInstance/AttachDeathRecipient/AttachCallbackProxy. Attach failures return without removing the just-added recipient. If AttachDeathRecipient succeeds but AttachCallbackProxy fails, deathRecipients_ also remains populated; the handler has no rollback."},
+        {"file":"ipc/native/src/core/framework/source/ipc_object_proxy.cpp","lines":"462-497,1214-1223","observation":"AddDeathRecipient pushes a DeathRecipientAddrInfo into recipients_; DeathRecipientAddrInfo stores recipient_ as sptr. For DBINDER_HANDLE_BASE proxies, the function returns true after the append without Binder registration. Thus the extra recipient is strongly held by the proxy and is not just a transient callback pointer."},
+        {"file":"dbinder/dbinder_service/src/dbinder_service.cpp","lines":"1185-1220","observation":"deathRecipients_ and noticeProxy_ use separate locks and insert by the sptr object key; duplicate death-recipient insertion fails. This confirms failure after the proxy mutation and prevents treating the Add/insert sequence as atomic."},
+        {"file":"ipc/native/src/core/framework/source/ipc_object_proxy.cpp","lines":"499-539,542-608","observation":"An explicit RemoveDeathRecipient erases one matching recipient. On remote death, SendObituary swaps all recipients_ to a local vector under the proxy mutex, marks dead, and invokes callbacks after releasing that mutex. Callback-vector ownership is released when the local vector is destroyed."},
+        {"file":"dbinder/dbinder_service/src/dbinder_death_recipient.cpp","lines":"22-54","observation":"OnRemoteDied promotes the weak remote to a strong object, snapshots the stored death recipient, calls RemoveDeathRecipient, then detaches the map entries. During SendObituary the proxy has already been marked dead and its recipient vector swapped, so RemoveDeathRecipient returns false; the callback vector is already the cleanup owner. For an orphan callback with no map entry, detach fails and returns, but its strong callback reference still drops when SendObituary's local vector is destroyed."},
+        {"file":"ipc/native/src/core/framework/source/ipc_object_proxy.cpp","lines":"424-452,589-608","observation":"Proxy last-strong-ref cleanup calls ClearDeathRecipients; that clears recipients_ under its mutex. The residue therefore lasts while the callback proxy remains live, or until its death callback batch / destruction clears it; static source does not show a permanent leak."}
+      ],
+      "counter_review": {
+        "source_observation":"Confirmed helper-level partial-failure residue. Repeating ADD for the same live DBinder callback proxy can append a fresh strongly-held DbinderDeathRecipient before AttachDeathRecipient rejects the duplicate key. The rejected recipient is not rolled back. If repeated raw ADD requests are possible, the callback vector and per-death callback work can grow for the proxy's live lifetime. Subsequent peer death swaps and invokes all entries then releases them; last-strong-ref cleanup also clears them. This is bounded by the proxy lifetime, not a proven permanent leak.",
+        "ordinary_route_counterexample":"The normal exported API path does not show repeat transmission: IPCObjectProxy::AddDbinderDeathRecipient first calls IPCProcessSkeleton::QueryCallbackStub(this) and returns true when a callback stub is already attached (proxy source lines 908-949). Public AddDeathRecipient serializes on the proxy recursive mutex and, after the first recipient, returns through recipients_.size()>1 without registering another DBinder callback (lines 473-487). Generic IPCObjectProxy::SendRequest rejects codes above MAX_TRANSACTION_ID; DBINDER_OBITUARY_TRANSACTION is ZIPC_PACK_CHARS('_','D','O','T'), greater than 0x00ffffff (ipc_types.h lines 35-55, 74-75; proxy lines 175-180). SendLocalRequest and AddDbinderDeathRecipient are private in ipc_object_proxy.h (lines 283-339). No public ordinary caller route to repeatedly submit the raw special ADD was established.",
+        "tests_and_fuzz_counterexample":"DBinderServiceStub ProcessDeathRecipient unit cases at test/unittest/dbinder_service/dbinder_service_stub_unittest.cpp:643-707 cover malformed/null/unknown process data, not successful duplicate ADD or rollback. D49's dbinderservicestub002 fuzzer directly calls the helper with a reused callbackProxy and can explore duplicate state, but it bypasses the sender-side QueryCallbackStub early return and is not evidence of production transaction reachability. No tests were run in T50.",
+        "other_checks":"Handle/token/session validation and remote callback provenance were not proven sufficient or insufficient for this special route in T50. We do not infer kernel Binder delivery, peer-controlled raw transaction access, or SoftBus semantics from unrelated or unpaired dependencies. The normal helper's serialization/deduplication is a source-level counterexample to treating repeat public API calls as a production trigger.",
+        "verdict":"Source-level partial-failure observation upheld; no confirmed security candidate. Keep one bounded conditional observation outside the second-layer security-candidate set until a supported raw transaction route and a material availability/security consequence are evidenced."
+      },
+      "minimum_test_oracle":"If a supported production route is identified, send repeated ADD for the identical callback object and observe recipients_ count/strong refs, deathRecipients_, noticeProxy_, and callback count. Include forced failures at AttachDeathRecipient and AttachCallbackProxy, normal public AddDeathRecipient repeat control (expect one ADD), explicit REMOVE, remote-death batch cleanup, and last-proxy-reference cleanup. A positive security candidate requires ordinary or realistic peer reachability plus a measurable unbounded/live-lifetime resource or authorization impact; direct helper invocation alone is insufficient."
+    }
+  ],
+  "aggregate_verdict": {
+    "confirmed_security_candidate_count": 0,
+    "conditional_security_candidate_count": 0,
+    "conditional_source_observation_count": 1,
+    "observation_id":"T50-R1",
+    "d49_assessment":"D49's bounded partial-failure observation and no-candidate decision are upheld. T50 adds confirmation that the unrolled-back recipient is strongly held in IPCObjectProxy::recipients_ and identifies its cleanup bounds; normal exported APIs deduplicate the ADD route.",
+    "material_unknowns":["whether any supported ordinary or remote caller can submit duplicate DBINDER_OBITUARY_TRANSACTION ADD for the same object","whether such a route can force a target-side insertion failure in a deployed product","whether live-lifetime callback accumulation has material security/availability impact"]
+  },
+  "verification": {
+    "immutable_source_hashes_recomputed": true,
+    "json_parse": "pending after write",
+    "tests_or_poc": "not run by instruction",
+    "product_code_changed": false
+  }
+}

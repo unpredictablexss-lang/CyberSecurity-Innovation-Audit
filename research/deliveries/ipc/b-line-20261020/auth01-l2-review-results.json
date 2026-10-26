@@ -1,0 +1,51 @@
+{
+  "review_date": "2026-10-20",
+  "baseline": {
+    "repository": "openharmony/communication_ipc",
+    "commit": "5903fd5f7332a427cb3f6915b0202ee5c76c63b5",
+    "tree": "0f7129fc37dcc38a0abd6c0ebdd5cbd1ff30d4ac",
+    "snapshot_sha256": "4a77a83643aecdef6214af80b1472ff8ebf1050eb4f48fa0b0935c4791babb9d"
+  },
+  "input_packet": "auth01-second-layer-review-packets.json",
+  "review_scope": "Two source-bound AUTH-01 candidate routes selected from 12 candidates. This is triage, not vulnerability confirmation or a safety conclusion.",
+  "results": [
+    {
+      "candidate_id": "ohscanner.interface.ipc:ca88225a02a0fe72",
+      "location": "dbinder_service_stub.cpp:168",
+      "route": "OnRemoteRequest -> GET_PROTO_INFO -> ProcessProto",
+      "source_binding": "Excerpt byte range, file SHA-256, Git blob OID, pinned commit/tree/snapshot independently verified.",
+      "mechanism_assessment": "refuted",
+      "narrow_claim_assessed": "This route is an application-interface dispatch lacking caller authorization.",
+      "evidence": [
+        "GET_PROTO_INFO is protocol/session metadata negotiation routed to ProcessProto, not the application interface business handler.",
+        "ProcessProto checks session, nonnegative UID/PID, bus name and DATABUS type and returns IF_PROT_DATABUS/session metadata/descriptor.",
+        "The descriptor is formed from binder object, secure device ID and PID; the proxy GetProtoInfo consumes the response descriptor.",
+        "DBINDER_OBITUARY_TRANSACTION is a separate death-recipient path."
+      ],
+      "unknowns": [
+        "Broader authorization or session-confusion properties are not resolved by this narrow route review.",
+        "Product reachability and deployment context remain unknown."
+      ],
+      "scanner_lifecycle": "No candidate status change; model review cannot upgrade or remove a scanner candidate."
+    },
+    {
+      "candidate_id": "ohscanner.interface.ipc:1831439990fdf6c8",
+      "location": "ohos.rpc.rpc.impl.cpp:231",
+      "route": "ANIRemoteObject::OnRemoteRequest -> callOnRemoteMessageRequest -> JS callback",
+      "source_binding": "Excerpt byte range, file SHA-256, Git blob OID, pinned commit/tree/snapshot independently verified.",
+      "mechanism_assessment": "insufficient",
+      "evidence": [
+        "Ordinary transaction codes pass through IPCObjectStub SendRequest/SendRequestInner/OnRemoteRequest into the ANIRemoteObject callback with code and parcels.",
+        "A missing JS callback returns false.",
+        "The separately observed GetLocalInterface descriptor comparison is not a guard on this callback path."
+      ],
+      "unknowns": [
+        "Product registration and caller reachability are unknown.",
+        "The concrete ETS callback handler and its descriptor contract are unavailable.",
+        "No concrete cross-interface effect or sensitive action is established by this excerpt."
+      ],
+      "scanner_lifecycle": "No candidate status change; retain as an unresolved static candidate for evidence review."
+    }
+  ],
+  "coverage_note": "Only 2 of 12 AUTH-01 candidates were source-bound and reviewed. The remaining 10 were not sent for review. Stable and occurrence finding identity remain unknown. No precision/recall or product vulnerability claim is made."
+}

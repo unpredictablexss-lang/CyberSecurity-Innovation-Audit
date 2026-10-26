@@ -1,0 +1,142 @@
+{
+  "schema_version": "1.0",
+  "task": "D71 follow-up: communication_ipc Cangjie security fix chain",
+  "date": "2026-10-20",
+  "status": "source_confirmed_overflow_candidate_research_only",
+  "scope": {
+    "plan_worktree": "D:/openHarmonyScanner/worktrees/b-ipc-plan-20261020",
+    "prior_report": "research/deliveries/ipc/b-line-20261020/d71_ipc_holdout_research-20261020.json",
+    "scanner_main_sha": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "ipc_anchor_sha": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "holdout_manifest_modified": false,
+    "code_or_tests_modified": false
+  },
+  "official_sources": [
+    {"url":"https://gitee.com/openharmony/communication_ipc/pulls/2037", "kind":"official Gitee PR", "claim":"PR !2037 titled 'fix security issue of cj'; merge commit confirms the PR and changed files"},
+    {"url":"https://gitee.com/openharmony/communication_ipc/commit/de3a68cc8b7d6f18017fd261060def0e38dce54a", "kind":"official Gitee commit", "claim":"source fix commit"},
+    {"url":"https://gitee.com/openharmony/communication_ipc/pulls/1837", "kind":"official Gitee PR", "claim":"earlier merged !1837 introduced parcel-length guard but used byte counts as typed-array allocation sizes"},
+    {"url":"https://gitee.com/openharmony/communication_ipc/issues/IC0GMS", "kind":"official Gitee issue", "claim":"earlier grouped interface-fix summary including readRemoteObjectArray peer array-size validation"},
+    {"url":"https://gitee.com/openharmony/communication_ipc/issues/IC0KMG", "kind":"official Gitee issue", "claim":"security-titled issue with materially same grouped summary"}
+  ],
+  "chronology": [
+    {
+      "event":"pre-!1837 vulnerable source revision",
+      "commit":"c10c8a5de6922f14dd46e6f9453215a66880a5fe",
+      "tree":"402e56778084eb74601dc9d9194e5d20c0a20bcd",
+      "date":"2025-04-11T02:57:33Z",
+      "relation":"first parent of !1837 change commit and merge"
+    },
+    {
+      "event":"!1837 change commit",
+      "commit":"c3e2f51daa30eb5485771f18a2772af96fa99605",
+      "tree":"f974d5ba5267ae4b73410e084891540077e18281",
+      "date":"2025-04-12T10:23:59+08:00",
+      "relation":"introduced CheckReadLength guard but allocated int32_t* and int64_t* with malloc(arrayLength)"
+    },
+    {
+      "event":"!1837 merge commit",
+      "commit":"940db1960eb32f5952affd1615937744e398e950",
+      "tree":"f974d5ba5267ae4b73410e084891540077e18281",
+      "parents":["c10c8a5de6922f14dd46e6f9453215a66880a5fe","c3e2f51daa30eb5485771f18a2772af96fa99605"],
+      "date":"2025-04-12T07:48:55Z",
+      "relation":"official clone history; merge tree equals !1837 change tree"
+    },
+    {
+      "event":"pre-!2037 source revision",
+      "commit":"84d681288793785e8f39f71c824f211edaed8f1e",
+      "tree":"80fb756221eac67a9f6a9a9506eb763e380d9c55",
+      "parent":"c634f7e1740b56f5b616bac3f67b6fc1988eec28",
+      "relation":"parent of the !2037 change commit; contains the under-sized allocations from !1837"
+    },
+    {
+      "event":"!2037 fix commit",
+      "commit":"de3a68cc8b7d6f18017fd261060def0e38dce54a",
+      "tree":"611835efd3112027f067b587146a2c2bbd38b47e",
+      "parent":"84d681288793785e8f39f71c824f211edaed8f1e",
+      "author_date":"2025-07-25T11:51:39+08:00",
+      "commit_date":"2025-07-28T15:14:00+08:00",
+      "subject":"fix security issue of cj"
+    },
+    {
+      "event":"!2037 merge commit",
+      "commit":"436cfb356e2273ecd8a8f390c5700fec46bf9847",
+      "tree":"d1b361ec6b46ba768497147b629733cf8b9843dc",
+      "parents":["b04ab1fb3292ef88ca0fc75c3c0c8632992cadf9","de3a68cc8b7d6f18017fd261060def0e38dce54a"],
+      "date":"2025-07-29T08:33:46Z",
+      "subject":"!2037 fix security issue of cj Merge pull request !2037 from 萌萌萌新/master"
+    }
+  ],
+  "ancestry_check": {
+    "pre_2037_revision_contains_1837_merge": true,
+    "1837_merge_is_ancestor_of_2037_fix_commit": true,
+    "chain": "c10c8a5 -> !1837 change c3e2f51d -> !1837 merge 940db196 -> intervening master history -> !2037 parent 84d68128 -> fix de3a68cc -> merge 436cfb35"
+  },
+  "source_binding": [
+    {
+      "revision":"c10c8a5de6922f14dd46e6f9453215a66880a5fe",
+      "path":"interfaces/innerkits/cj/src/message_sequence_impl.cpp",
+      "git_blob":"3136097396712eae8a4a0805faaea9f1363051ac",
+      "sha256":"ce9226565f0090d45ef44abfa5aa19cef710d8208155a7a99500b19c034fcd20"
+    },
+    {
+      "revision":"c3e2f51daa30eb5485771f18a2772af96fa99605",
+      "path":"interfaces/innerkits/cj/src/message_sequence_impl.cpp",
+      "git_blob":"3464d1dd6381f986a5f0da462e728ac40293b6dd",
+      "sha256":"98bd761fe25a16435830a8978473444a318b71a4cf4809689b4b7ffe106effa9"
+    },
+    {
+      "revision":"84d681288793785e8f39f71c824f211edaed8f1e",
+      "path":"interfaces/innerkits/cj/src/message_sequence_impl.cpp",
+      "git_blob":"c5f62c288a144478828c720d48c1485fae0e035c",
+      "sha256":"1f4d039b974a0021000126e61efea7eb0b8eb5f4baf756373c1b12150d0d5eec"
+    },
+    {
+      "revision":"de3a68cc8b7d6f18017fd261060def0e38dce54a",
+      "path":"interfaces/innerkits/cj/src/message_sequence_impl.cpp",
+      "git_blob":"9041e30d1926edd09e20126274b8903f0c55df50",
+      "sha256":"30ad2a9fa4f45792b83e75cef6c5106818b290ae523d9e17e48c88853854d777"
+    },
+    {
+      "revision":"c10c8a5de6922f14dd46e6f9453215a66880a5fe",
+      "path":"interfaces/innerkits/cj/include/ipc_utils_ffi.h",
+      "git_blob":"6fd9c27f5e821ee4a5f76a097bb38b011ea36876",
+      "sha256":"363503420b93735e5a55f85fc98090bb6aeb095474f9f7051e77613c6f6a9d91"
+    },
+    {
+      "revision":"de3a68cc8b7d6f18017fd261060def0e38dce54a",
+      "path":"interfaces/innerkits/cj/include/ipc_utils_ffi.h",
+      "git_blob":"653af3d17ba0c688c11cf00f47bc4304bc581da8",
+      "sha256":"162ce9d96721ae8dab9b862a868496ae789743e8790fe5ae9994c0b48cd85678"
+    }
+  ],
+  "code_evidence": {
+    "function":"MessageSequenceImpl::CJ_ReadRemoteObjectArray",
+    "pre_fix_from_1837_through_2037_parent":"reads signed int32 arrayLength from nativeParcel; returns early for <=0; validates CheckReadLength(arrayLength, BYTE_SIZE_32); then malloc(arrayLength) for int32_t type[] and malloc(arrayLength) for int64_t id[]; loop runs arrayLength iterations and assigns type[i] and id[i] from each returned remote object.",
+    "allocation_arithmetic":"For positive N, the allocations provide N bytes each, but the loops store 4N bytes to type and 8N bytes to id. Once N > 0 and a loop iteration writes an element, each typed array write extends beyond its requested allocation; for N=1, type overrun is 3 bytes and id overrun is 7 bytes; for larger N the extent scales linearly.",
+    "guard_semantics":"CheckReadLength(N, BYTE_SIZE_32) checks N <= remainSize and N*4 <= remainSize after checking current parcel position. This is input/parcel availability validation; it does not size either output allocation according to sizeof(int32_t) or sizeof(int64_t).",
+    "fix_diff":"!2037 changes allocations to malloc(sizeof(int32_t) * arrayLength) and malloc(sizeof(int64_t) * arrayLength), changes cast spelling, handles null ReadRemoteObject returns, and populates res.len. The two sizeof multiplications explicitly repair element-count-versus-byte-count allocation under-sizing.",
+    "source_bug_conclusion":"Confirmed source-level heap buffer under-allocation followed by typed indexed writes in the Cangjie IPC binding in the pre-!2037 tree; the later security PR is direct fix evidence. This upgrades the earlier tentative lead to a source-confirmed memory-write overflow candidate at the function level."
+  },
+  "candidate_assessment": {
+    "maximum_count":"one root mechanism: under-sized type/id output allocations in CJ_ReadRemoteObjectArray. The two destination arrays are manifestations of one allocation-sizing defect, not independent vulnerabilities.",
+    "attacker_reachability":"not established here. The code consumes an IPC parcel and validates parcel remaining bytes, but this research did not bind a concrete low-privilege caller/transport route that can supply a positive count and enough valid remote-object entries to reach the writes.",
+    "impact":"heap out-of-bounds writes are established conditionally by source control/data flow; process corruption/crash or code execution impact and product consequence are not dynamically demonstrated.",
+    "fixed_status":"the source-level size defect is corrected in !2037; fix PR also handles null remote-object reads. No fixed runtime replay was performed.",
+    "family_mapping":"Closest current B/IPC family is DATA-02 (parcel-derived count controls allocation/indexed memory access), CWE-122/787 style memory safety concern. Do not assert current detector hit or eligibility: this is Cangjie binding source, while scanner's IPC production family implementation is primarily scoped to native C/C++ parser/source models.",
+    "holdout_eligibility":"not admitted to frozen D41/D48 holdout. Manifest scope/selection is unchanged; there is no independent label, pinned inclusion, executed scanner replay, realistic caller proof, or product impact adjudication. The official fix is ground-truth evidence of a source bug for research, not authority to mutate the preregistered sample.",
+    "formal_metrics":"not_run; no TP/FP/FN, precision, or recall inference"
+  },
+  "tests_and_validation": {
+    "pr_2037_changed_test_files":false,
+    "test_status":"No tests appear in the PR !2037 changed-file list; no unit/fuzz/runtime tests were run in this research.",
+    "build_or_runtime":"not_run",
+    "source_methods":"Official Gitee Git objects fetched read-only; compared parent and fix source; confirmed merge ancestry; computed Git blob IDs and SHA-256 for listed files. No code or manifest writes."
+  },
+  "limits": [
+    "Gitee issue/PR summaries are not a detailed threat model or product CVE adjudication.",
+    "The exact immutable IPC anchor bbb92dbb2f52aca54ab268307c9476ac1802f3ff is not present in fetched official refs; whether the Cangjie subtree existed at that anchor remains unknown.",
+    "The scanner main SHA db77164fdc2af0da02e4d3efc056d84694fd68e8 is the scanner code baseline, not the component source revision or product build identity.",
+    "No product version matrix, release backport map, or binary build provenance was established."
+  ],
+  "code_changes": 0
+}

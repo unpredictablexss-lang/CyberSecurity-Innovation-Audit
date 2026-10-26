@@ -1,0 +1,268 @@
+{
+  "schema_version": 1,
+  "task_id": "D47",
+  "title": "Target-product proof matrix for conditional DBinder observations",
+  "revision": "final_T45_T46_incorporated",
+  "created_at_utc": "2026-10-20T00:00:00Z",
+  "baseline": {
+    "scanner_repository": "D:/openHarmonyScanner",
+    "scanner_head": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "origin_main_verified_equal_to_head": true,
+    "product_component": "openharmony/communication_ipc",
+    "product_component_commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "scope": "read-only proof planning; no product code, tests, or PoC changed or run",
+    "candidate_policy": "0 confirmed candidates; retain at most T30-R1 as one low-confidence conditional candidate; D39-R1 remains an unconfirmed lifecycle observation"
+  },
+  "review_status": {
+    "T45": {
+      "task": "blind second-layer review of T30-R1",
+      "status": "completed_insufficient_conditional_mechanism_supported",
+      "artifact": "research/deliveries/ipc/b-line-20261020/t45_second_layer_t30_r1-20261020.json",
+      "decision": "0 confirmed vulnerabilities; retain 1 low-confidence conditional candidate. Do not report UAF or change product code on present evidence.",
+      "promotion_gates": [
+        "target product pairing",
+        "callback/request cross-thread overlap",
+        "socket relation is the last strong reference",
+        "controlled destruction followed by SendRequest access/use"
+      ]
+    },
+    "T46": {
+      "task": "independent review of D39-R1 reachability and effect",
+      "status": "completed_insufficient_zero_candidates",
+      "expected_artifact": "research/deliveries/ipc/b-line-20261020/t46_granted_session_counterreview-20261020.json",
+      "artifact": "research/deliveries/ipc/b-line-20261020/t46_granted_session_l2_review-20261020.json",
+      "decision": "0 candidates; retain D39-R1 as one conditional lifecycle observation only.",
+      "reopen_gates": [
+        "shipped SDK/API policy proves a standard third-party app can obtain the proxy and call the exported helper",
+        "exact target SoftBus grant/removal authorization semantics are source-bound",
+        "realistic trigger demonstrates externally observable material security impact"
+      ]
+    },
+    "revision_rule": "T45 and T46 decisions and counterexamples are incorporated; do not promote either observation without a closed target-product reachability and impact chain."
+  },
+  "evidence_reuse": [
+    {
+      "artifact": "research/deliveries/ipc/b-line-20261020/d27_softbus_identity_pin-20261020.json",
+      "evidence": "Active ohos.xml floats IPC and DSoftBus to master; frozen manifests pair IPC 5903fd5f7332a427cb3f6915b0202ee5c76c63b5 with DSoftBus 78e7835a3673fb41399c6c2f5e86c578530046a3 or 7743b679f6c3599e21bea4e4b1564422668e3643. No product pin/build graph pairing IPC bbb92... to an immutable SoftBus revision was found.",
+      "hashes": {
+        "active_manifest_ohos_xml_sha256": "a7c829c419d79c696483bca56fe5ab0aae54aca0a1b0c2067be5b322fd2e472e",
+        "frozen_manifest_fixed_sha256": "701683246a8b4393e61cdb75132d76aacc9e53f6f663d37e386bbd535511fbee",
+        "frozen_manifest_20261018_sha256": "52f528dada321a140a29be2d55ef9053fda818cbdca93758425f1a25f6286d55"
+      }
+    },
+    {
+      "artifact": "research/deliveries/ipc/b-line-20261020/t28_softbus_identity_counterreview-20261020.json",
+      "evidence": "Independent review matched the cited local SoftBus source hashes but concluded peer name authenticity/spoofability and target product pairing are unknown; candidate count 0. These bytes do not establish deployed behavior."
+    },
+    {
+      "artifact": "research/deliveries/ipc/b-line-20261020/t32_dbinder_race_test_feasibility-20261020.json",
+      "evidence": "GN/Ninja exist, but OHOS clang/sysroot and out/rk3568 args.gn/build.ninja were absent; local IPC/SoftBus revisions do not establish target pairing. It specifies a post-QueryStubByIndex/pre-SendRequest seam and requires post-destruction access evidence, not just refcount zero/index erase."
+    },
+    {
+      "artifact": "research/deliveries/ipc/b-line-20261020/d41_test_seam_feasibility-20261020.json",
+      "evidence": "Target raw-file hashes and candidate seam confirmed; product lock, test target/build graph, paired callback provenance, last-ref status, runtime overlap, and actual memory-safety effect remain unproven. Current WSL recheck failed, so the recorded environment inventory is inherited from T32, not fresh."
+    },
+    {
+      "artifact": "research/deliveries/ipc/b-line-20261020/t42_lifetime_counterreview-20261020.json",
+      "evidence": "Independent raw-source counterreview found no lifetime pin/shared cross-thread mutex in the reviewed path; same-thread execution and any unrelated strong owner are counterexamples. It retains 0 confirmed / 1 conditional and requires target-paired concurrency, last reference, post-destruction access, and impact."
+    },
+    {
+      "artifact": "research/deliveries/ipc/b-line-20261020/d39_granted_session_scout-20261020.json",
+      "evidence": "Target-pinned IPC source review for GetSessionName/GetGrantedSessionName and IPC-side session-name grant accounting; repeated same-name grant imbalance is a conditional observation only. Source binding file hashes are included in that artifact."
+    },
+    {
+      "artifact": "research/deliveries/ipc/b-line-20261020/t40_granted_session_counterreview-20261020.json",
+      "evidence": "Independent review keeps 0 candidates; ordinary SDK reachability, target-paired backend semantics, and material impact are not established. Do not infer backend slot exhaustion or cross-principal authorization from an unpaired checkout."
+    },
+    {
+      "artifact": "research/deliveries/ipc/b-line-20261020/d43_dbinder_cleanup_static_scan-20261020.json",
+      "evidence": "Adjacent source scan records D39-R1 as service-self scope, with no ordinary-app reachability or material impact proof; IPC grant-before-reply ordering and shutdown removal are source-level observations only."
+    },
+    {
+      "artifact": "research/deliveries/ipc/b-line-20261020/t45_second_layer_t30_r1-20261020.json",
+      "evidence": "Blind review: mechanism supported at source level but product vulnerability insufficient; 0 confirmed, 1 low-confidence conditional. Evidence gathering only after product pairing; no vulnerability claim or production fix absent callback overlap, last-ref proof, and controlled post-destruction SendRequest access."
+    },
+    {
+      "artifact": "research/deliveries/ipc/b-line-20261020/t46_granted_session_l2_review-20261020.json",
+      "evidence": "Independent review: source ABI and grant/refcount mismatch possibility supported, but shipped third-party SDK/proxy route and material effect are product-unbound. Nested SAMGR caller identity is service itself; GET does not itself create a socket; repeat calls use one fixed UID/PID key. 0 candidates; reopen only on SDK/proxy route, exact paired SoftBus authorization semantics, and externally observable effect."
+    }
+  ],
+  "proof_matrix": [
+    {
+      "id": "PM1_PRODUCT_MANIFEST_AND_BUILD_LOCK",
+      "covers": [
+        "T30-R1",
+        "D39-R1",
+        "D27/T28 identity boundary"
+      ],
+      "current_evidence": "D27/T28 show active manifest floats component refs and frozen snapshots do not match IPC target bbb92...; D41/T32 report no resolved target build record. Exact target product pairing is not established.",
+      "exact_artifacts_to_obtain": [
+        "Product release manifest or lock snapshot used to build the target image, containing immutable communication_ipc, communication_dsoftbus, commonlibrary_c_utils, and relevant toolchain revisions.",
+        "Build provenance record for the same image/build ID, including product name, resolved repo revisions, GN args, generated dependency graph or equivalent build manifest, and IPC/SoftBus binary artifact identifiers."
+      ],
+      "owner": "OpenHarmony product release/build engineering or device-image maintainer; request the immutable source lock and build provenance for the specific product image under review.",
+      "verification_steps": [
+        "Verify the lock/build record is tied to one named image/build ID and is immutable or content-hashed.",
+        "Resolve communication_ipc to bbb92dbb2f52aca54ab268307c9476ac1802f3ff or explicitly record that the analyzed source is not deployed.",
+        "Resolve the exact paired DSoftBus and c_utils commits and GN targets; hash the supplied manifest/lock and dependency graph.",
+        "Map the produced IPC and SoftBus artifacts back to those source revisions; reject floating branch names or current checkout HEAD as proof."
+      ],
+      "pass": "One build ID has immutable, internally consistent IPC/SoftBus/c_utils/toolchain pins and artifacts; target source matches the analyzed pin, or the target source mismatch is explicitly resolved by rebinding the review.",
+      "fail_or_block": "Missing lock/build provenance, floating revisions, mismatched IPC pin, or artifact/source mismatch leaves all product claims unbound; retain static-only observations and stop target runtime promotion.",
+      "blocks": [
+        "PM3_CALLBACK_THREAD_PROVENANCE",
+        "PM4_LAST_REF_INSTRUMENTATION",
+        "PM5_IMPACT_ORACLE",
+        "PM6_GET_SESSION_NAME_PRODUCT_EFFECT"
+      ],
+      "status": "blocked_external_artifact"
+    },
+    {
+      "id": "PM2_SDK_EXPORT_AND_CALLER_POLICY",
+      "covers": [
+        "D39-R1 ordinary-app reachability",
+        "special transaction API reachability"
+      ],
+      "current_evidence": "D37/T38 and T46 show GetSessionName is an intended/exported source ABI helper, but T46 leaves shipped third-party SDK policy and ordinary-app proxy acquisition product-unbound. Nested SAMGR grant sees the service caller, not the original app; GET itself does not create a socket. GetGrantedSessionName is not established as a standard direct helper route; generic SendRequest rejects special codes per source-bound reviews.",
+      "exact_artifacts_to_obtain": [
+        "The product-matched SDK/API surface package and generated native symbol/version map or export map for libipc_single and any IPC core wrapper, tied to the same build ID as PM1.",
+        "Product API/permission policy governing which app classes may hold remote proxies and call IPCObjectProxy::GetSessionName, plus target service exposure/capability policy for the affected service."
+      ],
+      "owner": "OpenHarmony SDK/API release owner and product security policy owner for the target image; service owner supplies its proxy-distribution/exposure contract.",
+      "verification_steps": [
+        "Inspect exact product export maps and SDK headers/libraries for GetSessionName/GetGrantedSessionName and generic transaction entry points; record symbol visibility and version.",
+        "Trace the supported public call path from an ordinary third-party app to a live target proxy, including any permission, signature, token, or capability gate.",
+        "For any claimed special transaction route, show the exact exported ABI or IPC path bypassing the generic SendRequest guard; absence of a symbol in a mismatched/local map is not a product proof.",
+        "Document whether the caller can repeat the query at attacker-controlled rate and whether the affected session name belongs only to the receiver service itself."
+      ],
+      "pass": "Product-matched ABI and policy establish or refute an ordinary third-party caller path and rate/capability constraints; for D39-R1, a candidate also needs the exact helper-to-proxy route and cannot attribute original app identity to nested SAMGR grant.",
+      "fail_or_block": "No matching SDK/export artifact or no proof of a third-party caller path means D39-R1 remains non-candidate; do not infer reachability from header visibility or intended API semantics alone.",
+      "blocks": [
+        "PM6_GET_SESSION_NAME_PRODUCT_EFFECT"
+      ],
+      "status": "blocked_external_artifact"
+    },
+    {
+      "id": "PM3_CALLBACK_THREAD_PROVENANCE",
+      "covers": [
+        "T30-R1 close callback versus request worker concurrency"
+      ],
+      "current_evidence": "Target IPC source shows ServerOnShutdown obtains invoker from pthread TLS and the request/close locks are per-invoker instance. D41/T42 do not establish target-paired SoftBus callback thread identity, dispatch serialization, or overlap with the request worker.",
+      "exact_artifacts_to_obtain": [
+        "The PM1-paired DSoftBus implementation files and build configuration for the relevant session shutdown callback registration, dispatch, executor/looper selection, and IPC ServerOnShutdown entry.",
+        "Target product runtime trace or instrumented callback log carrying thread IDs, IPC TLS/invoker identity, socket ID, request interval, and close callback interval for the same connection."
+      ],
+      "owner": "DSoftBus transport/runtime owner for callback dispatch semantics, with IPC product integration owner to capture the paired runtime trace.",
+      "verification_steps": [
+        "Trace callback registration to actual invocation in the exact paired DSoftBus revision; identify executor/thread policy and any same-connection serialization guarantee.",
+        "Check whether callback and request worker can execute concurrently and whether their IPCThreadSkeleton/invoker instances and objectMutex_ addresses differ.",
+        "If source policy is not a hard guarantee, capture a target runtime trace demonstrating both overlap and same socket relation; preserve raw trace and build ID."
+      ],
+      "pass": "A product-paired source guarantee or target runtime trace demonstrates distinct-thread overlap on the same socket/request path without a common serialization primitive.",
+      "fail_or_block": "Guaranteed same-thread/serialized callbacks refute the proposed schedule; absent paired source/trace leaves concurrency unknown and T30-R1 conditional.",
+      "blocks": [
+        "PM4_LAST_REF_INSTRUMENTATION"
+      ],
+      "status": "blocked_external_artifact"
+    },
+    {
+      "id": "PM4_LAST_REF_INSTRUMENTATION",
+      "covers": [
+        "T30-R1 raw-pointer lifetime candidate"
+      ],
+      "current_evidence": "T32/D41 specify a test-only barrier after QueryStubByIndex returns and before SendRequest; T42 confirms no temporary strong reference in the reviewed source sequence, but unrelated strong owners and close-before-lookup are valid counterexamples. No target test has run.",
+      "exact_artifacts_to_obtain": [
+        "PM1 target build lock, resolved GN test target/dependency graph, matching OHOS clang/clang++ and sysroot, generated args.gn/build.ninja, and test binary provenance.",
+        "Instrumented target test output (sanitizer report or safe destructor/active-call markers) for lookup-first close and controls, tied to the product build ID and exact test source revision."
+      ],
+      "owner": "IPC component test/build owner; product build engineering supplies the toolchain/sysroot/config; security test owner records the controlled runtime oracle.",
+      "verification_steps": [
+        "Confirm target test target compiles the exact pinned IPC source and a test-only barrier immediately after raw QueryStubByIndex result, outside map-lock scope.",
+        "Create a valid stub/socket relation, instrument strong-reference owners and destructor/OnLastStrongRef, and prove whether the relation is the final reference at close.",
+        "Pause request worker at the barrier; close the same socket on a distinct TLS invoker; wait for detach and final-release marker; resume and observe SendRequest entry/access with ASan or safe instrumentation.",
+        "Run controls: close-before-lookup gives null/no SendRequest; unrelated strong owner prevents destruction during call; request-before-close keeps object alive and releases once.",
+        "Retain exact command, binary hash, sanitizer output, thread IDs, refcount/destructor sequence, and test-only diff. Do not count refcount zero/index erase alone as use-after-free."
+      ],
+      "pass": "On the PM1-paired target test, lookup-first interleaving demonstrably releases the last strong ref before a subsequent SendRequest access/use and yields a sanitizer or deterministic safe instrumentation failure; all controls behave as specified.",
+      "fail_or_block": "No last-ref state, no post-destruction access, same-thread serialization, or only stale-index/refcount observation does not prove UAF; record refuted or insufficient per T45. Missing toolchain/build graph keeps test blocked.",
+      "blocks": [
+        "T30-R1 candidate promotion",
+        "D45 product fix consideration"
+      ],
+      "status": "blocked_external_artifact"
+    },
+    {
+      "id": "PM5_IMPACT_ORACLE",
+      "covers": [
+        "T30-R1 security impact",
+        "D39-R1 security impact"
+      ],
+      "current_evidence": "T45 concludes the T30-R1 mechanism is source-supported but vulnerability is insufficient: target pairing, cross-thread overlap, last strong reference, and controlled post-destruction SendRequest access are all promotion gates. D39/T40/D43 limit grant effects to service-self name at source level and show no proven unauthorized cross-principal effect, persistence consequence, or resource exhaustion. No product runtime effect oracle exists.",
+      "exact_artifacts_to_obtain": [
+        "For T30-R1: PM1-paired sanitized test/runtime artifact showing the invalid access and its observable consequence within IPC, plus a non-attacker-controlled control result.",
+        "For D39-R1: PM1-paired SoftBus permission/grant implementation and target service policy, plus a controlled product test or authoritative API contract showing whether unmatched same-name references persist and what unauthorized operation or availability impact results.",
+        "For either route: minimal threat model naming attacker principal/capability, victim asset, security boundary crossed, and measurable effect; exclude artifacts from an unpaired SoftBus branch."
+      ],
+      "owner": "Product security validation owner with IPC and DSoftBus component owners; affected system service owner supplies the protected operation/capability contract.",
+      "verification_steps": [
+        "Start only after PM1 source/build pairing and the relevant caller/runtime route are established.",
+        "Define an oracle before execution: observable invalid memory access/use for T30-R1; for D39-R1, demonstrated unauthorized access, persistent permission/resource denial, or another named security impact beyond the receiver service's intended self-name lifecycle.",
+        "Run isolated, product-matched controls and the minimum repeatable condition; capture logs, sanitizer/report, state before/after, cleanup behavior, and build identity.",
+        "Ask the independent reviewer to assess the raw evidence against the stated principal and impact; source-level count mismatch alone is not a security impact."
+      ],
+      "pass": "A named unprivileged/attacker principal reaches a reproducible security-relevant effect across a stated boundary on the target-paired build, with controls excluding intended self-service behavior and test artifact reviewed independently.",
+      "fail_or_block": "Only internal counter imbalance, refcount/index mutation, intended service-self permission, or no observable unauthorized consequence leaves the route non-candidate; missing product route/effect data remains blocked or insufficient.",
+      "blocks": [
+        "candidate promotion for either route"
+      ],
+      "status": "blocked_external_artifact"
+    },
+    {
+      "id": "PM6_GET_SESSION_NAME_PRODUCT_EFFECT",
+      "covers": [
+        "D39-R1 same-name grant/remove imbalance"
+      ],
+      "current_evidence": "D39/T40/D43/T46 source reviews support grant-before-reply, same-name IPC refcount increment, and shutdown-event removal without per-query balancing remove; T46 refutes that each GET necessarily creates a socket or distinct permission key. Grant identity is the receiving service fixed UID/PID. Target SoftBus backend, shipped SDK/proxy reachability, trigger limits, persistence, and material effect remain unknown.",
+      "exact_artifacts_to_obtain": [
+        "PM1-paired IPC and SoftBus grant/remove implementations and lifecycle call graph for GetSessionName, nested SAMGR GetGrantedSessionName, DBinderGrantPermission, RemoveSessionName, and socket shutdown.",
+        "PM2 matching SDK/public export and service proxy exposure policy.",
+        "Product-matched isolated test or authoritative backend contract showing count behavior across repeated queries, reply failure, teardown, process restart, and effect on unrelated or unauthorized clients."
+      ],
+      "owner": "IPC and DSoftBus component owners plus the affected service/API owner; product security validates whether the observed effect crosses a boundary.",
+      "verification_steps": [
+        "First establish a shipped third-party app route to an eligible proxy and exported GetSessionName helper; source export alone is insufficient.",
+        "Trace nested SAMGR caller identity; expect receiving service UID/PID, not original app. Confirm GET itself does not create a socket and separately trace InvokeListenThread lifecycle.",
+        "Count target IPC grant increments and all paired decrements for normal reply, reply failure, repeated query, listener teardown, socket shutdown, and restart; keep fixed service UID/PID key explicit.",
+        "Inspect exact paired backend semantics for same-name grants: deduplication, reference counting, persistence, removal idempotence, and which principal can use permission.",
+        "Only if an ordinary app can invoke repeatedly and produce a measurable unauthorized/persistent/availability effect beyond intended service-self lifecycle, use a controlled product-matched oracle; otherwise close as no candidate."
+      ],
+      "pass": "Product evidence closes ordinary-app proxy/helper reachability, unbalanced count persistence, exact backend authorization semantics, and a concrete externally observable security impact beyond the receiving service intended self-name lifecycle.",
+      "fail_or_block": "No ordinary caller path, balanced lifecycle, service-self-only effect, backend deduplication/no harmful consequence, or missing product pairing keeps D39-R1 at 0 candidates.",
+      "blocks": [
+        "D39-R1 candidate promotion"
+      ],
+      "status": "blocked_external_artifact"
+    }
+  ],
+  "dependency_order": [
+    "PM1 must pass before any target-product claim or runtime test is treated as relevant.",
+    "PM2 is required for D39-R1 reachability and any claimed special-transaction route.",
+    "PM3 is required before the T30-R1 concurrent schedule is treated as product-reachable; a deterministic test may establish code behavior but not deployment by itself.",
+    "PM4 establishes or refutes the raw-pointer lifetime event; PM5 separately establishes security impact.",
+    "PM6 is the D39-specific balance/backend/impact closure and depends on PM1, PM2, and paired SoftBus evidence."
+  ],
+  "current_disposition": {
+    "confirmed_candidates": 0,
+    "conditional_candidates": 1,
+    "conditional_candidate_id": "T30-R1",
+    "non_candidate_observation": "D39-R1 remains an observation only after T46; do not add it to candidate count.",
+    "product_runtime_tests_run": false,
+    "product_code_changed": false,
+    "external_blockers": [
+      "No immutable product manifest/build lock and resolved graph binding IPC bbb92... to exact DSoftBus/c_utils/toolchain artifacts.",
+      "No matching OHOS clang/sysroot or generated target args.gn/build.ninja recorded; GN/Ninja presence alone is insufficient.",
+      "No target-paired SDK export/policy evidence, callback thread provenance, final-reference runtime trace, or impact oracle."
+    ],
+    "next_action": "T45/T46 decisions and counterexamples are incorporated. Request PM1 product lock and PM2 shipped SDK/proxy policy as minimum external artifacts; if supplied, proceed in dependency order to paired callback/backend semantics and a bounded test oracle. Meanwhile continue source-only review on independent routes."
+  }
+}

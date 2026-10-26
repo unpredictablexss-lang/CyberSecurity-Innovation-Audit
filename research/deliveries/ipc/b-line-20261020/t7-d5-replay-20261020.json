@@ -1,0 +1,115 @@
+{
+  "schema": "ohscanner.ipc-t7-d5-replay.v1",
+  "date": "2026-10-20",
+  "verified_main_sha": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+  "worktrees": {
+    "t_only": {
+      "path": "D:/openHarmonyScanner/worktrees/b-t1-data01-test-20261020",
+      "head": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+      "changed_test_files_only": [
+        "tests/test_a_ccr_03_finding_identity.py",
+        "tests/test_ipc_rule_versions.py"
+      ],
+      "production_edits": false
+    },
+    "integration": {
+      "path": "D:/openHarmonyScanner/worktrees/b-ipc-integration-20261020",
+      "head": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+      "contains_t_only_test_files": false,
+      "production_work_is_d1_d2_d5": true
+    }
+  },
+  "results": {
+    "latest_rerun": {
+      "ipc_suite": {
+        "tests": 352,
+        "passed": 352,
+        "skipped": 47,
+        "command": "python -m unittest discover -s tests -p 'test_ipc_*.py' -q"
+      },
+      "owner_ipc_suite": {
+        "tests": 12,
+        "passed": 12,
+        "command": "PYTHONUTF8=1 python -m unittest discover -s tests -p test_owner_ipc_platform.py -q"
+      },
+      "d5_specialized_integration": {
+        "tests": 2,
+        "passed": 2,
+        "command": "PYTHONPATH=<integration root>;<integration root>/tests python <T-only>/tests/test_ipc_rule_versions.py -v"
+      },
+      "identity_suite_integration": {
+        "tests": 22,
+        "passed": 21,
+        "skipped": 1
+      },
+      "d3_coverage_invariant": {
+        "tests": 1,
+        "passed": 1,
+        "command": "python -m unittest tests.test_ohscanner_m1.GitObjectIndexTests.test_global_parse_and_ipc_coverage_keep_distinct_denominators -v"
+      },
+      "full_repository_suite": {
+        "tests": 944,
+        "failures": 3,
+        "errors": 19,
+        "skipped": 60,
+        "environment": "Windows Anaconda Python 3.13.9; not the WSL2 Python 3.10 environment specified in docs/开发协作与交付指南.md",
+        "result": "not an acceptance pass; broad failures include unavailable FastAPI/fcntl, Windows clang/symlink behavior, CRLF fixture differences, and missing optional parser grammar",
+        "detailed_record": "full-suite-windows-environment-20261020.json"
+      },
+      "full_repository_suite_wsl2": {
+        "tests": 1151,
+        "passed": 1151,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 12,
+        "elapsed_seconds": 205.793,
+        "runtime": "WSL2 Linux, isolated Python 3.14.7 venv with requirements-web.txt",
+        "change_scope_violations": 0,
+        "detailed_record": "full-suite-final-replay-20261020.json"
+      }
+    },
+    "t7_targeted_baseline": {
+      "tests": 2,
+      "passed": 2,
+      "command": "python -m unittest tests.test_a_ccr_03_finding_identity.StableIdentityTests.test_occurrence_requires_nonempty_rule_version tests.test_a_ccr_03_finding_identity.RelationTests.test_missing_rule_version_never_establishes_compatibility -v"
+    },
+    "identity_suite_baseline": {
+      "tests": 22,
+      "passed": 21,
+      "skipped": 1,
+      "command": "python -m unittest discover -s tests -p test_a_ccr_03_finding_identity.py -v"
+    },
+    "d5_specialized_baseline": {
+      "expected_red": true,
+      "failures": 2,
+      "reasons": [
+        "IPC rule-version map absent",
+        "real ipc.auth.missing finding rule_version is None"
+      ],
+      "command": "python -m unittest discover -s tests -p test_ipc_rule_versions.py -v"
+    },
+    "identity_suite_integration": {
+      "tests": 22,
+      "passed": 21,
+      "skipped": 1,
+      "imported_production_source_from": "D:/openHarmonyScanner/worktrees/b-ipc-integration-20261020/src",
+      "command": "PYTHONPATH=<integration root>;<integration root>/tests python <T-only>/tests/test_a_ccr_03_finding_identity.py -v"
+    },
+    "d5_specialized_integration": {
+      "tests": 2,
+      "passed": 2,
+      "rule_version_entries": 21,
+      "unknown_rule_version": null,
+      "real_finding_source_bound_occurrence": true,
+      "imported_production_source_from": "D:/openHarmonyScanner/worktrees/b-ipc-integration-20261020/src",
+      "command": "PYTHONPATH=<integration root>;<integration root>/tests python <T-only>/tests/test_ipc_rule_versions.py -v"
+    },
+    "test_worktree_diff_check": "clean"
+  },
+  "independent_reviewer": "b_test_review",
+  "limits": [
+    "One verified main SHA and one IPC source snapshot only.",
+    "Identity suite skip is due to the missing same-scope rescan artifact.",
+    "Stable cross-version identity remains unknown; this replay does not establish vulnerability validity or precision/recall."
+  ]
+}

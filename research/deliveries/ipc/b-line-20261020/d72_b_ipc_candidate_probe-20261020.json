@@ -1,0 +1,188 @@
+{
+  "schema_version": "1.0",
+  "task": "D72 B/IPC current-detector candidate probe",
+  "date": "2026-10-20",
+  "status": "probe_complete_no_finding_on_both_versions",
+  "scope": {
+    "scanner_commit": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "detector_id": "ohscanner.interface.ipc",
+    "detector_version": "0.12.12",
+    "model_version": "oh-ipc-2026.10-v32",
+    "supported_languages": [
+      "c",
+      "cpp"
+    ],
+    "supported_scope_decision": "The implementation file is a .cpp C++ source under interfaces/innerkits/cj. It is inside the detector's declared language scope. The Cangjie API/binding as a whole is not necessarily in scope: .cj source language is unsupported, but this exact C++ FFI implementation is cpp.",
+    "parser": {
+      "name": "Tree-sitter C++",
+      "tree_sitter": "0.26.0",
+      "tree_sitter_cpp": "0.23.4",
+      "parse_status_vulnerable": "complete",
+      "parse_status_fixed": "complete"
+    },
+    "rule_ids_reviewed": [
+      "ipc.parcel.bounds",
+      "ipc.parcel.write-bounds"
+    ],
+    "family": "DATA-02",
+    "detector_file_sha256": "81446b38f1a43afa17aa6df7e611502316f557c073a399f67fe98a805118d9ed",
+    "data02_family_file_sha256": "8815aefce3a0259fe68d7b6a9d46078ea77085863d4a97f61789eb89002a63a6",
+    "parser_file_sha256": "82d1fb9e3e4ee048aed1d26ce91d99b1d3c7a9f7a638fda85df39ddf3125f3e2",
+    "scanner_commit_role": "HEAD is the integration worktree base only. The probed integration worktree had tracked local changes; the executable identity is bound by the source-file hashes and binary diff hash below."
+  },
+  "source_inputs": [
+    {
+      "label": "pre-!2037 vulnerable source (already includes !1837 parcel length guard)",
+      "official_repo": "https://gitee.com/openharmony/communication_ipc.git",
+      "commit": "84d681288793785e8f39f71c824f211edaed8f1e",
+      "tree": "80fb756221eac67a9f6a9a9506eb763e380d9c55",
+      "path": "interfaces/innerkits/cj/src/message_sequence_impl.cpp",
+      "git_blob": "c5f62c288a144478828c720d48c1485fae0e035c",
+      "source_sha256": "1f4d039b974a0021000126e61efea7eb0b8eb5f4baf756373c1b12150d0d5eec"
+    },
+    {
+      "label": "!2037 fixed source commit",
+      "official_repo": "https://gitee.com/openharmony/communication_ipc.git",
+      "commit": "de3a68cc8b7d6f18017fd261060def0e38dce54a",
+      "tree": "611835efd3112027f067b587146a2c2bbd38b47e",
+      "path": "interfaces/innerkits/cj/src/message_sequence_impl.cpp",
+      "git_blob": "9041e30d1926edd09e20126274b8903f0c55df50",
+      "source_sha256": "30ad2a9fa4f45792b83e75cef6c5106818b290ae523d9e17e48c88853854d777"
+    }
+  ],
+  "probe_method": {
+    "kind": "direct detector invocation; one SourceUnit and its Tree-sitter AST per run",
+    "command": "From the plan worktree, run Python with project root on sys.path. For each revision listed above, obtain the exact file bytes via `git -C <official-clone> show <commit>:interfaces/innerkits/cj/src/message_sequence_impl.cpp`; decode UTF-8; call `parse_source(text, language='cpp')`; build SourceUnit(path='interfaces/innerkits/cj/src/message_sequence_impl.cpp', language='cpp', text=text, sha256=sha256(text), parse_status=index.parse_status); build ScanRequest with repository='openharmony/communication_ipc', commit=<full source commit>, target_id='current-component:openharmony/communication_ipc', profile_id='light-ast', provenance='git_object', snapshot_sha256=sha256(text); construct ScanContext(request, (unit,), {'ast': {path: index.to_dict()}}); call IpcInterfaceDetector().detect(context, context.units).",
+    "summary": "The inline probe used these exact operations and emitted per-version status, findings, and limitations; no scanner or test file was changed."
+  },
+  "results": [
+    {
+      "source_commit": "84d681288793785e8f39f71c824f211edaed8f1e",
+      "parse_status": "complete",
+      "indexed_functions": [
+        "CheckReadLength",
+        "CJ_ReadRemoteObjectArray"
+      ],
+      "detector_status": "completed",
+      "findings": [],
+      "finding_count": 0,
+      "entry_coverage_limitation": "0 dispatcher(s), 0 bindings, no recognized entry path in this isolated file input"
+    },
+    {
+      "source_commit": "de3a68cc8b7d6f18017fd261060def0e38dce54a",
+      "parse_status": "complete",
+      "indexed_functions": [
+        "CheckReadLength",
+        "CJ_ReadRemoteObjectArray"
+      ],
+      "detector_status": "completed",
+      "findings": [],
+      "finding_count": 0,
+      "entry_coverage_limitation": "0 dispatcher(s), 0 bindings, no recognized entry path in this isolated file input"
+    }
+  ],
+  "interpretation": {
+    "current_rule_behavior": "No DATA-02 (or any other) finding was emitted for either version when the single C++ FFI implementation file was analyzed by the current B/IPC detector.",
+    "why_no_finding": "The detector is an IPC entry-to-effect analyzer whose current design expects source-indexed dispatch or other modeled roots. This C++ binding contains the vulnerable allocation/writes but no recognized dispatcher in this one-file input. The detector's completed status and zero findings here do not mean the function is safe; the source-level under-allocation established by the !2037 diff remains a scanner coverage gap for this invocation.",
+    "scope_nuance": "cpp implementation file is technically supported; Cangjie language inputs themselves are not. Language support does not imply that all memory-safety operations in the binding are modeled by the IPC rule set.",
+    "family_mapping": "DATA-02 ipc.parcel.bounds is the closest rule family conceptually. The probe does not demonstrate a rule firing. No new rule work was done.",
+    "eligibility": "This is an exploratory single-file probe, not a frozen holdout replay and not a product scan. No holdout entry or accuracy label is implied.",
+    "canonical_probe_worktree": "D:/openHarmonyScanner/worktrees/b-ipc-integration-20261020",
+    "scanner_identity_correction": "db77164 is only HEAD/base. The integration worktree tracked source overlay is dirty and bound by provenance_correction.git_diff_binary_head_sha256 plus exact hashes of imported files. Both results were rerun using those resolved integration-worktree modules."
+  },
+  "limitations": [
+    "Single-file context intentionally omits the rest of the component, build profile, Cangjie caller/API glue, and transport/dispatch call chain.",
+    "No compile, unit/fuzz, dynamic, exploitability, attacker-reachability, or product-impact validation was run.",
+    "An empty finding set is not safe/fixed evidence; source hashes and exact parser status bind only these file inputs.",
+    "The C++ frontend/parser and bounded detector can miss heap allocation-size defects when their supported entry model is absent or the operation shape is not modeled."
+  ],
+  "code_changes": 0,
+  "test_changes": 0,
+  "holdout_manifest_changes": 0,
+  "scanner_commit": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+  "provenance_correction": {
+    "canonical_probe": "Repeated both source probes in the current B/IPC integration worktree after noticing the first execution had run from the plan worktree. The canonical corrected results are the integration-worktree results, which are again zero findings for both sources.",
+    "working_directory": "D:/openHarmonyScanner/worktrees/b-ipc-integration-20261020",
+    "python_executable": "D:/anaconda3/python.exe",
+    "git_head_base": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "git_diff_binary_head_sha256": "95fbfc7516508d21a707bf89aea696544ae3fb6ff153bd9147d901cc90c50cf3",
+    "git_diff_binary_head_bytes": 95007,
+    "git_diff_binary_staged_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "git_diff_binary_staged_bytes": 0,
+    "worktree_dirty": true,
+    "git_status_at_probe": [
+      " M src/ohscanner/detectors/interface/analysis.py",
+      " M src/ohscanner/detectors/interface/detector.py",
+      " M src/ohscanner/detectors/interface/models.py",
+      " M tests/fixtures/ipc/manifest.json",
+      " M tests/test_ipc_data_flow_rules.py",
+      " M tests/test_ipc_relay_guard.py",
+      "?? tests/fixtures/ipc/relay_inner_wrong_then_correct_fixed.cpp",
+      "?? tests/fixtures/ipc/t5_multidispatch/",
+      "?? tests/test_ipc_coverage.py",
+      "?? tests/test_ipc_multidispatch_guard_matrix.py",
+      "?? tests/test_ipc_rule_versions.py"
+    ],
+    "import_resolution": "Probe ran with cwd equal to this integration worktree and imported the modules resolved below from its src package; resolved paths were verified with inspect.getfile(). The exact version and model were read from the imported IpcInterfaceDetector class.",
+    "detector_version": "0.12.12",
+    "model_version": "oh-ipc-2026.10-v32",
+    "imported_scanner_modules": [
+      {
+        "module": "src.ohscanner.detectors.interface.analysis",
+        "path": "D:/openHarmonyScanner/worktrees/b-ipc-integration-20261020/src/ohscanner/detectors/interface/analysis.py",
+        "sha256": "568df82020e75f1387ddbb1bb1270e3eb27ee04baea886fd2ed3ae69138be1a"
+      },
+      {
+        "module": "src.ohscanner.detectors.interface.detector",
+        "path": "D:/openHarmonyScanner/worktrees/b-ipc-integration-20261020/src/ohscanner/detectors/interface/detector.py",
+        "sha256": "3108067b3db83341ec186c69db4646d3271d39f637304b2be88cb74da9f60e10"
+      },
+      {
+        "module": "src.ohscanner.detectors.interface.models",
+        "path": "D:/openHarmonyScanner/worktrees/b-ipc-integration-20261020/src/ohscanner/detectors/interface/models.py",
+        "sha256": "33439d4551b714a82079506828264abed99eba64362e00153339ea11e3da857f"
+      },
+      {
+        "module": "src.ohscanner.detectors.interface.families.data02",
+        "path": "D:/openHarmonyScanner/worktrees/b-ipc-integration-20261020/src/ohscanner/detectors/interface/families/data02.py",
+        "sha256": "8815aefce3a0259fe68d7b6a9d46078ea77085863d4a97f61789eb89002a63a6"
+      },
+      {
+        "module": "src.parser.ast",
+        "path": "D:/openHarmonyScanner/worktrees/b-ipc-integration-20261020/src/parser/ast.py",
+        "sha256": "82d1fb9e3e4ee048aed1d26ce91d99b1d3c7a9f7a638fda85df39ddf3125f3e2"
+      },
+      {
+        "module": "src.parser.syntax_normalize",
+        "path": "D:/openHarmonyScanner/worktrees/b-ipc-integration-20261020/src/parser/syntax_normalize.py",
+        "sha256": "d71473f35e63ae6529c3ad8556f8216b4421ef25918f482d3d2dd3f5985fc8ea"
+      },
+      {
+        "module": "src.ohscanner.detectors.interface.families",
+        "path": "D:/openHarmonyScanner/worktrees/b-ipc-integration-20261020/src/ohscanner/detectors/interface/families/__init__.py",
+        "sha256": "55bce19738cdb8d67f64804009d15d3f47bacb6f8d1d3a719122663944b08387"
+      }
+    ],
+    "frontend": "src.ohscanner.frontend was not imported or used; the probe called parse_source directly.",
+    "parser_packages": {
+      "tree_sitter": "0.26.0",
+      "tree_sitter_cpp": "0.23.4"
+    },
+    "repeated_integration_probe_results": [
+      {
+        "source_commit": "84d681288793785e8f39f71c824f211edaed8f1e",
+        "parse_status": "complete",
+        "detector_status": "completed",
+        "findings": [],
+        "entry_coverage": "0 dispatcher(s), 0 bindings; entry discovery limitation applies."
+      },
+      {
+        "source_commit": "de3a68cc8b7d6f18017fd261060def0e38dce54a",
+        "parse_status": "complete",
+        "detector_status": "completed",
+        "findings": [],
+        "entry_coverage": "0 dispatcher(s), 0 bindings; entry discovery limitation applies."
+      }
+    ]
+  }
+}

@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "task": "T71 independent IPC holdout adjudication",
+  "date": "2026-10-20",
+  "status": "candidate_positive_identified_holdout_not_frozen",
+  "actions": false,
+  "scope": {
+    "component": "OpenHarmony/communication_ipc",
+    "purpose": "independently assess official security fixes as potential real-positive holdout cases for current B/IPC detector families",
+    "prohibited_actions_observed": ["no code or tests modified", "no holdout manifest modified", "no detector executed", "no holdout frozen"]
+  },
+  "official_evidence": [
+    {
+      "url": "https://lists.openatom.io/hyperkitty/list/security@openharmony.io/thread/TQNJ4QHLM23SAULGUN26MM2XBBK5L2MW/",
+      "title": "OpenHarmony September 2025 security bulletin",
+      "finding": "Lists CVE-2025-26474 as an improper input validation vulnerability in communication_ipc; restricted scenarios allow a local attacker to disclose information; Low, CVSS 3.1 3.3; affected OpenHarmony-v5.0.3-Release / communication_ipc 5.0.3.x."
+    },
+    {
+      "url": "https://gitee.com/openharmony/communication_ipc/issues/IC0KMG",
+      "title": "Issue IC0KMG: security issue fix",
+      "finding": "Issue says code review found a collection of fixes: CJ GetReadPosition switched from GetReadableBytes to GetReadPosition; readRemoteObjectArray gained an ArraySize check; float serialization switched to float APIs; IPCSkeleton caller UID/PID changed to live IPC caller values. It shows no linked PR and presents these as an umbrella implementation fix, with no specific exploit, affected data, or impact evidence."
+    },
+    {
+      "url": "https://gitee.com/openharmony/communication_ipc/issues/IC0GMS",
+      "title": "Issue IC0GMS: fix interface implementation error",
+      "finding": "The reported change text duplicates the IC0KMG set. It is not an independent vulnerability case or a second positive."
+    },
+    {
+      "url": "https://gitee.com/openharmony/communication_ipc/commit/de3a68cc8b7d6f18017fd261060def0e38dce54a",
+      "title": "Official fix commit de3a68cc",
+      "finding": "Commit message is 'fix security issue of cj'. CJ_ReadRemoteObjectArray allocation sizes are corrected from malloc(arrayLength) to malloc(sizeof(element) * arrayLength), and null remote objects are handled. This directly repairs memory safety/input handling in the candidate serialization path."
+    }
+  ],
+  "candidate_cases": [
+    {
+      "case_id": "CVE-2025-26474-communication_ipc-CJ-remote-object-array",
+      "label": "real_positive_source_level_officially_disclosed",
+      "adjudication": "The official OpenHarmony bulletin establishes a real communication_ipc information-disclosure vulnerability, affected product release, attacker class, impact, severity, and CVE identity. The official security-fix commit repairs the under-sized arrays in CJ_ReadRemoteObjectArray (and handles null parcel objects). This is an independently defensible source-positive candidate, unlike the IC0KMG/IC0GMS issue titles alone.",
+      "vulnerable_source": {
+        "repository": "https://gitee.com/openharmony/communication_ipc.git",
+        "commit": "84d681288793785e8f39f71c824f211edaed8f1e",
+        "tree": "80fb756221eac67a9f6a9a9506eb763e380d9c55",
+        "commit_relation": "direct parent of official security fix commit",
+        "file": "interfaces/innerkits/cj/src/message_sequence_impl.cpp",
+        "raw_sha256": "1f4d039b974a0021000126e61efea7eb0b8eb5f4baf756373c1b12150d0d5eec",
+        "raw_bytes": 42959,
+        "source_evidence": "CJ_ReadRemoteObjectArray checks input length, but allocates int32_t* type and int64_t* id with malloc(arrayLength), then writes one 4-byte and one 8-byte element per element. This under-allocates both buffers; it also dereferences ReadRemoteObject() without a null check."
+      },
+      "fixed_source": {
+        "repository": "https://gitee.com/openharmony/communication_ipc.git",
+        "commit": "de3a68cc8b7d6f18017fd261060def0e38dce54a",
+        "tree": "611835efd3112027f067b587146a2c2bbd38b47e",
+        "commit_message": "fix security issue of cj",
+        "file": "interfaces/innerkits/cj/src/message_sequence_impl.cpp",
+        "raw_sha256": "30ad2a9fa4f45792b83e75cef6c5106818b290ae523d9e17e48c88853854d777",
+        "raw_bytes": 43320,
+        "source_evidence": "Allocates sizeof(int32_t)*arrayLength and sizeof(int64_t)*arrayLength; checks null object results before dereference."
+      },
+      "family_mapping": {
+        "current_family": "B / ohscanner.interface.ipc 0.12.12",
+        "mapped_rule": null,
+        "mapping_assessment": "The disclosed root cause is remote-object-array deserialization allocation-size validation / heap write bounds, with a null-object dereference adjacent in the same fix. The current IPC detector's observed explicit rule IDs include IPC authorization, observer growth and TLV fixed-width parser rules; none directly models this CJ FFI array allocation. Thus this is a valid positive for broad IPC-input / memory-bounds evaluation only if that evaluation explicitly includes general C/C++ memory-safety checks or adds a predeclared rule mapping. Do not count as a TP for existing narrow IPC rule IDs without one.",
+        "possible_rule_families": ["input length validation", "allocation size / heap bounds", "null dereference"],
+        "impact_boundary": "Official bulletin supports local information disclosure in restricted scenarios. Product-independent source analysis alone does not establish arbitrary exploitability or a specific disclosure primitive."
+      },
+      "holdout_readiness": "candidate_for_locked_holdout_after_detector_identity_and_scope_are_frozen; not yet a scored holdout case",
+      "missing_evidence": [
+        "Freeze and record exact current B/IPC detector, model, parser, and rule-catalog hashes before revealing this candidate to its prediction run.",
+        "Bind the scan scope and language/parser eligibility for the Cangjie FFI implementation; if current B IPC rules do not cover it, record not_applicable or evaluate under an explicitly declared memory-safety family.",
+        "Verify commit/tree and raw file hashes independently against official Gitee objects at holdout ingestion; this work used a public Gitee clone and independently computed raw Git blob SHA-256, but did not establish product image identity.",
+        "A scored case requires a blind/locked prediction record; no prediction was run here."
+      ]
+    }
+  ],
+  "IC0KMG_IC0GMS_subchange_adjudication": [
+    {
+      "subchange": "CJ_GetReadPosition: GetReadableBytes -> GetReadPosition",
+      "assessment": "API semantic correction evidenced; no separate security consequence or vulnerability label established by the issue."
+    },
+    {
+      "subchange": "CJ_ReadRemoteObjectArray adds CheckReadLength(arrayLength, BYTE_SIZE_32)",
+      "assessment": "Input validation change alone did not close the allocation bug: the implementation still malloc(arrayLength) for int32_t and int64_t element arrays and then indexes both. The later de3a68cc fix supplies correctly scaled allocations. Do not label the Apr issue's patch as a complete fixed version for this root cause."
+    },
+    {
+      "subchange": "ReadFloat/WriteFloat and float arrays use float APIs/types",
+      "assessment": "Serialization type/API correction; no separate security impact or real-positive label established by the issue/advisory."
+    },
+    {
+      "subchange": "IPCSkeleton calling UID/PID fetched from live caller context",
+      "assessment": "Corrects identity semantics and may be security relevant, but IC0 issue evidence does not identify a specific authorization failure or consequence. Keep unknown as a standalone label."
+    },
+    {
+      "subchange": "IC0GMS duplicate report",
+      "assessment": "Same set of changes and text as IC0KMG; one umbrella issue trail, not a separate sample."
+    }
+  ],
+  "rejected_or_unresolved": [
+    {
+      "case": "IC0KMG as a standalone real-positive vulnerability label",
+      "decision": "reject_as_label_source",
+      "reason": "An issue titled security fix and a code-review description are evidence of a security-oriented change, not enough to adjudicate exploitability, impact, affected product exposure, or which subchange is the vulnerability. It has no linked PR and no specific vulnerability claim."
+    },
+    {
+      "case": "IC0GMS as another positive",
+      "decision": "reject_duplicate",
+      "reason": "Description duplicates IC0KMG; counting both inflates independent positives."
+    }
+  ],
+  "holdout_decision": {
+    "real_positive_candidates": 1,
+    "independent_positive_labels_supported": 1,
+    "frozen": false,
+    "scoring_status": "not_run",
+    "precision_recall": "not_reported",
+    "reason": "CVE-2025-26474 is a pinned, official source-positive candidate with vulnerable/fixed commit pair and raw hashes, but a frozen detector identity/scope plus a locked prediction record are not present in this adjudication. The candidate can support a future independent holdout once those controls are bound."
+  },
+  "sources_reviewed": [
+    "https://lists.openatom.io/hyperkitty/list/security@openharmony.io/thread/TQNJ4QHLM23SAULGUN26MM2XBBK5L2MW/",
+    "https://gitee.com/openharmony/communication_ipc/issues/IC0KMG",
+    "https://gitee.com/openharmony/communication_ipc/issues/IC0GMS",
+    "https://gitee.com/openharmony/communication_ipc/commit/de3a68cc8b7d6f18017fd261060def0e38dce54a",
+    "https://gitee.com/openharmony/communication_ipc.git"
+  ]
+}

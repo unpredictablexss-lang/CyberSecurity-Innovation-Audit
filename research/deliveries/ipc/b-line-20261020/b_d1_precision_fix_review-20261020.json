@@ -1,0 +1,33 @@
+{
+  "review_id": "B-D1-precision-fix-independent-review-20261020",
+  "reviewer": "b_d1_independent_review",
+  "base_commit": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+  "scope": "Read-only review of the D1 alias invalidation precision fix in analysis.py and regressions in test_ipc_data_flow_rules.py, especially whether deferral creates false-safe results.",
+  "verdict": "The unused-local-alias false-positive fix works, but a high-confidence false-safe remains: memcpy-family destination writes through a tracked request pointer alias are exempted from mutation invalidation.",
+  "findings": [
+    {
+      "id": "D1-FIX-R1",
+      "severity": "P1",
+      "category": "false_safe_after_alias_mutation",
+      "file": "src/ohscanner/detectors/interface/analysis.py",
+      "line": 2543,
+      "summary": "The memcpy-family value API exemption skips writes through request-derived pointer aliases.",
+      "detail": "value_apis includes policy.copy_calls, then may_mutate is false for an unresolved memcpy/memmove/memcpy_s/memmove_s even when argument 0 is a tracked writable pointer alias. Repro: `int n=data.ReadInt32(); if(n<=0)return -1; char *dst=new char[n]; int *p=&n; int replacement=100; memcpy(p,&replacement,sizeof(n)); const char *src=data.ReadBuffer(n); memcpy(dst,src,n);`. This writes replacement into n through p, so the final copy length no longer has the proven allocation capacity/nonnegative bound. Yet rules_for returns an empty set. Invalidate request aliases for the destination argument of copy-family calls (and separately model source/read-only positions as appropriate) rather than exempting the whole call by name.",
+      "reproduction_result": "rules_for returned set() for the unsafe sequence above.",
+      "confidence": "high"
+    }
+  ],
+  "regression_check": {
+    "fixed_positive_cases": [
+      "unused writable pointer alias no longer reports ipc.parcel.copy-range",
+      "unused writable reference alias no longer reports ipc.parcel.copy-range"
+    ],
+    "negative_cases": [
+      "unknown call with local reference alias still reports ipc.parcel.copy-range",
+      "unknown call with local pointer alias still reports ipc.parcel.copy-range"
+    ],
+    "command": "python -m pytest -q tests/test_ipc_data_flow_rules.py",
+    "result": "56 passed in 0.17s"
+  },
+  "files_modified_by_reviewer": false
+}

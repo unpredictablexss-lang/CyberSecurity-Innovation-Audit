@@ -1,0 +1,730 @@
+{
+  "title": "B/IPC fixed-source replay: baseline vs integrated detector",
+  "date": "2026-10-20",
+  "baseline_code_commit": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+  "source_provenance": {
+    "repository": "openharmony/communication_ipc",
+    "declared_default_remote": "gitcode",
+    "declared_default_revision": "master",
+    "locally_available_ref": "gitcode/master",
+    "source_commit": "5903fd5f7332a427cb3f6915b0202ee5c76c63b5",
+    "git_tree": "0f7129fc37dcc38a0abd6c0ebdd5cbd1ff30d4ac",
+    "verification": "commit/tree resolved from local OpenHarmony repo mirror object database; no checkout mutation during scan"
+  },
+  "comparison": {
+    "same_pinned_source_and_scope": true,
+    "diagnostics_observation_exactly_equal": true,
+    "baseline_count": 14,
+    "integrated_count": 14,
+    "added_observations": [],
+    "removed_observations": [],
+    "precision_recall_claimed": false
+  },
+  "interpretation": "No candidate movement was observed on this one pinned component snapshot. This does not measure detector accuracy, establish safety, or validate DATA-01; no DATA-01 candidate appeared in this scope. Coverage is partial and finding stable/occurrence identity is unknown, so equality is exact observation equality on this run only, not proof of robust cross-version identity.",
+  "limitations": [
+    "Detector coverage partial: 660 applicable files; 442 analyzed, 218 partially inspected; 37 source parsing entries not_run; 3 non-UTF8 JS files skipped.",
+    "JavaScript/TypeScript grammar dependencies unavailable; macro expansion false; product manifest not locked.",
+    "Finding identity records have null stable and occurrence IDs: stable identity lacks ast_fingerprint, rule_lineage_id, symbol_identity; occurrence identity lacks rule_version. Outer source_binding says bound, but embedded identity record remains unknown/unbound.",
+    "Holdout manifest is not_established and not frozen; each family has zero independent positives. No precision/recall or product-vulnerability claim."
+  ],
+  "reports": {
+    "baseline": {
+      "report_file": "communication-ipc-baseline.json",
+      "report_sha256": "2d86b49c08785b09881acbc0296a080dbbdf6a267ea7dacde3de7539045a6eb5",
+      "status": "completed_with_limitations",
+      "repository": "openharmony/communication_ipc",
+      "commit": "5903fd5f7332a427cb3f6915b0202ee5c76c63b5",
+      "git_tree": "0f7129fc37dcc38a0abd6c0ebdd5cbd1ff30d4ac",
+      "snapshot_sha256": "4a77a83643aecdef6214af80b1472ff8ebf1050eb4f48fa0b0935c4791babb9d",
+      "scope": {
+        "tracked_entries": 1389,
+        "out_of_scope": 0,
+        "non_source": 689,
+        "symlinks": 0,
+        "submodules": 0,
+        "oversize": 0,
+        "binary_or_non_utf8": 3,
+        "selected_source_files": 697,
+        "selected_source_bytes": 8047194,
+        "skipped": [
+          {
+            "file": "test/unittest/js/ipcTestA.js",
+            "reason": "non_utf8"
+          },
+          {
+            "file": "test/unittest/js/ipcTestB.js",
+            "reason": "non_utf8"
+          },
+          {
+            "file": "test/unittest/js/ipcTestC.js",
+            "reason": "non_utf8"
+          }
+        ],
+        "git_tree": "0f7129fc37dcc38a0abd6c0ebdd5cbd1ff30d4ac",
+        "declared_scope": [
+          "."
+        ],
+        "source_archives": []
+      },
+      "source_parsing": {
+        "parsing_status": {
+          "complete": 442,
+          "not_run": 37,
+          "partial": 218
+        },
+        "languages": {
+          "arkts": 2,
+          "c": 46,
+          "cpp": 614,
+          "js": 27,
+          "ts": 8
+        }
+      },
+      "detector": "ohscanner.interface.ipc",
+      "detector_version": "0.12.12",
+      "diagnostic_count": 14,
+      "rule_counts": {
+        "ipc.auth.missing": 2,
+        "ipc.relay.descriptor-boundary": 12
+      },
+      "coverage": {
+        "status": "partial",
+        "applicable_files": 660,
+        "analyzed_files": 442,
+        "partially_inspected_files": 218,
+        "not_analyzed_files": 0
+      },
+      "observations": [
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:ca88225a02a0fe72",
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "file": "dbinder/dbinder_service/src/dbinder_service_stub.cpp",
+          "line": 168,
+          "symbol": "DBinderServiceStub::OnRemoteRequest",
+          "source_sha256": "6583b7b212eb8230ae234c54666bb1c9bdcffed898a3799d096d573a0422b9f2",
+          "stable_identity_status": "unknown",
+          "stable_identity_reasons": [
+            "identity_quality:unknown",
+            "missing:ast_fingerprint",
+            "missing:rule_lineage_id",
+            "missing:symbol_identity"
+          ],
+          "occurrence_identity_status": "unknown",
+          "occurrence_identity_reasons": [
+            "missing:rule_version"
+          ],
+          "source_binding": "bound"
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:e5c3a944e38716fd",
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "file": "dbinder/dbinder_service/src/dbinder_service_stub.cpp",
+          "line": 172,
+          "symbol": "DBinderServiceStub::OnRemoteRequest",
+          "source_sha256": "6583b7b212eb8230ae234c54666bb1c9bdcffed898a3799d096d573a0422b9f2",
+          "stable_identity_status": "unknown",
+          "stable_identity_reasons": [
+            "identity_quality:unknown",
+            "missing:ast_fingerprint",
+            "missing:rule_lineage_id",
+            "missing:symbol_identity"
+          ],
+          "occurrence_identity_status": "unknown",
+          "occurrence_identity_reasons": [
+            "missing:rule_version"
+          ],
+          "source_binding": "bound"
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:2dc3665b93253dce",
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "file": "dbinder/dbinder_service/src/dbinder_service_stub.cpp",
+          "line": 190,
+          "symbol": "DBinderServiceStub::ProcessDeathRecipient",
+          "source_sha256": "6583b7b212eb8230ae234c54666bb1c9bdcffed898a3799d096d573a0422b9f2",
+          "stable_identity_status": "unknown",
+          "stable_identity_reasons": [
+            "identity_quality:unknown",
+            "missing:ast_fingerprint",
+            "missing:rule_lineage_id",
+            "missing:symbol_identity"
+          ],
+          "occurrence_identity_status": "unknown",
+          "occurrence_identity_reasons": [
+            "missing:rule_version"
+          ],
+          "source_binding": "bound"
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:2f37f269ff85f764",
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "file": "dbinder/dbinder_service/src/dbinder_service_stub.cpp",
+          "line": 194,
+          "symbol": "DBinderServiceStub::ProcessDeathRecipient",
+          "source_sha256": "6583b7b212eb8230ae234c54666bb1c9bdcffed898a3799d096d573a0422b9f2",
+          "stable_identity_status": "unknown",
+          "stable_identity_reasons": [
+            "identity_quality:unknown",
+            "missing:ast_fingerprint",
+            "missing:rule_lineage_id",
+            "missing:symbol_identity"
+          ],
+          "occurrence_identity_status": "unknown",
+          "occurrence_identity_reasons": [
+            "missing:rule_version"
+          ],
+          "source_binding": "bound"
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:1ae68a66948e0021",
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "file": "ipc/native/src/ani/rpc/src/rpc_ani_class.cpp",
+          "line": 153,
+          "symbol": "IPCAniStub::OnRemoteRequest",
+          "source_sha256": "ea3b46ff312b9526974c8020b26a4a030f95192ec2e914f6ec6bdd248765648a",
+          "stable_identity_status": "unknown",
+          "stable_identity_reasons": [
+            "identity_quality:unknown",
+            "missing:ast_fingerprint",
+            "missing:rule_lineage_id",
+            "missing:symbol_identity"
+          ],
+          "occurrence_identity_status": "unknown",
+          "occurrence_identity_reasons": [
+            "missing:rule_version"
+          ],
+          "source_binding": "bound"
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:769b6c1f4853e5f5",
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "file": "ipc/native/src/core/dbinder/source/dbinder_callback_stub.cpp",
+          "line": 118,
+          "symbol": "DBinderCallbackStub::ProcessProto",
+          "source_sha256": "167272c97c4796ec90f63db7089c3308c19f1dae8f07785339a38c645f82ca16",
+          "stable_identity_status": "unknown",
+          "stable_identity_reasons": [
+            "identity_quality:unknown",
+            "missing:ast_fingerprint",
+            "missing:rule_lineage_id",
+            "missing:symbol_identity"
+          ],
+          "occurrence_identity_status": "unknown",
+          "occurrence_identity_reasons": [
+            "missing:rule_version"
+          ],
+          "source_binding": "bound"
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:be13fd9ad5bb5f78",
+          "rule_id": "ipc.auth.missing",
+          "file": "ipc/native/src/core/dbinder/source/dbinder_callback_stub.cpp",
+          "line": 139,
+          "symbol": "DBinderCallbackStub::ProcessData",
+          "source_sha256": "167272c97c4796ec90f63db7089c3308c19f1dae8f07785339a38c645f82ca16",
+          "stable_identity_status": "unknown",
+          "stable_identity_reasons": [
+            "identity_quality:unknown",
+            "missing:ast_fingerprint",
+            "missing:rule_lineage_id",
+            "missing:symbol_identity"
+          ],
+          "occurrence_identity_status": "unknown",
+          "occurrence_identity_reasons": [
+            "missing:rule_version"
+          ],
+          "source_binding": "bound"
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:1c15c945a529931b",
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "file": "ipc/native/src/core/dbinder/source/dbinder_callback_stub.cpp",
+          "line": 139,
+          "symbol": "DBinderCallbackStub::ProcessData",
+          "source_sha256": "167272c97c4796ec90f63db7089c3308c19f1dae8f07785339a38c645f82ca16",
+          "stable_identity_status": "unknown",
+          "stable_identity_reasons": [
+            "identity_quality:unknown",
+            "missing:ast_fingerprint",
+            "missing:rule_lineage_id",
+            "missing:symbol_identity"
+          ],
+          "occurrence_identity_status": "unknown",
+          "occurrence_identity_reasons": [
+            "missing:rule_version"
+          ],
+          "source_binding": "bound"
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:037a70552f593f64",
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "file": "ipc/native/src/core/dbinder/source/dbinder_callback_stub.cpp",
+          "line": 167,
+          "symbol": "DBinderCallbackStub::OnRemoteRequest",
+          "source_sha256": "167272c97c4796ec90f63db7089c3308c19f1dae8f07785339a38c645f82ca16",
+          "stable_identity_status": "unknown",
+          "stable_identity_reasons": [
+            "identity_quality:unknown",
+            "missing:ast_fingerprint",
+            "missing:rule_lineage_id",
+            "missing:symbol_identity"
+          ],
+          "occurrence_identity_status": "unknown",
+          "occurrence_identity_reasons": [
+            "missing:rule_version"
+          ],
+          "source_binding": "bound"
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:5501bf2ba361596d",
+          "rule_id": "ipc.auth.missing",
+          "file": "ipc/native/src/core/framework/source/ipc_object_stub.cpp",
+          "line": 165,
+          "symbol": "IPCObjectStub::OnRemoteDump",
+          "source_sha256": "554a27bf335d0048373c326f3f9bddea9ba134b73bf8dca622d6c80b644656bb",
+          "stable_identity_status": "unknown",
+          "stable_identity_reasons": [
+            "identity_quality:unknown",
+            "missing:ast_fingerprint",
+            "missing:rule_lineage_id",
+            "missing:symbol_identity"
+          ],
+          "occurrence_identity_status": "unknown",
+          "occurrence_identity_reasons": [
+            "missing:rule_version"
+          ],
+          "source_binding": "bound"
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:a184f5535a3ef73b",
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "file": "ipc/native/src/napi_common/source/napi_remote_object.cpp",
+          "line": 917,
+          "symbol": "NAPIRemoteObject::OnRemoteRequest",
+          "source_sha256": "58c3d97c393ec77a6f14e2f27255a2c6bc7fbfb6cce25d08dc0c3478a2fd1812",
+          "stable_identity_status": "unknown",
+          "stable_identity_reasons": [
+            "identity_quality:unknown",
+            "missing:ast_fingerprint",
+            "missing:rule_lineage_id",
+            "missing:symbol_identity"
+          ],
+          "occurrence_identity_status": "unknown",
+          "occurrence_identity_reasons": [
+            "missing:rule_version"
+          ],
+          "source_binding": "bound"
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:33c80dc529b992ed",
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "file": "ipc/native/src/taihe/src/ohos.rpc.rpc.impl.cpp",
+          "line": 193,
+          "symbol": "ANIRemoteObject::GetCallingInfo",
+          "source_sha256": "2527026b8a744f9bb1ae4d9af98e991386ec07887af4310f2309c57a1674ba08",
+          "stable_identity_status": "unknown",
+          "stable_identity_reasons": [
+            "identity_quality:unknown",
+            "missing:ast_fingerprint",
+            "missing:rule_lineage_id",
+            "missing:symbol_identity"
+          ],
+          "occurrence_identity_status": "unknown",
+          "occurrence_identity_reasons": [
+            "missing:rule_version"
+          ],
+          "source_binding": "bound"
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:2aea18570c3e3821",
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "file": "ipc/native/src/taihe/src/ohos.rpc.rpc.impl.cpp",
+          "line": 210,
+          "symbol": "ANIRemoteObject::callOnRemoteMessageRequest",
+          "source_sha256": "2527026b8a744f9bb1ae4d9af98e991386ec07887af4310f2309c57a1674ba08",
+          "stable_identity_status": "unknown",
+          "stable_identity_reasons": [
+            "identity_quality:unknown",
+            "missing:ast_fingerprint",
+            "missing:rule_lineage_id",
+            "missing:symbol_identity"
+          ],
+          "occurrence_identity_status": "unknown",
+          "occurrence_identity_reasons": [
+            "missing:rule_version"
+          ],
+          "source_binding": "bound"
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:1831439990fdf6c8",
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "file": "ipc/native/src/taihe/src/ohos.rpc.rpc.impl.cpp",
+          "line": 231,
+          "symbol": "ANIRemoteObject::OnRemoteRequest",
+          "source_sha256": "2527026b8a744f9bb1ae4d9af98e991386ec07887af4310f2309c57a1674ba08",
+          "stable_identity_status": "unknown",
+          "stable_identity_reasons": [
+            "identity_quality:unknown",
+            "missing:ast_fingerprint",
+            "missing:rule_lineage_id",
+            "missing:symbol_identity"
+          ],
+          "occurrence_identity_status": "unknown",
+          "occurrence_identity_reasons": [
+            "missing:rule_version"
+          ],
+          "source_binding": "bound"
+        }
+      ]
+    },
+    "integrated": {
+      "report_file": "communication-ipc-integrated.json",
+      "report_sha256": "33bec41efd974e564fcb3e0afaebbc0ca789e83da86c038f903e71d66bc273ad",
+      "status": "completed_with_limitations",
+      "repository": "openharmony/communication_ipc",
+      "commit": "5903fd5f7332a427cb3f6915b0202ee5c76c63b5",
+      "git_tree": "0f7129fc37dcc38a0abd6c0ebdd5cbd1ff30d4ac",
+      "snapshot_sha256": "4a77a83643aecdef6214af80b1472ff8ebf1050eb4f48fa0b0935c4791babb9d",
+      "scope": {
+        "tracked_entries": 1389,
+        "out_of_scope": 0,
+        "non_source": 689,
+        "symlinks": 0,
+        "submodules": 0,
+        "oversize": 0,
+        "binary_or_non_utf8": 3,
+        "selected_source_files": 697,
+        "selected_source_bytes": 8047194,
+        "skipped": [
+          {
+            "file": "test/unittest/js/ipcTestA.js",
+            "reason": "non_utf8"
+          },
+          {
+            "file": "test/unittest/js/ipcTestB.js",
+            "reason": "non_utf8"
+          },
+          {
+            "file": "test/unittest/js/ipcTestC.js",
+            "reason": "non_utf8"
+          }
+        ],
+        "git_tree": "0f7129fc37dcc38a0abd6c0ebdd5cbd1ff30d4ac",
+        "declared_scope": [
+          "."
+        ],
+        "source_archives": []
+      },
+      "source_parsing": {
+        "parsing_status": {
+          "complete": 442,
+          "not_run": 37,
+          "partial": 218
+        },
+        "languages": {
+          "arkts": 2,
+          "c": 46,
+          "cpp": 614,
+          "js": 27,
+          "ts": 8
+        }
+      },
+      "detector": "ohscanner.interface.ipc",
+      "detector_version": "0.12.12",
+      "diagnostic_count": 14,
+      "rule_counts": {
+        "ipc.auth.missing": 2,
+        "ipc.relay.descriptor-boundary": 12
+      },
+      "coverage": {
+        "status": "partial",
+        "applicable_files": 660,
+        "analyzed_files": 442,
+        "partially_inspected_files": 218,
+        "not_analyzed_files": 0
+      },
+      "observations": [
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:ca88225a02a0fe72",
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "file": "dbinder/dbinder_service/src/dbinder_service_stub.cpp",
+          "line": 168,
+          "symbol": "DBinderServiceStub::OnRemoteRequest",
+          "source_sha256": "6583b7b212eb8230ae234c54666bb1c9bdcffed898a3799d096d573a0422b9f2",
+          "stable_identity_status": "unknown",
+          "stable_identity_reasons": [
+            "identity_quality:unknown",
+            "missing:ast_fingerprint",
+            "missing:rule_lineage_id",
+            "missing:symbol_identity"
+          ],
+          "occurrence_identity_status": "unknown",
+          "occurrence_identity_reasons": [
+            "missing:rule_version"
+          ],
+          "source_binding": "bound"
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:e5c3a944e38716fd",
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "file": "dbinder/dbinder_service/src/dbinder_service_stub.cpp",
+          "line": 172,
+          "symbol": "DBinderServiceStub::OnRemoteRequest",
+          "source_sha256": "6583b7b212eb8230ae234c54666bb1c9bdcffed898a3799d096d573a0422b9f2",
+          "stable_identity_status": "unknown",
+          "stable_identity_reasons": [
+            "identity_quality:unknown",
+            "missing:ast_fingerprint",
+            "missing:rule_lineage_id",
+            "missing:symbol_identity"
+          ],
+          "occurrence_identity_status": "unknown",
+          "occurrence_identity_reasons": [
+            "missing:rule_version"
+          ],
+          "source_binding": "bound"
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:2dc3665b93253dce",
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "file": "dbinder/dbinder_service/src/dbinder_service_stub.cpp",
+          "line": 190,
+          "symbol": "DBinderServiceStub::ProcessDeathRecipient",
+          "source_sha256": "6583b7b212eb8230ae234c54666bb1c9bdcffed898a3799d096d573a0422b9f2",
+          "stable_identity_status": "unknown",
+          "stable_identity_reasons": [
+            "identity_quality:unknown",
+            "missing:ast_fingerprint",
+            "missing:rule_lineage_id",
+            "missing:symbol_identity"
+          ],
+          "occurrence_identity_status": "unknown",
+          "occurrence_identity_reasons": [
+            "missing:rule_version"
+          ],
+          "source_binding": "bound"
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:2f37f269ff85f764",
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "file": "dbinder/dbinder_service/src/dbinder_service_stub.cpp",
+          "line": 194,
+          "symbol": "DBinderServiceStub::ProcessDeathRecipient",
+          "source_sha256": "6583b7b212eb8230ae234c54666bb1c9bdcffed898a3799d096d573a0422b9f2",
+          "stable_identity_status": "unknown",
+          "stable_identity_reasons": [
+            "identity_quality:unknown",
+            "missing:ast_fingerprint",
+            "missing:rule_lineage_id",
+            "missing:symbol_identity"
+          ],
+          "occurrence_identity_status": "unknown",
+          "occurrence_identity_reasons": [
+            "missing:rule_version"
+          ],
+          "source_binding": "bound"
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:1ae68a66948e0021",
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "file": "ipc/native/src/ani/rpc/src/rpc_ani_class.cpp",
+          "line": 153,
+          "symbol": "IPCAniStub::OnRemoteRequest",
+          "source_sha256": "ea3b46ff312b9526974c8020b26a4a030f95192ec2e914f6ec6bdd248765648a",
+          "stable_identity_status": "unknown",
+          "stable_identity_reasons": [
+            "identity_quality:unknown",
+            "missing:ast_fingerprint",
+            "missing:rule_lineage_id",
+            "missing:symbol_identity"
+          ],
+          "occurrence_identity_status": "unknown",
+          "occurrence_identity_reasons": [
+            "missing:rule_version"
+          ],
+          "source_binding": "bound"
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:769b6c1f4853e5f5",
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "file": "ipc/native/src/core/dbinder/source/dbinder_callback_stub.cpp",
+          "line": 118,
+          "symbol": "DBinderCallbackStub::ProcessProto",
+          "source_sha256": "167272c97c4796ec90f63db7089c3308c19f1dae8f07785339a38c645f82ca16",
+          "stable_identity_status": "unknown",
+          "stable_identity_reasons": [
+            "identity_quality:unknown",
+            "missing:ast_fingerprint",
+            "missing:rule_lineage_id",
+            "missing:symbol_identity"
+          ],
+          "occurrence_identity_status": "unknown",
+          "occurrence_identity_reasons": [
+            "missing:rule_version"
+          ],
+          "source_binding": "bound"
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:be13fd9ad5bb5f78",
+          "rule_id": "ipc.auth.missing",
+          "file": "ipc/native/src/core/dbinder/source/dbinder_callback_stub.cpp",
+          "line": 139,
+          "symbol": "DBinderCallbackStub::ProcessData",
+          "source_sha256": "167272c97c4796ec90f63db7089c3308c19f1dae8f07785339a38c645f82ca16",
+          "stable_identity_status": "unknown",
+          "stable_identity_reasons": [
+            "identity_quality:unknown",
+            "missing:ast_fingerprint",
+            "missing:rule_lineage_id",
+            "missing:symbol_identity"
+          ],
+          "occurrence_identity_status": "unknown",
+          "occurrence_identity_reasons": [
+            "missing:rule_version"
+          ],
+          "source_binding": "bound"
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:1c15c945a529931b",
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "file": "ipc/native/src/core/dbinder/source/dbinder_callback_stub.cpp",
+          "line": 139,
+          "symbol": "DBinderCallbackStub::ProcessData",
+          "source_sha256": "167272c97c4796ec90f63db7089c3308c19f1dae8f07785339a38c645f82ca16",
+          "stable_identity_status": "unknown",
+          "stable_identity_reasons": [
+            "identity_quality:unknown",
+            "missing:ast_fingerprint",
+            "missing:rule_lineage_id",
+            "missing:symbol_identity"
+          ],
+          "occurrence_identity_status": "unknown",
+          "occurrence_identity_reasons": [
+            "missing:rule_version"
+          ],
+          "source_binding": "bound"
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:037a70552f593f64",
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "file": "ipc/native/src/core/dbinder/source/dbinder_callback_stub.cpp",
+          "line": 167,
+          "symbol": "DBinderCallbackStub::OnRemoteRequest",
+          "source_sha256": "167272c97c4796ec90f63db7089c3308c19f1dae8f07785339a38c645f82ca16",
+          "stable_identity_status": "unknown",
+          "stable_identity_reasons": [
+            "identity_quality:unknown",
+            "missing:ast_fingerprint",
+            "missing:rule_lineage_id",
+            "missing:symbol_identity"
+          ],
+          "occurrence_identity_status": "unknown",
+          "occurrence_identity_reasons": [
+            "missing:rule_version"
+          ],
+          "source_binding": "bound"
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:5501bf2ba361596d",
+          "rule_id": "ipc.auth.missing",
+          "file": "ipc/native/src/core/framework/source/ipc_object_stub.cpp",
+          "line": 165,
+          "symbol": "IPCObjectStub::OnRemoteDump",
+          "source_sha256": "554a27bf335d0048373c326f3f9bddea9ba134b73bf8dca622d6c80b644656bb",
+          "stable_identity_status": "unknown",
+          "stable_identity_reasons": [
+            "identity_quality:unknown",
+            "missing:ast_fingerprint",
+            "missing:rule_lineage_id",
+            "missing:symbol_identity"
+          ],
+          "occurrence_identity_status": "unknown",
+          "occurrence_identity_reasons": [
+            "missing:rule_version"
+          ],
+          "source_binding": "bound"
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:a184f5535a3ef73b",
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "file": "ipc/native/src/napi_common/source/napi_remote_object.cpp",
+          "line": 917,
+          "symbol": "NAPIRemoteObject::OnRemoteRequest",
+          "source_sha256": "58c3d97c393ec77a6f14e2f27255a2c6bc7fbfb6cce25d08dc0c3478a2fd1812",
+          "stable_identity_status": "unknown",
+          "stable_identity_reasons": [
+            "identity_quality:unknown",
+            "missing:ast_fingerprint",
+            "missing:rule_lineage_id",
+            "missing:symbol_identity"
+          ],
+          "occurrence_identity_status": "unknown",
+          "occurrence_identity_reasons": [
+            "missing:rule_version"
+          ],
+          "source_binding": "bound"
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:33c80dc529b992ed",
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "file": "ipc/native/src/taihe/src/ohos.rpc.rpc.impl.cpp",
+          "line": 193,
+          "symbol": "ANIRemoteObject::GetCallingInfo",
+          "source_sha256": "2527026b8a744f9bb1ae4d9af98e991386ec07887af4310f2309c57a1674ba08",
+          "stable_identity_status": "unknown",
+          "stable_identity_reasons": [
+            "identity_quality:unknown",
+            "missing:ast_fingerprint",
+            "missing:rule_lineage_id",
+            "missing:symbol_identity"
+          ],
+          "occurrence_identity_status": "unknown",
+          "occurrence_identity_reasons": [
+            "missing:rule_version"
+          ],
+          "source_binding": "bound"
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:2aea18570c3e3821",
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "file": "ipc/native/src/taihe/src/ohos.rpc.rpc.impl.cpp",
+          "line": 210,
+          "symbol": "ANIRemoteObject::callOnRemoteMessageRequest",
+          "source_sha256": "2527026b8a744f9bb1ae4d9af98e991386ec07887af4310f2309c57a1674ba08",
+          "stable_identity_status": "unknown",
+          "stable_identity_reasons": [
+            "identity_quality:unknown",
+            "missing:ast_fingerprint",
+            "missing:rule_lineage_id",
+            "missing:symbol_identity"
+          ],
+          "occurrence_identity_status": "unknown",
+          "occurrence_identity_reasons": [
+            "missing:rule_version"
+          ],
+          "source_binding": "bound"
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:1831439990fdf6c8",
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "file": "ipc/native/src/taihe/src/ohos.rpc.rpc.impl.cpp",
+          "line": 231,
+          "symbol": "ANIRemoteObject::OnRemoteRequest",
+          "source_sha256": "2527026b8a744f9bb1ae4d9af98e991386ec07887af4310f2309c57a1674ba08",
+          "stable_identity_status": "unknown",
+          "stable_identity_reasons": [
+            "identity_quality:unknown",
+            "missing:ast_fingerprint",
+            "missing:rule_lineage_id",
+            "missing:symbol_identity"
+          ],
+          "occurrence_identity_status": "unknown",
+          "occurrence_identity_reasons": [
+            "missing:rule_version"
+          ],
+          "source_binding": "bound"
+        }
+      ]
+    }
+  }
+}

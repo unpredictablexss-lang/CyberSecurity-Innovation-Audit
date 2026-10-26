@@ -1,0 +1,107 @@
+{
+  "schema": "ohscanner.ipc-second-layer-review-results.v1",
+  "source": {
+    "repository": "openharmony/communication_ipc",
+    "commit": "5903fd5f7332a427cb3f6915b0202ee5c76c63b5",
+    "git_tree": "0f7129fc37dcc38a0abd6c0ebdd5cbd1ff30d4ac",
+    "snapshot_sha256": "4a77a83643aecdef6214af80b1472ff8ebf1050eb4f48fa0b0935c4791babb9d",
+    "baseline_code_commit": "db77164fdc2af0da02e4d3efc056d84694fd68e8"
+  },
+  "policy": "Independent L2 triage only. Model assessments do not mutate scanner candidate status, do not establish safety or confirmed vulnerability, and do not support precision/recall.",
+  "reviews": [
+    {
+      "candidate_id": "ohscanner.interface.ipc:be13fd9ad5bb5f78",
+      "rule_id": "ipc.auth.missing",
+      "source_binding_verified": true,
+      "assessment": "insufficient",
+      "narrow_claim": "Potential missing authorization on DBINDER_ADD_COMMAUTH auth-information exchange; unresolved.",
+      "evidence_facts": [
+        {
+          "source": "ipc/native/src/core/dbinder/source/dbinder_callback_stub.cpp:160-178",
+          "fact": "GET_PROTO_INFO dispatches to ProcessProto."
+        },
+        {
+          "source": "ipc/native/src/core/dbinder/source/dbinder_callback_stub.cpp:94-119",
+          "fact": "ProcessProto rejects negative UID/PID, resolves session name, then calls ProcessData."
+        },
+        {
+          "source": "ipc/native/src/core/dbinder/source/dbinder_callback_stub.cpp:127-139",
+          "fact": "ProcessData serializes pid/uid/device/stub/token identity fields and sends DBINDER_ADD_COMMAUTH."
+        },
+        {
+          "source": "ipc/native/src/core/framework/source/ipc_object_stub.cpp:459-460,299-320",
+          "fact": "Receiver dispatcher routes DBINDER_ADD_COMMAUTH to a handler that rejects local IPC and caller UID >= ALLOWED_UID before AddAuthInfo."
+        },
+        {
+          "source": "ipc/native/src/core/framework/source/ipc_object_stub.cpp:673-707",
+          "fact": "AddAuthInfo reads remote identity fields from the parcel and may attach AppAuthInfo to process state."
+        }
+      ],
+      "counterevidence": "A receiver-side transport caller UID gate exists; this is not simply an unguarded local SendRequest.",
+      "unknowns": [
+        "Provenance and trust semantics of DBinderDatabusInvoker::GetCallerUid().",
+        "Whether gated transport identity is bound to parcel-supplied remoteUid/PID/token/device ID.",
+        "Whether AddAuthInfo attachment grants a capability or is safe for admitted principals.",
+        "Product configuration/reachability, attacker privilege, trigger and concrete impact."
+      ],
+      "confidence": "Moderate on source path and receiver gate; insufficient on security outcome.",
+      "next_evidence": [
+        "Trace GetCallerUid population and its binding to AddAuthInfo tuple.",
+        "Verify product build/configuration and actual GET_PROTO_INFO reachability.",
+        "Establish effect of forged or accepted auth records."
+      ],
+      "status_effect": "No scanner status change; remains a static candidate for more evidence."
+    },
+    {
+      "candidate_id": "ohscanner.interface.ipc:5501bf2ba361596d",
+      "rule_id": "ipc.auth.missing",
+      "source_binding_verified": true,
+      "assessment": "refuted",
+      "narrow_claim": "The specific claim that DBinderDumpTransaction has no caller authorization is contradicted by an explicit local-caller and UID allowlist guard in this pinned source. This does not prove the policy is adequate or the product safe.",
+      "evidence_facts": [
+        {
+          "source": "ipc/native/src/core/framework/source/ipc_object_stub.cpp:448-450",
+          "fact": "DUMP_TRANSACTION dispatches to DBinderDumpTransaction."
+        },
+        {
+          "source": "ipc/native/src/core/framework/source/ipc_object_stub.cpp:211-216",
+          "fact": "Only local callers with UID 0, SHELL_UID or HIDUMPER_SERVICE_UID reach OnRemoteDump; other paths return."
+        },
+        {
+          "source": "ipc/native/src/core/framework/source/ipc_object_stub.cpp:61-62",
+          "fact": "SHELL_UID is 2000 and HIDUMPER_SERVICE_UID is 1212."
+        },
+        {
+          "source": "ipc/native/src/core/framework/source/ipc_object_stub.cpp:158-172",
+          "fact": "OnRemoteDump reads an FD and args, invokes Dump, and closes the FD."
+        },
+        {
+          "source": "ipc/native/src/core/framework/source/ipc_object_stub.cpp:125-130",
+          "fact": "Base IPCObjectStub::Dump logs metadata and returns ERR_NONE; subclasses may override."
+        },
+        {
+          "source": "ipc/native/src/core/framework/source/ipc_skeleton.cpp:137-146,258-264; ipc/native/src/core/invoker/source/binder_invoker.cpp:1714-1717; ipc/native/src/core/dbinder/source/dbinder_databus_invoker.cpp:802-805",
+          "fact": "Supporting local/remote semantics: GetCallingUid is unavailable for non-local calls; Binder invoker is local and DBinder invoker is not."
+        },
+        {
+          "source": "ipc/native/src/core/framework/source/ipc_object_proxy.cpp:139-145",
+          "fact": "Proxy Dump serializes caller FD and args and sends DUMP_TRANSACTION."
+        }
+      ],
+      "counterevidence": "The guard blocks DBinder callers and admits only local UID 0/2000/1212.",
+      "unknowns": [
+        "Whether those principals are appropriately trusted under the product threat model and SELinux policy.",
+        "Specific product service registration, concrete Dump override, and sensitive output.",
+        "Whether an untrusted app can influence or induce an allowlisted principal to make this call.",
+        "Deployment-specific transport/build and real product reachability."
+      ],
+      "confidence": "High on the explicit source guard and narrow claim refutation; low on product policy/impact.",
+      "next_evidence": [
+        "Pin target product configuration and deployed transports.",
+        "Bind a specific service registration and Dump override.",
+        "Verify actual UID principals, permissions and allowed dump-data policy."
+      ],
+      "status_effect": "No scanner status change; model triage cannot upgrade/downgrade finding lifecycle."
+    }
+  ]
+}

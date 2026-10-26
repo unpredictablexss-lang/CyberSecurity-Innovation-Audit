@@ -1,0 +1,188 @@
+{
+  "schema_version": "1.0",
+  "task_id": "D67",
+  "title": "Independent second-layer challenge of D9 and D54-R1 against exact IPC/DSoftBus source pair evidence",
+  "reviewed_at_local": "2026-10-20 Asia/Shanghai",
+  "reviewer_role": "independent second-layer reviewer; did not inherit prior L2 conclusion as premise",
+  "scope": {
+    "read_only": true,
+    "code_or_product_source_changed": false,
+    "tests_run": false,
+    "poc_or_device_network_experiment_run": false,
+    "candidate_ids_created": 0,
+    "candidate_cap": "retain no more than existing D9 and D54-R1; no new IDs"
+  },
+  "baseline_and_evidence": {
+    "scanner_baseline": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "origin_main_freshness": "not refreshed by D67; D66 records failed fetch and cached origin/main at db77164fdc2af0da02e4d3efc056d84694fd68e8. This review is source-pair bounded and does not claim latest remote freshness.",
+    "manifest": {
+      "path": "D:/openHarmonyScanner/openharmony-manifest-current-20261018.xml",
+      "sha256": "52f528dada321a140a29be2d55ef9053fda818cbdca93758425f1a6286d55",
+      "ipc": "5903fd5f7332a427cb3f6915b0202ee5c76c63b5",
+      "dsoftbus": "7743b679f6c3599e21bea4e4b1564422668e3643",
+      "meaning": "immutable component source lock; not a product build provenance record"
+    },
+    "ipc_candidate_source_anchor": {
+      "commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+      "tree": "125ecbfa21f430f2f977f0026ab97b70cd27a726",
+      "evidence": "D9 source-pin verification and T65 cross-pin comparison show all four relevant IPC files byte-identical between bbb92 and manifest IPC 5903; this is relevant-file identity, not full-tree identity."
+    },
+    "dsoftbus_exact_source": {
+      "commit": "7743b679f6c3599e21bea4e4b1564422668e3643",
+      "tree": "d386e20f8074e037f330a5df11e99fc66ed155d0",
+      "evidence": "D64 recovered exact commit/tree from manifest-synchronized .repo object store; nine reviewed local files byte-match target blobs. D64/D65 establish source lock, not binary/product pairing."
+    },
+    "inputs_read": [
+      "d64_dsoftbus_pin_recovery-20261020.json",
+      "t65_product_build_gate_audit-20261020.json",
+      "d66_softbus_boundary_review-20261020.json",
+      "d9-source-pin-verification-20261020.json",
+      "research/data_sensitive/D9_VALIDATION.json and D9_IMPLEMENTATION.md",
+      "plan entries D9, D53/T54, D54/T55, D55/T56 and T26"
+    ],
+    "product_build_gate": "T65 NO_GO: product IPC source tree / matching test binary absent; surviving compile DB records cwd /src/out/rk3568 while /src is empty; source/build outputs cannot be bound to the manifest pair.",
+    "d67_independent_raw_source_rehash": {
+      "ipc_sha256_files_checked": [
+        {
+          "path": "dbinder/dbinder_service/src/dbinder_service.cpp",
+          "sha256": "ac762ad0345451a605fffcd430d933161eb20aedd7b83479753b9be8384fa1cf",
+          "match": true
+        },
+        {
+          "path": "dbinder/dbinder_service/src/socket/dbinder_remote_listener.cpp",
+          "sha256": "787a37914ec1e1d760144803ed25a2aaddb60139651a691326bb1bd038f1df62",
+          "match": true
+        },
+        {
+          "path": "dbinder/dbinder_service/src/dbinder_service_stub.cpp",
+          "sha256": "6583b7b212eb8230ae234c54666bb1c9bdcffed898a3799d096d573a0422b9f2",
+          "match": true
+        },
+        {
+          "path": "dbinder/c/include/dbinder_types.h",
+          "sha256": "0ed05e8e4c1b92560ceb1de17fcc790d8cff8173ff4159a0c116caea16984341",
+          "match": true
+        }
+      ],
+      "dsoftbus_git_blob_ids_checked_using_git_blob_object_hash": [
+        {
+          "path": "core/transmission/trans_channel/common/src/trans_inner.c",
+          "blob": "0e95d604f16cb5b3ce048415d800e723d61066c4",
+          "match": true
+        },
+        {
+          "path": "core/transmission/common/src/trans_proxy_process_data.c",
+          "blob": "93e8d72bf89a308c92bd72b050dbc8d918b19ba2",
+          "match": true
+        },
+        {
+          "path": "core/transmission/trans_channel/proxy/src/softbus_proxychannel_listener.c",
+          "blob": "66775e05d59ccbccb908e41f3981800ff7c0ad57",
+          "match": true
+        },
+        {
+          "path": "core/transmission/trans_channel/auth/src/trans_auth_message.c",
+          "blob": "c2c4ae6b51d038e9a20927aaa4965381b6c02347",
+          "match": true
+        },
+        {
+          "path": "core/transmission/session/src/trans_session_manager.c",
+          "blob": "689980add1a74a28d0f08b909e1bfe4ea83cba98",
+          "match": true
+        }
+      ],
+      "note": "The DSoftBus values are Git blob IDs (SHA-1 over blob header + content), not raw-file SHA-1; all five local raw files independently reproduce the pinned target blob IDs."
+    },
+    "identifier_scope_note": "The repository also contains research/data_sensitive/D9_IMPLEMENTATION.md and D9_VALIDATION.json for an unrelated HiLog sink-model task. D67 uses D9 only as the IPC DeviceIdInfo candidate in the IPC task tree/D66; the HiLog D9 artifacts were read only to detect the ID collision and are not evidence for this IPC review."
+  },
+  "challenge_results": {
+    "D9": {
+      "mechanism_reproduced_from_pinned_source": "Fixed-size DHandleEntryTxRx ingress is copied as a struct; MakeSessionByReplyMessage validates registered stub and serviceName length/NUL consistency, then copies DeviceIdInfo without validating NUL termination of fromDeviceId/toDeviceId. A later GET_PROTO_INFO ProcessProto passes these arrays to MessageParcel::WriteString.",
+      "source_refs": [
+        "IPC dbinder_remote_listener.cpp:99-122 (fixed-size ingress and struct copy; socket argument is logged, not carried into message)",
+        "IPC dbinder_service.cpp:1113-1122 (raw DeviceIdInfo copy), 1136-1196 (stub/name gates and session attach)",
+        "IPC dbinder_service_stub.cpp:107-149 (GET_PROTO_INFO strings written from session fields)",
+        "IPC dbinder/c/include/dbinder_types.h (DeviceIdInfo arrays are DEVICEID_LENGTH+1; DHandleEntryTxRx contains following stub/service fields; SessionInfo embeds DeviceIdInfo before stub)"
+      ],
+      "AEAD_and_attacker_boundary": {
+        "off_path_tampering": "For the reviewed ordinary non-AUTH proxy data-channel path, D66 pins source evidence that packets are AES-GCM authenticated/decrypted before session listener delivery. This refutes treating arbitrary off-path packet modification as demonstrated on that route.",
+        "valid_key_endpoint": "AEAD provides integrity against parties without the session key; it does not stop an authenticated endpoint possessing the key from creating its own valid application payload. That endpoint capability is conditional on actually opening/reaching the relevant DBinder session and the target threat model permitting that peer.",
+        "route_binding": "The exact DBinder deployment route/channel configuration is not proven to be this proxy path; do not generalize the proxy guarantee to unreviewed channel types."
+      },
+      "peer_identity_and_replay": {
+        "peer_name": "D64/D66 trace SRC_BUS_NAME/peerSessionName through auth/session metadata and to PeerSocketInfo.name. Reviewed CheckUidAndPid is a local caller versus local registered-session check; no reviewed branch compares remote name UID/PID to authenticated remote OS credentials. Conversely, this absence does not prove an unauthenticated actor can choose the name: the whole session-open path/permissions remain unbound.",
+        "replay_freshness": "D66 traces proxy decrypt using PacketHead.seq but finds no duplicate/freshness check in the reviewed receive-to-listener chain. No source evidence here proves replay acceptance or rejection for the exact DBinder route; a valid endpoint may also create new valid frames, distinct from replay."
+      },
+      "out_of_bounds_and_recipient_challenge": {
+        "array_boundary": "The defect is definitely a missing terminator validation at a fixed char-array boundary (subobject overread risk). DeviceIdInfo is embedded in both DHandleEntryTxRx and SessionInfo, with following members/padding in the enclosing struct; a read beyond one array is not automatically a read beyond the heap allocation. Whether a nonzero following byte string runs past sizeof(SessionInfo), trips ASan, faults, or exposes bytes is unproven.",
+        "data_recipient": "ProcessProto serializes the values into a MessageParcel reply to the GET_PROTO_INFO caller. The reviewed evidence does not establish which security principal is that caller in the attack path, whether an attacker-controlled peer can receive/read the resulting bytes, or whether any returned bytes are confidential. No reliable confidentiality claim follows.",
+        "availability": "No reproducible crash or denial effect is established. Layout-only probe is not product evidence."
+      },
+      "strongest_counterevidence": [
+        "Normal request-side string writers use length-aware parcel WriteString and produce terminated fields; this explains compliant traffic but is not receive-side validation.",
+        "Reply session requires a registered stub and valid terminated serviceName; malformed stub/serviceName rejects session creation.",
+        "The four relevant IPC files match manifest IPC 5903, but no build proof establishes these bytes are in the tested/deployed artifact.",
+        "Authenticated proxy endpoint control is not equivalent to arbitrary network/app reachability."
+      ],
+      "verdict": "INSUFFICIENT; retain as a source-bound mechanism/research hypothesis only, not a reportable security candidate. No specific CIA effect or attacker-to-receiver data path is established.",
+      "candidate_status": "insufficient / parked; no confirmed candidate. Compared with prior evidence, source provenance improved and off-path tamper theory narrowed, but no impact/reachability/build gate changed favorably."
+    },
+    "D54_R1": {
+      "mechanism_reproduced_from_pinned_source": "OnRemoteReplyMessage calls MakeSessionByReplyMessage then wakes/detaches by reply.seqNumber. OnRemoteErrorMessage wakes/detaches by reply.seqNumber directly. ThreadLockInfo stores networkId, but lookup/wakeup does not compare it; success session mutation is keyed by reply stub and guarded by registered-stub, serviceName, nonzero stubIndex and attach checks.",
+      "source_refs": [
+        "IPC dbinder_service.cpp:1050-1068 (error/reply dispatch and seq-only wake/detach)",
+        "IPC dbinder_service.cpp:1136-1196 (reply session gates/mutation)",
+        "IPC dbinder_service.cpp:1198-1230 (seq-only thread waiter lookup; networkId stored at attach)",
+        "IPC dbinder_remote_listener.cpp:99-122 (listener callback does not pass socket identity into parsed message)"
+      ],
+      "AEAD_and_endpoint_capability": {
+        "off_path_tampering": "For the reviewed ordinary proxy path, AES-GCM makes unauthenticated off-path modification unsupported by current source evidence.",
+        "valid_key_endpoint": "An endpoint holding the session key can construct a valid chosen-sequence payload; authenticated encryption does not constrain application-level sequence fields to the receiver鈥檚 pending request. However D67 finds no evidence that an endpoint on one DBinder session can reach the same listener/context as another peer or target a different peer鈥檚 live waiter."
+      },
+      "peer_identity_and_replay": {
+        "peer_session_name_os_binding": "D64/D66 do not establish remote UID/PID binding, but the local CheckUidAndPid semantics and remote-name propagation alone also do not prove a peer can open the privileged DBinder socket. Authentication/device identity is not interchangeable with process identity.",
+        "replay_freshness": "Reviewed proxy receive chain shows authenticated decryption keyed by packet seq but no freshness state at that layer. Exact DBinder route and replay acceptance remain unknown. Replaying a previous valid frame would also need a live matching seq and applicable session/context; these are not demonstrated."
+      },
+      "waiter_impact_and_targetability": {
+        "possible_effect": "A mismatched seq can set ready and detach another live waiter; a caller then may observe failed negotiation when querying its own stub鈥檚 missing session. This is a plausible bounded availability effect, not a confidentiality/integrity effect.",
+        "targetability": "Process-local uint32 seq allocation is monotonically incremented (wraps), which makes values potentially inferable from a peer鈥檚 own observed requests, but no evidence establishes that a peer can observe adjacent allocations, predict another peer鈥檚 active seq at the needed time, or send to the shared listener across session boundaries.",
+        "preconditions": "Requires a valid message accepted by listener, an active waiter with targeted seq, and either same-session malformed response or cross-peer/session reachability. Error sibling has fewer stub/session mutation gates, but still requires the valid SoftBus delivery and live sequence.",
+        "materiality": "Single-call negotiation failure may be retryable; no persistent denial, cross-principal action, or product-level availability effect is proven."
+      },
+      "strongest_counterevidence": [
+        "AES-GCM excludes unauthenticated off-path frame forging on the reviewed proxy path.",
+        "Success path validates stub and serviceName and requires nonzero stubIndex before attach; invalid success replies need not mutate session state.",
+        "Waiter map is process-local and seq-only; source defect is clear, but the attacker鈥檚 cross-session seq acquisition and listener delivery are unproven.",
+        "No product-matched integration binary/build or behavioral oracle exists (T65 NO_GO)."
+      ],
+      "verdict": "INSUFFICIENT; retain only the existing low-confidence D54-R1 conditional product-verification item, with D55/T56 error handling merged; do not promote or split it.",
+      "candidate_status": "conditional / insufficient; zero confirmed/reportable candidates. Prior source observation remains; D66 AES-GCM evidence narrows off-path attacker model but does not establish authenticated-peer cross-waiter reachability or security impact."
+    }
+  },
+  "overall_disposition": {
+    "confirmed_candidates": 0,
+    "reportable_candidates": 0,
+    "retained_existing_items": [
+      "D9 source-bound mechanism, parked as insufficient (not a reportable security candidate)",
+      "D54-R1 low-confidence conditional verification item; D55/T56 same root"
+    ],
+    "new_candidate_ids": 0,
+    "candidate_count_interpretation": "zero confirmed and zero reportable; D54-R1 is tracked only as a conditional verification hypothesis. D9 is retained in evidence history, not counted as a security candidate until a concrete effect and threat-model reachability are proven.",
+    "changes_from_prior_l2": [
+      "DSoftBus exact source provenance is now verified from the manifest object store; manifest pair is IPC 5903 + DSoftBus 7743, and D9/D54 candidate IPC file bytes match independent anchor bbb92.",
+      "Ordinary non-AUTH proxy path source evidence supports AES-GCM integrity before listener delivery, removing support for unauthenticated off-path frame tampering on that path.",
+      "No new evidence binds product binaries to this source pair, establishes route selection, anti-replay outcome, remote peer UID/PID principal binding, D9 allocation-boundary escape/data recipient/CIA effect, or D54 cross-peer active-seq targetability."
+    ],
+    "minimum_evidence_to_reopen": [
+      "Product build/image provenance tied to manifest IPC 5903 + DSoftBus 7743 and actual DBinder channel route/configuration.",
+      "Source/runtime proof whether peer session name and encoded UID/PID bind to authenticated remote process identity and which principals may open/send on the DBinder session.",
+      "For D9: exact ASan/bounds oracle showing read past sizeof(SessionInfo) or other concrete fault, plus proof of which security principal receives any bytes and a concrete confidentiality/availability consequence.",
+      "For D54-R1: product-matched two-peer test proving a peer can deliver a valid/replayed frame targeting another live waiter鈥檚 seq and produce reproducible availability/integrity effect, with sequence and session controls."
+    ]
+  },
+  "artifact_integrity": {
+    "path": "research/deliveries/ipc/b-line-20261020/d67_l2_source_pair_challenge-20261020.json",
+    "sha256": null,
+    "validated_with_json_tool": true
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "schema": "ohscanner.full-suite-final-replay.v1",
+  "date": "2026-10-20",
+  "scanner_commit": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+  "worktree": "b-ipc-integration-20261020",
+  "branch": "codex/b-ipc-integration-20261020",
+  "command": "python -m unittest discover -s tests -q",
+  "runtime": {
+    "platform": "WSL2 Linux",
+    "python": "3.14.7",
+    "environment": "/tmp/ohscanner-b-fullsuite-20261020",
+    "dependencies": "requirements-web.txt (includes requirements.txt)",
+    "frontend": "Node 22.14.0; npm ci and npm run build completed"
+  },
+  "result": {
+    "tests": 1151,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 12,
+    "elapsed_seconds": 205.793,
+    "exit_code": 0
+  },
+  "change_scope": {
+    "command": "python scripts/check_change_scope.py --base db77164fdc2af0da02e4d3efc056d84694fd68e8 --lane ipc",
+    "violations": [],
+    "diff_check": "clean"
+  },
+  "b_line_targeted_tests": {
+    "ipc": "352 passed, 47 skipped",
+    "owner_ipc": "12 passed",
+    "t7_identity": "21 passed, 1 skipped",
+    "d5_rule_versions": "2 passed against integration; baseline red was 2 expected failures",
+    "d3_coverage_invariant": "1 passed in the independent D3 owner worktree; not copied into B integration due owner-only path policy"
+  },
+  "raw_output": {
+    "path": "/tmp/ohscanner-b-fulltests-wsl-final-in-scope-20261020.log",
+    "sha256": "6529efccd3a5b8b6bbb39598ee9b72df70c2cc7d118357e27b34fa268ba426de"
+  },
+  "notes": [
+    "The first Windows Anaconda full-suite run was not accepted; its environment failures are recorded in full-suite-windows-environment-20261020.json.",
+    "The final WSL run was performed after npm build and after removing the owner-only D3 test copy from the IPC integration tree.",
+    "The documented default in the repository guide is Python 3.10; Python 3.10 was unavailable in this WSL instance, so final Linux verification used Python 3.14.7 with declared project dependencies."
+  ]
+}

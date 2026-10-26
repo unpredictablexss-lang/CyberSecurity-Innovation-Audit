@@ -1,0 +1,45 @@
+{
+  "task": "T59",
+  "date": "2026-10-20",
+  "scope": {
+    "integration_worktree": "D:/openHarmonyScanner/worktrees/b-ipc-integration-20261020",
+    "reviewed": [
+      "src/ohscanner/detectors/interface/analysis.py IPC diff, including D1/D2 request-alias and range logic, guard relay logic, and observation emission",
+      "src/ohscanner/detectors/interface/detector.py and models.py rule-version wiring",
+      "tests/test_ipc_data_flow_rules.py",
+      "tests/test_ipc_relay_guard.py",
+      "tests/test_ipc_multidispatch_guard_matrix.py",
+      "tests/test_ipc_rule_versions.py",
+      "tests/test_ipc_coverage.py",
+      "tests/fixtures/ipc/manifest.json changes",
+      "current D9/D54/D55/T26 review evidence summarized by task owner"
+    ],
+    "mode": "read-only; no code edits or test execution"
+  },
+  "findings": [
+    {
+      "id": "T59-1",
+      "priority": "P2",
+      "category": "duplicate-candidate-oracle-gap",
+      "location": [
+        {
+          "file": "src/ohscanner/detectors/interface/analysis.py",
+          "lines": "941-960"
+        },
+        {
+          "file": "tests/test_ipc_data_flow_rules.py",
+          "lines": "42-48"
+        }
+      ],
+      "reason": "emit appends an Observation for every path visit and has no same-source-observation coalescing here. The common rules_for test helper collapses findings to a set of rule IDs, so path fan-out can emit repeated candidates at the same rule/file/line/symbol/root without failing most D1/D2 assertions. This is a candidate-count/precision gap, not evidence that current product findings are duplicated.",
+      "minimal_ipc_only_regression": "Add a synthetic DATA-01 fixture where both arms of an unrelated branch converge on the same unbounded Parcel copy sink; assert the emitted (rule_id,file,line,symbol,root) identity occurs once. Keep a control with two distinct sinks and assert two identities. Feed exact candidate identities, not only a rule-id set, to the oracle.",
+      "owner_feedback": "D1/D2 developer: inspect whether equivalent path states can reach emit more than once; if yes, coalesce only identical source observations while retaining distinct sink locations. T1/T5 tester: add the multiplicity oracle and verify the distinct-sink control."
+    }
+  ],
+  "audit_disposition": {
+    "unknown_status": "No silent unknown-to-safe or unknown-to-accepted promotion identified in the reviewed diff/evidence. The finding-identity tests preserve unbound/unknown states; bound source identity explicitly says verification was not performed by the identity layer.",
+    "guard_evidence": "Reviewed relay and multidispatch tests assert per-sink line outcomes, and relay fixtures retain unresolved/mismatched descriptor evidence. No additional concrete guard-evidence defect identified in this read-only pass.",
+    "holdout": "The changed manifest sample is marked split=design; no holdout promotion/misuse found in the reviewed diff.",
+    "source_identity_limit": "The repository-binding tests establish contract behavior with synthetic supplied blob OIDs; they explicitly mark verification as not performed. They do not establish product checkout provenance, which remains an external D9/T26 build/source-pin gate and should not be presented as a confirmed product finding."
+  }
+}

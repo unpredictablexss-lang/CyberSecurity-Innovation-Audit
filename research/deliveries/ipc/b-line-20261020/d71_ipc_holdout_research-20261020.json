@@ -1,0 +1,108 @@
+{
+  "schema_version": "1.0",
+  "task": "D71 official communication_ipc holdout-candidate research",
+  "date": "2026-10-20",
+  "status": "research_complete_candidate_not_admitted",
+  "scope": {
+    "plan_worktree": "D:/openHarmonyScanner/worktrees/b-ipc-plan-20261020",
+    "plan_read": "research/data_sensitive/holdout_plan.md",
+    "holdout_manifest_read": "research/data_sensitive/D41_HOLDOUT_MANIFEST.json",
+    "additional_preregistration_read": "research/data_sensitive/D48_HOLDOUT_PREREGISTRATION.md",
+    "scanner_main_sha": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "ipc_anchor_sha": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "holdout_manifest_modified": false,
+    "detector_code_modified": false,
+    "test_code_modified": false
+  },
+  "official_sources": [
+    {"url": "https://gitee.com/openharmony/communication_ipc/issues/IC0KMG", "kind": "official repository issue", "observed": "Done; created 2025-04-12; grouped summary mentions GetReadPosition, readRemoteObjectArray peer ArraySize validation, float API correction, and live IPCSkeleton caller UID/PID"},
+    {"url": "https://gitee.com/openharmony/communication_ipc/issues/IC0GMS", "kind": "official repository issue", "observed": "Done; created 2025-04-11; same grouped summary, wording describes interface implementation correction"},
+    {"url": "https://gitee.com/openharmony/communication_ipc/pulls/1837", "kind": "official repository pull request", "observed": "Merged as !1837, title/merge message 'fix functions'"},
+    {"url": "https://gitee.com/openharmony/communication_ipc", "kind": "official repository", "observed": "Public master clone's observed master tip during research: ec9f4f4bd643adb8d0c9b9baef42a50816cf62d3"}
+  ],
+  "issue_interpretation": {
+    "IC0KMG_and_IC0GMS": "The issue bodies are materially identical and appear to describe one grouped work item/duplicate lead. IC0KMG's 'security fix' title and its issue summary are not independent vulnerability adjudications.",
+    "independent_vulnerability_count": "unknown; do not count the four listed code changes as four vulnerabilities",
+    "classification": "source-level interface correctness/security-hardening changes; one externally-derived array-length validation is the only clearly security-shaped item, but exploitability and impact are not closed by the issue text"
+  },
+  "change_identity": {
+    "pr_number": 1837,
+    "pr_merge_commit": "940db1960eb32f5952affd1615937744e398e950",
+    "pr_merge_tree": "f974d5ba5267ae4b73410e084891540077e18281",
+    "pr_merge_parents": ["c10c8a5de6922f14dd46e6f9453215a66880a5fe", "c3e2f51daa30eb5485771f18a2772af96fa99605"],
+    "change_commit": "c3e2f51daa30eb5485771f18a2772af96fa99605",
+    "change_tree": "f974d5ba5267ae4b73410e084891540077e18281",
+    "change_parent_vulnerable_revision": "c10c8a5de6922f14dd46e6f9453215a66880a5fe",
+    "change_commit_subject": "fix functions",
+    "change_date": "2025-04-12T10:23:59+08:00",
+    "git_source": "https://gitee.com/openharmony/communication_ipc.git",
+    "source_retrieval": "Public official Gitee clone; these commit objects and source hashes were locally read and computed. The specified bbb92db anchor was not advertised/retrievable from this remote during this research, so no claim is made that it contains this Cangjie subtree."
+  },
+  "changed_files": [
+    {"path":"interfaces/innerkits/cj/BUILD.gn"},
+    {"path":"interfaces/innerkits/cj/include/ipc_ffi.h"},
+    {"path":"interfaces/innerkits/cj/include/ipc_skeleton_imp.h"},
+    {"path":"interfaces/innerkits/cj/include/message_sequence_impl.h"},
+    {"path":"interfaces/innerkits/cj/include/process_skeleton_impl.h"},
+    {"path":"interfaces/innerkits/cj/src/ipc_ffi.cpp"},
+    {"path":"interfaces/innerkits/cj/src/ipc_skeleton_imp.cpp"},
+    {"path":"interfaces/innerkits/cj/src/message_sequence_impl.cpp"},
+    {"path":"interfaces/innerkits/cj/src/process_skeleton_impl.cpp"}
+  ],
+  "source_bindings": [
+    {"revision":"c10c8a5de6922f14dd46e6f9453215a66880a5fe", "tree":"402e56778084eb74601dc9d9194e5d20c0a20bcd", "path":"interfaces/innerkits/cj/src/message_sequence_impl.cpp", "git_blob":"3136097396712eae8a4a0805faaea9f1363051ac", "sha256":"ce9226565f0090d45ef44abfa5aa19cef710d8208155a7a99500b19c034fcd20"},
+    {"revision":"c3e2f51daa30eb5485771f18a2772af96fa99605", "tree":"f974d5ba5267ae4b73410e084891540077e18281", "path":"interfaces/innerkits/cj/src/message_sequence_impl.cpp", "git_blob":"3464d1dd6381f986a5f0da462e728ac40293b6dd", "sha256":"98bd761fe25a16435830a8978473444a318b71a4cf4809689b4b7ffe106effa9"},
+    {"revision":"c10c8a5de6922f14dd46e6f9453215a66880a5fe", "tree":"402e56778084eb74601dc9d9194e5d20c0a20bcd", "path":"interfaces/innerkits/cj/src/ipc_skeleton_imp.cpp", "git_blob":"dc5eac7475c343dd1749901e36cff6126764aba1", "sha256":"9da7f3f7558c6aec48fa0eb377f6e7c3a7fd76c9ca8279cf39ae9db3885ba5e0"},
+    {"revision":"c3e2f51daa30eb5485771f18a2772af96fa99605", "tree":"f974d5ba5267ae4b73410e084891540077e18281", "path":"interfaces/innerkits/cj/src/ipc_skeleton_imp.cpp", "git_blob":"e33301e770349309e5782333781c014da1269103", "sha256":"0e68b30489962be1ff11ffb5ad0db81ecdb2c3ed36d106f9a0cf422f601d55a1"},
+    {"revision":"c10c8a5de6922f14dd46e6f9453215a66880a5fe", "tree":"402e56778084eb74601dc9d9194e5d20c0a20bcd", "path":"interfaces/innerkits/cj/include/message_sequence_impl.h", "git_blob":"96bf663b28b7529c46ab8f0db43a4e0697be90d5", "sha256":"2d374fe5f14c81b18ac4a3913699c8ca1198fd439efa8feca2f3d9e91a941db1"},
+    {"revision":"c3e2f51daa30eb5485771f18a2772af96fa99605", "tree":"f974d5ba5267ae4b73410e084891540077e18281", "path":"interfaces/innerkits/cj/include/message_sequence_impl.h", "git_blob":"7ab93597a6010f00e9835277058653287ecf5a49", "sha256":"7b417f48b66ac3a65740d7f467c5fc11a441a302b5bdbb17dc2e19ca9340a624"},
+    {"revision":"c10c8a5de6922f14dd46e6f9453215a66880a5fe", "tree":"402e56778084eb74601dc9d9194e5d20c0a20bcd", "path":"interfaces/innerkits/cj/include/ipc_skeleton_imp.h", "git_blob":"5412969d1715fa2d7232074154077e8db69e652c", "sha256":"41f9b4882e8d8b9b15fc09bafd5c6c8e3f1424804ede0e032ef425796d0ac820"},
+    {"revision":"c3e2f51daa30eb5485771f18a2772af96fa99605", "tree":"f974d5ba5267ae4b73410e084891540077e18281", "path":"interfaces/innerkits/cj/include/ipc_skeleton_imp.h", "git_blob":"bf17256b819bc371d227840523bd8dc8208f8b2e", "sha256":"333698ebb2fcad92b232089b70cd036d44ab2941a7d0763c4994c1bc3d3650b5"}
+  ],
+  "change_map": [
+    {
+      "reported_change":"CJ_GetReadPosition obtains nativeParcel_->GetReadPosition instead of GetReadableBytes",
+      "source_diff":"message_sequence_impl.cpp CJ_GetReadPosition; return value changes from remaining readable bytes to absolute read cursor",
+      "family_map":"No direct B-line rule-family match established. It is an API semantic correction; not shown to be a vulnerable source operation in current C++ detector scope.",
+      "adjudication":"not an independently established vulnerability"
+    },
+    {
+      "reported_change":"CJ_ReadRemoteObjectArray validates peer-provided arrayLength with CheckReadLength(arrayLength, BYTE_SIZE_32) before allocating/reading",
+      "source_diff":"new length-gated block; error code set on failed bound. Current patch still allocates int32_t and int64_t arrays with malloc(arrayLength) byte counts, a separate concern requiring independent API/layout analysis; do not assume the patch proves safe sizing or the pre-fix exploit.",
+      "family_map":"Closest conceptual analogue: DATA-02 ipc.parcel.bounds (parcel-derived length controls an allocation/read). The actual scanner B/IPC rules target C/C++ source and this change is in Cangjie binding C++; no confirmed detector eligibility, matching positive, or exploit path was established.",
+      "adjudication":"single possible security candidate only; insufficient to close attacker control, resulting out-of-bounds access/impact, and fixed behavior"
+    },
+    {
+      "reported_change":"CJ_ReadFloat/CJ_WriteFloat and arrays use float operations and float-sized capacity; double operations are separately implemented",
+      "source_diff":"wrong double calls/size for float are corrected and float/double APIs disentangled",
+      "family_map":"No direct AUTH or parcel-bounds family match. Type/serialization mismatch is plausible data integrity or protocol correctness concern, but no security consequence demonstrated.",
+      "adjudication":"not an independently established vulnerability"
+    },
+    {
+      "reported_change":"Cangjie IPCSkeleton getCallingUid/getCallingPid now call live OHOS::IPCSkeleton APIs; token/device/local-calling helpers also corrected",
+      "source_diff":"new GetCallingPid/GetCallingUid wrappers and implementation; prior source did not expose these implementations in this file set; other helper behavior corrected",
+      "family_map":"Closest possible concept: AUTH-03 ipc.auth.identity-domain/service-identity/request-identity depending on downstream misuse. No call-site authorization sink or caller-confusion exploit is in this patch evidence; rule cannot be assigned based on getter correction alone.",
+      "adjudication":"not an independently established vulnerability"
+    }
+  ],
+  "tests_and_validation": {
+    "issue_claimed_validation":"issue says code review; no test evidence provided on issue page",
+    "pr_diff_test_changes":"PR !1837 patch itself does not add tests",
+    "existing_test_coverage":"not independently enumerated for the Cangjie binding in this research; project tests found in the current scanner worktree exercise scanner rules, not this official Cangjie implementation",
+    "product_build_or_runtime":"not run",
+    "scanner_current_regressions_context":"current plan records 111 targeted pytest passed and 409 IPC unittest run / 47 skipped / 0 failures at scanner main db77164; these are scanner regression results, not validation of PR !1837 or holdout truth"
+  },
+  "holdout_decision": {
+    "enter_frozen_holdout": false,
+    "reason":"The frozen D41 manifest is preregistered with six specified repositories and pinned commits; communication_ipc is not among them. The D48 preregistration separately pins distributed_screen. This research task explicitly forbids modifying/freezing the manifest. The issues supply a grouped summary, not an independent vulnerability verdict; only the array-length item is a tentative source-level candidate and it lacks closed exploit/impact and fixed-behavior evidence. No candidate is added to the frozen holdout.",
+    "maximum_candidate_count":"one tentative DATA-02-like Cangjie array length hypothesis; not confirmed/reportable and not admitted",
+    "labels":"unknown / not adjudicated; do not count as TP, FP, FN, precision, or recall"
+  },
+  "limitations": [
+    "The issue pages mark the content security-sensitive and say code inspection, but do not disclose a vulnerability mechanism, attacker model, impact, CVE, product version range, or test results.",
+    "The specified IPC anchor bbb92dbb2f52aca54ab268307c9476ac1802f3ff was not available from the public clone's advertised refs and the Cangjie subtree's presence at that anchor remains unknown.",
+    "The scanner's repository main SHA db77164fdc2af0da02e4d3efc056d84694fd68e8 identifies scanner code, not the official component revision.",
+    "Source hashes are for the listed paths at the stated official repo Git commits; they do not authenticate a product build or deployment."
+  ],
+  "code_changes": 0
+}

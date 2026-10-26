@@ -1,0 +1,134 @@
+{
+  "schema_version": 1,
+  "task_id": "D27",
+  "title": "DBINDER_ADD_COMMAUTH SoftBus peer identity boundary and product dependency pin",
+  "reviewed_at_utc": "2026-10-19T20:41:00Z",
+  "scope": {
+    "question": "Does the target product's paired SoftBus authenticate PeerSocketInfo.name's service-name UID/PID against the remote OS principal before IPC uses it for QueryCommAuthInfo and accepted databus-session state?",
+    "read_only": true,
+    "tests_or_device_network_experiments_run": false,
+    "code_changed": false
+  },
+  "target_ipc_context": {
+    "repository": "communication_ipc",
+    "requested_target_commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "source_binding_artifact": "d25_add_commauth_scout-20261020.json",
+    "bound_ipc_files": [
+      "ipc/native/src/core/dbinder/source/databus_socket_listener.cpp",
+      "ipc/native/src/core/dbinder/source/dbinder_databus_invoker.cpp",
+      "ipc/native/src/core/framework/source/ipc_object_stub.cpp",
+      "ipc/native/src/core/framework/source/ipc_process_skeleton.cpp",
+      "ipc/native/src/core/invoker/source/binder_invoker.cpp"
+    ],
+    "target_product_build_binding": "not established"
+  },
+  "product_dependency_pin": {
+    "verdict": "insufficient",
+    "active_manifest": {
+      "path": "openharmony/.repo/manifests/ohos/ohos.xml",
+      "sha256": "a7c829c419d79c696483bca56fe5ab0aae54aca0a1b0c2067be5b322fd2e472e",
+      "communication_ipc_revision": "master",
+      "communication_dsoftbus_revision": "master",
+      "reason": "The checked-in active manifest floats both component refs; it does not resolve a product build to immutable commits."
+    },
+    "frozen_manifest_snapshots": [
+      {
+        "path": "D:/openHarmonyScanner/openharmony-manifest-fixed.xml",
+        "sha256": "701683246a8b4393e61cdb75132d76aacc9e53f6f663d37e386bbd535511fbee",
+        "communication_ipc_revision": "5903fd5f7332a427cb3f6915b0202ee5c76c63b5",
+        "communication_dsoftbus_revision": "78e7835a3673fb41399c6c2f5e86c578530046a3",
+        "matches_target_ipc_bbb92": false
+      },
+      {
+        "path": "D:/openHarmonyScanner/openharmony-manifest-current-20261018.xml",
+        "sha256": "52f528dada321a140a29be2d55ef9053fda818cbdca93758425f1a25f6286d55",
+        "communication_ipc_revision": "5903fd5f7332a427cb3f6915b0202ee5c76c63b5",
+        "communication_dsoftbus_revision": "7743b679f6c3599e21bea4e4b1564422668e3643",
+        "matches_target_ipc_bbb92": false
+      }
+    ],
+    "resolved_gn_dependency_graph_or_product_build_record": "not found in inspected local artifacts; no record pairs target IPC bbb92 with any immutable communication_dsoftbus revision",
+    "local_checkout_identity": "not treated as product pin; Windows git metadata at this multi-repository checkout could not be read reliably (git reported invalid .git/config / unknown config read error)",
+    "required_to_close": [
+      "Exact product manifest/lock resolving communication_ipc to bbb92... and communication_dsoftbus to an immutable revision",
+      "Product build record or resolved GN dependency graph identifying the built SoftBus source root/revision and IPC/SoftBus artifacts"
+    ]
+  },
+  "source_chain_observations": [
+    {
+      "stage": "service-name encoding at IPC service creation",
+      "source": "communication_ipc at target commit, from D25 source-bound evidence",
+      "observation": "IPC's CreateSessionName(uid,pid) constructs the DBinder service/session name containing UID and PID. D25 binds ipc_object_stub.cpp (SHA-256 554a27bf335d0048373c326f3f9bddea9ba134b73bf8dca622d6c80b644656bb) to target commit bbb92. This establishes IPC-side formatting only, not SoftBus authentication."
+    },
+    {
+      "stage": "SoftBus peer session metadata to PeerSocketInfo.name",
+      "source": "local unpinned dsoftbus checkout; source-level observation only",
+      "files": [
+        {
+          "path": "foundation/communication/dsoftbus/interfaces/kits/transport/trans_type.h",
+          "sha256": "2c98d918ee3283762696ae70f38f0cda899d98f96486a901eff8463d03f0c069",
+          "location": "PeerSocketInfo definition around lines 98-107",
+          "observation": "name is documented as peer socket name; this API declaration does not define it as an authenticated OS principal."
+        },
+        {
+          "path": "foundation/communication/dsoftbus/sdk/transmission/session/src/client_trans_session_manager.c",
+          "sha256": "b22730a43acac400144154ecf1304bbaaf0a0c64649088383744da0446c551135",
+          "location": "ClientGetPeerSocketInfoById around lines 2489-2515",
+          "observation": "PeerSocketInfo.name is assigned from sessionNode->info.peerSessionName; networkId is copied from peerDeviceId. This accessor returns session metadata rather than deriving UID/PID from the transport socket credentials."
+        },
+        {
+          "path": "foundation/communication/dsoftbus/sdk/transmission/session/src/client_trans_session_callback.c",
+          "sha256": "d35aad5f5edb118554890237732956b9c127f1088021889362a471d63452d299",
+          "location": "session initialization around lines 35-47",
+          "observation": "The callback path copies channel->peerSessionName into session->info.peerSessionName."
+        },
+        {
+          "path": "foundation/communication/dsoftbus/core/transmission/trans_channel/common/src/trans_channel_common.c",
+          "sha256": "96ecfda0b78814f6a5ee0ab5c870382be491f025ec09e1a8086df83ee65732d9",
+          "location": "AppInfo initialization around lines 300-335",
+          "observation": "Peer session name is copied from the channel/session parameter's peerSessionName into peerData.sessionName. This is a protocol/session field; the reviewed excerpt does not prove it equals an OS-authenticated remote UID/PID."
+        },
+        {
+          "path": "foundation/communication/dsoftbus/core/transmission/trans_channel/auth/src/trans_auth_manager.c",
+          "sha256": "dba6dffcb13e8baf1298493e1ed001cb446969c2a720eec322c0cf2e84c3fd2c",
+          "location": "NotifyOpenAuthChannelSuccess around lines 180-205",
+          "observation": "Auth-channel callback carries peerData.sessionName and peer device/network identity. It shows channel delivery, but by itself does not establish a cryptographic or OS-principal binding between session name UID/PID and remote process credentials."
+        }
+      ]
+    },
+    {
+      "stage": "IPC listener parses peer name",
+      "source": "communication_ipc at target commit, from D25 source-bound evidence",
+      "observation": "DatabusSocketListener::ServerOnBind takes info.name and calls GetPidAndUidFromServiceName. The parser strips the expected prefix, splits UID/PID, and parses integers; it performs no independent peer authentication. D25 binds databus_socket_listener.cpp SHA-256 dce80ace50af9f18a0e003f0bd49cdf6b4ba22a4012fe51df2a4bbb8456acb3b to target commit bbb92."
+    },
+    {
+      "stage": "accepted databus socket and CommAuth lookup",
+      "source": "communication_ipc at target commit, from D25 source-bound evidence",
+      "observation": "OnReceiveNewConnection looks up existing CommAuthInfo using parsed peer pid, uid, and networkId, then uses the stored token to construct the peer session. A failed lookup rejects acceptance. This authenticates against IPC's pre-existing CommAuth table only if the inputs used to create that table and the peer tuple itself are trustworthy; it does not independently authenticate PeerSocketInfo.name."
+    },
+    {
+      "stage": "DBINDER_ADD_COMMAUTH dispatch and resulting state",
+      "source": "communication_ipc at target commit, from D25 source-bound evidence",
+      "observation": "The transaction path requires the databus caller context and uid < ALLOWED_UID before AddAuthInfo. AddAuthInfo stores parcel tuple/device/token/stubIndex data; subsequent QueryAppInfoToStubIndex requires tuple and stub/socket mapping. These are downstream IPC gates, not proof that SoftBus bound the service name to remote OS UID/PID."
+    }
+  ],
+  "identity_boundary_verdict": {
+    "softbus_peer_name_to_remote_os_principal_binding": "not proven from target-paired source",
+    "softbus_source_revision_for_target_product": "unknown",
+    "peer_socket_name_meaning_from_local_source": "sessionNode peerSessionName surfaced through PeerSocketInfo.name; values flow from channel peerData.sessionName",
+    "authentication_evidence": "SoftBus auth-channel and peer device/network metadata exist in the local source snapshot, but no target-paired evidence was found that the UID/PID embedded in the peer session name is verified against the remote process OS credentials before exposure through PeerSocketInfo.name.",
+    "security_verdict": "insufficient evidence; do not claim either authenticated binding or spoofability for the target product",
+    "confirmed_candidates": 0,
+    "l2_candidate": false
+  },
+  "T28_independent_counterreview_points": [
+    "Independently locate an exact product manifest, repo lock, or build record and verify whether communication_ipc bbb92... and a specific communication_dsoftbus revision were built together; reject current checkout HEAD and floating master as pins.",
+    "Starting from PeerSocketInfo.name, independently trace all assignments and remote protocol fields that populate peerSessionName; determine whether the UID/PID encoded name comes from authenticated credentials, a peer-supplied field, or a mapping verified elsewhere.",
+    "Inspect the exact paired SoftBus receive/auth path for OS peer credentials or token verification and show whether that check dominates the callback that populates PeerSocketInfo.name.",
+    "Challenge whether device/network identity authentication authenticates only the device or also the app UID/PID tuple; do not conflate transport/device identity with process identity.",
+    "Re-evaluate QueryCommAuthInfo scope: it gates a new socket using a pre-existing IPC authorization tuple, but establish whether that tuple was created from a trusted peer identity or caller-controlled service-name fields.",
+    "Trace the initial databus transaction reaching DBINDER_ADD_COMMAUTH and verify the caller tuple/stubIndex/socket mapping is bound to the same authenticated peer; identify any effect beyond registration before reporting a finding.",
+    "Report insufficient evidence if exact product dependency pairing or the name-to-principal verification point remains unavailable; do not use tests, simulations, or unrelated checkout revisions to fill the gap."
+  ],
+  "next_evidence": "Acquire the product build's immutable manifest/lock and resolved GN/build record, then independently bind and inspect the paired SoftBus code at the session-name parse, peer authentication, PeerSocketInfo callback, and session registration boundary."
+}

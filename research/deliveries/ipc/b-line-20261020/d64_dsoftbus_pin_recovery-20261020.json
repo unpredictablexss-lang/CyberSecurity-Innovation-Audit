@@ -1,0 +1,175 @@
+{
+  "schema_version": 1,
+  "task_id": "D64",
+  "title": "Recover exact manifest-pinned DSoftBus source and trace peer-name/auth/replay boundary",
+  "reviewed_at_utc": "2026-10-20T01:50:41Z",
+  "scope": {
+    "read_only": true,
+    "tests_or_device_network_experiments_run": false,
+    "code_or_product_source_changed": false,
+    "scanner_main_revision": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "scanner_main_freshness": "origin/main fetch failed this round per coordinator; all findings are anchored to the recorded local scanner SHA, not asserted as latest remote state"
+  },
+  "recovery": {
+    "verdict": "exact_commit_and_tree_recovered_from_manifest_sync_object_store",
+    "requested_commit": "7743b679f6c3599e21bea4e4b1564422668e3643",
+    "resolved_commit": "7743b679f6c3599e21bea4e4b1564422668e3643",
+    "tree": "d386e20f8074e037f330a5df11e99fc66ed155d0",
+    "parents": [
+      "f4e45bab8925e761c8a4694fc695d0ecbed5b80d",
+      "83b112ef7b3abd6c9248f8f615af8d92e2fcafa8"
+    ],
+    "author": "openharmony_ci <openharmony_ci@noreply.gitcode.com>",
+    "commit_date": "2026-10-17T21:34:36+08:00",
+    "subject": "!12629 merge master into master",
+    "object_source": "D:/openHarmonyScanner/openharmony/.repo/project-objects/communication_dsoftbus.git",
+    "object_verification": "git cat-file -t returned commit; git show reported the exact commit and tree; blob reads and hashes below succeeded",
+    "manifest": {
+      "path": "D:/openHarmonyScanner/openharmony-manifest-current-20261018.xml",
+      "sha256": "52f528dada321a140a29be2d55ef9053fda818cbdca93758425f1a25f6286d55",
+      "dsoftbus_revision": "7743b679f6c3599e21bea4e4b1564422668e3643",
+      "ipc_revision_in_same_snapshot": "5903fd5f7332a427cb3f6915b0202ee5c76c63b5",
+      "interpretation": "immutable component revisions are recorded in this frozen manifest snapshot; it binds DSoftBus 7743 with IPC 5903, not the separately analyzed IPC bbb92 target. The manifest is source-lock evidence, not proof these exact sources were built into a product image."
+    },
+    "manifest_repo_refs": {
+      "project_gitdir": "D:/openHarmonyScanner/openharmony/.repo/projects/foundation/communication/dsoftbus.git",
+      "remote_url_from_repo_config": "https://gitcode.com/openharmony/communication_dsoftbus",
+      "refs": [
+        {
+          "name": "refs/remotes/gitcode/master",
+          "value": "7743b679f6c3599e21bea4e4b1564422668e3643",
+          "evidence": "loose ref content and git show-ref both resolve to the target"
+        },
+        {
+          "name": "refs/remotes/m/master",
+          "value": "7743b679f6c3599e21bea4e4b1564422668e3643",
+          "evidence": "symbolic ref to refs/remotes/gitcode/master; git show-ref resolves to the target"
+        },
+        {
+          "name": "FETCH_HEAD",
+          "value": "7743b679f6c3599e21bea4e4b1564422668e3643",
+          "evidence": "records branch master fetched from https://gitcode.com/openharmony/communication_dsoftbus"
+        }
+      ],
+      "refs_caveat": "project-objects is the shared bare object database and has no refs of its own; the sibling repo project gitdir owns refs. Its packed-refs contains an older gitcode/master value 78e7835a3673fb41399c6c2f5e86c578530046a3, but the current loose gitcode/master ref overrides it and resolves to 7743. The newer scratch dsoftbus-source-pin-20261020 bare repo has no target object: Gitee master is ccb1a86..., GitHub yielded 0e0c18... as dangling, exact-SHA fetch attempts previously returned not our ref and a later GitHub attempt failed to connect. Do not conflate this scratch clone with the manifest-synced .repo refs/object database. No release tag points directly to 7743; the manifest revision and GitCode master ref are the pin evidence."
+    },
+    "checkout_caveat": "the component checkout's .git/config is unreadable in this Windows mount; refs were read from .repo/projects and object bytes from .repo/project-objects with GIT_OBJECT_DIRECTORY pointed at the shared object store. This did not write or replace the checkout."
+  },
+  "raw_source_bindings": [
+    {
+      "path": "interfaces/kits/transport/trans_type.h",
+      "blob": "ef7890e93647e28ba8dd59621ffbe8b5984f309c",
+      "sha256": "2c98d918ee3283762696ae70f38f0cda899d98f96486a901eff8463d03f0c069",
+      "bytes": 12971,
+      "checkout_bytes_match_target": true
+    },
+    {
+      "path": "sdk/transmission/session/src/client_trans_session_manager.c",
+      "blob": "ed0e9be5f248097d234f2bca9c441ffa52773913",
+      "sha256": "b22730a43acac400144154ecf1304bbaaf0a0c64649088383744da0446c551135",
+      "bytes": 143914,
+      "checkout_bytes_match_target": true
+    },
+    {
+      "path": "sdk/transmission/session/src/client_trans_session_callback.c",
+      "blob": "ada523c3f69e344f08ce3dc4f89d296e16e76ec0",
+      "sha256": "d35aad5f5edb118554890237732956b9c127f1088021889362a471d63452d299",
+      "bytes": 42505,
+      "checkout_bytes_match_target": true
+    },
+    {
+      "path": "core/transmission/trans_channel/common/src/trans_channel_common.c",
+      "blob": "78b1275db1db8890c3a6f40fd3f7728f28f29798",
+      "sha256": "96ecfda0b78814f6a5ee0ab5c870382be491f025ec09e1a8086df83ee65732d9",
+      "bytes": 37449,
+      "checkout_bytes_match_target": true
+    },
+    {
+      "path": "core/transmission/trans_channel/auth/src/trans_auth_manager.c",
+      "blob": "4826ca70240cc88b5b68dee746b95df6e3dbd631",
+      "sha256": "dba6dffcb13e8baf1298493e1ed001cb446969c2a720eec322c0cf2e84c3fd2c",
+      "bytes": 67038,
+      "checkout_bytes_match_target": true
+    },
+    {
+      "path": "core/transmission/trans_channel/auth/src/trans_auth_message.c",
+      "blob": "c2c4ae6b51d038e9a20927aaa4965381b6c02347",
+      "sha256": "a0313cbc0ee89d9ce18195fec8374ba84ae4acd7e70e6f5a889fa65346542156",
+      "bytes": 6065,
+      "checkout_bytes_match_target": true
+    },
+    {
+      "path": "core/transmission/trans_channel/common/src/softbus_message_open_channel.c",
+      "blob": "b01a917ecd2f4d21cfce56f1c83ef171a6b9c0c5",
+      "sha256": "d58442c93e0cc991728b6df6da430c70880317468edbd31d5afdba923384f51b",
+      "bytes": 28344,
+      "checkout_bytes_match_target": true
+    },
+    {
+      "path": "core/authentication/src/auth_session_fsm.c",
+      "blob": "94c1e8af277df3a214298a92f55ef85ce601df93",
+      "sha256": "7efaa39d841ea752c342e7233161029694c7ec6725f4eb6ce0285fad686cbcc4",
+      "bytes": 92341,
+      "checkout_bytes_match_target": true
+    },
+    {
+      "path": "core/authentication/src/auth_connection.c",
+      "blob": "94d84d8269a0158c2ab9ca24921ab40fd4ac77f0",
+      "sha256": "1984ac04eb17d635196b8fa2344abfae41c3ee2662511091c679f3f4b5541363",
+      "bytes": 41370,
+      "checkout_bytes_match_target": true
+    }
+  ],
+  "identity_auth_integrity_replay_trace": {
+    "peer_name_exposure": [
+      {
+        "source": "sdk/transmission/session/src/client_trans_session_manager.c:2489-2512",
+        "finding": "ClientGetPeerSocketInfoById returns sessionNode->info.peerSessionName as PeerSocketInfo.name and peerDeviceId as networkId."
+      },
+      {
+        "source": "sdk/transmission/session/src/client_trans_session_callback.c:40-45",
+        "finding": "FillSessionInfoEx copies ChannelInfo.peerSessionName into the session record; this is the field later exposed by the public peer-info accessor."
+      },
+      {
+        "source": "core/transmission/trans_channel/auth/src/trans_auth_message.c:52-56,92-96",
+        "finding": "Auth-channel JSON serializes DST_BUS_NAME and reads the remote SRC_BUS_NAME into peerData.sessionName."
+      },
+      {
+        "source": "core/transmission/trans_channel/auth/src/trans_auth_manager.c:186-209",
+        "finding": "After the auth-channel handshake callback, NotifyOpenAuthChannelSuccess places appInfo.peerData.sessionName in ChannelInfo.peerSessionName. It marks channelInfo.isEncrypt=false and uses a fixed AUTH_SESSION_KEY label; this alone does not settle whether the preceding auth transport authenticates/integrity-protects the name."
+      },
+      {
+        "source": "core/transmission/trans_channel/common/src/trans_channel_common.c:332-335",
+        "finding": "The peer session name is copied from the channel/session parameter into peerData.sessionName."
+      },
+      {
+        "source": "core/transmission/trans_channel/common/src/softbus_message_open_channel.c:65-85,193-200,259-263",
+        "finding": "Open-channel JSON carries BUS_NAME/CLIENT_BUS_NAME and numeric UID/PID fields; corresponding parser paths read peer bus-name values. These excerpts do not show a comparison binding the UID/PID encoded in a DBinder service name to authenticated remote process credentials."
+      }
+    ],
+    "auth_transport_and_replay_observations": [
+      {
+        "source": "core/authentication/src/auth_session_fsm.c:2162-2165",
+        "finding": "AuthSessionHandleAuthFinish posts the FSM auth-finish event; this marks device-auth flow completion, not an explicit assertion that peer service-name UID/PID matches remote OS credentials."
+      },
+      {
+        "source": "core/authentication/src/auth_connection.c:222-270,633-655,738-765,950-1003",
+        "finding": "AuthDataHead packs dataType/module/seq/flag/len and payload; receive code unpacks it and dispatches. Comm transport sequence is generated and used to derive direction. The inspected framing code does not itself demonstrate a freshness/replay rejection rule for the peer-name field; lower transport/auth handling and message-specific state must be audited before concluding replay or integrity properties."
+      }
+    ],
+    "bounded_verdict": "Exact DSoftBus source provenance is recovered and all nine locally present files byte-match the target blobs. The reviewed path shows the peer session name crosses protocol parsing and is surfaced through PeerSocketInfo, but does not prove or disprove a cryptographic/OS-principal binding for the embedded UID/PID. Auth-channel transport integrity/replay semantics remain open. Do not promote DBINDER_ADD_COMMAUTH identity spoofability to a finding from this evidence alone."
+  },
+  "candidate_status": {
+    "existing_candidate": "D27/T28 identity boundary follow-up (linked to the IPC DBINDER_ADD_COMMAUTH / service-name UID-PID path)",
+    "effect_of_new_evidence": "source provenance blocker removed for DSoftBus 7743; manifest pins it alongside IPC 5903. Product build provenance, identity binding, auth-channel integrity/replay semantics, and the exact IPC 5903 pairing review remain unresolved.",
+    "confirmed_security_candidates": 0,
+    "second_layer_review_recommended": true,
+    "second_layer_review_scope": "Re-review only the recovered exact DSoftBus 7743 sources and frozen-manifest pair IPC 5903; keep as conditional/low-confidence until product build and peer-principal authentication/integrity evidence are established."
+  },
+  "next_dependencies": [
+    "Bind the frozen manifest pair (IPC 5903 + DSoftBus 7743) to a product build record or resolved GN dependency graph and artifact provenance.",
+    "Trace the exact auth-channel message send/receive and lower transport on each enabled link type; identify where integrity, encryption, peer-device authentication, and replay checks apply to SRC_BUS_NAME, and whether UID/PID is separately validated against the remote process principal.",
+    "Review the IPC 5903 source paths and verify they preserve the previously analyzed bbb92 behavior relevant to this candidate; do not infer pairing from a nearby but different IPC pin.",
+    "Only then decide whether to retain, reject, or promote the single consolidated identity-boundary candidate; no PoC, device test, or product build was run in D64."
+  ]
+}

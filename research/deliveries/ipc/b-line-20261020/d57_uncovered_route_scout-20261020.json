@@ -1,0 +1,93 @@
+{
+  "schema": "ohscanner.bline.d57-uncovered-route-scout.v1",
+  "review_date": "2026-10-20",
+  "mode": "read_only_static",
+  "target": {
+    "repository": "openharmony/communication_ipc",
+    "commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "tree": "125ecbfa21f430f2f977f0026ab97b70cd27a726",
+    "source_object_store": "D:/openHarmonyScanner/worktrees/ipc-source-pin-20261020",
+    "scanner_main": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "scanner_freshness": "Parent verified git fetch origin main at this SHA for this round."
+  },
+  "task_tree_check": {
+    "plan": "research/deliveries/b-line-development-test-plan-20261020.md",
+    "previously_covered_or_excluded": [
+      "D9/D54 and GET_PROTO_INFO reply/session paths",
+      "DUMP_TRANSACTION",
+      "death-recipient/obituary",
+      "DBinder reference, session, listen, lifecycle and cleanup routes",
+      "SYSPROPS_TRANSACTION",
+      "D21 SYNCHRONIZE_REFERENCE / CLEAR_DBINDER_SERVICE_STATE"
+    ],
+    "chosen_route": "Binder INTERFACE_TRANSACTION -> IPCObjectStub::DBinderSearchDescriptor -> reply descriptor",
+    "novelty_basis": "The listed route reviews do not cover descriptor-query dispatch; product-master-source-review has no INTERFACE_TRANSACTION/DBinderSearchDescriptor route entry. This is a bounded route review, not a whole-tree scan."
+  },
+  "route": {
+    "entry": "IPCObjectProxy::GetInterfaceDescriptor",
+    "call_chain": [
+      "IRemoteObject::GetInterfaceDescriptor public virtual API / IPCObjectProxy override",
+      "If interfaceDesc_ is empty and handle_ != 0, SendRequestInner(false, INTERFACE_TRANSACTION, ...)",
+      "IPCObjectStub::SendRequest dispatches INTERFACE_TRANSACTION to DBinderSearchDescriptor before SendRequestInner/OnRemoteRequest",
+      "DBinderSearchDescriptor obtains GetObjectDescriptor() and writes it as a UTF-16 reply"
+    ],
+    "source_bindings": [
+      {"path":"interfaces/innerkits/ipc_core/include/iremote_object.h","lines":"109","blob":"a734277347cd7236ffbcea07a8f810e15d6324b8","sha256":"ae151e961c8ad5b79b7ea7a8ccb23e0ba488eff62fc87cec4afb8589d1077ea2"},
+      {"path":"interfaces/innerkits/ipc_core/include/ipc_object_proxy.h","lines":"225","blob":"71e128907c3842441c9fe856472ceb5479263eea","sha256":"58a825867d11664f7f8716c53e46d6c852eaeaae6da2770ea6b70a9b0fa2c73c"},
+      {"path":"ipc/native/src/core/framework/source/ipc_object_proxy.cpp","lines":"266-291","blob":"4701faa882a030d0f34772d4b85b432b0be87e1e","sha256":"4d1e24129bec4a642047fb6187f63b40a1b17c1f1740f7b816f7691890b92157"},
+      {"path":"ipc/native/src/core/framework/source/ipc_object_stub.cpp","lines":"183-192,439-475","blob":"22c3a682c20fd350b318cad17a6d621206e65ba7","sha256":"554a27bf335d0048373c326f3f9bddea9ba134b73bf8dca622d6c80b644656bb"},
+      {"path":"ipc/native/src/core/framework/source/iremote_object.cpp","lines":"65-68","blob":"76be30fe4140a6fd649087a03a27be55d2fc4ba0","sha256":"663e4ac00cc902634c5cf0db5982821b9763cd2687599d0f58dadc78a6bb790a"}
+    ]
+  },
+  "caller_and_authorization": {
+    "api": "Source exposes GetInterfaceDescriptor() in the innerkits header; IPCObjectProxy override uses this transaction. This proves source-level API path, not shipped SDK/package reachability for a particular product.",
+    "transport": "A proxy with nonzero handle is needed and transport must deliver the request. Binder/SoftBus policy and target endpoint reachability are outside this source conclusion.",
+    "transaction_local_gate": "No caller UID/PID/token/descriptor authorization check appears in IPCObjectStub::SendRequest special-code dispatch or DBinderSearchDescriptor before reading/writing the descriptor. This observation alone is not a vulnerability.",
+    "local_preconditions": "Proxy cache is empty and handle_ != 0; otherwise the request is skipped and cached/empty descriptor is returned."
+  },
+  "input_and_guards": {
+    "attacker_controlled_input": "INTERFACE_TRANSACTION request payload is not read by DBinderSearchDescriptor; no request field controls the returned descriptor.",
+    "receiver_effect": "GetObjectDescriptor() returns the receiver object's descriptor_ field; reply.WriteString16(descriptor) serializes that metadata. Failure returns IPC_STUB_WRITE_PARCEL_ERR.",
+    "guard_dominance": [
+      "IPCObjectProxy::GetInterfaceDescriptor returns cache before request when interfaceDesc_ is nonempty (proxy-side guard).",
+      "handle_ == 0 returns empty descriptor before transaction (proxy-side guard).",
+      "For a delivered transaction, IPCObjectStub::SendRequest maps INTERFACE_TRANSACTION directly to DBinderSearchDescriptor; no transaction-local identity guard dominates the sink.",
+      "DBinderSearchDescriptor has only the reply serialization success check; no caller/input-dependent branch.",
+      "IRemoteObject::GetObjectDescriptor returns descriptor_ directly (source lines 65-68)."
+    ]
+  },
+  "effect_and_counterexample": {
+    "concrete_effect": "The caller can receive/cache the remote object's interface descriptor string. This route performs no state mutation or privilege change.",
+    "security_assessment": "0 candidate. The observed output is interface metadata exposed through a descriptor-query API; no evidence shows that it contains secret material or crosses a confidentiality boundary. A product-specific descriptor containing sensitive data would require separate product evidence and is not established by generic IPC source.",
+    "strongest_counterexample": "The API is explicitly GetInterfaceDescriptor, and the response is exactly GetObjectDescriptor() (the object descriptor field), not arbitrary parcel contents or process state. A proxy-side descriptor cache can satisfy subsequent calls without contacting the receiver. The route does not modify state.",
+    "unknowns": [
+      "Which descriptors are used by a particular shipped product service and whether any encode sensitive data.",
+      "Whether product SDK packaging, policy, and transport allow a given app to obtain a target proxy.",
+      "Kernel/SoftBus authorization and runtime behavior."
+    ],
+    "candidate_count": 0,
+    "confirmed_candidates": 0,
+    "conditional_candidates": 0
+  },
+  "test_coverage": {
+    "existing_source_tests": [
+      "test/unittest/common/ipc_object_stub_unittest.cpp has an INTERFACE_TRANSACTION test around line 217.",
+      "test/unittest/common/ipc_object_proxy_unittest.cpp has GetInterfaceDescriptorTest001-006 around lines 146-260.",
+      "test/unittest/ipc/native/core/ipc_object_proxy_unittest.cpp has descriptor cache/handle tests around lines 205-262."
+    ],
+    "execution": "not_run",
+    "gap": "No end-to-end product transport/identity test executed; it is not required to conclude that this generic route returns descriptor metadata only."
+  },
+  "disposition": {
+    "verdict": "insufficient_for_security_finding",
+    "new_candidates": 0,
+    "l2": "Do not forward as a vulnerability candidate. Reopen only with a concrete shipped service descriptor proven to contain sensitive data and a bound unauthorized caller route.",
+    "implementation": "No scanner/product code change indicated.",
+    "safety": "No PoC or runtime test run."
+  },
+  "limitations": [
+    "Source-bounded review, not whole-tree route enumeration.",
+    "Target commit is pinned by the raw Git object/blob and SHA-256 values listed above.",
+    "No inference about arbitrary app, Internet, SoftBus authentication, or product API packaging."
+  ]
+}

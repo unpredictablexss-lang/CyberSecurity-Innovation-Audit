@@ -1,0 +1,80 @@
+{
+  "task": "T63 root identity contract test",
+  "date": "2026-10-20",
+  "status": "PASS_SYNTHETIC_TESTS; NO_V2_CONTRACT_VIOLATION_ESTABLISHED",
+  "scope": {
+    "production_tree": "D:/openHarmonyScanner/worktrees/b-ipc-integration-20261020",
+    "plan_tree": "D:/openHarmonyScanner/worktrees/b-ipc-plan-20261020",
+    "repository_code_or_tests_modified": false,
+    "test_method": "Temporary in-memory source fixtures through production Interpreter.run(); also invoked run_all_with_coverage for a two-root fixture."
+  },
+  "contract_review": {
+    "ipc_observation": "src/ohscanner/detectors/interface/analysis.py:221-235 defines root_key=(root.file, root.qualified) as per-observation provenance.",
+    "public_v2": "src/ohscanner/contracts.py:118-142 DetectorFinding has no root/root-set field. src/ohscanner/identity.py stable identity is repository + rule_lineage_id + symbol_identity + ast_fingerprint; occurrence identity binds source observation fields and neither requires root. run_all_with_coverage normalizes the retained DetectorFinding and its identity record, but root is not included.",
+    "explicit_root_aggregation_contract_found": false,
+    "explicit_first_root_only_contract_found": false,
+    "conclusion": "The observed omission is not demonstrably a violation of the existing public schema-v2 identity contract. It is a test/coverage gap against the internal Observation provenance, and whether root provenance must be exposed after sink coalescing is an owner/product-evidence decision.",
+    "expected_oracle_for_future_root_provenance": "Keep one finding per (rule,file,line,symbol) sink and aggregate distinct root provenance as a deterministic set/list. Do not add root to the finding dedup key, which would split one sink into duplicate findings. Until an owner approves a public root field, tests should assert current v2 sink identity and classify root aggregation as unspecified."
+  },
+  "observations": [
+    {
+      "case": "same_root_branch_merge",
+      "result": "PASS",
+      "oracle": "Two branch states reach one copy sink under one root: two raw copy-range observations coalesce to one final sink observation.",
+      "source_identity": ["synthetic.cpp", 2, "Fixture::OnRemoteRequest"],
+      "root_keys": [["synthetic.cpp", "Fixture::OnRemoteRequest"]],
+      "basis": "Independent in-memory Interpreter probe; raw=2, final=1."
+    },
+    {
+      "case": "distinct_sink",
+      "result": "PASS",
+      "oracle": "Two copy sinks on different source lines under one root remain two final observations.",
+      "source_identities": [
+        ["synthetic.cpp", 6, "Fixture::OnRemoteRequest"],
+        ["synthetic.cpp", 7, "Fixture::OnRemoteRequest"]
+      ],
+      "root_keys": [["synthetic.cpp", "Fixture::OnRemoteRequest"]],
+      "basis": "Independent in-memory Interpreter probe; raw=2, final=2."
+    },
+    {
+      "case": "two_roots_shared_helper",
+      "result": "PASS_REPRODUCES_ATTRIBUTION_OMISSION",
+      "oracle": "Foo::OnRemoteRequest and Bar::OnRemoteRequest both reach the same source-backed Helper::copy sink. One final sink observation is retained, currently carrying Foo root only.",
+      "raw": {
+        "count": 2,
+        "sink": ["synthetic.cpp", 6, "Helper::copy"],
+        "roots": [
+          ["synthetic.cpp", "Foo::OnRemoteRequest"],
+          ["synthetic.cpp", "Bar::OnRemoteRequest"]
+        ]
+      },
+      "final": {
+        "count": 1,
+        "sink": ["synthetic.cpp", 6, "Helper::copy"],
+        "retained_root": ["synthetic.cpp", "Foo::OnRemoteRequest"]
+      },
+      "runner_v2": "run_all_with_coverage emits one diagnostic with file/line/symbol for the sink; finding_identity.observation has no root field. This confirms normalization does not recover the discarded root."
+    }
+  ],
+  "commands": [
+    {
+      "command": "python -m pytest -q tests/test_ipc_data_flow_rules.py tests/test_ipc_multidispatch_guard_matrix.py",
+      "result": "111 passed in 0.34s"
+    },
+    {
+      "command": "PowerShell temporary in-memory Python probes importing parse_source and Interpreter; the shared-helper probe additionally invoked IpcInterfaceDetector through DetectorRegistry and run_all_with_coverage. The separate distinct-sink probe asserted that line-distinct sinks remain distinct.",
+      "result": "Observed same-root branch raw 2/final 1; distinct sink raw 2/final 2 at lines 6 and 7 (assertions passed); shared helper raw 2 with Foo+Bar roots/final 1 with Foo only; run_all_with_coverage emitted one sink finding with no root in finding_identity.observation."
+    }
+  ],
+  "D62_falsification_conditions": [
+    "An explicit approved contract states that IPC findings are sink-only and root provenance is intentionally discarded, with no root-specific review obligation or consumer requirement.",
+    "An independent test shows every root-specific obligation and provenance needed by consumers is preserved in another report/sidecar channel despite the representative Observation.root_key being dropped.",
+    "Reverse root traversal order and demonstrate either deterministic documented first-root semantics or an aggregate elsewhere; if only the retained root changes with order and no other channel records the second, the provenance-omission observation remains reproducible."
+  ],
+  "limitations": [
+    "The shared-helper fixture is synthetic and does not establish that a real product component has this topology.",
+    "No exploitability, vulnerability, product reachability, or impact is established.",
+    "The plan's previous T61 artifact independently records matching branch and shared-helper behavior; this task re-ran the focused existing pytest pair and direct probes rather than changing persistent tests."
+  ]
+}
+

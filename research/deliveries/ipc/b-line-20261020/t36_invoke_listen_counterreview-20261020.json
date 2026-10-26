@@ -1,0 +1,172 @@
+{
+  "schema_version": 1,
+  "task_id": "T36",
+  "title": "Independent counterreview: INVOKE_LISTEN_THREAD session bootstrap",
+  "reviewed_at_utc": "2026-10-19T21:45:00Z",
+  "scope": {
+    "repository": "openharmony/communication_ipc",
+    "target_commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "method": "Fetched immutable raw.githubusercontent.com files at target commit and recomputed SHA-256/Git blob IDs; independently traced production source and tests.",
+    "read_only": true,
+    "tests_or_poc_run": false,
+    "product_or_detector_code_changed": false
+  },
+  "source_binding": {
+    "files": [
+      {
+        "path": "ipc/native/src/core/framework/source/ipc_object_stub.cpp",
+        "bytes": 29851,
+        "sha256": "554a27bf335d0048373c326f3f9bddea9ba134b73bf8dca622d6c80b644656bb",
+        "git_blob": "22c3a682c20fd350b318cad17a6d621206e65ba7"
+      },
+      {
+        "path": "ipc/native/src/core/dbinder/source/dbinder_databus_invoker.cpp",
+        "bytes": 41140,
+        "sha256": "378776e256a8438c5bb28c57acc39172b3376512907718e813b71406b7251217",
+        "git_blob": "83450463d6d39f3a327ffa3dccccf0d8c957757d"
+      },
+      {
+        "path": "ipc/native/src/core/framework/source/ipc_object_proxy.cpp",
+        "bytes": 49196,
+        "sha256": "4d1e24129bec4a642047fb6187f63b40a1b17c1f1740f7b816f7691890b92157",
+        "git_blob": "4701faa882a030d0f34772d4b85b432b0be87e1e"
+      },
+      {
+        "path": "dbinder/dbinder_service/src/dbinder_service.cpp",
+        "bytes": 59699,
+        "sha256": "ac762ad0345451a605fffcd430d933161eb20aedd7b83479753b9be8384fa1cf",
+        "git_blob": "fb7f0b92f1f842f10f35f14917c553d3bb38ee9e"
+      },
+      {
+        "path": "ipc/native/src/core/framework/source/ipc_skeleton.cpp",
+        "bytes": 10711,
+        "sha256": "9b6302bc0367ad2687fdda93e027954fd09699b9ef933f2bf5989a7096e45adb",
+        "git_blob": "5e3bf5f6296a6879bf18c4ce82ad203146df9d99"
+      },
+      {
+        "path": "ipc/native/src/core/framework/source/ipc_process_skeleton.cpp",
+        "bytes": 64744,
+        "sha256": "cdffaaf0054da5c80d64c0cec6ef287c9c24e432bc50a49d3288336715910366",
+        "git_blob": "516fd9efd0ab405cbd0c8a985f9f203478fc4d52"
+      },
+      {
+        "path": "ipc/native/src/core/dbinder/include/dbinder_databus_invoker.h",
+        "bytes": 6452,
+        "sha256": "9a79ad3d72f2377b63a39871e821312a526401efedef8338d993f398fa5737a5",
+        "git_blob": "23b8cb57dc80600594eef6a4e7889a9827831a49"
+      },
+      {
+        "path": "test/unittest/common/ipc_object_stub_unittest.cpp",
+        "bytes": 43662,
+        "sha256": "1652c75bd68e929f21d73c5ca5263aa9e829478e1a6bdb4f2d4ba202d1ba33bc",
+        "git_blob": "1bf3ead278c351f2411ef5e1669333b8091ba18e"
+      },
+      {
+        "path": "test/fuzztest/ipc/native/core/ipcobjectstub_fuzzer/ipcobjectstub008_fuzzer/ipcobjectstub008_fuzzer.cpp",
+        "bytes": 3157,
+        "sha256": "4176c559ae6e957670b5e0a60b3e96334ee658c7f2c90e9315e4121f451e2182",
+        "git_blob": "5aafb181adeacf6f4040b6d1c825a09b4825739f"
+      },
+      {
+        "path": "test/fuzztest/ipc/native/mock/ipcobjectstubmock_fuzzer/ipcobjectstubmock001_fuzzer/ipcobjectstubmock001_fuzzer.cpp",
+        "bytes": 5789,
+        "sha256": "b4bc60b02e4801538b42207ec4f047eb75129fb39e1d204b7804e0f47731064f",
+        "git_blob": "32ce9db004e2b3353af4663a30f91dd36ada28b3"
+      },
+      {
+        "path": "test/unittest/common/ipc_object_proxy_unittest.cpp",
+        "bytes": 56848,
+        "sha256": "2f471552fb52e65ca09f801feefe33f61da6b8fbfeee41f003e1142b8413b1fe",
+        "git_blob": "2cbcc2dbe02b99272e031f53536233b77ddae12c"
+      },
+      {
+        "path": "test/unittest/ipc/native/core/dbinder_databus_invoker_unittest.cpp",
+        "bytes": 105823,
+        "sha256": "0806a5463a9cc95cbfd4aaddd50435959333f187b5076c1d302478324c383712",
+        "git_blob": "efd19e225ab5c48d6b0a5cb2c0c7ff8153b9d4cc"
+      }
+    ]
+  },
+  "independent_route": [
+    {
+      "stage": "production request source",
+      "evidence": [
+        "DBinderDatabusInvoker::GetSessionForProxy builds the parcel with DATABUS_TYPE, local device ID, session peer PID/UID, peer device ID, session name, and token ID, then calls IPCObjectProxy::InvokeListenThread (dbinder_databus_invoker.cpp:94-122).",
+        "DBinderService::LoadSystemAbilityComplete passes incoming replyMessage->pid/uid/deviceId/tokenId to OnRemoteInvokerDataBusMessage; that function builds a second parcel and calls the same proxy API (dbinder_service.cpp:680-712, 893-926).",
+        "The second path runs after a remote request was matched to a SystemAbility and the proxy/death recipient was resolved."
+      ],
+      "finding": "Two production call contexts converge on IPCObjectProxy::InvokeListenThread; operation establishes a peer-facing databus listener/session bootstrap."
+    },
+    {
+      "stage": "transaction and trust domains",
+      "evidence": [
+        "IPCObjectProxy::InvokeListenThread sends INVOKE_LISTEN_THREAD through SendRequestInner (ipc_object_proxy.cpp:805-809).",
+        "IPCObjectStub::SendRequest dispatches that code only under #ifndef CONFIG_IPC_SINGLE (ipc_object_stub.cpp:453-455).",
+        "DBinderInvokeListenThread requires IPCSkeleton::IsLocalCalling() and GetCallingUid() < ALLOWED_UID (10000), then calls InvokerThread (ipc_object_stub.cpp:220-230; constant at line 59).",
+        "IPCSkeleton::GetCallingUid reads active Binder invoker caller UID only for local Binder calls; IsLocalCalling delegates to active invoker (ipc_skeleton.cpp; exact target file hash bound above).",
+        "Parcel remotePid/remoteUid are separate fields read in InvokerDataBusThread; they are not equated to Binder caller UID (ipc_object_stub.cpp:603-611)."
+      ],
+      "finding": "Gate distinguishes a local Binder caller under UID 10000 from the peer credentials carried in the parcel. It is a broad privileged/system UID class gate, not a service-specific identity/token check. Third-party app UIDs >=10000 are blocked at this route, assuming normal platform UID assignment."
+    },
+    {
+      "stage": "authorization and resource ordering",
+      "evidence": [
+        "InvokerDataBusThread parses fields and validates device IDs/sessionName, then CreateSoftbusServer(sessionName), then AddStubByIndex(this), then writes stubIndex/sessionName/deviceId/self token to Binder reply, then creates AppAuthInfo(remotePid, remoteUid, remoteTokenId, socketId=0, stubIndex, this, remoteDeviceId) and calls AttachOrUpdateAppAuthInfo; only a true return triggers IncStrongRef(this) (ipc_object_stub.cpp:603-650).",
+        "Synchronous caller reads Binder reply only after handler returns; DBinderService then packages/sends the remote reply (dbinder_service.cpp:913-950), so normal successful path registers mapping/ref before advertising the returned index remotely.",
+        "AttachOrUpdateAppAuthInfo stores app tuple->stubIndex/socket row before adding CommAuthInfo; the new entry path returns true for non-null stub unless process exit guard or duplicate nonzero socket relation conditions apply. For this bootstrap socketId is 0 (ipc_process_skeleton.cpp:1489-1534).",
+        "If CreateSoftbusServer or AddStubByIndex fails, returns error. If reply writes fail after server/index creation, error returns without explicit rollback. If final attach reports false, the function still returns ERR_NONE, but the map row may have been updated/inserted and the plausible false case is shutdown exit guard; no direct repeated per-request allocation follows because AddStubByIndex returns existing index for same stub."
+      ],
+      "finding": "Successful normal ordering is fail-closed for later databus authorization; no pre-registration window is exposed to the remote peer before the synchronous transaction returns. Partial failure rollback is incomplete, but no reachable unbounded leak or authorization bypass is established on this path."
+    },
+    {
+      "stage": "test and fuzz boundary",
+      "evidence": [
+        "SendRequestTest005 checks empty parcel causes IPC_STUB_INVOKE_THREAD_ERR; Test006 checks caller UID exactly 10000 is rejected; related Test017 at lines ~650-677 uses mocked caller UID 9999 and asserts it is not rejected as invalid data (ipc_object_stub_unittest.cpp).",
+        "ipcobjectstub008 fuzz target invokes DBinderInvokeListenThread directly with a fresh default MessageParcel and arbitrary code, with no binder caller context/parcel structure configured (fuzzer source).",
+        "ipcobjectstubmock001 direct-call fuzzer mocks IsLocalCalling=false and therefore exercises only the early rejection branch (source).",
+        "DBinderDatabusInvoker GetSessionForProxy unit cases mock proxy writes, InvokeListenThread result, and reply fields; they cover returned error, zero index, and success behavior but not real Binder identity or real server authorization/store ordering. Proxy unit covers dead-object return only."
+      ],
+      "finding": "Existing tests test a few guard/response branches and direct-function fuzz harnesses; they do not exercise end-to-end Binder caller UID vs databus peer tuple, successful server/index/auth/ref creation, rollback, or network-to-DBinderService ordering."
+    }
+  ],
+  "verdict": {
+    "confirmed_candidates": 0,
+    "conditional_candidates": 0,
+    "status": "no_vulnerability_candidate_on_reviewed_path",
+    "confidence": "medium",
+    "rationale": "The production peer bootstrap is reached through a privileged local Binder caller (UID < 10000). Its parcel-carried remote identity is distinct from that caller gate, but the server stores it as a tuple mapped to stub index and only returns success after the synchronous method has completed normal registration. No ordinary app route, authorization bypass, harmful partial state, or unbounded resource effect is demonstrated. The broad system-UID policy, missing service-specific caller binding, and lack of rollback after late serialization failure are hardening/runtime-review questions, not reportable findings without proof that an untrusted principal can drive this privileged local caller or that partial effects persist harmfully."
+  },
+  "unknowns": [
+    "Product build configuration may define CONFIG_IPC_SINGLE, which removes this dispatch/API path; target product build config is not available in this review.",
+    "System UID policy and which services can obtain/call the target proxy at runtime are product-specific; source establishes the broad UID threshold but not deployment composition.",
+    "SoftBus session peer PID/UID/device/token provenance and cryptographic/transport authentication are outside the reviewed pinned IPC files; require target-paired SoftBus/runtime evidence before treating parcel fields as trusted or attacker-controlled.",
+    "Allocation failure and process-shutdown interleaving around reply serialization/auth registration have not been exercised; no product binary/test environment was used.",
+    "Whether repeated CreateSoftbusServer calls with distinct names leave old SoftBus listener sockets alive or SoftBus implicitly replaces/shuts them down; source updates only the current listener fields and does not call Shutdown on the prior id in the name-change branch.",
+    "Whether target product exposes the inbound DBinder invitation/SA request path to untrusted remote peers and enforces peer identity/name quotas before privileged DBinderService invokes this local Binder transaction."
+  ],
+  "d35_comparison": {
+    "status": "completed_independent_comparison",
+    "agreement": [
+      "Same target pin and primary route: DBinderInvokeListenThread is reachable only through local Binder path gated to caller UID < 10000.",
+      "Both find two production caller contexts: C++ DBinderDatabusInvoker::GetSessionForProxy and C DBinderService::OnRemoteInvokerDataBusMessage.",
+      "Both find normal path registers AppAuthInfo/ref before outer DBinder response is sent, no confirmed ordinary-app vulnerability.",
+      "Both identify missing immediate rollback after post-listener/index failures as conditional cleanup observation only."
+    ],
+    "corrections_and_expansion": [
+      "D35 does not analyze the C++ DBinderService::LoadSystemAbilityComplete path as a separate production entrypoint; it feeds OnRemoteInvokerDataBusMessage with peer pid/uid/device/token from received message and converges on the same special transaction.",
+      "D35 describes AttachOrUpdateAppAuthInfo false as including duplicate socket auth; in this INVOKE_LISTEN_THREAD call socketId is 0, and implementation only returns false for duplicate CommAuthInfo when socketId != 0. With non-null stub and socketId=0, plausible false case is process exit guard. Regardless, code returns ERR_NONE even on false.",
+      "Failure cleanup ownership is partly asynchronous: a later socket shutdown callback calls RemoveSessionName and server-side relation cleanup; however post-StartServerListener failures occur before any peer has received the reply, so no peer connection/shutdown callback is guaranteed. IPCProcessSkeleton destructor shuts down only its currently recorded listener.",
+      "CreateSoftbusServer is process-global and if a different name arrives it starts a new listener then overwrites the recorded socket/name without explicitly shutting down the previous socket. This is a conditional resource-lifecycle question if multiple unique names can reach it; source alone does not establish SoftBus behavior or a remotely reachable untrusted trigger. AddStubByIndex reuses an existing index for the same stub, so the analyzed failure path does not create a new index on every repeat."
+    ],
+    "ordinary_caller_triggerability": "A normal local app UID >= 10000 cannot directly call this transaction. The production internal DBinderService callers run as privileged local Binder callers, and can be induced only through their upstream incoming-session/SA request flow; whether an untrusted peer can cause arbitrarily many distinct accepted names is not established by pinned IPC source. Therefore no persistent resource exhaustion candidate is promoted.",
+    "verdict_after_comparison": "0 confirmed and 0 reportable conditional candidates. Preserve only a low-priority runtime/configuration check for unique-name listener replacement and failure cleanup, not a second-layer vulnerability candidate."
+  },
+  "summary": {
+    "production_callers": 2,
+    "confirmed_candidates": 0,
+    "conditional_candidates": 0,
+    "tests_or_poc_run": false,
+    "product_or_detector_code_changed": false,
+    "next_evidence": "D35 comparison complete. To settle remaining resource-lifecycle question, inspect target-paired SoftBus StartServerListener/Shutdown semantics and run an integration test with distinct accepted names, forced post-listener failure, and later old-socket shutdown; first prove upstream peer can trigger these calls in the target product."
+  }
+}

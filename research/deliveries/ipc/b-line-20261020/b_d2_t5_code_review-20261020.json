@@ -1,0 +1,32 @@
+{
+  "review_id": "b_d2_t5_code_review-20261020",
+  "baseline": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+  "integration_head": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+  "scope": [
+    "src/ohscanner/detectors/interface/analysis.py:Interpreter.relay_guard",
+    "tests/fixtures/ipc/relay_inner_wrong_then_correct_fixed.cpp",
+    "tests/test_ipc_relay_guard.py",
+    "tests/fixtures/ipc/t5_multidispatch/*.cpp",
+    "tests/test_ipc_multidispatch_guard_matrix.py"
+  ],
+  "method": {
+    "baseline_diff": "Compared dirty integration changes against the specified HEAD; relay_guard previously stopped at the first descriptor predicate and returned seen immediately for an unaccepted descriptor subject.",
+    "tests_run": "python -m pytest -q tests/test_ipc_multidispatch_guard_matrix.py tests/test_ipc_relay_guard.py",
+    "test_result": "19 passed in 0.47s",
+    "extra_probe": "Ran an in-memory (no file changes) relay containing a sink before an accepted descriptor guard and a second sink after it. Detector retained an AUTH-01 finding at Relay::OnRemoteRequestInner for the earlier sink (line 5 in the synthetic source); the later guard did not erase this per-sink candidate."
+  },
+  "findings": [],
+  "assessment": {
+    "wrong_earlier_comparison": "Fixed for the reviewed case. analysis.py:1842-1851 continues after a descriptor comparison whose resolved subject is not accepted; analysis.py:1852-1870 credits a later accepted descriptor only if its mismatch branch leaves and a switch follows. The relay fixture test at tests/test_ipc_relay_guard.py:60-61 verifies an earlier IBar comparison no longer masks a later IFoo guard.",
+    "multiple_sinks": "T5 matrix covers guard before both dispatches (tests/test_ipc_multidispatch_guard_matrix.py:56-58), between dispatches (60-62), after both (64-65), and wrong-interface check before the later correct guard (67-70). In the between case, expected [0] preserves the pre-guard sink and suppresses the post-guard sink. An additional in-memory combined relay probe confirmed the pre-guard inner sink remains reportable even though the relay call itself is considered guarded by a later guard.",
+    "conditional_mismatch_exits": "Covered at tests/test_ipc_multidispatch_guard_matrix.py:76-83. A conditional-only return leaves a mismatch path and retains the candidate; adding an unconditional return suppresses it. relay_guard likewise only counts direct return/throw statements in the mismatch branch's top-level statement list (analysis.py:1855-1865), so a nested conditional return by itself is not treated as an unconditional exit.",
+    "branches": "Branch-local guard coverage at tests/test_ipc_multidispatch_guard_matrix.py:72-74 expects the unguarded sibling sink to remain a candidate.",
+    "ambiguous_helper": "Overloaded helper coverage at tests/test_ipc_multidispatch_guard_matrix.py:85-97 verifies a nonunique target does not guess a body and leaves one entry finding without claiming Guarded.",
+    "code_test_completeness": "No correctness defect observed in the requested cases. Minor test improvement: relay_inner_wrong_then_correct_fixed.cpp:26-30 invokes ReadInterfaceToken() twice, while the multi-dispatch fixture correctly caches one token at line 18 before comparing it. A cached-token relay variant would isolate descriptor identity handling from any cursor/consumption semantics of repeated parcel reads. The current test still exercises the code path and does not invalidate the tested analyzer behavior. A combined committed relay+multi-sink regression would also make the in-memory cross-check permanent; existing unit tests split those dimensions."
+  },
+  "limitations": [
+    "This is an analyzer/unit-fixture review, not validation against OpenHarmony runtime MessageParcel semantics.",
+    "Only the two directly relevant test modules were run; no product build or broader suite was run."
+  ],
+  "reviewer_disposition": "Accept current D2/T5 behavior for the requested scenarios; recommend adding a cached-token wrong-then-correct relay fixture and a committed combined relay/multi-sink regression when convenient."
+}

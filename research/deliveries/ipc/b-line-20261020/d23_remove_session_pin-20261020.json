@@ -1,0 +1,156 @@
+{
+  "schema_version": 1,
+  "task_id": "D23",
+  "title": "REMOVE_SESSION_NAME target pin and product surface binding",
+  "reviewed_at_utc": "2026-10-19T20:53:00Z",
+  "scope": {
+    "requested_repository": "openharmony/communication_ipc",
+    "requested_commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "route": "REMOVE_SESSION_NAME send guard, internal lifecycle helper, receiver invoker semantics, ipc_single export/build/install surface",
+    "read_only": true,
+    "product_code_changed": false,
+    "tests_run": false
+  },
+  "target_source_binding": {
+    "method": "Fetched raw.githubusercontent.com file contents at the immutable requested commit path; computed SHA-256 and Git blob SHA-1 over downloaded UTF-8 bytes. Local checkout comparisons are supplementary only.",
+    "commit_availability": "The Windows local checkout git metadata was unreadable; target raw files were available over HTTPS. These are source-file bindings, not proof of a deployed product build.",
+    "files": [
+      {
+        "path": "ipc/native/src/core/framework/source/ipc_object_proxy.cpp",
+        "bytes": 49196,
+        "sha256": "4d1e24129bec4a642047fb6187f63b40a1b17c1f1740f7b816f7691890b92157",
+        "git_blob": "4701faa882a030d0f34772d4b85b432b0be87e1e",
+        "matching_local_checkout_file": true
+      },
+      {
+        "path": "ipc/native/src/core/framework/source/ipc_process_skeleton.cpp",
+        "bytes": 64744,
+        "sha256": "cdffaaf0054da5c80d64c0cec6ef287c9c24e432bc50a49d3288336715910366",
+        "git_blob": "516fd9efd0ab405cbd0c8a985f9f203478fc4d52",
+        "matching_local_checkout_file": true
+      },
+      {
+        "path": "ipc/native/src/core/invoker/source/binder_invoker.cpp",
+        "bytes": 69765,
+        "sha256": "02c4e27beb57955df2afd3f836c1f38929f519b3d400f080a45a6f91e6210e4c",
+        "git_blob": "4a5cd7530835659a0f9fad523c0f14c4c25570dd",
+        "matching_local_checkout_file": true
+      },
+      {
+        "path": "interfaces/innerkits/ipc_single/libipc_single_map",
+        "bytes": 13953,
+        "sha256": "8e05e1b217ed5b42ad83fbf38d31ca33241302a5c2b49cf927fd66b868bd049a",
+        "git_blob": "0bab69a423e5127f4b2e7b0d0ba87f0eb3772d9b",
+        "matching_local_checkout_file": true
+      },
+      {
+        "path": "interfaces/innerkits/ipc_single/BUILD.gn",
+        "bytes": 6593,
+        "sha256": "331ba3ea500d4b89216aab1c749a2b4eeade0a671701d3285f4dc4c986116227",
+        "git_blob": "797626221f2bcc113fd60c10a2410290f2ed4685",
+        "matching_local_checkout_file": true
+      },
+      {
+        "path": "interfaces/innerkits/ipc_core/BUILD.gn",
+        "bytes": 1836,
+        "sha256": "a0215d55f3b4277dbcd62f9f0c42941e2c7cfe9b3aec34dbaf35f4ca8fcbf333",
+        "git_blob": "fcc114be4923335cb09a0ea00751b2dbfcae9726",
+        "matching_local_checkout_file": true
+      },
+      {
+        "path": "interfaces/innerkits/ipc_core/include/ipc_object_proxy.h",
+        "bytes": 14218,
+        "sha256": "58a825867d11664f7f8716c53e46d6c852eaeaae6da2770ea6b70a9b0fa2c73c",
+        "git_blob": "71e128907c3842441c9fe856472ceb5479263eea",
+        "matching_local_checkout_file": true
+      }
+    ],
+    "local_checkout_caveat": "The local checkout remains at 5903fd5f7332a427cb3f6915b0202ee5c76c63b5. Matching raw-file hashes establish the listed file contents at the target path, not whole-tree identity or product build provenance."
+  },
+  "route_evidence": [
+    {
+      "claim": "The ordinary public SendRequest entry rejects REMOVE_SESSION_NAME before forwarding because its code exceeds MAX_TRANSACTION_ID and is not DUMP_TRANSACTION.",
+      "target_source": "ipc/native/src/core/framework/source/ipc_object_proxy.cpp",
+      "location": "188-192",
+      "status": "supported"
+    },
+    {
+      "claim": "IPCObjectProxy::RemoveSessionName serializes the session name and calls SendRequestInner with REMOVE_SESSION_NAME and TF_ASYNC, bypassing the public range check.",
+      "target_source": "ipc/native/src/core/framework/source/ipc_object_proxy.cpp",
+      "location": "359-368",
+      "status": "supported"
+    },
+    {
+      "claim": "The helper is declared in the public section of ipc_object_proxy.h, while SendRequestInner is under private:.",
+      "target_source": "interfaces/innerkits/ipc_core/include/ipc_object_proxy.h",
+      "location": "203, 283-285",
+      "status": "supported"
+    },
+    {
+      "claim": "The pinned ipc_single version map has global and local wildcard sections but no IPCObjectProxy::RemoveSessionName symbol entry; ipc_single BUILD.gn selects this map as version_script.",
+      "target_source": "interfaces/innerkits/ipc_single/libipc_single_map; interfaces/innerkits/ipc_single/BUILD.gn",
+      "location": "map global/local sections; BUILD.gn 102-107",
+      "status": "supported",
+      "qualification": "Absence from the version map means this function is not explicitly exported by that ipc_single link surface, even though the C++ declaration is public. It does not establish all possible product/custom ABI paths."
+    },
+    {
+      "claim": "ipc_core is a prebuilt wrapper sourced from libipc_single.z.so, depends on ipc_single, and is installed under platformsdk.",
+      "target_source": "interfaces/innerkits/ipc_core/BUILD.gn",
+      "location": "29-46",
+      "status": "supported"
+    },
+    {
+      "claim": "The located IPCProcessSkeleton lifecycle caller obtains GetSAMgrObject and invokes RemoveSessionName(sessionName).",
+      "target_source": "ipc/native/src/core/framework/source/ipc_process_skeleton.cpp",
+      "location": "1345-1353",
+      "status": "supported"
+    },
+    {
+      "claim": "BinderInvoker::IsLocalCalling returns true; this is transport locality, not caller identity authentication.",
+      "target_source": "ipc/native/src/core/invoker/source/binder_invoker.cpp",
+      "location": "1714-1717",
+      "status": "supported"
+    },
+    {
+      "claim": "The process SAMGR flag is set after SetRegistryObject succeeds; it describes receiver process state and does not authenticate the incoming caller.",
+      "target_source": "ipc/native/src/core/framework/source/ipc_process_skeleton.cpp",
+      "location": "291-313 (correlated with D21/T22 stub evidence)",
+      "status": "supported"
+    }
+  ],
+  "candidate": {
+    "count": 1,
+    "status": "conditional_review_only",
+    "claim": "If a deployed product or custom SDK exposes IPCObjectProxy::RemoveSessionName to an ordinary local app, and that app can obtain a proxy to the SAMGR registry object, it may submit a chosen nonempty session name to a SAMGR receiver. The REMOVE_SESSION_NAME handler (D21/T22 pinned stub evidence) lacks original-caller/name-owner validation and can decrement the matching local permission reference count, potentially removing a DBinder session permission.",
+    "impact": "Conditional availability impact to a matching active DBinder session; cross-caller effect requires the chosen name to match another live entry and actual product reachability.",
+    "confirmed_ordinary_app_vulnerability": false,
+    "confidence": "medium for source-chain semantics; low for product exploitability",
+    "blocking_questions": [
+      "No exact deployed product manifest/build record was available pairing this source commit with the target SDK/binary and resolved GN graph.",
+      "No product SDK headers/library or app-level dependency metadata was available to prove what ordinary applications can link or invoke.",
+      "No end-to-end non-owner app evidence shows SAMGR proxy acquisition plus helper invocation and permission removal across callers.",
+      "The symbol is absent from the pinned ipc_single export version map, which weighs against the standard ipc_core exported ABI path."
+    ]
+  },
+  "verdict": {
+    "confirmed_candidate_count": 0,
+    "conditional_candidate_count": 1,
+    "status": "insufficient_for_ordinary_app_finding",
+    "reason": "The target source files and GN/export metadata are now byte-bound from the requested commit. The standard pinned ipc_single link map does not export the public C++ helper, and ordinary public SendRequest rejects the special code. The handler's missing caller/name ownership check remains security-sensitive if an alternate exported/custom/raw-injection route exists, but no deployed product or ordinary-app route was established."
+  },
+  "requested_feedback": {
+    "to": "T24",
+    "independent_recheck_points": [
+      "Recompute or independently retrieve the listed raw commit hashes and verify the version-map symbol absence, including demangled spelling/visibility handling.",
+      "Check whether any other installed target or SDK map exports IPCObjectProxy::RemoveSessionName despite its absence from libipc_single_map.",
+      "Independently verify GETSAMgrObject access and whether an ordinary app can obtain the relevant registry proxy under product policy.",
+      "Attempt to falsify the one conditional candidate; do not reinterpret BinderInvoker::IsLocalCalling or receiver SAMGR flag as caller authorization."
+    ],
+    "handoff_state": "awaiting independent T24 response"
+  },
+  "limitations": [
+    "No tests or PoCs were run, per instruction.",
+    "No source changes were made.",
+    "Raw target source/API files are available and pinned, but exact deployed product build pairing remains insufficient."
+  ]
+}

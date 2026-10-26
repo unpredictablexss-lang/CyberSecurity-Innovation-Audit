@@ -1,0 +1,200 @@
+{
+  "schema": "ohscanner.b-ipc.d17-static-scout.v1",
+  "reviewed_product": {
+    "repository": "openharmony/communication_ipc",
+    "commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "scope": "one general Binder transaction receive / Parcel object and raw-data boundary; not a whole-tree scan"
+  },
+  "route": {
+    "name": "Binder BR_TRANSACTION receive to generic target stub",
+    "flow": [
+      "BinderInvoker::HandleCommandsInner(BR_TRANSACTION or BR_TRANSACTION_SEC_CTX)",
+      "BinderInvoker::OnTransaction reads a fixed-size binder_transaction_data[_secctx] and rejects a null frame",
+      "BinderInvoker::Transaction ParseFrom(data buffer, data_size), checks non-null offsets when offsets_size > 0, then InjectOffsets",
+      "BinderInvoker::TargetStubSendRequest -> IPCObjectStub::SendRequest -> SendRequestInner -> virtual OnRemoteRequest"
+    ],
+    "excluded_routes": [
+      "D8 GET_SESSION_NAME_PID_UID / permission grant",
+      "D9 DBinder fromDeviceId",
+      "DUMP_TRANSACTION",
+      "death recipient / obituary"
+    ]
+  },
+  "candidate_review": {
+    "candidate_count": 0,
+    "candidate_identity": null,
+    "verdict": "insufficient",
+    "rationale": "The receive-to-dispatch path is source-supported, but this bounded review did not establish a concrete unvalidated caller-controlled field reaching a memory or security-sensitive sink. Do not infer device impact or claim a whole-tree zero-finding result.",
+    "control_and_counterevidence": [
+      "OnTransaction reads only the fixed transaction-header size through Parcel::ReadBuffer and returns an invalid-data error on null.",
+      "BinderInvoker::UnflattenObject checks Parcel offsets, requires a full flat_binder_object through ReadBuffer, dispatches only BINDER_TYPE_BINDER or BINDER_TYPE_HANDLE, and checks local BINDER cookies with IPCProcessSkeleton::IsContainsObject before reuse.",
+      "MessageParcel::ReadRawData rejects size zero and requires the parcel-declared size to equal the requested size; large-data path checks AshmemGetSize(fd) >= requested size before mmap.",
+      "IPCObjectStub dispatch has previously reviewed special transaction branches; this review concerns the generic BR_TRANSACTION receive/Parcel boundary and did not identify a new specialized transaction effect."
+    ],
+    "reachability_and_effect": "Caller supplies transaction Parcel contents through Binder, but the Binder driver mediates transaction buffers, object offsets, handles, and transferred FDs. This scout did not re-verify kernel-driver validation and makes no claim about malformed driver output. No specific ordinary-app security effect was established.",
+    "authorization": "No per-transaction access-control claim was inferred from this generic receive path; service-specific authorization belongs to individual OnRemoteRequest implementations and was outside this one-route review."
+  },
+  "source_bindings": [
+    {
+      "path": "ipc/native/src/core/invoker/source/binder_invoker.cpp",
+      "sha256": "02c4e27beb57955df2afd3f836c1f38929f519b3d400f080a45a6f91e6210e4c",
+      "git_blob": "4a5cd7530835659a0f9fad523c0f14c4c25570dd",
+      "bytes": 69765,
+      "remote_raw_and_local_checkout_match": true,
+      "line_ranges": {
+        "Transaction_ParseFrom_InjectOffsets_dispatch": [
+          990,
+          1028
+        ],
+        "OnTransaction_fixed_header_read": [
+          1111,
+          1131
+        ],
+        "UnflattenObject_object_validation": [
+          1750,
+          1798
+        ],
+        "ReadFileDescriptor_flat_object_read": [
+          1800,
+          1817
+        ]
+      },
+      "key_byte_offsets": {
+        "Transaction_start": 33391,
+        "OnTransaction_start": 37639,
+        "UnflattenObject_start": 57567
+      }
+    },
+    {
+      "path": "ipc/native/src/core/framework/source/message_parcel.cpp",
+      "sha256": "2f4d216c9a54534840b8c6ac7d81b9627fd9271bd9009b5289eb9a6ee0ce6349",
+      "git_blob": "e43990117d2f5aaaf5162bac9f488055bf37f9d4",
+      "bytes": 21045,
+      "remote_raw_and_local_checkout_match": true,
+      "line_ranges": {
+        "ReadRemoteObject": [
+          219,
+          234
+        ],
+        "ReadFileDescriptor": [
+          264,
+          282
+        ],
+        "ReadRawDataInner": [
+          451,
+          492
+        ],
+        "ReadRawData": [
+          494,
+          513
+        ]
+      },
+      "key_byte_offsets": {
+        "ReadRemoteObject_start": 7318,
+        "ReadFileDescriptor_start": 8657,
+        "ReadRawDataInner_start": 14540,
+        "ReadRawData_start": 16102
+      }
+    },
+    {
+      "path": "ipc/native/src/core/framework/source/ipc_object_stub.cpp",
+      "sha256": "554a27bf335d0048373c326f3f9bddea9ba134b73bf8dca622d6c80b644656bb",
+      "git_blob": "22c3a682c20fd350b318cad17a6d621206e65ba7",
+      "bytes": 29851,
+      "remote_raw_and_local_checkout_match": true,
+      "line_ranges": {
+        "SendRequestInner": [
+          393,
+          435
+        ],
+        "SendRequest": [
+          439,
+          483
+        ]
+      },
+      "key_byte_offsets": {
+        "SendRequestInner_start": 14189,
+        "SendRequest_start": 16150
+      }
+    }
+  ],
+  "test_inventory": {
+    "unit": [
+      "test/unittest/common/binder_invoker_unittest.cpp: ReadFileDescriptor001, UnflattenObject001/002, malformed BR_TRANSACTION header checks (lines 115-170, 411-447, 516-520)"
+    ],
+    "fuzz": [
+      "test/fuzztest/ipc/native/core/binderinvoker_fuzzer/binderinvoker001_fuzzer/binderinvoker001_fuzzer.cpp: Transaction and UnflattenObject calls (lines 29-78, 93-109)",
+      "test/fuzztest/ipc/native/core/binderinvoker_fuzzer/binderinvoker006_fuzzer/binderinvoker006_fuzzer.cpp: UnflattenObject (lines 66-78)",
+      "test/fuzztest/interfaces/innerkits/messageparcel_fuzzer/messageparcel003_fuzzer/messageparcel003_fuzzer.cpp: ReadRawData cases (lines 38-60)"
+    ],
+    "coverage_limit": "These tests/fuzzers show existing method-level exercise but do not prove Binder-driver offset validation or full product receive-path coverage. No tests were run by D17."
+  },
+  "independent_review_request": {
+    "agent": "T18",
+    "request": "Independently rebind the receive route and attempt to establish a concrete unvalidated field-to-sink claim, checking Parcel/object/FD size and type guards, tests/fuzz and candidate dedup. Preserve zero candidates if no claim is supportable.",
+    "status": "T18 complete: independently source-bound the IPC route and reviewed Parcel::ReadObject offset guard; zero new candidates. See independent_review.",
+    "verdict": "insufficient",
+    "candidate_count": 0,
+    "findings": [
+      "T18 independently matched all three pinned IPC source identities above to the local checkout.",
+      "T18 examined the UnFlattenDBinderObject special BINDER_TYPE_PTR branch. Public MessageParcel::ReadRemoteObject enters Parcel::ReadObject, which checks offsets and parcel object size before unmarshalling; UnflattenObject repeats offset and fixed-size object checks, validates object type, and checks local binder cookie membership.",
+      "For a valid BINDER_TYPE_PTR object offset, Binder-driver validation and receiver pointer conversion are relevant external controls. The driver source is not part of the communication_ipc pin and was not bound in this review; no vulnerability is inferred from it.",
+      "No generic authorization gate is claimed. Authorization for ordinary transaction codes is service-specific in OnRemoteRequest implementations, outside this bounded route review."
+    ],
+    "external_dependency_bindings": [
+      {
+        "repository": "commonlibrary/c_utils (working-tree content only; repository metadata unavailable)",
+        "path": "base/src/parcel.cpp",
+        "sha256": "f4296edd47f32475d6bb2b8c8a615ecc6f87fe3de2495cbef75cc59d326aac23",
+        "git_blob": "27ea446b9ae200d4a219b802d9f01d273415b941",
+        "binding_status": "workspace bytes only; no commit pin"
+      },
+      {
+        "repository": "commonlibrary/c_utils (working-tree content only; repository metadata unavailable)",
+        "path": "base/include/parcel.h",
+        "sha256": "25d5bca322bfbca84d362b6914856b2b197dea81f3212e9c135356f9c2de2c42",
+        "git_blob": "0143fb2c3065fbbe0acc7454fb5b4d8f905c16f0",
+        "binding_status": "workspace bytes only; no commit pin"
+      }
+    ],
+    "test_review": {
+      "unit": "binder_invoker_unittest.cpp covers UnFlattenDBinderObject empty read, wrong length, valid DBinder buffer, and fixed BR_TRANSACTION header behavior.",
+      "fuzz": [
+        "binderinvoker001 calls Transaction and object parsing",
+        "binderinvoker006 calls UnflattenObject"
+      ],
+      "limitation": "Method-level exercise does not prove end-to-end Binder-driver receive and offset validation coverage. T18 did not run tests."
+    },
+    "dedup": "No prior observation for the same UnFlattenDBinderObject route was found; because no concrete issue is established, do not create a detector rule or candidate."
+  },
+  "limitations": [
+    "This is a bounded one-route source scout, not whole-tree static analysis.",
+    "Although the IPC source files above were fetched from the pinned raw URL and their bytes match the local checkout, external Binder-driver/kernel behavior was not source-bound in this deliverable.",
+    "No exploit PoC, product integration test, or code change was created."
+  ],
+  "independent_review": {
+    "verdict": "0 new candidates; the apparent pre-CheckOffsets DBinder buffer dereference is blocked on the normal MessageParcel::ReadRemoteObject API path, subject to product dependency version binding.",
+    "facts": [
+      "MessageParcel::ReadRemoteObject calls Parcel::ReadObject<IRemoteObject>; Parcel::ReadObject runs CheckOffsets before unmarshalling and requires an exact current offset and enough bytes for a parcel_flat_binder_object.",
+      "UnflattenObject later checks offsets again, reads a complete flat object, dispatches known object types, and checks local BINDER cookie ownership.",
+      "Binder driver behavior is an external dependency and was not treated as verified from the IPC pin."
+    ],
+    "external_dependency_bindings": [
+      {
+        "path": "commonlibrary/c_utils/base/src/parcel.cpp",
+        "sha256": "f4296edd47f32475d6bb2b8c8a615ecc6f87fe3de2495cbef75cc59d326aac23",
+      "git_blob": "097bb3b44179ee382ee9ebb65aeb8ad25a66bbdf",
+      "repository_commit": "7a9af76276aca8f53347fb89c07850e014905521 (resolved with WSL git)"
+      },
+      {
+        "path": "commonlibrary/c_utils/base/include/parcel.h",
+        "sha256": "25d5bca322bfbca84d362b6914856b2b197dea81f3212e9c135356f9c2de2c42",
+      "git_blob": "882fac69ad5b6e2b8b680343f2bbfd8aa365019e",
+      "repository_commit": "7a9af76276aca8f53347fb89c07850e014905521 (resolved with WSL git)"
+      }
+    ],
+    "coverage_feedback": "Existing binder_invoker unit tests cover UnFlattenDBinderObject null/invalid-length/valid-buffer branches and OnTransaction fixed header. binderinvoker001 fuzzes transaction/object parsing; binderinvoker006 fuzzes UnflattenObject. These are method-level and do not establish full Binder-driver integration coverage. No tests run this turn.",
+    "dedup": "No matching prior observation found for this UnFlattenDBinderObject route.",
+    "next_dependency_gate": "Pin the exact commonlibrary_c_utils revision selected by the product build manifest, then independently verify that its Parcel::ReadObject/CheckOffsets guard matches the local content. Do not promote a candidate based only on the unpinned local dependency."
+  }
+}

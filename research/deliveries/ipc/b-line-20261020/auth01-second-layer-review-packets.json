@@ -1,0 +1,261 @@
+{
+  "schema": "ohscanner.ipc-second-layer-review-packets.v1",
+  "purpose": "Pinned-source L2 review input; AUTH-01 observations are candidates, not confirmed vulnerabilities.",
+  "source": {
+    "repository": "openharmony/communication_ipc",
+    "commit": "5903fd5f7332a427cb3f6915b0202ee5c76c63b5",
+    "git_tree": "0f7129fc37dcc38a0abd6c0ebdd5cbd1ff30d4ac",
+    "snapshot_sha256": "4a77a83643aecdef6214af80b1472ff8ebf1050eb4f48fa0b0935c4791babb9d",
+    "profile_id": "light-ast",
+    "detector_id": "ohscanner.interface.ipc",
+    "detector_version": "0.12.12",
+    "overall_scan_status": "completed_with_limitations",
+    "coverage_status": "partial",
+    "validated_vulnerability_count": 0,
+    "product_manifest_locked": false
+  },
+  "selection": {
+    "candidate_count": 2,
+    "scope": "Distinct DBinder service protocol and Taihe remote-object callback paths.",
+    "selection_status": "Pinned source excerpts and report byte bindings verified. Selected for independent L2 review only.",
+    "precision_recall_claimed": false,
+    "holdout_or_annotation_status": "No independent labeled holdout; precision/recall cannot be claimed."
+  },
+  "packets": [
+    {
+      "candidate_id": "ohscanner.interface.ipc:ca88225a02a0fe72",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "detector_version": "0.12.12",
+      "rule_version": null,
+      "repository": "openharmony/communication_ipc",
+      "source_commit": "5903fd5f7332a427cb3f6915b0202ee5c76c63b5",
+      "git_tree": "0f7129fc37dcc38a0abd6c0ebdd5cbd1ff30d4ac",
+      "snapshot_sha256": "4a77a83643aecdef6214af80b1472ff8ebf1050eb4f48fa0b0935c4791babb9d",
+      "profile_id": "light-ast",
+      "file": "dbinder/dbinder_service/src/dbinder_service_stub.cpp",
+      "line": 168,
+      "symbol": "DBinderServiceStub::OnRemoteRequest",
+      "source_blob_oid_verified": "11927a9291886f56211a3c775122b2462d6f1ddd",
+      "source_sha256_verified": "6583b7b212eb8230ae234c54666bb1c9bdcffed898a3799d096d573a0422b9f2",
+      "reported_byte_range": [
+        6025,
+        6087
+      ],
+      "reported_byte_excerpt": "            result = ProcessProto(code, data, reply, option);\n",
+      "source_excerpt_verification": "Read from pinned Git object. Git blob OID, SHA-256, report byte offsets and exact bytes all match.",
+      "identity_layer": {
+        "stable_status": "unknown",
+        "stable_id": null,
+        "stable_unknown_reasons": [
+          "identity_quality:unknown",
+          "missing:ast_fingerprint",
+          "missing:rule_lineage_id",
+          "missing:symbol_identity"
+        ],
+        "occurrence_status": "unknown",
+        "occurrence_id": null,
+        "occurrence_unknown_reasons": [
+          "missing:rule_version"
+        ],
+        "outer_source_binding": "bound",
+        "identity_record_source_binding": "unbound",
+        "identity_verification": "not_performed_by_identity_layer"
+      },
+      "scanner_observation": {
+        "message": "AUTH-01 candidate: IPC entry reaches a handler resolved in the scanned sources without interface-descriptor validation: DBinderServiceStub::ProcessProto Entry=DBinderServiceStub::OnRemoteRequest [entry-source=dbinder/dbinder_service/src/dbinder_service_stub.cpp]; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((167, 'switch entry'),)",
+        "candidate_cwe": "CWE-441",
+        "consequence_impact": "boundary_bypass",
+        "confidence": "unassessed",
+        "path": "((167, 'switch entry'),)"
+      },
+      "parse_and_coverage": {
+        "file_parse_status": "partial",
+        "language": "cpp",
+        "detector_coverage": "partial",
+        "applicable_files": 660,
+        "analyzed_files_count": 442,
+        "selected_source_files": 697,
+        "source_parsing_counts": {
+          "complete": 442,
+          "not_run": 37,
+          "partial": 218
+        },
+        "coverage_caveat": "Detector coverage is partial; cited source binding does not establish full-repository coverage."
+      },
+      "pinned_source_excerpts": [
+        {
+          "start_line": 107,
+          "end_line": 160,
+          "text": "107: int32_t DBinderServiceStub::ProcessProto(uint32_t code, MessageParcel &data, MessageParcel &reply,\n108:     MessageOption &option)\n109: {\n110:     sptr<DBinderService> dBinderService = DBinderService::GetInstance();\n111:     if (dBinderService == nullptr) {\n112:         DBINDER_LOGE(LOG_LABEL, \"DBinderService is nullptr\");\n113:         DfxReportFailEvent(DbinderErrorCode::RPC_DRIVER, RADAR_GET_SERVICE_NULL, __FUNCTION__);\n114:         return DBINDER_SERVICE_PROCESS_PROTO_ERR;\n115:     }\n116:     auto session = dBinderService->QuerySessionObject(reinterpret_cast<binder_uintptr_t>(this));\n117:     if (session == nullptr) {\n118:         DBINDER_LOGE(LOG_LABEL, \"client find session is null\");\n119:         DfxReportFailEvent(DbinderErrorCode::RPC_DRIVER, RADAR_QUERY_SESSION_FAIL, __FUNCTION__);\n120:         return DBINDER_SERVICE_PROCESS_PROTO_ERR;\n121:     }\n122: \n123:     DBINDER_LOGI(LOG_LABEL, \"serviceName:%{public}s stubIndex:%{public}\" PRIu64 \" tokenId:%{public}u\",\n124:         session->serviceName.c_str(), session->stubIndex, session->deviceIdInfo.tokenId);\n125: \n126:     int uid = IPCSkeleton::GetCallingUid();\n127:     int pid = IPCSkeleton::GetCallingPid();\n128:     if (uid < 0 || pid < 0) {\n129:         DBINDER_LOGE(LOG_LABEL, \"uid or pid err\");\n130:         DfxReportFailEvent(DbinderErrorCode::RPC_DRIVER, RADAR_GET_UID_OR_PID_FAIL, __FUNCTION__);\n131:         return DBINDER_SERVICE_PROCESS_PROTO_ERR;\n132:     }\n133: \n134:     std::string localBusName = dBinderService->CreateDatabusName(uid, pid);\n135:     if (localBusName.empty()) {\n136:         DBINDER_LOGE(LOG_LABEL, \"local busname nil\");\n137:         DfxReportFailEvent(DbinderErrorCode::RPC_DRIVER, RADAR_CREATE_BUS_NAME_FAIL, __FUNCTION__);\n138:         return DBINDER_SERVICE_PROCESS_PROTO_ERR;\n139:     }\n140: \n141:     switch (session->type) {\n142:         case IRemoteObject::DATABUS_TYPE: {\n143:             if (!reply.WriteUint32(IRemoteObject::IF_PROT_DATABUS) || !reply.WriteUint64(session->stubIndex) ||\n144:                 !reply.WriteString(session->serviceName) || !reply.WriteString(session->deviceIdInfo.toDeviceId) ||\n145:                 !reply.WriteString(session->deviceIdInfo.fromDeviceId) || !reply.WriteString(localBusName) ||\n146:                 !reply.WriteUint32(session->deviceIdInfo.tokenId) || !reply.WriteString16(descriptor_)) {\n147:                 DBINDER_LOGE(LOG_LABEL, \"write to parcel fail\");\n148:                 DfxReportFailEvent(DbinderErrorCode::RPC_DRIVER, RADAR_WRITE_TO_PARCEL_FAIL, __FUNCTION__);\n149:                 return DBINDER_SERVICE_PROCESS_PROTO_ERR;\n150:             }\n151:             break;\n152:         }\n153:         default: {\n154:             DBINDER_LOGE(LOG_LABEL, \"Invalid Type\");\n155:             DfxReportFailEvent(DbinderErrorCode::RPC_DRIVER, RADAR_TYPE_INVALID, __FUNCTION__);\n156:             return DBINDER_SERVICE_PROCESS_PROTO_ERR;\n157:         }\n158:     }\n159:     return ERR_NONE;\n160: }"
+        },
+        {
+          "start_line": 162,
+          "end_line": 182,
+          "text": "162: int32_t DBinderServiceStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply,\n163:     MessageOption &option)\n164: {\n165:     int32_t result = ERR_NONE;\n166:     switch (code) {\n167:         case GET_PROTO_INFO: {\n168:             result = ProcessProto(code, data, reply, option);\n169:             break;\n170:         }\n171:         case DBINDER_OBITUARY_TRANSACTION: {\n172:             result = ProcessDeathRecipient(data);\n173:             break;\n174:         }\n175:         default: {\n176:             DBINDER_LOGI(LOG_LABEL, \"unknown code:%{public}u\", code);\n177:             result = DBINDER_SERVICE_UNKNOW_TRANS_ERR;\n178:             break;\n179:         }\n180:     }\n181: \n182:     return result;"
+        }
+      ],
+      "evidence_review": {
+        "source_facts": [
+          "`DBinderServiceStub::OnRemoteRequest` switches on code; GET_PROTO_INFO invokes ProcessProto(code, data, reply, option) (162-169).",
+          "ProcessProto looks up DBinderService and session for `this`, rejecting null service/session (110-120).",
+          "It reads calling UID/PID and rejects negatives, constructs a bus name, checks session type and writes protocol/session fields including descriptor_ to reply (126-159).",
+          "Report byte range [6025,6087) at line 168 matches the ProcessProto call exactly."
+        ],
+        "review_hypothesis_not_finding": "The shown route has no visible input descriptor comparison. Session lookup and caller metadata checks may constrain its semantics; upstream validation and descriptor contract are unknown.",
+        "entry_dispatch_sink_path": "OnRemoteRequest → switch GET_PROTO_INFO → ProcessProto → session lookup / UID-PID checks / protocol reply construction.",
+        "attacker_control": "A remote caller can supply transaction code/parcel at the IPC-facing method boundary in source semantics; caller reachability and product configuration are unknown.",
+        "guard_and_privilege": {
+          "observed_guards_and_controls": [
+            "Null service/session rejected at 110-120.",
+            "Negative UID/PID, empty bus name, invalid session type rejected at 126-156.",
+            "No descriptor-specific safe control linked in integrated report; product manifest is not locked."
+          ],
+          "privilege": "UID/PID validity is checked; authorization and caller privilege are not established."
+        },
+        "candidate_obligations_for_second_layer": [
+          "Determine descriptor invariant for GET_PROTO_INFO and whether descriptor_ is an input check or response metadata.",
+          "Trace framework dispatch and any dominating descriptor guard.",
+          "Assess whether a caller can cause cross-interface behavior despite session and UID/PID checks.",
+          "Establish product object registration and reachability."
+        ],
+        "fixed_or_safe_controls_available": [
+          "Null service/session rejected at 110-120.",
+          "Negative UID/PID, empty bus name, invalid session type rejected at 126-156.",
+          "No descriptor-specific safe control linked in integrated report; product manifest is not locked."
+        ],
+        "product_reachability": "unknown",
+        "impact": "The detector proposes possible interface-boundary confusion. A concrete unintended operation and security consequence are not established.",
+        "unknowns": [
+          "Descriptor protocol/invariant unknown.",
+          "Upstream/base guard not demonstrated by this observation.",
+          "Product reachability unknown; manifest not locked.",
+          "This C++ file parse status is partial."
+        ],
+        "next_evidence": [
+          "Verify descriptor semantics and any guard before virtual dispatch.",
+          "Establish product registration/configuration and reachable caller privilege.",
+          "Use independent wrong-descriptor and correct-descriptor safe controls.",
+          "Trace whether observed handler behavior crosses an interface boundary."
+        ]
+      },
+      "selection_status": "Candidate for independent L2 review only; not a confirmed vulnerability or confidence promotion."
+    },
+    {
+      "candidate_id": "ohscanner.interface.ipc:1831439990fdf6c8",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "detector_version": "0.12.12",
+      "rule_version": null,
+      "repository": "openharmony/communication_ipc",
+      "source_commit": "5903fd5f7332a427cb3f6915b0202ee5c76c63b5",
+      "git_tree": "0f7129fc37dcc38a0abd6c0ebdd5cbd1ff30d4ac",
+      "snapshot_sha256": "4a77a83643aecdef6214af80b1472ff8ebf1050eb4f48fa0b0935c4791babb9d",
+      "profile_id": "light-ast",
+      "file": "ipc/native/src/taihe/src/ohos.rpc.rpc.impl.cpp",
+      "line": 231,
+      "symbol": "ANIRemoteObject::OnRemoteRequest",
+      "source_blob_oid_verified": "2c2e6db30c858b41b4166267df3f2b07794bc869",
+      "source_sha256_verified": "2527026b8a744f9bb1ae4d9af98e991386ec07887af4310f2309c57a1674ba08",
+      "reported_byte_range": [
+        14244,
+        14314
+      ],
+      "reported_byte_excerpt": "        callOnRemoteMessageRequest(code, jsData, jsReply, jsOption);\r\n",
+      "source_excerpt_verification": "Read from pinned Git object. Git blob OID, SHA-256, report byte offsets and exact bytes all match.",
+      "identity_layer": {
+        "stable_status": "unknown",
+        "stable_id": null,
+        "stable_unknown_reasons": [
+          "identity_quality:unknown",
+          "missing:ast_fingerprint",
+          "missing:rule_lineage_id",
+          "missing:symbol_identity"
+        ],
+        "occurrence_status": "unknown",
+        "occurrence_id": null,
+        "occurrence_unknown_reasons": [
+          "missing:rule_version"
+        ],
+        "outer_source_binding": "bound",
+        "identity_record_source_binding": "unbound",
+        "identity_verification": "not_performed_by_identity_layer"
+      },
+      "scanner_observation": {
+        "message": "AUTH-01 candidate: IPC entry reaches a handler resolved in the scanned sources without interface-descriptor validation: ANIRemoteObject::callOnRemoteMessageRequest Entry=ANIRemoteObject::OnRemoteRequest [entry-source=ipc/native/src/taihe/src/ohos.rpc.rpc.impl.cpp]; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=()",
+        "candidate_cwe": "CWE-441",
+        "consequence_impact": "boundary_bypass",
+        "confidence": "unassessed",
+        "path": "()"
+      },
+      "parse_and_coverage": {
+        "file_parse_status": "complete",
+        "language": "cpp",
+        "detector_coverage": "partial",
+        "applicable_files": 660,
+        "analyzed_files_count": 442,
+        "selected_source_files": 697,
+        "source_parsing_counts": {
+          "complete": 442,
+          "not_run": 37,
+          "partial": 218
+        },
+        "coverage_caveat": "Detector coverage is partial; cited source binding does not establish full-repository coverage."
+      },
+      "pinned_source_excerpts": [
+        {
+          "start_line": 198,
+          "end_line": 217,
+          "text": "198: ::ohos::rpc::rpc::OnRemoteMessageRequestResultUnion ANIRemoteObject::callOnRemoteMessageRequest(int32_t code,\n199:     ::ohos::rpc::rpc::weak::MessageSequence data, ::ohos::rpc::rpc::weak::MessageSequence reply,\n200:     ::ohos::rpc::rpc::weak::MessageOption options)\n201: {\n202:     if (!jsObjRef_.has_value()) {\n203:         ZLOGE(LOG_LABEL, \"jsObjRef_ is empty\");\n204:         return ::ohos::rpc::rpc::OnRemoteMessageRequestResultUnion::make_booleanValue(false);\n205:     }\n206:     auto jsObjRef = jsObjRef_.value();\n207: \n208:     if (hasCallingInfoAni_) {\n209:         ::ohos::rpc::rpc::OnRemoteMessageRequestResultUnion retWithCallingInfo =\n210:             jsObjRef->OnRemoteMessageRequestWithCallingInfo(code, data, reply, options, GetCallingInfo());\n211:         return retWithCallingInfo;\n212:     } else {\n213:         ::ohos::rpc::rpc::OnRemoteMessageRequestResultUnion ret =\n214:             jsObjRef->OnRemoteMessageRequest(code, data, reply, options);\n215:         return ret;\n216:     }\n217: }"
+        },
+        {
+          "start_line": 219,
+          "end_line": 249,
+          "text": "219: int ANIRemoteObject::OnRemoteRequest(uint32_t code, OHOS::MessageParcel &data, OHOS::MessageParcel &reply,\n220:     OHOS::MessageOption &option)\n221: {\n222:     auto [asyncCallback, future] =\n223:         ::taihe::make_async_pair<::taihe::expected<::ohos::rpc::rpc::RequestResult, ::taihe::error>>();\n224:     auto jsData = taihe::make_holder<MessageSequenceImpl, ::ohos::rpc::rpc::MessageSequence>(&data);\n225:     jsData->AddJsObjWeakRef(jsData);\n226:     auto jsReply = taihe::make_holder<MessageSequenceImpl, ::ohos::rpc::rpc::MessageSequence>(&reply);\n227:     jsReply->AddJsObjWeakRef(jsReply);\n228:     auto jsOption = taihe::make_holder<MessageOptionImpl, ::ohos::rpc::rpc::MessageOption>(option.GetFlags(),\n229:         option.GetWaitTime());\n230:     ::ohos::rpc::rpc::OnRemoteMessageRequestResultUnion res =\n231:         callOnRemoteMessageRequest(code, jsData, jsReply, jsOption);\n232:     if (res.holds_booleanValue()) {\n233:         bool boolRes = res.get_booleanValue_ref();\n234:         return boolRes ? OHOS::ERR_NONE : OHOS::ERR_UNKNOWN_TRANSACTION;\n235:     } else {\n236:         res.get_promiseValue_ref().on_complete(\n237:             [cb = std::move(asyncCallback), code, jsData = ::ohos::rpc::rpc::MessageSequence(jsData), jsReply =\n238:             ::ohos::rpc::rpc::MessageSequence(jsReply)](::taihe::expected<bool, ::taihe::error> expectedBool) {\n239:             if (expectedBool.has_value()) {\n240:                 int32_t retVal = expectedBool.value() ? OHOS::ERR_NONE : OHOS::ERR_UNKNOWN_TRANSACTION;\n241:                 ::ohos::rpc::rpc::RequestResult resRequestResult = { retVal, code, jsData, jsReply };\n242:                 cb.complete(resRequestResult);\n243:             } else {\n244:                 cb.complete(::taihe::unexpected<taihe::error>(expectedBool.error()));\n245:             }\n246:         });\n247:         return OHOS::ERR_NONE;\n248:     }\n249: }"
+        }
+      ],
+      "evidence_review": {
+        "source_facts": [
+          "ANIRemoteObject::OnRemoteRequest wraps data/reply/options and calls callOnRemoteMessageRequest(code, ...) (219-231).",
+          "The helper checks jsObjRef_, then invokes JS OnRemoteMessageRequestWithCallingInfo or OnRemoteMessageRequest based on hasCallingInfoAni_ (198-216).",
+          "Report byte range [14244,14314) at line 231 exactly matches the Taihe callback call."
+        ],
+        "review_hypothesis_not_finding": "The override forwards code and parcel wrappers to a JS callback without descriptor comparison in the excerpt. This may be by design if registration/framework dispatch binds descriptor; that contract and product exposure are unverified.",
+        "entry_dispatch_sink_path": "IPC dispatch → ANIRemoteObject::OnRemoteRequest → Taihe wrappers → callOnRemoteMessageRequest → JS request callback.",
+        "attacker_control": "A remote caller can supply transaction code/parcel at the IPC-facing method boundary in source semantics; caller reachability and product configuration are unknown.",
+        "guard_and_privilege": {
+          "observed_guards_and_controls": [
+            "Missing jsObjRef_ returns false (202-205).",
+            "Callback result maps to ERR_NONE / ERR_UNKNOWN_TRANSACTION (232-248).",
+            "No descriptor-specific safe control linked in report."
+          ],
+          "privilege": "Caller authorization and product caller privilege are not shown."
+        },
+        "candidate_obligations_for_second_layer": [
+          "Verify descriptor validation before virtual dispatch or in object registration/construction.",
+          "Determine if the JS receiver should only receive requests for its own descriptor.",
+          "Review async callback path for request isolation.",
+          "Find independent wrong-descriptor and correct-descriptor controls."
+        ],
+        "fixed_or_safe_controls_available": [
+          "Missing jsObjRef_ returns false (202-205).",
+          "Callback result maps to ERR_NONE / ERR_UNKNOWN_TRANSACTION (232-248).",
+          "No descriptor-specific safe control linked in report."
+        ],
+        "product_reachability": "unknown",
+        "impact": "The detector proposes possible interface-boundary confusion. A concrete unintended operation and security consequence are not established.",
+        "unknowns": [
+          "Upstream descriptor validation contract unknown.",
+          "Receiver callback semantics/runtime binding not established.",
+          "Product reachability unknown.",
+          "This C++ file parses complete; detector-wide coverage remains partial."
+        ],
+        "next_evidence": [
+          "Verify descriptor semantics and any guard before virtual dispatch.",
+          "Establish product registration/configuration and reachable caller privilege.",
+          "Use independent wrong-descriptor and correct-descriptor safe controls.",
+          "Trace whether observed handler behavior crosses an interface boundary."
+        ]
+      },
+      "selection_status": "Candidate for independent L2 review only; not a confirmed vulnerability or confidence promotion."
+    }
+  ]
+}

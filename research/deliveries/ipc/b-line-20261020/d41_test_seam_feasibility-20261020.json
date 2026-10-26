@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "task_id": "D41",
+  "title": "T30-R1 target-pinned test seam and execution feasibility",
+  "reviewed_at_utc": "2026-10-20T08:10:00Z",
+  "scope": {
+    "target_repository": "openharmony/communication_ipc",
+    "target_commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "review_type": "source-bound feasibility and build-environment inventory",
+    "read_only": true,
+    "tests_run": false,
+    "poc_run": false,
+    "product_code_changed": false
+  },
+  "source_evidence": {
+    "basis": "Immutable target-commit raw files previously bound in T33 and locally present under D:/openHarmonyScanner/tmp/d31-race; SHA-256 independently recomputed in this task for the central request and callback files.",
+    "files": [
+      {"path":"ipc/native/src/core/dbinder/include/dbinder_base_invoker_process.h","sha256":"bcd53526774d44fa4d86b21f94a4b3dd3239a8fbc923c5a8d0ba28e6f2aa49e9","claims":"TargetStubSendRequest locks this invoker's objectMutex_, gets QueryStubByIndex(cookie) into a raw pointer, then calls IPCObjectStub::SendRequest; no temporary sptr/ref acquisition between lookup and call."},
+      {"path":"ipc/native/src/core/dbinder/source/dbinder_databus_invoker.cpp","sha256":"378776e256a8438c5bb28c57acc39172b3376512907718e813b71406b7251217","claims":"OnDatabusSessionServerSideClosed detaches socket relations and decrements the corresponding stub strong ref under the callback thread's invoker object mutex."},
+      {"path":"ipc/native/src/core/dbinder/source/databus_socket_listener.cpp","sha256":"dce80ace50af9f18a0e003f0bd49cdf6b4ba22a4012fe51df2a4bbb8456acb3b","claims":"ServerOnShutdown obtains the current thread's remote invoker and dispatches the close handler; this source alone does not identify SoftBus callback thread identity or overlap with the transaction worker."},
+      {"path":"ipc/native/src/core/framework/source/ipc_thread_skeleton.cpp","sha256":"393ab2f501def549428374f8e3ceefab6e12df91118672272cc915c4d01bb4e1","claims":"Current IPCThreadSkeleton is obtained from pthread TLS; remote invoker lookup is through that current skeleton."},
+      {"path":"ipc/native/src/core/framework/source/ipc_process_skeleton.cpp","sha256":"cdffaaf0054da5c80d64c0cec6ef287c9c24e432bc50a49d3288336715910366","claims":"QueryStubByIndex returns a raw map pointer after its shared map lock scope; the map lock does not extend lifetime after return. Erase removes the index but does not revoke a previously copied pointer."},
+      {"path":"ipc/native/src/core/framework/source/ipc_object_stub.cpp","sha256":"554a27bf335d0048373c326f3f9bddea9ba134b73bf8dca622d6c80b644656bb","claims":"OnLastStrongRef performs stub-index/auth cleanup; actual destruction depends on the reference count reaching zero."},
+      {"path":"ipc/native/src/core/dbinder/include/dbinder_base_invoker_define.h","sha256":"dbea8dced551f18820cbf0bbb21e838d32a793dc23c359122cd33ca295341b4f","claims":"objectMutex_ is a non-static member, hence per-invoker-instance."},
+      {"path":"ipc/native/src/core/dbinder/include/dbinder_base_invoker_interface.h","sha256":"a6bc9bf8368c97dd8abc95a5f016a200a1cf7910b496cfad3dc829bf5ec43f91","claims":"GetObjectMutex exposes that instance member."}
+    ],
+    "interpretation": "Distinct callback and worker threads have distinct TLS skeleton/invoker instances and therefore distinct objectMutex_ objects. The source establishes a possible unsynchronized raw-pointer window, not that SoftBus schedules the close callback concurrently, that the socket relation is the last strong reference, or that a post-destruction SendRequest access occurs."
+  },
+  "environment": {
+    "workspace_head": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "product_source_tree": "D:/openHarmonyScanner/openharmony",
+    "product_lock": {
+      "status": "not established for requested IPC commit",
+      "evidence": "Prior D27/T28 manifest audit found active manifest floating IPC and SoftBus at master; frozen snapshots pair IPC 5903fd5f7332a427cb3f6915b0202ee5c76c63b5 with SoftBus 78e7835... or 7743b679f6c3599e21bea4e4b1564422668e3643. No immutable product manifest/build record pairs IPC bbb92dbb2f52aca54ab268307c9476ac1802f3ff with its SoftBus and c_utils revisions.",
+      "local_ipc_checkout": "5903fd5f7332a427cb3f6915b0202ee5c76c63b5 (does not match target pin)",
+      "local_dsoftbus_checkout": "7743b679f6c3599e21bea4e4b1564422668e3643 (pair with target pin not established)"
+    },
+    "build_tools": {
+      "gn": {"status":"present per T32 WSL inventory","path":"openharmony/prebuilts/build-tools/linux-x86/bin/gn","version":"2026 (47b40ef4)"},
+      "ninja": {"status":"present per T32 WSL inventory","path":"openharmony/prebuilts/build-tools/linux-x86/bin/ninja","version":"1.13.2"},
+      "ohos_clang_sysroot": {"status":"missing per T32 inventory","details":"No target OHOS clang/clang++ or OHOS sysroot found in prebuilts/out/rk3568; generic WSL /usr/bin/clang++ does not establish target ABI/toolchain."},
+      "generated_build": {"status":"missing per T32 inventory","path":"openharmony/out/rk3568","details":"No args.gn or build.ninja; directory contains build logs only."},
+      "current_recheck": "Windows WSL invocation returned a localhost/WSL service error in this task; no new successful WSL inventory was obtained. Earlier T32 inventory is retained with provenance rather than presented as a fresh check."
+    },
+    "execution_verdict": "blocked: exact target-paired product graph, OHOS compiler/sysroot and generated test build are unavailable/unproven; GN/Ninja alone are insufficient."
+  },
+  "test_design": {
+    "seam": "Test-only barrier immediately after TargetStubSendRequest receives the raw result of QueryStubByIndex(cookie), before the existing IPCObjectStub::SendRequest call. Keep seam behind test-only build configuration or injected synchronization hook; do not change production ownership or locking semantics.",
+    "deterministic_schedule": [
+      "Construct a real target-test stub and a valid socket/stub relation; instrument strong-reference count and destructor/OnLastStrongRef. Prove that the relation is the last strong reference at the scheduled close point, or explicitly classify the run as a non-last-ref control.",
+      "Drive the request through its normal caller gate and pause the worker at the post-QueryStubByIndex barrier, retaining only the raw pointer in the existing request path.",
+      "On a separate thread with its own IPCThreadSkeleton, invoke the target close callback for the same socket and wait until detach/DecStrongRef and any last-strong cleanup have completed.",
+      "Release the barrier and instrument entry/use/return of SendRequest with ASan or a safe test object marker. Never intentionally dereference freed memory outside the instrumented target test binary.",
+      "Repeat with an unrelated strong owner held: close must not destroy the object while that reference remains.",
+      "Fail-closed control: complete close and index erase before starting lookup; QueryStubByIndex must return null and SendRequest must not be entered."
+    ],
+    "oracles": {
+      "candidate_support": "Only target-paired runtime evidence that the close thread drops the last reference after lookup and the request then accesses the destroyed object (sanitizer or deterministic safe instrumentation) supports the lifetime candidate. Refcount zero, index erase, or stale mapping alone is insufficient.",
+      "fail_closed_control": "close-before-lookup yields null and no SendRequest call.",
+      "live_reference_control": "an unrelated strong reference prevents last-strong destruction during the request window.",
+      "non_confirmation": "If thread overlap, last-ref condition, or post-destruction access cannot be observed, retain conditional/insufficient; do not claim UAF."
+    },
+    "required_setup": [
+      "Immutable product manifest/build lock pairing exact IPC, SoftBus and c_utils commits.",
+      "Matching OHOS clang/clang++ and sysroot plus generated args.gn/build.ninja for the chosen product.",
+      "Resolved GN IPC unit-test target that compiles the test-only barrier seam.",
+      "Paired SoftBus callback implementation or product runtime evidence establishing callback thread and scheduling semantics."
+    ]
+  },
+  "disposition": {
+    "confirmed_candidates": 0,
+    "conditional_candidates": 1,
+    "candidate": "T30-R1 raw stub pointer lifetime window remains one low-confidence conditional candidate for second-layer review.",
+    "next_action": "Acquire a target-paired OHOS build/runtime or an immutable manifest/build artifact; then implement only the test-only seam and execute controls in the product unit-test target. Until then, source-only finding remains conditional.",
+    "static_candidate_policy": "Do not add stale INCREFS row or index cleanup as separate candidates; neither independently establishes authorization impact or UAF."
+  },
+  "feedback": {
+    "to_development": "The seam is precise and feasible in principle; no production code change is justified by this feasibility review. Any test hook must be test-only and preserve real handler/close paths.",
+    "to_test": "Run close-before-lookup and live-reference controls alongside the lookup-before-close/last-ref schedule; require target-paired sanitizer or safe instrumentation evidence before upgrading.",
+    "blocker_owner": "product build/runtime environment provisioning"
+  },
+  "limitations": [
+    "No tests or PoC were run, as requested.",
+    "The current container's WSL recheck failed; toolchain/build absence is based on T32's earlier inventory and current visible source-tree state, with that distinction recorded above.",
+    "The local product source checkout is not the target IPC revision; no host build or unpaired SoftBus evidence is accepted as product validation.",
+    "The source files establish structural possibility only; runtime overlap, last-reference status and security-relevant impact remain unproven."
+  ]
+}

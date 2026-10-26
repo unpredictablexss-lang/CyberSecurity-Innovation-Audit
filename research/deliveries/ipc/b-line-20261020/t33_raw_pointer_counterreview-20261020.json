@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "task_id": "T33",
+  "title": "Independent raw-pointer lifetime counter-review",
+  "reviewed_at_utc": "2026-10-19T21:45:00Z",
+  "scope": {
+    "repository": "openharmony/communication_ipc",
+    "target_commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "review_mode": "independent source review; D31 not used as correctness oracle",
+    "read_only": true,
+    "tests_or_poc_run": false,
+    "product_code_changed": false
+  },
+  "source_binding": {
+    "method": "Exact SHA-256 values independently recomputed over immutable target-commit raw files in D:/openHarmonyScanner/tmp/d31-race; matches listed target-commit Git blob evidence where available.",
+    "files": [
+      {"path":"ipc/native/src/core/dbinder/include/dbinder_base_invoker_process.h","sha256":"bcd53526774d44fa4d86b21f94a4b3dd3239a8fbc923c5a8d0ba28e6f2aa49e9","git_blob":"111cbfc11be5c3e4d090a6ef9152e93b8f25b804"},
+      {"path":"ipc/native/src/core/dbinder/include/dbinder_base_invoker_define.h","sha256":"dbea8dced551f18820cbf0bbb21e838d32a793dc23c359122cd33ca295341b4f","git_blob":"c4de1915c7b4798b031dd10c0584079af04c70fe"},
+      {"path":"ipc/native/src/core/dbinder/include/dbinder_base_invoker_interface.h","sha256":"a6bc9bf8368c97dd8abc95a5f016a200a1cf7910b496cfad3dc829bf5ec43f91","git_blob":"0ae2740d169ce773c40701ed5430b7c76c93472e"},
+      {"path":"ipc/native/src/core/dbinder/include/dbinder_databus_invoker.h","sha256":"9a79ad3d72f2377b63a39871e821312a526401efedef8338d993f398fa5737a5","git_blob":"23b8cb57dc80600594eef6a4e7889a9827831a49"},
+      {"path":"ipc/native/src/core/dbinder/source/dbinder_databus_invoker.cpp","sha256":"378776e256a8438c5bb28c57acc39172b3376512907718e813b71406b7251217","git_blob":"83450463d6d39f3a327ffa3dccccf0d8c957757d"},
+      {"path":"ipc/native/src/core/dbinder/source/databus_socket_listener.cpp","sha256":"dce80ace50af9f18a0e003f0bd49cdf6b4ba22a4012fe51df2a4bbb8456acb3b","git_blob":"7a01e036427e45385b02605a403dbca35b318aab"},
+      {"path":"ipc/native/src/core/framework/source/ipc_process_skeleton.cpp","sha256":"cdffaaf0054da5c80d64c0cec6ef287c9c24e432bc50a49d3288336715910366","git_blob":"516fd9efd0ab405cbd0c8a985f9f203478fc4d52"},
+      {"path":"ipc/native/src/core/framework/source/ipc_object_stub.cpp","sha256":"554a27bf335d0048373c326f3f9bddea9ba134b73bf8dca622d6c80b644656bb","git_blob":"22c3a682c20fd350b318cad17a6d621206e65ba7"},
+      {"path":"ipc/native/src/core/framework/source/ipc_thread_skeleton.cpp","sha256":"393ab2f501def549428374f8e3ceefab6e12df91118672272cc915c4d01bb4e1","git_blob":"0206b248dc57065721c1712b251d2edaaee79476"}
+    ]
+  },
+  "independent_findings": {
+    "request_holds_strong_reference": {
+      "verdict": "no temporary strong reference found in TargetStubSendRequest",
+      "evidence": [
+        "dbinder_base_invoker_process.h:53-80 locks objectMutex_, stores QueryStubByIndex(tr->cookie) into auto* and calls IPCObjectStub::SendRequest through that raw pointer; no sptr construction, IncStrongRef, or other ref acquisition appears between lookup and call.",
+        "The source comment at lines 69-70 explicitly warns that the stub must not be used after SendRequest because the command may be DBINDER_DECREFS and destroy it. This corroborates that the call may itself change lifetime, but does not protect against another thread destroying it during the call."
+      ],
+      "limit": "This establishes the local function's raw-pointer usage; callers or unrelated owners may hold other strong references, so it does not establish that the object is actually at risk of reaching zero in a given runtime."
+    },
+    "cross_thread_close_serialization": {
+      "verdict": "per-instance mutexes do not provide cross-thread serialization; overlap remains a runtime condition",
+      "evidence": [
+        "IPCThreadSkeleton::GetCurrent (ipc_thread_skeleton.cpp:123-148) gets/creates the skeleton stored in pthread TLS; GetRemoteInvoker (204 onward) obtains the invoker from that current skeleton.",
+        "DatabusSocketListener::ServerOnShutdown gets its DBinder invoker through GetRemoteInvoker and calls OnDatabusSessionServerSideClosed (databus_socket_listener.cpp:89-100).",
+        "TargetStubSendRequest's lockGuard uses its invoker's objectMutex_. OnDatabusSessionServerSideClosed obtains GetObjectMutex() from the callback-thread invoker. objectMutex_ is a non-static member of DBinderBaseInvoker (dbinder_base_invoker_define.h:171), and GetObjectMutex returns that member (dbinder_base_invoker_interface.h:245-248). Distinct TLS skeletons therefore mean distinct mutexes.",
+        "OnDatabusSessionServerSideClosed detaches socket rows, then under its per-instance objectMutex_ calls QueryStubByIndex and DecStrongRef (dbinder_databus_invoker.cpp:655-675)."
+      ],
+      "counter_evidence_or_gaps": [
+        "The listener implementation shows dispatch into this callback but does not identify SoftBus callback thread identity or establish a happens-before/overlap relation with the IPC worker. If both paths execute on the same TLS thread, they use the same invoker mutex and serialize; if distinct threads, the mutexes do not serialize.",
+        "The worker queue proves transaction processing can be delegated, but the callback's actual thread/scheduling relative to the worker must be confirmed in the paired SoftBus implementation or runtime."
+      ]
+    },
+    "stub_index_removal_protection": {
+      "verdict": "does not protect an already copied raw pointer",
+      "evidence": [
+        "QueryStubByIndex holds stubObjectsMutex_ shared lock only while finding and returning the map's raw IRemoteObject* (ipc_process_skeleton.cpp:994-1009); the lock is released when the function returns.",
+        "EraseStubIndex takes the unique stubObjectsMutex_ and erases map entry (1044-1057). IPCObjectStub::OnLastStrongRef calls EraseStubIndex and detaches auth state (ipc_object_stub.cpp:489-502).",
+        "The index lock prevents simultaneous map mutation during the lookup itself and makes a later lookup miss after erase. It does not extend object lifetime after return, and erasing the entry does not revoke a pointer already copied by the worker."
+      ],
+      "strongest_refutation": "If close/last-ref teardown completes before QueryStubByIndex begins, the erased index makes lookup return nullptr and this request path fails closed. This refutes stale-index reuse after completed teardown, but not the interleaving where lookup returns first."
+    },
+    "last_strong_ref_condition": {
+      "verdict": "possible by source mechanics but not demonstrated for a real target deployment",
+      "evidence": [
+        "Successful DBinder session establishment attaches the relation and increments the stub strong ref (IPCObjectStub::OnSessionOpened path and DBinderDatabusInvoker::ConnectRemoteObject2Session path).",
+        "Socket close returns one stubIndex per removed socket relation and calls DecStrongRef once per returned relation. DBinder_DECREFS similarly decrements only after successful exact relation detach.",
+        "If that socket-bound DBinder relation is the last strong reference, RefBase's last-strong callback invokes IPCObjectStub::OnLastStrongRef, which erases stub index and detaches the object. The object cannot be destroyed if unrelated strong owners remain."
+      ],
+      "missing": ["Reference count distribution for the target service/stub at the race point", "Target-paired SoftBus callback concurrency/scheduling", "Product runtime evidence that SendRequest executes after the last ref drop"]
+    },
+    "late_increfs_stale_mapping": {
+      "verdict": "separate secondary state issue; not the raw-pointer lifetime cause and not an independent confirmed candidate",
+      "reasoning": [
+        "A late INCREFS that passed the earlier socket authorization can write a stubIndex/socket relation with a null stub argument but does not increment the strong ref in that handler.",
+        "The row names the closed socket. New-session binding still requires separate CommAuth state; the stale row alone is not shown to authorize a new socket or create a strong ref.",
+        "If close reaches zero first, object teardown erases the stub index and rows by stub. If the object remains alive, stale-row duration/cleanup and any later valid rebind need runtime evidence."
+      ]
+    }
+  },
+  "verdict": {
+    "confirmed_candidates": 0,
+    "conditional_candidates": 1,
+    "classification": "low-confidence conditional raw-pointer lifetime candidate",
+    "candidate": "If the authorized request worker obtains the raw pointer first, a distinct-thread ServerOnShutdown callback may detach that socket's relation and drop the last strong ref before/during SendRequest. Per-instance TLS invoker mutexes do not serialize distinct threads, and erasing stubIndex cannot invalidate a pointer already returned.",
+    "not_confirmed_because": [
+      "No target-paired runtime proof that SoftBus shutdown callback and worker dispatch overlap.",
+      "No evidence that this socket relation is the last strong reference for a concrete service stub at the overlap point.",
+      "No product execution showing destruction concurrent with SendRequest or security-relevant impact."
+    ],
+    "candidate_count_policy": "Keep at most this one low/conditional item for second-layer review; do not report confirmed UAF."
+  },
+  "minimum_next_verification": {
+    "test_seam": "Pause after TargetStubSendRequest's QueryStubByIndex returns and before SendRequest; on a confirmed distinct SoftBus callback thread, close the same socket and observe relation detach, refcount, OnLastStrongRef/destructor and index erase before releasing the worker.",
+    "controls": [
+      "close-before-lookup must return null and not invoke SendRequest",
+      "lookup-before-close with an unrelated strong owner must not destroy the object",
+      "lookup-before-close with only the socket relation remaining must determine whether SendRequest is entered on a destroyed object"
+    ],
+    "required_external_evidence": ["Target-paired IPC and SoftBus build/source", "OHOS toolchain and generated build configuration", "instrumented runtime schedule/refcount/destructor observations"]
+  },
+  "summary": {
+    "independent_conclusion": "D31's central raw-pointer window is structurally plausible and its stated refutations (TLS/per-instance mutex and index erasure) do not eliminate the lookup-before-close interleaving. It remains conditional: thread overlap and last-ref status are not established.",
+    "stale_mapping": "secondary; no independent authorization or refcount exploit established",
+    "tests_or_poc_run": false,
+    "product_code_changed": false
+  }
+}

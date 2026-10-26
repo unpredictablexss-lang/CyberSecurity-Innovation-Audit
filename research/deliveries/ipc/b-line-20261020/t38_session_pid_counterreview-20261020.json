@@ -1,0 +1,117 @@
+{
+  "schema": "ohscanner.bline-session-pid-counterreview.v1",
+  "task": "T38",
+  "reviewed_at_utc": "2026-10-19T22:20:00Z",
+  "scope": {
+    "independent_of": "D37 conclusions; D37 artifact inspected only after completing independent route reconstruction",
+    "target_repository": "openharmony/communication_ipc",
+    "target_commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "routes": [
+      "GET_SESSION_NAME",
+      "GET_PID_UID"
+    ],
+    "read_only": true,
+    "tests_run": false,
+    "poc_run": false,
+    "product_code_changed": false
+  },
+  "d37_comparison": {
+    "artifact": "d37_session_pid_scout-20261020.json",
+    "source_binding_match": "All seven D37 source SHA-256/Git blob pairs for IPCObjectStub, IPCObjectProxy, IPCProcessSkeleton, IPCObjectProxy header, ipc_single map and build files independently match D23/T24 immutable target raw-source bindings.",
+    "route_agreement": [
+      "GET_SESSION_NAME has a direct typed proxy helper and handler dispatch; generic SendRequest guard is bypassed by that helper.",
+      "GET_PID_UID returns the receiver process getpid()/getuid(), but the standard generic SendRequest code guard blocks ordinary callers and no typed IPCObjectProxy helper exists in the reviewed target sources/header/export map.",
+      "The GET_SESSION_NAME value is the target service process UID/PID encoded as a DBinder session name, not the original app caller's UID/PID."
+    ],
+    "independent_deltas": [
+      "Confirmed GetSessionName is an intentional DBinder lifecycle query used by DBinderDatabusInvoker::GetSessionForProxy before InvokeListenThread, not an unrelated diagnostic API. It retrieves the target server's granted name needed to construct the remote session request.",
+      "An IPCObjectProxy to the target stub is sufficient; callers do not specifically need the registry proxy. IPCSkeleton::GetContextObject is one public route to the registry proxy, while any service API that returns a proxy could provide the needed receiver object if the native inner API is available.",
+      "The returned name contains numeric UID/PID, but this exposes only process identity metadata. D37 did not establish a confidentiality boundary or a security impact beyond disclosure of that metadata; the method is documented since API level 9, exported in the standard map, and has a legitimate public-innerkit DBinder use.",
+      "The ordinary third-party application SDK/package policy remains unbound. The GN/bundle evidence identifies inner-kit/platformsdk surfaces; it does not prove that an ordinary public-SDK app can link these interfaces in a deployed product. This gap does not turn the intended DBinder metadata query into a supported vulnerability."
+    ]
+  },
+  "target_source_bindings": [
+    {
+      "path": "ipc/native/src/core/framework/source/ipc_object_stub.cpp",
+      "sha256": "554a27bf335d0048373c326f3f9bddea9ba134b73bf8dca622d6c80b644656bb",
+      "git_blob": "22c3a682c20fd350b318cad17a6d621206e65ba7"
+    },
+    {
+      "path": "ipc/native/src/core/framework/source/ipc_object_proxy.cpp",
+      "sha256": "4d1e24129bec4a642047fb6187f63b40a1b17c1f1740f7b816f7691890b92157",
+      "git_blob": "4701faa882a030d0f34772d4b85b432b0be87e1e"
+    },
+    {
+      "path": "ipc/native/src/core/framework/source/ipc_process_skeleton.cpp",
+      "sha256": "cdffaaf0054da5c80d64c0cec6ef287c9c24e432bc50a49d3288336715910366",
+      "git_blob": "516fd9efd0ab405cbd0c8a985f9f203478fc4d52"
+    },
+    {
+      "path": "ipc/native/src/core/framework/source/ipc_skeleton.cpp",
+      "sha256": "9b6302bc0367ad2687fdda93e027954fd09699b9ef933f2bf5989a7096e45adb",
+      "git_blob": null,
+      "target_pin": "Not bound by D37; local 5903fd checkout only"
+    },
+    {
+      "path": "ipc/native/src/core/dbinder/source/dbinder_databus_invoker.cpp",
+      "sha256": "378776e256a8438c5bb28c57acc39172b3376512907718e813b71406b7251217",
+      "git_blob": null,
+      "target_pin": "Not bound by D37; local 5903fd checkout only"
+    },
+    {
+      "path": "interfaces/innerkits/ipc_core/include/ipc_object_proxy.h",
+      "sha256": "58a825867d11664f7f8716c53e46d6c852eaeaae6da2770ea6b70a9b0fa2c73c",
+      "git_blob": "71e128907c3842441c9fe856472ceb5479263eea"
+    },
+    {
+      "path": "interfaces/innerkits/ipc_single/libipc_single_map",
+      "sha256": "8e05e1b217ed5b42ad83fbf38d31ca33241302a5c2b49cf927fd66b868bd049a",
+      "git_blob": "0bab69a423e5127f4b2e7b0d0ba87f0eb3772d9b"
+    },
+    {
+      "path": "interfaces/innerkits/ipc_single/BUILD.gn",
+      "sha256": "331ba3ea500d4b89216aab1c749a2b4eeade0a671701d3285f4dc4c986116227",
+      "git_blob": "797626221f2bcc113fd60c10a2410290f2ed4685"
+    },
+    {
+      "path": "interfaces/innerkits/ipc_core/BUILD.gn",
+      "sha256": "a0215d55f3b4277dbcd62f9f0c42941e2c7cfe9b3aec34dbaf35f4ca8fcbf333",
+      "git_blob": "fcc114be4923335cb09a0ea00751b2dbfcae9726"
+    }
+  ],
+  "findings": {
+    "GET_SESSION_NAME": {
+      "dispatch_and_guard": "IPCObjectStub::SendRequest dispatches GET_SESSION_NAME to DBinderGetSessionName. That handler checks IsLocalCalling only; for Binder this is local transport, not a caller-identity ACL. IPCObjectProxy::GetSessionName is a public typed helper and directly calls SendRequestInner with the special code, so it bypasses the generic SendRequest MAX_TRANSACTION_ID guard.",
+      "data_and_side_effect": "The target stub's GetSessionName calls its process SAMGR proxy's GetGrantedSessionName. SAMGR derives DBINDER_SOCKET_NAME_PREFIX + caller_uid + '_' + caller_pid using the Binder caller identity of the requesting service process and calls CreateSessionName/DBinderGrantPermission. The target service then receives its own process session name. This is a legitimate prerequisite in DBinderDatabusInvoker::GetSessionForProxy, which places the name in the request sent through InvokeListenThread.",
+      "product_surface": "The helper is declared in ipc_object_proxy.h, explicitly exported in libipc_single_map, and available through ipc_core inner-kit/platformsdk metadata. IPCSkeleton::GetContextObject is also exported and obtains the REGISTRY_HANDLE proxy via IPCProcessSkeleton::GetRegistryObject. A registry proxy is one route, not a requirement; any usable IPCObjectProxy to a remote stub suffices. Exact availability to ordinary public-SDK/third-party apps is not established by these inner-kit/platformsdk source records.",
+      "descriptor_comparison": "GetInterfaceDescriptor returns the remote interface descriptor; GetHandle exposes the Binder handle; GetObjectDescriptor is an object/interface descriptor. None of these APIs in the reviewed source returns the target process UID/PID. Therefore the session name carries additional numeric process metadata versus those descriptors, but the review found no evidence that this metadata is security-sensitive or protected from the intended inner-kit caller class.",
+      "candidate_decision": "insufficient_as_a_security_finding; one_conditional_L2_candidate_retained",
+      "reason": "The technical disclosure is supported: the exported helper returns the target service process UID/PID encoded in its DBinder session name, and the reviewed descriptor APIs do not return these values. Whether those identifiers are materially sensitive to ordinary apps is not established. The helper is documented/exported and used by DBinder lifecycle code, which weighs toward intended exposure to supported inner-kit callers. The target product SDK/package policy and app impact are not bound; retain only as a conditional low-severity L2 question, not a finding."
+    },
+    "GET_PID_UID": {
+      "handler": "Requires IsLocalCalling and IsSamgrCall; the latter reads receiver-side ProcessSkeleton SAMGR state and is not caller authentication. It returns the receiver process getpid()/getuid().",
+      "reachability": "No typed proxy helper or exported special-code helper was found in the pinned target files/map. Generic SendRequest rejects packed GET_PID_UID above MAX_TRANSACTION_ID (except DUMP_TRANSACTION) before transport. IsSamgrCall also limits a successful handler dispatch to a receiver marked as SAMGR.",
+      "candidate_decision": "refuted_for_standard_ordinary_app_surface",
+      "product_qualification": "Custom products or alternate raw transport paths are outside the reviewed standard surface; no such app route is evidenced."
+    }
+  },
+  "existing_test_coverage": {
+    "source_scope": "Inspected the local IPC checkout at 5903fd5f7332a427cb3f6915b0202ee5c76c63b5; product tests were not run, and test files were not separately rebound to target commit bbb92...",
+    "proxy_tests": "GetSessionName proxy unit tests exercise error/dead-proxy behavior with mocked send paths; they do not establish app reachability, returned peer identity, or DBinder lifecycle integration.",
+    "stub_tests": "DBinderGetSessionName tests cover local-call gate, missing SAMGR/empty result, and parcel-write success/failure. DBinderGetPidUid tests cover reply-write failure/success. They do not test authorization of a real unprivileged caller or information sensitivity.",
+    "coverage_gap": "No end-to-end ordinary-app call through standard SDK/package, no target-process UID/PID observation test, and no deployed product ABI test were identified. No tests/PoCs run for this review."
+  },
+  "verdict": {
+    "confirmed_candidate_count": 0,
+    "retained_second_layer_candidate_count": 1,
+    "D37_C1": "insufficient; conditional low-severity metadata-disclosure candidate only",
+    "GET_PID_UID": "refuted on the standard app route by missing helper/export and generic code guard",
+    "feedback_to_D37": "The route and UID/PID data-flow premise is supported. The target UID/PID are not present in GetObjectDescriptor/GetInterfaceDescriptor/GetHandle, so those methods are not an equivalent source. However, GetSessionName is a documented/exported DBinder lifecycle helper, and no protected-data boundary or material impact is shown. Keep at most one conditional L2 candidate pending ordinary-app package-policy and product-specific sensitivity evidence; do not report it as confirmed.",
+    "limitations": [
+      "D37 immutable source file bindings are strong, but the deployed product build and ordinary third-party SDK package policy are not pinned.",
+      "Session-name metadata may be more revealing in a product-specific threat model; no such model or impact evidence was supplied.",
+      "No scanner code was changed and no tests or PoCs were run.",
+      "No evidence establishes whether a normal third-party app can link the platformsdk inner-kit or whether service process UID/PID metadata is protected in the target threat model."
+    ]
+  }
+}

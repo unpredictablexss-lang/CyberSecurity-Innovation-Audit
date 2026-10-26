@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "task": "T72 isolated source-level allocation bounds oracle",
+  "date": "2026-10-20",
+  "status": "synthetic_asan_oracle_passed_with_limitations",
+  "scope": {
+    "official_component": "OpenHarmony/communication_ipc",
+    "vulnerable_revision": "84d681288793785e8f39f71c824f211edaed8f1e",
+    "fixed_revision": "de3a68cc8b7d6f18017fd261060def0e38dce54a",
+    "target_file": "interfaces/innerkits/cj/src/message_sequence_impl.cpp",
+    "target_function": "MessageSequenceImpl::CJ_ReadRemoteObjectArray",
+    "scanner_or_tests_modified": false,
+    "product_or_binder_exercised": false
+  },
+  "source_facts": {
+    "vulnerable_revision": {
+      "raw_sha256": "1f4d039b974a0021000126e61efea7eb0b8eb5f4baf756373c1b12150d0d5eec",
+      "raw_bytes": 42959,
+      "read_guard": "CheckReadLength(static_cast<size_t>(arrayLength), BYTE_SIZE_32), BYTE_SIZE_32=4; the helper accepts when count <= remaining bytes and count*4 <= remaining bytes.",
+      "allocations": [
+        "int32_t* type = malloc(arrayLength)",
+        "int64_t* id = malloc(arrayLength)"
+      ],
+      "writes": [
+        "type[i] writes 4 bytes for each i in [0,count)",
+        "id[i] writes 8 bytes for each i in [0,count)"
+      ],
+      "conclusion": "The guard bounds serialized input bytes but does not scale destination allocations by element size. For any accepted positive count N, requested sizes are N and N bytes while loops write 4N and 8N bytes respectively. Aggregate excess is 3N and 7N bytes."
+    },
+    "fixed_revision": {
+      "raw_sha256": "30ad2a9fa4f45792b83e75cef6c5106818b290ae523d9e17e48c88853854d777",
+      "raw_bytes": 43320,
+      "allocations": [
+        "malloc(sizeof(int32_t) * arrayLength)",
+        "malloc(sizeof(int64_t) * arrayLength)"
+      ],
+      "other_change": "The loop checks a null ReadRemoteObject result before dereferencing it.",
+      "conclusion": "Correctly sized allocations match the two indexed write widths."
+    }
+  },
+  "preconditions_and_counts": {
+    "guard_acceptance": "arrayLength N > 0 and remaining parcel data >= max(N, 4N), which is 4N for positive N. The oracle uses remaining=4N as a source-level accepted boundary; actual Parcel accounting/object encoding is not emulated.",
+    "type_array": {
+      "requested_bytes": "N",
+      "bytes_written": "4N",
+      "first_out_of_bounds_element_index": "floor(N/4) (zero-based)",
+      "count_1": "1-byte allocation then 4-byte element-0 store: 3 bytes beyond requested size.",
+      "count_8": "8-byte allocation then 32 bytes of stores: 24 bytes beyond requested size; ASan reports the first OOB at element index 2."
+    },
+    "id_array": {
+      "requested_bytes": "N",
+      "bytes_written": "8N",
+      "first_out_of_bounds_element_index": "floor(N/8) (zero-based)",
+      "count_1": "1-byte allocation then 8-byte element-0 store: 7 bytes beyond requested size.",
+      "count_8": "8-byte allocation then 64 bytes of stores: 56 bytes beyond requested size; ASan reports the first OOB at element index 1."
+    },
+    "root_case_count": 1,
+    "deduplication": "The type[] and id[] writes are two manifestations of one root cause in one function: element-count allocation used as byte count for typed arrays. Count one CVE/root case, not two findings or independent positives."
+  },
+  "oracle": {
+    "harness_path": "tmp/t72-cj-array-bounds-oracle/oracle.cpp",
+    "harness_sha256": "c9f3d5d6fae672e4f04f609e924c9f98c6de60b4e6437de39f051c90cc35362b",
+    "binary_path": "tmp/t72-cj-array-bounds-oracle/oracle",
+    "binary_sha256": "ba2228ff565fb0801f9f9d4df12bddd3c3acdb78b65f7f469170fe81b1b44a42",
+    "build": "WSL Debian clang++ 21.1.8; clang++ -std=c++17 -O0 -g -fsanitize=address -fno-omit-frame-pointer oracle.cpp -o oracle",
+    "controls": "The harness mirrors only the allocation expressions, bounds guard precondition and typed indexed stores. It does not compile the OpenHarmony function or its dependencies."
+  },
+  "test_matrix": [
+    {
+      "case": "vulnerable type[] N=8, remaining=32",
+      "result": "ASan heap-buffer-overflow; WRITE size 4; source line 15; allocated region 8 bytes; process exit 1",
+      "log": "tmp/t72-cj-array-bounds-oracle/old-type-count8.log"
+    },
+    {
+      "case": "vulnerable id[] N=8, remaining=32",
+      "result": "ASan heap-buffer-overflow; WRITE size 8; source line 21; allocated region 8 bytes; process exit 1",
+      "log": "tmp/t72-cj-array-bounds-oracle/old-id-count8.log"
+    },
+    {
+      "case": "vulnerable type[] N=1, remaining=4",
+      "result": "ASan heap-buffer-overflow on first 4-byte store into requested 1-byte allocation; process exit 1",
+      "log": "tmp/t72-cj-array-bounds-oracle/old-type-count1.log"
+    },
+    {
+      "case": "vulnerable id[] N=1, remaining=4",
+      "result": "ASan heap-buffer-overflow on first 8-byte store into requested 1-byte allocation; process exit 1",
+      "log": "tmp/t72-cj-array-bounds-oracle/old-id-count1.log"
+    },
+    {
+      "case": "fixed allocation control N=8, remaining=32",
+      "result": "Both correctly sized arrays written/read and freed; no ASan report; exit 0",
+      "log": "tmp/t72-cj-array-bounds-oracle/fixed-count8.log"
+    },
+    {
+      "case": "fixed allocation control N=1, remaining=4",
+      "result": "Both correctly sized arrays written/read and freed; no ASan report; exit 0",
+      "log": "tmp/t72-cj-array-bounds-oracle/fixed-count1.log"
+    },
+    {
+      "case": "empty safe control N=0",
+      "result": "No allocation or element writes; no ASan report; exit 0",
+      "log": "tmp/t72-cj-array-bounds-oracle/safe-zero.log"
+    },
+    {
+      "case": "short-input rejection control N=8, remaining=31",
+      "result": "Guard rejects before allocation/writes; no ASan report; exit 0",
+      "log": "tmp/t72-cj-array-bounds-oracle/reject-short.log"
+    }
+  ],
+  "interpretation": {
+    "source_level_result": "The exact vulnerable allocation/write width pattern produces heap-buffer-overflow under ASan when the serialized-length guard accepts; the fixed allocation-size expressions pass the same synthetic writes.",
+    "product_route": "not_established",
+    "official_vulnerability_label": "CVE-2025-26474 official bulletin identifies communication_ipc improper input validation and restricted-scenario local information disclosure; this oracle corroborates only the memory overwrite mechanism, not disclosure or exploitability.",
+    "independence_limit": "A synthetic harness is a source-level mechanism proof, not a product binary test, Binder route test, scanner prediction, or holdout score. It does not validate the real Parcel byte accounting or attacker reachability."
+  },
+  "missing_evidence": [
+    "Compile and exercise the pinned full component/function with its authentic dependencies and ASan-compatible build profile.",
+    "Establish the product route from an attacker-controlled local parcel to the CJ FFI function and exact product build inclusion.",
+    "Establish actual parcel byte accounting for serialized remote objects and reproduce against the supported product configuration.",
+    "Any detector-scored holdout needs a frozen detector identity and a locked prediction record; none was produced here."
+  ],
+  "official_sources": [
+    "https://gitee.com/openharmony/communication_ipc/commit/de3a68cc8b7d6f18017fd261060def0e38dce54a",
+    "https://lists.openatom.io/hyperkitty/list/security@openharmony.io/thread/TQNJ4QHLM23SAULGUN26MM2XBBK5L2MW/"
+  ],
+  "actions": false
+}

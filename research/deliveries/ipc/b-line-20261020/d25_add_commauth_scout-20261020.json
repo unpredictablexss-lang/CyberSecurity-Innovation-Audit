@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "task_id": "D25",
+  "title": "DBINDER_ADD_COMMAUTH caller identity and AppAuthInfo flow",
+  "reviewed_at_utc": "2026-10-19T21:25:00Z",
+  "scope": {
+    "repository": "openharmony/communication_ipc",
+    "commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "route": "DBINDER_ADD_COMMAUTH -> DBinderAddCommAuth -> AddAuthInfo -> AppAuthInfo storage and later stubIndex authorization",
+    "read_only": true,
+    "product_code_changed": false,
+    "tests_or_poc_run": false
+  },
+  "source_binding": {
+    "method": "Fetched each listed file from raw.githubusercontent.com at the immutable commit URL; recomputed SHA-256 and Git blob SHA-1 over UTF-8 bytes.",
+    "limitation": "Binds listed source files to the requested commit path, not the deployed product build or its paired SoftBus implementation.",
+    "files": [
+      {"path":"ipc/native/src/core/framework/source/ipc_object_stub.cpp","bytes":29851,"sha256":"554a27bf335d0048373c326f3f9bddea9ba134b73bf8dca622d6c80b644656bb","git_blob":"22c3a682c20fd350b318cad17a6d621206e65ba7"},
+      {"path":"ipc/native/src/core/dbinder/source/dbinder_databus_invoker.cpp","bytes":41140,"sha256":"378776e256a8438c5bb28c57acc39172b3376512907718e813b71406b7251217","git_blob":"83450463d6d39f3a327ffa3dccccf0d8c957757d"},
+      {"path":"ipc/native/src/core/framework/source/ipc_process_skeleton.cpp","bytes":64744,"sha256":"cdffaaf0054da5c80d64c0cec6ef287c9c24e432bc50a49d3288336715910366","git_blob":"516fd9efd0ab405cbd0c8a985f9f203478fc4d52"},
+      {"path":"ipc/native/src/core/framework/include/ipc_process_skeleton.h","bytes":12933,"sha256":"02e7a822c88a4dafbdb4c52ad629fb4ad66ba019a26a6d363df5a890f0262fab","git_blob":"b31071270fb548f8f0c1d5d45bf861b1af02f254"},
+      {"path":"ipc/native/src/core/dbinder/include/dbinder_databus_invoker.h","bytes":6452,"sha256":"9a79ad3d72f2377b63a39871e821312a526401efedef8338d993f398fa5737a5","git_blob":"23b8cb57dc80600594eef6a4e7889a9827831a49"},
+      {"path":"ipc/native/src/core/dbinder/source/databus_socket_listener.cpp","bytes":11425,"sha256":"dce80ace50af9f18a0e003f0bd49cdf6b4ba22a4012fe51df2a4bbb8456acb3b","git_blob":"7a01e036427e45385b02605a403dbca35b318aab"},
+      {"path":"ipc/native/src/core/dbinder/source/dbinder_session_object.cpp","bytes":3673,"sha256":"0ed102874114141f66e50680d22d1ff5d62bf9dcfb3d2fc096279cee1588e36c","git_blob":"94ec1bbf28cdbfe2281c7fe3c35be881a8df6110"},
+      {"path":"ipc/native/src/core/dbinder/include/dbinder_session_object.h","bytes":2997,"sha256":"5ee52be8b96db156b16145eba84680ac9dbc4a82734467a4da0748ea36fc28ed","git_blob":"8e42e54e20224cf5035071200c1157ff8780aebb"},
+      {"path":"ipc/native/src/core/dbinder/include/dbinder_base_invoker_process.h","bytes":19306,"sha256":"bcd53526774d44fa4d86b21f94a4b3dd3239a8fbc923c5a8d0ba28e6f2aa49e9","git_blob":"111cbfc11be5c3e4d090a6ef9152e93b8f25b804"},
+      {"path":"ipc/native/src/core/invoker/source/binder_invoker.cpp","bytes":69765,"sha256":"02c4e27beb57955df2afd3f836c1f38929f519b3d400f080a45a6f91e6210e4c","git_blob":"4a5cd7530835659a0f9fad523c0f14c4c25570dd"},
+      {"path":"interfaces/innerkits/ipc_core/include/ipc_types.h","bytes":8559,"sha256":"656bb739c9262eed524ca8a4550d64cf1ad0f627c261a3fa97a829136c891077","git_blob":"1465e1e51f46c564e47a2fd9fd410175047f7913"}
+    ]
+  },
+  "route_evidence": [
+    {"claim":"DBINDER_ADD_COMMAUTH dispatches to DBinderAddCommAuth.","source":"ipc/native/src/core/framework/source/ipc_object_stub.cpp","location":"459-460","status":"supported"},
+    {"claim":"The handler rejects local calling, gets the DBinderDatabusInvoker, reads GetCallerUid(), rejects uid >= ALLOWED_UID, and only then calls AddAuthInfo. ALLOWED_UID is 10000.","source":"ipc/native/src/core/framework/source/ipc_object_stub.cpp","location":"59,299-320","status":"supported"},
+    {"claim":"GetCallerUid() returns the invoker's mutable callerUid_ field; it is not independently obtained from the DBINDER_ADD_COMMAUTH parcel.","source":"ipc/native/src/core/dbinder/source/dbinder_databus_invoker.cpp","location":"747-755","status":"supported"},
+    {"claim":"On the databus receive path, ProcessTransaction calls CheckAndSetCallerInfo(listenFd, tr->cookie) before dispatch and returns an error without dispatch when it fails.","source":"ipc/native/src/core/dbinder/include/dbinder_base_invoker_process.h","location":"83-103","status":"supported"},
+    {"claim":"CheckAndSetCallerInfo obtains peer pid/uid/deviceId/tokenId from the session and requires QueryAppInfoToStubIndex(tuple, tr cookie/stubIndex, socketId) before setting callerUid_.","source":"ipc/native/src/core/dbinder/source/dbinder_databus_invoker.cpp","location":"808-839","status":"supported"},
+    {"claim":"A newly bound socket is accepted only if QueryCommAuthInfo finds an existing authorization for peer pid, uid and networkId; the stored token is then used to create the peer session.","source":"ipc/native/src/core/dbinder/source/dbinder_databus_invoker.cpp","location":"232-267","status":"supported"},
+    {"claim":"The listener obtains peer pid/uid from PeerSocketInfo.name via GetPidAndUidFromServiceName; the latter performs prefix/separator/number parsing but no authentication itself in this file.","source":"ipc/native/src/core/dbinder/source/databus_socket_listener.cpp","location":"65-86,278-304","status":"supported"},
+    {"claim":"AuthSession2Proxy sends peer pid/uid/deviceId/stubIndex/tokenId as parcel fields. AddAuthInfo reads these same fields, checks deviceId nonempty, substitutes local QueryStubIndex(this) when stubIndex is zero, and stores AppAuthInfo.","source":"ipc/native/src/core/dbinder/source/dbinder_databus_invoker.cpp; ipc/native/src/core/framework/source/ipc_object_stub.cpp","location":"dbinder_databus_invoker.cpp:147-166; ipc_object_stub.cpp:673-707","status":"supported"},
+    {"claim":"AttachOrUpdateAppAuthInfo indexes by concatenated deviceId/pid/uid/tokenId and maps stubIndex to socketId; later QueryAppInfoToStubIndex checks the same tuple and accepts the matching stubIndex when its stored socket is zero or equals the caller socket.","source":"ipc/native/src/core/framework/source/ipc_process_skeleton.cpp","location":"1489-1531,1656-1676","status":"supported"},
+    {"claim":"BinderInvoker::AddCommAuth obtains pid/uid via GET_PID_UID, adds local deviceId and session stubIndex/tokenId, and sends DBINDER_ADD_COMMAUTH.","source":"ipc/native/src/core/invoker/source/binder_invoker.cpp","location":"343-379","status":"supported"}
+  ],
+  "candidate_assessment": {
+    "confirmed_candidates": 0,
+    "verdict": "insufficient evidence; no confirmed vulnerability",
+    "reason": "The received AddAuthInfo tuple is parcel-controlled and is stored as a later tuple-to-stubIndex/socket mapping, so the write deserves authorization review. However this route is reached after databus caller context has been populated from a session and validated against existing mappings; new socket acceptance also requires preexisting CommAuthInfo. The IPC repository's listener parses uid from the SoftBus peer service name, but this source review does not establish whether SoftBus authenticates that name and binds it to the remote OS principal. Nor does it establish an ordinary third-party app route to impersonate an admitted uid below 10000 or to inject a victim's valid stubIndex/socket tuple. No concrete exploit is therefore supported.",
+    "static_candidate_for_l2": false,
+    "ordinary_app_exploitability": "not demonstrated",
+    "conditional_security_question": "Can a remote peer cause SoftBus PeerSocketInfo.name to claim uid < 10000 without platform authentication, and if so can it satisfy the existing CommAuthInfo and tuple/stubIndex/socket checks to reach a victim stub?"
+  },
+  "counterreview_questions_for_T26": [
+    "Does the pinned SoftBus implementation authenticate PeerSocketInfo.name and bind its encoded uid/pid to the transport peer, or can a remote endpoint choose it?",
+    "Can a third-party app establish the preexisting CommAuthInfo needed by OnReceiveNewConnection, or is that restricted to a trusted system-side actor?",
+    "Can caller-selected AddAuthInfo pid/uid/deviceId/tokenId/stubIndex create a mapping that later passes QueryAppInfoToStubIndex for a different principal/socket?",
+    "Does the initial databus transaction reaching DBinderAddCommAuth necessarily pass ProcessTransaction::CheckAndSetCallerInfo and the existing mapping gate in the deployed route?",
+    "Can a regular app make the receiving system process send BinderInvoker::AddCommAuth for it, and what authenticates the GET_PID_UID reply and session tuple?"
+  ],
+  "next_step": "T26 independently challenge the session precondition, SoftBus peer identity binding, and subsequent mapping authorization. Keep at zero confirmed candidates unless those checks are disproven with target-paired evidence."
+}

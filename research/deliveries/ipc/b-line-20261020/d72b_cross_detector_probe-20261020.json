@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "task": "D72b cross-detector probe for CVE-2025-26474 source pair",
+  "date": "2026-10-20",
+  "status": "completed_no_findings_on_vulnerable_or_fixed_source",
+  "scanner": {
+    "base_commit": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "worktree": "D:/openHarmonyScanner/worktrees/b-ipc-integration-20261020",
+    "worktree_dirty": true,
+    "tracked_diff_binary_sha256": "95fbfc7516508d21a707bf89aea696544ae3fb6ff153bd9147d901cc90c50cf3",
+    "detectors": [
+      {"id": "ohscanner.cpp.bounds", "lineage": "A-BOF-01", "version": "0.2.0", "file_sha256": "de726036449cfcaaa31d86504a5b0266749b0063014885b4ba42579159694f71"},
+      {"id": "ohscanner.cpp.integer-bounds", "lineage": "A-INT-01", "version": "0.2.0", "file_sha256": "f3092a4e5bfcc2cbc8be1a2294219b5685af95bd02e4f2c4859a4185d7ab5f0b"},
+      {"module": "src.ohscanner.detectors.cpp.memory_safety", "file_sha256": "1d060929a5252afadd39ae7be50c08fb88757df02bbecf2f5afd124c6125d101"},
+      {"module": "src.parser.ast", "file_sha256": "82d1fb9e3e4ee048aed1d26ce91d99b1d3c7a9f7a638fda85df39ddf3125f3e2"}
+    ],
+    "language": "cpp",
+    "parse_status": "complete"
+  },
+  "inputs": [
+    {"label": "vulnerable pre-!2037 source", "commit": "84d681288793785e8f39f71c824f211edaed8f1e", "tree": "80fb756221eac67a9f6a9a9506eb763e380d9c55", "path": "interfaces/innerkits/cj/src/message_sequence_impl.cpp", "git_blob": "c5f62c288a144478828c720d48c1485fae0e035c", "source_sha256": "1f4d039b974a0021000126e61efea7eb0b8eb5f4baf756373c1b12150d0d5eec"},
+    {"label": "fixed !2037 source", "commit": "de3a68cc8b7d6f18017fd261060def0e38dce54a", "tree": "611835efd3112027f067b587146a2c2bbd38b47e", "path": "interfaces/innerkits/cj/src/message_sequence_impl.cpp", "git_blob": "9041e30d1926edd09e20126274b8903f0c55df50", "source_sha256": "30ad2a9fa4f45792b83e75cef6c5106818b290ae523d9e17e48c88853854d777"}
+  ],
+  "method": "Direct invocation of CppBoundsDetector and CppIntegerBoundsDetector on each single C++ SourceUnit parsed through src.parser.ast.parse_source; exact Git objects retrieved with git show.",
+  "results": [
+    {"source": "vulnerable", "parse_status": "complete", "A-BOF-01": {"status": "completed", "findings": []}, "A-INT-01": {"status": "completed", "findings": []}},
+    {"source": "fixed", "parse_status": "complete", "A-BOF-01": {"status": "completed", "findings": []}, "A-INT-01": {"status": "completed", "findings": []}}
+  ],
+  "interpretation": {
+    "known_root_cause": "For positive N the vulnerable function requests N bytes for int32_t[N] and int64_t[N] but writes 4N and 8N bytes respectively; fixed source scales each allocation by sizeof(element).",
+    "detector_result": "Neither the current B/IPC DATA-02 rules nor A-BOF-01/A-INT-01 produced a finding on the single-file source pair. This cross-check found no existing generic detector hit in these two candidate families.",
+    "scope_limit": "The A detector invocation is a single-file source probe. No whole-repository scan, product build, product caller path or actual Parcel runtime was exercised. Zero findings are not a safe verdict.",
+    "ownership_implication": "The missed pattern is generic heap allocation/write-width mismatch; B must confirm IPC/FFI boundary relevance before adding a specialized rule, and should avoid duplicating A's general C/C++ bounds responsibility."
+  },
+  "code_changes": 0,
+  "test_changes": 0,
+  "formal_metrics": "not_run"
+}

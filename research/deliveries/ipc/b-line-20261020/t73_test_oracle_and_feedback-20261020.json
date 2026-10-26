@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "task": "T73 independent wrapper route and test oracle",
+  "round": 2,
+  "date": "2026-10-20",
+  "actions": false,
+  "status": "focused_oracle_saved_and_passed",
+  "independence": "This contract and expected behavior were derived independently from the pinned official commits and the current B IPC detector source. No D73 artifact or conclusions were read or used.",
+  "official_revisions": {
+    "repository": "https://gitee.com/openharmony/communication_ipc.git",
+    "vulnerable": "84d681288793785e8f39f71c824f211edaed8f1e",
+    "fixed": "de3a68cc8b7d6f18017fd261060def0e38dce54a",
+    "source_function": "MessageSequenceImpl::CJ_ReadRemoteObjectArray",
+    "source_file": "interfaces/innerkits/cj/src/message_sequence_impl.cpp",
+    "wrapper_file": "interfaces/innerkits/cj/src/ipc_ffi.cpp",
+    "official_wrapper_source_blob_oids": {
+      "vulnerable_ipc_ffi.cpp": "50a44d59e3dfabf062fbbc80a84ff73921287abe",
+      "fixed_ipc_ffi.cpp": "02df8d8bcf66a793ccce54991106dedb102e2198",
+      "vulnerable_ipc_ffi.h": "6ea3847d508263135e227ecfae170a46ec43ffae"
+    }
+  },
+  "wrapper_route_assessment": {
+    "source_chain": [
+      "Exported wrapper FfiRpcMessageSequenceImplReadRemoteObjectArray(int64_t id, int32_t* errCode)",
+      "FFIData::GetData<MessageSequenceImpl>(id)",
+      "return rpc->CJ_ReadRemoteObjectArray(errCode)",
+      "CJ_ReadRemoteObjectArray reads a count from nativeParcel_ then allocates and fills typed arrays"
+    ],
+    "what_this_establishes": "The exported Cangjie FFI wrapper binds a MessageSequenceImpl handle to the vulnerable parser helper. The official ipc_ffi.h declares the exported function.",
+    "what_remains_unknown": "The reviewed source does not establish an attacker-controlled local Binder route to this FFI handle, product build inclusion, exact parcel byte accounting, or information disclosure by this precise path. The CVE bulletin establishes the official component-level issue and impact label, but this source check is not a product route proof.",
+    "current_b_ipc_root_fit": "The ohscanner.interface.ipc implementation roots most IPC analysis in source-confirmed OnRemoteRequest dispatchers or explicit service/transport allowlist roots. This CJ FFI binding is a public language/runtime wrapper and the target is a reusable parcel parser helper; it is not itself an OnRemoteRequest dispatcher. The present detector also has no count-derived allocation-size versus indexed element-width rule."
+  },
+  "focused_test": {
+    "path": "c-line-static-pr/tests/test_t73_cj_array_bounds_oracle.py",
+    "sha256": "2a8275b2d49558d3595e0e5eea8cb6f888265c2a8f642408eb58c86e1685fd35",
+    "source_repo": "tmp/t71-communication-ipc; override with T73_IPC_GIT for repeat execution elsewhere",
+    "tests": [
+      "Pinned vulnerable source has malloc(arrayLength) for int32_t and int64_t arrays, followed by indexed writes.",
+      "Pinned fixed source allocates sizeof(element)*arrayLength for both arrays and checks a null remote object before dereference.",
+      "Pinned exported FFI wrapper resolves FFIData<MessageSequenceImpl> and calls CJ_ReadRemoteObjectArray; current B IPC run completes with no finding on these helper/wrapper snippets.",
+      "Accepted count preconditions and excess bytes for N=8 and N=1; N<=0 safe return; short input rejected before writes.",
+      "Fixed source and an unrelated correctly sized typed-array shape are controls.",
+      "type[] and id[] manifestations share one CVE/file/function root and dedupe to one case on the label side."
+    ],
+    "result": "5 passed in 0.18 seconds",
+    "command": "From c-line-static-pr: python -m pytest -q tests/test_t73_cj_array_bounds_oracle.py",
+    "test_constraints": "Focused test only; no existing test or fixture manifest changed. Test reads the pinned source using git show from the T71 public clone and can use T73_IPC_GIT to point at another local clone."
+  },
+  "matrix_expected_behavior": [
+    {"count": 8, "remaining": 32, "guard_and_method": "accepted; both target writes execute", "vulnerable_type_excess_bytes": 24, "vulnerable_id_excess_bytes": 56, "fixed": "adequate allocations"},
+    {"count": 1, "remaining": 4, "guard_and_method": "accepted; first typed store overruns each N-byte allocation", "vulnerable_type_excess_bytes": 3, "vulnerable_id_excess_bytes": 7, "fixed": "adequate allocations"},
+    {"count": 8, "remaining": 31, "guard_and_method": "CheckReadLength rejects before allocation/writes", "vulnerable_type_excess_bytes": 0, "vulnerable_id_excess_bytes": 0, "fixed": "rejects"},
+    {"count": 0, "remaining": 0, "guard_and_method": "arrayLength<=0 return before guard/allocation/writes", "vulnerable_type_excess_bytes": 0, "vulnerable_id_excess_bytes": 0, "fixed": "safe empty result"},
+    {"count": -1, "remaining": 0, "guard_and_method": "arrayLength<=0 return before allocation/writes", "vulnerable_type_excess_bytes": 0, "vulnerable_id_excess_bytes": 0, "fixed": "safe empty result"}
+  ],
+  "oracle_boundary_and_test_seam": {
+    "current_detector_result": "No finding for the target helper/wrapper, including vulnerable commit source shape; current B IPC cannot directly adjudicate or count the CVE root, so no true-positive/dedup claim is made from detector output.",
+    "proposed_nonproduction_test_seam": "Add a dedicated source-level memory-safety oracle or future IPC helper-root extension that recognizes count-derived allocations feeding typed indexed writes, computes element width, requires a proven guard on count/data extent, and deduplicates multiple sinks by function/root plus source revision. Keep product entry and attacker reachability as separate evidence obligations.",
+    "test_side_dedupe": "The focused test validates one label root for two manifestations; because detector emits no candidate, it cannot test production finding deduplication."
+  },
+  "preservation": {
+    "known_preexisting_untracked_path": "c-line-static-pr/research/deliveries/c-line/",
+    "status": "left unchanged"
+  },
+  "next_dependency": "If the goal requires a scanner-visible positive for this case, implement and review a separate source-level allocation-bounds detector/test seam or expand B IPC's root model. Keep the current no-finding outcome as a documented boundary until then; do not count it as an IPC rule TP.",
+  "coordination": "Independent contract and JSON saved before contacting D73.",
+  "actions": false
+}

@@ -1,0 +1,212 @@
+{
+  "schema": "ohscanner.ipc-second-layer-review-packets.v1",
+  "purpose": "Pinned-source review input only; these are static candidates, not confirmed vulnerabilities.",
+  "source": {
+    "repository": "openharmony/communication_ipc",
+    "commit": "5903fd5f7332a427cb3f6915b0202ee5c76c63b5",
+    "git_tree": "0f7129fc37dcc38a0abd6c0ebdd5cbd1ff30d4ac",
+    "snapshot_sha256": "4a77a83643aecdef6214af80b1472ff8ebf1050eb4f48fa0b0935c4791babb9d",
+    "baseline_code_commit": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+    "integrated_detector_version": "0.12.12",
+    "overall_scan_status": "completed_with_limitations",
+    "coverage_status": "partial",
+    "validated_vulnerability_count": 0
+  },
+  "selection": {
+    "candidate_count": 2,
+    "scope": "two AUTH-02 observations from this single component snapshot",
+    "selection_status": "source excerpts verified; eligibility for LLM review only, not confidence promotion",
+    "precision_recall_claimed": false
+  },
+  "packets": [
+    {
+      "candidate_id": "ohscanner.interface.ipc:be13fd9ad5bb5f78",
+      "rule_id": "ipc.auth.missing",
+      "detector_version": "0.12.12",
+      "rule_version": null,
+      "repository": "openharmony/communication_ipc",
+      "source_commit": "5903fd5f7332a427cb3f6915b0202ee5c76c63b5",
+      "git_tree": "0f7129fc37dcc38a0abd6c0ebdd5cbd1ff30d4ac",
+      "snapshot_sha256": "4a77a83643aecdef6214af80b1472ff8ebf1050eb4f48fa0b0935c4791babb9d",
+      "profile_id": "light-ast",
+      "file": "ipc/native/src/core/dbinder/source/dbinder_callback_stub.cpp",
+      "line": 139,
+      "symbol": "DBinderCallbackStub::ProcessData",
+      "source_blob_oid_verified": "05dceaa7ec0df2f19c3b45b7f1f90ef54b98031d",
+      "source_sha256_verified": "167272c97c4796ec90f63db7089c3308c19f1dae8f07785339a38c645f82ca16",
+      "reported_byte_range": [
+        5382,
+        5489
+      ],
+      "source_excerpt_verification": "verified against Git blob at pinned commit; SHA-256, Git blob OID and exact byte range checked",
+      "identity_layer": {
+        "stable_status": "unknown",
+        "stable_id": null,
+        "stable_unknown_reasons": [
+          "identity_quality:unknown",
+          "missing:ast_fingerprint",
+          "missing:rule_lineage_id",
+          "missing:symbol_identity"
+        ],
+        "occurrence_status": "unknown",
+        "occurrence_id": null,
+        "occurrence_unknown_reasons": [
+          "missing:rule_version"
+        ],
+        "outer_source_binding": "bound",
+        "identity_record_source_binding": "unbound",
+        "identity_verification": "not_performed_by_identity_layer"
+      },
+      "scanner_observation": {
+        "message": "AUTH-02 candidate: Sensitive modeled call SendRequest has a structured path without a recognized caller authorization. Entry=DBinderCallbackStub::OnRemoteRequest [entry-source=ipc/native/src/core/dbinder/source/dbinder_callback_stub.cpp]; possible consequence (not established): an operation intended to require authorization may run without it [unauthorized_effect]; path=((166, 'switch entry'), (96, 'uid < 0 => False'), (96, 'pid < 0 => False'), (101, 'IPCProcessSkeleton::GetCurrent() == nullptr => False'), (106, 'object == nullptr => False'), (113, 'sessionName.empty() => False'), (127, 'authData.WriteUint32(pid) => True'), (127, 'authData.WriteUint32(uid) => True'), (127, 'authData.WriteString(localDeviceID_) => True'), (128, 'authData.WriteUint64(stubIndex_) => True'), (128, 'authData.WriteUint32(tokenId_) => True'), (134, 'dbinderInvoker == nullptr => False'))",
+        "candidate_cwe": "CWE-862",
+        "consequence_impact": "unauthorized_effect",
+        "consequence_cwe": null,
+        "confidence": "unassessed",
+        "path": "((166, 'switch entry'), (96, 'uid < 0 => False'), (96, 'pid < 0 => False'), (101, 'IPCProcessSkeleton::GetCurrent() == nullptr => False'), (106, 'object == nullptr => False'), (113, 'sessionName.empty() => False'), (127, 'authData.WriteUint32(pid) => True'), (127, 'authData.WriteUint32(uid) => True'), (127, 'authData.WriteString(localDeviceID_) => True'), (128, 'authData.WriteUint64(stubIndex_) => True'), (128, 'authData.WriteUint32(tokenId_) => True'), (134, 'dbinderInvoker == nullptr => False'))"
+      },
+      "pinned_source_excerpts": [
+        {
+          "start_line": 91,
+          "end_line": 119,
+          "text": "91: int32_t DBinderCallbackStub::ProcessProto(uint32_t code, MessageParcel &data, MessageParcel &reply,\n92:     MessageOption &option)\n93: {\n94:     int uid = IPCSkeleton::GetCallingUid();\n95:     int pid = IPCSkeleton::GetCallingPid();\n96:     if (uid < 0 || pid < 0) {\n97:         ZLOGE(LOG_LABEL, \"uid or pid err\");\n98:         DfxReportFailEvent(DbinderErrorCode::RPC_DRIVER, RADAR_GET_UID_OR_PID_FAIL, __FUNCTION__);\n99:         return DBINDER_SERVICE_PROCESS_PROTO_ERR;\n100:     }\n101:     if (IPCProcessSkeleton::GetCurrent() == nullptr) {\n102:         ZLOGE(LOG_LABEL, \"IPCProcessSkeleton GetCurrent is null\");\n103:         return ERR_NULL_OBJECT;\n104:     }\n105:     sptr<IRemoteObject> object = IPCProcessSkeleton::GetCurrent()->GetSAMgrObject();\n106:     if (object == nullptr) {\n107:         ZLOGE(LOG_LABEL, \"get sa object is null\");\n108:         DfxReportFailEvent(DbinderErrorCode::RPC_DRIVER, RADAR_GET_SA_OBJECT_NULL, __FUNCTION__);\n109:         return DBINDER_CALLBACK_READ_OBJECT_ERR;\n110:     }\n111:     IPCObjectProxy *samgr = reinterpret_cast<IPCObjectProxy *>(object.GetRefPtr());\n112:     std::string sessionName = samgr->GetSessionNameForPidUid(uid, pid);\n113:     if (sessionName.empty()) {\n114:         ZLOGE(LOG_LABEL, \"grans session name failed\");\n115:         DfxReportFailEvent(DbinderErrorCode::RPC_DRIVER, RADAR_GET_SESSION_NAME_FAIL, __FUNCTION__);\n116:         return DBINDER_SERVICE_WRONG_SESSION;\n117:     }\n118:     return ProcessData(uid, pid, sessionName, data, reply);\n119: }"
+        },
+        {
+          "start_line": 121,
+          "end_line": 158,
+          "text": "121: int32_t DBinderCallbackStub::ProcessData(int uid, int pid, const std::string &sessionName, MessageParcel &data,\n122:     MessageParcel &reply)\n123: {\n124:     MessageParcel authData;\n125:     MessageParcel authReply;\n126:     MessageOption authOption;\n127:     if (!authData.WriteUint32(pid) || !authData.WriteUint32(uid) || !authData.WriteString(localDeviceID_) ||\n128:         !authData.WriteUint64(stubIndex_) || !authData.WriteUint32(tokenId_)) {\n129:         ZLOGE(LOG_LABEL, \"write to MessageParcel fail\");\n130:         DfxReportFailEvent(DbinderErrorCode::RPC_DRIVER, RADAR_ERR_INVALID_DATA, __FUNCTION__);\n131:         return ERR_INVALID_DATA;\n132:     }\n133:     IRemoteInvoker *dbinderInvoker = IPCThreadSkeleton::GetRemoteInvoker(IRemoteObject::IF_PROT_DATABUS);\n134:     if (dbinderInvoker == nullptr) {\n135:         ZLOGE(LOG_LABEL, \"no databus thread and invoker\");\n136:         DfxReportFailEvent(DbinderErrorCode::RPC_DRIVER, RADAR_RPC_DATABUS_INVOKER_ERR, __FUNCTION__);\n137:         return RPC_DATABUS_INVOKER_ERR;\n138:     }\n139:     int err = dbinderInvoker->SendRequest(handle_, DBINDER_ADD_COMMAUTH, authData, authReply, authOption);\n140:     if (err != ERR_NONE) {\n141:         ZLOGE(LOG_LABEL, \"send auth info to remote fail\");\n142:         DfxReportFailEvent(DbinderErrorCode::RPC_DRIVER, RADAR_BINDER_CALLBACK_AUTHCOMM_ERR, __FUNCTION__);\n143:         return BINDER_CALLBACK_AUTHCOMM_ERR;\n144:     }\n145:     ZLOGI(LOG_LABEL, \"send to stub ok! stubIndex:%{public}\" PRIu64 \" peerDevice:%{public}s localDeviceID:%{public}s \"\n146:         \"serviceName:%{public}s uid:%{public}d pid:%{public}d tokenId:%{public}u sessionName:%{public}s\",\n147:         stubIndex_, IPCProcessSkeleton::ConvertToSecureString(deviceID_).c_str(),\n148:         IPCProcessSkeleton::ConvertToSecureString(localDeviceID_).c_str(), serviceName_.c_str(), uid, pid, tokenId_,\n149:         sessionName.c_str());\n150:     if (!reply.WriteUint32(IRemoteObject::IF_PROT_DATABUS) || !reply.WriteUint64(stubIndex_) ||\n151:         !reply.WriteString(serviceName_) || !reply.WriteString(deviceID_) || !reply.WriteString(localDeviceID_) ||\n152:         !reply.WriteString(sessionName) || !reply.WriteUint32(tokenId_)) {\n153:         ZLOGE(LOG_LABEL, \"write to parcel fail\");\n154:         DfxReportFailEvent(DbinderErrorCode::RPC_DRIVER, RADAR_ERR_INVALID_DATA, __FUNCTION__);\n155:         return ERR_INVALID_DATA;\n156:     }\n157:     return 0;\n158: }"
+        },
+        {
+          "start_line": 160,
+          "end_line": 178,
+          "text": "160: int32_t DBinderCallbackStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply,\n161:     MessageOption &option)\n162: {\n163:     int32_t result = ERR_NONE;\n164:     ZLOGI(LOG_LABEL, \"code:%{public}u\", code);\n165:     switch (code) {\n166:         case GET_PROTO_INFO: {\n167:             result = ProcessProto(code, data, reply, option);\n168:             break;\n169:         }\n170:         default: {\n171:             ZLOGI(LOG_LABEL, \"unknown code:%{public}u\", code);\n172:             result = DBINDER_CALLBACK_ERR;\n173:             break;\n174:         }\n175:     }\n176: \n177:     return result;\n178: }"
+        }
+      ],
+      "review_question": "Does this SendRequest represent a missing caller authorization, or an authentication handshake whose remote-side validation is outside this source path? Trace the actual receiver/credential validation and assess whether the caller can cause an unauthorized effect. Also inspect the included pinned receiver path for DBINDER_ADD_COMMAUTH and determine whether it supplies a missing authorization/validation step or leaves sender-controlled identity claims insufficiently bound.",
+      "known_unknowns": [
+        "Product dispatch/reachability must be independently proved from pinned callsites/configuration.",
+        "Concrete attacker control, privilege, effect and impact are not established by the scanner observation.",
+        "No stable or occurrence identity is available; use exact diagnostic ID only for this fixed report.",
+        "The review must attempt counterevidence and may conclude insufficient."
+      ],
+      "model_decision": "pending; no second-layer model invoked",
+      "related_source_evidence": [
+        {
+          "file": "ipc/native/src/core/framework/source/ipc_object_stub.cpp",
+          "source_blob_oid_verified": "22c3a682c20fd350b318cad17a6d621206e65ba7",
+          "source_sha256_verified": "554a27bf335d0048373c326f3f9bddea9ba134b73bf8dca622d6c80b644656bb",
+          "excerpts": [
+            {
+              "start_line": 299,
+              "end_line": 320,
+              "text": "299: int IPCObjectStub::DBinderAddCommAuth(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)\n300: {\n301:     if (IPCSkeleton::IsLocalCalling()) {\n302:         ZLOGE(LABEL, \"DBINDER_ADD_COMMAUTH is not supported in ipc communication, desc:%{public}s\",\n303:             remoteDescriptor_.c_str());\n304:         return IPC_STUB_INVALID_DATA_ERR;\n305:     }\n306: \n307:     DBinderDatabusInvoker *invoker = reinterpret_cast<DBinderDatabusInvoker *>(\n308:         IPCThreadSkeleton::GetRemoteInvoker(IRemoteObject::IF_PROT_DATABUS));\n309:     if (invoker == nullptr) {\n310:         ZLOGE(LABEL, \"get dbinder databus invoker failed\");\n311:         return IPC_STUB_INVALID_DATA_ERR;\n312:     }\n313: \n314:     uid_t uid = invoker->GetCallerUid();\n315:     if (uid >= ALLOWED_UID) {\n316:         ZLOGE(LABEL, \"DBINDER_ADD_COMMAUTH unauthenticated user, desc:%{public}s, uid:%{public}u\",\n317:             remoteDescriptor_.c_str(), uid);\n318:         return IPC_STUB_INVALID_DATA_ERR;\n319:     }\n320:     return AddAuthInfo(data, reply, code);"
+            },
+            {
+              "start_line": 441,
+              "end_line": 461,
+              "text": "441:     switch (code) {\n442:         case PING_TRANSACTION:\n443:             return DBinderPingTransaction(code, data, reply, option);\n444:         case INTERFACE_TRANSACTION:\n445:             return DBinderSearchDescriptor(code, data, reply, option);\n446:         case SYNCHRONIZE_REFERENCE:\n447:             return DBinderSearchRefCount(code, data, reply, option);\n448:         case DUMP_TRANSACTION:\n449:             return DBinderDumpTransaction(code, data, reply, option);\n450:         case GET_PROTO_INFO:\n451:             return ProcessProto(code, data, reply, option);\n452: #ifndef CONFIG_IPC_SINGLE\n453:         case INVOKE_LISTEN_THREAD:\n454:             return DBinderInvokeListenThread(code, data, reply, option);\n455:         case DBINDER_INCREFS_TRANSACTION:\n456:             return DBinderIncRefsTransaction(code, data, reply, option);\n457:         case DBINDER_DECREFS_TRANSACTION:\n458:             return DBinderDecRefsTransaction(code, data, reply, option);\n459:         case DBINDER_ADD_COMMAUTH:\n460:             return DBinderAddCommAuth(code, data, reply, option);\n461:         case GET_SESSION_NAME:"
+            },
+            {
+              "start_line": 673,
+              "end_line": 707,
+              "text": "673: int32_t IPCObjectStub::AddAuthInfo(MessageParcel &data, MessageParcel &reply, uint32_t code)\n674: {\n675:     uint32_t remotePid = data.ReadUint32();\n676:     uint32_t remoteUid = data.ReadUint32();\n677:     std::string remoteDeviceId = data.ReadString();\n678:     uint64_t stubIndex = data.ReadUint64();\n679:     uint32_t tokenId = data.ReadUint32();\n680:     if (IsDeviceIdIllegal(remoteDeviceId)) {\n681:         ZLOGE(LABEL, \"remote deviceId is null, desc:%{public}s\", remoteDescriptor_.c_str());\n682:         return IPC_STUB_INVALID_DATA_ERR;\n683:     }\n684: \n685:     IPCProcessSkeleton *current = IPCProcessSkeleton::GetCurrent();\n686:     if (current == nullptr) {\n687:         ZLOGE(LABEL, \"current is null\");\n688:         return IPC_STUB_CURRENT_NULL_ERR;\n689:     }\n690: \n691:     if (stubIndex == 0) {\n692:         // keep compatible with proxy that doesn't write stubIndex when adding auth info to stub\n693:         stubIndex = current->QueryStubIndex(this);\n694:         if (stubIndex == 0) {\n695:             ZLOGE(LABEL, \"stub index is null\");\n696:             return BINDER_CALLBACK_STUBINDEX_ERR;\n697:         }\n698:     }\n699:     ZLOGW(LABEL, \"add auth info, pid:%{public}u uid:%{public}u deviceId:%{public}s \"\n700:         \"stubIndex:%{public}\" PRIu64 \" tokenId:%{public}u\",\n701:         remotePid, remoteUid, IPCProcessSkeleton::ConvertToSecureString(remoteDeviceId).c_str(), stubIndex, tokenId);\n702:     // mark listen fd as 0\n703:     AppAuthInfo appAuthInfo = { remotePid, remoteUid, tokenId, 0, stubIndex, this, remoteDeviceId };\n704:     if (current->AttachOrUpdateAppAuthInfo(appAuthInfo)) {\n705:         IncStrongRef(this);\n706:     }\n707:     return ERR_NONE;"
+            }
+          ],
+          "purpose": "Cross-file counterevidence: protocol dispatcher maps DBINDER_ADD_COMMAUTH to DBinderAddCommAuth; that handler checks transport locality and caller UID before parsing sender-supplied pid/uid/device/stub/token fields into AppAuthInfo. It remains necessary to evaluate whether this is sufficient authorization and whether the reported entry is reachable under product configuration."
+        }
+      ]
+    },
+    {
+      "candidate_id": "ohscanner.interface.ipc:5501bf2ba361596d",
+      "rule_id": "ipc.auth.missing",
+      "detector_version": "0.12.12",
+      "rule_version": null,
+      "repository": "openharmony/communication_ipc",
+      "source_commit": "5903fd5f7332a427cb3f6915b0202ee5c76c63b5",
+      "git_tree": "0f7129fc37dcc38a0abd6c0ebdd5cbd1ff30d4ac",
+      "snapshot_sha256": "4a77a83643aecdef6214af80b1472ff8ebf1050eb4f48fa0b0935c4791babb9d",
+      "profile_id": "light-ast",
+      "file": "ipc/native/src/core/framework/source/ipc_object_stub.cpp",
+      "line": 165,
+      "symbol": "IPCObjectStub::OnRemoteDump",
+      "source_blob_oid_verified": "22c3a682c20fd350b318cad17a6d621206e65ba7",
+      "source_sha256_verified": "554a27bf335d0048373c326f3f9bddea9ba134b73bf8dca622d6c80b644656bb",
+      "reported_byte_range": [
+        5592,
+        5629
+      ],
+      "source_excerpt_verification": "verified against Git blob at pinned commit; SHA-256, Git blob OID and exact byte range checked",
+      "identity_layer": {
+        "stable_status": "unknown",
+        "stable_id": null,
+        "stable_unknown_reasons": [
+          "identity_quality:unknown",
+          "missing:ast_fingerprint",
+          "missing:rule_lineage_id",
+          "missing:symbol_identity"
+        ],
+        "occurrence_status": "unknown",
+        "occurrence_id": null,
+        "occurrence_unknown_reasons": [
+          "missing:rule_version"
+        ],
+        "outer_source_binding": "bound",
+        "identity_record_source_binding": "unbound",
+        "identity_verification": "not_performed_by_identity_layer"
+      },
+      "scanner_observation": {
+        "message": "AUTH-02 candidate: Sensitive modeled call Dump has a structured path without a recognized caller authorization. Guard seen, not accepted: the caller identity is compared against SHELL_UID (which these sources bind to 2000 at ipc/native/src/core/framework/source/ipc_object_stub.cpp:61), but no reviewed account assignment in this policy credits that value, so the comparison cannot be credited as authorization. Entry=IPCObjectStub::DBinderDumpTransaction [entry-source=ipc/native/src/core/framework/source/ipc_object_stub.cpp] [dispatch=switch_case_return codes=DUMP_TRANSACTION]; possible consequence (not established): data the caller is not entitled to read may be returned to it [information_disclosure CWE-200] driven by modelled call Dump; path=((212, 'IPCSkeleton::IsLocalCalling() => True'), (212, 'uid != 0 => True'), (212, 'uid != SHELL_UID => False'), (163, 'fd != (-1) => True'), (164, 'data.ReadString16Vector(&args) => True'))",
+        "candidate_cwe": "CWE-862",
+        "consequence_impact": "information_disclosure",
+        "consequence_cwe": "CWE-200",
+        "confidence": "unassessed",
+        "path": "((212, 'IPCSkeleton::IsLocalCalling() => True'), (212, 'uid != 0 => True'), (212, 'uid != SHELL_UID => False'), (163, 'fd != (-1) => True'), (164, 'data.ReadString16Vector(&args) => True'))"
+      },
+      "pinned_source_excerpts": [
+        {
+          "start_line": 57,
+          "end_line": 64,
+          "text": "57: #ifndef CONFIG_IPC_SINGLE\n58: // Authentication information can be added only for processes with system permission.\n59: static constexpr pid_t ALLOWED_UID = 10000;\n60: #endif\n61: static constexpr int SHELL_UID = 2000;\n62: static constexpr int HIDUMPER_SERVICE_UID = 1212;\n63: static constexpr int COEFF_MILLI_TO_MICRO = 1000;\n64: static constexpr int IPC_CMD_PROCESS_WARN_TIME = 500 * COEFF_MILLI_TO_MICRO; // 500 ms"
+        },
+        {
+          "start_line": 125,
+          "end_line": 130,
+          "text": "125: int IPCObjectStub::Dump(int fd, const std::vector<std::u16string> &args)\n126: {\n127:     const size_t numArgs = args.size();\n128:     ZLOGE(LABEL, \"Invalid call on Stub, fd:%{public}d args:%{public}zu\", fd, numArgs);\n129:     return ERR_NONE;\n130: }"
+        },
+        {
+          "start_line": 158,
+          "end_line": 172,
+          "text": "158: int IPCObjectStub::OnRemoteDump(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)\n159: {\n160:     int result = ERR_NONE;\n161:     int fd = data.ReadFileDescriptor();\n162:     std::vector<std::u16string> args;\n163:     if (fd != INVALID_FD) {\n164:         if (data.ReadString16Vector(&args)) {\n165:             result = Dump(fd, args);\n166:         }\n167:         ::close(fd);\n168:     } else {\n169:         result = IPC_STUB_INVALID_DATA_ERR;\n170:     }\n171:     return result;\n172: }"
+        },
+        {
+          "start_line": 208,
+          "end_line": 217,
+          "text": "208: int IPCObjectStub::DBinderDumpTransaction(uint32_t code, MessageParcel &data, MessageParcel &reply,\n209:     MessageOption &option)\n210: {\n211:     pid_t uid = IPCSkeleton::GetCallingUid();\n212:     if (!IPCSkeleton::IsLocalCalling() || (uid != 0 && uid != SHELL_UID && uid != HIDUMPER_SERVICE_UID)) {\n213:         ZLOGE(LABEL, \"do not allow dump, uid:%{public}u\", uid);\n214:         return ERR_NONE;\n215:     }\n216:     return OnRemoteDump(code, data, reply, option);\n217: }"
+        }
+      ],
+      "review_question": "Does the local-caller plus uid allowlist (root, SHELL_UID=2000, HIDUMPER_SERVICE_UID=1212) adequately authorize this dump path under the product threat model? Trace dispatch/reachability and any subclass Dump effects; distinguish protocol authorization from OS identity policy. The pinned dispatcher excerpt maps DUMP_TRANSACTION to DBinderDumpTransaction; verify this mapping and whether subclass Dump behavior changes the concrete effect.",
+      "known_unknowns": [
+        "Product dispatch/reachability must be independently proved from pinned callsites/configuration.",
+        "Concrete attacker control, privilege, effect and impact are not established by the scanner observation.",
+        "No stable or occurrence identity is available; use exact diagnostic ID only for this fixed report.",
+        "The review must attempt counterevidence and may conclude insufficient."
+      ],
+      "model_decision": "pending; no second-layer model invoked",
+      "related_source_evidence": [
+        {
+          "file": "ipc/native/src/core/framework/source/ipc_object_stub.cpp",
+          "source_blob_oid_verified": "22c3a682c20fd350b318cad17a6d621206e65ba7",
+          "source_sha256_verified": "554a27bf335d0048373c326f3f9bddea9ba134b73bf8dca622d6c80b644656bb",
+          "excerpts": [
+            {
+              "start_line": 441,
+              "end_line": 461,
+              "text": "441:     switch (code) {\n442:         case PING_TRANSACTION:\n443:             return DBinderPingTransaction(code, data, reply, option);\n444:         case INTERFACE_TRANSACTION:\n445:             return DBinderSearchDescriptor(code, data, reply, option);\n446:         case SYNCHRONIZE_REFERENCE:\n447:             return DBinderSearchRefCount(code, data, reply, option);\n448:         case DUMP_TRANSACTION:\n449:             return DBinderDumpTransaction(code, data, reply, option);\n450:         case GET_PROTO_INFO:\n451:             return ProcessProto(code, data, reply, option);\n452: #ifndef CONFIG_IPC_SINGLE\n453:         case INVOKE_LISTEN_THREAD:\n454:             return DBinderInvokeListenThread(code, data, reply, option);\n455:         case DBINDER_INCREFS_TRANSACTION:\n456:             return DBinderIncRefsTransaction(code, data, reply, option);\n457:         case DBINDER_DECREFS_TRANSACTION:\n458:             return DBinderDecRefsTransaction(code, data, reply, option);\n459:         case DBINDER_ADD_COMMAUTH:\n460:             return DBinderAddCommAuth(code, data, reply, option);\n461:         case GET_SESSION_NAME:"
+            }
+          ],
+          "purpose": "Pinned dispatcher mapping shows DUMP_TRANSACTION reaches DBinderDumpTransaction; use alongside allowlist guard and OnRemoteDump excerpt to assess path binding."
+        }
+      ]
+    }
+  ]
+}

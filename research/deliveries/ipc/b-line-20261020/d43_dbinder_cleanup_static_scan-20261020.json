@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "task_id": "D43",
+  "title": "Adjacent DBinder transaction partial-state and socket-close cleanup scan",
+  "scope": {
+    "repository": "openharmony/communication_ipc",
+    "target_commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "target_tree": "125ecbfa21f430f2f977f0026ab97b70cd27a726",
+    "read_only": true,
+    "tests_run": false,
+    "poc_run": false,
+    "product_code_changed": false,
+    "routes_reviewed": [
+      "IPCObjectStub::SendRequest special DBinder dispatch",
+      "DBINDER_INCREFS_TRANSACTION and DBINDER_DECREFS_TRANSACTION",
+      "DBINDER_ADD_COMMAUTH",
+      "GET_SESSION_NAME, GET_GRANTED_SESSION_NAME, GET_SESSION_NAME_FOR_PID_UID, GET_PID_UID",
+      "REMOVE_SESSION_NAME and CLEAR_SERVICE_STATE",
+      "INVOKE_LISTEN_THREAD setup and failure cleanup",
+      "DBinderBaseInvoker::ProcessTransaction early returns and caller-state restoration",
+      "DBinderDatabusInvoker::OnDatabusSessionServerSideClosed and socket-bound app-auth cleanup"
+    ],
+    "exclusions": [
+      "No inference from unpaired SoftBus source or build head.",
+      "No claim about a deployed product build absent a target manifest/build lock.",
+      "This is a narrow route scan, not a whole-tree audit."
+    ]
+  },
+  "source_binding": {
+    "method": "Fetched raw.githubusercontent.com file contents at immutable target commit; SHA-256 and Git blob SHA-1 computed from exact UTF-8 bytes.",
+    "files": [
+      {"path":"ipc/native/src/core/framework/source/ipc_object_stub.cpp","bytes":29851,"sha256":"554a27bf335d0048373c326f3f9bddea9ba134b73bf8dca622d6c80b644656bb","git_blob":"22c3a682c20fd350b318cad17a6d621206e65ba7"},
+      {"path":"ipc/native/src/core/framework/source/ipc_process_skeleton.cpp","bytes":64744,"sha256":"cdffaaf0054da5c80d64c0cec6ef287c9c24e432bc50a49d3288336715910366","git_blob":"516fd9efd0ab405cbd0c8a985f9f203478fc4d52"},
+      {"path":"ipc/native/src/core/dbinder/source/dbinder_databus_invoker.cpp","bytes":41140,"sha256":"378776e256a8438c5bb28c57acc39172b3376512907718e813b71406b7251217","git_blob":"83450463d6d39f3a327ffa3dccccf0d8c957757d"},
+      {"path":"ipc/native/src/core/dbinder/include/dbinder_base_invoker_process.h","bytes":19306,"sha256":"bcd53526774d44fa4d86b21f94a4b3dd3239a8fbc923c5a8d0ba28e6f2aa49e9","git_blob":"111cbfc11be5c3e4d090a6ef9152e93b8f25b804"},
+      {"path":"ipc/native/src/core/dbinder/source/dbinder_softbus_client.cpp","bytes":14649,"sha256":"01d83f57fafc2c206039d74a90e9a21cbd16bd7813a3d501b704e3642c9de87b","git_blob":"7b4bcd7525d01bee078d26ea80ce7ee4c1e86bef","source_note":"Only IPC-side grant/remove accounting is in scope; no unpaired SoftBus implementation semantics inferred."}
+    ],
+    "product_pairing": "not established"
+  },
+  "transaction_path_findings": [
+    {
+      "path": "INCREFS/DECREFS and close",
+      "caller_gate": "ProcessTransaction calls CheckAndSetCallerInfo(listenFd, tr->cookie) before target dispatch. The active DBinder session tuple (pid/uid/token/device), cookie stub index, and socket mapping must match; local Binder INCREFS/DECREFS are rejected in the handlers.",
+      "state_effect": "INCREFS calls AttachOrUpdateAppAuthInfo with socketId=GetClientFd and stub=nullptr; DECREFS calls DetachAppAuthInfo and drops a strong ref only on successful exact tuple/index/socket removal. Close callback removes socket-bound rows under appAuthMutex_, then drops corresponding strong refs.",
+      "error_and_rollback": "INCREFS ignores the boolean return and returns ERR_NONE; the method's normal stub-null outcome is false after its map update, so this is not by itself a failed update. DECREFS is idempotent against close removal because only the successful exact-row detach decrements the reference. Close cleanup removes state before looking up stub indices and drops refs for surviving indices.",
+      "residual_race": "A transaction that passed CheckAndSetCallerInfo can race close and call INCREFS after close removed the row, potentially reinserting the tuple/socket relation. Distinct per-thread invoker locks do not prove a stable exploit schedule or user-visible effect; D29/T30/T33 classified this as unproven absent runtime overlap and last-ref proof.",
+      "references": [
+        {"file":"ipc/native/src/core/dbinder/include/dbinder_base_invoker_process.h","lines":"83-135","claim":"gate, early failure cleanup, dispatch and restoration"},
+        {"file":"ipc/native/src/core/framework/source/ipc_object_stub.cpp","lines":"232-296","claim":"INCREFS/DECREFS effects and local transport gate"},
+        {"file":"ipc/native/src/core/framework/source/ipc_process_skeleton.cpp","lines":"1489-1573","claim":"map update and exact detach behavior"},
+        {"file":"ipc/native/src/core/dbinder/source/dbinder_databus_invoker.cpp","lines":"655-676","claim":"socket-close row cleanup and reference drops"}
+      ],
+      "existing_tests_and_counterexamples": "D29/T30/T33 already reviewed the relation/refcount paths: exact DECREFS-vs-close duplicate decrement is prevented by serialized exact-row removal; no deterministic late-reinsert schedule/impact established. No tests were run by D43."
+    },
+    {
+      "path": "INVOKE_LISTEN_THREAD partial setup",
+      "caller_gate": "DBinderInvokeListenThread requires local Binder and calling UID < 10000 before parsing; normal app UIDs are outside this gate. Production C++ and C callers are internal DBinder lifecycle paths; upstream peer reachability is not proved here.",
+      "state_effect": "Listener is started before AddStubByIndex; after index creation, reply fields are written; app-auth mapping and strong ref are attached only after all writes succeed.",
+      "error_and_rollback": "AddStubByIndex failure or reply serialization failure after listener/index creation returns without immediate rollback. Repeated same-stub AddStubByIndex reuses the index. Ordinary caller reachability, harmful persistent state, and backend listener behavior are not proven. D35/T36 keep this as a hardening observation, not a vulnerability candidate.",
+      "references": [
+        {"file":"ipc/native/src/core/framework/source/ipc_object_stub.cpp","lines":"220-230, 585-653","claim":"privileged local Binder gate and listener/index/reply/auth ordering"},
+        {"file":"ipc/native/src/core/framework/source/ipc_process_skeleton.cpp","lines":"1011-1045","claim":"stub index registration behavior"}
+      ],
+      "existing_tests_and_counterexamples": "D35/T36 identify SendRequestTest005 (empty parcel), Test006 (UID 10000 rejected), and Test017 (mock UID 9999 boundary); direct fuzzer does not establish a real Binder or network caller. D35/T36 found no unbounded repeat index growth for the same stub. No tests were run by D43."
+    },
+    {
+      "path": "GET_SESSION_NAME grant and reply failure / repeated grants",
+      "caller_gate": "GET_SESSION_NAME requires local Binder transport. The helper calls the receiver service's GetSessionName, which makes a nested SAMGR request. GET_GRANTED_SESSION_NAME also checks receiver-side SAMGR process state, not caller identity; the target transaction caller identity is used to construct the uid_pid name.",
+      "state_effect": "CreateSessionName performs DBinderGrantPermission before reply serialization. Thus a subsequent reply write failure has no local compensating removal. Repeated exported GetSessionName calls can increment the same name's IPC-side reference count without one-for-one demonstrated shutdown removes.",
+      "error_and_rollback": "D39/T40 confirmed this only as a conditional lifecycle/refcount possibility. The self-identity target is the service's own uid_pid; no cross-principal authorization, material impact, standard third-party package reachability, or target-paired backend semantics are proven. Do not infer backend slot exhaustion or permission behavior from unpaired SoftBus code.",
+      "references": [
+        {"file":"ipc/native/src/core/framework/source/ipc_object_stub.cpp","lines":"323-360, 734-785","claim":"GET_SESSION/GET_GRANTED route, identity source and grant before reply"},
+        {"file":"ipc/native/src/core/framework/source/ipc_process_skeleton.cpp","lines":"1345-1353","claim":"RemoveSessionName lifecycle callsite"},
+        {"file":"ipc/native/src/core/dbinder/source/dbinder_softbus_client.cpp","lines":"target-pinned file; D39 route analysis","claim":"IPC-side reference accounting only; see D39 source binding"}
+      ],
+      "existing_tests_and_counterexamples": "D39/T40 independently retain 0 candidates and at most one conditional observation. D39 notes shutdown removal is once per relevant callback, but one query is not shown to create a distinct session/socket; backend and product policy remain unknown. No tests were run by D43."
+    },
+    {
+      "path": "ADD_COMMAUTH and other special transactions",
+      "caller_gate": "ADD_COMMAUTH rejects local Binder and requires DBinder caller UID < 10000; databus dispatch is preceded by CheckAndSetCallerInfo. GET_SESSION_NAME_FOR_PID_UID, GET_PID_UID and REMOVE_SESSION_NAME require local Binder plus receiver IsSamgrCall; CLEAR_SERVICE_STATE is a no-op.",
+      "state_effect": "ADD_COMMAUTH reads peer identity fields and may attach/update map/auth state; malformed device ID, missing process skeleton, and unresolved stub index return before attachment. Other inspected query handlers either write replies or grant as described above; no extra partial state/cleanup path was found.",
+      "references": [
+        {"file":"ipc/native/src/core/framework/source/ipc_object_stub.cpp","lines":"299-389, 673-717","claim":"special transaction gates, validation, writes and auth attachment"},
+        {"file":"ipc/native/src/core/dbinder/include/dbinder_base_invoker_process.h","lines":"83-135","claim":"databus caller tuple gate before dispatch"}
+      ],
+      "existing_tests_and_counterexamples": "D25/T26/T27/T28 previously found no ordinary-app authorization/effect path for ADD_COMMAUTH; D35/T36 cover listener setup; D37/T38 cover session and PID/UID query routes. No new candidate in this adjacent scan."
+    }
+  ],
+  "candidate_assessment": {
+    "confirmed_candidates": 0,
+    "conditional_candidates": 0,
+    "observations_retained_for_l2_or_followup": [
+      {"id":"D43-R1","source":"D29/T30/T33","claim":"Pass-gate INCREFS may reinsert a socket relation after concurrent close cleanup; schedule, attacker control and material impact remain unproven."},
+      {"id":"D43-R2","source":"D35/T36","claim":"INVOKE_LISTEN_THREAD leaves listener/index state without immediate rollback on late setup/reply failure; ordinary reachability and harmful persistence remain unproven."},
+      {"id":"D43-R3","source":"D39/T40","claim":"Repeated GET_SESSION_NAME or post-grant reply failure may leave same-name IPC grant refcount unmatched; caller-self scope, product reachability and material impact remain unproven."}
+    ],
+    "verdict": "No high-confidence candidate found. Preserve the three bounded lifecycle observations as existing cross-task questions, not as new findings from D43."
+  },
+  "limitations": [
+    "No tests or PoCs were run, as instructed.",
+    "No product code was changed.",
+    "No unpaired SoftBus HEAD or backend behavior was used to support impact.",
+    "Target source pins establish source content, not target product deployment or runtime schedules."
+  ]
+}

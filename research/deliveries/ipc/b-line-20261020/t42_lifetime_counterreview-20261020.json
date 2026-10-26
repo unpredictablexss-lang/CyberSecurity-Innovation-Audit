@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "task_id": "T42",
+  "title": "Independent counter-review of T30-R1 and proposed test seam",
+  "reviewed_at_utc": "2026-10-20T00:00:00Z",
+  "scope": {
+    "repository": "openharmony/communication_ipc",
+    "target_commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "mode": "read-only independent counter-review",
+    "tests_or_poc_run": false,
+    "product_code_changed": false
+  },
+  "source_binding": {
+    "method": "SHA-256 recomputed over target-commit raw files previously downloaded from immutable raw URLs; hashes match the independent T33 source binding.",
+    "files": [
+      {"path":"ipc/native/src/core/dbinder/include/dbinder_base_invoker_process.h","sha256":"bcd53526774d44fa4d86b21f94a4b3dd3239a8fbc923c5a8d0ba28e6f2aa49e9"},
+      {"path":"ipc/native/src/core/dbinder/include/dbinder_base_invoker_define.h","sha256":"dbea8dced551f18820cbf0bbb21e838d32a793dc23c359122cd33ca295341b4f"},
+      {"path":"ipc/native/src/core/dbinder/include/dbinder_base_invoker_interface.h","sha256":"a6bc9bf8368c97dd8abc95a5f016a200a1cf7910b496cfad3dc829bf5ec43f91"},
+      {"path":"ipc/native/src/core/dbinder/source/dbinder_databus_invoker.cpp","sha256":"378776e256a8438c5bb28c57acc39172b3376512907718e813b71406b7251217"},
+      {"path":"ipc/native/src/core/dbinder/source/databus_socket_listener.cpp","sha256":"dce80ace50af9f18a0e003f0bd49cdf6b4ba22a4012fe51df2a4bbb8456acb3b"},
+      {"path":"ipc/native/src/core/framework/source/ipc_process_skeleton.cpp","sha256":"cdffaaf0054da5c80d64c0cec6ef287c9c24e432bc50a49d3288336715910366"},
+      {"path":"ipc/native/src/core/framework/source/ipc_object_stub.cpp","sha256":"554a27bf335d0048373c326f3f9bddea9ba134b73bf8dca622d6c80b644656bb"},
+      {"path":"ipc/native/src/core/framework/source/ipc_thread_skeleton.cpp","sha256":"393ab2f501def549428374f8e3ceefab6e12df91118672272cc915c4d01bb4e1"}
+    ]
+  },
+  "reconstruction": {
+    "request_path": {
+      "evidence": "dbinder_base_invoker_process.h: TargetStubSendRequest holds this invoker's objectMutex_, obtains auto* stub = current->QueryStubByIndex(cookie), checks null, then invokes IPCObjectStub::SendRequest through the raw pointer. No sptr construction or IncStrongRef occurs between lookup and call. The lock remains held through SendRequest.",
+      "counter_review": "The per-invoker lock is not by itself a lifetime pin. It only blocks teardown paths using the same mutex instance."
+    },
+    "close_path": {
+      "evidence": "databus_socket_listener.cpp: ServerOnShutdown obtains the DBinder invoker from the callback thread's IPCThreadSkeleton and calls OnDatabusSessionServerSideClosed. dbinder_databus_invoker.cpp: that method detaches the socket/session and app-auth rows, locks GetObjectMutex(), looks up each remaining stub index and calls DecStrongRef(this).",
+      "counter_review": "No source-level guarantee found that callback and request worker share a TLS skeleton/invoker. If they are distinct threads, their non-static objectMutex_ fields are distinct, so this lock does not serialize the two paths. Same-thread execution would serialize, but target SoftBus dispatch/thread evidence is unavailable."
+    },
+    "index_and_destruction": {
+      "evidence": "ipc_process_skeleton.cpp: QueryStubByIndex uses stubObjectsMutex_ while finding the raw map entry and returns the pointer after releasing the shared lock; EraseStubIndex takes the unique map lock. ipc_object_stub.cpp: OnLastStrongRef erases the index and detaches auth state.",
+      "counter_review": "Erase prevents a later lookup from finding the entry but cannot invalidate an already copied raw pointer. If close completes before lookup, lookup returns null (fail-closed). If lookup returns first, this map lock does not keep the object alive."
+    },
+    "reference_count": {
+      "evidence": "Session relation establishment increments a strong reference; close detaches each socket relation and performs one DecStrongRef per returned relation. OnLastStrongRef handles final release.",
+      "counter_review": "The socket relation can mechanically be the final ref, but source alone does not establish reference distribution for a real target stub at an overlap point. Other sptr owners would keep it alive."
+    }
+  },
+  "existing_test_coverage": {
+    "basis": "Pinned-target test inventory from T30 and T32 reports; no test execution performed in this task.",
+    "coverage_found": [
+      "IPCObjectStub DBinder INCREFS/DECREFS handler unit cases exercise handler branches, not a synchronized request-versus-close interleaving.",
+      "DBinderDatabusInvoker OnDatabusSessionServerSideClosed unit/fuzz cases exercise close handling in isolation.",
+      "IPCProcessSkeleton attach/detach fuzz routines exercise relation operations without a concurrent transaction gate."
+    ],
+    "gap": "No identified target test pauses after successful raw QueryStubByIndex and coordinates a distinct callback thread to detach the same socket relation before SendRequest."
+  },
+  "runtime_and_pairing": {
+    "target_paired_softbus_callback_thread_proof": "not found",
+    "runtime_overlap_proof": "not found",
+    "last_reference_proof": "not found",
+    "product_build_execution": "not available in reviewed evidence; T32 records no matching OHOS clang/sysroot or generated target build files and no manifest pairing the target IPC commit with SoftBus",
+    "interpretation": "These gaps prevent confirmation; they do not refute the source-level raw-pointer window."
+  },
+  "verdict": {
+    "confirmed_candidates": 0,
+    "conditional_candidates": 1,
+    "candidate": "T30-R1 remains one low-confidence conditional raw-pointer lifetime candidate: a distinct-thread close callback could detach the socket's last strong reference after lookup and before/during SendRequest. No static strong-ref pin, shared cross-thread mutex, or index-erasure mechanism was found that closes that exact interleaving.",
+    "strongest_refuting_edge": "Close-before-lookup: close releases the relation and last-ref teardown erases the index; a later QueryStubByIndex returns null and SendRequest is skipped. Also, an unrelated remaining strong owner or a callback on the same serialized thread prevents this particular destruction schedule.",
+    "do_not_promote_without": ["paired SoftBus callback/worker concurrency evidence", "proof the socket relation is the last strong ref", "target runtime observation of destruction before a subsequent SendRequest access and concrete impact"]
+  },
+  "minimum_test_oracle": {
+    "seam": "Test-only barrier immediately after QueryStubByIndex returns non-null and before SendRequest; do not pause while holding a map lock (the lookup has already released it).",
+    "red_schedule": ["Create a target stub whose same socket relation is demonstrably its only strong ref.", "On request worker, pass caller gate, obtain raw pointer and pause at the seam.", "On a distinct thread-local IPC invoker, close that socket and wait for DecStrongRef-to-zero, OnLastStrongRef/destruction marker, and index erase.", "Release the request worker and instrument whether SendRequest entry/access occurs after the destruction marker; run under the target product sanitizer/instrumented build."],
+    "green_oracle": "With a test-only strong sptr pin acquired before the raw pointer can outlive lookup and held through SendRequest, the destructor must not run before the call exits; releasing the pin then permits exactly one final destruction. This is an oracle design only, not a proposed production patch.",
+    "controls": ["close-before-lookup returns null and skips SendRequest", "an unrelated strong owner keeps the object alive through the call", "request finishes before close and close releases the relation once"],
+    "safety_limit": "Do not deliberately perform an uncontrolled dangling dereference. A red result requires a controlled target test showing destructor-before-call and instrumented post-destruction access (or sanitizer evidence), not merely refcount zero/index erase."
+  },
+  "summary": "Independent review does not find a source-level refutation of the lookup-before-close window. Candidate stays conditional (0 confirmed, 1 conditional). Dynamic thread overlap, last-ref state, post-destruction access, and impact remain unproven; existing reported unit/fuzz coverage does not test the interleaving."
+}
+

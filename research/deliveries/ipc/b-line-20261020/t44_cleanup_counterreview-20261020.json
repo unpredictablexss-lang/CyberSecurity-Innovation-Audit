@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "task_id": "T44",
+  "title": "Independent counter-review of D43 DBinder cleanup scan",
+  "reviewed_at_utc": "2026-10-20",
+  "scope": {
+    "repository": "openharmony/communication_ipc",
+    "target_commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "target_tree": "125ecbfa21f430f2f977f0026ab97b70cd27a726",
+    "reviewed_artifact": "d43_dbinder_cleanup_static_scan-20261020.json",
+    "mode": "independent read-only source counter-review",
+    "tests_or_poc_run": false,
+    "product_code_changed": false,
+    "paired_softbus_assumptions": false
+  },
+  "source_revalidation": {
+    "method": "Fetched raw files from the immutable target commit and independently recomputed SHA-256 over UTF-8 source bytes. All six overlapping files match D43 pins. The IPC DBinderSoftbusClient source is used only for IPC-side reference accounting; no backend semantics are inferred.",
+    "files": [
+      {"path":"ipc/native/src/core/framework/source/ipc_object_stub.cpp","sha256":"554a27bf335d0048373c326f3f9bddea9ba134b73bf8dca622d6c80b644656bb"},
+      {"path":"ipc/native/src/core/framework/source/ipc_process_skeleton.cpp","sha256":"cdffaaf0054da5c80d64c0cec6ef287c9c24e432bc50a49d3288336715910366"},
+      {"path":"ipc/native/src/core/dbinder/source/dbinder_databus_invoker.cpp","sha256":"378776e256a8438c5bb28c57acc39172b3376512907718e813b71406b7251217"},
+      {"path":"ipc/native/src/core/dbinder/source/dbinder_softbus_client.cpp","sha256":"01d83f57fafc2c206039d74a90e9a21cbd16bd7813a3d501b704e3642c9de87b"},
+      {"path":"ipc/native/src/core/dbinder/include/dbinder_base_invoker_process.h","sha256":"bcd53526774d44fa4d86b21f94a4b3dd3239a8fbc923c5a8d0ba28e6f2aa49e9"},
+      {"path":"ipc/native/src/core/dbinder/source/databus_socket_listener.cpp","sha256":"dce80ace50af9f18a0e003f0bd49cdf6b4ba22a4012fe51df2a4bbb8456acb3b"}
+    ],
+    "test_inventory_basis": [
+      "D29/T30/T33 source and test inventory for INCREFS/DECREFS and close relation handling",
+      "D35/T36 source and test inventory for INVOKE_LISTEN_THREAD",
+      "D39/T40 source and test inventory for GetSessionName grant routing",
+      "No test files were executed or independently rebuilt in T44"
+    ]
+  },
+  "point_reviews": [
+    {
+      "id":"D43-R1",
+      "topic":"INCREFS after concurrent close; exact DECREFS/close idempotence",
+      "source_evidence":[
+        {"file":"ipc/native/src/core/dbinder/include/dbinder_base_invoker_process.h","lines":"83-135","observation":"ProcessTransaction gates the DBinder request using CheckAndSetCallerInfo before TargetStubSendRequest and restores caller state afterward."},
+        {"file":"ipc/native/src/core/dbinder/source/dbinder_databus_invoker.cpp","lines":"808-839","observation":"CheckAndSetCallerInfo requires a live client session and matching peer PID/UID/token/device, socket ID and stub index in existing app-to-index state."},
+        {"file":"ipc/native/src/core/framework/source/ipc_object_stub.cpp","lines":"232-296","observation":"INCREFS updates app auth state for the current caller tuple/socket/stub index; DECREFS decrements the strong reference only when exact detach succeeds."},
+        {"file":"ipc/native/src/core/framework/source/ipc_process_skeleton.cpp","lines":"1489-1534,1536-1574,1598-1630","observation":"Auth map updates and exact detach/socket cleanup are under appAuthMutex_; socket cleanup first removes rows and returns only removed indexes."},
+        {"file":"ipc/native/src/core/dbinder/source/dbinder_databus_invoker.cpp","lines":"655-676","observation":"Close callback detaches socket rows before decrementing refs for the returned indexes."}
+      ],
+      "counter_review": {
+        "reachability_counterexample":"No ordinary-app route was established. A databus transaction must originate on a live, already-authorized DBinder session with a matching tuple/index; local Binder INCREFS/DECREFS calls are rejected. This does not prove that every authenticated remote peer is benign, but it prevents treating this as an unauthenticated app-triggerable state change.",
+        "cleanup_and_idempotence":"DECREFS racing close does not double-decrement the same exact relation: only one serialized successful detach returns true / includes the index. A second detach sees the row absent. Close removes socket rows before performing the corresponding DecStrongRef calls. This does not rule out the separately identified pass-gate/close/late-INCREFS race, nor does it prove that its reinserted app-info row has a useful live socket or causes impact.",
+        "owner_and_impact":"INCREFS uses stub=nullptr, so this handler does not itself add another strong reference. The late-row consequence and any last-reference raw-pointer race remain conditional; they are pre-existing T30-R1/T42 questions, not a new D43 candidate.",
+        "verdict":"No new candidate. Retain only the already tracked conditional lifecycle observation; 0 confirmed candidates."
+      },
+      "existing_coverage_and_gap":"D29/T30/T33 report handler tests and isolated close/fuzz exercises, but no deterministic pass-gate then close then late-INCREFS interleaving. T42 separately confirms a raw-pointer lookup-to-SendRequest lifetime window is not statically closed, but lacks paired runtime overlap, last-ref, and post-destruction access evidence.",
+      "minimum_test_oracle":"A target-paired deterministic test should hold an authorized session tuple, pause a request immediately after the caller gate, close and fully detach the socket on another thread, then resume the request through INCREFS. Assert exact app-info row contents, live-session lookup outcome, stub refcount/destructor/index state, and whether a subsequent transaction can pass the gate. Add duplicate DECREFS/close ordering controls proving exactly one decrement. Any memory-safety red result must instrument destruction and access without uncontrolled UAF."
+    },
+    {
+      "id":"D43-R2",
+      "topic":"INVOKE_LISTEN_THREAD partial setup rollback",
+      "source_evidence":[
+        {"file":"ipc/native/src/core/framework/source/ipc_object_stub.cpp","lines":"220-230","observation":"Handler requires local Binder and caller UID below ALLOWED_UID before parsing or starting the listener path."},
+        {"file":"ipc/native/src/core/framework/source/ipc_object_stub.cpp","lines":"604-651","observation":"InvokerDataBusThread validates input, creates server, registers/reuses stub index, writes reply fields, and only then attaches app auth and increments a strong reference. A late AddStubByIndex or reply-write failure has no immediate local rollback in this function."},
+        {"file":"ipc/native/src/core/framework/source/ipc_process_skeleton.cpp","lines":"1011-1029,1320-1355","observation":"AddStubByIndex reuses an existing index for the same stub; server state tracks one listen socket/name and RemoveSoftbusServer is the lifecycle cleanup route."},
+        {"file":"ipc/native/src/core/dbinder/source/databus_socket_listener.cpp","lines":"89-100,267-275","observation":"Server-side shutdown calls RemoveSoftbusServer and then closes session state."}
+      ],
+      "counter_review": {
+        "reachability_counterexample":"The obvious remote/databus route is rejected by IsLocalCalling(); the only admitted transport is local Binder and the UID threshold excludes ordinary application UIDs (the existing D35/T36 boundary tests use 9999 as allowed and 10000 as rejected). Internal privileged service reachability is not itself proof of attacker control.",
+        "rollback_and_persistence":"The missing immediate rollback is real source-level hardening debt. Repeating AddStubByIndex for the same object reuses its index, so the report does not support unbounded index growth by repeated same-stub calls. Whether a failed reply leaves an active harmful listener, for how long, or with attacker-controlled configuration requires a privileged caller and runtime/backend evidence absent here.",
+        "verdict":"No new candidate; preserve as a privileged-path hardening observation only."
+      },
+      "existing_coverage_and_gap":"D35/T36 identify empty-parcel, UID boundary, and mocked handler/fuzzer tests, but those do not model a real Binder peer or a real DBinder/network caller. No evidence establishes a caller-controlled ordinary-app path or harmful listener persistence.",
+      "minimum_test_oracle":"In target product tests, invoke through a real local Binder caller at both sides of the UID gate. Inject failures at server creation, stub-index registration, and each reply write; assert listener/socket/name and index state after each return, then drive shutdown and verify idempotent cleanup and no surviving auth/ref rows. Include same-stub repetition and distinct-stub cases. Treat any vulnerability claim as requiring demonstrated unprivileged caller reachability and concrete externally observable effect."
+    },
+    {
+      "id":"D43-R3",
+      "topic":"GET_SESSION_NAME same-name grant refcount and reply failure",
+      "source_evidence":[
+        {"file":"ipc/native/src/core/framework/source/ipc_object_stub.cpp","lines":"711-730,734-750,775-799","observation":"Service-side GetSessionName makes nested SAMGR GetGrantedSessionName; SAMGR uses immediate Binder caller PID/UID to build the service's own uid_pid session name, grants before reply serialization, and RemoveSessionName is a distinct request."},
+        {"file":"ipc/native/src/core/dbinder/source/dbinder_softbus_client.cpp","lines":"165-228","observation":"IPC-side mapSessionRefCount_ increments on repeated same-name grants and removes backend permission only when count reaches zero; this is IPC accounting evidence only."},
+        {"file":"ipc/native/src/core/framework/source/ipc_process_skeleton.cpp","lines":"1335-1355","observation":"RemoveSoftbusServer invokes a single SAMGR RemoveSessionName for the listener's stored name; socket listener shutdown invokes this lifecycle path."}
+      ],
+      "counter_review": {
+        "reachability_counterexample":"There is no evidence that arbitrary ordinary applications can invoke the exported proxy helper under the target product SDK/policy or cause the service's internal GetSessionName route to repeat. The nested SAMGR call sees the target service as immediate caller and therefore names that service's own UID/PID, not a parcel-selected victim identity. Intended DBinder lifecycle use is not evidence of a vulnerability.",
+        "rollback_and_effect":"The IPC-side count can mechanically rise on repeated grants and a failed reply has no direct local compensating remove. One listener shutdown removes the currently stored name once. However, no target-paired backend or product lifecycle proves that repeated query calls create multiple externally useful grants, strand usable permission, cross an isolation boundary, or have material effect. Do not infer SoftBus slot exhaustion, deduplication, or persistence from an unpaired implementation.",
+        "verdict":"No new candidate; retain only D39/T40's bounded conditional observation, with 0 confirmed."
+      },
+      "existing_coverage_and_gap":"D39/T40 review helper export/transaction guards and IPC-side refcount code, but ordinary third-party package policy, target product pairing, and downstream permission impact remain unknown. No test execution was performed.",
+      "minimum_test_oracle":"In an exact target product pairing, issue repeated valid GetSessionName operations through the real public route and inject reply-write failure after grant. Observe caller PID/UID, same-name grant count, backend permission state, listener count, and shutdown removes. A positive security result requires proof that an unprivileged caller can cause the repeated grants and that after lifecycle cleanup a concrete unauthorized operation succeeds or a bounded availability/resource impact occurs; count imbalance alone is not a vulnerability oracle."
+    }
+  ],
+  "aggregate_verdict": {
+    "new_confirmed_candidates": 0,
+    "new_conditional_candidates": 0,
+    "existing_conditional_items_preserved": ["T30-R1 raw-pointer/close lifetime race", "D39/T40 same-name grant-refcount observation"],
+    "d43_verdict_upheld":"D43 found no new high-confidence candidate. Its three points are bounded lifecycle observations; the first remains linked to the separately tracked T30-R1 hypothesis, and the latter two lack ordinary reachability or material-effect proof.",
+    "material_unknowns":["target product build pairing and SDK policy", "SoftBus runtime semantics for this exact target", "cross-thread callback schedule", "real-world reference ownership and observable effect"]
+  },
+  "verification": {
+    "immutable_raw_hashes_recomputed": true,
+    "json_parse": "passed",
+    "whitespace_validation": "passed by explicit trailing-whitespace scan; file is untracked, so git diff --check does not include its contents",
+    "tests_or_poc": "not run by instruction",
+    "product_code_changed": false
+  }
+}

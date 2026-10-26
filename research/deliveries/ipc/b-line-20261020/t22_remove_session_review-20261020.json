@@ -1,0 +1,127 @@
+{
+  "schema": "ohscanner.bline-remove-session-review.v1",
+  "task_id": "T22",
+  "reviewed_at_utc": "2026-10-19T20:46:45Z",
+  "scope": {
+    "product": "openharmony/communication_ipc",
+    "requested_commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "route": "REMOVE_SESSION_NAME receive/send, IsLocalCalling and SAMGR flag, SoftBus permission removal, lifecycle callers, tests and export surface",
+    "product_code_changed": false,
+    "tests_run": false
+  },
+  "pin_status": {
+    "local_checkout_commit": "5903fd5f7332a427cb3f6915b0202ee5c76c63b5",
+    "ipc_object_stub_cpp": {
+      "path": "ipc/ipc/native/src/core/framework/source/ipc_object_stub.cpp",
+      "sha256": "554a27bf335d0048373c326f3f9bddea9ba134b73bf8dca622d6c80b644656bb",
+      "binding": "Matches the pinned-source SHA recorded independently in the product source review and D21."
+    },
+    "other_reviewed_files": "Read from local IPC and communication source checkouts; exact bytes were not bound to requested IPC commit bbb92dbb2f52aca54ab268307c9476ac1802f3ff.",
+    "limitation": "The pinned commit is unavailable in the local IPC object database and local checkout configuration is inaccessible. The single-file SHA does not pin the proxy sender, process skeleton, invoker, symbol map, or SoftBus dependency/build pairing."
+  },
+  "independent_conclusion": {
+    "ordinary_app_candidate": "not_confirmed",
+    "candidate_count": 0,
+    "confidence": "medium",
+    "summary": "The handler is security-sensitive: after passing receiver-process checks it accepts any nonempty sessionName and decrements/removes that permission without binding the name to the original IPC caller. However, the ordinary SendRequest API rejects this special code; the located internal helper is absent from the local ipc_single export map, and no untrusted standard-SDK route to the internal helper was established. Do not promote as an ordinary-app vulnerability until the pinned target symbol map/build and app reachability are confirmed.",
+    "second_layer_candidate": {
+      "status": "conditional_review_only",
+      "claim": "If the deployed SDK exports IPCObjectProxy::RemoveSessionName or another untrusted caller can issue the special transaction below IPCObjectProxy::SendRequest, a caller may ask the SAMGR receiver to remove a chosen session-name permission because the IPC handler has no original-caller or session-name ownership check.",
+      "impact": "Potential denial of service to the affected DBinder session; cross-caller scope depends on a matching active permission/refcount and target name.",
+      "missing_proof": [
+        "The pinned target export map/build must show the helper is available to an ordinary app.",
+        "The app must be able to obtain a proxy to the SAMGR registry object and invoke the helper, or otherwise inject REMOVE_SESSION_NAME below the public code guard.",
+        "An end-to-end test or product evidence must show a non-owner app can remove another session's permission."
+      ]
+    }
+  },
+  "evidence": [
+    {
+      "claim": "Special receive dispatch is gated only by CONFIG_IPC_SINGLE and routes REMOVE_SESSION_NAME to DBinderRemoveSessionName.",
+      "source": "ipc/ipc/native/src/core/framework/source/ipc_object_stub.cpp",
+      "locations": ["IPCObjectStub::SendRequest switch, lines 439-477", "DBinderRemoveSessionName, lines 376-384"],
+      "detail": "The handler checks !IPCSkeleton::IsLocalCalling() || !IsSamgrCall(), then calls RemoveSessionName(data)."
+    },
+    {
+      "claim": "IsLocalCalling is a transport property and does not authenticate local Binder callers.",
+      "sources": [
+        "ipc/ipc/native/src/core/framework/source/ipc_skeleton.cpp:258-265",
+        "ipc/ipc/native/src/core/invoker/source/binder_invoker.cpp:1714-1717",
+        "ipc/ipc/native/src/core/dbinder/source/dbinder_databus_invoker.cpp:802-805"
+      ],
+      "detail": "BinderInvoker::IsLocalCalling returns true unconditionally; DBinderDatabusInvoker::IsLocalCalling returns false. The guard rejects remote Databus but admits any transaction arriving through Binder transport."
+    },
+    {
+      "claim": "IsSamgrCall reads receiver process state; successful context-manager registration sets that state.",
+      "sources": [
+        "ipc/ipc/native/src/core/framework/source/ipc_object_stub.cpp:802-809",
+        "ipc/ipc/native/src/core/framework/source/ipc_process_skeleton.cpp:291-313",
+        "ipc/ipc/native/src/core/invoker/source/binder_invoker.cpp:1534-1558",
+        "ipc/ipc/native/src/core/framework/source/process_skeleton.cpp:94-104"
+      ],
+      "detail": "The process flag is set after invoker SetRegistryObject returns true. Binder implementation attempts BINDER_SET_CONTEXT_MGR[_EXT]; this is a receiver identity indicator, not the transaction caller identity."
+    },
+    {
+      "claim": "The normal public proxy request path rejects the special code, while the lifecycle helper bypasses that range check.",
+      "sources": [
+        "ipc/ipc/native/src/core/framework/source/ipc_object_proxy.cpp:359-372",
+        "ipc/interfaces/innerkits/ipc_core/include/ipc_object_proxy.h:197-203, 283-287",
+        "ipc/ipc/native/src/core/framework/source/ipc_process_skeleton.cpp:1335-1354",
+        "ipc/ipc/native/src/core/framework/source/ipc_object_proxy.cpp:188-192 (as identified in D21; exact file pin not independently established)"
+      ],
+      "detail": "IPCProcessSkeleton::RemoveSoftbusServer obtains GetSAMgrObject and invokes IPCObjectProxy::RemoveSessionName. That helper sends REMOVE_SESSION_NAME through private SendRequestInner using TF_ASYNC. The C++ declaration of RemoveSessionName is public, but local ipc_single/libipc_single_map does not list it; ipc_core BUILD target is a prebuilt symlink to libipc_single. Exact target commit ABI remains unbound."
+    },
+    {
+      "claim": "The receiver removes a name without ownership, syntax, UID, or PID validation.",
+      "source": "ipc/ipc/native/src/core/framework/source/ipc_object_stub.cpp:786-800",
+      "detail": "ReadString is rejected only when empty; DBinderSoftbusClient::DBinderRemovePermission is called with the supplied name."
+    },
+    {
+      "claim": "SoftBus permission removal independently requires a SAMGR native process token, but this does not authenticate the original IPC caller at the IPC stub.",
+      "sources": [
+        "dsoftbus/core/frame/standard/init/src/softbus_server_stub.cpp:1728-1749",
+        "dsoftbus/adapter/common/security/access_token/common/softbus_access_token_adapter.cpp:168-183",
+        "dsoftbus/core/common/security/permission/standard/softbus_permission.cpp:190-196"
+      ],
+      "detail": "RemovePermissionInner checks SoftBusCheckDynamicPermission(callingTokenId), which accepts only TOKEN_NATIVE whose processName is SAMGR_PROCESS_NAME, then removes the serialized sessionName. When the IPC stub runs inside SAMGR, that downstream check authenticates the SAMGR process making the outbound call, not the app that initiated the IPC transaction."
+    },
+    {
+      "claim": "Permission names are reference-counted locally and removal is asynchronous at the IPC proxy boundary.",
+      "sources": [
+        "ipc/ipc/native/src/core/dbinder/source/dbinder_softbus_client.cpp:165-193, 196-225",
+        "ipc/ipc/native/src/core/framework/source/ipc_object_proxy.cpp:359-372"
+      ],
+      "detail": "DBinderSoftbusClient decrements mapSessionRefCount_; at zero it erases the entry and calls SoftBus removal. IPCObjectProxy uses TF_ASYNC, so caller return does not confirm server-side completion. A stale cleanup racing a new grant of the same name is a plausible lifecycle availability concern, but this review did not establish an attacker-controlled cross-caller trigger or reproducible race."
+    },
+    {
+      "claim": "Tests cover handler gates and helper behavior but not caller spoofing across the full route.",
+      "sources": [
+        "ipc/test/unittest/common/ipc_object_stub_unittest.cpp:1515-1578",
+        "ipc/test/unittest/common/ipc_object_stub_unittest.cpp:1448-1465",
+        "ipc/test/unittest/common/ipc_object_proxy_unittest.cpp:1464-1508",
+        "ipc/test/unittest/common/dbinder_softbus_client_additional_unittest.cpp (D21 references refcount tests)"
+      ],
+      "detail": "Existing tests cover nonlocal rejection, SAMGR-flag rejection, and mocked successful removal; no reviewed end-to-end test attempts a forged local transaction from an ordinary app against another name. Tests were not executed."
+    }
+  ],
+  "d21_cross_check": {
+    "d21_verdict": "0 candidates; no standard public SendRequest route found; exact product build pairing unverified.",
+    "agreement": [
+      "Normal IPCObjectProxy::SendRequest rejects this special transaction code.",
+      "The located production caller is IPCProcessSkeleton cleanup through a SAMGR proxy, using TF_ASYNC.",
+      "RemoveSessionName itself has no session-name ownership or UID/PID validation.",
+      "No product tests were run and target build provenance remains incomplete."
+    ],
+    "omissions_or_refinements": [
+      "D21's description of IsLocalCalling plus the SAMGR flag as a caller constraint is incomplete: IsLocalCalling is true for every BinderInvoker call, and the SAMGR flag identifies the receiving process only. There is no original-caller authorization check in DBinderRemoveSessionName.",
+      "The IPCObjectProxy::RemoveSessionName declaration is public in the innerkits header even though the local ipc_single version script does not export it. D21's 'internal helper' characterization needs this ABI distinction and exact pinned map binding.",
+      "SoftBus's native-SAMGR token check is a real defense at the downstream SoftBus endpoint, but it does not distinguish the originating IPC caller when the privileged SAMGR process relays removal."
+    ],
+    "net_result": "No contradiction of D21's current ordinary-app reachability verdict from the standard public API. D21's guard rationale was overstated; a conditional cross-caller permission-removal path remains for second-layer review if exact target export/raw-injection reachability is demonstrated."
+  },
+  "limits_and_next_evidence": [
+    "Independently bind ipc_object_proxy.cpp, ipc_process_skeleton.cpp, binder_invoker.cpp, libipc_single_map, and relevant BUILD.gn files to requested IPC commit bbb92dbb2f52aca54ab268307c9476ac1802f3ff.",
+    "Establish whether an ordinary app can link/call IPCObjectProxy::RemoveSessionName and obtain the SAMGR registry proxy in the deployed SDK.",
+    "If that ABI route exists, add a test that submits another UID/PID's active session name and observes whether its permission/refcount is removed; also race a stale async removal against a fresh grant of the same name."
+  ]
+}

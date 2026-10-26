@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "task_id": "T32",
+  "title": "Independent feasibility review for deterministic T30-R1 DBinder close/INCREFS interleaving test",
+  "reviewed_at_utc": "2026-10-19T21:45:00Z",
+  "scope": {
+    "target_repository": "openharmony/communication_ipc",
+    "target_commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "source_basis": "T29/T30 immutable pinned-source evidence plus current local environment inventory",
+    "read_only": true,
+    "tests_run": false,
+    "poc_run": false,
+    "product_code_changed": false
+  },
+  "verdict": {
+    "test_design": "feasible in principle as a test-only deterministic raw-pointer lifetime interleaving test",
+    "current_execution": "blocked by missing target-pinned build/toolchain/product pairing",
+    "do_not_substitute": "Host harness or current local IPC/SoftBus checkouts cannot count as product validation",
+    "confidence": "high for environment gap, medium for proposed test seam pending target build graph",
+    "primary_candidate": "conditional raw stub pointer lifetime race; late INCREFS stale authorization row is secondary and not the primary impact"
+  },
+  "environment": {
+    "platform": "Windows host with WSL Ubuntu available",
+    "gn": {
+      "present": true,
+      "path": "openharmony/prebuilts/build-tools/linux-x86/bin/gn",
+      "version": "2026 (47b40ef4)"
+    },
+    "ninja": {
+      "present": true,
+      "path": "openharmony/prebuilts/build-tools/linux-x86/bin/ninja",
+      "version": "1.13.2"
+    },
+    "ohos_clang": {
+      "present": false,
+      "searched": "openharmony/prebuilts (clang/clang++), Ubuntu PATH",
+      "result": "no target clang/clang++ found; clang++ command not found"
+    },
+    "ohos_sysroot": {
+      "present": false,
+      "searched": "openharmony/prebuilts (depth <= 6), out/rk3568",
+      "result": "no OHOS sysroot directory found"
+    },
+    "generated_build": {
+      "target_out": "openharmony/out/rk3568",
+      "args_gn": false,
+      "build_ninja": false,
+      "note": "out/rk3568 contains build logs only; no generated args.gn/build.ninja"
+    },
+    "local_checkout_pairing": {
+      "communication_ipc": "5903fd5f7332a427cb3f6915b0202ee5c76c63b5",
+      "requested_ipc": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+      "matches_target": false,
+      "dsoftbus": "7743b679f6c3599e21bea4e4b1564422668e3643",
+      "target_ipc_softbus_product_pairing": "not established by manifest/lock/build record"
+    }
+  },
+  "existing_target_coverage": {
+    "source_of_test_inventory": "T30 independent counter-review report",
+    "unit_tests": [
+      {
+        "path": "test/unittest/ipc/native/core/ipc_object_stub_unittest.cpp",
+        "cases": [
+          "DBinderIncRefsTransactionTest001-003",
+          "DBinderDecRefsTransactionTest001-002"
+        ],
+        "coverage": "handler-level success/early-error branches; no close-race interleaving assertion identified"
+      },
+      {
+        "path": "test/unittest/ipc/native/core/dbinder_databus_invoker_unittest.cpp",
+        "cases": [
+          "OnDatabusSessionServerSideClosedTest001",
+          "other invoker unit cases"
+        ],
+        "coverage": "close callback isolated with mocks; no in-flight transaction barrier/interleaving"
+      }
+    ],
+    "fuzz": [
+      {
+        "path": "test/fuzztest/ipc/native/core/dbinderdatabusinvoker_fuzzer/dbinderdatabusinvoker002_fuzzer",
+        "coverage": "invokes close callback with fuzzed data; not a synchronized concurrent ProcessTransaction-vs-close schedule"
+      },
+      {
+        "path": "test/fuzztest/ipc/native/core/dbinderdatabusinvoker_fuzzer/dbinderdatabusinvoker006_fuzzer",
+        "coverage": "isolated close callback entry; no ordering gate"
+      },
+      {
+        "path": "test/fuzztest/ipc/native/core/ipcprocessskeleton_fuzzer/ipcprocessskeleton006_fuzzer",
+        "coverage": "Attach/Detach/DetachBySocketId state operations in single-threaded fuzz routines; no transaction gate/close race"
+      }
+    ],
+    "source_binding": "Test case inventory is reported from pinned target commit by T30; current local IPC checkout differs and is not used as proof of target content"
+  },
+  "proposed_test": {
+    "goal": "Prove or refute whether concurrent close can destroy the stub after QueryStubByIndex returns a raw pointer and before/during SendRequest; do not treat the late INCREFS row as the primary vulnerability mechanism",
+    "prerequisites": [
+      "Build exact IPC target bbb92... with its product-paired SoftBus and c_utils revisions",
+      "Add a test-only synchronization seam in TargetStubSendRequest immediately after QueryStubByIndex(cookie) returns the raw IRemoteObject* and before SendRequest is called",
+      "Run request worker and SoftBus shutdown callback on separate thread-local IPCThreadSkeleton/invoker instances; establish that the socket relation represents the last strong ref",
+      "Use a test destructor marker or sanitizer/instrumented build to detect object destruction and any subsequent SendRequest access; no raw dangling dereference outside the controlled target test"
+    ],
+    "deterministic_schedule": [
+      "Seed valid peer identity/stubIndex/socket relation and arrange that its reference is the last strong ref for the target stub",
+      "Start an authorized request; let CheckAndSetCallerInfo succeed and let TargetStubSendRequest complete QueryStubByIndex, then pause while retaining only the raw pointer",
+      "On the callback thread call OnDatabusSessionServerSideClosed(socket); wait for map detach, DecStrongRef-to-zero, OnLastStrongRef/destructor marker and stub-index erasure",
+      "Release the request worker so the existing SendRequest(rawStub, ...) statement executes; observe sanitizer/destructor/index state within the product test binary",
+      "Run close-before-lookup control: finish close before QueryStubByIndex, then verify lookup returns null and no SendRequest occurs",
+      "Separately, if same-socket INCREFS path can be gated, record late row/refcount behavior as secondary accounting evidence only"
+    ],
+    "oracles": {
+      "primary": "The candidate is supported only if the controlled overlap proves close reaches last-strong-ref destruction after raw lookup and the request subsequently accesses the destroyed object (e.g. sanitizer report or deterministic test instrumentation around SendRequest). Merely observing refcount zero or erased index is not enough to claim UAF without the post-destruction use.",
+      "close_before_lookup": "Fail-closed control: close erases the index before lookup, QueryStubByIndex returns null, and SendRequest is not called.",
+      "late_increfs_secondary": "Observe whether a closed-socket appAuth row is reinserted without a strong-ref increment, but assess its reachability/authorization separately; do not use this as the primary impact.",
+      "controls": [
+        "request completes SendRequest before close: object stays live during call and close releases exactly once",
+        "close completes before raw lookup: lookup fails closed",
+        "close after raw pointer retrieval and before SendRequest: inspect destructor and instrumented call result"
+      ]
+    },
+    "pass_fail": "Primary pass requires target-paired execution demonstrating the raw-pointer use-after-last-ref schedule under the real IPC code path; a state mismatch alone remains conditional. Do not infer UAF from the secondary stale row."
+  },
+  "required_environment_to_unblock": [
+    "Exact OHOS clang/clang++ toolchain and matching sysroot for selected product target",
+    "Generated target out/<product>/args.gn and build.ninja, with actual IPC unit-test target name and resolved deps",
+    "Immutable product manifest/lock that pairs IPC bbb92... with the exact SoftBus and c_utils commits",
+    "A test-only synchronization seam or existing injection point at the post-gate/pre-handler boundary; confirm its test target is compiled in the product build"
+  ],
+  "feedback": {
+    "to": "D31 and lead",
+    "summary": "D31 refined the primary candidate to a raw IRemoteObject* lifetime window: place the barrier after QueryStubByIndex returns the raw pointer and before SendRequest, then race close/last DecStrongRef and observe destructor/index/sanitizer state. Keep close-before-lookup as fail-closed control. Late INCREFS row is secondary, not the primary mechanism.",
+    "disposition": "retain one low-confidence conditional raw-pointer lifetime candidate; do not confirm without target runtime overlap and post-destruction access evidence",
+    "suggested_next": "D31 recommends target-paired test at the post-raw-lookup/pre-SendRequest seam; execute close-before-lookup control and close-after-lookup race schedule, and separately record late INCREFS row only as secondary state evidence.",
+    "d31_reference": "research/deliveries/ipc/b-line-20261020/d31_dbinder_race_impact-20261020.json"
+  },
+  "limitations": [
+    "No test or PoC was run per task instruction.",
+    "Environment inventory is local-machine scoped and does not prove no toolchain exists elsewhere.",
+    "GN/Ninja binaries are present and usable under WSL; they do not by themselves provide OHOS compiler, sysroot, generated configuration, or product dependency provenance.",
+    "A stale appAuth relation/refcount mismatch is the immediate oracle; do not infer UAF from this alone."
+  ]
+}
