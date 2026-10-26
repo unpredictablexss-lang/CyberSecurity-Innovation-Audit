@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "verified_on": "2026-10-19",
+  "manifest_repository": "openharmony/manifest (official mirror captured at research/experiments/ark_runtime/c2_drift_triage_20261018)",
+  "mirror_path": "D:\\openHarmonyScanner\\tmp\\c2-manifest-history-full-20261019.git",
+  "mirror_shallow": false,
+  "local_ref_count": 10315,
+  "manifest_history_audit": "research/experiments/ark_runtime/c2_drift_triage_20261018/full_manifest_history_audit_20261019.json",
+  "ark_commits": [
+    {
+      "ark_commit": "a3bbeab9883c7c22d4bdc0e65b3b516215d39e0d",
+      "command": "git --git-dir=<pinned full manifest mirror> log --all --full-history --format=%H%x09%cI%x09%s -S<exact Ark OID> --",
+      "match_count": 0,
+      "matches": [],
+      "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "interpretation": "No exact Ark object hash occurs in reachable advertised manifest history"
+    },
+    {
+      "ark_commit": "df668db447d7b19ee38fe7925638feffdd2c9bd6",
+      "command": "git --git-dir=<pinned full manifest mirror> log --all --full-history --format=%H%x09%cI%x09%s -S<exact Ark OID> --",
+      "match_count": 0,
+      "matches": [],
+      "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "interpretation": "No exact Ark object hash occurs in reachable advertised manifest history"
+    }
+  ],
+  "scope_limit": "Reachable advertised refs only; unadvertised/unreachable server objects and third-party manifests excluded. Exact pin absence does not exclude branch-name tracking or non-OpenHarmony products."
+}

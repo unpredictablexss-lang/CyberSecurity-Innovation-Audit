@@ -1,0 +1,62 @@
+{
+  "assessment_id": "ark-runtime-c-independent-holdout-20261018-v2",
+  "status": "frozen_before_holdout_replay",
+  "detector_id": "ohscanner.ark.runtime.type_safety",
+  "detector_version": "0.6.2",
+  "rules": [
+    {
+      "id": "ark.runtime.typedarray-store-type-origin",
+      "version": "0.6.2"
+    },
+    {
+      "id": "ark.runtime.typedarray-allocation-exception-guard",
+      "version": "0.6.2"
+    }
+  ],
+  "model_digest_sha256": "662c74d79b75b2a111f7ec0eca4cb819a8b1f092ea3e9f7e6cff63621a3d8a1a",
+  "scanner_repository": "D:/openHarmonyScanner/CyberSecurity-Innovation-Audit-c4",
+  "scanner_baseline_head_recorded": "5cceb70e3b00b5e4938bfcee378863a8232931a9",
+  "scanner_worktree": "mutable checkout has detector/parser test changes; freeze is committed HEAD bytes only, reproduced from a clean git archive",
+  "implementation_sha256": {
+    "src/ohscanner/detectors/ark_runtime/model.py": "1c2fa93762f19a9ceb6f17999ba74c447203367d6cb107e130d846b81cd7404e",
+    "src/ohscanner/detectors/ark_runtime/analysis.py": "4fd9f375725ca7039beb2fe428f176ebe360299ce1f9e105ab4235e80875853d",
+    "src/ohscanner/detectors/ark_runtime/runtime_ir.py": "f3c2c85f086e223cb5897150f7d1e6890bf568599a287c1a6fe6e5411c2a39ca",
+    "src/ohscanner/detectors/ark_runtime/syntax.py": "efcd76fc5312acf0021ecce701f9506ece1db781f7ba51e6c702b75125e6e5c4",
+    "src/ohscanner/detectors/ark_runtime/type_origin.py": "5ff1ffacbf80f175b75979e6a49cdba4ba70e34bc4736e5d4c48402fb67a3073",
+    "src/ohscanner/detectors/ark_runtime/exception_guard.py": "3bb959a1164d43b44bbe0e20a79193d55907278ea83da8b85490bbf2c409437c",
+    "src/ohscanner/detectors/ark_runtime/detector.py": "058a3ac01acc685d59e74c3057aa1ab0654e704fa7d1d6c9a2ffaeed354ec532"
+  },
+  "scanner_commit": "5cceb70e3b00b5e4938bfcee378863a8232931a9",
+  "scanner_tree": "33df67ffd1529d098bcbabbba63ac4c9199b01c9",
+  "git_blob_sha1": {
+    "src/ohscanner/detectors/ark_runtime/syntax.py": "6e89568ee531adcc5e9ee0c20080dd166c926058",
+    "src/ohscanner/detectors/ark_runtime/runtime_ir.py": "e68e3191deef7a7825fe5ce9ab083e16d9ef7368",
+    "src/ohscanner/detectors/ark_runtime/detector.py": "1182c4a7fd10709aa7bca98dd15d5fe4942b45aa",
+    "src/ohscanner/detectors/ark_runtime/exception_guard.py": "6cd85455663568cbc808948ec9b1fc7e840a2151",
+    "src/ohscanner/detectors/ark_runtime/model.py": "558576bc67226f04cabb30a7de61957c09f5d90b",
+    "src/ohscanner/detectors/ark_runtime/type_origin.py": "e08edac049f743749d38b77fdc2db9fc31f26761",
+    "src/ohscanner/detectors/ark_runtime/analysis.py": "080f6cfc5a179ba73c67ec090bb724093da4f654"
+  },
+  "model_input_paths": [
+    "ecmascript/base/typed_array_helper-inl.h",
+    "ecmascript/base/typed_array_helper.cpp",
+    "ecmascript/compiler/builtins/builtins_array_stub_builder.h",
+    "ecmascript/compiler/builtins/builtins_stubs.cpp",
+    "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+    "ecmascript/compiler/call_stub_builder.h",
+    "ecmascript/compiler/circuit_builder.cpp",
+    "ecmascript/compiler/hcr_circuit_builder.h",
+    "ecmascript/compiler/lcr_circuit_builder.cpp",
+    "ecmascript/compiler/mcr_circuit_builder.h",
+    "ecmascript/compiler/new_object_stub_builder.cpp",
+    "ecmascript/compiler/new_object_stub_builder.h",
+    "ecmascript/compiler/profiler_operation.h",
+    "ecmascript/compiler/stub_builder-inl.h",
+    "ecmascript/compiler/stub_builder.cpp",
+    "ecmascript/compiler/stub_builder.h",
+    "ecmascript/js_typed_array.cpp",
+    "ecmascript/stubs/runtime_stubs.cpp"
+  ],
+  "parser_ast_sha256": "eabb4aff1b613661cb37f9f8d7bb50c6c2b5a4fb28cb55fbd452aa5179ec5eb0",
+  "frozen_scanner_archive_root": "work/frozen-scanner-5cceb70"
+}

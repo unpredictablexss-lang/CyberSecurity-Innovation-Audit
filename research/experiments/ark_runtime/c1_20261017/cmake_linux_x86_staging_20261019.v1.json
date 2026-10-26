@@ -1,0 +1,21 @@
+{
+  "schema": "ohscanner.c1.cmake-prebuilt-staging/v1",
+  "status": "snapshot_configured_archive_hash_verified_safely_staged",
+  "snapshot_config_sha256": "9cd6a95721895aff6eb44a8c314d36e4a79543ddbf9865e25da602c8b4d4f850",
+  "host_platform": "linux",
+  "host_cpu": "x86_64",
+  "remote_path": "/openharmony/compiler/cmake/3.28.2/cmake-linux-x86-3.28.2.tar.gz",
+  "archive_url": "https://repo.huaweicloud.com/openharmony/compiler/cmake/3.28.2/cmake-linux-x86-3.28.2.tar.gz",
+  "sidecar_url": "https://repo.huaweicloud.com/openharmony/compiler/cmake/3.28.2/cmake-linux-x86-3.28.2.tar.gz.sha256",
+  "sidecar_sha256": "6635900983a247bd3eab8fa524c824019ee8f90200f0e772ff5ca86dce05f35c",
+  "archive_sha256": "6635900983a247bd3eab8fa524c824019ee8f90200f0e772ff5ca86dce05f35c",
+  "archive_bytes": 52840113,
+  "sidecar_bytes": 65,
+  "archive_member_count": 7520,
+  "archive_paths_and_links_validated": true,
+  "staging_path": "/home/deepsleep/c-line-c1-profile-20261018/prebuilts-stage-sdk-addon-20261019/cmake/linux-x86",
+  "cmake_binary_sha256": "5e3ff9030537ed2d5e93d267b1895d944765ca3d133dc0e936d1b243313f18ec",
+  "tree_inventory_sha256": "8d944311c24237237cafd0a651d9cea0aae37623b7cff8c8c5b786ddbc0ee67c",
+  "lifecycle_scripts_executed": false,
+  "scope_note": "The archive URL is fixed by the snapshot config. The sidecar is served by the same mirror and is not an independent signature; extraction is external to the source archive and no package scripts were run."
+}

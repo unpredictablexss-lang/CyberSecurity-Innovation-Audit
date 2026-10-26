@@ -1,0 +1,174 @@
+{
+  "advertised_refs_snapshot": {
+    "classes": {
+      "refs/heads": 361,
+      "refs/pull/*/head": 7,
+      "refs/pull/*/merge": 7,
+      "refs/tags": 56
+    },
+    "count": 431,
+    "path": "upstream_refs_20261019.txt",
+    "sha256": "d7fa0f2ca21e9a617798e41070c2e64375b382db290cd5ca94806ea682402b14"
+  },
+  "boundary": "All five commits are reachable as ancestors from current advertised heads/tags fetched from the recorded upstream. Each commit walk traverses to the same root with no missing parent edges. Direct exact-OID fetch also succeeded. Filtered tree objects are not claimed here; see source_tree_closure_20261019.json. This establishes selected-commit ancestry, not arbitrary unreachable history or branch provenance beyond the captured refs.",
+  "current_advertised_history": {
+    "command": "git --git-dir=<scratch> rev-list --all --parents",
+    "commit_count": 23829,
+    "containing_fetched_head_or_tag_refs": {
+      "81ca57487d04ea30cd11c271e86494a4e130f43e": 114,
+      "830e85b40240677039719fcbf14f721ad3b19050": 152,
+      "95554c2ee75b35d556640eb6f2591d429796f60e": 26,
+      "a0e30483ab3e4aead67ecfb5c708489915e447f9": 150,
+      "c758818dbfd0b146a908d43d21f6ca1706c33783": 114
+    },
+    "exit_code": 0,
+    "target_commits_reachable_from_advertised_refs": {
+      "81ca57487d04ea30cd11c271e86494a4e130f43e": true,
+      "830e85b40240677039719fcbf14f721ad3b19050": true,
+      "95554c2ee75b35d556640eb6f2591d429796f60e": true,
+      "a0e30483ab3e4aead67ecfb5c708489915e447f9": true,
+      "c758818dbfd0b146a908d43d21f6ca1706c33783": true
+    },
+    "walk_path": "upstream_advertised_ref_walk_20261019.txt",
+    "walk_sha256": "8ff9e2f63b960c7d5e3c198d0c1cac3336596d6bb178b866035d66f7729bab26"
+  },
+  "fetch_all_refs": {
+    "command": "git fetch --filter=tree:0 --no-tags https://github.com/openharmony/arkcompiler_ets_runtime.git +refs/heads/*:refs/remotes/upstream/* +refs/tags/*:refs/tags/*",
+    "exit_code": 0,
+    "log": "upstream_fetch_all_refs_20261019.txt",
+    "log_sha256": "cd076d292e2d6bb70316967a556ef4264c6a2c61e60e5a000fcb2fdfeb6b97a9",
+    "ref_count_fetched": 417,
+    "scope": "all advertised refs/heads/* and refs/tags/*; GitHub pull refs were recorded separately but not fetched by this wildcard"
+  },
+  "fetch_exact_oids": {
+    "accepted_commit_oids": [
+      "830e85b40240677039719fcbf14f721ad3b19050",
+      "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+      "c758818dbfd0b146a908d43d21f6ca1706c33783",
+      "81ca57487d04ea30cd11c271e86494a4e130f43e",
+      "95554c2ee75b35d556640eb6f2591d429796f60e"
+    ],
+    "command": "git --git-dir=<scratch> fetch --filter=tree:0 --no-tags <remote> <five exact commit OIDs>",
+    "exit_code": 0,
+    "log": "upstream_fetch_exact_oids_20261019.txt",
+    "log_sha256": "e42d8f2d7c76e8b157d65030821568561e10508ac8ecc81a34e457be51f7f660"
+  },
+  "post_fetch_history": {
+    "combined_sha256": "f20ff13c64a2b3738971ad7398ad357a1abee3e5d595ee8465e98683832acb3e",
+    "commit_graph_dump": "upstream_target_ancestry_20261019.txt",
+    "is_shallow": false,
+    "per_target": [
+      {
+        "commit": "830e85b40240677039719fcbf14f721ad3b19050",
+        "containing_fetched_head_or_tag_ref_count": 152,
+        "containing_ref_examples": [
+          "refs/remotes/upstream/ArkUI-X-6.1-Release",
+          "refs/remotes/upstream/ArkUI-X-7.0-Beta1",
+          "refs/remotes/upstream/ArkUI-X-7.0-Release",
+          "refs/remotes/upstream/OpenHarmony-5.1.0-Release",
+          "refs/remotes/upstream/OpenHarmony-6.0-Beta1"
+        ],
+        "missing_parent_ids_within_walk": [],
+        "output_bytes": 1554679,
+        "output_sha256": "a6f3e610b5cbe20e0b5db827838d21e8cdd9bbdbb6d9593dc269639b03648a3b",
+        "reachable_commit_count": 15326,
+        "rev_list_exit": 0,
+        "root_commits": [
+          "ac58bbe578f0eb61e985a450c6ceab03bd9ad2ec"
+        ],
+        "root_tree_oid": "579712c1ebbb703d17cea422b1572023bed5d8a4"
+      },
+      {
+        "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+        "containing_fetched_head_or_tag_ref_count": 150,
+        "containing_ref_examples": [
+          "refs/remotes/upstream/ArkUI-X-6.1-Release",
+          "refs/remotes/upstream/ArkUI-X-7.0-Beta1",
+          "refs/remotes/upstream/ArkUI-X-7.0-Release",
+          "refs/remotes/upstream/OpenHarmony-5.1.0-Release",
+          "refs/remotes/upstream/OpenHarmony-6.0-Beta1"
+        ],
+        "missing_parent_ids_within_walk": [],
+        "output_bytes": 1554761,
+        "output_sha256": "3363734000e89e665c70022a811235ab21a58cb6231ab960d5a2b9857eca8b34",
+        "reachable_commit_count": 15327,
+        "rev_list_exit": 0,
+        "root_commits": [
+          "ac58bbe578f0eb61e985a450c6ceab03bd9ad2ec"
+        ],
+        "root_tree_oid": "82af11ced4297818410ccf61906b703d25b69165"
+      },
+      {
+        "commit": "c758818dbfd0b146a908d43d21f6ca1706c33783",
+        "containing_fetched_head_or_tag_ref_count": 114,
+        "containing_ref_examples": [
+          "refs/remotes/upstream/ArkUI-X-6.1-Release",
+          "refs/remotes/upstream/ArkUI-X-7.0-Beta1",
+          "refs/remotes/upstream/ArkUI-X-7.0-Release",
+          "refs/remotes/upstream/OpenHarmony-6.0-Beta1",
+          "refs/remotes/upstream/OpenHarmony-6.0-Release"
+        ],
+        "missing_parent_ids_within_walk": [],
+        "output_bytes": 1596786,
+        "output_sha256": "069ea3b2e6d3eb9e7602840067c8107ca81646962525d9b1d35c1f1f81ff94cb",
+        "reachable_commit_count": 15742,
+        "rev_list_exit": 0,
+        "root_commits": [
+          "ac58bbe578f0eb61e985a450c6ceab03bd9ad2ec"
+        ],
+        "root_tree_oid": "5d7c18a5d5ccbf48617b3c07ae9353f5f427d07a"
+      },
+      {
+        "commit": "81ca57487d04ea30cd11c271e86494a4e130f43e",
+        "containing_fetched_head_or_tag_ref_count": 114,
+        "containing_ref_examples": [
+          "refs/remotes/upstream/ArkUI-X-6.1-Release",
+          "refs/remotes/upstream/ArkUI-X-7.0-Beta1",
+          "refs/remotes/upstream/ArkUI-X-7.0-Release",
+          "refs/remotes/upstream/OpenHarmony-6.0-Beta1",
+          "refs/remotes/upstream/OpenHarmony-6.0-Release"
+        ],
+        "missing_parent_ids_within_walk": [],
+        "output_bytes": 1596868,
+        "output_sha256": "9bc55b1326d9740e5bb7b44f453c7e9925460273ac7deb7829b759c3615c7e75",
+        "reachable_commit_count": 15743,
+        "rev_list_exit": 0,
+        "root_commits": [
+          "ac58bbe578f0eb61e985a450c6ceab03bd9ad2ec"
+        ],
+        "root_tree_oid": "f0ddee8ee7f74b3f22e45b174ce96a269b2e57a5"
+      },
+      {
+        "commit": "95554c2ee75b35d556640eb6f2591d429796f60e",
+        "containing_fetched_head_or_tag_ref_count": 26,
+        "containing_ref_examples": [
+          "refs/remotes/upstream/ArkUI-X-7.0-Release",
+          "refs/remotes/upstream/OpenHarmony-7.0-Release",
+          "refs/remotes/upstream/cherry-pick-mr-15069-1786153419191-auto",
+          "refs/remotes/upstream/enable_litecg_only",
+          "refs/remotes/upstream/enable_litecg_only_v2"
+        ],
+        "missing_parent_ids_within_walk": [],
+        "output_bytes": 1935241,
+        "output_sha256": "4283c43161c33ce5d53b46fea51cb6ca0224c8886a993c66ac2569d742e12027",
+        "reachable_commit_count": 19061,
+        "rev_list_exit": 0,
+        "root_commits": [
+          "ac58bbe578f0eb61e985a450c6ceab03bd9ad2ec"
+        ],
+        "root_tree_oid": "65728158c365a0100db906bfca1cedf3ee3f5ebf"
+      }
+    ],
+    "tree_filter": "tree:0 intentionally omitted trees; commit parent graph only. Root tree OIDs cross-check against the independently verified full-tree closure report."
+  },
+  "pull_ref_probe": {
+    "exit_code": 0,
+    "path": "upstream_pull_refs_20261019.txt",
+    "refs_returned": 7,
+    "sha256": "1bf7bfa1042b15afa0303fb61681d26bda83254ec200a69443b4aba4c5f0c045"
+  },
+  "remote": "https://github.com/openharmony/arkcompiler_ets_runtime.git",
+  "result": "complete_parent_graph_verified_and_targets_are_ancestors_of_current_advertised_heads_or_tags",
+  "schema": "c7-upstream-parent-history.v1",
+  "trusted_remote_basis": "same official GitHub repository URL recorded in the C7 full-snapshot fetch record; no new trust root introduced"
+}

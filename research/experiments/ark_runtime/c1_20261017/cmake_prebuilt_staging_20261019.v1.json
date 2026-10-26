@@ -1,0 +1,33 @@
+{
+  "schema": "ohscanner.c1.cmake-prebuilt-staging/v1",
+  "status": "snapshot_configured_archive_hash_verified_safely_staged",
+  "source_config": "build/prebuilts_config.json",
+  "source_config_sha256": "9cd6a95721895aff6eb44a8c314d36e4a79543ddbf9865e25da602c8b4d4f850",
+  "tool_config_path": "build/prebuilts_config.py",
+  "tool_config_sha256": "82b13e7432b44c0ed28159c2dc0484ce824c5f8875a707bbf8862bb840f58427",
+  "source_package": {
+    "name": "cmake",
+    "host_platform": "linux",
+    "host_cpu": "arm64",
+    "unzip_filename": "linux",
+    "remote_url": "/openharmony/compiler/cmake/3.28.2/cmake-linux-aarch64-3.28.2-20241210.tar.gz",
+    "url": "https://repo.huaweicloud.com/openharmony/compiler/cmake/3.28.2/cmake-linux-aarch64-3.28.2-20241210.tar.gz",
+    "final_url": "https://repo.huaweicloud.com/openharmony/compiler/cmake/3.28.2/cmake-linux-aarch64-3.28.2-20241210.tar.gz",
+    "archive_bytes": 53964112,
+    "sha256_sidecar_url": "https://repo.huaweicloud.com/openharmony/compiler/cmake/3.28.2/cmake-linux-aarch64-3.28.2-20241210.tar.gz.sha256",
+    "sidecar_final_url": "https://repo.huaweicloud.com/openharmony/compiler/cmake/3.28.2/cmake-linux-aarch64-3.28.2-20241210.tar.gz.sha256",
+    "sidecar_bytes": 0,
+    "sidecar_value": "92220f56c8fcbdfcbccf178f44c1aebe6af7c2da7a0c87c75626f1174599b93d",
+    "archive_sha256": "92220f56c8fcbdfcbccf178f44c1aebe6af7c2da7a0c87c75626f1174599b93d",
+    "archive_member_count": 7519,
+    "archive_paths_and_links_validated": true
+  },
+  "staging_path": "/home/deepsleep/c-line-c1-profile-20261018/prebuilts-stage-sdk-addon-20261019/cmake/linux-aarch64",
+  "cmake_binary_sha256": "4f1c6f5d7fe2158f2060313a28440a11edb9c5b1452e34ac1f1b60b142203d2d",
+  "tree_inventory_sha256": "38548237cee8588d6a425dd4a5d32396bbd60b3dd926872324c9571c236555b2",
+  "tree_files": 7384,
+  "tree_directories": 134,
+  "tree_symlinks": 0,
+  "lifecycle_scripts_executed": false,
+  "scope_note": "Static snapshot-configured tool artifact staged outside the source archive. Downloaded sidecar and archive come from the same Huawei Cloud mirror; the bytes are captured by SHA256 but no independent signature is claimed."
+}

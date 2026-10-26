@@ -1,0 +1,13 @@
+{
+  "schema": "c7-combined-source-provenance.v1",
+  "status": "complete_for_five_selected_commits",
+  "tree_closure_report_sha256": "96afce130e6dab6b19872a3d5a2f6d06b3e461aa964336deaabf5c164fad0b33",
+  "source_manifest_sha256": "8ec7dd1790b9b6245e132f0b9ca72580960ed66739da7bd85aa2c879c101628c",
+  "upstream_parent_history_report_sha256": "397c4b08f673f88aea3459433e5d69e5142ef8360fd89a50929a3769726ab544",
+  "verifier_sha256": "b032dc6f346d2d139476f6f438de38722d81d09c3919cd53c8952d5852a7e304",
+  "upstream_remote": "https://github.com/openharmony/arkcompiler_ets_runtime.git",
+  "scope": "five selected commits only; does not establish arbitrary unreachable upstream history, product build context, or detector coverage",
+  "selected_commit_count": 5,
+  "tree_closure_and_history_roots_match": true,
+  "errors": []
+}

@@ -1,0 +1,6 @@
+COMMAND: git --git-dir=D:/openHarmonyScanner/tmp/c7-upstream-ancestry-20261019.git fetch --filter=tree:0 --no-tags https://github.com/openharmony/arkcompiler_ets_runtime.git 830e85b40240677039719fcbf14f721ad3b19050 a0e30483ab3e4aead67ecfb5c708489915e447f9 c758818dbfd0b146a908d43d21f6ca1706c33783 81ca57487d04ea30cd11c271e86494a4e130f43e 95554c2ee75b35d556640eb6f2591d429796f60e\nEXIT: 0\nSTDOUT:\n\nSTDERR:\nFrom https://github.com/openharmony/arkcompiler_ets_runtime
+ * branch              830e85b40240677039719fcbf14f721ad3b19050 -> FETCH_HEAD
+ * branch              a0e30483ab3e4aead67ecfb5c708489915e447f9 -> FETCH_HEAD
+ * branch              c758818dbfd0b146a908d43d21f6ca1706c33783 -> FETCH_HEAD
+ * branch              81ca57487d04ea30cd11c271e86494a4e130f43e -> FETCH_HEAD
+ * branch              95554c2ee75b35d556640eb6f2591d429796f60e -> FETCH_HEAD

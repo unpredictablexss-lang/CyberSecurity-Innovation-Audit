@@ -1,0 +1,645 @@
+{
+  "schema_version": 1,
+  "verified_on": "2026-10-19",
+  "purpose": "Source-bound proof for recognizing inherited three-argument Branch as generated CFG control.",
+  "repository": "openharmony/arkcompiler_ets_runtime",
+  "source_database": "D:\\openHarmonyScanner\\tmp\\c8-i9k03b-manifest-pin-source-20261019.git",
+  "scope": [
+    "ecmascript/compiler/builtins/builtins_array_stub_builder.cpp",
+    "ecmascript/compiler/builtins/builtins_array_stub_builder.h",
+    "ecmascript/compiler/builtins/builtins_stubs.h",
+    "ecmascript/compiler/stub_builder.h",
+    "ecmascript/compiler/stub_builder.cpp"
+  ],
+  "branch_contract": {
+    "declaration": "void Branch(GateRef condition, Label *trueLabel, Label *falseLabel)",
+    "implementation_invariant": "CircuitBuilder::Branch receives the same condition; IfTrue/IfFalse of the returned gate merge into argument 2/3 respectively.",
+    "name_based_vulnerability_matching": false,
+    "missing_or_ambiguous_contract": "Leave Branch as unknown; do not build edges.",
+    "additional_fail_closed_conditions": [
+      "Reject when the selected source set contains a direct #define/#undef Branch.",
+      "Reject a derived owner if it redeclares Branch before the defining StubBuilder class.",
+      "Resolve inheritance by fully qualified class identity; ambiguity rejects all aliases."
+    ],
+    "class_parsing": "Use recovered class_specifier AST nodes with no local syntax error; a file-level partial header does not establish a complete build profile and remains a scan limitation."
+  },
+  "snapshots": {
+    "manifest_pin_20240521": {
+      "commit": "3ad6d4c17d24fd4e1bb9a42067b36cc498d0979f",
+      "tree": "0ca739eb7b7063ea8b7de950011917effcfc3656",
+      "files": [
+        {
+          "path": "ecmascript/compiler/builtins/builtins_array_stub_builder.cpp",
+          "blob": "f6beb77fbcc38c15629aab5dbef3f7cc99f03481",
+          "sha256": "f802e85f16e7f51ddbdfed2416a8c56ee186a6e40ae6a7f43ab0b1ef18106bd7",
+          "bytes": 84805,
+          "parse_status": "complete"
+        },
+        {
+          "path": "ecmascript/compiler/builtins/builtins_array_stub_builder.h",
+          "blob": "690e853f44e0a17e67298fe312e088dc5bc01dee",
+          "sha256": "fe036586c92d2837717439faf8563c5582792ffa8deb8ec27285a73403ef903b",
+          "bytes": 4111,
+          "parse_status": "complete"
+        },
+        {
+          "path": "ecmascript/compiler/builtins/builtins_stubs.h",
+          "blob": "c5ff639d0147f8520b343694242507cf972eb4f6",
+          "sha256": "74175b42dc427ce9b6bd2cce2bcfbc1e94457eff96fecf6fc0be042e5574f731",
+          "bytes": 6890,
+          "parse_status": "partial"
+        },
+        {
+          "path": "ecmascript/compiler/stub_builder.h",
+          "blob": "156b2d4377bafd1a65462adcad97682e3603be5d",
+          "sha256": "fcc2a9cf1c057e2a57fe0b477ce55092dd0126ac2176b7614be42afc87409b66",
+          "bytes": 44795,
+          "parse_status": "complete"
+        },
+        {
+          "path": "ecmascript/compiler/stub_builder.cpp",
+          "blob": "5240f7e6f08323f27fac26ff42772b184cf9c620",
+          "sha256": "22a3c1f2e1819a7fbc4e1479b2b58ff02b733886d8da47880b4a8ada700c2408",
+          "bytes": 316766,
+          "parse_status": "complete"
+        }
+      ],
+      "verified_branch_owners": [
+        "panda::ecmascript::kungfu::BuiltinsArrayStubBuilder",
+        "panda::ecmascript::kungfu::BuiltinsStubBuilder"
+      ],
+      "contract_verified_for_target": true
+    },
+    "i9k03b_parent": {
+      "commit": "a3bbeab9883c7c22d4bdc0e65b3b516215d39e0d",
+      "tree": "af0321fb130de3e69613d61323cc337f0a4836a7",
+      "files": [
+        {
+          "path": "ecmascript/compiler/builtins/builtins_array_stub_builder.cpp",
+          "blob": "03ee6ac8e1249e95d1db7d50ee249fa7f17fa7e1",
+          "sha256": "58c636d216da0c4c532fe1ade3831cfd41969af1f921ae864595056a9481df09",
+          "bytes": 206834,
+          "parse_status": "complete"
+        },
+        {
+          "path": "ecmascript/compiler/builtins/builtins_array_stub_builder.h",
+          "blob": "4a4e1f0faf236411e45fcd0337b21033445e6f8f",
+          "sha256": "9572f8ab07527a006532a480e8f540e4f4bade34912b892a16b7d0512fac8081",
+          "bytes": 2922,
+          "parse_status": "partial"
+        },
+        {
+          "path": "ecmascript/compiler/builtins/builtins_stubs.h",
+          "blob": "c62e3bb3cf23b4938b38efd661a74ae9300f8712",
+          "sha256": "24048e7417755571e34fb96f8289a3fdba93fa9db6ae5c66f347227e07558119",
+          "bytes": 8091,
+          "parse_status": "partial"
+        },
+        {
+          "path": "ecmascript/compiler/stub_builder.h",
+          "blob": "cf80a32ae79a0cf884b43dcff2f7a0b4f5e75714",
+          "sha256": "0fd1b6ead1108f0d9fb95faaaa21455e74794e56e73f43a327493ffe2a5b12d9",
+          "bytes": 49969,
+          "parse_status": "complete"
+        },
+        {
+          "path": "ecmascript/compiler/stub_builder.cpp",
+          "blob": "62ab03c9ce3c5503232c4caaa349dab586325e60",
+          "sha256": "f0e13be7f65a4babd3609b9845c52f65b6c806ab15326e4ee4bc4207bba37d73",
+          "bytes": 403309,
+          "parse_status": "complete"
+        }
+      ],
+      "verified_branch_owners": [],
+      "contract_verified_for_target": false
+    },
+    "i9k03b_fix": {
+      "commit": "df668db447d7b19ee38fe7925638feffdd2c9bd6",
+      "tree": "7ad1bcd12c8f35982d04fdab329a43555039cff1",
+      "files": [
+        {
+          "path": "ecmascript/compiler/builtins/builtins_array_stub_builder.cpp",
+          "blob": "d0ba20e09cbafffacf035a659cfeabaca67ae39d",
+          "sha256": "12bb0fe98368bc07b03d9cb1f13c8d11dcdbaab5c67b04e1ed335afbb766f022",
+          "bytes": 206832,
+          "parse_status": "complete"
+        },
+        {
+          "path": "ecmascript/compiler/builtins/builtins_array_stub_builder.h",
+          "blob": "4a4e1f0faf236411e45fcd0337b21033445e6f8f",
+          "sha256": "9572f8ab07527a006532a480e8f540e4f4bade34912b892a16b7d0512fac8081",
+          "bytes": 2922,
+          "parse_status": "partial"
+        },
+        {
+          "path": "ecmascript/compiler/builtins/builtins_stubs.h",
+          "blob": "c62e3bb3cf23b4938b38efd661a74ae9300f8712",
+          "sha256": "24048e7417755571e34fb96f8289a3fdba93fa9db6ae5c66f347227e07558119",
+          "bytes": 8091,
+          "parse_status": "partial"
+        },
+        {
+          "path": "ecmascript/compiler/stub_builder.h",
+          "blob": "cf80a32ae79a0cf884b43dcff2f7a0b4f5e75714",
+          "sha256": "0fd1b6ead1108f0d9fb95faaaa21455e74794e56e73f43a327493ffe2a5b12d9",
+          "bytes": 49969,
+          "parse_status": "complete"
+        },
+        {
+          "path": "ecmascript/compiler/stub_builder.cpp",
+          "blob": "62ab03c9ce3c5503232c4caaa349dab586325e60",
+          "sha256": "f0e13be7f65a4babd3609b9845c52f65b6c806ab15326e4ee4bc4207bba37d73",
+          "bytes": 403309,
+          "parse_status": "complete"
+        }
+      ],
+      "verified_branch_owners": [],
+      "contract_verified_for_target": false
+    }
+  },
+  "production_replays": {
+    "i9k03b_parent": {
+      "report": "reports/runtime-exception-v0812-i9k03b-parent-expanded-scope-20261019.json",
+      "scanner_version": "0.8.12",
+      "commit": "a3bbeab9883c7c22d4bdc0e65b3b516215d39e0d",
+      "tree": "af0321fb130de3e69613d61323cc337f0a4836a7",
+      "scope_file_count": 5,
+      "scope_paths": [
+        "ecmascript/compiler/builtins/builtins_array_stub_builder.cpp",
+        "ecmascript/compiler/builtins/builtins_array_stub_builder.h",
+        "ecmascript/compiler/builtins/builtins_stubs.h",
+        "ecmascript/compiler/stub_builder.h",
+        "ecmascript/compiler/stub_builder.cpp"
+      ],
+      "status": "completed_with_limitations",
+      "detector_status": "blocked",
+      "diagnostic_count": 2,
+      "diagnostics": [
+        {
+          "diagnostic_id": "ohscanner.ark.runtime.type_safety:7b9f4946c0d0d542",
+          "provider": "ohscanner.ark.runtime.type_safety",
+          "evidence_type": "syntax",
+          "file": "ecmascript/compiler/builtins/builtins_array_stub_builder.cpp",
+          "line": 2234,
+          "column": 41,
+          "rule_id": "ark.runtime.callback-exception-before-result-conversion",
+          "severity": "unassessed",
+          "message": "Candidate only: callback completion may reach a result conversion before a dominating exception exit. trace={\"constraints\": [], \"creation_line\": 0, \"function_region\": [94112, 100803], \"generated_path\": [2222, 2225, 2231, 2233, 2234], \"model_sha256\": \"39fe26fbdb2c975c03bc73b0315cf311914e9818d97ea4780c9275680a05d2ae\", \"target\": \"panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::FindIndex:97295:retValue\", \"token_line\": 2222, \"token_origin\": \"JSCallDispatch\", \"unreviewed_effect_sites\": []}",
+          "candidate_cwe": "CWE-755",
+          "confidence": "unassessed",
+          "symbol": "panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::FindIndex",
+          "source_sha256": "58c636d216da0c4c532fe1ade3831cfd41969af1f921ae864595056a9481df09",
+          "consequence_impact": null,
+          "consequence_cwe": null,
+          "finding_identity": {
+            "schema_version": "ohscanner.finding-identity-record.v1",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version"
+              ]
+            },
+            "observation": {
+              "legacy_diagnostic_id": "ohscanner.ark.runtime.type_safety:7b9f4946c0d0d542",
+              "detector_id": "ohscanner.ark.runtime.type_safety",
+              "detector_version": "0.8.12",
+              "rule_id": "ark.runtime.callback-exception-before-result-conversion",
+              "rule_version": null,
+              "file": "ecmascript/compiler/builtins/builtins_array_stub_builder.cpp",
+              "line": 2234,
+              "message": "Candidate only: callback completion may reach a result conversion before a dominating exception exit. trace={\"constraints\": [], \"creation_line\": 0, \"function_region\": [94112, 100803], \"generated_path\": [2222, 2225, 2231, 2233, 2234], \"model_sha256\": \"39fe26fbdb2c975c03bc73b0315cf311914e9818d97ea4780c9275680a05d2ae\", \"target\": \"panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::FindIndex:97295:retValue\", \"token_line\": 2222, \"token_origin\": \"JSCallDispatch\", \"unreviewed_effect_sites\": []}",
+              "source_blob_oid": "03ee6ac8e1249e95d1db7d50ee249fa7f17fa7e1",
+              "source_sha256": "58c636d216da0c4c532fe1ade3831cfd41969af1f921ae864595056a9481df09",
+              "byte_start": 97863,
+              "byte_end": 97951,
+              "identity_quality": "unknown",
+              "rule_lineage_id": null,
+              "symbol_identity": null,
+              "ast_fingerprint": null
+            },
+            "source_binding": {
+              "repository": "openharmony/arkcompiler_ets_runtime",
+              "commit": "a3bbeab9883c7c22d4bdc0e65b3b516215d39e0d",
+              "snapshot_sha256": "37f6ac7bdd4ae81bffdc08ce7ae1330aae8c6aa66238339557ce7aee5a97d105",
+              "profile_id": "light-ast",
+              "detector_id": "ohscanner.ark.runtime.type_safety",
+              "detector_version": "0.8.12",
+              "rule_id": "ark.runtime.callback-exception-before-result-conversion",
+              "rule_version": null,
+              "file": "ecmascript/compiler/builtins/builtins_array_stub_builder.cpp",
+              "source_blob_oid": "03ee6ac8e1249e95d1db7d50ee249fa7f17fa7e1",
+              "source_sha256": "58c636d216da0c4c532fe1ade3831cfd41969af1f921ae864595056a9481df09",
+              "byte_start": 97863,
+              "byte_end": 97951,
+              "status": "unbound",
+              "verification": "not_performed_by_identity_layer"
+            },
+            "historical_ids": [
+              "ohscanner.ark.runtime.type_safety:7b9f4946c0d0d542"
+            ],
+            "backfilled": false,
+            "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+          },
+          "source_binding": "bound"
+        },
+        {
+          "diagnostic_id": "ohscanner.ark.runtime.type_safety:751c857d52606d5a",
+          "provider": "ohscanner.ark.runtime.type_safety",
+          "evidence_type": "syntax",
+          "file": "ecmascript/compiler/builtins/builtins_array_stub_builder.cpp",
+          "line": 2292,
+          "column": 45,
+          "rule_id": "ark.runtime.callback-exception-before-result-conversion",
+          "severity": "unassessed",
+          "message": "Candidate only: callback completion may reach a result conversion before a dominating exception exit. trace={\"constraints\": [], \"creation_line\": 0, \"function_region\": [94112, 100803], \"generated_path\": [2280, 2283, 2289, 2291, 2292], \"model_sha256\": \"39fe26fbdb2c975c03bc73b0315cf311914e9818d97ea4780c9275680a05d2ae\", \"target\": \"panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::FindIndex:99638:retValue\", \"token_line\": 2280, \"token_origin\": \"JSCallDispatch\", \"unreviewed_effect_sites\": []}",
+          "candidate_cwe": "CWE-755",
+          "confidence": "unassessed",
+          "symbol": "panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::FindIndex",
+          "source_sha256": "58c636d216da0c4c532fe1ade3831cfd41969af1f921ae864595056a9481df09",
+          "consequence_impact": null,
+          "consequence_cwe": null,
+          "finding_identity": {
+            "schema_version": "ohscanner.finding-identity-record.v1",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version"
+              ]
+            },
+            "observation": {
+              "legacy_diagnostic_id": "ohscanner.ark.runtime.type_safety:751c857d52606d5a",
+              "detector_id": "ohscanner.ark.runtime.type_safety",
+              "detector_version": "0.8.12",
+              "rule_id": "ark.runtime.callback-exception-before-result-conversion",
+              "rule_version": null,
+              "file": "ecmascript/compiler/builtins/builtins_array_stub_builder.cpp",
+              "line": 2292,
+              "message": "Candidate only: callback completion may reach a result conversion before a dominating exception exit. trace={\"constraints\": [], \"creation_line\": 0, \"function_region\": [94112, 100803], \"generated_path\": [2280, 2283, 2289, 2291, 2292], \"model_sha256\": \"39fe26fbdb2c975c03bc73b0315cf311914e9818d97ea4780c9275680a05d2ae\", \"target\": \"panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::FindIndex:99638:retValue\", \"token_line\": 2280, \"token_origin\": \"JSCallDispatch\", \"unreviewed_effect_sites\": []}",
+              "source_blob_oid": "03ee6ac8e1249e95d1db7d50ee249fa7f17fa7e1",
+              "source_sha256": "58c636d216da0c4c532fe1ade3831cfd41969af1f921ae864595056a9481df09",
+              "byte_start": 100249,
+              "byte_end": 100337,
+              "identity_quality": "unknown",
+              "rule_lineage_id": null,
+              "symbol_identity": null,
+              "ast_fingerprint": null
+            },
+            "source_binding": {
+              "repository": "openharmony/arkcompiler_ets_runtime",
+              "commit": "a3bbeab9883c7c22d4bdc0e65b3b516215d39e0d",
+              "snapshot_sha256": "37f6ac7bdd4ae81bffdc08ce7ae1330aae8c6aa66238339557ce7aee5a97d105",
+              "profile_id": "light-ast",
+              "detector_id": "ohscanner.ark.runtime.type_safety",
+              "detector_version": "0.8.12",
+              "rule_id": "ark.runtime.callback-exception-before-result-conversion",
+              "rule_version": null,
+              "file": "ecmascript/compiler/builtins/builtins_array_stub_builder.cpp",
+              "source_blob_oid": "03ee6ac8e1249e95d1db7d50ee249fa7f17fa7e1",
+              "source_sha256": "58c636d216da0c4c532fe1ade3831cfd41969af1f921ae864595056a9481df09",
+              "byte_start": 100249,
+              "byte_end": 100337,
+              "status": "unbound",
+              "verification": "not_performed_by_identity_layer"
+            },
+            "historical_ids": [
+              "ohscanner.ark.runtime.type_safety:751c857d52606d5a"
+            ],
+            "backfilled": false,
+            "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+          },
+          "source_binding": "bound"
+        }
+      ],
+      "elapsed_seconds": 0.07287390000419691,
+      "coverage": "partial"
+    },
+    "i9k03b_fix": {
+      "report": "reports/runtime-exception-v0812-i9k03b-fixed-expanded-scope-20261019.json",
+      "scanner_version": "0.8.12",
+      "commit": "df668db447d7b19ee38fe7925638feffdd2c9bd6",
+      "tree": "7ad1bcd12c8f35982d04fdab329a43555039cff1",
+      "scope_file_count": 5,
+      "scope_paths": [
+        "ecmascript/compiler/builtins/builtins_array_stub_builder.cpp",
+        "ecmascript/compiler/builtins/builtins_array_stub_builder.h",
+        "ecmascript/compiler/builtins/builtins_stubs.h",
+        "ecmascript/compiler/stub_builder.h",
+        "ecmascript/compiler/stub_builder.cpp"
+      ],
+      "status": "completed_with_limitations",
+      "detector_status": "blocked",
+      "diagnostic_count": 1,
+      "diagnostics": [
+        {
+          "diagnostic_id": "ohscanner.ark.runtime.type_safety:0819150c3e5ad858",
+          "provider": "ohscanner.ark.runtime.type_safety",
+          "evidence_type": "syntax",
+          "file": "ecmascript/compiler/builtins/builtins_array_stub_builder.cpp",
+          "line": 2292,
+          "column": 45,
+          "rule_id": "ark.runtime.callback-exception-before-result-conversion",
+          "severity": "unassessed",
+          "message": "Candidate only: callback completion may reach a result conversion before a dominating exception exit. trace={\"constraints\": [], \"creation_line\": 0, \"function_region\": [94112, 100801], \"generated_path\": [2280, 2283, 2289, 2291, 2292], \"model_sha256\": \"39fe26fbdb2c975c03bc73b0315cf311914e9818d97ea4780c9275680a05d2ae\", \"target\": \"panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::FindIndex:99636:retValue\", \"token_line\": 2280, \"token_origin\": \"JSCallDispatch\", \"unreviewed_effect_sites\": []}",
+          "candidate_cwe": "CWE-755",
+          "confidence": "unassessed",
+          "symbol": "panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::FindIndex",
+          "source_sha256": "12bb0fe98368bc07b03d9cb1f13c8d11dcdbaab5c67b04e1ed335afbb766f022",
+          "consequence_impact": null,
+          "consequence_cwe": null,
+          "finding_identity": {
+            "schema_version": "ohscanner.finding-identity-record.v1",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version"
+              ]
+            },
+            "observation": {
+              "legacy_diagnostic_id": "ohscanner.ark.runtime.type_safety:0819150c3e5ad858",
+              "detector_id": "ohscanner.ark.runtime.type_safety",
+              "detector_version": "0.8.12",
+              "rule_id": "ark.runtime.callback-exception-before-result-conversion",
+              "rule_version": null,
+              "file": "ecmascript/compiler/builtins/builtins_array_stub_builder.cpp",
+              "line": 2292,
+              "message": "Candidate only: callback completion may reach a result conversion before a dominating exception exit. trace={\"constraints\": [], \"creation_line\": 0, \"function_region\": [94112, 100801], \"generated_path\": [2280, 2283, 2289, 2291, 2292], \"model_sha256\": \"39fe26fbdb2c975c03bc73b0315cf311914e9818d97ea4780c9275680a05d2ae\", \"target\": \"panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::FindIndex:99636:retValue\", \"token_line\": 2280, \"token_origin\": \"JSCallDispatch\", \"unreviewed_effect_sites\": []}",
+              "source_blob_oid": "d0ba20e09cbafffacf035a659cfeabaca67ae39d",
+              "source_sha256": "12bb0fe98368bc07b03d9cb1f13c8d11dcdbaab5c67b04e1ed335afbb766f022",
+              "byte_start": 100247,
+              "byte_end": 100335,
+              "identity_quality": "unknown",
+              "rule_lineage_id": null,
+              "symbol_identity": null,
+              "ast_fingerprint": null
+            },
+            "source_binding": {
+              "repository": "openharmony/arkcompiler_ets_runtime",
+              "commit": "df668db447d7b19ee38fe7925638feffdd2c9bd6",
+              "snapshot_sha256": "4fba819d7d896f270e26dc966e7250b4f9a498e7e297cd3ac3b34066260f9c11",
+              "profile_id": "light-ast",
+              "detector_id": "ohscanner.ark.runtime.type_safety",
+              "detector_version": "0.8.12",
+              "rule_id": "ark.runtime.callback-exception-before-result-conversion",
+              "rule_version": null,
+              "file": "ecmascript/compiler/builtins/builtins_array_stub_builder.cpp",
+              "source_blob_oid": "d0ba20e09cbafffacf035a659cfeabaca67ae39d",
+              "source_sha256": "12bb0fe98368bc07b03d9cb1f13c8d11dcdbaab5c67b04e1ed335afbb766f022",
+              "byte_start": 100247,
+              "byte_end": 100335,
+              "status": "unbound",
+              "verification": "not_performed_by_identity_layer"
+            },
+            "historical_ids": [
+              "ohscanner.ark.runtime.type_safety:0819150c3e5ad858"
+            ],
+            "backfilled": false,
+            "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+          },
+          "source_binding": "bound"
+        }
+      ],
+      "elapsed_seconds": 0.07227299999794923,
+      "coverage": "partial"
+    },
+    "manifest_pin_20240521": {
+      "report": "reports/runtime-exception-v0812-i9k03b-manifest-tag-20240521-20261019.json",
+      "scanner_version": "0.8.12",
+      "commit": "3ad6d4c17d24fd4e1bb9a42067b36cc498d0979f",
+      "tree": "0ca739eb7b7063ea8b7de950011917effcfc3656",
+      "scope_file_count": 5,
+      "scope_paths": [
+        "ecmascript/compiler/builtins/builtins_array_stub_builder.cpp",
+        "ecmascript/compiler/builtins/builtins_array_stub_builder.h",
+        "ecmascript/compiler/builtins/builtins_stubs.h",
+        "ecmascript/compiler/stub_builder.h",
+        "ecmascript/compiler/stub_builder.cpp"
+      ],
+      "status": "completed_with_limitations",
+      "detector_status": "blocked",
+      "diagnostic_count": 2,
+      "diagnostics": [
+        {
+          "diagnostic_id": "ohscanner.ark.runtime.type_safety:f95de426f71ea93f",
+          "provider": "ohscanner.ark.runtime.type_safety",
+          "evidence_type": "syntax",
+          "file": "ecmascript/compiler/builtins/builtins_array_stub_builder.cpp",
+          "line": 1282,
+          "column": 41,
+          "rule_id": "ark.runtime.callback-exception-before-result-conversion",
+          "severity": "unassessed",
+          "message": "Candidate only: callback completion may reach a result conversion before a dominating exception exit. trace={\"constraints\": [], \"creation_line\": 0, \"function_region\": [51064, 57733], \"generated_path\": [1270, 1273, 1279, 1281, 1282], \"model_sha256\": \"39fe26fbdb2c975c03bc73b0315cf311914e9818d97ea4780c9275680a05d2ae\", \"target\": \"panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::FindIndex:54247:retValue\", \"token_line\": 1270, \"token_origin\": \"JSCallDispatch\", \"unreviewed_effect_sites\": []}",
+          "candidate_cwe": "CWE-755",
+          "confidence": "unassessed",
+          "symbol": "panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::FindIndex",
+          "source_sha256": "f802e85f16e7f51ddbdfed2416a8c56ee186a6e40ae6a7f43ab0b1ef18106bd7",
+          "consequence_impact": null,
+          "consequence_cwe": null,
+          "finding_identity": {
+            "schema_version": "ohscanner.finding-identity-record.v1",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version"
+              ]
+            },
+            "observation": {
+              "legacy_diagnostic_id": "ohscanner.ark.runtime.type_safety:f95de426f71ea93f",
+              "detector_id": "ohscanner.ark.runtime.type_safety",
+              "detector_version": "0.8.12",
+              "rule_id": "ark.runtime.callback-exception-before-result-conversion",
+              "rule_version": null,
+              "file": "ecmascript/compiler/builtins/builtins_array_stub_builder.cpp",
+              "line": 1282,
+              "message": "Candidate only: callback completion may reach a result conversion before a dominating exception exit. trace={\"constraints\": [], \"creation_line\": 0, \"function_region\": [51064, 57733], \"generated_path\": [1270, 1273, 1279, 1281, 1282], \"model_sha256\": \"39fe26fbdb2c975c03bc73b0315cf311914e9818d97ea4780c9275680a05d2ae\", \"target\": \"panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::FindIndex:54247:retValue\", \"token_line\": 1270, \"token_origin\": \"JSCallDispatch\", \"unreviewed_effect_sites\": []}",
+              "source_blob_oid": "f6beb77fbcc38c15629aab5dbef3f7cc99f03481",
+              "source_sha256": "f802e85f16e7f51ddbdfed2416a8c56ee186a6e40ae6a7f43ab0b1ef18106bd7",
+              "byte_start": 54815,
+              "byte_end": 54903,
+              "identity_quality": "unknown",
+              "rule_lineage_id": null,
+              "symbol_identity": null,
+              "ast_fingerprint": null
+            },
+            "source_binding": {
+              "repository": "openharmony/arkcompiler_ets_runtime",
+              "commit": "3ad6d4c17d24fd4e1bb9a42067b36cc498d0979f",
+              "snapshot_sha256": "a91598448eb47751fc9afdeffa33bc33e1ead36f09519184a8dbddd6bb54f031",
+              "profile_id": "light-ast",
+              "detector_id": "ohscanner.ark.runtime.type_safety",
+              "detector_version": "0.8.12",
+              "rule_id": "ark.runtime.callback-exception-before-result-conversion",
+              "rule_version": null,
+              "file": "ecmascript/compiler/builtins/builtins_array_stub_builder.cpp",
+              "source_blob_oid": "f6beb77fbcc38c15629aab5dbef3f7cc99f03481",
+              "source_sha256": "f802e85f16e7f51ddbdfed2416a8c56ee186a6e40ae6a7f43ab0b1ef18106bd7",
+              "byte_start": 54815,
+              "byte_end": 54903,
+              "status": "unbound",
+              "verification": "not_performed_by_identity_layer"
+            },
+            "historical_ids": [
+              "ohscanner.ark.runtime.type_safety:f95de426f71ea93f"
+            ],
+            "backfilled": false,
+            "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+          },
+          "source_binding": "bound"
+        },
+        {
+          "diagnostic_id": "ohscanner.ark.runtime.type_safety:bad3e2aedd6bb227",
+          "provider": "ohscanner.ark.runtime.type_safety",
+          "evidence_type": "syntax",
+          "file": "ecmascript/compiler/builtins/builtins_array_stub_builder.cpp",
+          "line": 1340,
+          "column": 45,
+          "rule_id": "ark.runtime.callback-exception-before-result-conversion",
+          "severity": "unassessed",
+          "message": "Candidate only: callback completion may reach a result conversion before a dominating exception exit. trace={\"constraints\": [], \"creation_line\": 0, \"function_region\": [51064, 57733], \"generated_path\": [1328, 1331, 1337, 1339, 1340], \"model_sha256\": \"39fe26fbdb2c975c03bc73b0315cf311914e9818d97ea4780c9275680a05d2ae\", \"target\": \"panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::FindIndex:56579:retValue\", \"token_line\": 1328, \"token_origin\": \"JSCallDispatch\", \"unreviewed_effect_sites\": []}",
+          "candidate_cwe": "CWE-755",
+          "confidence": "unassessed",
+          "symbol": "panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::FindIndex",
+          "source_sha256": "f802e85f16e7f51ddbdfed2416a8c56ee186a6e40ae6a7f43ab0b1ef18106bd7",
+          "consequence_impact": null,
+          "consequence_cwe": null,
+          "finding_identity": {
+            "schema_version": "ohscanner.finding-identity-record.v1",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version"
+              ]
+            },
+            "observation": {
+              "legacy_diagnostic_id": "ohscanner.ark.runtime.type_safety:bad3e2aedd6bb227",
+              "detector_id": "ohscanner.ark.runtime.type_safety",
+              "detector_version": "0.8.12",
+              "rule_id": "ark.runtime.callback-exception-before-result-conversion",
+              "rule_version": null,
+              "file": "ecmascript/compiler/builtins/builtins_array_stub_builder.cpp",
+              "line": 1340,
+              "message": "Candidate only: callback completion may reach a result conversion before a dominating exception exit. trace={\"constraints\": [], \"creation_line\": 0, \"function_region\": [51064, 57733], \"generated_path\": [1328, 1331, 1337, 1339, 1340], \"model_sha256\": \"39fe26fbdb2c975c03bc73b0315cf311914e9818d97ea4780c9275680a05d2ae\", \"target\": \"panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::FindIndex:56579:retValue\", \"token_line\": 1328, \"token_origin\": \"JSCallDispatch\", \"unreviewed_effect_sites\": []}",
+              "source_blob_oid": "f6beb77fbcc38c15629aab5dbef3f7cc99f03481",
+              "source_sha256": "f802e85f16e7f51ddbdfed2416a8c56ee186a6e40ae6a7f43ab0b1ef18106bd7",
+              "byte_start": 57190,
+              "byte_end": 57278,
+              "identity_quality": "unknown",
+              "rule_lineage_id": null,
+              "symbol_identity": null,
+              "ast_fingerprint": null
+            },
+            "source_binding": {
+              "repository": "openharmony/arkcompiler_ets_runtime",
+              "commit": "3ad6d4c17d24fd4e1bb9a42067b36cc498d0979f",
+              "snapshot_sha256": "a91598448eb47751fc9afdeffa33bc33e1ead36f09519184a8dbddd6bb54f031",
+              "profile_id": "light-ast",
+              "detector_id": "ohscanner.ark.runtime.type_safety",
+              "detector_version": "0.8.12",
+              "rule_id": "ark.runtime.callback-exception-before-result-conversion",
+              "rule_version": null,
+              "file": "ecmascript/compiler/builtins/builtins_array_stub_builder.cpp",
+              "source_blob_oid": "f6beb77fbcc38c15629aab5dbef3f7cc99f03481",
+              "source_sha256": "f802e85f16e7f51ddbdfed2416a8c56ee186a6e40ae6a7f43ab0b1ef18106bd7",
+              "byte_start": 57190,
+              "byte_end": 57278,
+              "status": "unbound",
+              "verification": "not_performed_by_identity_layer"
+            },
+            "historical_ids": [
+              "ohscanner.ark.runtime.type_safety:bad3e2aedd6bb227"
+            ],
+            "backfilled": false,
+            "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+          },
+          "source_binding": "bound"
+        }
+      ],
+      "elapsed_seconds": 0.03718230000231415,
+      "coverage": "partial"
+    },
+    "old_scanner_scope_baseline": {
+      "report": "reports/runtime-exception-v0810-e4-i9k03b-manifest-tag-20240521-20261019.json",
+      "scanner_version": "0.8.10",
+      "commit": "3ad6d4c17d24fd4e1bb9a42067b36cc498d0979f",
+      "tree": "0ca739eb7b7063ea8b7de950011917effcfc3656",
+      "scope_file_count": 5,
+      "scope_paths": [
+        "ecmascript/compiler/builtins/builtins_array_stub_builder.cpp",
+        "ecmascript/compiler/builtins/builtins_array_stub_builder.h",
+        "ecmascript/compiler/builtins/builtins_stubs.h",
+        "ecmascript/compiler/stub_builder.h",
+        "ecmascript/compiler/stub_builder.cpp"
+      ],
+      "status": "completed_with_limitations",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "diagnostics": [],
+      "elapsed_seconds": 9.60000033956021e-06,
+      "coverage": "not_applicable"
+    }
+  }
+}

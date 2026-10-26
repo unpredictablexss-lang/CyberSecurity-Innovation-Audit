@@ -1,0 +1,60 @@
+{
+  "schema": "ohscanner.c1.sdk-input-reconciliation/v1",
+  "status": "exact_input_unavailable_sdk_source_gn_blocked_by_missing_declared_clang_prebuilt",
+  "product_profile": "hihope/rk3568",
+  "profile_digest_sha256": "e86461191c065e3e140afb734c9d8c27818851ae51651f9ba004231fa7d52063",
+  "missing_ninja_input": "../../prebuilts/ohos-sdk/linux/26.0.1/native/sysroot/usr/lib/arm-linux-ohos/libbundle_ndk.z.so",
+  "graph_edge": {
+    "ninja_query_record": "ninja_sdk_input_query_20261019.txt",
+    "ninja_query_record_sha256": "fd65538aac889df60a3088d64ad73fbb1b9c779ad322f73547ad3918d2b341e1",
+    "sdk_file_query_summary": "The file has no generating rule in the rk3568 graph and is listed as an input to web/webview/libnweb_ohos_adapter.z.so and its unstripped counterpart.",
+    "consumer_output": "web/webview/libnweb_ohos_adapter.z.so",
+    "consumer_input_line_in_query_record": 214,
+    "duplicate_output_warnings_emitted_during_queries": 1258
+  },
+  "local_artifact_search": {
+    "record": "local_sdk_artifact_search_20261019.txt",
+    "record_sha256": "481b68b759500347cb23d3bddfaeece8d32e34423b17cd3c9c5859d627a41836",
+    "searched_roots": [
+      "/home/deepsleep/.prebuilts_cache",
+      "/home/deepsleep/c-line-c1-profile-20261018/prebuilts-stage-20261019",
+      "/home/deepsleep/c-line-c1-profile-20261018/out-gn-20261019-retry3",
+      "/mnt/d/OpenHarmony807/prebuilts",
+      "/mnt/d/OpenHarmony807/out"
+    ],
+    "result": "No libbundle_ndk.z.so or ohos-sdk-full-linux archive matched in these local roots. This is a scoped local search, not proof that no external artifact exists."
+  },
+  "snapshot_configuration": {
+    "prebuilts_config_path": "build/prebuilts_config.json",
+    "prebuilts_config_sha256": "9cd6a95721895aff6eb44a8c314d36e4a79543ddbf9865e25da602c8b4d4f850",
+    "requested_sdk_name": "ohos-sdk-full-linux",
+    "requested_api_version": "26.0.0",
+    "version_gni_path": "build/version.gni",
+    "version_gni_sha256": "8469067500bd335d7e4705769c2da8f27b74f20a9cb4350129a1b2afce66cd2f",
+    "sdk_version": "26.0.1.47",
+    "version_interpretation": "These are distinct declared version fields; their compatibility mapping has not been established from a pinned SDK artifact. Do not infer incompatibility solely from the strings."
+  },
+  "dynamic_downloader": {
+    "path": "build/scripts/download_sdk.py",
+    "sha256": "e07dd469139d993ae5f4a159bae3b4014ae2bb650830e8f97f2ba05ab2fb06cf",
+    "behavior_observed": "Queries the daily-build service for recent master builds, selects a matching product, downloads its reported obsPath and extracts it; no immutable artifact digest is pinned by the snapshot config.",
+    "used_as_snapshot_evidence": false
+  },
+  "same_snapshot_source_build_route": {
+    "product_name": "ohos-sdk",
+    "product_config": "productdefine/common/products/ohos-sdk.json",
+    "product_config_sha256": "fa9232391468348f4af0b0ed4ed457595362c6eec39f50453f48dcc66aacf01c",
+    "productdefine_project_commit": "c9317af4074bf0e445fe3fc3979e53c470687153",
+    "productdefine_project_tree": "71f1c83472fbf4b0360bf9fbde23572c529cef21",
+    "sdk_build_gn_sha256": "4933e647a65283604015d8b393ba80afa26b0654971daf39e23bf01170aa824e",
+    "sdk_gni_sha256": "b7497c54d489e9e53547cd6b1211eeffc0501cf82c7514921dabd73b988cfdba",
+    "rk3568_graph_sdk_archive_targets": "No ohos-sdk package/archive target appears in the filtered Ninja target inventory; the current rk3568 graph contains component-level SDK targets only.",
+    "source_build_attempted": true,
+    "source_gn_attempt": "sdk_source_gn_attempt_20261019.v1.json",
+    "source_gn_attempt_sha256": "eed22d587579bfeae5953e02c0e106c8a96d5fe810f47159d423871caee76a43",
+    "attempt_9_status": "GN generation failed before graph output because prebuilts/clang/ohos/linux-x86_64/llvm/NOTICE is absent",
+    "next_action": "The exact snapshot declares a 789238720-byte clang 15.0.4-02fbe8 Linux x86_64 archive; no matching local archive was found. Assess whether to acquire the fixed archive, verify its SHA-256 sidecar and stage it externally. Then retry the separate SDK GN graph under the same network-isolated/read-only-source boundary in a fresh output directory."
+  },
+  "scope_note": "Ninja and source inspections were read-only. A separate exact-source SDK GN attempt reached a snapshot-declared missing clang prebuilt and did not generate a GN graph. This does not establish SDK compatibility, SDK package reproducibility, or a complete hihope/rk3568 build."
+}
+

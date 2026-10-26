@@ -1,0 +1,25 @@
+{
+  "schema": "ohscanner.c1.host-ruby-runtime.v1",
+  "distribution": "Ubuntu 24.04 Noble",
+  "ruby_version": "3.2.3-1ubuntu0.24.04.8",
+  "packages": [
+    {
+      "file": "ruby3.2_3.2.3-1ubuntu0.24.04.8_amd64.deb",
+      "sha256": "6f11e297b3508e8db95a5a047126a16ccf1358292049a27e3dc72b88180e779a",
+      "expected_sha256_from_apt_index": "6f11e297b3508e8db95a5a047126a16ccf1358292049a27e3dc72b88180e779a",
+      "matches_expected": true,
+      "bytes": 50654
+    },
+    {
+      "file": "libruby3.2_3.2.3-1ubuntu0.24.04.8_amd64.deb",
+      "sha256": "77c2e98ccfba2c4a4e5edb48ca8c0eb041702e1579eabc40cf07064fd4f3033e",
+      "expected_sha256_from_apt_index": "77c2e98ccfba2c4a4e5edb48ca8c0eb041702e1579eabc40cf07064fd4f3033e",
+      "matches_expected": true,
+      "bytes": 5342224
+    }
+  ],
+  "binary": {
+    "sha256": "ead53704d7da35c85a28db19070d34e7ecef9461ecf8ae5e9d51ae79125bb731",
+    "bytes": 14488
+  }
+}

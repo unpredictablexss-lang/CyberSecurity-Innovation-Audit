@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "case_id": "ARK-ARRAY-FINDINDEX-CALLBACK-PENDING-EXCEPTION-I9K03B",
+  "upstream_repository": "openharmony/arkcompiler_ets_runtime",
+  "issue_reference": "I9K03B (referenced by upstream commit; issue content/security status not retrieved)",
+  "verified_on": "2026-10-19",
+  "history_database": "D:\\openHarmonyScanner\\tmp\\c-line-callback-holdout-history-20261019.git",
+  "vulnerable": {
+    "commit": "a3bbeab9883c7c22d4bdc0e65b3b516215d39e0d",
+    "tree": "af0321fb130de3e69613d61323cc337f0a4836a7",
+    "path": "ecmascript/compiler/builtins/builtins_array_stub_builder.cpp",
+    "blob": "03ee6ac8e1249e95d1db7d50ee249fa7f17fa7e1",
+    "sha256": "58c636d216da0c4c532fe1ade3831cfd41969af1f921ae864595056a9481df09",
+    "bytes": 206834
+  },
+  "fixed": {
+    "commit": "df668db447d7b19ee38fe7925638feffdd2c9bd6",
+    "tree": "7ad1bcd12c8f35982d04fdab329a43555039cff1",
+    "path": "ecmascript/compiler/builtins/builtins_array_stub_builder.cpp",
+    "blob": "d0ba20e09cbafffacf035a659cfeabaca67ae39d",
+    "sha256": "12bb0fe98368bc07b03d9cb1f13c8d11dcdbaab5c67b04e1ed335afbb766f022",
+    "bytes": 206832
+  },
+  "patch_fact": "The fix changes the stable-array callback branch from TaggedIsException(retValue) to HasPendingException(glue); the analogous non-stable path remains unchanged and is a fixed-source residual candidate.",
+  "test": {
+    "path": "test/moduletest/arrayfindindex/arrayfindindex.js",
+    "parent_blob": "7a6019d7264489175b573376bbbc710fdb3615ee",
+    "fixed_blob": "b2bacfc7d5d1323509cdebea33e81f25aea5c3ab",
+    "scenario": "new class with BigInt-keyed field is enumerated in callback; callback then called as function; FindIndex catches and prints TypeError. Test is source evidence only; it was not executed."
+  },
+  "cve": "none verified",
+  "dynamic": "not run",
+  "product_mapping": "unknown",
+  "product_build_profile_search": {
+    "searched_on": "2026-10-19",
+    "exact_profile_found": false,
+    "checked_profile_path": "research/experiments/ark_runtime/c1_20261017/product_profile_20261019.v1.json",
+    "checked_profile_sha256": "44f40f1c4c8bacc05869f40d1cb42846c0f058d0514ba8397a0aaafd7df8591d",
+    "profile_bound_ark_commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+    "profile_bound_ark_tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+    "profile_compile_commands_sha256": "f4ac150e2af2d2d0eff5da063e5be3beee973c459d998c50ca119530019cee7e",
+    "profile_compile_commands_bytes": 4103004071,
+    "historical_pair_commits": [
+      "a3bbeab9883c7c22d4bdc0e65b3b516215d39e0d",
+      "df668db447d7b19ee38fe7925638feffdd2c9bd6"
+    ],
+    "search_result": "Neither historical commit occurs in the C1/C4 product profile identity records. Recursive D:\\OpenHarmony807 compile_commands.json enumeration returned only third-party/LLVM test databases, no product action corresponding to these historical commits. Existing C1 profile explicitly pins a65, not this pair.",
+    "decision": "Do not reuse a65 flags or generated headers for I9K03B. Exact product manifest revision, matching GN args, compile command, and generated-input closure are required before build/runtime validation."
+  }
+}

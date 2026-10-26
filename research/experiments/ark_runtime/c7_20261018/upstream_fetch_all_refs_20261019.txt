@@ -1,0 +1,5 @@
+COMMAND: git --git-dir=D:/openHarmonyScanner/tmp/c7-upstream-ancestry-20261019.git fetch --filter=tree:0 --no-tags https://github.com/openharmony/arkcompiler_ets_runtime.git +refs/heads/*:refs/remotes/upstream/* +refs/tags/*:refs/tags/*
+EXIT: 0
+STDOUT:
+
+STDERR:

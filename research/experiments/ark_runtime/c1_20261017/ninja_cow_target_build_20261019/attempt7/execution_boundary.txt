@@ -1,0 +1,22 @@
+namespace_user=user:[4026532237]
+namespace_mount=mnt:[4026532238]
+namespace_network=net:[4026532318]
+root_mount=/      ro,relatime,discard,errors=remount-ro,data=ordered
+root_readonly_probe=write_rejected
+source_effective_mount=/home/deepsleep/c-line-c1-profile-20261018/openharmony-git-archive-20261019 ext4    ro,relatime,discard,errors=remount-ro,data=ordered
+/home/deepsleep/c-line-c1-profile-20261018/openharmony-git-archive-20261019 overlay rw,relatime,lowerdir=/home/deepsleep/c-line-c1-profile-20261018/openharmony-git-archive-20261019,upperdir=/home/deepsleep/c-line-c1-profile-20261018/ninja_isolated_build_attempt7_20261019/source-upper,workdir=/home/deepsleep/c-line-c1-profile-20261018/ninja_isolated_build_attempt7_20261019/source-work,redirect_dir=nofollow,uuid=null
+toolchain_mount=/home/deepsleep/c-line-c1-profile-20261018/toolchain-20261019 ro,relatime,discard,errors=remount-ro,data=ordered
+ruby_mount=/home/deepsleep/c-line-c1-profile-20261018/ruby-runtime-stage-20261019/root ro,relatime,discard,errors=remount-ro,data=ordered
+prebuilts_mount=/home/deepsleep/c-line-c1-profile-20261018/prebuilts-stage-20261019 ro,relatime,discard,errors=remount-ro,data=ordered
+source_view_mount=/src   ro,relatime,discard,errors=remount-ro,data=ordered
+output_root_mount=/src/out rw,relatime,discard,errors=remount-ro,data=ordered
+product_output_mount=/src/out rw,relatime,discard,errors=remount-ro,data=ordered
+evidence_mount=/home/deepsleep/c-line-c1-profile-20261018/ninja_isolated_build_attempt7_20261019 rw,relatime,discard,errors=remount-ro,data=ordered
+overlay_upper=/home/deepsleep/c-line-c1-profile-20261018/ninja_isolated_build_attempt7_20261019/source-upper
+overlay_work=/home/deepsleep/c-line-c1-profile-20261018/ninja_isolated_build_attempt7_20261019/source-work
+ninja_sha256=2c867ca18771ff64d2a9f72f16316760651c98b1fbce692b0542f25de49b112b
+ninja_version=1.13.2
+python_sha256=02e619087c33f723f4bd8e7f7443f35d87d4383d9592de04b66a3c05a5d4f316
+python_version=Python 3.12.10
+ruby_sha256=ead53704d7da35c85a28db19070d34e7ecef9461ecf8ae5e9d51ae79125bb731
+ruby_version=ruby 3.2.3 (2024-01-18 revision 52bb2ac0a6) [x86_64-linux-gnu]

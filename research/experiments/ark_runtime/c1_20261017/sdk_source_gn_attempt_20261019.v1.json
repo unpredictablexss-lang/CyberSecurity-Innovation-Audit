@@ -1,0 +1,45 @@
+{
+  "schema": "ohscanner.c1.sdk-source-gn-attempt/v1",
+  "status": "blocked_missing_snapshot_declared_clang_prebuilt",
+  "product": "ohos-sdk",
+  "source_snapshot": "openharmony-git-archive-20261019",
+  "attempt": 9,
+  "build_scope": "GN generation only (--build-only-gn true); no build actions executed",
+  "boundary": {
+    "network_namespace_isolated": true,
+    "root_mount_read_only": true,
+    "source_mount_read_only_overlay": true,
+    "source_overlay_upper_files": 0,
+    "prebuilts_mount_read_only": true,
+    "sdk_addon_mount_read_only": true,
+    "output_external_and_writable": true
+  },
+  "result": {
+    "returncode": 255,
+    "first_missing_input": "prebuilts/clang/ohos/linux-x86_64/llvm/NOTICE",
+    "failure": "GN build/ohos/ndk/ndk.gni:370 find.py cannot find ../../prebuilts/clang/ohos/linux-x86_64/llvm/NOTICE",
+    "ninja_graph_generated": false
+  },
+  "snapshot_input_declaration": {
+    "config": "build/prebuilts_config.json",
+    "config_sha256": "9cd6a95721895aff6eb44a8c314d36e4a79543ddbf9865e25da602c8b4d4f850",
+    "tool": "clang",
+    "version": "15.0.4-02fbe8",
+    "artifact": "clang_linux-x86_64-02fbe8-20260908.tar.gz",
+    "archive_url": "https://repo.huaweicloud.com/openharmony/compiler/clang/15.0.4-02fbe8/linux/clang_linux-x86_64-02fbe8-20260908.tar.gz",
+    "archive_bytes_from_head": 789238720,
+    "sha256_sidecar_url": "https://repo.huaweicloud.com/openharmony/compiler/clang/15.0.4-02fbe8/linux/clang_linux-x86_64-02fbe8-20260908.tar.gz.sha256",
+    "sidecar_head_status": 200,
+    "downloaded_or_staged": false,
+    "local_cache_search": "No matching archive or clang NOTICE found in the searched local home roots."
+  },
+  "evidence": {
+    "attempt_directory": "/home/deepsleep/c-line-c1-profile-20261018/ohos_sdk_source_gn_20261019-attempt9",
+    "execution_boundary_sha256": "10852066bcebbd72950b11e62f459d5998897ef5fafffa606b1db33e718abe29",
+    "hb_gn_log_sha256": "2d83ca63a26d10b2e579100aa7963e3733e4ddf0366c269421d1cd709af551ca",
+    "status_sha256": "debc68ec5a767fd9226b582f7afc42ff060bac07548c22d5e9f75e7bca015d55",
+    "output_file_list_sha256": "e799a242fe5ca9842c35c10ab6c5cae76ce95cf1adbbcda76cd2780b0a678372"
+  },
+  "next_action": "Decide whether the 789238720-byte snapshot-declared clang archive can be acquired and pinned with verified sidecar SHA-256; if staged, retry GN in a fresh external-output attempt and preserve all earlier attempts.",
+  "scope_note": "A mirror HEAD response identifies the snapshot-configured archive and reported size but is not artifact identity verification. This attempt does not establish SDK GN graph generation, SDK reproducibility, or a hihope/rk3568 product build."
+}

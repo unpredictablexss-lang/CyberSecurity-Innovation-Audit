@@ -1,0 +1,52 @@
+{
+  "schema": "c2-full-manifest-history-pin-audit/v1",
+  "old_ark_commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+  "remote": "https://gitcode.com/openharmony/manifest.git",
+  "captured_at_utc": "2026-10-18T19:48:17.039060+00:00",
+  "capture_scope": "all refs advertised by git ls-remote --refs at capture and the complete parent/blob history reachable from those refs in the non-shallow mirror",
+  "excluded_scope": "unadvertised or unreachable server objects and third-party manifest repositories",
+  "mirror": {
+    "path": "D:\\openHarmonyScanner\\tmp\\c2-manifest-history-full-20261019.git",
+    "bare": true,
+    "shallow": false,
+    "local_ref_count": 10315,
+    "reachable_commit_count": 10420,
+    "advertised_ref_count": 10315,
+    "all_advertised_refs_materialized_at_capture": true,
+    "ref_differences": {
+      "remote_only": [],
+      "local_only": [],
+      "oid_mismatches": []
+    },
+    "fsck_exit_code": 0
+  },
+  "historical_exact_pin_search": {
+    "command": "git log --all --full-history --format=%H%x09%cI%x09%s -S<old-commit> --",
+    "match_count": 0,
+    "matches_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "result": "no_exact_pin_in_reachable_advertised_history"
+  },
+  "evidence_files": {
+    "manifest_advertised_refs_full_20261019.txt": {
+      "sha256": "1f04c2a80e519ae29afc2cad0c693e9a141c3de0ca9a65b55d39d3ccd44fe976",
+      "bytes": 814865
+    },
+    "manifest_local_refs_full_20261019.txt": {
+      "sha256": "71eb79ebc611d3b4f9f0e8f33f046aa9270d0e12ed05831049e9e5cc65d7684f",
+      "bytes": 814865
+    },
+    "manifest_commit_graph_full_20261019.txt": {
+      "sha256": "ff7588c710cfcb838e1b1495e7733b41c28c0274cde6a8d2d3557cd732b07e9b",
+      "bytes": 1039186
+    },
+    "manifest_old_ark_pin_history_matches_20261019.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "manifest_mirror_fsck_20261019.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    }
+  },
+  "status": "complete_no_exact_pin_found"
+}

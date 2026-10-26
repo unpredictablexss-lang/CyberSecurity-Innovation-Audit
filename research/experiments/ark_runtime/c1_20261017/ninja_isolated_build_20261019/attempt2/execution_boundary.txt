@@ -1,0 +1,13 @@
+namespace_user=user:[4026532318]
+namespace_mount=mnt:[4026532319]
+namespace_network=net:[4026532321]
+root_mount=/      rw,relatime,discard,errors=remount-ro,data=ordered
+source_mount=/home/deepsleep/c-line-c1-profile-20261018/openharmony-git-archive-20261019 ro,relatime,discard,errors=remount-ro,data=ordered
+toolchain_mount=/home/deepsleep/c-line-c1-profile-20261018/toolchain-20261019 ro,relatime,discard,errors=remount-ro,data=ordered
+prebuilts_mount=/home/deepsleep/c-line-c1-profile-20261018/prebuilts-stage-20261019 ro,relatime,discard,errors=remount-ro,data=ordered
+source_view_mount=/home/deepsleep/c-line-c1-profile-20261018/c1-object-source-view-20261019 ro,relatime,discard,errors=remount-ro,data=ordered
+output_mount=/home/deepsleep/c-line-c1-profile-20261018/c1-object-source-view-20261019/out/rk3568 rw,relatime,discard,errors=remount-ro,data=ordered
+evidence_mount=/home/deepsleep/c-line-c1-profile-20261018/ninja_isolated_build_attempt2_20261019 rw,relatime,discard,errors=remount-ro,data=ordered
+ninja_version=1.13.2
+python_version=Python 3.12.10
+python_sha256=02e619087c33f723f4bd8e7f7443f35d87d4383d9592de04b66a3c05a5d4f316

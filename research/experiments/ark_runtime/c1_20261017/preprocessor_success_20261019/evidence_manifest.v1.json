@@ -1,0 +1,104 @@
+{
+  "schema": "ohscanner.c1.preprocessor-success-evidence/v1",
+  "date": "2026-10-19",
+  "status": "preprocessing_complete_for_two_selected_arm_actions; full_snapshot_and_build_partial",
+  "profile": {
+    "product": "hihope/rk3568",
+    "profile_json": "../product_profile_20261019.v1.json",
+    "normalized_gn_profile_sha256": "e86461191c065e3e140afb734c9d8c27818851ae51651f9ba004231fa7d52063",
+    "compile_database_sha256": "f4ac150e2af2d2d0eff5da063e5be3beee973c459d998c50ca119530019cee7",
+    "source_commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+    "source_tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+    "source_path": "arkcompiler/ets_runtime/ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+    "source_sha256": "76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c"
+  },
+  "execution": {
+    "container_image_id": "sha256:e92d5365460142169ddd21d489bc9157d003c61e3382351c8f8516f3e38f96ae",
+    "network": "none",
+    "source_mount": "read-only",
+    "toolchain_mount": "read-only",
+    "ninja_warning_policy": "-w dupbuild=warn",
+    "ninja_graph_has_duplicate_output_warnings": true,
+    "target_object_compiled": false,
+    "product_image_built": false
+  },
+  "actions": [
+    {
+      "object_output": "obj/arkcompiler/ets_runtime/ecmascript/compiler/builtins/libark_jsoptimizer_set/builtins_typedarray_stub_builder.o",
+      "command_sha256": "c6d7959215306a67152ac3c2bf1f5012ba919107e27380691c0f9c32e6a6fa88",
+      "preprocess_returncode": 0,
+      "preprocessed_sha256": "dab12661579ac32a102c7e121f14359c008f0ff403a2b17b82b99a03ccf9c299",
+      "preprocessed_bytes": 11684931,
+      "dependency_scan_returncode": 0,
+      "dependency_file_sha256": "2e297ea17442dfe27f59179a36670cf1d14d746ebe10da9ef966116ad70438c0",
+      "dependency_file_bytes": 113409,
+      "macro_dump_returncode": 0,
+      "macro_dump_sha256": "8324be27ad6b466787312ca034c9a32e54b2b4beb3410bd132cb7ac6045befba",
+      "macro_dump_bytes": 653566
+    },
+    {
+      "object_output": "obj/arkcompiler/ets_runtime/ecmascript/compiler/builtins/libark_jsoptimizer_set_with_maple/builtins_typedarray_stub_builder.o",
+      "command_sha256": "7471f97a0bfab59e0e350be060391af4f17511aa4c019a861822f5154750e82a",
+      "preprocess_returncode": 0,
+      "preprocessed_sha256": "e82309686e0a056e38e46b24d37645e84fb0bee9cd44c01d59de9b738671123e",
+      "preprocessed_bytes": 11684891,
+      "dependency_scan_returncode": 0,
+      "dependency_file_sha256": "eaa4aecd560560ff053990e9168b017339be364110fd23a537dc2194d27778b2",
+      "dependency_file_bytes": 113608,
+      "macro_dump_returncode": 0,
+      "macro_dump_sha256": "3ec49a353a85e9295a626b698ceb2831dc9450750de27b29a47a0b2b905ac350",
+      "macro_dump_bytes": 653648
+    }
+  ],
+  "generated_headers": [
+    {
+      "path": "generated/arm-linux-ohos-features.h",
+      "bytes": 865,
+      "sha256": "6d228e77b88b69f70f9157548b6ec673ffc6b998ce6035fbbee0caddb8442903",
+      "ninja_target": "obj/third_party/musl/usr/include/arm-linux-ohos/features.h"
+    },
+    {
+      "path": "generated/arkcompiler/runtime_core/libpandabase/include/logger_enum_gen.h",
+      "bytes": 1400,
+      "sha256": "122de5b838fe8bd3fdd9a6c12d77a9acbf3a0476d96e47f210278afb7b7c939b",
+      "ninja_target": "gen/arkcompiler/runtime_core/libpandabase/include/logger_enum_gen.h"
+    },
+    {
+      "path": "generated/arkcompiler/runtime_core/libpandafile/type.h",
+      "bytes": 12607,
+      "sha256": "a71454f8b90d3654487e145c100ada5795bb64f7216715bd0ccc34b0067ccb74",
+      "ninja_target": "gen/arkcompiler/runtime_core/libpandafile/type.h"
+    },
+    {
+      "path": "generated/arkcompiler/runtime_core/libpandafile/include/file_format_version.h",
+      "bytes": 3583,
+      "sha256": "b5c553cf52753e63d06c12cb2176fb69200bfa49868273f5e78c4a411e9ac371",
+      "ninja_target": "gen/arkcompiler/runtime_core/libpandafile/include/file_format_version.h"
+    },
+    {
+      "path": "generated/arkcompiler/runtime_core/libpandafile/include/source_lang_enum.h",
+      "bytes": 2321,
+      "sha256": "77f702686b210d18fadaa5a40bce67cf2e342455983a97dde57f706f5f562bec",
+      "ninja_target": "gen/arkcompiler/runtime_core/libpandafile/include/source_lang_enum.h"
+    },
+    {
+      "path": "generated/arkcompiler/runtime_core/libpandafile/include/bytecode_instruction_enum_gen.h",
+      "bytes": 15410,
+      "sha256": "9926ab909a82533f7a7dd3406e414c3975af34a6f81d2f0ae092984a728ad395",
+      "ninja_target": "gen/arkcompiler/runtime_core/libpandafile/include/bytecode_instruction_enum_gen.h"
+    },
+    {
+      "path": "generated/arkcompiler/runtime_core/libpandafile/include/bytecode_instruction-inl_gen.h",
+      "bytes": 577835,
+      "sha256": "c2163a60901c6579427d29f8df6d98cf0cb4f5ff1af80673f9994b24436fc4be",
+      "ninja_target": "gen/arkcompiler/runtime_core/libpandafile/include/bytecode_instruction-inl_gen.h"
+    }
+  ],
+  "musl_sysroot": {
+    "generated_header_dependency": "obj/third_party/musl/usr/include/arm-linux-ohos/features.h",
+    "features_h_sha256": "6d228e77b88b69f70f9157548b6ec673ffc6b998ce6035fbbee0caddb8442903",
+    "full_target_set": "17 GN-declared Musl header stamps; Ninja log external to this compact evidence directory",
+    "source_snapshot_materialization": "partial: 19 nested gitlink commit trees outside the manifest archive and one missing manifest linkfile source"
+  },
+  "source_snapshot_materialization": "partial: 19 nested gitlink commit trees outside manifest archive and one missing manifest linkfile source"
+}

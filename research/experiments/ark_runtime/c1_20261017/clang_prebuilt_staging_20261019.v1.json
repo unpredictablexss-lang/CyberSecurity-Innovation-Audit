@@ -1,0 +1,27 @@
+{
+  "schema": "ohscanner.c1.snapshot-prebuilt-staging/v1",
+  "status": "snapshot_configured_archive_hash_verified_safely_staged",
+  "tool": "clang",
+  "snapshot_config_sha256": "9cd6a95721895aff6eb44a8c314d36e4a79543ddbf9865e25da602c8b4d4f850",
+  "snapshot_config_remote_path": "/openharmony/compiler/clang/15.0.4-02fbe8/linux/clang_linux-x86_64-02fbe8-20260908.tar.gz",
+  "archive_url": "https://repo.huaweicloud.com/openharmony/compiler/clang/15.0.4-02fbe8/linux/clang_linux-x86_64-02fbe8-20260908.tar.gz",
+  "sidecar_url": "https://repo.huaweicloud.com/openharmony/compiler/clang/15.0.4-02fbe8/linux/clang_linux-x86_64-02fbe8-20260908.tar.gz.sha256",
+  "sidecar_sha256": "8c1173e6386e2c7f72ca8350693fb2cf122b6fc6107fa66c77c6ba6283743edf",
+  "archive_sha256": "8c1173e6386e2c7f72ca8350693fb2cf122b6fc6107fa66c77c6ba6283743edf",
+  "archive_bytes": 789238720,
+  "sidecar_bytes": 0,
+  "archive_member_count": 8260,
+  "archive_paths_and_links_validated": true,
+  "extracted_with_python_tarfile_data_filter": true,
+  "required_paths": [
+    "NOTICE",
+    "bin/clang",
+    "bin/clang++"
+  ],
+  "staging_path": "/home/deepsleep/c-line-c1-profile-20261018/prebuilts-stage-sdk-addon-20261019/clang/ohos/linux-x86_64/llvm",
+  "tree_inventory_sha256": "bca0bfe006d86163410c497d7478032e827e9141c51c72ff9cc0a1d127b7fea4",
+  "file_count": 7655,
+  "symlink_count": 38,
+  "lifecycle_scripts_executed": false,
+  "scope_note": "Publisher sidecar verification establishes archive equality with the mirror-published digest; it is not an independent signature. Artifact was extracted outside the repository without executing package scripts."
+}

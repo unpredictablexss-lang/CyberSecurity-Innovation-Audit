@@ -1,0 +1,2617 @@
+{
+  "schema_version": 1,
+  "search_basis": "local pinned Git history snapshots with Branch( changes on builtins_array_stub_builder.cpp",
+  "candidate_count": 27,
+  "candidates": [
+    {
+      "commit": "0aab2028c1f8b90d60064210d2a0ab94876528ba",
+      "tree": "c96c90133c7b726ddb34932692e75a55ababb5b5",
+      "blob": "cbadf9345bc570d445edcd2a69efc2373068483c",
+      "source_sha256": "7cc5cc051b4a5294c7e0ca81b8bb3e86047125414a4d500dacf9c86068537260",
+      "symbol": "panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::Filter",
+      "parse_status": "complete",
+      "calls": [
+        {
+          "name": "Branch",
+          "line": 167,
+          "text": "Branch(TaggedIsHeapObject(thisValue), &isHeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 171,
+          "text": "Branch(BoolAnd(thisValueIsJSArray, protoIsJsArray), &isJsArray, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 173,
+          "text": "Branch(HasConstructor(thisValue), slowPath, &defaultConstr)"
+        },
+        {
+          "name": "Branch",
+          "line": 180,
+          "text": "Branch(TaggedIsHeapObject(callbackFnHandle), &argOHeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 182,
+          "text": "Branch(IsCallable(callbackFnHandle), &callable, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 187,
+          "text": "Branch(Int64Equal(len, Int64(0)), &isEmptyArray, &notEmptyArray)"
+        },
+        {
+          "name": "Branch",
+          "line": 195,
+          "text": "Branch(Int64GreaterThan(len, Int64(JSObject::MAX_GAP)), slowPath, &notOverFlow)"
+        },
+        {
+          "name": "Branch",
+          "line": 206,
+          "text": "Branch(IsStableJSArray(glue, thisValue), &stableJSArray, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 218,
+          "text": "Branch(Int64LessThan(*i, *thisArrLenVar), &next, &loopExit)"
+        },
+        {
+          "name": "Branch",
+          "line": 226,
+          "text": "Branch(TaggedIsHole(*kValue), &arrayValueIsHole, &arrayValueNotHole)"
+        },
+        {
+          "name": "Branch",
+          "line": 230,
+          "text": "Branch(TaggedIsTrue(hasProp), &hasProperty, &arrayValueNotHole)"
+        },
+        {
+          "name": "Branch",
+          "line": 235,
+          "text": "Branch(HasPendingException(glue), &hasException0, &notHasException0)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 235,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "Branch",
+          "line": 247,
+          "text": "Branch(TaggedIsHole(*kValue), &kValueIsHole, &kValueNotHole)"
+        },
+        {
+          "name": "JSCallDispatch",
+          "line": 252,
+          "text": "JSCallDispatch(glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS), 0,\n                                                  Circuit::NullGate(), JSCallMode::CALL_THIS_ARG3_WITH_RETURN,\n                                 "
+        },
+        {
+          "name": "Branch",
+          "line": 258,
+          "text": "Branch(HasPendingException(glue), &hasException1, &notHasException1)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 258,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "Branch",
+          "line": 265,
+          "text": "Branch(TaggedIsTrue(FastToBoolean(retValue)), &find, &checkArray)"
+        },
+        {
+          "name": "FastToBoolean",
+          "line": 265,
+          "text": "FastToBoolean(retValue)"
+        },
+        {
+          "name": "Branch",
+          "line": 277,
+          "text": "Branch(Int64LessThan(tmpArrLen, *thisArrLenVar), &lenChange, &kValueIsHole)"
+        },
+        {
+          "name": "Branch",
+          "line": 287,
+          "text": "Branch(IsStableJSArray(glue, thisValue), &loopEnd, &notStableJSArray)"
+        },
+        {
+          "name": "Branch",
+          "line": 298,
+          "text": "Branch(Int32LessThan(*i, len), &callRT, &finish)"
+        },
+        {
+          "name": "Branch",
+          "line": 312,
+          "text": "Branch(Int64LessThan(*toIndex, len), &needTrim, exit)"
+        }
+      ]
+    },
+    {
+      "commit": "0aab2028c1f8b90d60064210d2a0ab94876528ba",
+      "tree": "c96c90133c7b726ddb34932692e75a55ababb5b5",
+      "blob": "cbadf9345bc570d445edcd2a69efc2373068483c",
+      "source_sha256": "7cc5cc051b4a5294c7e0ca81b8bb3e86047125414a4d500dacf9c86068537260",
+      "symbol": "panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::Find",
+      "parse_status": "complete",
+      "calls": [
+        {
+          "name": "Branch",
+          "line": 1267,
+          "text": "Branch(TaggedIsHeapObject(thisValue), &isHeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1269,
+          "text": "Branch(IsJsArray(thisValue), &isJsArray, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1271,
+          "text": "Branch(HasConstructor(thisValue), slowPath, &defaultConstr)"
+        },
+        {
+          "name": "Branch",
+          "line": 1273,
+          "text": "Branch(IsStableJSArray(glue, thisValue), &isStability, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1275,
+          "text": "Branch(IsJsCOWArray(thisValue), slowPath, &notCOWArray)"
+        },
+        {
+          "name": "Branch",
+          "line": 1280,
+          "text": "Branch(TaggedIsHeapObject(callbackFnHandle), &arg0HeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1283,
+          "text": "Branch(IsCallable(callbackFnHandle), &callable, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1297,
+          "text": "Branch(Int64LessThan(*i, *thisArrLen), &next, &loopExit)"
+        },
+        {
+          "name": "Branch",
+          "line": 1300,
+          "text": "Branch(HasPendingException(glue), &hasException0, &notHasException0)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 1300,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "JSCallDispatch",
+          "line": 1311,
+          "text": "JSCallDispatch(glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS), 0,\n                Circuit::NullGate(), JSCallMode::CALL_THIS_ARG3_WITH_RETURN, { argHandle, kValue, key, thisValue })"
+        },
+        {
+          "name": "Branch",
+          "line": 1313,
+          "text": "Branch(HasPendingException(glue), &hasException, &notHasException)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 1313,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "Branch",
+          "line": 1322,
+          "text": "Branch(TaggedIsTrue(FastToBoolean(retValue)), &find, &loopEnd)"
+        },
+        {
+          "name": "FastToBoolean",
+          "line": 1322,
+          "text": "FastToBoolean(retValue)"
+        }
+      ]
+    },
+    {
+      "commit": "0aab2028c1f8b90d60064210d2a0ab94876528ba",
+      "tree": "c96c90133c7b726ddb34932692e75a55ababb5b5",
+      "blob": "cbadf9345bc570d445edcd2a69efc2373068483c",
+      "source_sha256": "7cc5cc051b4a5294c7e0ca81b8bb3e86047125414a4d500dacf9c86068537260",
+      "symbol": "panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::FindIndex",
+      "parse_status": "complete",
+      "calls": [
+        {
+          "name": "Branch",
+          "line": 1347,
+          "text": "Branch(TaggedIsHeapObject(thisValue), &isHeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1349,
+          "text": "Branch(IsJsArray(thisValue), &isJsArray, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1351,
+          "text": "Branch(HasConstructor(thisValue), slowPath, &defaultConstr)"
+        },
+        {
+          "name": "Branch",
+          "line": 1353,
+          "text": "Branch(IsJsCOWArray(thisValue), slowPath, &notCOWArray)"
+        },
+        {
+          "name": "Branch",
+          "line": 1361,
+          "text": "Branch(TaggedIsHeapObject(callbackFnHandle), &arg0HeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1363,
+          "text": "Branch(IsCallable(callbackFnHandle), &callable, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1368,
+          "text": "Branch(IsStableJSArray(glue, thisValue), &stableJSArray, &notStableJSArray)"
+        },
+        {
+          "name": "Branch",
+          "line": 1380,
+          "text": "Branch(Int64LessThan(*i, *thisArrLen), &next, &loopExit)"
+        },
+        {
+          "name": "Branch",
+          "line": 1385,
+          "text": "Branch(TaggedIsHole(*kValue), &isHole, &notHole)"
+        },
+        {
+          "name": "Branch",
+          "line": 1391,
+          "text": "Branch(HasPendingException(glue), &hasException0, &notHasException0)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 1391,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "Branch",
+          "line": 1401,
+          "text": "Branch(TaggedIsHole(res), &resIsHole, &resNotHole)"
+        },
+        {
+          "name": "JSCallDispatch",
+          "line": 1419,
+          "text": "JSCallDispatch(glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS), 0,\n                    Circuit::NullGate(), JSCallMode::CALL_THIS_ARG3_WITH_RETURN,\n                    { argHandle, *kValue, key, thisValue })"
+        },
+        {
+          "name": "Branch",
+          "line": 1422,
+          "text": "Branch(TaggedIsException(retValue), &hasException, &notHasException)"
+        },
+        {
+          "name": "TaggedIsException",
+          "line": 1422,
+          "text": "TaggedIsException(retValue)"
+        },
+        {
+          "name": "Branch",
+          "line": 1431,
+          "text": "Branch(TaggedIsTrue(FastToBoolean(retValue)), &find, &checkStable)"
+        },
+        {
+          "name": "FastToBoolean",
+          "line": 1431,
+          "text": "FastToBoolean(retValue)"
+        },
+        {
+          "name": "Branch",
+          "line": 1440,
+          "text": "Branch(IsStableJSArray(glue, thisValue), &loopEnd, &notStableJSArray)"
+        },
+        {
+          "name": "Branch",
+          "line": 1460,
+          "text": "Branch(Int64LessThan(*j, *thisArrLen), &next, &loopExit)"
+        },
+        {
+          "name": "Branch",
+          "line": 1466,
+          "text": "Branch(HasPendingException(glue), &hasException0, &notHasException0)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 1466,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "JSCallDispatch",
+          "line": 1477,
+          "text": "JSCallDispatch(glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS),\n                        0, Circuit::NullGate(), JSCallMode::CALL_THIS_ARG3_WITH_RETURN,\n                        { argHandle, kValue, key, thisValue"
+        },
+        {
+          "name": "Branch",
+          "line": 1480,
+          "text": "Branch(TaggedIsException(retValue), &hasException, &notHasException)"
+        },
+        {
+          "name": "TaggedIsException",
+          "line": 1480,
+          "text": "TaggedIsException(retValue)"
+        },
+        {
+          "name": "Branch",
+          "line": 1489,
+          "text": "Branch(TaggedIsTrue(FastToBoolean(retValue)), &find, &loopEnd)"
+        },
+        {
+          "name": "FastToBoolean",
+          "line": 1489,
+          "text": "FastToBoolean(retValue)"
+        }
+      ]
+    },
+    {
+      "commit": "4d33b764fffd8b30b78dc09108beab3d26a4d794",
+      "tree": "50952b79cc811730f670b4d7252ff66c447ab4b3",
+      "blob": "4f13f99b198de2dcd42d1b1d58ae1366583f4e7d",
+      "source_sha256": "51d70d1a743895d49b7bf6e3000d16afd5a7d8bf91042e2b370f21d46b67c4be",
+      "symbol": "panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::Filter",
+      "parse_status": "complete",
+      "calls": [
+        {
+          "name": "Branch",
+          "line": 167,
+          "text": "Branch(TaggedIsHeapObject(thisValue), &isHeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 171,
+          "text": "Branch(BoolAnd(thisValueIsJSArray, protoIsJsArray), &isJsArray, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 173,
+          "text": "Branch(HasConstructor(thisValue), slowPath, &defaultConstr)"
+        },
+        {
+          "name": "Branch",
+          "line": 180,
+          "text": "Branch(TaggedIsHeapObject(callbackFnHandle), &argOHeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 182,
+          "text": "Branch(IsCallable(callbackFnHandle), &callable, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 187,
+          "text": "Branch(Int64Equal(len, Int64(0)), &isEmptyArray, &notEmptyArray)"
+        },
+        {
+          "name": "Branch",
+          "line": 195,
+          "text": "Branch(Int64GreaterThan(len, Int64(JSObject::MAX_GAP)), slowPath, &notOverFlow)"
+        },
+        {
+          "name": "Branch",
+          "line": 206,
+          "text": "Branch(IsStableJSArray(glue, thisValue), &stableJSArray, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 218,
+          "text": "Branch(Int64LessThan(*i, *thisArrLenVar), &next, &loopExit)"
+        },
+        {
+          "name": "Branch",
+          "line": 226,
+          "text": "Branch(TaggedIsHole(*kValue), &arrayValueIsHole, &arrayValueNotHole)"
+        },
+        {
+          "name": "Branch",
+          "line": 230,
+          "text": "Branch(TaggedIsTrue(hasProp), &hasProperty, &arrayValueNotHole)"
+        },
+        {
+          "name": "Branch",
+          "line": 235,
+          "text": "Branch(HasPendingException(glue), &hasException0, &notHasException0)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 235,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "Branch",
+          "line": 247,
+          "text": "Branch(TaggedIsHole(*kValue), &kValueIsHole, &kValueNotHole)"
+        },
+        {
+          "name": "JSCallDispatch",
+          "line": 252,
+          "text": "JSCallDispatch(glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS), 0,\n                                                  Circuit::NullGate(), JSCallMode::CALL_THIS_ARG3_WITH_RETURN,\n                                 "
+        },
+        {
+          "name": "Branch",
+          "line": 258,
+          "text": "Branch(HasPendingException(glue), &hasException1, &notHasException1)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 258,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "Branch",
+          "line": 265,
+          "text": "Branch(TaggedIsTrue(FastToBoolean(retValue)), &find, &checkArray)"
+        },
+        {
+          "name": "FastToBoolean",
+          "line": 265,
+          "text": "FastToBoolean(retValue)"
+        },
+        {
+          "name": "Branch",
+          "line": 277,
+          "text": "Branch(Int64LessThan(tmpArrLen, *thisArrLenVar), &lenChange, &kValueIsHole)"
+        },
+        {
+          "name": "Branch",
+          "line": 287,
+          "text": "Branch(IsStableJSArray(glue, thisValue), &loopEnd, &notStableJSArray)"
+        },
+        {
+          "name": "Branch",
+          "line": 298,
+          "text": "Branch(Int32LessThan(*i, len), &callRT, &finish)"
+        },
+        {
+          "name": "Branch",
+          "line": 312,
+          "text": "Branch(Int64LessThan(*toIndex, len), &needTrim, exit)"
+        }
+      ]
+    },
+    {
+      "commit": "4d33b764fffd8b30b78dc09108beab3d26a4d794",
+      "tree": "50952b79cc811730f670b4d7252ff66c447ab4b3",
+      "blob": "4f13f99b198de2dcd42d1b1d58ae1366583f4e7d",
+      "source_sha256": "51d70d1a743895d49b7bf6e3000d16afd5a7d8bf91042e2b370f21d46b67c4be",
+      "symbol": "panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::Find",
+      "parse_status": "complete",
+      "calls": [
+        {
+          "name": "Branch",
+          "line": 1114,
+          "text": "Branch(TaggedIsHeapObject(thisValue), &isHeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1116,
+          "text": "Branch(IsJsArray(thisValue), &isJsArray, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1118,
+          "text": "Branch(HasConstructor(thisValue), slowPath, &defaultConstr)"
+        },
+        {
+          "name": "Branch",
+          "line": 1120,
+          "text": "Branch(IsStableJSArray(glue, thisValue), &isStability, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1122,
+          "text": "Branch(IsJsCOWArray(thisValue), slowPath, &notCOWArray)"
+        },
+        {
+          "name": "Branch",
+          "line": 1127,
+          "text": "Branch(TaggedIsHeapObject(callbackFnHandle), &arg0HeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1130,
+          "text": "Branch(IsCallable(callbackFnHandle), &callable, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1144,
+          "text": "Branch(Int64LessThan(*i, *thisArrLen), &next, &loopExit)"
+        },
+        {
+          "name": "Branch",
+          "line": 1147,
+          "text": "Branch(HasPendingException(glue), &hasException0, &notHasException0)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 1147,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "JSCallDispatch",
+          "line": 1158,
+          "text": "JSCallDispatch(glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS), 0,\n                Circuit::NullGate(), JSCallMode::CALL_THIS_ARG3_WITH_RETURN, { argHandle, kValue, key, thisValue })"
+        },
+        {
+          "name": "Branch",
+          "line": 1160,
+          "text": "Branch(HasPendingException(glue), &hasException, &notHasException)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 1160,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "Branch",
+          "line": 1169,
+          "text": "Branch(TaggedIsTrue(FastToBoolean(retValue)), &find, &loopEnd)"
+        },
+        {
+          "name": "FastToBoolean",
+          "line": 1169,
+          "text": "FastToBoolean(retValue)"
+        }
+      ]
+    },
+    {
+      "commit": "4d33b764fffd8b30b78dc09108beab3d26a4d794",
+      "tree": "50952b79cc811730f670b4d7252ff66c447ab4b3",
+      "blob": "4f13f99b198de2dcd42d1b1d58ae1366583f4e7d",
+      "source_sha256": "51d70d1a743895d49b7bf6e3000d16afd5a7d8bf91042e2b370f21d46b67c4be",
+      "symbol": "panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::FindIndex",
+      "parse_status": "complete",
+      "calls": [
+        {
+          "name": "Branch",
+          "line": 1194,
+          "text": "Branch(TaggedIsHeapObject(thisValue), &isHeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1196,
+          "text": "Branch(IsJsArray(thisValue), &isJsArray, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1198,
+          "text": "Branch(HasConstructor(thisValue), slowPath, &defaultConstr)"
+        },
+        {
+          "name": "Branch",
+          "line": 1200,
+          "text": "Branch(IsJsCOWArray(thisValue), slowPath, &notCOWArray)"
+        },
+        {
+          "name": "Branch",
+          "line": 1208,
+          "text": "Branch(TaggedIsHeapObject(callbackFnHandle), &arg0HeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1210,
+          "text": "Branch(IsCallable(callbackFnHandle), &callable, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1215,
+          "text": "Branch(IsStableJSArray(glue, thisValue), &stableJSArray, &notStableJSArray)"
+        },
+        {
+          "name": "Branch",
+          "line": 1227,
+          "text": "Branch(Int64LessThan(*i, *thisArrLen), &next, &loopExit)"
+        },
+        {
+          "name": "Branch",
+          "line": 1232,
+          "text": "Branch(TaggedIsHole(*kValue), &isHole, &notHole)"
+        },
+        {
+          "name": "Branch",
+          "line": 1238,
+          "text": "Branch(HasPendingException(glue), &hasException0, &notHasException0)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 1238,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "Branch",
+          "line": 1248,
+          "text": "Branch(TaggedIsHole(res), &resIsHole, &resNotHole)"
+        },
+        {
+          "name": "JSCallDispatch",
+          "line": 1266,
+          "text": "JSCallDispatch(glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS), 0,\n                    Circuit::NullGate(), JSCallMode::CALL_THIS_ARG3_WITH_RETURN,\n                    { argHandle, *kValue, key, thisValue })"
+        },
+        {
+          "name": "Branch",
+          "line": 1269,
+          "text": "Branch(TaggedIsException(retValue), &hasException, &notHasException)"
+        },
+        {
+          "name": "TaggedIsException",
+          "line": 1269,
+          "text": "TaggedIsException(retValue)"
+        },
+        {
+          "name": "Branch",
+          "line": 1278,
+          "text": "Branch(TaggedIsTrue(FastToBoolean(retValue)), &find, &checkStable)"
+        },
+        {
+          "name": "FastToBoolean",
+          "line": 1278,
+          "text": "FastToBoolean(retValue)"
+        },
+        {
+          "name": "Branch",
+          "line": 1287,
+          "text": "Branch(IsStableJSArray(glue, thisValue), &loopEnd, &notStableJSArray)"
+        },
+        {
+          "name": "Branch",
+          "line": 1307,
+          "text": "Branch(Int64LessThan(*j, *thisArrLen), &next, &loopExit)"
+        },
+        {
+          "name": "Branch",
+          "line": 1313,
+          "text": "Branch(HasPendingException(glue), &hasException0, &notHasException0)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 1313,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "JSCallDispatch",
+          "line": 1324,
+          "text": "JSCallDispatch(glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS),\n                        0, Circuit::NullGate(), JSCallMode::CALL_THIS_ARG3_WITH_RETURN,\n                        { argHandle, kValue, key, thisValue"
+        },
+        {
+          "name": "Branch",
+          "line": 1327,
+          "text": "Branch(TaggedIsException(retValue), &hasException, &notHasException)"
+        },
+        {
+          "name": "TaggedIsException",
+          "line": 1327,
+          "text": "TaggedIsException(retValue)"
+        },
+        {
+          "name": "Branch",
+          "line": 1336,
+          "text": "Branch(TaggedIsTrue(FastToBoolean(retValue)), &find, &loopEnd)"
+        },
+        {
+          "name": "FastToBoolean",
+          "line": 1336,
+          "text": "FastToBoolean(retValue)"
+        }
+      ]
+    },
+    {
+      "commit": "3cf420dfc70cd2f6d2b71439f0482170e467fb99",
+      "tree": "0b6cdb3f3aa0e0a6be9790df2bff942375e096dc",
+      "blob": "768ea8ec72accc023a82a17ea0ccc62f6a795137",
+      "source_sha256": "f8abd5f98ed421deaaf49e28f233e62a2d3c8325ccddcfddf9238badde179721",
+      "symbol": "panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::Filter",
+      "parse_status": "complete",
+      "calls": [
+        {
+          "name": "Branch",
+          "line": 157,
+          "text": "Branch(TaggedIsHeapObject(thisValue), &isHeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 161,
+          "text": "Branch(BoolAnd(thisValueIsJSArray, protoIsJsArray), &isJsArray, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 163,
+          "text": "Branch(HasConstructor(thisValue), slowPath, &defaultConstr)"
+        },
+        {
+          "name": "Branch",
+          "line": 170,
+          "text": "Branch(TaggedIsHeapObject(callbackFnHandle), &argOHeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 172,
+          "text": "Branch(IsCallable(callbackFnHandle), &callable, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 175,
+          "text": "Branch(Int64GreaterThan(len, Int64(JSObject::MAX_GAP)), slowPath, &notOverFlow)"
+        },
+        {
+          "name": "Branch",
+          "line": 186,
+          "text": "Branch(IsStableJSArray(glue, thisValue), &stableJSArray, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 198,
+          "text": "Branch(Int64LessThan(*i, *thisArrLenVar), &next, &loopExit)"
+        },
+        {
+          "name": "Branch",
+          "line": 206,
+          "text": "Branch(TaggedIsHole(*kValue), &arrayValueIsHole, &arrayValueNotHole)"
+        },
+        {
+          "name": "Branch",
+          "line": 210,
+          "text": "Branch(TaggedIsTrue(hasProp), &hasProperty, &arrayValueNotHole)"
+        },
+        {
+          "name": "Branch",
+          "line": 215,
+          "text": "Branch(HasPendingException(glue), &hasException0, &notHasException0)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 215,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "Branch",
+          "line": 227,
+          "text": "Branch(TaggedIsHole(*kValue), &kValueIsHole, &kValueNotHole)"
+        },
+        {
+          "name": "JSCallDispatch",
+          "line": 232,
+          "text": "JSCallDispatch(glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS), 0,\n                                                  Circuit::NullGate(), JSCallMode::CALL_THIS_ARG3_WITH_RETURN,\n                                 "
+        },
+        {
+          "name": "Branch",
+          "line": 236,
+          "text": "Branch(TaggedIsTrue(FastToBoolean(retValue)), &find, &checkArray)"
+        },
+        {
+          "name": "FastToBoolean",
+          "line": 236,
+          "text": "FastToBoolean(retValue)"
+        },
+        {
+          "name": "Branch",
+          "line": 248,
+          "text": "Branch(Int64LessThan(tmpArrLen, *thisArrLenVar), &lenChange, &kValueIsHole)"
+        },
+        {
+          "name": "Branch",
+          "line": 258,
+          "text": "Branch(IsStableJSArray(glue, thisValue), &loopEnd, &notStableJSArray)"
+        },
+        {
+          "name": "Branch",
+          "line": 269,
+          "text": "Branch(Int32LessThan(*i, len), &callRT, &finish)"
+        },
+        {
+          "name": "Branch",
+          "line": 283,
+          "text": "Branch(Int64LessThan(*toIndex, len), &needTrim, exit)"
+        }
+      ]
+    },
+    {
+      "commit": "3cf420dfc70cd2f6d2b71439f0482170e467fb99",
+      "tree": "0b6cdb3f3aa0e0a6be9790df2bff942375e096dc",
+      "blob": "768ea8ec72accc023a82a17ea0ccc62f6a795137",
+      "source_sha256": "f8abd5f98ed421deaaf49e28f233e62a2d3c8325ccddcfddf9238badde179721",
+      "symbol": "panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::Find",
+      "parse_status": "complete",
+      "calls": [
+        {
+          "name": "Branch",
+          "line": 1080,
+          "text": "Branch(TaggedIsHeapObject(thisValue), &isHeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1082,
+          "text": "Branch(IsJsArray(thisValue), &isJsArray, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1084,
+          "text": "Branch(HasConstructor(thisValue), slowPath, &defaultConstr)"
+        },
+        {
+          "name": "Branch",
+          "line": 1086,
+          "text": "Branch(IsStableJSArray(glue, thisValue), &isStability, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1088,
+          "text": "Branch(IsJsCOWArray(thisValue), slowPath, &notCOWArray)"
+        },
+        {
+          "name": "Branch",
+          "line": 1093,
+          "text": "Branch(TaggedIsHeapObject(callbackFnHandle), &arg0HeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1096,
+          "text": "Branch(IsCallable(callbackFnHandle), &callable, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1110,
+          "text": "Branch(Int64LessThan(*i, *thisArrLen), &next, &loopExit)"
+        },
+        {
+          "name": "Branch",
+          "line": 1113,
+          "text": "Branch(HasPendingException(glue), &hasException0, &notHasException0)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 1113,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "JSCallDispatch",
+          "line": 1124,
+          "text": "JSCallDispatch(glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS), 0,\n                Circuit::NullGate(), JSCallMode::CALL_THIS_ARG3_WITH_RETURN, { argHandle, kValue, key, thisValue })"
+        },
+        {
+          "name": "Branch",
+          "line": 1126,
+          "text": "Branch(HasPendingException(glue), &hasException, &notHasException)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 1126,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "Branch",
+          "line": 1135,
+          "text": "Branch(TaggedIsTrue(FastToBoolean(retValue)), &find, &loopEnd)"
+        },
+        {
+          "name": "FastToBoolean",
+          "line": 1135,
+          "text": "FastToBoolean(retValue)"
+        }
+      ]
+    },
+    {
+      "commit": "3cf420dfc70cd2f6d2b71439f0482170e467fb99",
+      "tree": "0b6cdb3f3aa0e0a6be9790df2bff942375e096dc",
+      "blob": "768ea8ec72accc023a82a17ea0ccc62f6a795137",
+      "source_sha256": "f8abd5f98ed421deaaf49e28f233e62a2d3c8325ccddcfddf9238badde179721",
+      "symbol": "panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::FindIndex",
+      "parse_status": "complete",
+      "calls": [
+        {
+          "name": "Branch",
+          "line": 1160,
+          "text": "Branch(TaggedIsHeapObject(thisValue), &isHeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1162,
+          "text": "Branch(IsJsArray(thisValue), &isJsArray, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1164,
+          "text": "Branch(HasConstructor(thisValue), slowPath, &defaultConstr)"
+        },
+        {
+          "name": "Branch",
+          "line": 1166,
+          "text": "Branch(IsJsCOWArray(thisValue), slowPath, &notCOWArray)"
+        },
+        {
+          "name": "Branch",
+          "line": 1174,
+          "text": "Branch(TaggedIsHeapObject(callbackFnHandle), &arg0HeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1176,
+          "text": "Branch(IsCallable(callbackFnHandle), &callable, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1181,
+          "text": "Branch(IsStableJSArray(glue, thisValue), &stableJSArray, &notStableJSArray)"
+        },
+        {
+          "name": "Branch",
+          "line": 1193,
+          "text": "Branch(Int64LessThan(*i, *thisArrLen), &next, &loopExit)"
+        },
+        {
+          "name": "Branch",
+          "line": 1198,
+          "text": "Branch(TaggedIsHole(*kValue), &isHole, &notHole)"
+        },
+        {
+          "name": "Branch",
+          "line": 1204,
+          "text": "Branch(HasPendingException(glue), &hasException0, &notHasException0)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 1204,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "Branch",
+          "line": 1214,
+          "text": "Branch(TaggedIsHole(res), &resIsHole, &resNotHole)"
+        },
+        {
+          "name": "JSCallDispatch",
+          "line": 1232,
+          "text": "JSCallDispatch(glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS), 0,\n                    Circuit::NullGate(), JSCallMode::CALL_THIS_ARG3_WITH_RETURN,\n                    { argHandle, *kValue, key, thisValue })"
+        },
+        {
+          "name": "Branch",
+          "line": 1235,
+          "text": "Branch(TaggedIsException(retValue), &hasException, &notHasException)"
+        },
+        {
+          "name": "TaggedIsException",
+          "line": 1235,
+          "text": "TaggedIsException(retValue)"
+        },
+        {
+          "name": "Branch",
+          "line": 1244,
+          "text": "Branch(TaggedIsTrue(FastToBoolean(retValue)), &find, &checkStable)"
+        },
+        {
+          "name": "FastToBoolean",
+          "line": 1244,
+          "text": "FastToBoolean(retValue)"
+        },
+        {
+          "name": "Branch",
+          "line": 1253,
+          "text": "Branch(IsStableJSArray(glue, thisValue), &loopEnd, &notStableJSArray)"
+        },
+        {
+          "name": "Branch",
+          "line": 1273,
+          "text": "Branch(Int64LessThan(*j, *thisArrLen), &next, &loopExit)"
+        },
+        {
+          "name": "Branch",
+          "line": 1279,
+          "text": "Branch(HasPendingException(glue), &hasException0, &notHasException0)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 1279,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "JSCallDispatch",
+          "line": 1290,
+          "text": "JSCallDispatch(glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS),\n                        0, Circuit::NullGate(), JSCallMode::CALL_THIS_ARG3_WITH_RETURN,\n                        { argHandle, kValue, key, thisValue"
+        },
+        {
+          "name": "Branch",
+          "line": 1293,
+          "text": "Branch(TaggedIsException(retValue), &hasException, &notHasException)"
+        },
+        {
+          "name": "TaggedIsException",
+          "line": 1293,
+          "text": "TaggedIsException(retValue)"
+        },
+        {
+          "name": "Branch",
+          "line": 1302,
+          "text": "Branch(TaggedIsTrue(FastToBoolean(retValue)), &find, &loopEnd)"
+        },
+        {
+          "name": "FastToBoolean",
+          "line": 1302,
+          "text": "FastToBoolean(retValue)"
+        }
+      ]
+    },
+    {
+      "commit": "ae2ce470e186dd46f3736c45fbed1ba81ff47f39",
+      "tree": "b141c6517a68a2116bec7752416337314726e124",
+      "blob": "7a91b90deb43830f0803216ea87150c26a18dbad",
+      "source_sha256": "9580443245641986239d51da6583d5aec184d1598010b0041675a9d54d211c60",
+      "symbol": "panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::Filter",
+      "parse_status": "complete",
+      "calls": [
+        {
+          "name": "Branch",
+          "line": 157,
+          "text": "Branch(TaggedIsHeapObject(thisValue), &isHeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 161,
+          "text": "Branch(BoolAnd(thisValueIsJSArray, protoIsJsArray), &isJsArray, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 163,
+          "text": "Branch(HasConstructor(thisValue), slowPath, &defaultConstr)"
+        },
+        {
+          "name": "Branch",
+          "line": 170,
+          "text": "Branch(TaggedIsHeapObject(callbackFnHandle), &argOHeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 172,
+          "text": "Branch(IsCallable(callbackFnHandle), &callable, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 175,
+          "text": "Branch(Int64GreaterThan(len, Int64(JSObject::MAX_GAP)), slowPath, &notOverFlow)"
+        },
+        {
+          "name": "Branch",
+          "line": 186,
+          "text": "Branch(IsStableJSArray(glue, thisValue), &stableJSArray, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 198,
+          "text": "Branch(Int64LessThan(*i, *thisArrLenVar), &next, &loopExit)"
+        },
+        {
+          "name": "Branch",
+          "line": 206,
+          "text": "Branch(TaggedIsHole(*kValue), &arrayValueIsHole, &arrayValueNotHole)"
+        },
+        {
+          "name": "Branch",
+          "line": 210,
+          "text": "Branch(TaggedIsTrue(hasProp), &hasProperty, &arrayValueNotHole)"
+        },
+        {
+          "name": "Branch",
+          "line": 215,
+          "text": "Branch(HasPendingException(glue), &hasException0, &notHasException0)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 215,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "Branch",
+          "line": 227,
+          "text": "Branch(TaggedIsHole(*kValue), &kValueIsHole, &kValueNotHole)"
+        },
+        {
+          "name": "JSCallDispatch",
+          "line": 232,
+          "text": "JSCallDispatch(glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS), 0,\n                                                  Circuit::NullGate(), JSCallMode::CALL_THIS_ARG3_WITH_RETURN,\n                                 "
+        },
+        {
+          "name": "Branch",
+          "line": 238,
+          "text": "Branch(HasPendingException(glue), &hasException1, &notHasException1)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 238,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "Branch",
+          "line": 245,
+          "text": "Branch(TaggedIsTrue(FastToBoolean(retValue)), &find, &checkArray)"
+        },
+        {
+          "name": "FastToBoolean",
+          "line": 245,
+          "text": "FastToBoolean(retValue)"
+        },
+        {
+          "name": "Branch",
+          "line": 257,
+          "text": "Branch(Int64LessThan(tmpArrLen, *thisArrLenVar), &lenChange, &kValueIsHole)"
+        },
+        {
+          "name": "Branch",
+          "line": 267,
+          "text": "Branch(IsStableJSArray(glue, thisValue), &loopEnd, &notStableJSArray)"
+        },
+        {
+          "name": "Branch",
+          "line": 278,
+          "text": "Branch(Int32LessThan(*i, len), &callRT, &finish)"
+        },
+        {
+          "name": "Branch",
+          "line": 292,
+          "text": "Branch(Int64LessThan(*toIndex, len), &needTrim, exit)"
+        }
+      ]
+    },
+    {
+      "commit": "ae2ce470e186dd46f3736c45fbed1ba81ff47f39",
+      "tree": "b141c6517a68a2116bec7752416337314726e124",
+      "blob": "7a91b90deb43830f0803216ea87150c26a18dbad",
+      "source_sha256": "9580443245641986239d51da6583d5aec184d1598010b0041675a9d54d211c60",
+      "symbol": "panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::Find",
+      "parse_status": "complete",
+      "calls": [
+        {
+          "name": "Branch",
+          "line": 1094,
+          "text": "Branch(TaggedIsHeapObject(thisValue), &isHeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1096,
+          "text": "Branch(IsJsArray(thisValue), &isJsArray, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1098,
+          "text": "Branch(HasConstructor(thisValue), slowPath, &defaultConstr)"
+        },
+        {
+          "name": "Branch",
+          "line": 1100,
+          "text": "Branch(IsStableJSArray(glue, thisValue), &isStability, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1102,
+          "text": "Branch(IsJsCOWArray(thisValue), slowPath, &notCOWArray)"
+        },
+        {
+          "name": "Branch",
+          "line": 1107,
+          "text": "Branch(TaggedIsHeapObject(callbackFnHandle), &arg0HeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1110,
+          "text": "Branch(IsCallable(callbackFnHandle), &callable, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1124,
+          "text": "Branch(Int64LessThan(*i, *thisArrLen), &next, &loopExit)"
+        },
+        {
+          "name": "Branch",
+          "line": 1127,
+          "text": "Branch(HasPendingException(glue), &hasException0, &notHasException0)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 1127,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "JSCallDispatch",
+          "line": 1138,
+          "text": "JSCallDispatch(glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS), 0,\n                Circuit::NullGate(), JSCallMode::CALL_THIS_ARG3_WITH_RETURN, { argHandle, kValue, key, thisValue })"
+        },
+        {
+          "name": "Branch",
+          "line": 1140,
+          "text": "Branch(HasPendingException(glue), &hasException, &notHasException)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 1140,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "Branch",
+          "line": 1149,
+          "text": "Branch(TaggedIsTrue(FastToBoolean(retValue)), &find, &loopEnd)"
+        },
+        {
+          "name": "FastToBoolean",
+          "line": 1149,
+          "text": "FastToBoolean(retValue)"
+        }
+      ]
+    },
+    {
+      "commit": "ae2ce470e186dd46f3736c45fbed1ba81ff47f39",
+      "tree": "b141c6517a68a2116bec7752416337314726e124",
+      "blob": "7a91b90deb43830f0803216ea87150c26a18dbad",
+      "source_sha256": "9580443245641986239d51da6583d5aec184d1598010b0041675a9d54d211c60",
+      "symbol": "panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::FindIndex",
+      "parse_status": "complete",
+      "calls": [
+        {
+          "name": "Branch",
+          "line": 1174,
+          "text": "Branch(TaggedIsHeapObject(thisValue), &isHeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1176,
+          "text": "Branch(IsJsArray(thisValue), &isJsArray, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1178,
+          "text": "Branch(HasConstructor(thisValue), slowPath, &defaultConstr)"
+        },
+        {
+          "name": "Branch",
+          "line": 1180,
+          "text": "Branch(IsJsCOWArray(thisValue), slowPath, &notCOWArray)"
+        },
+        {
+          "name": "Branch",
+          "line": 1188,
+          "text": "Branch(TaggedIsHeapObject(callbackFnHandle), &arg0HeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1190,
+          "text": "Branch(IsCallable(callbackFnHandle), &callable, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1195,
+          "text": "Branch(IsStableJSArray(glue, thisValue), &stableJSArray, &notStableJSArray)"
+        },
+        {
+          "name": "Branch",
+          "line": 1207,
+          "text": "Branch(Int64LessThan(*i, *thisArrLen), &next, &loopExit)"
+        },
+        {
+          "name": "Branch",
+          "line": 1212,
+          "text": "Branch(TaggedIsHole(*kValue), &isHole, &notHole)"
+        },
+        {
+          "name": "Branch",
+          "line": 1218,
+          "text": "Branch(HasPendingException(glue), &hasException0, &notHasException0)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 1218,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "Branch",
+          "line": 1228,
+          "text": "Branch(TaggedIsHole(res), &resIsHole, &resNotHole)"
+        },
+        {
+          "name": "JSCallDispatch",
+          "line": 1246,
+          "text": "JSCallDispatch(glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS), 0,\n                    Circuit::NullGate(), JSCallMode::CALL_THIS_ARG3_WITH_RETURN,\n                    { argHandle, *kValue, key, thisValue })"
+        },
+        {
+          "name": "Branch",
+          "line": 1249,
+          "text": "Branch(TaggedIsException(retValue), &hasException, &notHasException)"
+        },
+        {
+          "name": "TaggedIsException",
+          "line": 1249,
+          "text": "TaggedIsException(retValue)"
+        },
+        {
+          "name": "Branch",
+          "line": 1258,
+          "text": "Branch(TaggedIsTrue(FastToBoolean(retValue)), &find, &checkStable)"
+        },
+        {
+          "name": "FastToBoolean",
+          "line": 1258,
+          "text": "FastToBoolean(retValue)"
+        },
+        {
+          "name": "Branch",
+          "line": 1267,
+          "text": "Branch(IsStableJSArray(glue, thisValue), &loopEnd, &notStableJSArray)"
+        },
+        {
+          "name": "Branch",
+          "line": 1287,
+          "text": "Branch(Int64LessThan(*j, *thisArrLen), &next, &loopExit)"
+        },
+        {
+          "name": "Branch",
+          "line": 1293,
+          "text": "Branch(HasPendingException(glue), &hasException0, &notHasException0)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 1293,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "JSCallDispatch",
+          "line": 1304,
+          "text": "JSCallDispatch(glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS),\n                        0, Circuit::NullGate(), JSCallMode::CALL_THIS_ARG3_WITH_RETURN,\n                        { argHandle, kValue, key, thisValue"
+        },
+        {
+          "name": "Branch",
+          "line": 1307,
+          "text": "Branch(TaggedIsException(retValue), &hasException, &notHasException)"
+        },
+        {
+          "name": "TaggedIsException",
+          "line": 1307,
+          "text": "TaggedIsException(retValue)"
+        },
+        {
+          "name": "Branch",
+          "line": 1316,
+          "text": "Branch(TaggedIsTrue(FastToBoolean(retValue)), &find, &loopEnd)"
+        },
+        {
+          "name": "FastToBoolean",
+          "line": 1316,
+          "text": "FastToBoolean(retValue)"
+        }
+      ]
+    },
+    {
+      "commit": "715b0150add381b29e22c72708932987311f6081",
+      "tree": "53ffd6b980762fe34602d91f2dd57c7d42f89f89",
+      "blob": "5230ab1e0ec16450da37ce69e4226141499298b2",
+      "source_sha256": "c8731ef1bf568fc69fe44280b86dcb6406e6c80d2c21609bf02adcbe01705d91",
+      "symbol": "panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::Filter",
+      "parse_status": "complete",
+      "calls": [
+        {
+          "name": "Branch",
+          "line": 157,
+          "text": "Branch(TaggedIsHeapObject(thisValue), &isHeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 161,
+          "text": "Branch(BoolAnd(thisValueIsJSArray, protoIsJsArray), &isJsArray, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 163,
+          "text": "Branch(HasConstructor(thisValue), slowPath, &defaultConstr)"
+        },
+        {
+          "name": "Branch",
+          "line": 170,
+          "text": "Branch(TaggedIsHeapObject(callbackFnHandle), &argOHeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 172,
+          "text": "Branch(IsCallable(callbackFnHandle), &callable, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 175,
+          "text": "Branch(Int64GreaterThan(len, Int64(JSObject::MAX_GAP)), slowPath, &notOverFlow)"
+        },
+        {
+          "name": "Branch",
+          "line": 186,
+          "text": "Branch(IsStableJSArray(glue, thisValue), &stableJSArray, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 198,
+          "text": "Branch(Int64LessThan(*i, *thisArrLenVar), &next, &loopExit)"
+        },
+        {
+          "name": "Branch",
+          "line": 206,
+          "text": "Branch(TaggedIsHole(*kValue), &arrayValueIsHole, &arrayValueNotHole)"
+        },
+        {
+          "name": "Branch",
+          "line": 210,
+          "text": "Branch(TaggedIsTrue(hasProp), &hasProperty, &arrayValueNotHole)"
+        },
+        {
+          "name": "Branch",
+          "line": 215,
+          "text": "Branch(HasPendingException(glue), &hasException0, &notHasException0)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 215,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "Branch",
+          "line": 227,
+          "text": "Branch(TaggedIsHole(*kValue), &kValueIsHole, &kValueNotHole)"
+        },
+        {
+          "name": "JSCallDispatch",
+          "line": 232,
+          "text": "JSCallDispatch(glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS), 0,\n                                                  Circuit::NullGate(), JSCallMode::CALL_THIS_ARG3_WITH_RETURN,\n                                 "
+        },
+        {
+          "name": "Branch",
+          "line": 236,
+          "text": "Branch(TaggedIsTrue(FastToBoolean(retValue)), &find, &checkArray)"
+        },
+        {
+          "name": "FastToBoolean",
+          "line": 236,
+          "text": "FastToBoolean(retValue)"
+        },
+        {
+          "name": "Branch",
+          "line": 248,
+          "text": "Branch(Int64LessThan(tmpArrLen, *thisArrLenVar), &lenChange, &kValueIsHole)"
+        },
+        {
+          "name": "Branch",
+          "line": 258,
+          "text": "Branch(IsStableJSArray(glue, thisValue), &loopEnd, &notStableJSArray)"
+        },
+        {
+          "name": "Branch",
+          "line": 269,
+          "text": "Branch(Int32LessThan(*i, len), &callRT, &finish)"
+        },
+        {
+          "name": "Branch",
+          "line": 283,
+          "text": "Branch(Int64LessThan(*toIndex, len), &needTrim, exit)"
+        }
+      ]
+    },
+    {
+      "commit": "715b0150add381b29e22c72708932987311f6081",
+      "tree": "53ffd6b980762fe34602d91f2dd57c7d42f89f89",
+      "blob": "5230ab1e0ec16450da37ce69e4226141499298b2",
+      "source_sha256": "c8731ef1bf568fc69fe44280b86dcb6406e6c80d2c21609bf02adcbe01705d91",
+      "symbol": "panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::Find",
+      "parse_status": "complete",
+      "calls": [
+        {
+          "name": "Branch",
+          "line": 1076,
+          "text": "Branch(TaggedIsHeapObject(thisValue), &isHeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1078,
+          "text": "Branch(IsJsArray(thisValue), &isJsArray, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1080,
+          "text": "Branch(HasConstructor(thisValue), slowPath, &defaultConstr)"
+        },
+        {
+          "name": "Branch",
+          "line": 1082,
+          "text": "Branch(IsStableJSArray(glue, thisValue), &isStability, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1084,
+          "text": "Branch(IsJsCOWArray(thisValue), slowPath, &notCOWArray)"
+        },
+        {
+          "name": "Branch",
+          "line": 1089,
+          "text": "Branch(TaggedIsHeapObject(callbackFnHandle), &arg0HeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1092,
+          "text": "Branch(IsCallable(callbackFnHandle), &callable, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1106,
+          "text": "Branch(Int64LessThan(*i, *thisArrLen), &next, &loopExit)"
+        },
+        {
+          "name": "Branch",
+          "line": 1109,
+          "text": "Branch(HasPendingException(glue), &hasException0, &notHasException0)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 1109,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "JSCallDispatch",
+          "line": 1120,
+          "text": "JSCallDispatch(glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS), 0,\n                Circuit::NullGate(), JSCallMode::CALL_THIS_ARG3_WITH_RETURN, { argHandle, kValue, key, thisValue })"
+        },
+        {
+          "name": "Branch",
+          "line": 1122,
+          "text": "Branch(HasPendingException(glue), &hasException, &notHasException)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 1122,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "Branch",
+          "line": 1131,
+          "text": "Branch(TaggedIsTrue(FastToBoolean(retValue)), &find, &loopEnd)"
+        },
+        {
+          "name": "FastToBoolean",
+          "line": 1131,
+          "text": "FastToBoolean(retValue)"
+        }
+      ]
+    },
+    {
+      "commit": "715b0150add381b29e22c72708932987311f6081",
+      "tree": "53ffd6b980762fe34602d91f2dd57c7d42f89f89",
+      "blob": "5230ab1e0ec16450da37ce69e4226141499298b2",
+      "source_sha256": "c8731ef1bf568fc69fe44280b86dcb6406e6c80d2c21609bf02adcbe01705d91",
+      "symbol": "panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::FindIndex",
+      "parse_status": "complete",
+      "calls": [
+        {
+          "name": "Branch",
+          "line": 1156,
+          "text": "Branch(TaggedIsHeapObject(thisValue), &isHeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1158,
+          "text": "Branch(IsJsArray(thisValue), &isJsArray, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1160,
+          "text": "Branch(HasConstructor(thisValue), slowPath, &defaultConstr)"
+        },
+        {
+          "name": "Branch",
+          "line": 1162,
+          "text": "Branch(IsJsCOWArray(thisValue), slowPath, &notCOWArray)"
+        },
+        {
+          "name": "Branch",
+          "line": 1170,
+          "text": "Branch(TaggedIsHeapObject(callbackFnHandle), &arg0HeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1172,
+          "text": "Branch(IsCallable(callbackFnHandle), &callable, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1177,
+          "text": "Branch(IsStableJSArray(glue, thisValue), &stableJSArray, &notStableJSArray)"
+        },
+        {
+          "name": "Branch",
+          "line": 1189,
+          "text": "Branch(Int64LessThan(*i, *thisArrLen), &next, &loopExit)"
+        },
+        {
+          "name": "Branch",
+          "line": 1194,
+          "text": "Branch(TaggedIsHole(*kValue), &isHole, &notHole)"
+        },
+        {
+          "name": "Branch",
+          "line": 1200,
+          "text": "Branch(HasPendingException(glue), &hasException0, &notHasException0)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 1200,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "Branch",
+          "line": 1210,
+          "text": "Branch(TaggedIsHole(res), &resIsHole, &resNotHole)"
+        },
+        {
+          "name": "JSCallDispatch",
+          "line": 1228,
+          "text": "JSCallDispatch(glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS), 0,\n                    Circuit::NullGate(), JSCallMode::CALL_THIS_ARG3_WITH_RETURN,\n                    { argHandle, *kValue, key, thisValue })"
+        },
+        {
+          "name": "Branch",
+          "line": 1231,
+          "text": "Branch(TaggedIsException(retValue), &hasException, &notHasException)"
+        },
+        {
+          "name": "TaggedIsException",
+          "line": 1231,
+          "text": "TaggedIsException(retValue)"
+        },
+        {
+          "name": "Branch",
+          "line": 1240,
+          "text": "Branch(TaggedIsTrue(FastToBoolean(retValue)), &find, &checkStable)"
+        },
+        {
+          "name": "FastToBoolean",
+          "line": 1240,
+          "text": "FastToBoolean(retValue)"
+        },
+        {
+          "name": "Branch",
+          "line": 1249,
+          "text": "Branch(IsStableJSArray(glue, thisValue), &loopEnd, &notStableJSArray)"
+        },
+        {
+          "name": "Branch",
+          "line": 1269,
+          "text": "Branch(Int64LessThan(*j, *thisArrLen), &next, &loopExit)"
+        },
+        {
+          "name": "Branch",
+          "line": 1275,
+          "text": "Branch(HasPendingException(glue), &hasException0, &notHasException0)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 1275,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "JSCallDispatch",
+          "line": 1286,
+          "text": "JSCallDispatch(glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS),\n                        0, Circuit::NullGate(), JSCallMode::CALL_THIS_ARG3_WITH_RETURN,\n                        { argHandle, kValue, key, thisValue"
+        },
+        {
+          "name": "Branch",
+          "line": 1289,
+          "text": "Branch(TaggedIsException(retValue), &hasException, &notHasException)"
+        },
+        {
+          "name": "TaggedIsException",
+          "line": 1289,
+          "text": "TaggedIsException(retValue)"
+        },
+        {
+          "name": "Branch",
+          "line": 1298,
+          "text": "Branch(TaggedIsTrue(FastToBoolean(retValue)), &find, &loopEnd)"
+        },
+        {
+          "name": "FastToBoolean",
+          "line": 1298,
+          "text": "FastToBoolean(retValue)"
+        }
+      ]
+    },
+    {
+      "commit": "8ab7eccc657ef1346e933b0dd20904c831e6387e",
+      "tree": "5ea419e1f611df3ea698e3eacf4c1addf1feab9c",
+      "blob": "e660efb1b18af0aeee3e07c97783fb55526c4486",
+      "source_sha256": "46dbb7a0732a2016ccb96e2d0cdb0fd653c0ed643ea6fb43e3cf1525f898bb5a",
+      "symbol": "panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::Filter",
+      "parse_status": "complete",
+      "calls": [
+        {
+          "name": "Branch",
+          "line": 158,
+          "text": "Branch(TaggedIsHeapObject(thisValue), &isHeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 162,
+          "text": "Branch(BoolAnd(thisValueIsJSArray, protoIsJsArray), &isJsArray, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 164,
+          "text": "Branch(HasConstructor(thisValue), slowPath, &defaultConstr)"
+        },
+        {
+          "name": "Branch",
+          "line": 171,
+          "text": "Branch(TaggedIsHeapObject(callbackFnHandle), &argOHeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 173,
+          "text": "Branch(IsCallable(callbackFnHandle), &callable, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 176,
+          "text": "Branch(Int64GreaterThan(len, Int64(JSObject::MAX_GAP)), slowPath, &notOverFlow)"
+        },
+        {
+          "name": "Branch",
+          "line": 188,
+          "text": "Branch(IsStableJSArray(glue, thisValue), &stableJSArray, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 200,
+          "text": "Branch(Int64LessThan(*i, *thisArrLenVar), &next, &loopExit)"
+        },
+        {
+          "name": "Branch",
+          "line": 209,
+          "text": "Branch(TaggedIsHole(*kValue), &arrayValueIsHole, &arrayValueNotHole)"
+        },
+        {
+          "name": "Branch",
+          "line": 213,
+          "text": "Branch(TaggedIsTrue(hasProp), &hasProperty, &arrayValueNotHole)"
+        },
+        {
+          "name": "Branch",
+          "line": 218,
+          "text": "Branch(HasPendingException(glue), &hasException0, &notHasException0)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 218,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "Branch",
+          "line": 230,
+          "text": "Branch(TaggedIsHole(*kValue), &kValueIsHole, &kValueNotHole)"
+        },
+        {
+          "name": "JSCallDispatch",
+          "line": 235,
+          "text": "JSCallDispatch(glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS), 0,\n                                                  Circuit::NullGate(), JSCallMode::CALL_THIS_ARG3_WITH_RETURN,\n                                 "
+        },
+        {
+          "name": "Branch",
+          "line": 239,
+          "text": "Branch(TaggedIsTrue(FastToBoolean(retValue)), &find, &checkArray)"
+        },
+        {
+          "name": "FastToBoolean",
+          "line": 239,
+          "text": "FastToBoolean(retValue)"
+        },
+        {
+          "name": "Branch",
+          "line": 250,
+          "text": "Branch(Int64LessThan(tmpArrLen, *thisArrLenVar), &lenChange, &kValueIsHole)"
+        },
+        {
+          "name": "Branch",
+          "line": 260,
+          "text": "Branch(IsStableJSArray(glue, thisValue), &loopEnd, &notStableJSArray)"
+        },
+        {
+          "name": "Branch",
+          "line": 271,
+          "text": "Branch(Int32LessThan(*i, len), &callRT, &finish)"
+        },
+        {
+          "name": "Branch",
+          "line": 285,
+          "text": "Branch(Int64LessThan(*toIndex, len), &needTrim, exit)"
+        }
+      ]
+    },
+    {
+      "commit": "8ab7eccc657ef1346e933b0dd20904c831e6387e",
+      "tree": "5ea419e1f611df3ea698e3eacf4c1addf1feab9c",
+      "blob": "e660efb1b18af0aeee3e07c97783fb55526c4486",
+      "source_sha256": "46dbb7a0732a2016ccb96e2d0cdb0fd653c0ed643ea6fb43e3cf1525f898bb5a",
+      "symbol": "panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::Find",
+      "parse_status": "complete",
+      "calls": [
+        {
+          "name": "Branch",
+          "line": 1075,
+          "text": "Branch(TaggedIsHeapObject(thisValue), &isHeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1077,
+          "text": "Branch(IsJsArray(thisValue), &isJsArray, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1079,
+          "text": "Branch(HasConstructor(thisValue), slowPath, &defaultConstr)"
+        },
+        {
+          "name": "Branch",
+          "line": 1081,
+          "text": "Branch(IsStableJSArray(glue, thisValue), &isStability, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1083,
+          "text": "Branch(IsJsCOWArray(thisValue), slowPath, &notCOWArray)"
+        },
+        {
+          "name": "Branch",
+          "line": 1088,
+          "text": "Branch(TaggedIsHeapObject(callbackFnHandle), &arg0HeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1091,
+          "text": "Branch(IsCallable(callbackFnHandle), &callable, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1105,
+          "text": "Branch(Int64LessThan(*i, *thisArrLen), &next, &loopExit)"
+        },
+        {
+          "name": "Branch",
+          "line": 1108,
+          "text": "Branch(HasPendingException(glue), &hasException0, &notHasException0)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 1108,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "JSCallDispatch",
+          "line": 1119,
+          "text": "JSCallDispatch(glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS), 0,\n                Circuit::NullGate(), JSCallMode::CALL_THIS_ARG3_WITH_RETURN, { argHandle, kValue, key, thisValue })"
+        },
+        {
+          "name": "Branch",
+          "line": 1121,
+          "text": "Branch(HasPendingException(glue), &hasException, &notHasException)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 1121,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "Branch",
+          "line": 1130,
+          "text": "Branch(TaggedIsTrue(FastToBoolean(retValue)), &find, &loopEnd)"
+        },
+        {
+          "name": "FastToBoolean",
+          "line": 1130,
+          "text": "FastToBoolean(retValue)"
+        }
+      ]
+    },
+    {
+      "commit": "8ab7eccc657ef1346e933b0dd20904c831e6387e",
+      "tree": "5ea419e1f611df3ea698e3eacf4c1addf1feab9c",
+      "blob": "e660efb1b18af0aeee3e07c97783fb55526c4486",
+      "source_sha256": "46dbb7a0732a2016ccb96e2d0cdb0fd653c0ed643ea6fb43e3cf1525f898bb5a",
+      "symbol": "panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::FindIndex",
+      "parse_status": "complete",
+      "calls": [
+        {
+          "name": "Branch",
+          "line": 1155,
+          "text": "Branch(TaggedIsHeapObject(thisValue), &isHeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1157,
+          "text": "Branch(IsJsArray(thisValue), &isJsArray, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1159,
+          "text": "Branch(HasConstructor(thisValue), slowPath, &defaultConstr)"
+        },
+        {
+          "name": "Branch",
+          "line": 1161,
+          "text": "Branch(IsJsCOWArray(thisValue), slowPath, &notCOWArray)"
+        },
+        {
+          "name": "Branch",
+          "line": 1169,
+          "text": "Branch(TaggedIsHeapObject(callbackFnHandle), &arg0HeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1171,
+          "text": "Branch(IsCallable(callbackFnHandle), &callable, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1176,
+          "text": "Branch(IsStableJSArray(glue, thisValue), &stableJSArray, &notStableJSArray)"
+        },
+        {
+          "name": "Branch",
+          "line": 1188,
+          "text": "Branch(Int64LessThan(*i, *thisArrLen), &next, &loopExit)"
+        },
+        {
+          "name": "Branch",
+          "line": 1194,
+          "text": "Branch(TaggedIsHole(*kValue), &isHole, &notHole)"
+        },
+        {
+          "name": "Branch",
+          "line": 1200,
+          "text": "Branch(HasPendingException(glue), &hasException0, &notHasException0)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 1200,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "Branch",
+          "line": 1210,
+          "text": "Branch(TaggedIsHole(res), &resIsHole, &resNotHole)"
+        },
+        {
+          "name": "JSCallDispatch",
+          "line": 1228,
+          "text": "JSCallDispatch(glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS), 0,\n                    Circuit::NullGate(), JSCallMode::CALL_THIS_ARG3_WITH_RETURN,\n                    { argHandle, *kValue, key, thisValue })"
+        },
+        {
+          "name": "Branch",
+          "line": 1231,
+          "text": "Branch(TaggedIsException(retValue), &hasException, &notHasException)"
+        },
+        {
+          "name": "TaggedIsException",
+          "line": 1231,
+          "text": "TaggedIsException(retValue)"
+        },
+        {
+          "name": "Branch",
+          "line": 1240,
+          "text": "Branch(TaggedIsTrue(FastToBoolean(retValue)), &find, &checkStable)"
+        },
+        {
+          "name": "FastToBoolean",
+          "line": 1240,
+          "text": "FastToBoolean(retValue)"
+        },
+        {
+          "name": "Branch",
+          "line": 1249,
+          "text": "Branch(IsStableJSArray(glue, thisValue), &loopEnd, &notStableJSArray)"
+        },
+        {
+          "name": "Branch",
+          "line": 1269,
+          "text": "Branch(Int64LessThan(*j, *thisArrLen), &next, &loopExit)"
+        },
+        {
+          "name": "Branch",
+          "line": 1275,
+          "text": "Branch(HasPendingException(glue), &hasException0, &notHasException0)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 1275,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "JSCallDispatch",
+          "line": 1286,
+          "text": "JSCallDispatch(glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS),\n                        0, Circuit::NullGate(), JSCallMode::CALL_THIS_ARG3_WITH_RETURN,\n                        { argHandle, kValue, key, thisValue"
+        },
+        {
+          "name": "Branch",
+          "line": 1289,
+          "text": "Branch(TaggedIsException(retValue), &hasException, &notHasException)"
+        },
+        {
+          "name": "TaggedIsException",
+          "line": 1289,
+          "text": "TaggedIsException(retValue)"
+        },
+        {
+          "name": "Branch",
+          "line": 1298,
+          "text": "Branch(TaggedIsTrue(FastToBoolean(retValue)), &find, &loopEnd)"
+        },
+        {
+          "name": "FastToBoolean",
+          "line": 1298,
+          "text": "FastToBoolean(retValue)"
+        }
+      ]
+    },
+    {
+      "commit": "78e54166b0cf6e5a0d10efff828e682276bda498",
+      "tree": "ced499289a7264828e778b39d0fa7e70531c47d1",
+      "blob": "97910bbbb41a7d02272bf349fee454e11c3abb9c",
+      "source_sha256": "a63d60aed188f6487ab4d3a93eac7c412ba9ef09906e325b72d86b85a56885bb",
+      "symbol": "panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::Find",
+      "parse_status": "complete",
+      "calls": [
+        {
+          "name": "Branch",
+          "line": 1041,
+          "text": "Branch(TaggedIsHeapObject(thisValue), &isHeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1043,
+          "text": "Branch(IsJsArray(thisValue), &isJsArray, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1045,
+          "text": "Branch(HasConstructor(thisValue), slowPath, &defaultConstr)"
+        },
+        {
+          "name": "Branch",
+          "line": 1047,
+          "text": "Branch(IsStableJSArray(glue, thisValue), &isStability, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1049,
+          "text": "Branch(IsJsCOWArray(thisValue), slowPath, &notCOWArray)"
+        },
+        {
+          "name": "Branch",
+          "line": 1054,
+          "text": "Branch(TaggedIsHeapObject(callbackFnHandle), &arg0HeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1057,
+          "text": "Branch(IsCallable(callbackFnHandle), &callable, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1071,
+          "text": "Branch(Int64LessThan(*i, *thisArrLen), &next, &loopExit)"
+        },
+        {
+          "name": "Branch",
+          "line": 1074,
+          "text": "Branch(HasPendingException(glue), &hasException0, &notHasException0)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 1074,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "JSCallDispatch",
+          "line": 1084,
+          "text": "JSCallDispatch(glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS), 0,\n            Circuit::NullGate(), JSCallMode::CALL_THIS_ARG3_WITH_RETURN, { argHandle, kValue, key, thisValue })"
+        },
+        {
+          "name": "Branch",
+          "line": 1086,
+          "text": "Branch(HasPendingException(glue), &hasException, &notHasException)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 1086,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "Branch",
+          "line": 1095,
+          "text": "Branch(TaggedIsTrue(FastToBoolean(retValue)), &find, &loopEnd)"
+        },
+        {
+          "name": "FastToBoolean",
+          "line": 1095,
+          "text": "FastToBoolean(retValue)"
+        }
+      ]
+    },
+    {
+      "commit": "bb5ab2763b882daab036fe5dfa1cc36829419302",
+      "tree": "b8e6e4243b8d51cc7276e45200a2cac52a61e10b",
+      "blob": "62f36ef74fb6f1dee07d8061a568c31237dc4f68",
+      "source_sha256": "8225d46d7653b1f638299a8e7964d76b33470683cfda8496f31db34753389576",
+      "symbol": "panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::Find",
+      "parse_status": "complete",
+      "calls": [
+        {
+          "name": "Branch",
+          "line": 996,
+          "text": "Branch(TaggedIsHeapObject(thisValue), &isHeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1000,
+          "text": "Branch(isThisStableJSArray, &stableJSArray, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1005,
+          "text": "Branch(TaggedIsHeapObject(callbackFnHandle), &arg0HeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1008,
+          "text": "Branch(IsCallable(callbackFnHandle), &callable, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1021,
+          "text": "Branch(Int64LessThan(*i, thisArrLen), &next, &loopExit)"
+        },
+        {
+          "name": "JSCallDispatch",
+          "line": 1027,
+          "text": "JSCallDispatch(glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS), 0,\n            Circuit::NullGate(), JSCallMode::CALL_THIS_ARG3_WITH_RETURN, { argHandle, kValue, key, thisValue })"
+        },
+        {
+          "name": "Branch",
+          "line": 1029,
+          "text": "Branch(HasPendingException(glue), &hasException, &notHasException)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 1029,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "Branch",
+          "line": 1038,
+          "text": "Branch(TaggedIsTrue(FastToBoolean(retValue)), &find, &loopEnd)"
+        },
+        {
+          "name": "FastToBoolean",
+          "line": 1038,
+          "text": "FastToBoolean(retValue)"
+        }
+      ]
+    },
+    {
+      "commit": "8ba49865a8568f0871de6c175c396eaebae2026e",
+      "tree": "3433c25794d0175817cda3b4a8f783fe7b9dff74",
+      "blob": "59b5dfc8fd3bfabe253b466fe69cd4103f6a80a5",
+      "source_sha256": "fd15ac9664ef0c0c2e9220d7e6ca1bc572560cbec8ad23a6363ec90ce860f8e9",
+      "symbol": "panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::Find",
+      "parse_status": "complete",
+      "calls": [
+        {
+          "name": "Branch",
+          "line": 981,
+          "text": "Branch(TaggedIsHeapObject(thisValue), &isHeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 985,
+          "text": "Branch(isThisStableJSArray, &stableJSArray, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 990,
+          "text": "Branch(TaggedIsHeapObject(callbackFnHandle), &arg0HeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 993,
+          "text": "Branch(IsCallable(callbackFnHandle), &callable, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1006,
+          "text": "Branch(Int64LessThan(*i, thisArrLen), &next, &loopExit)"
+        },
+        {
+          "name": "JSCallDispatch",
+          "line": 1012,
+          "text": "JSCallDispatch(glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS), 0,\n            Circuit::NullGate(), JSCallMode::CALL_THIS_ARG3_WITH_RETURN, { argHandle, kValue, key, thisValue })"
+        },
+        {
+          "name": "Branch",
+          "line": 1014,
+          "text": "Branch(HasPendingException(glue), &hasException, &notHasException)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 1014,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "Branch",
+          "line": 1023,
+          "text": "Branch(TaggedIsTrue(FastToBoolean(retValue)), &find, &loopEnd)"
+        },
+        {
+          "name": "FastToBoolean",
+          "line": 1023,
+          "text": "FastToBoolean(retValue)"
+        }
+      ]
+    },
+    {
+      "commit": "23564f994be85cd7aed739a31e4ff095d54e0215",
+      "tree": "fb8127cf8da96eefabf798ed10ab2ef31c5fe0c5",
+      "blob": "b28163aeda10bf0246b0925d082121b98491dbc3",
+      "source_sha256": "3bb521a5734128aed38cc8f15ed282500d4c95648e919b4c2149e9fe10d2ebc2",
+      "symbol": "panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::Find",
+      "parse_status": "complete",
+      "calls": [
+        {
+          "name": "Branch",
+          "line": 979,
+          "text": "Branch(TaggedIsHeapObject(thisValue), &isHeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 983,
+          "text": "Branch(isThisStableJSArray, &stableJSArray, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 988,
+          "text": "Branch(TaggedIsHeapObject(callbackFnHandle), &arg0HeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 991,
+          "text": "Branch(IsCallable(callbackFnHandle), &callable, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 1004,
+          "text": "Branch(Int64LessThan(*i, thisArrLen), &next, &loopExit)"
+        },
+        {
+          "name": "JSCallDispatch",
+          "line": 1010,
+          "text": "JSCallDispatch(glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS), 0,\n            Circuit::NullGate(), JSCallMode::CALL_THIS_ARG3_WITH_RETURN, { argHandle, kValue, key, thisValue })"
+        },
+        {
+          "name": "Branch",
+          "line": 1012,
+          "text": "Branch(HasPendingException(glue), &hasException, &notHasException)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 1012,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "Branch",
+          "line": 1021,
+          "text": "Branch(TaggedIsTrue(FastToBoolean(retValue)), &find, &loopEnd)"
+        },
+        {
+          "name": "FastToBoolean",
+          "line": 1021,
+          "text": "FastToBoolean(retValue)"
+        }
+      ]
+    },
+    {
+      "commit": "3bf89635ca256be1df42410e35249dd4ac4f3940",
+      "tree": "fb82319e83fa4607e8a8838aa721932c68e4e5a7",
+      "blob": "5a65738f56cabfd0f349338135d3b8fbdcebfbfc",
+      "source_sha256": "d8e56565d5043a15ca99b8624803376944a4fb18af37d25846f9541989c033d8",
+      "symbol": "panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::Find",
+      "parse_status": "complete",
+      "calls": [
+        {
+          "name": "Branch",
+          "line": 721,
+          "text": "Branch(TaggedIsHeapObject(thisValue), &isHeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 725,
+          "text": "Branch(isThisStableJSArray, &stableJSArray, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 730,
+          "text": "Branch(TaggedIsHeapObject(callbackFnHandle), &arg0HeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 733,
+          "text": "Branch(IsCallable(callbackFnHandle), &callable, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 746,
+          "text": "Branch(Int64LessThan(*i, thisArrLen), &next, &loopExit)"
+        },
+        {
+          "name": "JSCallDispatch",
+          "line": 752,
+          "text": "JSCallDispatch(glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS), 0,\n            Circuit::NullGate(), JSCallMode::CALL_THIS_ARG3_WITH_RETURN, { argHandle, kValue, key, thisValue })"
+        },
+        {
+          "name": "Branch",
+          "line": 754,
+          "text": "Branch(HasPendingException(glue), &hasException, &notHasException)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 754,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "Branch",
+          "line": 763,
+          "text": "Branch(TaggedIsTrue(FastToBoolean(retValue)), &find, &loopEnd)"
+        },
+        {
+          "name": "FastToBoolean",
+          "line": 763,
+          "text": "FastToBoolean(retValue)"
+        }
+      ]
+    },
+    {
+      "commit": "b68ca2f249041d9aacf75dee0858eb8e977dc151",
+      "tree": "746d47983f5e230de54ca42c8d76ed35b0f73ade",
+      "blob": "b161c666f32cdca9922abd8c2f288ce935db2330",
+      "source_sha256": "e82ca4f33f9cfb567fdba043a9ff5ab735658c8ab94dae05bb10c13a3abc25cb",
+      "symbol": "panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::Find",
+      "parse_status": "complete",
+      "calls": [
+        {
+          "name": "Branch",
+          "line": 660,
+          "text": "Branch(TaggedIsHeapObject(thisValue), &isHeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 664,
+          "text": "Branch(isThisStableJSArray, &stableJSArray, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 669,
+          "text": "Branch(TaggedIsHeapObject(callbackFnHandle), &arg0HeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 672,
+          "text": "Branch(IsCallable(callbackFnHandle), &callable, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 685,
+          "text": "Branch(Int64LessThan(*i, thisArrLen), &next, &loopExit)"
+        },
+        {
+          "name": "JSCallDispatch",
+          "line": 691,
+          "text": "JSCallDispatch(glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS), 0,\n            Circuit::NullGate(), JSCallMode::CALL_THIS_ARG3_WITH_RETURN, { argHandle, kValue, key, thisValue })"
+        },
+        {
+          "name": "Branch",
+          "line": 693,
+          "text": "Branch(HasPendingException(glue), &hasException, &notHasException)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 693,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "Branch",
+          "line": 702,
+          "text": "Branch(TaggedIsTrue(FastToBoolean(retValue)), &find, &loopEnd)"
+        },
+        {
+          "name": "FastToBoolean",
+          "line": 702,
+          "text": "FastToBoolean(retValue)"
+        }
+      ]
+    },
+    {
+      "commit": "548558c3509b53e080087680553cb9e76ed1843a",
+      "tree": "bc816fc901a28ecbbf69410d4cef71192e86e04a",
+      "blob": "724a30b4f8f35c606c6837ff936ca1010d64d7dc",
+      "source_sha256": "d0253b4eddf47c9f48cc86b7ae599e71a56126597f91c9f2acb0553f1a0373b7",
+      "symbol": "panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::Find",
+      "parse_status": "complete",
+      "calls": [
+        {
+          "name": "Branch",
+          "line": 575,
+          "text": "Branch(TaggedIsHeapObject(thisValue), &isHeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 579,
+          "text": "Branch(isThisStableJSArray, &stableJSArray, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 584,
+          "text": "Branch(TaggedIsHeapObject(callbackFnHandle), &arg0HeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 587,
+          "text": "Branch(IsCallable(callbackFnHandle), &callable, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 600,
+          "text": "Branch(Int64LessThan(*i, thisArrLen), &next, &loopExit)"
+        },
+        {
+          "name": "JSCallDispatch",
+          "line": 606,
+          "text": "JSCallDispatch(glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS), 0,\n            Circuit::NullGate(), JSCallMode::CALL_THIS_ARG3_WITH_RETURN, { argHandle, kValue, key, thisValue })"
+        },
+        {
+          "name": "Branch",
+          "line": 608,
+          "text": "Branch(HasPendingException(glue), &hasException, &notHasException)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 608,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "Branch",
+          "line": 617,
+          "text": "Branch(TaggedIsTrue(FastToBoolean(retValue)), &find, &loopEnd)"
+        },
+        {
+          "name": "FastToBoolean",
+          "line": 617,
+          "text": "FastToBoolean(retValue)"
+        }
+      ]
+    },
+    {
+      "commit": "03b5bacc3b502ffba6c9abe3f1e5727bbeadb556",
+      "tree": "98e534e7919297796ad0aa53e84025b26500ee0a",
+      "blob": "c7b75d4ef3f0614e70a2032fea2c51269cf72fd9",
+      "source_sha256": "0a6f93dd4e11d2f3222baed1cd7ded56d1e728f5f6cc53e8d50b67d3017285db",
+      "symbol": "panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::Find",
+      "parse_status": "complete",
+      "calls": [
+        {
+          "name": "Branch",
+          "line": 229,
+          "text": "Branch(TaggedIsHeapObject(thisValue), &isHeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 233,
+          "text": "Branch(isThisStableJSArray, &stableJSArray, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 238,
+          "text": "Branch(TaggedIsHeapObject(callbackFnHandle), &arg0HeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 241,
+          "text": "Branch(IsCallable(callbackFnHandle), &callable, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 254,
+          "text": "Branch(Int64LessThan(*i, thisArrLen), &next, &loopExit)"
+        },
+        {
+          "name": "JSCallDispatch",
+          "line": 260,
+          "text": "JSCallDispatch(glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS), 0,\n            Circuit::NullGate(), JSCallMode::CALL_THIS_ARG3_WITH_RETURN, { argHandle, kValue, key, thisValue })"
+        },
+        {
+          "name": "Branch",
+          "line": 262,
+          "text": "Branch(HasPendingException(glue), &hasException, &notHasException)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 262,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "Branch",
+          "line": 271,
+          "text": "Branch(TaggedIsTrue(FastToBoolean(retValue)), &find, &loopEnd)"
+        },
+        {
+          "name": "FastToBoolean",
+          "line": 271,
+          "text": "FastToBoolean(retValue)"
+        }
+      ]
+    },
+    {
+      "commit": "538a718a410eb554e9c7e5c964b2411483cb3228",
+      "tree": "cd4daf1735b7fd1308ab0de4e6b6b8fe9bb74279",
+      "blob": "01bb52b92e5a28969889bcd05f8d9c9664279cd2",
+      "source_sha256": "8c8d6eea41d9fb6a3b41d1baa5fdb4cedca53258196e1a99843c6702ba4a3b92",
+      "symbol": "panda::ecmascript::kungfu::BuiltinsArrayStubBuilder::Find",
+      "parse_status": "complete",
+      "calls": [
+        {
+          "name": "Branch",
+          "line": 231,
+          "text": "Branch(isThisStableJSArray, &stableJSArray, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 236,
+          "text": "Branch(TaggedIsHeapObject(callbackFnHandle), &isHeapObject, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 239,
+          "text": "Branch(IsCallable(callbackFnHandle), &callable, slowPath)"
+        },
+        {
+          "name": "Branch",
+          "line": 253,
+          "text": "Branch(Int64LessThan(*i, thisArrLen), &next, &loopExit)"
+        },
+        {
+          "name": "JSCallDispatch",
+          "line": 260,
+          "text": "JSCallDispatch(glue, callbackFnHandle, Int32(NUM_MANDATORY_JSFUNC_ARGS), 0,\n            Circuit::NullGate(), JSCallMode::CALL_THIS_ARG3_WITH_RETURN, { argHandle, kValue, key, thisValue })"
+        },
+        {
+          "name": "Branch",
+          "line": 262,
+          "text": "Branch(HasPendingException(glue), &hasException, &notHasException)"
+        },
+        {
+          "name": "HasPendingException",
+          "line": 262,
+          "text": "HasPendingException(glue)"
+        },
+        {
+          "name": "Branch",
+          "line": 271,
+          "text": "Branch(TaggedIsTrue(FastToBoolean(retValue)), &find, &loopEnd)"
+        },
+        {
+          "name": "FastToBoolean",
+          "line": 271,
+          "text": "FastToBoolean(retValue)"
+        }
+      ]
+    }
+  ]
+}

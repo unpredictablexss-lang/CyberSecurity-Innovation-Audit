@@ -1,0 +1,119 @@
+{
+  "document_status": "preparation_only",
+  "schema_id": "c5.frozen-artifact-register.template.v1",
+  "protocol_version": "UNFROZEN",
+  "artifacts": [
+    {
+      "artifact_role": "semantic_contract",
+      "required_before": "detector_freeze",
+      "version": null,
+      "sha256": null,
+      "created_at_utc": null,
+      "custodian_role": null,
+      "independent_verifier_role": null,
+      "verification_reference": null,
+      "status": "missing"
+    },
+    {
+      "artifact_role": "detector_source_and_rules",
+      "required_before": "source_selection",
+      "version": null,
+      "sha256": null,
+      "created_at_utc": null,
+      "custodian_role": null,
+      "independent_verifier_role": null,
+      "verification_reference": null,
+      "status": "missing"
+    },
+    {
+      "artifact_role": "configuration_parser_toolchain_environment",
+      "required_before": "source_selection",
+      "version": null,
+      "sha256": null,
+      "created_at_utc": null,
+      "custodian_role": null,
+      "independent_verifier_role": null,
+      "verification_reference": null,
+      "status": "missing"
+    },
+    {
+      "artifact_role": "applicability_contract",
+      "required_before": "source_selection",
+      "version": null,
+      "sha256": null,
+      "created_at_utc": null,
+      "custodian_role": null,
+      "independent_verifier_role": null,
+      "verification_reference": null,
+      "status": "missing"
+    },
+    {
+      "artifact_role": "protocol_and_label_rubric",
+      "required_before": "source_selection",
+      "version": "UNFROZEN",
+      "sha256": null,
+      "created_at_utc": null,
+      "custodian_role": null,
+      "independent_verifier_role": null,
+      "verification_reference": null,
+      "status": "preparation_only"
+    },
+    {
+      "artifact_role": "family_inventory_and_exclusion_ledger",
+      "required_before": "candidate_frame_approval",
+      "version": null,
+      "sha256": null,
+      "created_at_utc": null,
+      "custodian_role": null,
+      "independent_verifier_role": null,
+      "verification_reference": null,
+      "status": "not_started"
+    },
+    {
+      "artifact_role": "reviewer_qualification_and_conflict_decisions",
+      "required_before": "any_reviewer_access",
+      "version": null,
+      "sha256": null,
+      "created_at_utc": null,
+      "custodian_role": null,
+      "independent_verifier_role": null,
+      "verification_reference": null,
+      "status": "not_started"
+    },
+    {
+      "artifact_role": "source_manifest_and_random_id_commitment",
+      "required_before": "packet_generation",
+      "version": null,
+      "sha256": null,
+      "created_at_utc": null,
+      "custodian_role": null,
+      "independent_verifier_role": null,
+      "verification_reference": null,
+      "status": "not_started"
+    },
+    {
+      "artifact_role": "reviewer_submissions_and_adjudication_ledger",
+      "required_before": "prediction_reveal",
+      "version": null,
+      "sha256": null,
+      "created_at_utc": null,
+      "custodian_role": null,
+      "independent_verifier_role": null,
+      "verification_reference": null,
+      "status": "not_started"
+    },
+    {
+      "artifact_role": "prediction_escrow_seal_and_execution_log",
+      "required_before": "joint_reveal_authorization",
+      "version": null,
+      "sha256": null,
+      "created_at_utc": null,
+      "custodian_role": null,
+      "independent_verifier_role": null,
+      "verification_reference": null,
+      "status": "not_started"
+    }
+  ],
+  "freeze_rule": "Do not overwrite a frozen artifact. Corrections create a new version with a reason, approval, prior digest, and impact assessment; exposure after material change requires a fresh run.",
+  "approval": null
+}

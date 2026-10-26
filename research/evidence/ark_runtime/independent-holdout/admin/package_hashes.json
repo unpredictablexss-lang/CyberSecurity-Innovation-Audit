@@ -1,0 +1,106 @@
+[
+  {
+    "path": "README.md",
+    "sha256": "3a95dcb4b2a1b483b4ce4e6a95194eb5474aa0a0a4a4ef981828a38c62e56b1f"
+  },
+  {
+    "path": "admin/C-line-independent-holdout-brief.md",
+    "sha256": "b8c5fd8a77cd8eeaf841f214635f36545c638e75f3a9057ee1a4b05a08566c52"
+  },
+  {
+    "path": "admin/adjudication_ledger_template.csv",
+    "sha256": "4e1bf133f81cdcaece76aaa5151db10b8fb7e8fb58fc8a5a3d807d0c281f12fc"
+  },
+  {
+    "path": "admin/annotation_template.csv",
+    "sha256": "1a9cfdf554f76aa2853c524699a447556434c0f7926f34844aec36cebebe39e6"
+  },
+  {
+    "path": "admin/artifact_hashes.json",
+    "sha256": "ecefb61bb1f34055cd94d86590b82c231126e2634e596f2cd98328a9cf148f12"
+  },
+  {
+    "path": "admin/blind_replay.py",
+    "sha256": "091526fd774807ad18212fca67e9b9d0960636e322f67842f6ec9daa50d1f91d"
+  },
+  {
+    "path": "admin/blind_review_packet.csv",
+    "sha256": "11e45aba4f61c0ce53322e19372557559a15e131fed1117d72c19a7ad1e615e1"
+  },
+  {
+    "path": "admin/blind_run_summary.json",
+    "sha256": "216c74364c19a936a86f98c97879c0cd1deda4b3dc4be32ed906925356e1294a"
+  },
+  {
+    "path": "admin/build_holdout_artifacts.py",
+    "sha256": "fa829df56422a38a37d92a6921a0330b52fcefe5d34bff1450eb1d3d12c8bce2"
+  },
+  {
+    "path": "admin/exclusion_ledger_template.csv",
+    "sha256": "513337ee749f3b73e2c1effd34f366f80d732e918be6bd314291b02ef834db8e"
+  },
+  {
+    "path": "admin/family_leakage_audit.csv",
+    "sha256": "f450716da86ca619f2b6f30968c009d6bd38fdf00baddf09cf7493e93ad48189"
+  },
+  {
+    "path": "admin/family_leakage_audit_template.csv",
+    "sha256": "a5f021e0c304f65bc0e7377443a2be7f91f475c6447c48703b26ff1587c5e13e"
+  },
+  {
+    "path": "admin/freeze_record_template.json",
+    "sha256": "d6ac227dcf0919b82eb3662523e1415e0011d855b070b73486a94baef9c206bc"
+  },
+  {
+    "path": "admin/freeze_verification.json",
+    "sha256": "3ecc05defab82118b3594d730b4a912921594286e2934f3e20b05f572facafcd"
+  },
+  {
+    "path": "admin/frozen_detector.json",
+    "sha256": "53512c2f3537a08dff7257050b707db819004bbdd7c3b0e7b39b6e297058d10e"
+  },
+  {
+    "path": "admin/holdout_source_manifest.csv",
+    "sha256": "ef1b36574c1b6f50ea1ac64dc2ca0a374a824a4d0e0e124b1d32eea75b56afd5"
+  },
+  {
+    "path": "admin/holdout_specs.json",
+    "sha256": "82444ef56b05df36f1b1e56334c2918e90815dad109c8ee23c8a007701e9e649"
+  },
+  {
+    "path": "admin/readiness_audit_2026-10-18.md",
+    "sha256": "3308e063f985119a5de26d144efa458cbd62d2b144ca514b9ee48603655e5d96"
+  },
+  {
+    "path": "admin/restart_plan_2026-10-18.md",
+    "sha256": "26bd85f807ccba69a150e4a3853459254c82191437eec219f84d0e714db837ab"
+  },
+  {
+    "path": "admin/reviewer_declaration_response_template.json",
+    "sha256": "e417e9f28c3020074314f47d95995eab4e925fbb80df6fd4caea8f6f2461739b"
+  },
+  {
+    "path": "admin/reviewer_submissions_template.csv",
+    "sha256": "0306539038438d87d5279d94cc25dd53fd2b0aa558aebef1bfd03436ebb04641"
+  },
+  {
+    "path": "admin/verify_frozen_holdout.py",
+    "sha256": "08676fdef5d2dc4d30a35a18120a1d35eedd65dbc00a446995a3ba0149bb4cf7"
+  },
+  {
+    "path": "export_reviewers.py",
+    "sha256": "0e4638dfa71615b493471e6945d6912164645bf93a622ec500150310473b6e89"
+  },
+  {
+    "path": "reviewer-packet-export/README.md",
+    "sha256": "60f6fce3dd5e3ff9146c10f2b67057c094830a832cd5aa3bea5cb0f47f44f274"
+  },
+  {
+    "path": "reviewer-packet-export/reviewer_declaration_template.md",
+    "sha256": "af370b9a68e2b253d3dfa886ceb2b8fd35dc2f475c3eb408ada539b94729b050"
+  },
+  {
+    "path": "score_holdout.py",
+    "sha256": "8040dd092bd5062473356d29d21b5522b7b45a4d39e30c94802bfa38a71bc7ef"
+  }
+]

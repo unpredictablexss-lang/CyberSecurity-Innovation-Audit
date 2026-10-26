@@ -1,0 +1,22 @@
+{
+  "schema": "ohscanner.c1.snapshot-prebuilt-staging/v1",
+  "status": "snapshot_configured_archive_hash_verified_safely_staged",
+  "tool": "ninja",
+  "snapshot_config_sha256": "9cd6a95721895aff6eb44a8c314d36e4a79543ddbf9865e25da602c8b4d4f850",
+  "remote_path": "/openharmony/compiler/ninja/1.13.2/linux/ninja-linux-x86-1.13.2-20260810.tar.gz",
+  "archive_url": "https://repo.huaweicloud.com/openharmony/compiler/ninja/1.13.2/linux/ninja-linux-x86-1.13.2-20260810.tar.gz",
+  "sidecar_url": "https://repo.huaweicloud.com/openharmony/compiler/ninja/1.13.2/linux/ninja-linux-x86-1.13.2-20260810.tar.gz.sha256",
+  "sidecar_sha256": "97aad3d1cff64297a90d2fa60e77f246f6c550a5ad26cf38aed99f6413804057",
+  "archive_sha256": "97aad3d1cff64297a90d2fa60e77f246f6c550a5ad26cf38aed99f6413804057",
+  "archive_bytes": 160618,
+  "sidecar_bytes": 65,
+  "archive_member_count": 4,
+  "archive_paths_and_links_validated": true,
+  "staging_path": "/home/deepsleep/c-line-c1-profile-20261018/prebuilts-stage-sdk-addon-20261019/build-tools/linux-x86/bin",
+  "staged_files": {
+    "ninja": "2c867ca18771ff64d2a9f72f16316760651c98b1fbce692b0542f25de49b112b",
+    "BUILD.gn": "b5d60a127f093e0399eaaae80ccce93dc9b8afb138a9c565f00909dbd948843c"
+  },
+  "lifecycle_scripts_executed": false,
+  "scope_note": "The URL is from the exact snapshot config. The publisher sidecar is served by the same mirror and is not an independent signature. Only the executable and its package BUILD.gn were staged outside the source archive."
+}

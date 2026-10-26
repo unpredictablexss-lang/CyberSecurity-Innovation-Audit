@@ -1,0 +1,127 @@
+{
+  "schema": "c2-old-revision-manifest-candidate-audit/v1",
+  "captured_date": "2026-10-19",
+  "scope": "bounded refs available locally plus current origin branch inventory; not an exhaustive search of every historical or third-party manifest",
+  "old_ark_revision": {
+    "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+    "tree": "82af11ced4297818410ccf61906b703d25b69165",
+    "commit_date": "2025-03-10T15:36:03+08:00"
+  },
+  "manifest_remote": "https://gitcode.com/openharmony/manifest.git",
+  "remote_heads_sha256": "c4694227aa5fecf4a3570bc6bf6d1cc87887ed5a823b11aeb9120f401e58da49",
+  "remote_heads_matching_release_or_march_candidates": {
+    "114_trunk_5.0.2-Release": "04c9d10d21c26003714479688c5e565ddaa19b54",
+    "114_trunk_5.0.3-Release": "acf6fda330f4e4180ad521730a4d6bce8ec88e2d",
+    "114_trunk_5.1.0-Release": "a88c56bdb408ea14b32b960a9913a91aa0edcd4d",
+    "114_trunk_feature_20250327": "3ffd0cd76422d35d2d620ea67f2d6303ab783dd4",
+    "114_trunk_feature_20250328": "f398e1d4d32e69ef454fb3779169df7af85e0f59",
+    "OpenHarmony-5.0.2-Release": "7b3ebf2e9de830b03bb28037a480b655be2efe86",
+    "OpenHarmony-5.0.3-Release": "db9207366ddf56485cacd9ea49840acc0c9acf3f",
+    "OpenHarmony-5.1.0-Release": "7a1c4c56d4837c9b523cb1b27fcfdc6ef99f36f5",
+    "OpenHarmony_UIPlugin_20250323": "512e9ea3b4685c8aec08bf14bb3a6e832d113d35",
+    "OpenHarmony_feature_20250327": "2ae3872bd87b1ad325ac1a5997379a924c0424b6",
+    "OpenHarmony_feature_20250328": "4ee42ac6e6cedde47df69263626c377fb4492953",
+    "remote/114_trunk_5.0.2-Release": "3d972c980f0fa23f60a63ba628536234e4b2872c",
+    "revert-merge-2376-OpenHarmony_feature_20250328": "38a6243fe96b9cbd54fc91b564efd359d7174751",
+    "weekly_20241216": "b7b3ba2ae58ad321ac3337151c924e839b0037c8"
+  },
+  "inspected_refs": [
+    {
+      "ref": "OpenHarmony-v5.0.2-Release",
+      "manifest_commit": "ed169a3b5410b3f1377480be497ecf6d3064e8f0",
+      "manifest_commit_date": "2025-01-22T14:43:07+08:00",
+      "old_ark_commit_pin_matches": [],
+      "exact_old_commit_pinned": false
+    },
+    {
+      "ref": "OpenHarmony-v5.0.3-Release",
+      "manifest_commit": "db554281b9a2909b1e595b9dda6bbfa8758c6656",
+      "manifest_commit_date": "2025-03-21T15:31:34+08:00",
+      "old_ark_commit_pin_matches": [],
+      "exact_old_commit_pinned": false,
+      "nearest_release_snapshot": {
+        "manifest_path": "tag/manifest_tag_20250320_101213.xml",
+        "manifest_blob_sha256": "ea6aa19536642b6a94690452df8b3a3c8f25da8ab069b9dd4fddfe05c04453d5",
+        "pins": {
+          "arkcompiler_ets_runtime": "637821232cb94231ed09c7df528a3a8a811feffa",
+          "device_board_hihope": "0cf85b418b29b031999c5d4a45020fbf898d0d84",
+          "vendor_hihope": "aaaacf01dc03e5c6d63b294f9837f993d08d7f83"
+        },
+        "candidate_ark_commit_date": "2025-03-10T13:30:32+00:00",
+        "old_commit_is_ancestor_of_candidate": false
+      }
+    },
+    {
+      "ref": "OpenHarmony-v5.1.0-Release",
+      "manifest_commit": "ed8e976c401d64347f8d41cdf13bdb97541feeb4",
+      "manifest_commit_date": "2025-05-03T17:31:23+08:00",
+      "old_ark_commit_pin_matches": [],
+      "exact_old_commit_pinned": false
+    },
+    {
+      "ref": "origin/OpenHarmony-5.0.2-Release",
+      "manifest_commit": "7b3ebf2e9de830b03bb28037a480b655be2efe86",
+      "manifest_commit_date": "2025-09-14T00:24:05+08:00",
+      "old_ark_commit_pin_matches": [],
+      "exact_old_commit_pinned": false
+    },
+    {
+      "ref": "origin/OpenHarmony-5.0.3-Release",
+      "manifest_commit": "db9207366ddf56485cacd9ea49840acc0c9acf3f",
+      "manifest_commit_date": "2025-09-14T00:24:07+08:00",
+      "old_ark_commit_pin_matches": [],
+      "exact_old_commit_pinned": false
+    },
+    {
+      "ref": "origin/114_trunk_5.0.3-Release",
+      "manifest_commit": "acf6fda330f4e4180ad521730a4d6bce8ec88e2d",
+      "manifest_commit_date": "2025-02-25T15:31:15+08:00",
+      "old_ark_commit_pin_matches": [],
+      "exact_old_commit_pinned": false
+    },
+    {
+      "ref": "origin/weekly_20241216",
+      "manifest_commit": "b7b3ba2ae58ad321ac3337151c924e839b0037c8",
+      "manifest_commit_date": "2025-09-14T00:27:35+08:00",
+      "old_ark_commit_pin_matches": [],
+      "exact_old_commit_pinned": false
+    },
+    {
+      "ref": "origin/OpenHarmony_UIPlugin_20250323",
+      "manifest_commit": "512e9ea3b4685c8aec08bf14bb3a6e832d113d35",
+      "manifest_commit_date": "2025-09-14T00:24:26+08:00",
+      "old_ark_commit_pin_matches": [],
+      "exact_old_commit_pinned": false
+    },
+    {
+      "ref": "origin/OpenHarmony_feature_20250327",
+      "manifest_commit": "2ae3872bd87b1ad325ac1a5997379a924c0424b6",
+      "manifest_commit_date": "2025-09-14T00:25:05+08:00",
+      "old_ark_commit_pin_matches": [],
+      "exact_old_commit_pinned": false
+    },
+    {
+      "ref": "origin/OpenHarmony_feature_20250328",
+      "manifest_commit": "4ee42ac6e6cedde47df69263626c377fb4492953",
+      "manifest_commit_date": "2025-09-14T00:25:07+08:00",
+      "old_ark_commit_pin_matches": [],
+      "exact_old_commit_pinned": false
+    },
+    {
+      "ref": "origin/114_trunk_feature_20250327",
+      "manifest_commit": "3ffd0cd76422d35d2d620ea67f2d6303ab783dd4",
+      "manifest_commit_date": "2025-04-10T16:44:34+08:00",
+      "old_ark_commit_pin_matches": [],
+      "exact_old_commit_pinned": false
+    },
+    {
+      "ref": "origin/114_trunk_feature_20250328",
+      "manifest_commit": "f398e1d4d32e69ef454fb3779169df7af85e0f59",
+      "manifest_commit_date": "2025-04-10T16:45:04+08:00",
+      "old_ark_commit_pin_matches": [],
+      "exact_old_commit_pinned": false
+    }
+  ],
+  "conclusion": "No exact old Ark commit pin was found in the bounded candidate refs. The v5.0.3 release snapshot does pin HiHope board/vendor, but its Ark commit differs and is not the old commit's descendant; it is not a profile-matched old revision. A matching historical product manifest/profile remains unresolved.",
+  "fail_closed": true
+}

@@ -1,0 +1,31 @@
+f4624b45e5c74240553f79b72ddd2f1c98054f02 2024-05-27 optTypedArray
+b95a954da72eada025f3fa423d9839f8998326cf 2024-04-08 add array.toSorted IR and moduletest
+bf154699e827377cb08d7ab167781073b002b8fe 2024-03-18 Code comment Enhancement 1. Add code commment for Branch 2. Complete code comment for Call
+0aab2028c1f8b90d60064210d2a0ab94876528ba 2024-02-29 opt Array.map issue:I943QV
+4d33b764fffd8b30b78dc09108beab3d26a4d794 2024-01-08 Optimizes Array concat/filter for empty arrays
+3cf420dfc70cd2f6d2b71439f0482170e467fb99 2024-01-08 修改asm解释器BuiltinsArrayStubBuilder::Pop
+ae2ce470e186dd46f3736c45fbed1ba81ff47f39 2024-01-06 Fix some bug issue:https://gitee.com/openharmony/arkcompiler_ets_runtime/issues/I8TMGY
+715b0150add381b29e22c72708932987311f6081 2023-12-25 Bugfix on BuiltinsArrayStubBuilder::Includes and StubBuilder::GetCtorPrototype
+8ab7eccc657ef1346e933b0dd20904c831e6387e 2023-12-16 add exception check
+78e54166b0cf6e5a0d10efff828e682276bda498 2023-12-16 open find findIndex
+bb5ab2763b882daab036fe5dfa1cc36829419302 2023-12-11 Array Fail Test Case 2 1.Proxy.IsArray Stackoverflower 2.Array.Filter does not crawl the prototype chain 2.[].concat(obj)  the called number is error
+8ba49865a8568f0871de6c175c396eaebae2026e 2023-12-11 array failure use case 1.BuiltinsTypedArray::Sort does not check whether callbackFnHandle is callable 2.Part of the Array.prototype[Symbol.unscopables] attribute is missing 3.splice changed the hole value to undefined value
+23564f994be85cd7aed739a31e4ff095d54e0215 2023-11-30 speed sort and reduce
+3bf89635ca256be1df42410e35249dd4ac4f3940 2023-11-30 Opt array.from & splice Issue:https://gitee.com/openharmony/arkcompiler_ets_runtime/issues/I8K9KP
+b68ca2f249041d9aacf75dee0858eb8e977dc151 2023-11-28 change testcase name
+548558c3509b53e080087680553cb9e76ed1843a 2023-11-27 fix confilct
+03b5bacc3b502ffba6c9abe3f1e5727bbeadb556 2023-11-24 add testcase
+4b10692cb9cff06d103cf842e1686da1d86836e5 2023-11-24 array.slice
+e9b1dcc3f08cee821049108b1559835a315f4cc4 2023-11-24 code style
+bbdd384184468f9e820360bbec20ab8904e052f1 2023-11-24 [add test case]
+538a718a410eb554e9c7e5c964b2411483cb3228 2023-11-24 speed find() and findIndex()
+04676bf738836da10b8b04618a8bff81344290ef 2023-11-23 fix array.includes TypeError issue
+f5983f94e2aa76d577776a0030483058e640b31e 2023-11-23 fixbug
+b766e0f0a99e4b63c3027e1c4c2b21113b1c47dd 2023-11-21 speed filter
+c31b1b2a7aa1fb8e1450f981e8404dad240083a1 2023-11-16 speed Values() and reverse()
+740d68090f5737668f3d2a9bbd77db4afc902ab9 2023-11-15 fix Number to Int issue
+8e4768226fc4f17061a0f39fb9cae9fd6e7c304a 2023-11-11 speed array.concat() by ir
+bfaea67b5f0b1b0ba49a8c3df3b86b9f9c253f04 2023-11-10 Opt array.includes func by IR
+a70152fdf78cf46a30af2b9b4124120f097b2698 2023-10-18 Bugfix on Array.filter&Array.forEach&instanceof callback is not callable
+70b99a3f462900f592086236a5104e77fc0ee1ab 2023-09-20 Opt Array.push with ir Issue:https://gitee.com/openharmony/arkcompiler_ets_runtime/issues/I828P0?from=project-issue
+7ced892677004e048239d33a29f40e9c520c492b 2023-08-16 Optimizes Array methods for empty arrays

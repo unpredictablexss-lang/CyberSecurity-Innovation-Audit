@@ -1,0 +1,183 @@
+{
+  "schema": "ohscanner.c1.nested-gitlink-origins/v1",
+  "materialization_report_sha256": "7074b7abca895b6f462efe894c3051f8bdbac3e52b2d280c5ec9b569f7cd4acc",
+  "project_count": 525,
+  "gitlink_count": 19,
+  "gitlinks_with_declared_origin": 16,
+  "gitlinks_without_declared_origin": 3,
+  "gitlink_content_materialized_count": 0,
+  "gitlinks": [
+    {
+      "parent_project": "arkcompiler/runtime_core",
+      "gitlink_path": "static_core/tools/plugins/ecmascript",
+      "gitlink_commit": "cc2552eb551e806e6892fe6871de7b173943afb6",
+      "gitmodules_path_match": false,
+      "declared_url": null,
+      "archive_directory_entry_count": 0,
+      "commit_content_materialized": false
+    },
+    {
+      "parent_project": "test/testfwk/arkxtest",
+      "gitlink_path": "acl/developtools_integration_verification",
+      "gitlink_commit": "a3204c2a52f6cd94c5f4e812da34c16b7bc358eb",
+      "gitmodules_path_match": false,
+      "declared_url": null,
+      "archive_directory_entry_count": 0,
+      "commit_content_materialized": false
+    },
+    {
+      "parent_project": "test/xts/acts",
+      "gitlink_path": "xts_acts",
+      "gitlink_commit": "a63fc8596bf60927461e99ee68f9df10a6c0945f",
+      "gitmodules_path_match": false,
+      "declared_url": null,
+      "archive_directory_entry_count": 0,
+      "commit_content_materialized": false
+    },
+    {
+      "parent_project": "third_party/astc-encoder",
+      "gitlink_path": "Source/GoogleTest",
+      "gitlink_commit": "703bd9caab50b139428cea1aaff9974ebee5742e",
+      "gitmodules_path_match": true,
+      "declared_url": "https://github.com/google/googletest.git",
+      "archive_directory_entry_count": 0,
+      "commit_content_materialized": false
+    },
+    {
+      "parent_project": "third_party/nghttp2",
+      "gitlink_path": "third-party/mruby",
+      "gitlink_commit": "87260e7bb1a9edfb2ce9b41549c4142129061ca5",
+      "gitmodules_path_match": true,
+      "declared_url": "https://github.com/mruby/mruby",
+      "archive_directory_entry_count": 0,
+      "commit_content_materialized": false
+    },
+    {
+      "parent_project": "third_party/nghttp2",
+      "gitlink_path": "third-party/neverbleed",
+      "gitlink_commit": "4cf9b993b2cb3d5fbf1a34b86119f298edd00f1d",
+      "gitmodules_path_match": true,
+      "declared_url": "https://github.com/tatsuhiro-t/neverbleed.git",
+      "archive_directory_entry_count": 0,
+      "commit_content_materialized": false
+    },
+    {
+      "parent_project": "third_party/openhitls",
+      "gitlink_path": "platform/Secure_C",
+      "gitlink_commit": "1ae16ab92de4884eacea211dcd1989af95dae79b",
+      "gitmodules_path_match": true,
+      "declared_url": "https://gitee.com/openeuler/libboundscheck.git",
+      "archive_directory_entry_count": 0,
+      "commit_content_materialized": false
+    },
+    {
+      "parent_project": "third_party/rust/crates/cxx",
+      "gitlink_path": "tools/buck/prelude",
+      "gitlink_commit": "37752b6ec36a68c169053cb3f7ba359b677a22b6",
+      "gitmodules_path_match": true,
+      "declared_url": "https://github.com/facebook/buck2-prelude",
+      "archive_directory_entry_count": 0,
+      "commit_content_materialized": false
+    },
+    {
+      "parent_project": "third_party/rust/rust",
+      "gitlink_path": "library/backtrace",
+      "gitlink_commit": "e1c49fbd6124a1b626cdf19871aff68c362bdf07",
+      "gitmodules_path_match": true,
+      "declared_url": "https://github.com/rust-lang/backtrace-rs.git",
+      "archive_directory_entry_count": 0,
+      "commit_content_materialized": false
+    },
+    {
+      "parent_project": "third_party/rust/rust",
+      "gitlink_path": "library/stdarch",
+      "gitlink_commit": "d77878b7299dd7e286799a6e8447048b65d2a861",
+      "gitmodules_path_match": true,
+      "declared_url": "https://github.com/rust-lang/stdarch.git",
+      "archive_directory_entry_count": 0,
+      "commit_content_materialized": false
+    },
+    {
+      "parent_project": "third_party/rust/rust",
+      "gitlink_path": "src/doc/book",
+      "gitlink_commit": "21cf840842bdf768a798869f06373c96c1cc5122",
+      "gitmodules_path_match": true,
+      "declared_url": "https://github.com/rust-lang/book.git",
+      "archive_directory_entry_count": 0,
+      "commit_content_materialized": false
+    },
+    {
+      "parent_project": "third_party/rust/rust",
+      "gitlink_path": "src/doc/edition-guide",
+      "gitlink_commit": "f63e578b92ff43e8cc38fcaa257b660f45c8a8c2",
+      "gitmodules_path_match": true,
+      "declared_url": "https://github.com/rust-lang/edition-guide.git",
+      "archive_directory_entry_count": 0,
+      "commit_content_materialized": false
+    },
+    {
+      "parent_project": "third_party/rust/rust",
+      "gitlink_path": "src/doc/embedded-book",
+      "gitlink_commit": "f2aed2fe8e9f55508c86ba3aa4b6789b18a08a22",
+      "gitmodules_path_match": true,
+      "declared_url": "https://github.com/rust-embedded/book.git",
+      "archive_directory_entry_count": 0,
+      "commit_content_materialized": false
+    },
+    {
+      "parent_project": "third_party/rust/rust",
+      "gitlink_path": "src/doc/nomicon",
+      "gitlink_commit": "c369e4b489332f8721fbae630354fa83385d457d",
+      "gitmodules_path_match": true,
+      "declared_url": "https://github.com/rust-lang/nomicon.git",
+      "archive_directory_entry_count": 0,
+      "commit_content_materialized": false
+    },
+    {
+      "parent_project": "third_party/rust/rust",
+      "gitlink_path": "src/doc/reference",
+      "gitlink_commit": "5ca365eac678cb0d41a20b3204546d6ed70c7171",
+      "gitmodules_path_match": true,
+      "declared_url": "https://github.com/rust-lang/reference.git",
+      "archive_directory_entry_count": 0,
+      "commit_content_materialized": false
+    },
+    {
+      "parent_project": "third_party/rust/rust",
+      "gitlink_path": "src/doc/rust-by-example",
+      "gitlink_commit": "57636d6926762861f34e030d52ca25a71e95e5bf",
+      "gitmodules_path_match": true,
+      "declared_url": "https://github.com/rust-lang/rust-by-example.git",
+      "archive_directory_entry_count": 0,
+      "commit_content_materialized": false
+    },
+    {
+      "parent_project": "third_party/rust/rust",
+      "gitlink_path": "src/doc/rustc-dev-guide",
+      "gitlink_commit": "17fe3e948498c50e208047a750f17d6a8d89669b",
+      "gitmodules_path_match": true,
+      "declared_url": "https://github.com/rust-lang/rustc-dev-guide.git",
+      "archive_directory_entry_count": 0,
+      "commit_content_materialized": false
+    },
+    {
+      "parent_project": "third_party/rust/rust",
+      "gitlink_path": "src/llvm-project",
+      "gitlink_commit": "c9bca8a6cbed64d421b9afb9065769ed64fafcc6",
+      "gitmodules_path_match": true,
+      "declared_url": "https://github.com/rust-lang/llvm-project.git",
+      "archive_directory_entry_count": 0,
+      "commit_content_materialized": false
+    },
+    {
+      "parent_project": "third_party/rust/rust",
+      "gitlink_path": "src/tools/cargo",
+      "gitlink_commit": "103a7ff2ee7678d34f34d778614c5eb2525ae9de",
+      "gitmodules_path_match": true,
+      "declared_url": "https://github.com/rust-lang/cargo.git",
+      "archive_directory_entry_count": 0,
+      "commit_content_materialized": false
+    }
+  ],
+  "scope": "read-only mapping from each parent project .gitmodules; no remote fetch and no source mutation"
+}

@@ -1,0 +1,8 @@
+COMMAND: git ls-remote --refs https://github.com/openharmony/arkcompiler_ets_runtime.git refs/pull/*/head\nEXIT: 0\nSTDOUT:\n37e4f10b06652e8b535af9c06701968510de7591	refs/pull/1/head
+1c4bed1e895dc162c6d873fe9fb3104546e6cc46	refs/pull/2/head
+f0fb6575b1e117a0826f8913d3bd7bc55408b6a4	refs/pull/3/head
+bbf2098272b3fef887bdd563fff62aec80110cbe	refs/pull/4/head
+50316d66fc4f5d40e2fe938d97185250d1308609	refs/pull/5/head
+d4aab64d075fbfbdc25f202eb61e7f0fa639286d	refs/pull/6/head
+2f05e54449422d89bd0b4ce25e35b3cdca360257	refs/pull/7/head
+\nSTDERR:\n

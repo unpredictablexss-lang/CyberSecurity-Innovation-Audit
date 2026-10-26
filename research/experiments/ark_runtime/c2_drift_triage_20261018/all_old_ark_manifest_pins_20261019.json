@@ -1,0 +1,48 @@
+{
+  "schema": "c2-all-old-ark-manifest-pins/v1",
+  "old_ark_commits": [
+    "81ca57487d04ea30cd11c271e86494a4e130f43e",
+    "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+    "c758818dbfd0b146a908d43d21f6ca1706c33783"
+  ],
+  "old_commit_count": 3,
+  "c2_dependency_rows_sha256": "54e0dad29c4928da2ccfa81f75ca2c129040a32f93f35545945aabefbf8d350d",
+  "base_single_pin_audit_sha256": "21048c7b337aabcc6724688d89e3460650ff0bcda04760dd15fb4262daf70cdf",
+  "remote": "https://gitcode.com/openharmony/manifest.git",
+  "capture_scope": "all refs advertised by git ls-remote --refs at capture and the complete parent/blob history reachable from those refs in the non-shallow mirror",
+  "excluded_scope": "unadvertised or unreachable server objects and third-party manifest repositories",
+  "mirror": {
+    "path": "D:\\openHarmonyScanner\\tmp\\c2-manifest-history-full-20261019.git",
+    "bare": true,
+    "shallow": false,
+    "ref_count": 10315,
+    "reachable_commit_count": 10420,
+    "ref_list_sha256": "71eb79ebc611d3b4f9f0e8f33f046aa9270d0e12ed05831049e9e5cc65d7684f",
+    "commit_graph_sha256": "ff7588c710cfcb838e1b1495e7733b41c28c0274cde6a8d2d3557cd732b07e9b",
+    "fsck_exit_code": 0,
+    "captured_ref_snapshot_matches": true,
+    "captured_commit_graph_matches": true,
+    "captured_fsck_output_matches": true
+  },
+  "searches": {
+    "81ca57487d04ea30cd11c271e86494a4e130f43e": {
+      "match_count": 0,
+      "matches_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "matches": [],
+      "result": "no_exact_pin_in_reachable_advertised_history"
+    },
+    "a0e30483ab3e4aead67ecfb5c708489915e447f9": {
+      "match_count": 0,
+      "matches_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "matches": [],
+      "result": "no_exact_pin_in_reachable_advertised_history"
+    },
+    "c758818dbfd0b146a908d43d21f6ca1706c33783": {
+      "match_count": 0,
+      "matches_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "matches": [],
+      "result": "no_exact_pin_in_reachable_advertised_history"
+    }
+  },
+  "status": "complete_no_exact_pins_found"
+}

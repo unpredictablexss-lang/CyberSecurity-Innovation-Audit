@@ -1,0 +1,22 @@
+{
+  "assessment_id": "ark-runtime-c-independent-holdout-20261018-v2",
+  "input_manifest_sha256": "",
+  "family_leakage_audit_sha256": "",
+  "exclusion_ledger_sha256": "",
+  "frozen_detector_sha256": "",
+  "reviewer_1_submission_sha256": "",
+  "reviewer_2_submission_sha256": "",
+  "reviewer_1_submission_path": "",
+  "reviewer_2_submission_path": "",
+  "reviewer_1_declaration_sha256": "",
+  "reviewer_2_declaration_sha256": "",
+  "reviewer_1_declaration_path": "",
+  "reviewer_2_declaration_path": "",
+  "adjudication_ledger_sha256": "",
+  "labels_frozen_utc": "",
+  "prediction_escrow_sha256": "",
+  "prediction_revealed_utc": "",
+  "prediction_reveal_after_label_freeze": false,
+  "exclusion_reasons_recorded": false
+}
+

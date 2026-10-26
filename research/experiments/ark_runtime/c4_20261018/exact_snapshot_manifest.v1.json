@@ -11,14 +11,14 @@
     "target_sha256": "76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c"
   },
   "profile": {
-    "accepted_c1_profile": "ark-runtime-build-profile-v1 capture contract; observed product profile remains blocked",
-    "c1_profile_evidence": "CyberSecurity-Innovation-Audit-c3-review/research/experiments/ark_runtime/c3_20261018/build_profile.json",
-    "c1_profile_status": "capture contract available; product profile blocked (compile database absent)",
+    "accepted_c1_profile": "partial hihope/rk3568 GN compile profile; both ARM actions preprocess and direct supplemental Clang compile successfully",
+    "c1_profile_evidence": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/product_profile_20261019.v1.json",
+    "c1_profile_status": "partial: HB GN generation and compile database repeated byte-identically twice; both ARM actions pass preprocess, dependency scan, and macro dump in isolation and direct supplemental Clang object compile; the object compile was outside the original container/read-only source boundary; duplicate-output warnings and incomplete full-snapshot materialization remain",
     "replay_profile": "light-ast",
     "replay_profile_source": "C3 current-run.json",
-    "build_profile": "none",
-    "product_manifest_locked": false,
-    "target_platform": "unknown",
+    "build_profile": "hihope/rk3568; normalized GN profile digest e86461191c065e3e140afb734c9d8c27818851ae51651f9ba004231fa7d52063; both ARM actions preprocess in isolation and compile supplemental objects outside that boundary",
+    "product_manifest_locked": true,
+    "target_platform": "arm-linux-ohos; ARMv7-A, softfp, NEON, thumb; product vendor/hihope/rk3568; generated device_path device/board/rockchip/rk3568",
     "command_argv": [
       "python",
       "-m",
@@ -37,12 +37,394 @@
     ],
     "command_normalization": "argv is ordered UTF-8 strings; no shell expansion; placeholders are literal stable tokens",
     "macros": {
-      "definitions": [],
-      "status": "unknown_not_collected_from_compile_database"
+      "definitions": [
+        "ENABLE_OHOS_PARAMETER",
+        "V8_DEPRECATION_WARNINGS",
+        "_GNU_SOURCE",
+        "HAVE_SYS_UIO_H",
+        "__MUSL__",
+        "_LIBCPP_HAS_MUSL_LIBC",
+        "__BUILD_LINUX_WITH_CLANG",
+        "__STDC_CONSTANT_MACROS",
+        "__STDC_FORMAT_MACROS",
+        "COMPONENT_BUILD",
+        "__GNU_SOURCE=1",
+        "CHROMIUM_CXX_TWEAK_INLINES",
+        "NDEBUG",
+        "NVALGRIND",
+        "DYNAMIC_ANNOTATIONS_ENABLED=0",
+        "PANDA_ENABLE_LTO",
+        "ENABLE_COLD_STARTUP_GC_POLICY",
+        "CMC_LCOV_EXCL",
+        "USE_CMS_GC=0",
+        "USE_STICKY_CMS_GC=0",
+        "LATEST_OPTIMIZATION_MACRO",
+        "V70_OPTIMIZATION_MACRO",
+        "STUB_FUNCTION_REORDERING",
+        "PANDA_USE_MUSL",
+        "IS_PUBLIC_VERSION",
+        "ENABLE_QOS",
+        "ECMASCRIPT_SUPPORT_DEBUGGER",
+        "ECMASCRIPT_SUPPORT_CPUPROFILER",
+        "ECMASCRIPT_SUPPORT_HEAPPROFILER",
+        "ECMASCRIPT_SUPPORT_HEAPSAMPLING",
+        "ECMASCRIPT_SUPPORT_SNAPSHOT",
+        "ECMASCRIPT_SUPPORT_TRACING",
+        "PANDA_TARGET_UNIX",
+        "PANDA_USE_FUTEX",
+        "PANDA_TARGET_OHOS",
+        "ENABLE_COW_ARRAY",
+        "PANDA_TARGET_ARM32_ABI_SOFT=1",
+        "PANDA_TARGET_ARM32",
+        "PANDA_TARGET_32",
+        "ARK_SUPPORT_INTL",
+        "ENABLE_EXCEPTION_BACKTRACE",
+        "HOOK_ENABLE",
+        "ENABLE_DUMP_IN_FAULTLOG",
+        "ENABLE_HANDLE_NODE_ID_MAP_PROTO",
+        "ENABLE_BYTRACE",
+        "ENABLE_HITRACE",
+        "ENABLE_HILOG",
+        "ENABLE_HISYSEVENT",
+        "ENABLE_UCOLLECTION",
+        "ENABLE_UNWINDER",
+        "PANDA_JS_ETS_HYBRID_MODE",
+        "is_ohos=true",
+        "is_linux=false",
+        "is_mingw=false",
+        "RUSTC_DEMANGLE",
+        "ENABLE_MINIDEBUGINFO",
+        "__DATE__=",
+        "__TIME__=",
+        "__TIMESTAMP__=",
+        "ARK_GC_SUPPORT"
+      ],
+      "status": "ordered command-line definitions and compiler-expanded macro dumps captured for both ARM actions; see C1 successful preprocessing evidence",
+      "by_action": [
+        {
+          "object_output": "obj/arkcompiler/ets_runtime/ecmascript/compiler/builtins/libark_jsoptimizer_set/builtins_typedarray_stub_builder.o",
+          "definitions_ordered": [
+            "ENABLE_OHOS_PARAMETER",
+            "V8_DEPRECATION_WARNINGS",
+            "_GNU_SOURCE",
+            "HAVE_SYS_UIO_H",
+            "__MUSL__",
+            "_LIBCPP_HAS_MUSL_LIBC",
+            "__BUILD_LINUX_WITH_CLANG",
+            "__STDC_CONSTANT_MACROS",
+            "__STDC_FORMAT_MACROS",
+            "COMPONENT_BUILD",
+            "__GNU_SOURCE=1",
+            "CHROMIUM_CXX_TWEAK_INLINES",
+            "NDEBUG",
+            "NVALGRIND",
+            "DYNAMIC_ANNOTATIONS_ENABLED=0",
+            "PANDA_ENABLE_LTO",
+            "ENABLE_COLD_STARTUP_GC_POLICY",
+            "CMC_LCOV_EXCL",
+            "USE_CMS_GC=0",
+            "USE_STICKY_CMS_GC=0",
+            "LATEST_OPTIMIZATION_MACRO",
+            "V70_OPTIMIZATION_MACRO",
+            "STUB_FUNCTION_REORDERING",
+            "PANDA_USE_MUSL",
+            "IS_PUBLIC_VERSION",
+            "ENABLE_QOS",
+            "ECMASCRIPT_SUPPORT_DEBUGGER",
+            "ECMASCRIPT_SUPPORT_CPUPROFILER",
+            "ECMASCRIPT_SUPPORT_HEAPPROFILER",
+            "ECMASCRIPT_SUPPORT_HEAPSAMPLING",
+            "ECMASCRIPT_SUPPORT_SNAPSHOT",
+            "ECMASCRIPT_SUPPORT_TRACING",
+            "PANDA_TARGET_UNIX",
+            "PANDA_USE_FUTEX",
+            "PANDA_TARGET_OHOS",
+            "ENABLE_COW_ARRAY",
+            "PANDA_TARGET_ARM32_ABI_SOFT=1",
+            "PANDA_TARGET_ARM32",
+            "PANDA_TARGET_32",
+            "ARK_SUPPORT_INTL",
+            "ENABLE_EXCEPTION_BACKTRACE",
+            "HOOK_ENABLE",
+            "ENABLE_DUMP_IN_FAULTLOG",
+            "ENABLE_HANDLE_NODE_ID_MAP_PROTO",
+            "ENABLE_BYTRACE",
+            "ENABLE_HITRACE",
+            "ENABLE_HILOG",
+            "ENABLE_HISYSEVENT",
+            "ENABLE_UCOLLECTION",
+            "ENABLE_UNWINDER",
+            "PANDA_JS_ETS_HYBRID_MODE",
+            "is_ohos=true",
+            "is_linux=false",
+            "is_mingw=false",
+            "RUSTC_DEMANGLE",
+            "ENABLE_MINIDEBUGINFO",
+            "__DATE__=",
+            "__TIME__=",
+            "__TIMESTAMP__=",
+            "ARK_GC_SUPPORT"
+          ],
+          "command_sha256": "c6d7959215306a67152ac3c2bf1f5012ba919107e27380691c0f9c32e6a6fa88"
+        },
+        {
+          "object_output": "obj/arkcompiler/ets_runtime/ecmascript/compiler/builtins/libark_jsoptimizer_set_with_maple/builtins_typedarray_stub_builder.o",
+          "definitions_ordered": [
+            "ARK_LITECG_DEBUG",
+            "DISABLE_LLVM_BACKEND",
+            "ENABLE_OHOS_PARAMETER",
+            "V8_DEPRECATION_WARNINGS",
+            "_GNU_SOURCE",
+            "HAVE_SYS_UIO_H",
+            "__MUSL__",
+            "_LIBCPP_HAS_MUSL_LIBC",
+            "__BUILD_LINUX_WITH_CLANG",
+            "__STDC_CONSTANT_MACROS",
+            "__STDC_FORMAT_MACROS",
+            "COMPONENT_BUILD",
+            "__GNU_SOURCE=1",
+            "CHROMIUM_CXX_TWEAK_INLINES",
+            "NDEBUG",
+            "NVALGRIND",
+            "DYNAMIC_ANNOTATIONS_ENABLED=0",
+            "PANDA_ENABLE_LTO",
+            "ENABLE_COLD_STARTUP_GC_POLICY",
+            "CMC_LCOV_EXCL",
+            "USE_CMS_GC=0",
+            "USE_STICKY_CMS_GC=0",
+            "LATEST_OPTIMIZATION_MACRO",
+            "V70_OPTIMIZATION_MACRO",
+            "STUB_FUNCTION_REORDERING",
+            "PANDA_USE_MUSL",
+            "IS_PUBLIC_VERSION",
+            "ENABLE_QOS",
+            "ECMASCRIPT_SUPPORT_DEBUGGER",
+            "ECMASCRIPT_SUPPORT_CPUPROFILER",
+            "ECMASCRIPT_SUPPORT_HEAPPROFILER",
+            "ECMASCRIPT_SUPPORT_HEAPSAMPLING",
+            "ECMASCRIPT_SUPPORT_SNAPSHOT",
+            "ECMASCRIPT_SUPPORT_TRACING",
+            "PANDA_TARGET_UNIX",
+            "PANDA_USE_FUTEX",
+            "PANDA_TARGET_OHOS",
+            "ENABLE_COW_ARRAY",
+            "PANDA_TARGET_ARM32_ABI_SOFT=1",
+            "PANDA_TARGET_ARM32",
+            "PANDA_TARGET_32",
+            "ARK_SUPPORT_INTL",
+            "ENABLE_EXCEPTION_BACKTRACE",
+            "HOOK_ENABLE",
+            "ENABLE_DUMP_IN_FAULTLOG",
+            "ENABLE_HANDLE_NODE_ID_MAP_PROTO",
+            "ENABLE_BYTRACE",
+            "ENABLE_HITRACE",
+            "ENABLE_HILOG",
+            "ENABLE_HISYSEVENT",
+            "ENABLE_UCOLLECTION",
+            "ENABLE_UNWINDER",
+            "PANDA_JS_ETS_HYBRID_MODE",
+            "is_ohos=true",
+            "is_linux=false",
+            "is_mingw=false",
+            "RUSTC_DEMANGLE",
+            "ENABLE_MINIDEBUGINFO",
+            "__DATE__=",
+            "__TIME__=",
+            "__TIMESTAMP__=",
+            "ARK_GC_SUPPORT",
+            "COMPILE_MAPLE"
+          ],
+          "command_sha256": "7471f97a0bfab59e0e350be060391af4f17511aa4c019a861822f5154750e82a"
+        }
+      ]
     },
     "include_search_paths": {
-      "ordered_paths": [],
-      "status": "unknown_no_accepted_compile_database"
+      "ordered_paths": [
+        "obj/third_party/musl/usr/include/arm-linux-ohos",
+        "override/third_party",
+        "../..",
+        "gen",
+        "../../prebuilts/ark_tools/ark_js_prebuilts/llvm_prebuilts/llvm/include",
+        "../../prebuilts/ark_tools/ark_js_prebuilts/llvm_prebuilts/build/include",
+        "../../base/hiviewdfx/hilog/interfaces/native/innerkits/include",
+        "../../arkcompiler/ets_runtime",
+        "../../arkcompiler/ets_runtime/ecmascript/napi/include",
+        "../../arkcompiler/runtime_core/common_interfaces",
+        "../../arkcompiler/runtime_core",
+        "../../arkcompiler/runtime_core/libpandabase",
+        "../../arkcompiler/runtime_core/libpandabase/include",
+        "../../arkcompiler/runtime_core/libpandabase/include/libpandabase",
+        "../../arkcompiler/runtime_core/platforms",
+        "gen/arkcompiler/runtime_core/libpandabase/include",
+        "gen/arkcompiler/runtime_core/libpandabase",
+        "../../arkcompiler/runtime_core/libpandafile",
+        "../../arkcompiler/runtime_core/libziparchive",
+        "gen/arkcompiler/runtime_core/libpandafile",
+        "gen/arkcompiler/runtime_core/libpandafile/include",
+        "../../third_party/icu/icu4c/source/common",
+        "../../third_party/icu/icu4c/source/i18n",
+        "../../third_party/icu/icu4c/source",
+        "../../third_party/bounds_checking_function/include",
+        "../../arkcompiler/runtime_core/arkplatform",
+        "../../third_party/zlib",
+        "../../third_party/zlib/contrib/minizip",
+        "../../base/hiviewdfx/faultloggerd/interfaces/innerkits/faultloggerd_client/include",
+        "../../base/hiviewdfx/faultloggerd/interfaces/common",
+        "../../base/startup/init/interfaces/innerkits/include",
+        "../../base/startup/init/interfaces/innerkits/include/syspara",
+        "../../base/startup/init/interfaces/innerkits/include/token",
+        "../../base/startup/init/interfaces/innerkits/include/param",
+        "../../base/hiviewdfx/faultloggerd/common/dfxlog",
+        "../../base/hiviewdfx/faultloggerd/common/dfxutil",
+        "../../base/hiviewdfx/faultloggerd/interfaces/innerkits/unwinder/include",
+        "../../base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace_meter",
+        "../../base/hiviewdfx/hitrace/utils",
+        "../../base/hiviewdfx/hitrace/interfaces/native/innerkits/include",
+        "../../base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace",
+        "../../base/hiviewdfx/hisysevent/interfaces/native/innerkits/hisysevent/include",
+        "../../base/hiviewdfx/hiview/adapter/service/client/include",
+        "../../base/hiviewdfx/hiview/interfaces/inner_api/unified_collection",
+        "../../base/hiviewdfx/hiview/interfaces/inner_api/unified_collection/client",
+        "../../base/hiviewdfx/hiview/interfaces/inner_api/unified_collection/resource",
+        "../../base/hiviewdfx/faultloggerd/interfaces/innerkits/signal_handler/include",
+        "../../foundation/resourceschedule/qos_manager/include",
+        "../../foundation/resourceschedule/qos_manager/interfaces/inner_api",
+        "../../foundation/resourceschedule/qos_manager/services/include",
+        "../../foundation/resourceschedule/qos_manager/common/include"
+      ],
+      "status": "ordered compile-command paths and active dependency files captured for both ARM actions; compiler preprocessing completed successfully",
+      "by_action": [
+        {
+          "object_output": "obj/arkcompiler/ets_runtime/ecmascript/compiler/builtins/libark_jsoptimizer_set/builtins_typedarray_stub_builder.o",
+          "include_paths_ordered": [
+            "obj/third_party/musl/usr/include/arm-linux-ohos",
+            "override/third_party",
+            "../..",
+            "gen",
+            "../../prebuilts/ark_tools/ark_js_prebuilts/llvm_prebuilts/llvm/include",
+            "../../prebuilts/ark_tools/ark_js_prebuilts/llvm_prebuilts/build/include",
+            "../../base/hiviewdfx/hilog/interfaces/native/innerkits/include",
+            "../../arkcompiler/ets_runtime",
+            "../../arkcompiler/ets_runtime/ecmascript/napi/include",
+            "../../arkcompiler/runtime_core/common_interfaces",
+            "../../arkcompiler/runtime_core",
+            "../../arkcompiler/runtime_core/libpandabase",
+            "../../arkcompiler/runtime_core/libpandabase/include",
+            "../../arkcompiler/runtime_core/libpandabase/include/libpandabase",
+            "../../arkcompiler/runtime_core/platforms",
+            "gen/arkcompiler/runtime_core/libpandabase/include",
+            "gen/arkcompiler/runtime_core/libpandabase",
+            "../../arkcompiler/runtime_core/libpandafile",
+            "../../arkcompiler/runtime_core/libziparchive",
+            "gen/arkcompiler/runtime_core/libpandafile",
+            "gen/arkcompiler/runtime_core/libpandafile/include",
+            "../../third_party/icu/icu4c/source/common",
+            "../../third_party/icu/icu4c/source/i18n",
+            "../../third_party/icu/icu4c/source",
+            "../../third_party/bounds_checking_function/include",
+            "../../arkcompiler/runtime_core/arkplatform",
+            "../../third_party/zlib",
+            "../../third_party/zlib/contrib/minizip",
+            "../../base/hiviewdfx/faultloggerd/interfaces/innerkits/faultloggerd_client/include",
+            "../../base/hiviewdfx/faultloggerd/interfaces/common",
+            "../../base/startup/init/interfaces/innerkits/include",
+            "../../base/startup/init/interfaces/innerkits/include/syspara",
+            "../../base/startup/init/interfaces/innerkits/include/token",
+            "../../base/startup/init/interfaces/innerkits/include/param",
+            "../../base/hiviewdfx/faultloggerd/common/dfxlog",
+            "../../base/hiviewdfx/faultloggerd/common/dfxutil",
+            "../../base/hiviewdfx/faultloggerd/interfaces/innerkits/unwinder/include",
+            "../../base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace_meter",
+            "../../base/hiviewdfx/hitrace/utils",
+            "../../base/hiviewdfx/hitrace/interfaces/native/innerkits/include",
+            "../../base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace",
+            "../../base/hiviewdfx/hisysevent/interfaces/native/innerkits/hisysevent/include",
+            "../../base/hiviewdfx/hiview/adapter/service/client/include",
+            "../../base/hiviewdfx/hiview/interfaces/inner_api/unified_collection",
+            "../../base/hiviewdfx/hiview/interfaces/inner_api/unified_collection/client",
+            "../../base/hiviewdfx/hiview/interfaces/inner_api/unified_collection/resource",
+            "../../base/hiviewdfx/faultloggerd/interfaces/innerkits/signal_handler/include",
+            "../../foundation/resourceschedule/qos_manager/include",
+            "../../foundation/resourceschedule/qos_manager/interfaces/inner_api",
+            "../../foundation/resourceschedule/qos_manager/services/include",
+            "../../foundation/resourceschedule/qos_manager/common/include"
+          ],
+          "command_sha256": "c6d7959215306a67152ac3c2bf1f5012ba919107e27380691c0f9c32e6a6fa88"
+        },
+        {
+          "object_output": "obj/arkcompiler/ets_runtime/ecmascript/compiler/builtins/libark_jsoptimizer_set_with_maple/builtins_typedarray_stub_builder.o",
+          "include_paths_ordered": [
+            "obj/third_party/musl/usr/include/arm-linux-ohos",
+            "override/third_party",
+            "../..",
+            "gen",
+            "../../prebuilts/ark_tools/ark_js_prebuilts/llvm_prebuilts/llvm/include",
+            "../../prebuilts/ark_tools/ark_js_prebuilts/llvm_prebuilts/build/include",
+            "../../arkcompiler/ets_runtime/ecmascript/compiler/codegen/maple/maple_be/include/cg",
+            "../../arkcompiler/ets_runtime/ecmascript/compiler/codegen/maple/maple_be/include/litecg",
+            "../../arkcompiler/ets_runtime/ecmascript/compiler/codegen/maple/maple_be/cg/aarch64",
+            "../../arkcompiler/ets_runtime/ecmascript/compiler/codegen/maple/maple_be/include/ad",
+            "../../arkcompiler/ets_runtime/ecmascript/compiler/codegen/maple/maple_be/include/ad/target",
+            "../../arkcompiler/ets_runtime/ecmascript/compiler/codegen/maple/maple_be/include/be/aarch64",
+            "../../arkcompiler/ets_runtime/ecmascript/compiler/codegen/maple/maple_be/include/be",
+            "../../arkcompiler/ets_runtime/ecmascript/compiler/codegen/maple/maple_driver/include",
+            "../../arkcompiler/ets_runtime/ecmascript/compiler/codegen/maple/maple_driver/defs",
+            "../../arkcompiler/ets_runtime/ecmascript/compiler/codegen/maple/maple_driver/defs/default",
+            "../../arkcompiler/ets_runtime/ecmascript/compiler/codegen/maple/maple_util/include",
+            "../../arkcompiler/ets_runtime/ecmascript/compiler/codegen/maple/mpl2mpl/include",
+            "../../arkcompiler/ets_runtime/ecmascript/compiler/codegen/maple/mempool/include",
+            "../../arkcompiler/ets_runtime/ecmascript/compiler/codegen/maple/maple_phase/include",
+            "../../arkcompiler/ets_runtime/ecmascript/compiler/codegen/maple/maple_ir/include",
+            "../../arkcompiler/ets_runtime/ecmascript/compiler/codegen/maple/maple_me/include",
+            "../../base/hiviewdfx/hilog/interfaces/native/innerkits/include",
+            "../../arkcompiler/ets_runtime",
+            "../../arkcompiler/ets_runtime/ecmascript/napi/include",
+            "../../arkcompiler/runtime_core/common_interfaces",
+            "../../arkcompiler/runtime_core",
+            "../../arkcompiler/runtime_core/libpandabase",
+            "../../arkcompiler/runtime_core/libpandabase/include",
+            "../../arkcompiler/runtime_core/libpandabase/include/libpandabase",
+            "../../arkcompiler/runtime_core/platforms",
+            "gen/arkcompiler/runtime_core/libpandabase/include",
+            "gen/arkcompiler/runtime_core/libpandabase",
+            "../../arkcompiler/runtime_core/libpandafile",
+            "../../arkcompiler/runtime_core/libziparchive",
+            "gen/arkcompiler/runtime_core/libpandafile",
+            "gen/arkcompiler/runtime_core/libpandafile/include",
+            "../../third_party/icu/icu4c/source/common",
+            "../../third_party/icu/icu4c/source/i18n",
+            "../../third_party/icu/icu4c/source",
+            "../../third_party/bounds_checking_function/include",
+            "../../arkcompiler/runtime_core/arkplatform",
+            "../../third_party/zlib",
+            "../../third_party/zlib/contrib/minizip",
+            "../../base/hiviewdfx/faultloggerd/interfaces/innerkits/faultloggerd_client/include",
+            "../../base/hiviewdfx/faultloggerd/interfaces/common",
+            "../../base/startup/init/interfaces/innerkits/include",
+            "../../base/startup/init/interfaces/innerkits/include/syspara",
+            "../../base/startup/init/interfaces/innerkits/include/token",
+            "../../base/startup/init/interfaces/innerkits/include/param",
+            "../../base/hiviewdfx/faultloggerd/common/dfxlog",
+            "../../base/hiviewdfx/faultloggerd/common/dfxutil",
+            "../../base/hiviewdfx/faultloggerd/interfaces/innerkits/unwinder/include",
+            "../../base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace_meter",
+            "../../base/hiviewdfx/hitrace/utils",
+            "../../base/hiviewdfx/hitrace/interfaces/native/innerkits/include",
+            "../../base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace",
+            "../../base/hiviewdfx/hisysevent/interfaces/native/innerkits/hisysevent/include",
+            "../../base/hiviewdfx/hiview/adapter/service/client/include",
+            "../../base/hiviewdfx/hiview/interfaces/inner_api/unified_collection",
+            "../../base/hiviewdfx/hiview/interfaces/inner_api/unified_collection/client",
+            "../../base/hiviewdfx/hiview/interfaces/inner_api/unified_collection/resource",
+            "../../base/hiviewdfx/faultloggerd/interfaces/innerkits/signal_handler/include",
+            "../../foundation/resourceschedule/qos_manager/include",
+            "../../foundation/resourceschedule/qos_manager/interfaces/inner_api",
+            "../../foundation/resourceschedule/qos_manager/services/include",
+            "../../foundation/resourceschedule/qos_manager/common/include"
+          ],
+          "command_sha256": "7471f97a0bfab59e0e350be060391af4f17511aa4c019a861822f5154750e82a"
+        }
+      ]
     },
     "tools": {
       "python": "3.12.3",
@@ -50,14 +432,19 @@
       "tree-sitter": "0.26.0",
       "tree-sitter-c": "0.24.2",
       "tree-sitter-cpp": "0.23.4",
-      "preprocessor": "unknown",
-      "compiler": "unknown",
-      "tool_binary_hashes": "unavailable"
+      "preprocessor": "OHOS Clang 15.0.4 preprocessor; both selected ARM actions completed preprocess, dependency scan, and macro dump",
+      "compiler": "OHOS Clang 15.0.4 (02fbe8daf56b9704358bc2e7bea9da79938a7abf)",
+      "tool_binary_hashes": {
+        "python3.12": "02e619087c33f723f4bd8e7f7443f35d87d4383d9592de04b66a3c05a5d4f316",
+        "gn": "aa76f11ec5ab820695fdd0973d644d205305b1a23fabcc43e230871f502230a7",
+        "ninja": "2c867ca18771ff64d2a9f72f16316760651c98b1fbce692b0542f25de49b112b",
+        "clang++": "2b28a71dbd71e1bc7f2b9b793f4add7499bee5d533e2d581df2bd0f716e7011c"
+      }
     },
     "parser_mode": "light-ast; no C/C++ preprocessing; syntax parse is partial",
     "c1_profile_tool": "CyberSecurity-Innovation-Audit-c3-review/research/experiments/ark_runtime/c3_20261018/build_profile.py",
-    "c1_compile_database_status": "missing; profile digest null",
-    "c1_dependency_policy": "exact compile command required; preserve argv and target/sysroot/macros/includes; dependency-only compiler preprocessing; no GN/Ninja/build scripts executed",
+    "c1_compile_database_status": "present: 234245 entries; target source has five actions including two ARM OHOS actions; full database is byte-identical across two GN runs",
+    "c1_dependency_policy": "Exact GN compile commands, tool hashes, active dependency files, preprocessed outputs, macro dumps, and object outputs are captured for both selected ARM actions. Supplemental direct Clang compilation succeeded outside the original container/read-only source boundary; no Ninja target object build or product image build was run.",
     "c2_semantic_review": "CyberSecurity-Innovation-Audit-c3-review/research/experiments/ark_runtime/c3_20261018/dependency-review-20261018.md; 18 changed dependencies remain unknown/blocked",
     "c3_replay_config": "CyberSecurity-Innovation-Audit-c3-review/research/experiments/ark_runtime/c3_20261018/dependency-gated-run-20261018.json; exact snapshot and light-ast; blocked dependency gate",
     "c1_build_profile_schema": "ark-runtime-build-profile-v1",
@@ -65,7 +452,8 @@
     "build_system_evidence_paths": [
       "openharmony/arkcompiler/ets_runtime/BUILD.gn",
       "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/BUILD.gn"
-    ]
+    ],
+    "c1_build_profile_digest": "e86461191c065e3e140afb734c9d8c27818851ae51651f9ba004231fa7d52063"
   },
   "serialization": {
     "digest_algorithm": "sha256",
@@ -77,17 +465,78 @@
   },
   "inputs": [
     {
+      "id": "board-hihope-rk3568-build-gn",
+      "kind": "product_build_configuration",
+      "workspace_path": "openharmony/device/board/hihope/rk3568/BUILD.gn",
+      "bytes": 1389,
+      "content_sha256": "83c7881c7bad49ee2f962ae8b58141c87bc01ae760b6772ede7064968765c39e",
+      "source": {
+        "kind": "git_blob",
+        "repository": "device_board_hihope",
+        "commit": "5d368fb765920c2b1cad41eb86164563461a7074",
+        "tree": "992544086dffa1a73ea444f7a22eeed25b149107",
+        "git_blob_oid": "748520a75b2b185a3d83ab2d995cd14433cae2bc",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
+      }
+    },
+    {
+      "id": "board-hihope-rk3568-config-gni",
+      "kind": "product_build_configuration",
+      "workspace_path": "openharmony/device/board/hihope/rk3568/config.gni",
+      "bytes": 812,
+      "content_sha256": "ca368f4a9db0302b4cd6c656c30e0c196070591251ac8777079861c0fd7d45b4",
+      "source": {
+        "kind": "git_blob",
+        "repository": "device_board_hihope",
+        "commit": "5d368fb765920c2b1cad41eb86164563461a7074",
+        "tree": "992544086dffa1a73ea444f7a22eeed25b149107",
+        "git_blob_oid": "12776e4d60dea146dd31c91ca93f84b3e41f6920",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
+      }
+    },
+    {
+      "id": "board-hihope-rk3568-device-gni",
+      "kind": "product_build_configuration",
+      "workspace_path": "openharmony/device/board/hihope/rk3568/device.gni",
+      "bytes": 1340,
+      "content_sha256": "19a5a8c0a56ab973e59d959e6c7a149fd674019d04c59c8acd440b253fb41840",
+      "source": {
+        "kind": "git_blob",
+        "repository": "device_board_hihope",
+        "commit": "5d368fb765920c2b1cad41eb86164563461a7074",
+        "tree": "992544086dffa1a73ea444f7a22eeed25b149107",
+        "git_blob_oid": "60d5f0b22c3ff6a1447aeef583ceb5c141e8d43b",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
+      }
+    },
+    {
+      "id": "board-hihope-rk3568-ohos-build",
+      "kind": "product_build_configuration",
+      "workspace_path": "openharmony/device/board/hihope/rk3568/ohos.build",
+      "bytes": 690,
+      "content_sha256": "2723fd9d5d4497c99a0fbcaa38c3fa5bf5981024ee1549871cd0392755386c58",
+      "source": {
+        "kind": "git_blob",
+        "repository": "device_board_hihope",
+        "commit": "5d368fb765920c2b1cad41eb86164563461a7074",
+        "tree": "992544086dffa1a73ea444f7a22eeed25b149107",
+        "git_blob_oid": "9d1dd250dfd061ad6c024e333ad58548b5fa7a5e",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
+      }
+    },
+    {
       "id": "build-gn-compiler",
       "kind": "build_system_configuration",
       "workspace_path": "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/BUILD.gn",
       "bytes": 23777,
       "content_sha256": "34f23416b2983f5635c00f881b444c4b15975e7ff8d9657b03ae65847ada103a",
       "source": {
-        "kind": "workspace_source_candidate",
-        "uri": "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/BUILD.gn",
-        "verification": "local_checkout_bytes_only",
-        "expected_sha256_from_profile": "34f23416b2983f5635c00f881b444c4b15975e7ff8d9657b03ae65847ada103a",
-        "profile_record": "c1-profile-spec"
+        "kind": "git_blob",
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "git_blob_oid": "e6f28ab0562deea4a0ece18851e1ea927b806c1d",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
       }
     },
     {
@@ -97,11 +546,843 @@
       "bytes": 82005,
       "content_sha256": "8e5f0d4d829578200b75175ea81e8ef2c8370fe4c331ab6a3b255cad95988a89",
       "source": {
-        "kind": "workspace_source_candidate",
-        "uri": "openharmony/arkcompiler/ets_runtime/BUILD.gn",
-        "verification": "local_checkout_bytes_only",
-        "expected_sha256_from_profile": "8e5f0d4d829578200b75175ea81e8ef2c8370fe4c331ab6a3b255cad95988a89",
-        "profile_record": "c1-profile-spec"
+        "kind": "git_blob",
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "git_blob_oid": "b3c8effde42ae810e825437b7cfcaabf1a3fdbdf",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
+      }
+    },
+    {
+      "id": "build-gn-runtime-config",
+      "kind": "build_system_configuration",
+      "workspace_path": "openharmony/arkcompiler/ets_runtime/js_runtime_config.gni",
+      "bytes": 22839,
+      "content_sha256": "c088d81878bd6b3c38244e8e1ee9ab90252f64029d85e68a6c23163725c3bbb1",
+      "source": {
+        "kind": "git_blob",
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "git_blob_oid": "c8d1de004c93829a5236f497b911d268647a8761",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
+      }
+    },
+    {
+      "id": "build-hb-args",
+      "kind": "build_toolchain_configuration",
+      "workspace_path": "openharmony/build/hb/resources/args/default/buildargs.json",
+      "bytes": 20822,
+      "content_sha256": "507e08c88ed8be0e184b85e9b810fec29c68fe92843429f488dfedfa66bdfbeb",
+      "source": {
+        "kind": "git_blob",
+        "repository": "openharmony/build",
+        "commit": "6b6d6533967db07e8e7d40d140fc63d0faabacbd",
+        "tree": "d58b57c4bc6273a51e182a1014eea26ae60df028",
+        "git_blob_oid": "6b7c4f35f829e37a9124fdb094a8eff08d6a7975",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
+      }
+    },
+    {
+      "id": "build-hb-build-args-resolver",
+      "kind": "build_toolchain_configuration",
+      "workspace_path": "openharmony/build/hb/resolver/build_args_resolver.py",
+      "bytes": 52144,
+      "content_sha256": "d05a900f31b9e497f26376eff72a0772731457836b70e367d6349049204d0b74",
+      "source": {
+        "kind": "git_blob",
+        "repository": "openharmony/build",
+        "commit": "6b6d6533967db07e8e7d40d140fc63d0faabacbd",
+        "tree": "d58b57c4bc6273a51e182a1014eea26ae60df028",
+        "git_blob_oid": "2f6e2b67dbf1f9c958f7fd998a8172ad49448a20",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
+      }
+    },
+    {
+      "id": "build-hb-gn-service",
+      "kind": "build_toolchain_configuration",
+      "workspace_path": "openharmony/build/hb/services/gn.py",
+      "bytes": 12508,
+      "content_sha256": "dd7bc60e0d3ae570db94a1aef4fa3d6ad315cf8b03f3075d87ea1376a3c3e1b2",
+      "source": {
+        "kind": "git_blob",
+        "repository": "openharmony/build",
+        "commit": "6b6d6533967db07e8e7d40d140fc63d0faabacbd",
+        "tree": "d58b57c4bc6273a51e182a1014eea26ae60df028",
+        "git_blob_oid": "6b75c931bd47fc8b1b4dccc6c0775e2e9c1b7309",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
+      }
+    },
+    {
+      "id": "build-hb-main",
+      "kind": "build_toolchain_configuration",
+      "workspace_path": "openharmony/build/hb/main.py",
+      "bytes": 14975,
+      "content_sha256": "e8b897e12345ba6130d5c454e076c7e266eb7bcfac740245cf0dd1a562bca326",
+      "source": {
+        "kind": "git_blob",
+        "repository": "openharmony/build",
+        "commit": "6b6d6533967db07e8e7d40d140fc63d0faabacbd",
+        "tree": "d58b57c4bc6273a51e182a1014eea26ae60df028",
+        "git_blob_oid": "3bb0ee880bb2d4386310d012489b02f1f0f5122e",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
+      }
+    },
+    {
+      "id": "build-prebuilts-config",
+      "kind": "build_toolchain_configuration",
+      "workspace_path": "openharmony/build/prebuilts_config.json",
+      "bytes": 52046,
+      "content_sha256": "9cd6a95721895aff6eb44a8c314d36e4a79543ddbf9865e25da602c8b4d4f850",
+      "source": {
+        "kind": "git_blob",
+        "repository": "openharmony/build",
+        "commit": "6b6d6533967db07e8e7d40d140fc63d0faabacbd",
+        "tree": "d58b57c4bc6273a51e182a1014eea26ae60df028",
+        "git_blob_oid": "4cce563b1040b76de6b01e9670156b851ee74bc2",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
+      }
+    },
+    {
+      "id": "c1-cow-execution-boundary",
+      "kind": "C1 observed read-only-root namespace and writable GN/evidence mount boundary",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt7/execution_boundary.txt",
+      "bytes": 2144,
+      "content_sha256": "b3638ea1dbd53a525706649c78b90ae65fd7034770240700224fe9c810ef6afc",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt7/execution_boundary.txt",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-cow-ninja-build-observation",
+      "kind": "C1 exact-profile Ninja object builds under read-only root and source COW",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/observation.v1.json",
+      "bytes": 10066,
+      "content_sha256": "83b0933452642e352f60d0bb8acd8917db92b464482a3161ca95585bd810e31a",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/observation.v1.json",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-cow-prerequisite-boundary",
+      "kind": "C1 attempt 6 user/mount/network namespace and COW mount boundary",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt6/execution_boundary.txt",
+      "bytes": 2109,
+      "content_sha256": "20487556f7e025e9e31ccb5d6499cc3ca894a3b0b6124a61e180e8046d3bfe5a",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt6/execution_boundary.txt",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-cow-prerequisite-runner",
+      "kind": "C1 incremental prerequisite-closure COW Ninja runner, preceding root-read-only replay",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/run_ninja_targets_cow_fullenv_20261019.sh",
+      "bytes": 5023,
+      "content_sha256": "587e2de5196a93f3aa0ec9b8bad98d3b3ce062c10adb50f39508afa652e60731",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/run_ninja_targets_cow_fullenv_20261019.sh",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-cow-prerequisite-target1-log",
+      "kind": "C1 attempt 6 completed ARM target 1 prerequisite closure and target build",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt6/target-1.log",
+      "bytes": 124042,
+      "content_sha256": "254adb748ad9454da8499a33d5c99f9db4105df85a6a46e432f0901f0b9659ac",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt6/target-1.log",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-cow-prerequisite-target1-status",
+      "kind": "C1 attempt 6 target 1 return code and target identity",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt6/target-1.status",
+      "bytes": 234,
+      "content_sha256": "6898e68cb222ce0209a33f6cecc94af97954f99ecb706e079c981d65c0fe4035",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt6/target-1.status",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-cow-prerequisite-target2-log",
+      "kind": "C1 attempt 6 completed ARM target 2 prerequisite closure and target build",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt6/target-2.log",
+      "bytes": 105603,
+      "content_sha256": "5f9de7f9695333e165a7ac0cdf809ca086c5598ac79491b95049582c1fbdab25",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt6/target-2.log",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-cow-prerequisite-target2-status",
+      "kind": "C1 attempt 6 target 2 return code and target identity",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt6/target-2.status",
+      "bytes": 245,
+      "content_sha256": "26a65061d663cd43bcf37fcdb6cc39991628c90fd7629bc140c4bedfc3c29d85",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt6/target-2.status",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-cow-prerequisite-upper",
+      "kind": "C1 attempt 6 source-overlay upper-layer inventory",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt6/source_upper.v1.json",
+      "bytes": 6786,
+      "content_sha256": "a1db7f6167f090bdf1f8aa46bdfccaffb524ad8845d0a544f709c243b1140181",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt6/source_upper.v1.json",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-cow-root-readonly-runner",
+      "kind": "C1 exact Ninja target runner with read-only root/source lower and COW source overlay",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/run_ninja_targets_cow_ro_root_20261019.sh",
+      "bytes": 5680,
+      "content_sha256": "2cf9ea59675052574fdd21986f2df6e86577e649f9c6402607b452cba2c5906e",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/run_ninja_targets_cow_ro_root_20261019.sh",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-cow-source-upper-manifest",
+      "kind": "C1 source COW upper-layer content inventory and lower comparisons",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/source_upper.v1.json",
+      "bytes": 75,
+      "content_sha256": "c4aef554074579715c8134b0bdd79a1cd4bff3d95e20bb1a6c4bf5b89dda4a1b",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/source_upper.v1.json",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-cow-target-build-verifier",
+      "kind": "C1 read-only verifier for root-readonly Ninja object build evidence",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/verify_ninja_cow_target_build_20261019.py",
+      "bytes": 3707,
+      "content_sha256": "d788824fb44798ffc9b7e5dbb7cb2c2a168862fdaecd733519d87196566ba1f3",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/verify_ninja_cow_target_build_20261019.py",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-cow-target-capture-script",
+      "kind": "C1 reproducible capture of target logs, objects, profile commands, and COW changes",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/capture_ninja_cow_target_build_20261019.py",
+      "bytes": 10002,
+      "content_sha256": "c124a5644487794e70520ab269d6a93c37da5db921507479e45a3e99b942499f",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/capture_ninja_cow_target_build_20261019.py",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-cow-target1-command",
+      "kind": "C1 target 1 Ninja graph command matched to exact profile argv",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt7/commands/target-1.command.txt",
+      "bytes": 7238,
+      "content_sha256": "1dd05bf3fb39a3fab0c813df2eb0f3b8ac3cdeba64162c9901317755a62a6f44",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt7/commands/target-1.command.txt",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-cow-target1-log",
+      "kind": "C1 target 1 successful Ninja log under read-only root",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt7/target-1.log",
+      "bytes": 104988,
+      "content_sha256": "1a4343ac2ca9d4f2b4b9e8abe1511921624adc301217bd3e592fe2792cbe46c2",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt7/target-1.log",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-cow-target1-object",
+      "kind": "C1 target 1 Ninja-built ARM object output",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt7/objects/target-1.o",
+      "bytes": 5555996,
+      "content_sha256": "865a1639c3f73f24f7235400228d0bd341930aa903231cd2c4ff21de25f220d5",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt7/objects/target-1.o",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-cow-target1-status",
+      "kind": "C1 target 1 Ninja return code and target identity",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt7/target-1.status",
+      "bytes": 234,
+      "content_sha256": "99471d64af5a69682ec806e3b2b1710039fd682b79e53f0b512d9c3a6761832a",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt7/target-1.status",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-cow-target2-command",
+      "kind": "C1 target 2 Ninja graph command matched to exact profile argv",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt7/commands/target-2.command.txt",
+      "bytes": 8445,
+      "content_sha256": "370fc2440a9ab67d3d3217d96f17ef952f2322b1e7b59267a9b904f2c480f10b",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt7/commands/target-2.command.txt",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-cow-target2-log",
+      "kind": "C1 target 2 successful Ninja log under read-only root",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt7/target-2.log",
+      "bytes": 104999,
+      "content_sha256": "c43b3b1c6d6278f05ba822142e0820393870d0186219333a437e09a13b0bb8f9",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt7/target-2.log",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-cow-target2-object",
+      "kind": "C1 target 2 Ninja-built ARM object output",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt7/objects/target-2.o",
+      "bytes": 5652940,
+      "content_sha256": "2392ee26b87366edcc93fbe695eb85459ebc4d425d4c6e38ba46fd51ec2d5b8a",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt7/objects/target-2.o",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-cow-target2-status",
+      "kind": "C1 target 2 Ninja return code and target identity",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt7/target-2.status",
+      "bytes": 245,
+      "content_sha256": "6afe44a9ed80d605405b7010b7eaa69f5924cb282cb0c60ee1b79e05aaec5090",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt7/target-2.status",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-critical-repo-status",
+      "kind": "critical_repository_worktree_status_log",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/repo_status_critical_20261019.txt",
+      "bytes": 312,
+      "content_sha256": "9f84db351a624576164e2d4b8bdbda38344929b1e1e1c920169927a5bea7f805",
+      "source": {
+        "kind": "local_evidence",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-direct-object-compile-driver",
+      "kind": "C1 direct exact-profile Clang compile driver; supplemental unisolated execution",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/run_profile_object_compile_20261019.py",
+      "bytes": 7510,
+      "content_sha256": "496445779e9467be98d8f1b894237b471e0ab2e89c0afbd58bae65c691f17a4a",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/run_profile_object_compile_20261019.py",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-full-repo-status-partial",
+      "kind": "partial_full_manifest_worktree_status_snapshot",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/repo_status_partial_20261019.txt",
+      "bytes": 9322,
+      "content_sha256": "5b5adfe66111a489b42247012278c3b4717ebd0dbac4b697dd234cb46f2db2a4",
+      "source": {
+        "kind": "local_evidence",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-generated-31b092e7c9dd56b6",
+      "kind": "C1 GN-generated header output",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/generated/arkcompiler/runtime_core/libpandabase/include/logger_enum_gen.h",
+      "bytes": 1400,
+      "content_sha256": "122de5b838fe8bd3fdd9a6c12d77a9acbf3a0476d96e47f210278afb7b7c939b",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/generated/arkcompiler/runtime_core/libpandabase/include/logger_enum_gen.h",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-generated-b133966b5b3f7bde",
+      "kind": "C1 GN-generated header output",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/generated/arkcompiler/runtime_core/libpandafile/type.h",
+      "bytes": 12607,
+      "content_sha256": "a71454f8b90d3654487e145c100ada5795bb64f7216715bd0ccc34b0067ccb74",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/generated/arkcompiler/runtime_core/libpandafile/type.h",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-generated-b3781c35b36836d3",
+      "kind": "C1 GN-generated header output",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/generated/arkcompiler/runtime_core/libpandafile/include/source_lang_enum.h",
+      "bytes": 2321,
+      "content_sha256": "77f702686b210d18fadaa5a40bce67cf2e342455983a97dde57f706f5f562bec",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/generated/arkcompiler/runtime_core/libpandafile/include/source_lang_enum.h",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-generated-c0edef1649fe75fa",
+      "kind": "C1 GN-generated header output",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/generated/uapi_files.stamp",
+      "bytes": 88892,
+      "content_sha256": "704dff95dab818a2fca346906e54c6a3d5ba080e6b0709b52a9e2f6ab36d3ef0",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/generated/uapi_files.stamp",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-generated-dbbae24453c845a2",
+      "kind": "C1 GN-generated header output",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/generated/arkcompiler/runtime_core/libpandafile/include/file_format_version.h",
+      "bytes": 3583,
+      "content_sha256": "b5c553cf52753e63d06c12cb2176fb69200bfa49868273f5e78c4a411e9ac371",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/generated/arkcompiler/runtime_core/libpandafile/include/file_format_version.h",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-generated-e7525ec3d72efebd",
+      "kind": "C1 GN-generated header output",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/generated/arkcompiler/runtime_core/libpandafile/include/bytecode_instruction-inl_gen.h",
+      "bytes": 577835,
+      "content_sha256": "c2163a60901c6579427d29f8df6d98cf0cb4f5ff1af80673f9994b24436fc4be",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/generated/arkcompiler/runtime_core/libpandafile/include/bytecode_instruction-inl_gen.h",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-generated-ee5a84bdf3da0a27",
+      "kind": "C1 GN-generated header output",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/generated/arm-linux-ohos-features.h",
+      "bytes": 865,
+      "content_sha256": "6d228e77b88b69f70f9157548b6ec673ffc6b998ce6035fbbee0caddb8442903",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/generated/arm-linux-ohos-features.h",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-generated-fa8220ac72f6b5a2",
+      "kind": "C1 GN-generated header output",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/generated/arkcompiler/runtime_core/libpandafile/include/bytecode_instruction_enum_gen.h",
+      "bytes": 15410,
+      "content_sha256": "9926ab909a82533f7a7dd3406e414c3975af34a6f81d2f0ae092984a728ad395",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/generated/arkcompiler/runtime_core/libpandafile/include/bytecode_instruction_enum_gen.h",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-hb-probe-log",
+      "kind": "isolated_product_build_probe_log",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/hb_probe_20261018.log",
+      "bytes": 1647,
+      "content_sha256": "01d69ec000492bba2605c51de522ed2152d02ebc4e8cee17c8b327571ddd85f7",
+      "source": {
+        "kind": "local_evidence",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-host-ruby-runtime-profile",
+      "kind": "C1 hash-pinned Ruby 3.2.3 host generator runtime",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/ruby_runtime.v1.json",
+      "bytes": 913,
+      "content_sha256": "35b3e178eb8d9cc265594699ffd264d385e3dab0ca2a28502c19b4654b4e82e9",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/ruby_runtime.v1.json",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-isolated-ninja-boundary",
+      "kind": "C1 observed namespace and mount boundary for the failed Ninja target attempt",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_isolated_build_20261019/attempt2/execution_boundary.txt",
+      "bytes": 1144,
+      "content_sha256": "6c0d3683695884f08a3cedfd2dad42883e137b81a445a41f063136cfe034a9d2",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_isolated_build_20261019/attempt2/execution_boundary.txt",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-isolated-ninja-build-observation",
+      "kind": "C1 exact-profile Ninja target attempt in no-network namespace; blocked before target compile",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_isolated_build_20261019/observation.v1.json",
+      "bytes": 4912,
+      "content_sha256": "7cde280695003d791daace259a51e7ae77f5e5f168d98af5db3726a8f3fd4ad0",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_isolated_build_20261019/observation.v1.json",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-isolated-ninja-build-runner",
+      "kind": "C1 user/mount/network namespace runner with read-only source/toolchain and writable GN output",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/run_ninja_targets_isolated_20261019.sh",
+      "bytes": 4496,
+      "content_sha256": "16d76205bd6780bf92a96a00c757414560e09285797054db7fe76e73f3b923db",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/run_ninja_targets_isolated_20261019.sh",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-isolated-ninja-observation-capture",
+      "kind": "C1 read-only hash and result capture for the isolated Ninja attempt",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/capture_ninja_isolated_build_observation.py",
+      "bytes": 6496,
+      "content_sha256": "6173fe87990e3fa526656fd5898515aa6d147b4fb894df51c80ff5ab9ee35717",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/capture_ninja_isolated_build_observation.py",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-isolated-ninja-stamp-query",
+      "kind": "C1 Ninja query showing the transitive inputdeps stamp prerequisites",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_isolated_build_20261019/attempt2/query-stamp.log",
+      "bytes": 137389,
+      "content_sha256": "bcc15661c67c2f192ed98f1baee8d4fc14e71b897190cbaa74f9d5c77857b6ef",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_isolated_build_20261019/attempt2/query-stamp.log",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-isolated-ninja-target-query",
+      "kind": "C1 Ninja query for exact target object and order-only inputdeps stamp",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_isolated_build_20261019/attempt2/query-target-1.log",
+      "bytes": 108825,
+      "content_sha256": "4cfd392261f8ec79a9a2afd53eb4a5595eae81bf9b0334f885235b78a170cacb",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_isolated_build_20261019/attempt2/query-target-1.log",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-isolated-ninja-target1-log",
+      "kind": "C1 exact Ninja target-1 failure log, including duplicate-output warnings",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_isolated_build_20261019/attempt2/target-1.log",
+      "bytes": 106988,
+      "content_sha256": "b4648b562c214d2746d0d5744c573bba827ed2815e4361eaa657d1eb374b40b8",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_isolated_build_20261019/attempt2/target-1.log",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-isolated-ninja-target1-status",
+      "kind": "C1 exact Ninja target-1 return code and target identity",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_isolated_build_20261019/attempt2/target-1.status",
+      "bytes": 234,
+      "content_sha256": "1bc0b3d5add026ef69ff63dbea139042c5504a7de4bf146f244ca2df7c31a938",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_isolated_build_20261019/attempt2/target-1.status",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-libruby-runtime-package",
+      "kind": "C1 hash-verified Ubuntu Noble libruby runtime package",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/ruby_packages/libruby3.2_3.2.3-1ubuntu0.24.04.8_amd64.deb",
+      "bytes": 5342224,
+      "content_sha256": "77c2e98ccfba2c4a4e5edb48ca8c0eb041702e1579eabc40cf07064fd4f3033e",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/ruby_packages/libruby3.2_3.2.3-1ubuntu0.24.04.8_amd64.deb",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-materialization-report",
+      "kind": "C1 captured external manifest archive materialization report",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/materialization_manifest_20261019.json",
+      "bytes": 214726,
+      "content_sha256": "7074b7abca895b6f462efe894c3051f8bdbac3e52b2d280c5ec9b569f7cd4acc",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/materialization_manifest_20261019.json",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-nested-gitlink-origins",
+      "kind": "C1 read-only mapping of nested gitlink commits to parent .gitmodules URLs",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/nested_gitlink_origins_20261019.json",
+      "bytes": 7287,
+      "content_sha256": "38dbc1438f69abb6dd7d48dc7faeec10863e041c4f7219c7cee2b43ac67f4a7a",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/nested_gitlink_origins_20261019.json",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-nested-gitlink-origins-script",
+      "kind": "C1 reproducible nested gitlink origin inventory",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/audit_nested_gitlink_origins_20261019.py",
+      "bytes": 2761,
+      "content_sha256": "659ede9fd778bf5b7838c90f545644cd7246e48f7b49fda78bdd092f1ba1426a",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/audit_nested_gitlink_origins_20261019.py",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-ninja-graph-failure",
+      "kind": "C1 generated Ninja graph parse diagnostic",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_attempt_20261019/ninja_query.log",
+      "bytes": 141,
+      "content_sha256": "3b4217445e9a2d78a1344270e99c96071cab24435da207cd4eaeda037f9b095f",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_attempt_20261019/ninja_query.log",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-object-ark-runtime-arm-action-1",
+      "kind": "C1 supplemental direct Clang object output; execution was outside original isolation boundary",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/object_compile_supplement_20261019/ark-runtime-arm-action-1.o",
+      "bytes": 5556068,
+      "content_sha256": "87085144abb1566909828f00ead2602c7738fae3f70c7c6b4dfe354f6b5c6831",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/object_compile_supplement_20261019/ark-runtime-arm-action-1.o",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-object-ark-runtime-arm-action-2",
+      "kind": "C1 supplemental direct Clang object output; execution was outside original isolation boundary",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/object_compile_supplement_20261019/ark-runtime-arm-action-2.o",
+      "bytes": 5653008,
+      "content_sha256": "b4d24b2db363bf88b4768c3194e12bbda3ffeba8fad0671e5308495e8695a19a",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/object_compile_supplement_20261019/ark-runtime-arm-action-2.o",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-object-compile-supplement-observation",
+      "kind": "C1 direct Clang object compile observations for both selected ARM actions",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/object_compile_supplement_20261019/object_compile_observation.v1.json",
+      "bytes": 25496,
+      "content_sha256": "e83731a9d5565501539aba97b28935897fc029bcf4ef0d03220bd088c287199d",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/object_compile_supplement_20261019/object_compile_observation.v1.json",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-object-compile-supplement-readme",
+      "kind": "C1 supplemental direct object compile evidence and isolation limits",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/object_compile_supplement_20261019/README.md",
+      "bytes": 1567,
+      "content_sha256": "fe2a192e8e0d77011498abc7e7a9fc63aeee85b271811e85c4681047add0a470",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/object_compile_supplement_20261019/README.md",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-object-deps-ark-runtime-arm-action-1",
+      "kind": "C1 supplemental direct Clang dependency output",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/object_compile_supplement_20261019/ark-runtime-arm-action-1.d",
+      "bytes": 37880,
+      "content_sha256": "f9ab866b80ea57fdd3db6961126ed291879f43bdeae571bcdef07000f747ef74",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/object_compile_supplement_20261019/ark-runtime-arm-action-1.d",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-object-deps-ark-runtime-arm-action-2",
+      "kind": "C1 supplemental direct Clang dependency output",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/object_compile_supplement_20261019/ark-runtime-arm-action-2.d",
+      "bytes": 37988,
+      "content_sha256": "bbde77c6eb380446a6f099f7b6e804dd4345e46e4c2860f71ba4d73f3a031105",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/object_compile_supplement_20261019/ark-runtime-arm-action-2.d",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-object-stderr-ark-runtime-arm-action-1",
+      "kind": "C1 supplemental direct Clang stderr",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/object_compile_supplement_20261019/ark-runtime-arm-action-1.stderr",
+      "bytes": 0,
+      "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/object_compile_supplement_20261019/ark-runtime-arm-action-1.stderr",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-object-stderr-ark-runtime-arm-action-2",
+      "kind": "C1 supplemental direct Clang stderr",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/object_compile_supplement_20261019/ark-runtime-arm-action-2.stderr",
+      "bytes": 0,
+      "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/object_compile_supplement_20261019/ark-runtime-arm-action-2.stderr",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-preprocessor-observation",
+      "kind": "C1 exact compile action preprocessing attempt",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_attempt_20261019/preprocessor_observation.json",
+      "bytes": 68222,
+      "content_sha256": "965648e937a5936376491daed04350338e68c6b597844f790e85a606c3ff55d0",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_attempt_20261019/preprocessor_observation.json",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-preprocessor-success-manifest",
+      "kind": "C1 successful preprocessing evidence manifest",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/evidence_manifest.v1.json",
+      "bytes": 5606,
+      "content_sha256": "1031092f3b712c2ecdffbc3337b28e80e905ecc67292e7823516dea5535d47cf",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/evidence_manifest.v1.json",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-preprocessor-success-observation",
+      "kind": "C1 successful exact ARM action preprocessing observation",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/results/preprocessor_observation.json",
+      "bytes": 69360,
+      "content_sha256": "2eb080ec6ae72564647b2f77ba596702525e8db9d9595e51d472db84120355ac",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/results/preprocessor_observation.json",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-preprocessor-success-readme",
+      "kind": "C1 successful exact-profile preprocessing handoff",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/README.md",
+      "bytes": 6595,
+      "content_sha256": "e8f3272705d873c05bff210f61d5819255dc1cfbd9662d5ef537a0962e62ac27",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/README.md",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-product-args-gn",
+      "kind": "C1 exact product evaluated GN arguments",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/product_args_20261019.args.gn",
+      "bytes": 4659,
+      "content_sha256": "0d8ec13db04c5eef0561f4862bdd0bf2cb90dd639dfa3f2e1f5ca54a1d9c3bae",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/product_args_20261019.args.gn",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-product-profile",
+      "kind": "C1 exact-manifest product GN profile evidence",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/product_profile_20261019.v1.json",
+      "bytes": 245574,
+      "content_sha256": "44f40f1c4c8bacc05869f40d1cb42846c0f058d0514ba8397a0aaafd7df8591d",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/product_profile_20261019.v1.json",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-product-replay-log",
+      "kind": "C1 repeated product GN generation transcript",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/hb_probe_20261019_replay2.log",
+      "bytes": 99936,
+      "content_sha256": "bc59e17c2fdf33c4364d19816577abc119b570afe941f6e1c5fc0f35560267ce",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/hb_probe_20261019_replay2.log",
+        "verification": "sha256_bound_local_evidence"
       }
     },
     {
@@ -129,6 +1410,53 @@
       }
     },
     {
+      "id": "c1-resolved-repo-manifest",
+      "kind": "resolved_openharmony_repo_manifest",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/source_manifest_resolved_20261019.xml",
+      "bytes": 117629,
+      "content_sha256": "52f528dada321a140a29be2d55ef9053fda818cbdca93758425f1a25f6286d55",
+      "source": {
+        "kind": "local_evidence",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-ruby-runtime-package",
+      "kind": "C1 hash-verified Ubuntu Noble Ruby runtime package",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/ruby_packages/ruby3.2_3.2.3-1ubuntu0.24.04.8_amd64.deb",
+      "bytes": 50654,
+      "content_sha256": "6f11e297b3508e8db95a5a047126a16ccf1358292049a27e3dc72b88180e779a",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/ruby_packages/ruby3.2_3.2.3-1ubuntu0.24.04.8_amd64.deb",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-snapshot-materialization-audit",
+      "kind": "C1 audit of manifest project archives, nested gitlink content, and exact linkfile sources",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/snapshot_gitlink_linkfile_audit_20261019.json",
+      "bytes": 25292,
+      "content_sha256": "7cbc375723b585256c157c3935e34e2613d5294b6451357340f1e563a082960b",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/snapshot_gitlink_linkfile_audit_20261019.json",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-snapshot-materialization-audit-script",
+      "kind": "C1 reproducible exact gitlink directory and manifest linkfile source audit",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/audit_snapshot_gitlink_linkfile_20261019.py",
+      "bytes": 6092,
+      "content_sha256": "52282ca005beaf70d7c27816aa714335d176f3cbf4b959525c797801253a421b",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/audit_snapshot_gitlink_linkfile_20261019.py",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
       "id": "c1-source-evidence",
       "kind": "C1 source/environment identity evidence",
       "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/source_evidence.json",
@@ -137,6 +1465,270 @@
       "source": {
         "kind": "workspace_evidence",
         "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/source_evidence.json",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-success-deps-ark-runtime-arm-action-1",
+      "kind": "C1 compiler dependency scan output",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/results/ark-runtime-arm-action-1.d",
+      "bytes": 113409,
+      "content_sha256": "2e297ea17442dfe27f59179a36670cf1d14d746ebe10da9ef966116ad70438c0",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/results/ark-runtime-arm-action-1.d",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-success-deps-ark-runtime-arm-action-2",
+      "kind": "C1 compiler dependency scan output",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/results/ark-runtime-arm-action-2.d",
+      "bytes": 113608,
+      "content_sha256": "eaa4aecd560560ff053990e9168b017339be364110fd23a537dc2194d27778b2",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/results/ark-runtime-arm-action-2.d",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-success-macros-ark-runtime-arm-action-1",
+      "kind": "C1 compiler-expanded macro output",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/results/ark-runtime-arm-action-1.macros",
+      "bytes": 653566,
+      "content_sha256": "8324be27ad6b466787312ca034c9a32e54b2b4beb3410bd132cb7ac6045befba",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/results/ark-runtime-arm-action-1.macros",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-success-macros-ark-runtime-arm-action-2",
+      "kind": "C1 compiler-expanded macro output",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/results/ark-runtime-arm-action-2.macros",
+      "bytes": 653648,
+      "content_sha256": "3ec49a353a85e9295a626b698ceb2831dc9450750de27b29a47a0b2b905ac350",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/results/ark-runtime-arm-action-2.macros",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-success-preprocessed-ark-runtime-arm-action-1",
+      "kind": "C1 preprocessed translation unit",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/results/ark-runtime-arm-action-1.ii",
+      "bytes": 11684931,
+      "content_sha256": "dab12661579ac32a102c7e121f14359c008f0ff403a2b17b82b99a03ccf9c299",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/results/ark-runtime-arm-action-1.ii",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-success-preprocessed-ark-runtime-arm-action-2",
+      "kind": "C1 preprocessed translation unit",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/results/ark-runtime-arm-action-2.ii",
+      "bytes": 11684891,
+      "content_sha256": "e82309686e0a056e38e46b24d37645e84fb0bee9cd44c01d59de9b738671123e",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/results/ark-runtime-arm-action-2.ii",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c2-all-old-ark-pin-audit",
+      "kind": "C2 full advertised manifest history search for every old Ark commit in the dependency matrix",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c2_drift_triage_20261018/all_old_ark_manifest_pins_20261019.json",
+      "bytes": 2200,
+      "content_sha256": "92cb970bfca296919d46f58e0f98f173aa1b4b113a03f843b9d7870cac42fbca",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c2_drift_triage_20261018/all_old_ark_manifest_pins_20261019.json",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c2-all-old-ark-pin-audit-script",
+      "kind": "C2 reproducible full manifest history search for all old Ark commits",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c2_drift_triage_20261018/audit_all_old_ark_manifest_pins_20261019.py",
+      "bytes": 4319,
+      "content_sha256": "721514fef4861fde2ce252078ef4bbf7528ba933274f613df29c2f49d381027b",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c2_drift_triage_20261018/audit_all_old_ark_manifest_pins_20261019.py",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c2-evidence-verifier",
+      "kind": "C2 object identity, profile context, and action census verifier",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c2_drift_triage_20261018/verify_c2_evidence.py",
+      "bytes": 29569,
+      "content_sha256": "fdb39466258c248cee810f0df40dff51fc1f01892ad51048b5b88f89b3fe69ad",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c2_drift_triage_20261018/verify_c2_evidence.py",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c2-full-manifest-history-audit",
+      "kind": "C2 all advertised GitCode manifest refs and reachable history old Ark pin audit",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c2_drift_triage_20261018/full_manifest_history_audit_20261019.json",
+      "bytes": 2169,
+      "content_sha256": "21048c7b337aabcc6724688d89e3460650ff0bcda04760dd15fb4262daf70cdf",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c2_drift_triage_20261018/full_manifest_history_audit_20261019.json",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c2-full-manifest-history-audit-script",
+      "kind": "C2 reproducible complete advertised-ref history audit",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c2_drift_triage_20261018/audit_full_manifest_history.py",
+      "bytes": 5822,
+      "content_sha256": "fd54dc50dbbe7326190fd593111458b0e7c011f032d9b716aa64f0210d9beb60",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c2_drift_triage_20261018/audit_full_manifest_history.py",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c2-full-manifest-support-ark",
+      "kind": "C2 full manifest history audit supporting capture: manifest_old_ark_pin_history_matches_20261019.txt",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c2_drift_triage_20261018/manifest_old_ark_pin_history_matches_20261019.txt",
+      "bytes": 0,
+      "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c2_drift_triage_20261018/manifest_old_ark_pin_history_matches_20261019.txt",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c2-full-manifest-support-fsck",
+      "kind": "C2 full manifest history audit supporting capture: manifest_mirror_fsck_20261019.log",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c2_drift_triage_20261018/manifest_mirror_fsck_20261019.log",
+      "bytes": 0,
+      "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c2_drift_triage_20261018/manifest_mirror_fsck_20261019.log",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c2-full-manifest-support-graph",
+      "kind": "C2 full manifest history audit supporting capture: manifest_commit_graph_full_20261019.txt",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c2_drift_triage_20261018/manifest_commit_graph_full_20261019.txt",
+      "bytes": 1039186,
+      "content_sha256": "ff7588c710cfcb838e1b1495e7733b41c28c0274cde6a8d2d3557cd732b07e9b",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c2_drift_triage_20261018/manifest_commit_graph_full_20261019.txt",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c2-full-manifest-support-refs",
+      "kind": "C2 full manifest history audit supporting capture: manifest_local_refs_full_20261019.txt",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c2_drift_triage_20261018/manifest_local_refs_full_20261019.txt",
+      "bytes": 814865,
+      "content_sha256": "71eb79ebc611d3b4f9f0e8f33f046aa9270d0e12ed05831049e9e5cc65d7684f",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c2_drift_triage_20261018/manifest_local_refs_full_20261019.txt",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c2-historical-profile-audit",
+      "kind": "C2 bounded old-revision historical manifest candidate audit",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c2_drift_triage_20261018/historical_profile_candidate_audit_20261019.json",
+      "bytes": 5927,
+      "content_sha256": "3eb813f1098369154999e8df791b15d5ac3d96ecb0583d74d316b40ef2e3a2a2",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c2_drift_triage_20261018/historical_profile_candidate_audit_20261019.json",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c2-historical-profile-audit-script",
+      "kind": "C2 reproducible bounded manifest ref and old Ark pin audit",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c2_drift_triage_20261018/audit_old_revision_manifest_candidates.py",
+      "bytes": 6210,
+      "content_sha256": "70403e74d5a5153dfd106a370cad10100928dfe7869e1fbb3eeec87246073a8f",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c2_drift_triage_20261018/audit_old_revision_manifest_candidates.py",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c2-new-profile-product-action-census",
+      "kind": "C2 new-profile ARM compile actions for changed non-target translation units",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c2_drift_triage_20261018/new_profile_product_action_census_20261019.json",
+      "bytes": 359659,
+      "content_sha256": "8b1e06730e4252fb50d1342a3b52640f30c210ab60070ffb49ed7748cc5ba355",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c2_drift_triage_20261018/new_profile_product_action_census_20261019.json",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c2-object-verification",
+      "kind": "C2 recomputed old/new object identities, diffs, and new-profile context evidence",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c2_drift_triage_20261018/object_verification.json",
+      "bytes": 380683,
+      "content_sha256": "d4fde606510333840dcc6a6f0423b6de6be298704e36d7d4b12de5aab7c417f8",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c2_drift_triage_20261018/object_verification.json",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c2-product-action-census-capture-script",
+      "kind": "C2 streaming compile database census and hash verifier",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c2_drift_triage_20261018/capture_new_profile_product_action_census.py",
+      "bytes": 5135,
+      "content_sha256": "b1a74dc1e6d15463fd79195deec86ef603c5aaaf6e2b62420bd1ee01685e75f2",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c2_drift_triage_20261018/capture_new_profile_product_action_census.py",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c2-profile-context-readme",
+      "kind": "C2 profile-context scope and remaining proof requirements",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c2_drift_triage_20261018/README.md",
+      "bytes": 45863,
+      "content_sha256": "26aba160f3e4a4c6e0c36ff135143cad2eea19e247ee0c40a2e3f27f0972503a",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c2_drift_triage_20261018/README.md",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c2-profile-context-triage",
+      "kind": "C2 exact new-profile action-context triage matrix; semantics remain unknown",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c2_drift_triage_20261018/triage_matrix.json",
+      "bytes": 401829,
+      "content_sha256": "f61713896cf138c4020a699b09bed439824e7ead24a4bc676c5485618612f0c2",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c2_drift_triage_20261018/triage_matrix.json",
         "verification": "sha256_bound_local_evidence"
       }
     },
@@ -165,11 +1757,23 @@
       }
     },
     {
+      "id": "c2-source-diffs",
+      "kind": "C2 exact function-context patch for the 18 changed dependencies",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c2_drift_triage_20261018/source-diffs.patch",
+      "bytes": 1811523,
+      "content_sha256": "21d54292e1f31cd4f21b689a8f12903f4b2246c467fa6cf696e274979834d263",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c2_drift_triage_20261018/source-diffs.patch",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
       "id": "c3-drift-review",
       "kind": "C3 per-dependency source drift review",
       "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c3_20261018/source_drift_review.json",
-      "bytes": 1290441,
-      "content_sha256": "3cb6cabaffe5640bb8a44e26e774ccbce0cd24ea6397bd28c9ea7ccfa8042a97",
+      "bytes": 70603,
+      "content_sha256": "342aeeee53871e1643bd57ac4a2904d2133831626a652dc8fb51be3bb2d77577",
       "source": {
         "kind": "workspace_evidence",
         "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c3_20261018/source_drift_review.json",
@@ -225,6 +1829,78 @@
       }
     },
     {
+      "id": "c4-active-include-capture-script",
+      "kind": "C4 read-only active include closure capture implementation",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c4_20261018/capture_active_include_closure.py",
+      "bytes": 9039,
+      "content_sha256": "427582829197bae63bc4c4726a25be0178dfaee928bcfdbb2982bdb152ee0bdc",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c4_20261018/capture_active_include_closure.py",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c4-active-include-closure",
+      "kind": "C4 hash-bound active dependency closure and direct Ninja producer evidence",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c4_20261018/active_include_closure_20261019.bound.json",
+      "bytes": 882624,
+      "content_sha256": "7d7798a9678022b13b81bdac1b244b88bd21670db7a97d22b9c47706bfd7723a",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c4_20261018/active_include_closure_20261019.bound.json",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c4-active-producer-binding-script",
+      "kind": "C4 read-only direct Ninja producer binding implementation",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c4_20261018/bind_active_closure_producers.py",
+      "bytes": 4851,
+      "content_sha256": "283c87098b7b7ccae0949636139e91ecb490b8a22e8ad61e46f5d69a490d94ac",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c4_20261018/bind_active_closure_producers.py",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c4-generated-input-closure-capture-script",
+      "kind": "C4 read-only recursive Ninja input closure capture and verifier",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c4_20261018/capture_generated_input_graph_closure.py",
+      "bytes": 14520,
+      "content_sha256": "6967adaa4b8bbee5d2900d31a15264c16c5c9ecbfbc08e17942a100054b69a66",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c4_20261018/capture_generated_input_graph_closure.py",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c4-generated-input-graph-closure",
+      "kind": "C4 recursive producer-input graph and pinned-source blob closure",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c4_20261018/generated_input_graph_closure_20261019.json",
+      "bytes": 2468845,
+      "content_sha256": "a5c5590274cb39f0b2ecbe93b1b10ffa364651cbba162b4be609238ddfef69e7",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c4_20261018/generated_input_graph_closure_20261019.json",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c4-musl-uapi-side-effect-binding-script",
+      "kind": "C4 verification of Musl UAPI directory and stamp side-effect producers",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c4_20261018/bind_musl_uapi_side_effects.py",
+      "bytes": 11130,
+      "content_sha256": "1f2dde4a03cb65d74688ccbefaa91d45fb04e707e2c13043436ce564f4471c87",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c4_20261018/bind_musl_uapi_side_effects.py",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
       "id": "c4-verifier-tool",
       "kind": "manifest_verifier_implementation",
       "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c4_20261018/dependency_manifest.py",
@@ -243,10 +1919,12 @@
       "bytes": 7999,
       "content_sha256": "f5b25eed46bfe6e951c6ad8b79ff76bfee8d402868839d21e6d41cd84ef3f8e3",
       "source": {
-        "kind": "workspace_source_candidate",
-        "uri": "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/builtins/builtins_typedarray_stub_builder.h",
-        "verification": "local_checkout_bytes_only",
-        "resolution_basis": "quoted include resolved by source-repository-root candidate; not confirmed by compiler dependency output"
+        "kind": "git_blob",
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "git_blob_oid": "017286724e4cd6df1a369589293efe920660c4c6",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
       }
     },
     {
@@ -256,10 +1934,12 @@
       "bytes": 22772,
       "content_sha256": "ecad66a6acb1a19f4eed9b84ce9f86f565348ad0be8c3411643ebace7a8ee559",
       "source": {
-        "kind": "workspace_source_candidate",
-        "uri": "openharmony/arkcompiler/ets_runtime/ecmascript/base/typed_array_helper-inl.h",
-        "verification": "local_checkout_bytes_only",
-        "resolution_basis": "quoted include resolved by source-repository-root candidate; not confirmed by compiler dependency output"
+        "kind": "git_blob",
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "git_blob_oid": "172fa188b64ed23d0714c4f4cd0ef66bcbb8e1cf",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
       }
     },
     {
@@ -269,10 +1949,12 @@
       "bytes": 2671,
       "content_sha256": "85e68db5ae84bffba1247d8ce186edd7e562c6560a0b82cfe3422e7669d906aa",
       "source": {
-        "kind": "workspace_source_candidate",
-        "uri": "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/builtins/builtins_arraybuffer_stub_builder.h",
-        "verification": "local_checkout_bytes_only",
-        "resolution_basis": "quoted include resolved by source-repository-root candidate; not confirmed by compiler dependency output"
+        "kind": "git_blob",
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "git_blob_oid": "89167b4a2160f153a9445c19e3488756bbde8576",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
       }
     },
     {
@@ -282,10 +1964,12 @@
       "bytes": 12190,
       "content_sha256": "1804426bca64803a2a7b70c63004eb5236718daa075c67d74c68fd5f21ef151c",
       "source": {
-        "kind": "workspace_source_candidate",
-        "uri": "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/builtins/builtins_array_stub_builder.h",
-        "verification": "local_checkout_bytes_only",
-        "resolution_basis": "quoted include resolved by source-repository-root candidate; not confirmed by compiler dependency output"
+        "kind": "git_blob",
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "git_blob_oid": "c9b5a66c12c657533047286ec79406a639fb8232",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
       }
     },
     {
@@ -295,10 +1979,12 @@
       "bytes": 9597,
       "content_sha256": "18af6653e22c36dc1fce30d9b7b7eda9d616084add2b1c6d1faa6d89c6c895ae",
       "source": {
-        "kind": "workspace_source_candidate",
-        "uri": "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/call_stub_builder.h",
-        "verification": "local_checkout_bytes_only",
-        "resolution_basis": "quoted include resolved by source-repository-root candidate; not confirmed by compiler dependency output"
+        "kind": "git_blob",
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "git_blob_oid": "d1fb1b9ef28ff8c928a6e8dfdd9aed67e42ef6aa",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
       }
     },
     {
@@ -308,10 +1994,12 @@
       "bytes": 12540,
       "content_sha256": "d84a72bb1a252fb9ea2b8ff01e702c3a0c952681e211d8f1a850f1880217778b",
       "source": {
-        "kind": "workspace_source_candidate",
-        "uri": "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/new_object_stub_builder.h",
-        "verification": "local_checkout_bytes_only",
-        "resolution_basis": "quoted include resolved by source-repository-root candidate; not confirmed by compiler dependency output"
+        "kind": "git_blob",
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "git_blob_oid": "ecdf871b20e884e013ce0f26877ef404e4950cb0",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
       }
     },
     {
@@ -600,6 +2288,51 @@
       }
     },
     {
+      "id": "product-hihope-rk3568-config",
+      "kind": "product_build_configuration",
+      "workspace_path": "openharmony/vendor/hihope/rk3568/config.json",
+      "bytes": 10569,
+      "content_sha256": "46dc640a6ca988687245de967f4e2ec3aebd20ed3423472c48b89bc845c28408",
+      "source": {
+        "kind": "git_blob",
+        "repository": "vendor_hihope",
+        "commit": "b40eabbe69943126c65df1f9ff28057f56e93e46",
+        "tree": "aa95785ef84ddde8d1c3622e2c2d80d6b388caeb",
+        "git_blob_oid": "fc7fed801d07f19f05a752878e738d8d40f1bc01",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
+      }
+    },
+    {
+      "id": "product-hihope-rk3568-ohos-build",
+      "kind": "product_build_configuration",
+      "workspace_path": "openharmony/vendor/hihope/rk3568/ohos.build",
+      "bytes": 690,
+      "content_sha256": "73faae48e7bcf9a100e6bb8f1def7602958a9590f9e70636f0cf22346154fbc7",
+      "source": {
+        "kind": "git_blob",
+        "repository": "vendor_hihope",
+        "commit": "b40eabbe69943126c65df1f9ff28057f56e93e46",
+        "tree": "aa95785ef84ddde8d1c3622e2c2d80d6b388caeb",
+        "git_blob_oid": "ea4b61b7e495cdb0a22bb64752f509832e2a9c98",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
+      }
+    },
+    {
+      "id": "product-hihope-rk3568-product-gni",
+      "kind": "product_build_configuration",
+      "workspace_path": "openharmony/vendor/hihope/rk3568/product.gni",
+      "bytes": 644,
+      "content_sha256": "762ce8c4e909ed94d91b7dcbc4d40b3d509b5b0b02f20b3c3b38e47f50f6da86",
+      "source": {
+        "kind": "git_blob",
+        "repository": "vendor_hihope",
+        "commit": "b40eabbe69943126c65df1f9ff28057f56e93e46",
+        "tree": "aa95785ef84ddde8d1c3622e2c2d80d6b388caeb",
+        "git_blob_oid": "60e39596b26e52829b8ff4b2698cb15e1a88fed5",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
+      }
+    },
+    {
       "id": "src-target",
       "kind": "target_source",
       "workspace_path": "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
@@ -612,6 +2345,62 @@
         "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
         "git_blob_oid": "68fb3b0adc4f9062889a861be51b7be90362e37a",
         "verification": "verified_at_pinned_commit_from_local_git_objects"
+      }
+    },
+    {
+      "id": "tool-clang-linux-x86_64",
+      "kind": "toolchain_package",
+      "workspace_path": "tmp/c-line-c1-profile-20261018/downloads/clang_linux-x86_64-02fbe8-20260908.tar.gz",
+      "bytes": 789238720,
+      "content_sha256": "8c1173e6386e2c7f72ca8350693fb2cf122b6fc6107fa66c77c6ba6283743edf",
+      "source": {
+        "kind": "external_toolchain_package",
+        "uri": "https://repo.huaweicloud.com/openharmony/compiler/clang/15.0.4-02fbe8/linux/clang_linux-x86_64-02fbe8-20260908.tar.gz",
+        "checksum_uri": "https://repo.huaweicloud.com/openharmony/compiler/clang/15.0.4-02fbe8/linux/clang_linux-x86_64-02fbe8-20260908.tar.gz.sha256",
+        "provider_sha256": "8c1173e6386e2c7f72ca8350693fb2cf122b6fc6107fa66c77c6ba6283743edf",
+        "verification": "verified_tool_or_profile_identity"
+      }
+    },
+    {
+      "id": "tool-gn-linux-x86",
+      "kind": "toolchain_package",
+      "workspace_path": "tmp/c-line-c1-profile-20261018/downloads/gn-linux-x86-20260609.tar.gz",
+      "bytes": 1235297,
+      "content_sha256": "6e40a7f19f9aa6949aa10ed1c680fe3b6973ab94bddc52b9e120136845a315bd",
+      "source": {
+        "kind": "external_toolchain_package",
+        "uri": "https://repo.huaweicloud.com/openharmony/compiler/gn/20260611/gn-linux-x86-20260609.tar.gz",
+        "checksum_uri": "https://repo.huaweicloud.com/openharmony/compiler/gn/20260611/gn-linux-x86-20260609.tar.gz.sha256",
+        "provider_sha256": "6e40a7f19f9aa6949aa10ed1c680fe3b6973ab94bddc52b9e120136845a315bd",
+        "verification": "verified_tool_or_profile_identity"
+      }
+    },
+    {
+      "id": "tool-ninja-linux-x86",
+      "kind": "toolchain_package",
+      "workspace_path": "tmp/c-line-c1-profile-20261018/downloads/ninja-linux-x86-1.13.2-20260810.tar.gz",
+      "bytes": 160618,
+      "content_sha256": "97aad3d1cff64297a90d2fa60e77f246f6c550a5ad26cf38aed99f6413804057",
+      "source": {
+        "kind": "external_toolchain_package",
+        "uri": "https://repo.huaweicloud.com/openharmony/compiler/ninja/1.13.2/linux/ninja-linux-x86-1.13.2-20260810.tar.gz",
+        "checksum_uri": "https://repo.huaweicloud.com/openharmony/compiler/ninja/1.13.2/linux/ninja-linux-x86-1.13.2-20260810.tar.gz.sha256",
+        "provider_sha256": "97aad3d1cff64297a90d2fa60e77f246f6c550a5ad26cf38aed99f6413804057",
+        "verification": "verified_tool_or_profile_identity"
+      }
+    },
+    {
+      "id": "tool-python-linux-x86",
+      "kind": "toolchain_package",
+      "workspace_path": "tmp/c-line-c1-profile-20261018/downloads/python-linux-x86-3.12.10_20260414.tar.gz",
+      "bytes": 9186145,
+      "content_sha256": "f4ac21eb22e23ffcd9c5025d8b04435e3e5c95d861e4455a416560ec175bf544",
+      "source": {
+        "kind": "external_toolchain_package",
+        "uri": "https://repo.huaweicloud.com/openharmony/compiler/python/3.12.10/linux/python-linux-x86-GLIBC2.27-3.12.10_20260414.tar.gz",
+        "checksum_uri": "https://repo.huaweicloud.com/openharmony/compiler/python/3.12.10/linux/python-linux-x86-GLIBC2.27-3.12.10_20260414.tar.gz.sha256",
+        "provider_sha256": "f4ac21eb22e23ffcd9c5025d8b04435e3e5c95d861e4455a416560ec175bf544",
+        "verification": "verified_tool_or_profile_identity"
       }
     }
   ],
@@ -660,41 +2449,130 @@
   "unresolved": [
     {
       "id": "C1_PRODUCT_BUILD_PROFILE",
-      "reason": "The accepted ark-runtime-build-profile-v1 capture contract is bound, but its profile_status is blocked, compile database is null and digest is null; no product command can be trusted."
-    },
-    {
-      "id": "ACTUAL_INCLUDE_CLOSURE",
-      "reason": "Literal include directives are inventoried, but no trusted compile command/search order was supplied; active transitive includes and generated headers cannot be determined."
-    },
-    {
-      "id": "PREPROCESSOR_TOOLCHAIN",
-      "reason": "C3 explicitly records build_profile=none and macro_expansion=false; compiler/preprocessor identity and executable byte hashes are unavailable."
-    },
-    {
-      "id": "MACRO_CONFIGURATION",
-      "reason": "No compile database or product configuration binds command-line macros and conditional compilation state."
-    },
-    {
-      "id": "GENERATED_BUILD_INPUTS",
-      "reason": "No generated-header manifest or build target outputs are bound."
-    },
-    {
-      "id": "TARGET_PLATFORM",
-      "reason": "The replay target platform is not bound to a product platform."
-    },
-    {
-      "id": "PARSER_BINARY_IDENTITY",
-      "reason": "C3 records parser package versions but not parser distribution artifact hashes or loaded module bytes."
+      "reason": "A repeatable hihope/rk3568 HB GN profile and successful preprocessing/dependency/macro captures now exist for both selected ARM actions; supplemental direct Clang object compilation succeeded outside the original container boundary, but no in-boundary Ninja target object or product image build was run. Ninja reports duplicate-output warnings and the top-level source export still has 19 unresolved gitlinks plus a missing manifest linkfile source."
     },
     {
       "id": "C2_CASE_MATRIX",
       "reason": "The C2 replay script references c1_20261017/case_matrix.json, which is absent from this C-line worktree; it was not copied from another worktree."
     },
     {
-      "id": "DIRECT_INCLUDE_GIT_PROVENANCE",
-      "reason": "Six include candidate files are byte-hashed and linked to literal directives, but exact compiler resolution and Git blob identity are not verified."
+      "id": "PARSER_BINARY_IDENTITY",
+      "reason": "C3 records parser package versions but not parser distribution artifact hashes or loaded module bytes."
     }
   ],
   "known_scope_note": "Known model source dependencies and C3 replay identity are hashed. They do not form a complete preprocessor dependency closure and must not be used as a trusted cache key while status is blocked.",
-  "summary_sha256": "6aba13c03d071edb4e07076a5e1910d631903c95755691c4e068ed4d27a653a9"
+  "summary_sha256": "948783cd288213aed89908b8ab5df4096bc7de401bde5b41b10bb0bbfd0f1e1a",
+  "product_build_probe": {
+    "product": "hihope/rk3568",
+    "source_commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+    "manifest": "openharmony-manifest-current-20261018.xml",
+    "build_project_commit": "6b6d6533967db07e8e7d40d140fc63d0faabacbd",
+    "invocation": [
+      "build/hb/main.py",
+      "build",
+      "--product-name",
+      "rk3568@hihope",
+      "--build-only-gn",
+      "true",
+      "--gn-flags=--export-compile-commands",
+      "--ccache",
+      "false",
+      "--enable-pycache",
+      "false",
+      "--no-prebuilt-sdk",
+      "true",
+      "--clean-args",
+      "false"
+    ],
+    "execution_state": "completed_hb_gn_generation_twice_byte_identical; compile_database_exported; both_arm_actions_preprocessed_dependency_scanned_and_macro_dumped; ninja_invocations_used_dupbuild_warn_with_duplicate_output_warnings; supplemental_direct_object_compile_succeeded_outside_isolation; no_in_boundary_ninja_target_object_or_product_image_build",
+    "container_image": "ohscanner-validation:local",
+    "container_image_id": "sha256:e92d5365460142169ddd21d489bc9157d003c61e3382351c8f8516f3e38f96ae",
+    "network": "none",
+    "root_filesystem_read_only": true,
+    "source_mount_read_only": true,
+    "output_path": "/home/deepsleep/c-line-c1-profile-20261018/out-gn-20261019-retry3/rk3568",
+    "container_user": "1000:1000",
+    "resource_limits": {
+      "memory_bytes": 17179869184,
+      "cpus": 8,
+      "pids": 384
+    },
+    "runtime_tools": [
+      {
+        "name": "python3",
+        "version": "3.12.10",
+        "sha256": "02e619087c33f723f4bd8e7f7443f35d87d4383d9592de04b66a3c05a5d4f316",
+        "package_input_id": "tool-python-linux-x86"
+      },
+      {
+        "name": "gn",
+        "version": "2026 (47b40ef4)",
+        "sha256": "aa76f11ec5ab820695fdd0973d644d205305b1a23fabcc43e230871f502230a7",
+        "package_input_id": "tool-gn-linux-x86"
+      },
+      {
+        "name": "ninja",
+        "version": "1.13.2",
+        "sha256": "2c867ca18771ff64d2a9f72f16316760651c98b1fbce692b0542f25de49b112b",
+        "package_input_id": "tool-ninja-linux-x86"
+      },
+      {
+        "name": "clang++",
+        "version": "OHOS Clang 15.0.4 (02fbe8daf56b9704358bc2e7bea9da79938a7abf)",
+        "sha256": "2b28a71dbd71e1bc7f2b9b793f4add7499bee5d533e2d581df2bd0f716e7011c",
+        "package_input_id": "tool-clang-linux-x86_64"
+      }
+    ],
+    "probe_log": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/hb_probe_20261019_replay2.log",
+    "probe_log_sha256": "bc59e17c2fdf33c4364d19816577abc119b570afe941f6e1c5fc0f35560267ce",
+    "observed_result": "two HB invocations exit 0; normalized args.gn digest stable; compile_commands.json and build.ninja byte-identical; 234245 compile actions exported; both ARM actions pass preprocess, -M, and -dM -E after declared generated headers; supplemental direct Clang object compile succeeded outside original isolation; duplicate-output warnings persist; no in-boundary Ninja object or product image build",
+    "resolved_repo_manifest": {
+      "path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/source_manifest_resolved_20261019.xml",
+      "sha256": "52f528dada321a140a29be2d55ef9053fda818cbdca93758425f1a25f6286d55",
+      "projects": 525,
+      "comparison": "525/525 paths and revisions match; 0 missing, 0 extra, 0 revision mismatch",
+      "worktree_cleanliness": "repo_status_completed_exit_0; 10 other project blocks have 142 changed-path records; see bound snapshot below"
+    },
+    "critical_project_status": {
+      "command": "repo status --jobs=4 build arkcompiler/ets_runtime vendor/hihope device/board/hihope",
+      "exit_code": 0,
+      "result": "nothing to commit (working directory clean)",
+      "log_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/repo_status_critical_20261019.txt",
+      "log_sha256": "9f84db351a624576164e2d4b8bdbda38344929b1e1e1c920169927a5bea7f805",
+      "all_project_status": "completed_exit_0; 10 project blocks and 142 changed-path records; snapshot is byte-identical to final output"
+    },
+    "partial_full_project_status": {
+      "path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/repo_status_partial_20261019.txt",
+      "sha256": "5b5adfe66111a489b42247012278c3b4717ebd0dbac4b697dd234cb46f2db2a4",
+      "captured_bytes": 9322,
+      "project_blocks_with_changes_observed": 10,
+      "changed_path_records_observed": 142,
+      "status_code_counts": {
+        "M-": 61,
+        "-m": 81
+      },
+      "observed_projects": [
+        "applications/standard/app_samples/",
+        "base/tee/tee_os_kernel/",
+        "foundation/multimedia/av_codec/",
+        "foundation/multimedia/image_framework/",
+        "kernel/linux/linux-5.10/",
+        "kernel/linux/patches/",
+        "kernel/linux/linux-6.6/",
+        "third_party/icu/",
+        "third_party/iptables/",
+        "test/xts/acts/"
+      ],
+      "completeness": "snapshot_captured_before_process_exit_but_sha256_matches_completed_exit_0_full_audit_output; these are all reported dirty project blocks"
+    },
+    "profile_json_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/product_profile_20261019.v1.json",
+    "profile_json_sha256": "44f40f1c4c8bacc05869f40d1cb42846c0f058d0514ba8397a0aaafd7df8591d",
+    "compile_commands_sha256": "f4ac150e2af2d2d0eff5da063e5be3beee973c459d998c50ca119530019cee7e",
+    "compile_commands_bytes": 4103004071,
+    "build_ninja_sha256": "eb313a6a3f282c71c72186e6f3e2022973e6fa0d07efc18426e7505ce7fc8951",
+    "preprocessing_observation_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_attempt_20261019/preprocessor_observation.json",
+    "preprocessing_observation_sha256": "965648e937a5936376491daed04350338e68c6b597844f790e85a606c3ff55d0",
+    "preprocessing_success_observation_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/preprocessor_success_20261019/results/preprocessor_observation.json",
+    "preprocessing_success_observation_sha256": "2eb080ec6ae72564647b2f77ba596702525e8db9d9595e51d472db84120355ac"
+  }
 }

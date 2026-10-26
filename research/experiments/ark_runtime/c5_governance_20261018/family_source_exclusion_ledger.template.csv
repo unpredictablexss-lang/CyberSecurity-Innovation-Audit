@@ -1,0 +1,2 @@
+# PREPARATION_ONLY — NOT DATA; NOT A SCORING/REVIEWER INPUT; zero records
+record_status,family_key_admin_only,source_key_admin_only,identity_basis,public_metadata_reference,development_or_tuning_overlap,reviewer_exposure_overlap,related_family_uncertainty,decision,decision_reason,evidence_references,reviewer_conflict_check,reviewed_by,reviewed_at_utc,protocol_version

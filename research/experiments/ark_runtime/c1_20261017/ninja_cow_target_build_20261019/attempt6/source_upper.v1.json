@@ -1,0 +1,171 @@
+{
+  "schema": "ohscanner.c1.cow-source-upper-manifest/v1",
+  "files": [
+    {
+      "path": "arkcompiler/ets_runtime/LICENSE",
+      "upper_sha256": "9264a6b3c134511ccfcae48ed3808320688ae6933ec4fc547476a005095fc1ef",
+      "upper_bytes": 10349,
+      "lower_exists": true,
+      "upper_matches_lower": true,
+      "lower_sha256": "9264a6b3c134511ccfcae48ed3808320688ae6933ec4fc547476a005095fc1ef"
+    },
+    {
+      "path": "arkcompiler/runtime_core/LICENSE",
+      "upper_sha256": "d59c05f05ecc2d0b0045b0ccd32fc52a62127c081276066e84657ee1a3dd539a",
+      "upper_bytes": 10773,
+      "lower_exists": true,
+      "upper_matches_lower": true,
+      "lower_sha256": "d59c05f05ecc2d0b0045b0ccd32fc52a62127c081276066e84657ee1a3dd539a"
+    },
+    {
+      "path": "base/hiviewdfx/faultloggerd/LICENSE",
+      "upper_sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+      "upper_bytes": 10174,
+      "lower_exists": true,
+      "upper_matches_lower": true,
+      "lower_sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+    },
+    {
+      "path": "base/hiviewdfx/hilog/LICENSE",
+      "upper_sha256": "9264a6b3c134511ccfcae48ed3808320688ae6933ec4fc547476a005095fc1ef",
+      "upper_bytes": 10349,
+      "lower_exists": true,
+      "upper_matches_lower": true,
+      "lower_sha256": "9264a6b3c134511ccfcae48ed3808320688ae6933ec4fc547476a005095fc1ef"
+    },
+    {
+      "path": "base/hiviewdfx/hitrace/LICENSE",
+      "upper_sha256": "0cec06e0e55fbc3dc5cee4fca9b607f66cb8f4e4dbcf3b3c013594dd156732e9",
+      "upper_bytes": 10173,
+      "lower_exists": true,
+      "upper_matches_lower": true,
+      "lower_sha256": "0cec06e0e55fbc3dc5cee4fca9b607f66cb8f4e4dbcf3b3c013594dd156732e9"
+    },
+    {
+      "path": "base/hiviewdfx/hiview/LICENSE",
+      "upper_sha256": "eb3d7b5485466acbd81f2b496f595ab637d2792e268206b27d99e793bdb67549",
+      "upper_bytes": 10351,
+      "lower_exists": true,
+      "upper_matches_lower": true,
+      "lower_sha256": "eb3d7b5485466acbd81f2b496f595ab637d2792e268206b27d99e793bdb67549"
+    },
+    {
+      "path": "base/startup/init/LICENSE",
+      "upper_sha256": "9264a6b3c134511ccfcae48ed3808320688ae6933ec4fc547476a005095fc1ef",
+      "upper_bytes": 10349,
+      "lower_exists": true,
+      "upper_matches_lower": true,
+      "lower_sha256": "9264a6b3c134511ccfcae48ed3808320688ae6933ec4fc547476a005095fc1ef"
+    },
+    {
+      "path": "build/__pycache__/gn_helpers.cpython-312.pyc",
+      "upper_sha256": "129eb1217785d85af86387d3384fe0436679ca337f736d0b82e555eac0fe4f02",
+      "upper_bytes": 17065,
+      "lower_exists": false,
+      "upper_matches_lower": null
+    },
+    {
+      "path": "build/scripts/__pycache__/__init__.cpython-312.pyc",
+      "upper_sha256": "eb0f263cd527630836ae3827e8ba7c979bf5858652fa1abb3dc79dd7bd8b3a89",
+      "upper_bytes": 198,
+      "lower_exists": false,
+      "upper_matches_lower": null
+    },
+    {
+      "path": "build/scripts/util/__pycache__/__init__.cpython-312.pyc",
+      "upper_sha256": "d24d9868ed7c16d3c2d011976520162e5ea2feaec586b5826b78422adceec2c4",
+      "upper_bytes": 203,
+      "lower_exists": false,
+      "upper_matches_lower": null
+    },
+    {
+      "path": "build/scripts/util/__pycache__/build_utils.cpython-312.pyc",
+      "upper_sha256": "f3e3e1088959b1796e4a61267ba7c47487e8838e64d1455db7d3927897acb422",
+      "upper_bytes": 35928,
+      "lower_exists": false,
+      "upper_matches_lower": null
+    },
+    {
+      "path": "build/scripts/util/__pycache__/file_utils.cpython-312.pyc",
+      "upper_sha256": "60e9dc1e685606758d4045d0c4d274648ca85c14b6cfbb1c6a19d07661519d12",
+      "upper_bytes": 5703,
+      "lower_exists": false,
+      "upper_matches_lower": null
+    },
+    {
+      "path": "build/scripts/util/__pycache__/md5_check.cpython-312.pyc",
+      "upper_sha256": "53256f5695ca0dcd8e85df7e1e712ac0543dbe6982183b5db591c55cb26ec399",
+      "upper_bytes": 24197,
+      "lower_exists": false,
+      "upper_matches_lower": null
+    },
+    {
+      "path": "build/scripts/util/__pycache__/pycache.cpython-312.pyc",
+      "upper_sha256": "bd39ba09da8b233ceaa1dd2369056340b0f33570d3f0d6265b156a1c9c9cd3eb",
+      "upper_bytes": 7079,
+      "lower_exists": false,
+      "upper_matches_lower": null
+    },
+    {
+      "path": "build/templates/common/__pycache__/check_deps_handler.cpython-312.pyc",
+      "upper_sha256": "1f5655ce9641baef5a97300a88f0478b71e39f3fb77cf07ba716a661e191be4c",
+      "upper_bytes": 9846,
+      "lower_exists": false,
+      "upper_matches_lower": null
+    },
+    {
+      "path": "build/templates/common/__pycache__/check_external_deps.cpython-312.pyc",
+      "upper_sha256": "f9e5980b49204f375e6e0d6e99d7bc9555e937378ac5eae23cea0e69d2aba572",
+      "upper_bytes": 3925,
+      "lower_exists": false,
+      "upper_matches_lower": null
+    },
+    {
+      "path": "build/templates/common/__pycache__/check_part_subsystem_name.cpython-312.pyc",
+      "upper_sha256": "d151486a3115f93105cc816c116b0e203e4ae459c65935d170c81cfa6269d350",
+      "upper_bytes": 2800,
+      "lower_exists": false,
+      "upper_matches_lower": null
+    },
+    {
+      "path": "foundation/filemanagement/storage_service/LICENSE",
+      "upper_sha256": "0cec06e0e55fbc3dc5cee4fca9b607f66cb8f4e4dbcf3b3c013594dd156732e9",
+      "upper_bytes": 10173,
+      "lower_exists": true,
+      "upper_matches_lower": true,
+      "lower_sha256": "0cec06e0e55fbc3dc5cee4fca9b607f66cb8f4e4dbcf3b3c013594dd156732e9"
+    },
+    {
+      "path": "foundation/resourceschedule/qos_manager/LICENSE",
+      "upper_sha256": "1eb85fc97224598dad1852b5d6483bbcf0aa8608790dcc657a5a2a761ae9c8c6",
+      "upper_bytes": 11558,
+      "lower_exists": true,
+      "upper_matches_lower": true,
+      "lower_sha256": "1eb85fc97224598dad1852b5d6483bbcf0aa8608790dcc657a5a2a761ae9c8c6"
+    },
+    {
+      "path": "foundation/systemabilitymgr/samgr/LICENSE",
+      "upper_sha256": "9264a6b3c134511ccfcae48ed3808320688ae6933ec4fc547476a005095fc1ef",
+      "upper_bytes": 10349,
+      "lower_exists": true,
+      "upper_matches_lower": true,
+      "lower_sha256": "9264a6b3c134511ccfcae48ed3808320688ae6933ec4fc547476a005095fc1ef"
+    },
+    {
+      "path": "third_party/json/LICENSE.MIT",
+      "upper_sha256": "46a65cffd1ea955132d95a8dd921640714a8d6b537d2e4e482d31145ae95b603",
+      "upper_bytes": 1076,
+      "lower_exists": true,
+      "upper_matches_lower": true,
+      "lower_sha256": "46a65cffd1ea955132d95a8dd921640714a8d6b537d2e4e482d31145ae95b603"
+    },
+    {
+      "path": "third_party/zlib/LICENSE",
+      "upper_sha256": "e32ff4e00d9d94930537635291da39e7e612703334bf6fde8c7f1686fe8a45a2",
+      "upper_bytes": 1002,
+      "lower_exists": true,
+      "upper_matches_lower": true,
+      "lower_sha256": "e32ff4e00d9d94930537635291da39e7e612703334bf6fde8c7f1686fe8a45a2"
+    }
+  ]
+}

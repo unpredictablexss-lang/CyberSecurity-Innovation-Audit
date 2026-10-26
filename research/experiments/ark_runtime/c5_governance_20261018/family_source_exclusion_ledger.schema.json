@@ -1,0 +1,45 @@
+{
+  "document_status": "preparation_only",
+  "schema_id": "c5.family-source-exclusion-ledger.preparation.v1",
+  "description": "Schema for a future admin-only family/source independence ledger. This file is not data and MUST NOT be consumed by evaluation or scoring scripts.",
+  "record_status_allowed": ["preparation_only", "pending_review", "excluded", "eligible_after_freeze"],
+  "required_fields": [
+    "record_status",
+    "family_key_admin_only",
+    "source_key_admin_only",
+    "identity_basis",
+    "public_metadata_reference",
+    "development_or_tuning_overlap",
+    "reviewer_exposure_overlap",
+    "related_family_uncertainty",
+    "decision",
+    "decision_reason",
+    "evidence_references",
+    "reviewer_conflict_check",
+    "reviewed_by",
+    "reviewed_at_utc",
+    "protocol_version"
+  ],
+  "fields": {
+    "record_status": {"type": "string", "enum": ["preparation_only", "pending_review", "excluded", "eligible_after_freeze"]},
+    "family_key_admin_only": {"type": "string", "minLength": 1, "description": "Opaque admin identity; never export to reviewers."},
+    "source_key_admin_only": {"type": "string", "minLength": 1, "description": "Opaque source identity; never export to reviewers."},
+    "identity_basis": {"type": "string", "enum": ["root_cause", "patch_family", "source_lineage", "unknown"]},
+    "public_metadata_reference": {"type": "string", "description": "Citation to already-public development identity metadata only; no restricted holdout content."},
+    "development_or_tuning_overlap": {"type": "string", "enum": ["yes", "no", "unknown"]},
+    "reviewer_exposure_overlap": {"type": "string", "enum": ["yes", "no", "unknown", "pending"]},
+    "related_family_uncertainty": {"type": "string", "enum": ["resolved", "unresolved", "not_assessed"]},
+    "decision": {"type": "string", "enum": ["exclude_family", "pending_block", "eligible_only_after_all_gates", "not_a_candidate"]},
+    "decision_reason": {"type": "string", "minLength": 1},
+    "evidence_references": {"type": "array", "items": {"type": "string"}},
+    "reviewer_conflict_check": {"type": "string", "enum": ["not_started", "pending", "clear", "conflict"]},
+    "reviewed_by": {"type": "array", "items": {"type": "string"}, "description": "Admin/auditor role IDs; do not store reviewer identity here."},
+    "reviewed_at_utc": {"type": ["string", "null"], "format": "date-time"},
+    "protocol_version": {"type": "string"}
+  },
+  "invariants": [
+    "Any unknown or unresolved overlap blocks the whole family.",
+    "An eligible decision is valid only after detector and protocol freeze, full leakage inventory, reviewer conflict checks, and independent audit.",
+    "This schema and its empty template are not scoring inputs; future operational data requires a separately versioned and approved format."
+  ]
+}

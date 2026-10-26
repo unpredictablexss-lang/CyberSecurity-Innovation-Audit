@@ -4,6 +4,7 @@ from src.ohscanner.detectors.ark_runtime.model import RUNTIME_EXCEPTION_RULE_ID
 from src.ohscanner.detectors.ark_runtime.runtime_exception import (
     analyze_call_info_construction_guard,
     analyze_runtime_exception_propagation,
+    _verified_generated_branch_owners,
 )
 from src.ohscanner.detectors.ark_runtime.unseen_model import UnseenRuntimeTypeModel
 from .support import unit
@@ -47,11 +48,121 @@ JSTaggedValue Some(EcmaRuntimeCallInfo *argv) {{
 '''
 
 
+def generated_source(exception_check="TaggedIsException", result_name="callbackResult",
+                     pending_context="glue"):
+    operand = pending_context if exception_check == "HasPendingException" else result_name
+    extra_context = ", GateRef otherContext" if pending_context == "otherContext" else ""
+    return f'''class BuiltinsArrayStubBuilder {{
+GateRef FindIndex(GateRef glue, GateRef numArgs, Variable *result, Label *exit{extra_context}) {{
+    GateRef callbackHandle = GetCallArg0(numArgs);
+    GateRef {result_name} = JSCallDispatch(glue, callbackHandle, Int32(3));
+    Label hasException(env);
+    Label continueCallback(env);
+    BRANCH({exception_check}({operand}), &hasException, &continueCallback);
+    Bind(&hasException);
+    result->WriteVariable({result_name});
+    Jump(exit);
+    Bind(&continueCallback);
+    BRANCH(TaggedIsTrue(FastToBoolean({result_name})), &hasException, exit);
+}}
+}};
+'''
+
+
 class RuntimeExceptionPropagationTests(unittest.TestCase):
     def analyze(self, text, macro_source=MACROS):
         return analyze_runtime_exception_propagation(
             unit(text, "ecmascript/builtins/builtins_typedarray.cpp"),
             source_units=(unit(macro_source, "ecmascript/ecma_macros.h"),))
+
+    def branch_contract_units(self, implementation=None):
+        implementation = implementation or '''
+void StubBuilder::Branch(GateRef condition, Label *trueLabel, Label *falseLabel)
+{
+    GateRef branch = builder->Branch(control, condition);
+    GateRef onTrue = builder->IfTrue(branch);
+    trueLabel->MergeControl(onTrue);
+    GateRef onFalse = builder->IfFalse(branch);
+    falseLabel->MergeControl(onFalse);
+}
+'''
+        return (
+            unit("namespace panda::ecmascript::kungfu { class BuiltinsArrayStubBuilder : public BuiltinsStubBuilder {}; }\n"
+                 "namespace unrelated { class StubBuilder {}; class BuiltinsArrayStubBuilder : public StubBuilder {}; }",
+                 "ecmascript/compiler/builtins/builtins_array_stub_builder.h"),
+            unit("namespace panda::ecmascript::kungfu { class BuiltinsStubBuilder : public StubBuilder {}; }",
+                 "ecmascript/compiler/builtins/builtins_stubs.h"),
+            unit("namespace panda::ecmascript::kungfu { class StubBuilder { public: void Branch(GateRef condition, Label *trueLabel, Label *falseLabel); }; }",
+                 "ecmascript/compiler/stub_builder.h"),
+            unit("namespace panda::ecmascript::kungfu {\n" + implementation + "\n}",
+                 "ecmascript/compiler/stub_builder.cpp"),
+        )
+
+    def generated_branch_source(self, predicate):
+        return f'''namespace panda::ecmascript::kungfu {{
+class BuiltinsArrayStubBuilder : public BuiltinsStubBuilder {{
+GateRef FindIndex(GateRef glue, GateRef numArgs, Variable *result, Label *exit) {{
+    GateRef callback = GetCallArg0(numArgs);
+    GateRef completion = JSCallDispatch(glue, callback, Int32(3));
+    Label hasException;
+    Label continueCallback;
+    Branch({predicate}, &hasException, &continueCallback);
+    Bind(&hasException);
+    result->WriteVariable(completion);
+    Jump(exit);
+    Bind(&continueCallback);
+    GateRef accepted = FastToBoolean(completion);
+}}
+}};
+}}
+'''
+
+    def test_verified_branch_contract_enables_real_cfg_alias(self):
+        source_units = self.branch_contract_units()
+        owners = _verified_generated_branch_owners(source_units)
+        self.assertIn("panda::ecmascript::kungfu::BuiltinsArrayStubBuilder", owners)
+        self.assertNotIn("unrelated::BuiltinsArrayStubBuilder", owners)
+
+        vulnerable = unit(self.generated_branch_source("TaggedIsException(completion)"),
+                          "ecmascript/compiler/builtins/builtins_array_stub_builder.cpp")
+        fixed = unit(self.generated_branch_source("HasPendingException(glue)"),
+                     "ecmascript/compiler/builtins/builtins_array_stub_builder.cpp")
+        before = analyze_runtime_exception_propagation(
+            vulnerable, source_units=source_units + (vulnerable,))
+        after = analyze_runtime_exception_propagation(
+            fixed, source_units=source_units + (fixed,))
+        self.assertEqual([item.kind for item in before.observations], ["candidate"])
+        self.assertEqual(after.observations, ())
+
+    def test_branch_name_without_source_contract_stays_unknown(self):
+        target = unit(self.generated_branch_source("HasPendingException(glue)"),
+                      "ecmascript/compiler/builtins/builtins_array_stub_builder.cpp")
+        result = analyze_runtime_exception_propagation(target)
+        self.assertEqual(result.observations, ())
+        self.assertIn("unmodeled_generated_callback_exception_path",
+                      " ".join(result.limitations))
+
+    def test_wrong_true_false_edge_mapping_does_not_verify_branch_contract(self):
+        implementation = '''
+void StubBuilder::Branch(GateRef condition, Label *trueLabel, Label *falseLabel) {
+    GateRef branch = builder->Branch(control, condition);
+    GateRef onTrue = builder->IfTrue(branch);
+    falseLabel->MergeControl(onTrue);
+    GateRef onFalse = builder->IfFalse(branch);
+    trueLabel->MergeControl(onFalse);
+}
+'''
+        self.assertEqual(_verified_generated_branch_owners(
+            self.branch_contract_units(implementation)), frozenset())
+
+    def test_derived_branch_override_disables_base_contract(self):
+        units = list(self.branch_contract_units())
+        units[0] = unit(
+            "namespace panda::ecmascript::kungfu { class BuiltinsArrayStubBuilder : public BuiltinsStubBuilder { "
+            "void Branch(GateRef condition, Label *trueLabel, Label *falseLabel); }; }",
+            "ecmascript/compiler/builtins/builtins_array_stub_builder.h")
+        self.assertNotIn("panda::ecmascript::kungfu::BuiltinsArrayStubBuilder",
+                         _verified_generated_branch_owners(tuple(units)))
 
     def test_callback_result_conversion_before_exception_guard_is_candidate(self):
         result = self.analyze(source())
@@ -70,6 +181,53 @@ class RuntimeExceptionPropagationTests(unittest.TestCase):
         result = self.analyze(source(body=body))
         self.assertEqual(result.file_outcome, "complete")
         self.assertEqual(result.observations, ())
+
+    def test_negated_exception_test_does_not_guard_exceptional_path(self):
+        body = "    if (!callbackOutcome.IsException()) return JSTaggedValue::Exception();"
+        result = self.analyze(source(body=body))
+        self.assertEqual(len(result.observations), 1)
+
+    def test_conditional_return_does_not_prove_exception_exit_dominates(self):
+        body = "    if (callbackOutcome.IsException()) { if (condition) return JSTaggedValue::Exception(); }"
+        result = self.analyze(source(body=body))
+        self.assertEqual(len(result.observations), 1)
+
+    def test_normal_value_return_does_not_propagate_pending_exception(self):
+        body = "    if (callbackOutcome.IsException()) return JSTaggedValue::False();"
+        result = self.analyze(source(body=body))
+        self.assertEqual(len(result.observations), 1)
+
+    def test_braced_unconditional_exception_return_guards_conversion(self):
+        body = "    if (callbackOutcome.IsException()) { return callbackOutcome; }"
+        result = self.analyze(source(body=body))
+        self.assertEqual(result.observations, ())
+
+    def test_generated_callback_result_sentinel_check_does_not_guard_pending_state(self):
+        result = self.analyze(generated_source(), macro_source="")
+        self.assertEqual(result.file_outcome, "complete")
+        self.assertEqual(len(result.observations), 1)
+        self.assertEqual(result.observations[0].reason,
+                         "callback_pending_exception_can_reach_generated_result_conversion")
+
+    def test_generated_callback_pending_state_guard_dominates_conversion(self):
+        result = self.analyze(
+            generated_source("HasPendingException"), macro_source="")
+        self.assertEqual(result.file_outcome, "complete")
+        self.assertEqual(result.observations, ())
+
+    def test_generated_guard_on_different_thread_keeps_path_unknown(self):
+        result = self.analyze(
+            generated_source("HasPendingException", pending_context="otherContext"),
+            macro_source="")
+        self.assertEqual(result.file_outcome, "partial")
+        self.assertEqual(result.observations, ())
+        self.assertIn("unmodeled_generated_callback_exception_path", result.limitations[0])
+
+    def test_generated_callback_result_provenance_survives_renaming(self):
+        result = self.analyze(
+            generated_source("TaggedIsException", "renamedCallResult"), macro_source="")
+        self.assertEqual(len(result.observations), 1)
+        self.assertEqual(result.observations[0].line, 12)
 
     def test_variable_rename_does_not_change_dataflow_result(self):
         result = self.analyze(source("renamedCompletion"))

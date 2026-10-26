@@ -1,0 +1,50 @@
+{
+  "schema": "ohscanner.c1.ninja-input-inventory/v1",
+  "status": "captured",
+  "product": "hihope/rk3568",
+  "target": "all",
+  "command": [
+    "/home/deepsleep/c-line-c1-profile-20261018/toolchain-20261019/ninja",
+    "-C",
+    "/home/deepsleep/c-line-c1-profile-20261018/out-gn-20261019-retry3/rk3568",
+    "-w",
+    "dupbuild=warn",
+    "-t",
+    "inputs",
+    "all"
+  ],
+  "ninja_sha256": "2c867ca18771ff64d2a9f72f16316760651c98b1fbce692b0542f25de49b112b",
+  "build_ninja_sha256": "eb313a6a3f282c71c72186e6f3e2022973e6fa0d07efc18426e7505ce7fc8951",
+  "returncode": 0,
+  "input_line_count": 573846,
+  "stdout_bytes": 61964397,
+  "stdout_sha256": "1d9c3a4f439e6711528a94dd1410f824a8e992e3e0c9444fa568afe4af4b8000",
+  "node_modules_reference_roots": [
+    {
+      "build_path_root": "../../developtools/ace_ets2bundle/compiler",
+      "reference_count": 1,
+      "example": "'../../developtools/ace_ets2bundle/compiler/node_modules/@babel/cli/bin/babel.js'"
+    },
+    {
+      "build_path_root": "../../developtools/ace_js2bundle/ace-loader",
+      "reference_count": 1,
+      "example": "'../../developtools/ace_js2bundle/ace-loader/node_modules/@babel/cli/bin/babel.js'"
+    },
+    {
+      "build_path_root": "../../third_party/parse5/packages/parse5",
+      "reference_count": 1,
+      "example": "../../third_party/parse5/packages/parse5/node_modules/typescript/bin/tsc"
+    },
+    {
+      "build_path_root": "../../third_party/weex-loader",
+      "reference_count": 1,
+      "example": "'../../third_party/weex-loader/node_modules/@babel/cli/bin/babel.js'"
+    },
+    {
+      "build_path_root": "NOTICE_FILES/sdk/ets/build-tools/ets-loader",
+      "reference_count": 1,
+      "example": "NOTICE_FILES/sdk/ets/build-tools/ets-loader/node_modules/typescript.txt"
+    }
+  ],
+  "scope_note": "Ninja -t inputs is a read-only graph query. It enumerates declared inputs; it does not establish source-tree completeness, run build actions, or prove input existence."
+}

@@ -36,7 +36,7 @@
   "dependency_reference": {
     "manifest_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c4_20261018/exact_snapshot_manifest.v1.json",
     "manifest_schema": "ohscanner.ark-runtime-exact-snapshot-dependencies/v1",
-    "dependency_summary_sha256": "6aba13c03d071edb4e07076a5e1910d631903c95755691c4e068ed4d27a653a9",
+    "dependency_summary_sha256": "948783cd288213aed89908b8ab5df4096bc7de401bde5b41b10bb0bbfd0f1e1a",
     "verification_status": "blocked"
   },
   "note": "Reference only. C3 reports are immutable and predate this dependency manifest. The sidecar links their exact report hashes to the same deterministic summary; it does not claim those runs used a complete preprocessor closure or share Detector/model version."

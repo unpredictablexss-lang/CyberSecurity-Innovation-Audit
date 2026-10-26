@@ -45,7 +45,7 @@ class UnseenSourceContractTests(unittest.TestCase):
         context = self.make_git_context((source,), "f" * 40)
         reports, coverage = run_all_with_coverage(context, build_registry((DETECTOR_ID,)))
         report = reports[0]
-        self.assertEqual(report.tool_version, "0.8.10")
+        self.assertEqual(report.tool_version, "0.8.12")
         self.assertEqual(report.diagnostic_count, 1)
         self.assertEqual(report.diagnostics[0].file, source.path)
         self.assertEqual(report.diagnostics[0].source_sha256, source.sha256)
@@ -166,7 +166,7 @@ void BuiltinsTypedArrayStubBuilder::Map(GateRef glue, GateRef input, GateRef cou
             scan_context, build_registry((DETECTOR_ID,)))
         entry = coverage["detectors"][DETECTOR_ID]
         self.assertEqual(entry["applicable_files"], 1)
-        self.assertEqual(reports[0].tool_version, "0.8.10")
+        self.assertEqual(reports[0].tool_version, "0.8.12")
         self.assertFalse(any(d.rule_id == "ark.runtime.typedarray-store-type-origin"
                              for d in reports[0].diagnostics))
 
@@ -205,7 +205,7 @@ void BuiltinsTypedArrayStubBuilder::Map(GateRef glue, GateRef input, GateRef cou
         self.assertEqual(model.source_dependencies, ())
         self.assertEqual(model.exception_guard_dependencies, ())
         self.assertEqual(model.effect_summary_sources, ())
-        self.assertEqual(model.version, "0.8.10")
+        self.assertEqual(model.version, "0.8.12")
 
 
 if __name__ == "__main__":

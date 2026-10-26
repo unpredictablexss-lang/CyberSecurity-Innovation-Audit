@@ -1,0 +1,36 @@
+{
+  "assessment_id": "ark-runtime-c-independent-holdout-20261018-v2",
+  "status": "blind_run_complete_labels_pending",
+  "detector_id": "ohscanner.ark.runtime.type_safety",
+  "detector_version": "0.6.2",
+  "model_digest_sha256": "662c74d79b75b2a111f7ec0eca4cb819a8b1f092ea3e9f7e6cff63621a3d8a1a",
+  "scanner_commit": "5cceb70e3b00b5e4938bfcee378863a8232931a9",
+  "scanner_tree": "33df67ffd1529d098bcbabbba63ac4c9199b01c9",
+  "sample_count": 9,
+  "labels_frozen_before_run": false,
+  "raw_prediction_escrow_path": "work/prediction-escrow/holdout_run.json",
+  "raw_prediction_escrow_sha256": "1bf438e8634a12291b3940651ca16210611aee7bde053908e5d6192967c3fa55",
+  "source_manifest_sha256": "ef1b36574c1b6f50ea1ac64dc2ca0a374a824a4d0e0e124b1d32eea75b56afd5",
+  "blind_packet_sha256": "11e45aba4f61c0ce53322e19372557559a15e131fed1117d72c19a7ad1e615e1",
+  "parse_status_counts": {
+    "complete": 8,
+    "partial": 1
+  },
+  "detector_report_status_counts": {
+    "blocked": 9
+  },
+  "detector_coverage_status_counts": {
+    "not_applicable": 9
+  },
+  "predicted_candidate_count": 0,
+  "true_positive_count": null,
+  "false_positive_count": null,
+  "false_negative_count": null,
+  "precision": null,
+  "recall": null,
+  "limitations": [
+    "All selected source paths are outside the frozen model's applicable source paths; blocked/not-applicable results are not misses or safe outcomes.",
+    "Labels are not independently frozen; candidate hits/false positives/false negatives and all rates remain unestimable.",
+    "The blind packet contains no detector output. Keep this summary and escrow file away from reviewers until their label snapshots are frozen."
+  ]
+}

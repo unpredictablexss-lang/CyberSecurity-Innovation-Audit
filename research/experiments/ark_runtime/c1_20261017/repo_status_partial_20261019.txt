@@ -1,0 +1,154 @@
+/home/deepsleep/bin/repo:603: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  now = datetime.datetime.utcnow()
+project applications/standard/app_samples/      (*** NO BRANCH ***)
+ M-	code/BasicFeature/Media/AudioMusicPlayer/entry/src/main/resources/rawfile/Delacey - Dream It Possible.flac
+ M-	code/BasicFeature/Media/AudioMusicPlayer/entry/src/main/resources/rawfile/Delacey - Dream It Possible.pcm
+ M-	code/BasicFeature/Media/AudioMusicPlayer/entry/src/main/resources/rawfile/boisterous.pcm
+ M-	code/BasicFeature/Media/AudioMusicPlayer/entry/src/main/resources/rawfile/boisterous.wav
+ M-	code/BasicFeature/Media/AudioMusicPlayer/entry/src/main/resources/rawfile/power.pcm
+ M-	code/BasicFeature/Media/AudioMusicPlayer/entry/src/main/resources/rawfile/power.wav
+ M-	code/BasicFeature/Media/AudioMusicPlayer/entry/src/main/resources/rawfile/world.pcm
+ M-	code/BasicFeature/Media/AudioMusicPlayer/entry/src/main/resources/rawfile/world.wav
+ M-	code/DocsSample/Media/Image/ImageNativeSample/entry/src/main/resources/rawfile/allAux.jpg
+ M-	code/DocsSample/Media/Image/ImageNativeSample/entry/src/main/resources/rawfile/test.gif
+project base/tee/tee_os_kernel/                 (*** NO BRANCH ***)
+ -m	user/system-services/chcore-libc/libchcore/porting/overrides/src/thread/aarch64/__unmapself.S
+project foundation/multimedia/av_codec/         (*** NO BRANCH ***)
+ M-	test/moduletest/resources/video_decoder/test_msvideo1.msvideo1
+ M-	test/unittest/resources/demuxer_res/aigc_str.m4v
+ M-	test/unittest/resources/demuxer_res/caf_pcm_s16le_ut.caf
+ M-	test/unittest/resources/demuxer_res/dat_h264_mp3_high_bitrate.dat
+ M-	test/unittest/resources/demuxer_res/dat_h265_aac_4k_60fps.dat
+ M-	test/unittest/resources/demuxer_res/dat_mpeg4_aac_high_bitrate.dat
+ M-	test/unittest/resources/demuxer_res/h264_fmp4.m4v
+ M-	test/unittest/resources/video_res/profile0_128x96.h263
+ M-	test/unittest/resources/video_res/profile0_1408x1152.h263
+ M-	test/unittest/resources/video_res/profile0_176x144.h263
+ M-	test/unittest/resources/video_res/profile0_352x288.h263
+ M-	test/unittest/resources/video_res/profile0_704x576.h263
+ M-	test/unittest/resources/video_res/profile2_04x04.h263
+ M-	test/unittest/resources/video_res/profile2_1280x720.h263
+ M-	test/unittest/resources/video_res/profile2_1920x1080.h263
+ M-	test/unittest/resources/video_res/profile2_2048x1152.h263
+ M-	test/unittest/resources/video_res/profile2_20x20.h263
+ M-	test/unittest/resources/video_res/profile2_480p_720p_1080p.h263
+ M-	test/unittest/resources/video_res/profile2_480x720.h263
+ M-	test/unittest/resources/video_res/profile2_720x480.h263
+ M-	test/unittest/resources/video_res/profile2_720x480_par10_11.h263
+ M-	test/unittest/resources/video_res/profile2_720x480_par16_11.h263
+ M-	test/unittest/resources/video_res/profile2_720x480_par23_31.h263
+ M-	test/unittest/resources/video_res/profile2_720x480_par31_23.h263
+ M-	test/unittest/resources/video_res/profile2_720x480_par40_33.h263
+ M-	test/unittest/resources/video_res/test_msvideo1_001.msvideo1
+project foundation/multimedia/image_framework/  (*** NO BRANCH ***)
+ M-	test/resource/image/images/test_rfdatab_depthen.jpg
+ M-	test/resource/image/images/test_rfdatab_depthp.jpg
+ M-	test/resource/image/images/test_rfdatab_rfdatab.jpg
+ M-	test/resource/image/images/xmp/dng_xmp.dng
+project kernel/linux/linux-5.10/                (*** NO BRANCH ***)
+ -m	include/uapi/linux/netfilter/xt_CONNMARK.h
+ -m	include/uapi/linux/netfilter/xt_DSCP.h
+ -m	include/uapi/linux/netfilter/xt_MARK.h
+ -m	include/uapi/linux/netfilter/xt_RATEEST.h
+ -m	include/uapi/linux/netfilter/xt_TCPMSS.h
+ -m	include/uapi/linux/netfilter_ipv4/ipt_ECN.h
+ -m	include/uapi/linux/netfilter_ipv4/ipt_TTL.h
+ -m	include/uapi/linux/netfilter_ipv6/ip6t_HL.h
+ -m	net/netfilter/xt_DSCP.c
+ -m	net/netfilter/xt_HL.c
+ -m	net/netfilter/xt_RATEEST.c
+ -m	net/netfilter/xt_TCPMSS.c
+ -m	tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+pombonce.litmus
+project kernel/linux/patches/                   (*** NO BRANCH ***)
+ -m	linux-4.19/prebuilts/usr/include/linux/netfilter/xt_CONNMARK.h
+ -m	linux-4.19/prebuilts/usr/include/linux/netfilter/xt_DSCP.h
+ -m	linux-4.19/prebuilts/usr/include/linux/netfilter/xt_MARK.h
+ -m	linux-4.19/prebuilts/usr/include/linux/netfilter/xt_RATEEST.h
+ -m	linux-4.19/prebuilts/usr/include/linux/netfilter/xt_TCPMSS.h
+ -m	linux-4.19/prebuilts/usr/include/linux/netfilter_ipv4/ipt_ECN.h
+ -m	linux-4.19/prebuilts/usr/include/linux/netfilter_ipv4/ipt_TTL.h
+ -m	linux-4.19/prebuilts/usr/include/linux/netfilter_ipv6/ip6t_HL.h
+ -m	linux-5.10/prebuilts/usr/include/linux/netfilter/xt_CONNMARK.h
+ -m	linux-5.10/prebuilts/usr/include/linux/netfilter/xt_DSCP.h
+ -m	linux-5.10/prebuilts/usr/include/linux/netfilter/xt_MARK.h
+ -m	linux-5.10/prebuilts/usr/include/linux/netfilter/xt_RATEEST.h
+ -m	linux-5.10/prebuilts/usr/include/linux/netfilter/xt_TCPMSS.h
+ -m	linux-5.10/prebuilts/usr/include/linux/netfilter_ipv4/ipt_ECN.h
+ -m	linux-5.10/prebuilts/usr/include/linux/netfilter_ipv4/ipt_TTL.h
+ -m	linux-5.10/prebuilts/usr/include/linux/netfilter_ipv6/ip6t_HL.h
+project kernel/linux/linux-6.6/                 (*** NO BRANCH ***)
+ -m	include/uapi/linux/netfilter/xt_CONNMARK.h
+ -m	include/uapi/linux/netfilter/xt_DSCP.h
+ -m	include/uapi/linux/netfilter/xt_MARK.h
+ -m	include/uapi/linux/netfilter/xt_RATEEST.h
+ -m	include/uapi/linux/netfilter/xt_TCPMSS.h
+ -m	include/uapi/linux/netfilter_ipv4/ipt_ECN.h
+ -m	include/uapi/linux/netfilter_ipv4/ipt_TTL.h
+ -m	include/uapi/linux/netfilter_ipv6/ip6t_HL.h
+ -m	net/netfilter/xt_DSCP.c
+ -m	net/netfilter/xt_HL.c
+ -m	net/netfilter/xt_RATEEST.c
+ -m	net/netfilter/xt_TCPMSS.c
+ -m	tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+pombonce.litmus
+project third_party/icu/                        (*** NO BRANCH ***)
+ M-	tools/multi/proj/icu4cscan/old-xmls.tar.bz2
+project third_party/iptables/                   (*** NO BRANCH ***)
+ -m	extensions/libip6t_HL.c
+ -m	extensions/libip6t_HL.man
+ -m	extensions/libip6t_HL.t
+ -m	extensions/libipt_TTL.c
+ -m	extensions/libipt_TTL.man
+ -m	extensions/libipt_TTL.t
+ -m	extensions/libxt_CONNMARK.c
+ -m	extensions/libxt_CONNMARK.man
+ -m	extensions/libxt_CONNMARK.t
+ -m	extensions/libxt_CONNMARK.txlate
+ -m	extensions/libxt_DSCP.c
+ -m	extensions/libxt_DSCP.man
+ -m	extensions/libxt_DSCP.t
+ -m	extensions/libxt_DSCP.txlate
+ -m	extensions/libxt_MARK.c
+ -m	extensions/libxt_MARK.man
+ -m	extensions/libxt_MARK.t
+ -m	extensions/libxt_MARK.txlate
+ -m	extensions/libxt_RATEEST.c
+ -m	extensions/libxt_RATEEST.man
+ -m	extensions/libxt_RATEEST.t
+ -m	extensions/libxt_SET.c
+ -m	extensions/libxt_SET.man
+ -m	extensions/libxt_SET.t
+ -m	extensions/libxt_TCPMSS.c
+ -m	extensions/libxt_TCPMSS.man
+ -m	extensions/libxt_TCPMSS.t
+ -m	extensions/libxt_TCPMSS.txlate
+ -m	extensions/libxt_TOS.c
+ -m	extensions/libxt_TOS.man
+ -m	extensions/libxt_TOS.t
+ -m	include/linux/netfilter/xt_CONNMARK.h
+ -m	include/linux/netfilter/xt_DSCP.h
+ -m	include/linux/netfilter/xt_MARK.h
+ -m	include/linux/netfilter/xt_RATEEST.h
+ -m	include/linux/netfilter/xt_TCPMSS.h
+ -m	include/linux/netfilter_ipv4/ipt_TTL.h
+ -m	include/linux/netfilter_ipv6/ip6t_HL.h
+project test/xts/acts/                          (*** NO BRANCH ***)
+ M-	multimedia/audio/audio_js_standard/AudioCapturer/entry/src/main/resources/rawfile/pcm_48ksr_32kbr_2ch.wav
+ M-	multimedia/audio/audio_js_standard/AudioCapturer/entry/src/ohosTest/resources/rawfile/pcm_48ksr_32kbr_2ch.wav
+ M-	multimedia/audio/audio_js_standard/AudioRenderStage/entry/src/main/resources/rawfile/pcm_48ksr_32kbr_2ch.wav
+ M-	multimedia/audio/audio_js_standard/AudioRenderStage/entry/src/ohosTest/resources/rawfile/pcm_48ksr_32kbr_2ch.wav
+ M-	multimedia/audio/audio_js_standard/audio_ndk_test/entry/src/main/resources/rawfile/test_44100_2.wav
+ M-	multimedia/audio/audio_js_standard/audio_ndk_test/entry/src/ohosTest/resources/rawfile/test_44100_2.wav
+ M-	multimedia/image/image_ets_standard/ImageXtsStatic/entry/src/main/resources/rawfile/CUVAHdrMulti.jpg
+ M-	multimedia/image/image_ets_standard/imageGetMimeType/entry/src/main/resources/rawfile/wrong_suffix_dng.jpg
+ M-	multimedia/image/image_ets_standard/imageXMPMetadata/entry/src/main/resources/rawfile/CUVAHdrMulti.jpg
+ M-	multimedia/image/image_ets_standard/imageXts/entry/src/main/resources/rawfile/AllAuxiliaryPictures.jpg
+ M-	multimedia/image/image_ets_standard/imageXts/entry/src/main/resources/rawfile/CUVAHdrMulti.jpg
+ M-	multimedia/image/image_js_standard/imagePackToFile/entry/src/ohosTest/resources/rawfile/test.png
+ M-	multimedia/image/image_js_standard/imagePackToFileStatic/entry/src/main/resources/rawfile/test.png
+ M-	multimedia/image/image_js_standard/imagePacking/entry/src/ohosTest/resources/rawfile/test.png
+ M-	multimedia/image/image_js_standard/imagePackingNDK/AppScope/resources/rawfile/test.png
+ M-	multimedia/image/image_js_standard/imagePackingNDK/entry/src/ohosTest/resources/rawfile/test.png
+ M-	multimedia/image/image_js_standard/imagePackingStatic/entry/src/main/resources/rawfile/test.png
+ M-	multimedia/photoAccess/photoAccess_ets_standard/photoAccessXts/entry/src/main/resources/rawfile/CUVAHdrMulti.jpg
+ M-	web/DFX/log_dotting_four/libs/xtstestserver.har
+ M-	web/web_content_processing/password_padding/libs/xtstestserver.har

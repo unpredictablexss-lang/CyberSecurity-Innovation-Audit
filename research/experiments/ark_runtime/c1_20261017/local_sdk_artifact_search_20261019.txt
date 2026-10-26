@@ -1,0 +1,9 @@
+search_started_utc=2026-10-19T05:53:00Z
+=== absent: /home/deepsleep/.prebuilts_cache ===
+=== /home/deepsleep/c-line-c1-profile-20261018/prebuilts-stage-20261019 ===
+find_status=0
+=== /home/deepsleep/c-line-c1-profile-20261018/out-gn-20261019-retry3 ===
+find_status=0
+=== absent: /mnt/d/OpenHarmony807/prebuilts ===
+=== absent: /mnt/d/OpenHarmony807/out ===
+search_finished_utc=2026-10-19T05:53:08Z

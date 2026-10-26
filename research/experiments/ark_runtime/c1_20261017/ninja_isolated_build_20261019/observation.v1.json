@@ -1,0 +1,72 @@
+{
+  "schema": "ohscanner.c1.isolated-ninja-target-build-observation/v1",
+  "status": "blocked_before_target_compile",
+  "product": "hihope/rk3568",
+  "profile_digest_sha256": "e86461191c065e3e140afb734c9d8c27818851ae51651f9ba004231fa7d52063",
+  "source_manifest_sha256": "52f528dada321a140a29be2d55ef9053fda818cbdca93758425f1a25f6286d55",
+  "ark_runtime_commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+  "ninja_sha256": "2c867ca18771ff64d2a9f72f16316760651c98b1fbce692b0542f25de49b112b",
+  "ninja_version": "1.13.2",
+  "python_sha256": "02e619087c33f723f4bd8e7f7443f35d87d4383d9592de04b66a3c05a5d4f316",
+  "python_expected_sha256": "02e619087c33f723f4bd8e7f7443f35d87d4383d9592de04b66a3c05a5d4f316",
+  "python_version": "Python 3.12.10",
+  "execution_boundary": {
+    "user_mount_network_namespaces": true,
+    "network_namespace": "net:[4026532321]",
+    "source_read_only": true,
+    "prebuilts_read_only": true,
+    "toolchain_read_only": true,
+    "output_writable": true,
+    "root_filesystem_read_only": false,
+    "mounts": {
+      "root_mount": "/      rw,relatime,discard,errors=remount-ro,data=ordered",
+      "source_mount": "/home/deepsleep/c-line-c1-profile-20261018/openharmony-git-archive-20261019 ro,relatime,discard,errors=remount-ro,data=ordered",
+      "prebuilts_mount": "/home/deepsleep/c-line-c1-profile-20261018/prebuilts-stage-20261019 ro,relatime,discard,errors=remount-ro,data=ordered",
+      "toolchain_mount": "/home/deepsleep/c-line-c1-profile-20261018/toolchain-20261019 ro,relatime,discard,errors=remount-ro,data=ordered",
+      "source_view_mount": "/home/deepsleep/c-line-c1-profile-20261018/c1-object-source-view-20261019 ro,relatime,discard,errors=remount-ro,data=ordered",
+      "output_mount": "/home/deepsleep/c-line-c1-profile-20261018/c1-object-source-view-20261019/out/rk3568 rw,relatime,discard,errors=remount-ro,data=ordered",
+      "evidence_mount": "/home/deepsleep/c-line-c1-profile-20261018/ninja_isolated_build_attempt2_20261019 rw,relatime,discard,errors=remount-ro,data=ordered"
+    }
+  },
+  "ninja_command": [
+    "/home/deepsleep/c-line-c1-profile-20261018/toolchain-20261019/ninja",
+    "-C",
+    "/home/deepsleep/c-line-c1-profile-20261018/c1-object-source-view-20261019/out/rk3568",
+    "-j2",
+    "-w",
+    "dupbuild=warn",
+    "obj/arkcompiler/ets_runtime/ecmascript/compiler/builtins/libark_jsoptimizer_set/builtins_typedarray_stub_builder.o"
+  ],
+  "exact_arm_targets": [
+    {
+      "object_output": "obj/arkcompiler/ets_runtime/ecmascript/compiler/builtins/libark_jsoptimizer_set/builtins_typedarray_stub_builder.o",
+      "command_sha256": "c6d7959215306a67152ac3c2bf1f5012ba919107e27380691c0f9c32e6a6fa88"
+    },
+    {
+      "object_output": "obj/arkcompiler/ets_runtime/ecmascript/compiler/builtins/libark_jsoptimizer_set_with_maple/builtins_typedarray_stub_builder.o",
+      "command_sha256": "7471f97a0bfab59e0e350be060391af4f17511aa4c019a861822f5154750e82a"
+    }
+  ],
+  "attempted_target": "obj/arkcompiler/ets_runtime/ecmascript/compiler/builtins/libark_jsoptimizer_set/builtins_typedarray_stub_builder.o",
+  "target_returncode": 1,
+  "second_arm_target_attempted": false,
+  "target_compile_observed": false,
+  "graph_actions_scheduled": 2870,
+  "graph_actions_started_before_failure": 1,
+  "duplicate_output_warning_count": 630,
+  "failure": "OSError: [Errno 30] Read-only file system: '../../third_party/musl/COPYRIGHT'",
+  "failure_classification": "Ninja prerequisite notice generator attempted to write a source-tree COPYRIGHT file; read-only source mount rejected the write",
+  "ninja_logs_sha256": "b4648b562c214d2746d0d5744c573bba827ed2815e4361eaa657d1eb374b40b8",
+  "ninja_sha256_verified_by_runner_preflight": "2c867ca18771ff64d2a9f72f16316760651c98b1fbce692b0542f25de49b112b",
+  "ninja_status_sha256": "1bc0b3d5add026ef69ff63dbea139042c5504a7de4bf146f244ca2df7c31a938",
+  "execution_boundary_sha256": "6c0d3683695884f08a3cedfd2dad42883e137b81a445a41f063136cfe034a9d2",
+  "target_query_sha256": "4cfd392261f8ec79a9a2afd53eb4a5595eae81bf9b0334f885235b78a170cacb",
+  "stamp_query_sha256": "bcc15661c67c2f192ed98f1baee8d4fc14e71b897190cbaa74f9d5c77857b6ef",
+  "runner_sha256": "16d76205bd6780bf92a96a00c757414560e09285797054db7fe76e73f3b923db",
+  "limitations": [
+    "The WSL root filesystem remained writable; source, prebuilt, compiler toolchain, and source view were read-only; only GN output and evidence mounts were writable.",
+    "Ninja's object target has an order-only inputdeps stamp whose transitive closure schedules unrelated notice/info actions before compiling the requested object.",
+    "The exact immutable source policy was preserved; the write failure was not bypassed by making the source tree writable or editing generated Ninja rules.",
+    "The second ARM object target was not attempted; no product image build was performed."
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "document_status": "preparation_only",
+  "purpose": "Publicly documented development-family exposure metadata for future leakage screening; this is not a source roster and contains no evaluation samples.",
+  "sample_count": 0,
+  "families": [
+    {
+      "family_key": "DEV-C1-TYPE-ORIGIN",
+      "public_identity": "TypedArray type-origin development patch family",
+      "development_artifacts": ["research/experiments/ark_runtime/c7_20261018/README.md"],
+      "exposure_note": "C1 parent/fix development pair; exclude this family and related root-cause variants from any future independent assessment.",
+      "evaluation_candidate": false
+    },
+    {
+      "family_key": "DEV-C2-EXCEPTION-GUARD",
+      "public_identity": "TypedArray exception-guard development patch family",
+      "development_artifacts": ["research/experiments/ark_runtime/c7_20261018/README.md"],
+      "exposure_note": "C2 parent/fix development pair; exclude this family and related root-cause variants from any future independent assessment.",
+      "evaluation_candidate": false
+    },
+    {
+      "family_key": "DEV-UNRELATED-SPELLING-CONTROL",
+      "public_identity": "Previously exposed unrelated spelling-patch control",
+      "development_artifacts": ["research/experiments/ark_runtime/c7_20261018/README.md"],
+      "exposure_note": "Previously inspected development control; not a positive, safe, or eligible evaluation example.",
+      "evaluation_candidate": false
+    }
+  ],
+  "local_git_history_review": {
+    "status": "partial_inventory_only",
+    "review_scope": "Reachable local Git history for Ark Runtime detector development",
+    "observed": "A read-only all-refs history query returned nine reachable detector-development commits across multiple iterations; local refs also include separate C-line review and replay branches.",
+    "limitation": "This does not enumerate untracked work or external tuning and patch-family history, and does not establish family closure.",
+    "selection_effect": "Keep C5 blocked before source selection until the authorized complete family inventory is reconciled.",
+    "prohibited_data_recorded": false
+  },
+  "unresolved_scope_note": "The existing admin readiness audit reports unresolved possible related-family overlap and incomplete external/untracked tuning history. A partial read-only review of reachable local detector-development history found additional iterations and review/replay refs, but does not resolve either gap or establish family closure. All future selection remains blocked until the complete authorized inventory is reconciled.",
+  "prohibition": "Do not add holdout row identifiers, source paths, commits, hashes, labels, predictions, or reviewer data to this file."
+}

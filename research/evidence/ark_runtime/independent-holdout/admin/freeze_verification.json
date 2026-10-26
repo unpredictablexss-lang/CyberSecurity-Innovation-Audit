@@ -1,0 +1,214 @@
+{
+  "assessment_id": "ark-runtime-c-independent-holdout-20261018-v2",
+  "verification_scope": "frozen scanner implementation/model/parser and source identity/parser states only; no detector prediction run",
+  "scanner": {
+    "commit": "5cceb70e3b00b5e4938bfcee378863a8232931a9",
+    "tree": "33df67ffd1529d098bcbabbba63ac4c9199b01c9",
+    "version": "0.6.2",
+    "model_digest": "662c74d79b75b2a111f7ec0eca4cb819a8b1f092ea3e9f7e6cff63621a3d8a1a",
+    "model_digest_match": true,
+    "implementation_file_count": 7,
+    "implementation_files": {
+      "src/ohscanner/detectors/ark_runtime/model.py": {
+        "expected": "1c2fa93762f19a9ceb6f17999ba74c447203367d6cb107e130d846b81cd7404e",
+        "actual": "1c2fa93762f19a9ceb6f17999ba74c447203367d6cb107e130d846b81cd7404e",
+        "match": true
+      },
+      "src/ohscanner/detectors/ark_runtime/analysis.py": {
+        "expected": "4fd9f375725ca7039beb2fe428f176ebe360299ce1f9e105ab4235e80875853d",
+        "actual": "4fd9f375725ca7039beb2fe428f176ebe360299ce1f9e105ab4235e80875853d",
+        "match": true
+      },
+      "src/ohscanner/detectors/ark_runtime/runtime_ir.py": {
+        "expected": "f3c2c85f086e223cb5897150f7d1e6890bf568599a287c1a6fe6e5411c2a39ca",
+        "actual": "f3c2c85f086e223cb5897150f7d1e6890bf568599a287c1a6fe6e5411c2a39ca",
+        "match": true
+      },
+      "src/ohscanner/detectors/ark_runtime/syntax.py": {
+        "expected": "efcd76fc5312acf0021ecce701f9506ece1db781f7ba51e6c702b75125e6e5c4",
+        "actual": "efcd76fc5312acf0021ecce701f9506ece1db781f7ba51e6c702b75125e6e5c4",
+        "match": true
+      },
+      "src/ohscanner/detectors/ark_runtime/type_origin.py": {
+        "expected": "5ff1ffacbf80f175b75979e6a49cdba4ba70e34bc4736e5d4c48402fb67a3073",
+        "actual": "5ff1ffacbf80f175b75979e6a49cdba4ba70e34bc4736e5d4c48402fb67a3073",
+        "match": true
+      },
+      "src/ohscanner/detectors/ark_runtime/exception_guard.py": {
+        "expected": "3bb959a1164d43b44bbe0e20a79193d55907278ea83da8b85490bbf2c409437c",
+        "actual": "3bb959a1164d43b44bbe0e20a79193d55907278ea83da8b85490bbf2c409437c",
+        "match": true
+      },
+      "src/ohscanner/detectors/ark_runtime/detector.py": {
+        "expected": "058a3ac01acc685d59e74c3057aa1ab0654e704fa7d1d6c9a2ffaeed354ec532",
+        "actual": "058a3ac01acc685d59e74c3057aa1ab0654e704fa7d1d6c9a2ffaeed354ec532",
+        "match": true
+      }
+    },
+    "parser_ast_sha256": "eabb4aff1b613661cb37f9f8d7bb50c6c2b5a4fb28cb55fbd452aa5179ec5eb0",
+    "parser_ast_match": true
+  },
+  "parser_dependencies": {
+    "tree_sitter": "0.26.0",
+    "tree_sitter_cpp": "0.23.4"
+  },
+  "sample_count": 9,
+  "source_results": [
+    {
+      "sample_id": "AR-MAP-01",
+      "commit": "74004beceed63d5f06c95bbb64cd80da1f55dc80",
+      "path": "ecmascript/js_stable_array.cpp",
+      "source_sha256": "5ae4681fdb8236036854bbcadc345b51f994f8c8ff6ae3e3ad45a3e9a537d2db",
+      "git_blob_sha1": "14c979d0414a1344d13328228b61aa398701a587",
+      "parser_status": "complete",
+      "parser_issue_count": 0,
+      "checks": {
+        "bytes_match": true,
+        "source_sha256_match": true,
+        "git_blob_sha1_match": true,
+        "parser_status_match": true,
+        "parser_issue_count_match": true
+      }
+    },
+    {
+      "sample_id": "AR-MAP-02",
+      "commit": "38024ab0498cb3f27453bebdfee4e2569928d6dc",
+      "path": "ecmascript/js_stable_array.cpp",
+      "source_sha256": "77aeeaae7e66642a6fe6087de2a4ae2dafd403d5196e1e64193b1bfd9648488b",
+      "git_blob_sha1": "4614fdf7a9390a939d633ae77995fb2f7beeae21",
+      "parser_status": "complete",
+      "parser_issue_count": 0,
+      "checks": {
+        "bytes_match": true,
+        "source_sha256_match": true,
+        "git_blob_sha1_match": true,
+        "parser_status_match": true,
+        "parser_issue_count_match": true
+      }
+    },
+    {
+      "sample_id": "AR-FILTER-01",
+      "commit": "38024ab0498cb3f27453bebdfee4e2569928d6dc",
+      "path": "ecmascript/js_stable_array.cpp",
+      "source_sha256": "77aeeaae7e66642a6fe6087de2a4ae2dafd403d5196e1e64193b1bfd9648488b",
+      "git_blob_sha1": "4614fdf7a9390a939d633ae77995fb2f7beeae21",
+      "parser_status": "complete",
+      "parser_issue_count": 0,
+      "checks": {
+        "bytes_match": true,
+        "source_sha256_match": true,
+        "git_blob_sha1_match": true,
+        "parser_status_match": true,
+        "parser_issue_count_match": true
+      }
+    },
+    {
+      "sample_id": "AR-FILTER-02",
+      "commit": "b16ad583e82f9a80a2f4392b295f1500c4798b10",
+      "path": "ecmascript/js_stable_array.cpp",
+      "source_sha256": "13b4fd739f01eae285e525f584225bc9e83def2e4c4206b9eec64ad8e37f605a",
+      "git_blob_sha1": "c584b83a625be982f9e42e2ceae3c51b05be44c2",
+      "parser_status": "complete",
+      "parser_issue_count": 0,
+      "checks": {
+        "bytes_match": true,
+        "source_sha256_match": true,
+        "git_blob_sha1_match": true,
+        "parser_status_match": true,
+        "parser_issue_count_match": true
+      }
+    },
+    {
+      "sample_id": "AR-TY-STD-01",
+      "commit": "edc5231fdbc81d0d7477d03347c0ea44408f6726",
+      "path": "ecmascript/builtins/builtins_typedarray.cpp",
+      "source_sha256": "14507ac872dc34a6c20b6f448678466f119de94a4ed1de6d91e269640936c81c",
+      "git_blob_sha1": "0fc27c213e1ea80d93e1e3807eec11baf2634832",
+      "parser_status": "complete",
+      "parser_issue_count": 0,
+      "checks": {
+        "bytes_match": true,
+        "source_sha256_match": true,
+        "git_blob_sha1_match": true,
+        "parser_status_match": true,
+        "parser_issue_count_match": true
+      }
+    },
+    {
+      "sample_id": "AR-TY-MACRO-PARTIAL-01",
+      "commit": "edc5231fdbc81d0d7477d03347c0ea44408f6726",
+      "path": "ecmascript/builtins/builtins_typedarray.h",
+      "source_sha256": "651d426c00c1d8bc6503c1d717decf42b28c61c57336e9418ad422604a6a1be7",
+      "git_blob_sha1": "b291181c949c7038b7030a216f5bdc0e7474a1c2",
+      "parser_status": "partial",
+      "parser_issue_count": 33,
+      "checks": {
+        "bytes_match": true,
+        "source_sha256_match": true,
+        "git_blob_sha1_match": true,
+        "parser_status_match": true,
+        "parser_issue_count_match": true
+      }
+    },
+    {
+      "sample_id": "AR-TY-SHARED-01",
+      "commit": "edc5231fdbc81d0d7477d03347c0ea44408f6726",
+      "path": "ecmascript/builtins/builtins_shared_typedarray.cpp",
+      "source_sha256": "e439dd0cab8cfb422ab12b1970f09ce3abd400f8b63338c49830fa4e820ec7c3",
+      "git_blob_sha1": "faf7160d26bd9be6c6564cb2b508ad7fed95d78f",
+      "parser_status": "complete",
+      "parser_issue_count": 0,
+      "checks": {
+        "bytes_match": true,
+        "source_sha256_match": true,
+        "git_blob_sha1_match": true,
+        "parser_status_match": true,
+        "parser_issue_count_match": true
+      }
+    },
+    {
+      "sample_id": "AR-MEM-ALLOC-01",
+      "commit": "edc5231fdbc81d0d7477d03347c0ea44408f6726",
+      "path": "ecmascript/mem/allocator-inl.h",
+      "source_sha256": "b678029693391c3cd6b334f77ced73e441792546a0c707ab4ab38b17937383c4",
+      "git_blob_sha1": "b2ab49cfca49a10e8e154b1dbb0673b275ff3cce",
+      "parser_status": "complete",
+      "parser_issue_count": 0,
+      "checks": {
+        "bytes_match": true,
+        "source_sha256_match": true,
+        "git_blob_sha1_match": true,
+        "parser_status_match": true,
+        "parser_issue_count_match": true
+      }
+    },
+    {
+      "sample_id": "AR-MEM-TLAB-01",
+      "commit": "edc5231fdbc81d0d7477d03347c0ea44408f6726",
+      "path": "ecmascript/mem/tlab_allocator-inl.h",
+      "source_sha256": "da3a88662b10e1771b68c2f0ae2fc88ac45e81db49f37b2b9c1ac6cb49797d6c",
+      "git_blob_sha1": "b7b340897dd664dcc11087f3bc20afc7835d7ddd",
+      "parser_status": "complete",
+      "parser_issue_count": 0,
+      "checks": {
+        "bytes_match": true,
+        "source_sha256_match": true,
+        "git_blob_sha1_match": true,
+        "parser_status_match": true,
+        "parser_issue_count_match": true
+      }
+    }
+  ],
+  "recorded_blind_replay": {
+    "coverage_status_counts": {
+      "not_applicable": 9
+    },
+    "labels_frozen_before_run": false,
+    "metrics_estimable": false,
+    "prediction_escrow_path": "work\\prediction-escrow\\holdout_run.json",
+    "prediction_escrow_presence": "missing_at_recorded_path",
+    "prediction_escrow_contents_read": false
+  },
+  "errors": [],
+  "status": "verified_freeze_and_source_identities"
+}

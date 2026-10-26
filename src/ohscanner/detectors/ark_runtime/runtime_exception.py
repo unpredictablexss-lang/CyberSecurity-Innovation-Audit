@@ -6,8 +6,12 @@ syntax based and reports candidates; it does not model all C++ effects.
 """
 from dataclasses import dataclass
 import re
+from tree_sitter import Language, Parser
+import tree_sitter_cpp
 
 from .analysis import Observation
+from .model import AnalysisBudget
+from .runtime_ir import build_graph
 from .syntax import name_node, parse_functions, walk
 
 
@@ -377,22 +381,375 @@ def _guarded_by_exception_result(fn, compound, source_index, sink_index, result_
         consequence = statement.child_by_field_name("consequence")
         if condition is None or consequence is None:
             continue
-        has_return = any(node.type == "return_statement" for node in walk(consequence))
-        if not has_return:
+        # Only accept a positive IsException test whose taken branch exits
+        # unconditionally and returns the exception. A negated test, a nested
+        # conditional return, or a return of a normal value does not dominate
+        # the sensitive use on the exceptional path.
+        test = condition
+        while test.type in ("condition_clause", "parenthesized_expression") and test.named_children:
+            test = test.named_children[0]
+        if test.type != "call_expression":
             continue
-        for node in walk(condition):
-            if node.type != "call_expression":
-                continue
-            callee = node.child_by_field_name("function")
-            if callee is None or callee.type != "field_expression":
-                continue
-            field = callee.child_by_field_name("field")
-            receiver = callee.child_by_field_name("argument")
-            if (field is not None and fn.text(field) == "IsException"
-                    and receiver is not None and receiver.type == "identifier"
-                    and fn.resolve(fn.text(receiver), receiver) == result_binding):
-                return True
+        callee = test.child_by_field_name("function")
+        field = callee.child_by_field_name("field") if callee is not None else None
+        receiver = callee.child_by_field_name("argument") if callee is not None else None
+        if (callee is None or callee.type != "field_expression"
+                or field is None or fn.text(field) != "IsException"
+                or receiver is None or receiver.type != "identifier"
+                or fn.resolve(fn.text(receiver), receiver) != result_binding):
+            continue
+
+        exits = []
+        if consequence.type == "return_statement":
+            exits = [consequence]
+        elif consequence.type == "compound_statement":
+            direct = [child for child in consequence.named_children if child.type != "comment"]
+            if len(direct) == 1 and direct[0].type == "return_statement":
+                exits = direct
+        if len(exits) != 1:
+            continue
+        return_statement = exits[0]
+        return_value = return_statement.named_children[0] if return_statement.named_children else None
+        if return_value is None:
+            continue
+        if fn.text(return_value).replace(" ", "") == "JSTaggedValue::Exception()":
+            return True
+        if (return_value.type == "identifier"
+                and fn.resolve(fn.text(return_value), return_value) == result_binding):
+            return True
     return False
+
+
+def _generated_callback_sources(fn, instruction):
+    """Find callback-dispatch results whose callee is sourced from JS arguments."""
+    for node in walk(instruction.node):
+        if node.type != "call_expression" or fn.call_name(node) != "JSCallDispatch":
+            continue
+        args = fn.arguments(node)
+        if len(args) < 3 or any(arg.type != "identifier" for arg in args[:2]):
+            continue
+        glue = fn.resolve(fn.text(args[0]), args[0])
+        callback = fn.resolve(fn.text(args[1]), args[1])
+        if (glue is None or glue.type_name != "GateRef" or not glue.parameter
+                or callback is None or callback.type_name != "GateRef"):
+            continue
+        callback_from_js_arg = False
+        for candidate in walk(fn.body):
+            if candidate.type != "init_declarator":
+                continue
+            declarator = candidate.child_by_field_name("declarator")
+            ident = name_node(declarator)
+            value = candidate.child_by_field_name("value")
+            if (ident is None or value is None or value.type != "call_expression"
+                    or fn.call_name(value) != "GetCallArg0"):
+                continue
+            if fn.resolve(fn.text(ident), ident) == callback:
+                callback_from_js_arg = True
+                break
+        if not callback_from_js_arg:
+            continue
+        parent = node.parent
+        while parent is not None and parent.type not in ("init_declarator", "assignment_expression"):
+            parent = parent.parent
+        if parent is None:
+            continue
+        if parent.type == "init_declarator":
+            ident = name_node(parent.child_by_field_name("declarator"))
+            value = parent.child_by_field_name("value")
+            if ident is None or value is None or value != node:
+                continue
+        else:
+            ident = parent.child_by_field_name("left")
+            value = parent.child_by_field_name("right")
+            if ident is None or value is None or ident.type != "identifier" or value != node:
+                continue
+        if ident.type != "identifier":
+            continue
+        result = fn.resolve(fn.text(ident), ident)
+        if result is not None and result.type_name == "GateRef":
+            yield result, glue
+
+
+def _generated_branch_kind(fn, instruction, result_binding, thread_binding):
+    if instruction.kind != "BRANCH" or not instruction.arguments:
+        return None
+    condition = instruction.arguments[0]
+    if condition.type != "call_expression":
+        return None
+    name = fn.call_name(condition)
+    args = fn.arguments(condition)
+    if name == "HasPendingException" and len(args) == 1 and args[0].type == "identifier":
+        thread = fn.resolve(fn.text(args[0]), args[0])
+        if (thread is not None and thread == thread_binding and thread.parameter
+                and thread.type_name == "GateRef"):
+            return "pending"
+    if name == "TaggedIsException" and len(args) == 1 and args[0].type == "identifier":
+        if fn.resolve(fn.text(args[0]), args[0]) == result_binding:
+            return "result_sentinel"
+    return None
+
+
+def _writes_exception_result(fn, instruction, result_binding, exception_path):
+    if not exception_path:
+        return False
+    calls = [item for item in walk(instruction.node) if item.type == "call_expression"]
+    if len(calls) != 1:
+        return False
+    call = calls[0]
+    callee = call.child_by_field_name("function")
+    field = callee.child_by_field_name("field") if callee is not None else None
+    receiver = callee.child_by_field_name("argument") if callee is not None else None
+    args = fn.arguments(call)
+    output = fn.resolve(fn.text(receiver), receiver) if receiver is not None and receiver.type == "identifier" else None
+    return (
+        field is not None and fn.text(field) == "WriteVariable"
+        and output is not None and output.parameter and output.name == "result"
+        and output.type_name == "Variable*" and len(args) == 1
+        and args[0].type == "identifier"
+        and fn.resolve(fn.text(args[0]), args[0]) == result_binding
+    )
+
+
+def _verified_generated_branch_owners(source_units):
+    """Prove the source contract for the inherited three-way StubBuilder::Branch API.
+
+    The alias is enabled only when the scanned source set contains the class
+    inheritance chain, the declaration, and a parsed implementation that maps
+    the true and false labels to the corresponding CircuitBuilder edges.
+    Missing or ambiguous source evidence leaves CamelCase Branch unmodeled.
+    """
+    texts = [unit.text for unit in source_units if unit.language == "cpp"]
+    if not texts:
+        return frozenset()
+    class_bases = {}
+    class_branch_declarations = {}
+    declaration_count = 0
+    branch_definitions = []
+    declaration_pattern = re.compile(
+        r"\bvoid\s+Branch\s*\(\s*GateRef\s+[A-Za-z_]\w*\s*,\s*"
+        r"Label\s*\*\s*[A-Za-z_]\w*\s*,\s*Label\s*\*\s*[A-Za-z_]\w*\s*\)\s*;"
+    )
+    for source in texts:
+        stripped = re.sub(r"/\*.*?\*/|//[^\n]*", " ", source, flags=re.DOTALL)
+        if re.search(r"^\s*#\s*(?:define|undef)\s+Branch\b", stripped, flags=re.MULTILINE):
+            return frozenset()
+        declaration_count += len(declaration_pattern.findall(stripped))
+        tree = Parser(Language(tree_sitter_cpp.language())).parse(source.encode("utf-8"))
+        for node in walk(tree.root_node):
+            if (node.type not in ("class_specifier", "struct_specifier")
+                    or node.has_error or node.child_by_field_name("name") is None):
+                continue
+            name = node.child_by_field_name("name").text.decode("utf-8")
+            scope = []
+            parent = node.parent
+            while parent is not None:
+                if parent.type in ("namespace_definition", "class_specifier", "struct_specifier"):
+                    scope_node = parent.child_by_field_name("name")
+                    if scope_node is not None:
+                        scope.append(scope_node.text.decode("utf-8"))
+                parent = parent.parent
+            prefix = "::".join(reversed(scope))
+            qualified_name = (prefix + "::" if prefix else "") + name
+            base_clause = next((child for child in node.named_children
+                                if child.type == "base_class_clause"), None)
+            bases = [child.text.decode("utf-8") for child in base_clause.named_children
+                     if child.type not in ("access_specifier", "attribute_declaration")] if base_clause else []
+            qualified_bases = []
+            for base in bases:
+                if base.startswith("::"):
+                    qualified_bases.append(base.lstrip(":"))
+                elif "::" in base or not prefix:
+                    qualified_bases.append(base)
+                else:
+                    qualified_bases.append(prefix + "::" + base)
+            class_bases.setdefault(qualified_name, []).append(tuple(qualified_bases))
+            body_node = node.child_by_field_name("body")
+            declares_branch = any(
+                child.type == "function_declarator"
+                and name_node(child) is not None
+                and name_node(child).text.decode("utf-8") == "Branch"
+                for child in walk(body_node)) if body_node is not None else False
+            class_branch_declarations.setdefault(qualified_name, []).append(declares_branch)
+        try:
+            _, functions = parse_functions(source.encode("utf-8"))
+        except (ValueError, RuntimeError, UnicodeError):
+            continue
+        for function in functions:
+            parts = function.qualified_name.split("::")
+            if (parts[-2:] == ["StubBuilder", "Branch"]
+                    and function.parameter_types == ["GateRef", "Label*", "Label*"]
+                    and function.translation_unit_status == "complete"):
+                branch_definitions.append(function)
+    if declaration_count != 1 or len(branch_definitions) != 1:
+        return frozenset()
+
+    branch = branch_definitions[0]
+    parameters = [binding.name for binding in branch.bindings if binding.parameter]
+    if len(parameters) != 3:
+        return frozenset()
+    body = re.sub(r"/\*.*?\*/|//[^\n]*", " ", branch.text(branch.body), flags=re.DOTALL)
+    body = re.sub(r"\s+", "", body)
+    branch_edge = re.search(r"\bGateRef([A-Za-z_]\w*)=[^;]*?->Branch\([^,]+,([A-Za-z_]\w*)\);", body)
+    true_edge = re.search(r"\bGateRef([A-Za-z_]\w*)=[^;]*?->IfTrue\(([A-Za-z_]\w*)\);", body)
+    false_edge = re.search(r"\bGateRef([A-Za-z_]\w*)=[^;]*?->IfFalse\(([A-Za-z_]\w*)\);", body)
+    merges = re.findall(r"([A-Za-z_]\w*)->MergeControl\(([A-Za-z_]\w*)\);", body)
+    if not (branch_edge and true_edge and false_edge
+            and branch_edge.group(2) == parameters[0]
+            and true_edge.group(2) == branch_edge.group(1)
+            and false_edge.group(2) == branch_edge.group(1)
+            and (parameters[1], true_edge.group(1)) in merges
+            and (parameters[2], false_edge.group(1)) in merges):
+        return frozenset()
+
+    # All class declarations must be unambiguous. Resolve only classes for
+    # which the complete inheritance chain is present in this source set.
+    normalized_bases = {}
+    for name, declarations in class_bases.items():
+        unique = {bases for bases in declarations}
+        if len(unique) != 1:
+            return frozenset()
+        normalized_bases[name] = next(iter(unique))
+    normalized_branch_declarations = {}
+    for name, declarations in class_branch_declarations.items():
+        if len(set(declarations)) != 1:
+            return frozenset()
+        normalized_branch_declarations[name] = declarations[0]
+
+    branch_owner = "::".join(branch_definitions[0].qualified_name.split("::")[:-1])
+    if branch_owner not in normalized_bases:
+        return frozenset()
+    owners = set()
+    for name in normalized_bases:
+        current, seen = name, set()
+        while current not in seen and current in normalized_bases:
+            seen.add(current)
+            bases = normalized_bases[current]
+            if len(bases) != 1:
+                break
+            if current != branch_owner and normalized_branch_declarations.get(current, False):
+                break
+            current = bases[0]
+            if current == branch_owner:
+                owners.add(name)
+                break
+    return frozenset(owners)
+
+
+def _trace_generated_callback_result(fn, graph, start, sink, result_binding,
+                                     thread_binding, budget):
+    queue = []
+    for target, _ in graph.instructions[start].successors:
+        if target is not None and target >= 0:
+            queue.extend((target, pending, None, (graph.instructions[start].node.start_point[0] + 1,))
+                         for pending in (True, False))
+    seen, candidate_paths, unknown, steps = set(), [], [], 0
+    while queue:
+        index, pending, sentinel_is_exception, path = queue.pop(0)
+        if index < 0 or index >= len(graph.instructions):
+            continue
+        state = (index, pending, sentinel_is_exception)
+        if state in seen:
+            continue
+        seen.add(state)
+        steps += 1
+        if steps > budget.max_steps:
+            return "unknown", (), "exception_path_budget_exhausted", steps
+        instruction = graph.instructions[index]
+        next_path = path + (instruction.node.start_point[0] + 1,)
+        if index == sink:
+            if pending:
+                candidate_paths.append(next_path)
+            continue
+        if instruction.kind == "unknown" or instruction.problem:
+            unknown.append(next_path)
+            continue
+        if instruction.kind == "BRANCH":
+            branch_kind = _generated_branch_kind(
+                fn, instruction, result_binding, thread_binding)
+            if branch_kind is None:
+                unknown.append(next_path)
+                continue
+            for target, truth in instruction.successors:
+                if target is None or target < 0:
+                    continue
+                if branch_kind == "pending":
+                    queue.append((target, bool(truth), sentinel_is_exception, next_path))
+                else:
+                    queue.append((target, pending, bool(truth), next_path))
+            continue
+        if instruction.kind in ("declaration", "expression"):
+            calls = [item for item in walk(instruction.node) if item.type == "call_expression"]
+            if calls and not _writes_exception_result(
+                    fn, instruction, result_binding, pending or sentinel_is_exception):
+                unknown.append(next_path)
+                continue
+        for target, _ in instruction.successors:
+            if target is not None and target >= 0:
+                queue.append((target, pending, sentinel_is_exception, next_path))
+    if candidate_paths:
+        return "candidate", tuple(candidate_paths), "", steps
+    if unknown:
+        return "unknown", tuple(unknown), "unmodeled_generated_callback_exception_path", steps
+    return "matched", (), "", steps
+
+
+def _analyze_generated_callback_exceptions(functions, budget=None, source_units=()):
+    """Trace callback result conversions in generated IR, keeping pending state independent of value tags."""
+    budget = budget or AnalysisBudget()
+    observations, limitations, steps = [], [], 0
+    applicable = False
+    branch_owners = _verified_generated_branch_owners(source_units)
+    for fn in functions:
+        if fn.node.has_error:
+            continue
+        try:
+            parts = fn.qualified_name.split("::")
+            owner = "::".join(parts[:-1]) if len(parts) > 1 else ""
+            graph = build_graph(
+                fn, budget,
+                extra_controls=("Branch",) if owner in branch_owners else ())
+        except ValueError as error:
+            limitations.append(str(error))
+            continue
+        sources = []
+        for index, instruction in enumerate(graph.instructions):
+            for binding, thread in _generated_callback_sources(fn, instruction):
+                sources.append((index, binding, thread))
+        for start, binding, thread in sources:
+            sinks = []
+            for index, instruction in enumerate(graph.instructions):
+                if index <= start:
+                    continue
+                for node in walk(instruction.node):
+                    if node.type != "call_expression" or fn.call_name(node) != "FastToBoolean":
+                        continue
+                    args = fn.arguments(node)
+                    if (len(args) == 1 and args[0].type == "identifier"
+                            and fn.resolve(fn.text(args[0]), args[0]) == binding):
+                        sinks.append((index, node))
+            if not sinks:
+                continue
+            applicable = True
+            for sink_index, sink_node in sinks:
+                status, paths, limitation, used = _trace_generated_callback_result(
+                    fn, graph, start, sink_index, binding, thread, budget)
+                steps += used
+                if status == "candidate":
+                    observations.append(Observation(
+                        "candidate", sink_node.start_point[0] + 1, sink_node.start_point[1] + 1,
+                        "callback_pending_exception_can_reach_generated_result_conversion",
+                        token_line=graph.instructions[start].node.start_point[0] + 1,
+                        symbol=fn.qualified_name, target_identity=binding.identity,
+                        token_origin="JSCallDispatch", path=paths[0] if paths else (),
+                        region_start_byte=fn.node.start_byte, region_end_byte=fn.node.end_byte))
+                elif status == "unknown":
+                    limitations.append(limitation + ":" + fn.qualified_name)
+    if not applicable:
+        return None
+    outcome = "partial" if limitations else "complete"
+    return RuntimeExceptionResult(
+        "limited" if limitations else "completed", outcome, tuple(observations),
+        tuple(sorted(set(limitations))), steps)
 
 
 def analyze_runtime_exception_propagation(
@@ -552,6 +909,12 @@ def analyze_runtime_exception_propagation(
                     path=(source_line, sink_line),
                 ))
 
+    generated = _analyze_generated_callback_exceptions(functions, source_units=source_units)
+    if generated is not None:
+        observations.extend(generated.observations)
+        limitations.extend(generated.limitations)
+        steps += generated.steps
+        applicable = True
     if not applicable:
         return RuntimeExceptionResult("limited", "not_analyzed",
                                       limitations=("no_modeled_exception_result_source",), steps=steps)

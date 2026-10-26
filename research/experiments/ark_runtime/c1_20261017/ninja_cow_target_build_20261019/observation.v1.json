@@ -1,0 +1,200 @@
+{
+  "schema": "ohscanner.c1.cow-ninja-target-build-observation/v1",
+  "status": "two_exact_profile_arm_object_targets_built",
+  "product": "hihope/rk3568",
+  "profile_digest_sha256": "e86461191c065e3e140afb734c9d8c27818851ae51651f9ba004231fa7d52063",
+  "resolved_manifest_sha256": "52f528dada321a140a29be2d55ef9053fda818cbdca93758425f1a25f6286d55",
+  "ark_runtime_commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+  "runner": {
+    "path": "research/experiments/ark_runtime/c1_20261017/run_ninja_targets_cow_ro_root_20261019.sh",
+    "sha256": "2cf9ea59675052574fdd21986f2df6e86577e649f9c6402607b452cba2c5906e"
+  },
+  "execution_boundary": {
+    "user_mount_network_namespaces": true,
+    "network_namespace": "net:[4026532318]",
+    "root_filesystem_read_only": true,
+    "exact_source_snapshot_is_read_only_lower": true,
+    "source_accessed_through_overlay_cow": true,
+    "source_overlay_upper_change_count": 0,
+    "all_existing_upper_files_identical_to_lower": true,
+    "source_lower_musl_copyright_sha256": "b870108ec5e7790e9f9919064f1b9421d62d5f9b0e6c230c6adf7ea2da62e97b",
+    "prebuilts_read_only": true,
+    "clang_toolchain_read_only": true,
+    "ruby_runtime_read_only": true,
+    "gn_output_root_writable": true,
+    "no_network": true,
+    "limitations": [
+      "GN output and evidence were reused incrementally from the preceding successful build; only the exact target object actions were forced to rerun in this read-only-root attempt.",
+      "The complete GN output root was reused incrementally; exact Ninja object target builds succeeded, but no product image/full product build was produced.",
+      "The prerequisite-closure attempt COW upper contains notice-file copy-ups and Python bytecode cache files; the read-only-root replay upper was empty and the source lower remained unchanged."
+    ]
+  },
+  "runtime_tools": {
+    "ninja_version": "1.13.2",
+    "ninja_sha256": "2c867ca18771ff64d2a9f72f16316760651c98b1fbce692b0542f25de49b112b",
+    "python_version": "3.12.10",
+    "python_sha256": "02e619087c33f723f4bd8e7f7443f35d87d4383d9592de04b66a3c05a5d4f316",
+    "ruby_version": "3.2.3",
+    "ruby_binary_sha256": "ead53704d7da35c85a28db19070d34e7ecef9461ecf8ae5e9d51ae79125bb731",
+    "ruby_packages": [
+      {
+        "file": "ruby3.2_3.2.3-1ubuntu0.24.04.8_amd64.deb",
+        "sha256": "6f11e297b3508e8db95a5a047126a16ccf1358292049a27e3dc72b88180e779a",
+        "expected_sha256_from_apt_index": "6f11e297b3508e8db95a5a047126a16ccf1358292049a27e3dc72b88180e779a",
+        "matches_expected": true,
+        "bytes": 50654
+      },
+      {
+        "file": "libruby3.2_3.2.3-1ubuntu0.24.04.8_amd64.deb",
+        "sha256": "77c2e98ccfba2c4a4e5edb48ca8c0eb041702e1579eabc40cf07064fd4f3033e",
+        "expected_sha256_from_apt_index": "77c2e98ccfba2c4a4e5edb48ca8c0eb041702e1579eabc40cf07064fd4f3033e",
+        "matches_expected": true,
+        "bytes": 5342224
+      }
+    ]
+  },
+  "targets": [
+    {
+      "target_index": 1,
+      "ninja_target": "obj/arkcompiler/ets_runtime/ecmascript/compiler/builtins/libark_jsoptimizer_set/builtins_typedarray_stub_builder.o",
+      "returncode": 0,
+      "object": {
+        "path": "research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt7/objects/target-1.o",
+        "sha256": "865a1639c3f73f24f7235400228d0bd341930aa903231cd2c4ff21de25f220d5",
+        "bytes": 5555996
+      },
+      "profile_command_sha256": "c6d7959215306a67152ac3c2bf1f5012ba919107e27380691c0f9c32e6a6fa88",
+      "ninja_t_command_line_sha256": "f2fa3676266d1050bc2e8e832c89014230afcc55f0c503b7aaee3cf6b27e4e16",
+      "ninja_command_matches_profile_stripped": false,
+      "ninja_argv_matches_profile": true,
+      "ninja_command_capture_path": "research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt7/commands/target-1.command.txt",
+      "ninja_t_command_count_for_target_closure": 3171,
+      "log_sha256": "1a4343ac2ca9d4f2b4b9e8abe1511921624adc301217bd3e592fe2792cbe46c2"
+    },
+    {
+      "target_index": 2,
+      "ninja_target": "obj/arkcompiler/ets_runtime/ecmascript/compiler/builtins/libark_jsoptimizer_set_with_maple/builtins_typedarray_stub_builder.o",
+      "returncode": 0,
+      "object": {
+        "path": "research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt7/objects/target-2.o",
+        "sha256": "2392ee26b87366edcc93fbe695eb85459ebc4d425d4c6e38ba46fd51ec2d5b8a",
+        "bytes": 5652940
+      },
+      "profile_command_sha256": "7471f97a0bfab59e0e350be060391af4f17511aa4c019a861822f5154750e82a",
+      "ninja_t_command_line_sha256": "110f4182c6e6893faa9baaf25c302540c890701bf6b2d162bd5e5141dc599795",
+      "ninja_command_matches_profile_stripped": false,
+      "ninja_argv_matches_profile": true,
+      "ninja_command_capture_path": "research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt7/commands/target-2.command.txt",
+      "ninja_t_command_count_for_target_closure": 3167,
+      "log_sha256": "c43b3b1c6d6278f05ba822142e0820393870d0186219333a437e09a13b0bb8f9"
+    }
+  ],
+  "prerequisite_closure_attempt": {
+    "attempt": 6,
+    "target1_returncode": 0,
+    "target2_returncode": 0,
+    "target1_last_progress": "136/136",
+    "target2_last_progress": "6/6",
+    "root_filesystem_read_only": false,
+    "source_upper_change_count": 22,
+    "all_existing_upper_files_identical_to_lower": true
+  },
+  "source_overlay_upper": [],
+  "captured_files": [
+    {
+      "path": "research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt6/execution_boundary.txt",
+      "sha256": "20487556f7e025e9e31ccb5d6499cc3ca894a3b0b6124a61e180e8046d3bfe5a",
+      "bytes": 2109
+    },
+    {
+      "path": "research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt6/target-1.log",
+      "sha256": "254adb748ad9454da8499a33d5c99f9db4105df85a6a46e432f0901f0b9659ac",
+      "bytes": 124042
+    },
+    {
+      "path": "research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt6/target-1.status",
+      "sha256": "6898e68cb222ce0209a33f6cecc94af97954f99ecb706e079c981d65c0fe4035",
+      "bytes": 234
+    },
+    {
+      "path": "research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt6/target-2.log",
+      "sha256": "5f9de7f9695333e165a7ac0cdf809ca086c5598ac79491b95049582c1fbdab25",
+      "bytes": 105603
+    },
+    {
+      "path": "research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt6/target-2.status",
+      "sha256": "26a65061d663cd43bcf37fcdb6cc39991628c90fd7629bc140c4bedfc3c29d85",
+      "bytes": 245
+    },
+    {
+      "path": "research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt6/source_upper.v1.json",
+      "sha256": "a1db7f6167f090bdf1f8aa46bdfccaffb524ad8845d0a544f709c243b1140181",
+      "bytes": 6786
+    },
+    {
+      "path": "research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt7/execution_boundary.txt",
+      "sha256": "b3638ea1dbd53a525706649c78b90ae65fd7034770240700224fe9c810ef6afc",
+      "bytes": 2144
+    },
+    {
+      "path": "research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt7/target-1.log",
+      "sha256": "1a4343ac2ca9d4f2b4b9e8abe1511921624adc301217bd3e592fe2792cbe46c2",
+      "bytes": 104988
+    },
+    {
+      "path": "research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt7/target-1.status",
+      "sha256": "99471d64af5a69682ec806e3b2b1710039fd682b79e53f0b512d9c3a6761832a",
+      "bytes": 234
+    },
+    {
+      "path": "research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt7/target-2.log",
+      "sha256": "c43b3b1c6d6278f05ba822142e0820393870d0186219333a437e09a13b0bb8f9",
+      "bytes": 104999
+    },
+    {
+      "path": "research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt7/target-2.status",
+      "sha256": "6afe44a9ed80d605405b7010b7eaa69f5924cb282cb0c60ee1b79e05aaec5090",
+      "bytes": 245
+    },
+    {
+      "path": "research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/ruby_packages/ruby3.2_3.2.3-1ubuntu0.24.04.8_amd64.deb",
+      "sha256": "6f11e297b3508e8db95a5a047126a16ccf1358292049a27e3dc72b88180e779a",
+      "bytes": 50654
+    },
+    {
+      "path": "research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/ruby_packages/libruby3.2_3.2.3-1ubuntu0.24.04.8_amd64.deb",
+      "sha256": "77c2e98ccfba2c4a4e5edb48ca8c0eb041702e1579eabc40cf07064fd4f3033e",
+      "bytes": 5342224
+    },
+    {
+      "path": "research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt7/commands/target-1.command.txt",
+      "sha256": "1dd05bf3fb39a3fab0c813df2eb0f3b8ac3cdeba64162c9901317755a62a6f44",
+      "bytes": 7238
+    },
+    {
+      "path": "research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt7/objects/target-1.o",
+      "sha256": "865a1639c3f73f24f7235400228d0bd341930aa903231cd2c4ff21de25f220d5",
+      "bytes": 5555996
+    },
+    {
+      "path": "research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt7/objects/target-1.o",
+      "sha256": "865a1639c3f73f24f7235400228d0bd341930aa903231cd2c4ff21de25f220d5",
+      "bytes": 5555996
+    },
+    {
+      "path": "research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt7/commands/target-2.command.txt",
+      "sha256": "370fc2440a9ab67d3d3217d96f17ef952f2322b1e7b59267a9b904f2c480f10b",
+      "bytes": 8445
+    },
+    {
+      "path": "research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt7/objects/target-2.o",
+      "sha256": "2392ee26b87366edcc93fbe695eb85459ebc4d425d4c6e38ba46fd51ec2d5b8a",
+      "bytes": 5652940
+    },
+    {
+      "path": "research/experiments/ark_runtime/c1_20261017/ninja_cow_target_build_20261019/attempt7/objects/target-2.o",
+      "sha256": "2392ee26b87366edcc93fbe695eb85459ebc4d425d4c6e38ba46fd51ec2d5b8a",
+      "bytes": 5652940
+    }
+  ]
+}

@@ -1,0 +1,116 @@
+{
+  "document_status": "preparation_only",
+  "schema_id": "c5.independent-admission-gates.template.v1",
+  "protocol_version": "UNFROZEN",
+  "as_of_utc": null,
+  "run_id": null,
+  "sample_count": 0,
+  "label_count": 0,
+  "prediction_count": 0,
+  "score_count": 0,
+  "rule": "This template is not an operational approval record. No gate may be marked passed based on this template. Unknown, missing, partial, or stale evidence is not a pass.",
+  "gates": [
+    {
+      "gate_id": "G0",
+      "name": "C0 semantic contract and C1-C4 evidence baseline",
+      "status": "blocked_or_incomplete",
+      "required_evidence": ["approved semantic contract digest", "exact C1 product profile and reproducible build/preprocess evidence", "C2 dependency drift dispositions with evidence", "C3 required evidence package", "C4 closure report and binding verification"],
+      "evidence_refs": [],
+      "reviewer_roles": [],
+      "decision_reason": "Preparation records report upstream gates blocked or incomplete; resolve against the current authoritative artifacts before changing status.",
+      "decided_at_utc": null
+    },
+    {
+      "gate_id": "G1",
+      "name": "Detector and execution environment freeze",
+      "status": "blocked",
+      "required_evidence": ["immutable detector/rules/configuration digests", "parser/toolchain and environment identity", "source-identity-independent applicability contract", "independent freeze approval before source selection"],
+      "evidence_refs": [],
+      "reviewer_roles": [],
+      "decision_reason": "No frozen independent-evaluation release is recorded in this preparation package.",
+      "decided_at_utc": null
+    },
+    {
+      "gate_id": "G2",
+      "name": "Complete development, tuning, and exposure family inventory",
+      "status": "blocked",
+      "required_evidence": ["reconciled tracked and untracked local history", "authorized external tuning and patch-family inventory", "root-cause family resolution", "independent auditor completeness attestation"],
+      "evidence_refs": [],
+      "reviewer_roles": [],
+      "decision_reason": "Only a partial reachable local-history review and public development exposure metadata are recorded; external/untracked history remains unresolved.",
+      "decided_at_utc": null
+    },
+    {
+      "gate_id": "G3",
+      "name": "Protocol and rubric independent review and freeze",
+      "status": "blocked",
+      "required_evidence": ["versioned protocol and rubric", "independent review disposition", "approved SHA-256 and effective UTC time", "amendment and supersession record"],
+      "evidence_refs": [],
+      "reviewer_roles": [],
+      "decision_reason": "The supplied protocol remains preparation_only and UNFROZEN.",
+      "decided_at_utc": null
+    },
+    {
+      "gate_id": "G4",
+      "name": "Role qualification, conflicts, and access-control readiness",
+      "status": "blocked",
+      "required_evidence": ["two qualified reviewers cleared before access", "separate qualified adjudicator cleared before access", "signed declarations in restricted custody", "verified isolated workspaces and append-only audit log", "prediction escrow read/write separation verified"],
+      "evidence_refs": [],
+      "reviewer_roles": [],
+      "decision_reason": "No named roles, cleared declarations, or deployed access-control evidence are included in this preparation package.",
+      "decided_at_utc": null
+    },
+    {
+      "gate_id": "G5",
+      "name": "Candidate-frame eligibility and whole-family exclusions",
+      "status": "blocked",
+      "required_evidence": ["G0-G4 passed in order", "complete family ledger independently reconciled", "all unknown/overlapping families excluded or resolved", "selection frame and method frozen before exposure"],
+      "evidence_refs": [],
+      "reviewer_roles": [],
+      "decision_reason": "No source selection is authorized while family closure and upstream freezes are unresolved.",
+      "decided_at_utc": null
+    },
+    {
+      "gate_id": "G6",
+      "name": "Source and randomized-ID manifest freeze",
+      "status": "not_started",
+      "required_evidence": ["G5 passed", "source identity and content digests in restricted manifest", "CSPRNG ID-list digest and uniqueness evidence", "two-person encrypted map custody and access audit"],
+      "evidence_refs": [],
+      "reviewer_roles": [],
+      "decision_reason": "No candidates or source manifest may be created during preparation.",
+      "decided_at_utc": null
+    },
+    {
+      "gate_id": "G7",
+      "name": "Independent labels and adjudication freeze",
+      "status": "not_started",
+      "required_evidence": ["G6 passed", "two separately frozen submissions", "adjudication for every disagreement", "final label ledger digest and independent audit attestation"],
+      "evidence_refs": [],
+      "reviewer_roles": [],
+      "decision_reason": "No label work is authorized during preparation.",
+      "decided_at_utc": null
+    },
+    {
+      "gate_id": "G8",
+      "name": "Prediction execution and escrow seal",
+      "status": "not_started",
+      "required_evidence": ["G6 passed", "frozen detector applied to frozen source manifest", "prediction payload digest and execution log", "independent custody and access evidence"],
+      "evidence_refs": [],
+      "reviewer_roles": [],
+      "decision_reason": "No prediction may be generated or opened during preparation.",
+      "decided_at_utc": null
+    },
+    {
+      "gate_id": "G9",
+      "name": "Joint reveal authorization and separately authorized scoring",
+      "status": "not_started",
+      "required_evidence": ["G7 and G8 passed", "joint reveal approval by coordinator and independent auditor", "separately approved scoring protocol and scope", "integrity and role-separation audit"],
+      "evidence_refs": [],
+      "reviewer_roles": [],
+      "decision_reason": "Reveal and scoring are not authorized by this preparation package.",
+      "decided_at_utc": null
+    }
+  ],
+  "prohibited_during_preparation": ["source selection", "label creation", "prediction execution or reveal", "score calculation", "access to admin-only escrow or hidden labels"],
+  "approval": null
+}

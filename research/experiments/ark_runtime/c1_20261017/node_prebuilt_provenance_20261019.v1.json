@@ -1,0 +1,45 @@
+{
+  "schema": "ohscanner.c1.prebuilt-provenance/v1",
+  "status": "downloaded_and_sha256_verified_for_isolated_dry_run",
+  "product": "hihope/rk3568",
+  "profile_digest_sha256": "e86461191c065e3e140afb734c9d8c27818851ae51651f9ba004231fa7d52063",
+  "snapshot": {
+    "manifest_sha256": "52f528dada321a140a29be2d55ef9053fda818cbdca93758425f1a25f6286d55",
+    "config_path": "build/prebuilts_config.json",
+    "config_sha256": "9cd6a95721895aff6eb44a8c314d36e4a79543ddbf9865e25da602c8b4d4f850",
+    "downloader_path": "build/prebuilts_download.py",
+    "downloader_sha256": "83abcb52c54717787c06f358609df63607160690b782d8791c8b168ec6539abf"
+  },
+  "artifact": {
+    "name": "node-v14.21.1-linux-x64.tar.gz",
+    "url": "https://repo.huaweicloud.com/nodejs/v14.21.1/node-v14.21.1-linux-x64.tar.gz",
+    "sha256_sidecar_url": "https://repo.huaweicloud.com/nodejs/v14.21.1/node-v14.21.1-linux-x64.tar.gz.sha256",
+    "sha256_sidecar_value": "8ae854dac7fa5e7dfd5dae8fe8e001c0599821705f650b32c4819149cfda1d0e",
+    "archive_sha256": "8ae854dac7fa5e7dfd5dae8fe8e001c0599821705f650b32c4819149cfda1d0e",
+    "archive_bytes": 35031005,
+    "archive_member_count": 5707,
+    "archive_paths_checked_for_absolute_or_parent_traversal": true,
+    "unpacked_root": "node-v14.21.1-linux-x64",
+    "node_version": "v14.21.1",
+    "node_binary_sha256": "6f920cf526ac67c66756848a9622d29d8596b136fec7b93cfe43f8290fc2d223",
+    "external_staging_path": "/home/deepsleep/c-line-c1-profile-20261018/prebuilts-stage-20261019/build-tools/common/nodejs/node-v14.21.1-linux-x64"
+  },
+  "default_target_dry_run": {
+    "record_path": "ninja_cow_target_build_20261019/default_dry_run.v1.json",
+    "record_sha256": "72a6b284626f228b75d1938237d4895089cd6bbf2a62f44cf9f2a287ff0f18c3",
+    "returncode": 1,
+    "build_actions_executed": false,
+    "warning_count": 631,
+    "first_missing_input": "prebuilts/ohos-sdk/linux/26.0.1/native/sysroot/usr/lib/arm-linux-ohos/libbundle_ndk.z.so",
+    "locked_npm_dependency_staging_record": "graph_npm_staging_20261019.v1.json",
+    "locked_npm_dependency_roots_staged": 4,
+    "sdk_input_reconciliation_record": "sdk_input_reconciliation_20261019.v1.json",
+    "sdk_input_reconciliation_record_sha256": "5a14f9297f4567ca61b5194fd3e457bd3c352e8217f0e5c3a3724dd899c72e2c",
+    "sdk_configuration_note": "build/prebuilts_config.json requests sdk 26.0.0 while build/version.gni identifies 26.0.1.47; the snapshot downloader dynamically selects a recent master artifact and provides no pinned artifact SHA-256. No SDK artifact was treated as exact-snapshot evidence.",
+    "cow_upper_file_count": 0,
+    "root_mount": "read-only",
+    "network_namespace_isolated": true
+  },
+  "scope_note": "The declared Node prebuilt was hash verified and staged outside the repository. This record does not establish a complete snapshot, a full product build, or a product image."
+}
+

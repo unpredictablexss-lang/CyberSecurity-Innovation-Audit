@@ -114,7 +114,11 @@
         "research/experiments/ark_runtime/c8_20261018/reports/v084-wrapper-parent.json",
         "research/experiments/ark_runtime/c8_20261018/reports/v084-wrapper-fixed.json",
         "research/experiments/ark_runtime/c8_20261018/reports/v084-array-f536-parent.json",
-        "research/experiments/ark_runtime/c8_20261018/reports/v084-array-f536-fixed.json"
+        "research/experiments/ark_runtime/c8_20261018/reports/v084-array-f536-fixed.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/runtime-exception-guard-v0810-i7e0fm-parent-20261019.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/runtime-exception-guard-v0810-i7e0fm-fixed-20261019.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/runtime-exception-v0811-i7e0fm-parent-20261019.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/runtime-exception-v0811-i7e0fm-fixed-20261019.json"
       ],
       "remaining_blockers": [
         "Cross-compound paths and branch-sensitive flow still yield blocked/partial results in builtins_array.cpp.",
@@ -130,6 +134,19 @@
         "static_detection": "v0.8.4 production M2: TypedArray exact pair 1->0 with complete coverage; I5XZRO Every wrapper 1->0 at line 719 with parent/fixed overall runs blocked due other paths; f536 direct Array pair 2->1 with residual FindIndex and both blocked.",
         "component_dynamic_reproduction": "not run",
         "product_vulnerability_confirmation": "unknown"
+      },
+      "latest_guard_control_review": {
+        "verified_on": "2026-10-19",
+        "change": "runtime_exception.py now treats only a positive IsException test on the same resolved completion, followed by an unconditional return of JSTaggedValue::Exception() or that completion, as protecting the sensitive use. Negated test, nested conditional return, and normal-value return remain candidates.",
+        "tests": "47 passed, 3 skipped across runtime_exception, exception_guard, and unseen_detector suites; 4 new polarity/dominance unit controls.",
+        "production_replay": {
+          "entry": "M2 CLI ohscan-run, detector ohscanner.ark.runtime.type_safety v0.8.10, light-ast, same two-file scope",
+          "parent_report": "research/experiments/ark_runtime/c8_20261018/reports/runtime-exception-guard-v0810-i7e0fm-parent-20261019.json",
+          "fixed_report": "research/experiments/ark_runtime/c8_20261018/reports/runtime-exception-guard-v0810-i7e0fm-fixed-20261019.json",
+          "result": "Exact I7E0FM !4255 parent has 1 candidate / complete scan; fixed merge has 0 / complete scan. The historical fix uses the pending-exception macro, so this is regression evidence for the family, not a direct real-source test of the IsException predicate."
+        },
+        "dynamic_product_confirmation": "not run; not established",
+        "remaining_blocker": "Find an independent official historical real-source IsException branch case and replay it without further tuning, or retain this branch form as unit-controlled only."
       }
     },
     {
@@ -196,7 +213,7 @@
     },
     {
       "case_id": "ARK-ARRAY-EVERY-WRAPPED-CALLBACK-EXCEPTION-I5XZRO",
-      "CVE_or_advisory": "No CVE verified. Upstream commit message identifies issue I5XZRO and says \u201cFix crash caused by uncaught exception\u201d; public issue page could not be independently read in this turn.",
+      "CVE_or_advisory": "No CVE verified. Upstream commit message identifies issue I5XZRO and says “Fix crash caused by uncaught exception”; public issue page could not be independently read in this turn.",
       "source_and_verification_date": [
         "https://gitee.com/openharmony/arkcompiler_ets_runtime/issues/I5XZRO",
         "https://gitee.com/openharmony/arkcompiler_ets_runtime"
@@ -295,7 +312,7 @@
     },
     {
       "case_id": "ARK-ARRAY-FINDINDEX-STABLE-ABRUPT-RETURN-C333",
-      "CVE_or_advisory": "No CVE or security advisory verified. Commit c333bfc148f0ecc2e0db8c84c821a7560f904906 is titled \u201cbugfix of jsproxy\u201d and references issue I7ZZHM; the issue-to-FindIndex-hunk association is unverified and the Gitee issue page was inaccessible.",
+      "CVE_or_advisory": "No CVE or security advisory verified. Commit c333bfc148f0ecc2e0db8c84c821a7560f904906 is titled “bugfix of jsproxy” and references issue I7ZZHM; the issue-to-FindIndex-hunk association is unverified and the Gitee issue page was inaccessible.",
       "source_and_verification_date": [
         "https://gitee.com/openharmony/arkcompiler_ets_runtime/issues/I7ZZHM",
         "https://gitee.com/openharmony/arkcompiler_ets_runtime"
@@ -791,13 +808,13 @@
       "existing_detector_and_rule": "Production CLI selected ohscanner.ark.runtime.type_safety, rule ark.runtime.typedarray-store-type-origin. v0.8.7 did not select the Map flow; its Filter finding was a separate method under the same generic rule, not established as unrelated or safe.",
       "baseline_scan_result": {
         "v0.8.7": "Parent and fixed each had one Filter candidate and no Map diagnostic; selector missed the Map flow. Filter is a separate method under the same generic TypeOrigin rule and is not a clean unrelated control. Both full-file runs blocked/partial.",
-        "v0.8.8_final": "Same production CLI scope/profile: parent has Map candidate at line 2665 plus Filter line 1491; fixed has Filter line 1491. Map-specific delta is 1\u21920. Filter candidate is unresolved same-family behavior, not proven unrelated. Both detector runs blocked because the full TU parses partial outside Map. Runtime 0.599s parent / 0.585s fixed.",
+        "v0.8.8_final": "Same production CLI scope/profile: parent has Map candidate at line 2665 plus Filter line 1491; fixed has Filter line 1491. Map-specific delta is 1→0. Filter candidate is unresolved same-family behavior, not proven unrelated. Both detector runs blocked because the full TU parses partial outside Map. Runtime 0.599s parent / 0.585s fixed.",
         "v0.8.8_failed_intermediate": "An earlier model preserved fresh output identity across all unknown calls without checking escapes; it yielded parent Map candidate/fix 0 but caused three existing safety-control regressions. It was withdrawn and preserved separately in reports/v088-conservative-premodel-* and checkpoint history.",
-        "v0.8.9_final": "Same production CLI scope/profile. Vulnerable parent: Map candidate line 2665 plus Filter line 1491; fixed merge: no Map candidate, Filter line 1491 remains. Map-specific delta is 1\u21920, total diagnostics 2\u21921. Filter remains an unresolved same-family candidate. Four scans including independent !11684 safe pair all blocked/partial. Parent/fix runtime 0.578/0.575s.",
+        "v0.8.9_final": "Same production CLI scope/profile. Vulnerable parent: Map candidate line 2665 plus Filter line 1491; fixed merge: no Map candidate, Filter line 1491 remains. Map-specific delta is 1→0, total diagnostics 2→1. Filter remains an unresolved same-family candidate. Four scans including independent !11684 safe pair all blocked/partial. Parent/fix runtime 0.578/0.575s.",
         "v0.8.10": "Same-family Filter candidate persists on the !11130 fixed merge; it must not be treated as an unrelated clean control. See current v502 residual triage for species-sensitive creation analysis."
       },
       "miss_reason": "v0.8.7 semantic selector admitted only configured profiles and StoreTypedArrayElement sinks. v0.8.8 adds generic creation-to-FastSetPropertyByIndex selection and type-origin modeling. Source snapshot validity is still invalidated across callback; a mismatch candidate is retained only for a fresh, unescaped result whose creation may produce a different runtime type. Direct/nested call arguments and the recognized JSCallArgs call-this initializer cause escape invalidation.",
-      "implementation_status": "Production CLI v0.8.10 detects Map at official 5.0.2 pin and removes Map finding at its release-branch fix. However, the fixed source retains three candidates in Filter, With and ToReversed that share the source-token/new-result type-origin pattern. The Map-specific patch delta is 1\u21920; generalized root-family fixed-version gate is not met pending source/runtime triage. Candidate-only, not production-admitted.",
+      "implementation_status": "Production CLI v0.8.10 detects Map at official 5.0.2 pin and removes Map finding at its release-branch fix. However, the fixed source retains three candidates in Filter, With and ToReversed that share the source-token/new-result type-origin pattern. The Map-specific patch delta is 1→0; generalized root-family fixed-version gate is not met pending source/runtime triage. Candidate-only, not production-admitted.",
       "controls": {
         "positive": "Pinned vulnerable parent: Map candidate at line 2665.",
         "fixed": "Pinned Map fix has no Map method candidate. Filter candidate remains under same generic rule and has unresolved species behavior; not a clean fixed-family result.",
@@ -812,7 +829,7 @@
       },
       "real_source_rescans": {
         "before": "v0.8.7 parent/fix had no Map finding and one Filter candidate each; selector missed Map. Filter is another same-rule method candidate, not proven unrelated.",
-        "after": "v0.8.10 Map candidate 1\u21920 on exact Map pair and official 5.0.2 branch pair; same-family Filter/With/ToReversed candidates remain on fixed branch pair. !11684 independent safe Map variant remains TypeOrigin 0\u21920. Whole-file status partial/blocked where reported.",
+        "after": "v0.8.10 Map candidate 1→0 on exact Map pair and official 5.0.2 branch pair; same-family Filter/With/ToReversed candidates remain on fixed branch pair. !11684 independent safe Map variant remains TypeOrigin 0→0. Whole-file status partial/blocked where reported.",
         "profile": "light-ast; one selected C++ file; no macro expansion; build_profile none; product_manifest_locked false. Local exact Git objects, no scan-time fetch.",
         "cost_seconds": {
           "parent": 0.5991475999981049,
@@ -977,7 +994,7 @@
             "elapsed_seconds": 0.27706169999873964,
             "source_db": "D:/openHarmonyScanner/tmp/c-line-callback-holdout-history-20261019.git"
           },
-          "interpretation": "!11130 Map type-origin root is 1 candidate on the vulnerable parent and 0 on the fixed merge. The unrelated Filter type-origin candidate remains on both sides (total 2\u21921). The independent !11684 pair has zero TypeOrigin findings on both sides, although the exception-guard rule produces two parent candidates and zero on the fix. All runs parse the selected file partially and are blocked; findings remain candidates, and zero is not a safety pass.",
+          "interpretation": "!11130 Map type-origin root is 1 candidate on the vulnerable parent and 0 on the fixed merge. The unrelated Filter type-origin candidate remains on both sides (total 2→1). The independent !11684 pair has zero TypeOrigin findings on both sides, although the exception-guard rule produces two parent candidates and zero on the fix. All runs parse the selected file partially and are blocked; findings remain candidates, and zero is not a safety pass.",
           "parse_diagnostics": {
             "vulnerable_parent": [
               {
@@ -1058,7 +1075,7 @@
             "status": "blocked/partial",
             "report": "reports/typeorigin-v0810-v502-map-fix.json"
           },
-          "interpretation": "The Map-specific finding is 1\u21920, but three findings in the same generic type-origin family remain at Filter/With/ToReversed. These are unresolved candidates, not unrelated findings or established false positives. The family-level fixed-version gate fails until they are resolved."
+          "interpretation": "The Map-specific finding is 1→0, but three findings in the same generic type-origin family remain at Filter/With/ToReversed. These are unresolved candidates, not unrelated findings or established false positives. The family-level fixed-version gate fails until they are resolved."
         },
         "v0.8.10_v503_backport": {
           "profile": "same production ohscan-run selector/file scope; official locally pinned Gitee parent/fix objects, no scan-time fetch",
@@ -1087,7 +1104,7 @@
             ],
             "report": "reports/typeorigin-v0810-v503-pr11279-fixed.json"
           },
-          "interpretation": "Cross-branch security backport replay reproduces Map 1\u21920; target source blobs exactly match the 5.0.2 pair and therefore do not count as an independent holdout."
+          "interpretation": "Cross-branch security backport replay reproduces Map 1→0; target source blobs exactly match the 5.0.2 pair and therefore do not count as an independent holdout."
         }
       },
       "evidence_paths": [
@@ -1144,7 +1161,7 @@
         "No independent vulnerable positive holdout; !11684 is a safe TypeOrigin control.",
         "No exact component dynamic run, product build association or attacker/reachability/impact evidence."
       ],
-      "next_step": "Select a new official Ark Runtime history case outside the reviewed !11196/!11130/!11684 set with a distinct vulnerable\u2192fixed TypeOrigin flow; inspect its official PR diff and regression first, then pin parent/fix tree/blob and run current production ohscan-run plus direct observation replay without changing the model. If no qualifying case exists in the locally pinned history, extend the official PR search and record the exact search boundary before choosing another root family. Completion: either a new, source-verified positive/fix pair and untouched safe variant are replayed, or the bounded absence is documented and the next available root family is selected.",
+      "next_step": "Select a new official Ark Runtime history case outside the reviewed !11196/!11130/!11684 set with a distinct vulnerable→fixed TypeOrigin flow; inspect its official PR diff and regression first, then pin parent/fix tree/blob and run current production ohscan-run plus direct observation replay without changing the model. If no qualifying case exists in the locally pinned history, extend the official PR search and record the exact search boundary before choosing another root family. Completion: either a new, source-verified positive/fix pair and untouched safe variant are replayed, or the bounded absence is documented and the next available root family is selected.",
       "evidence_dimensions": {
         "public_disclosure_fact": "confirmed: official bulletin lists CVE-2025-24304 as Ark Runtime out-of-bounds write, local attacker DoS, affected releases.",
         "source_root_cause_match": "confirmed for issue IBP5J6 and !11130 by exact source/test diff; CVE-to-this-individual-mainline-fix mapping is not proven. !11279 calls !11130 among two vulnerability fixes.",
@@ -1239,7 +1256,7 @@
           }
         },
         "focused_tests": "74 passed, 4 skipped in 0.26s. Wrong arity remains unknown; reviewed overloads preserve source binding.",
-        "scope_boundary": "!11196 direct pair is still 1\u21920 candidate with partial/blocked scope. a65 and official master remain 0 diagnostics with partial/blocked outcomes and unresolved_local_observations; a65 additionally reports unsupported_host_expression_effects. Zero diagnostics are not safety results. No preprocessor/macro profile, product dynamic run, or product vulnerability confirmation."
+        "scope_boundary": "!11196 direct pair is still 1→0 candidate with partial/blocked scope. a65 and official master remain 0 diagnostics with partial/blocked outcomes and unresolved_local_observations; a65 additionally reports unsupported_host_expression_effects. Zero diagnostics are not safety results. No preprocessor/macro profile, product dynamic run, or product vulnerability confirmation."
       },
       "call_builder_overload_replay": {
         "updated": "2026-10-19",
@@ -1708,14 +1725,14 @@
       "evidence_dimensions": {
         "public_disclosure_fact": "upstream bug issue and merged PR verified; no public CVE/advisory found.",
         "source_root_cause_match": "verified by direct parent/fix diff and added regression source.",
-        "static_detection": "candidate distinction 2\u21920 through production CLI, but both runs blocked/partial.",
+        "static_detection": "candidate distinction 2→0 through production CLI, but both runs blocked/partial.",
         "component_dynamic_reproduction": "not_run.",
         "product_vulnerability_confirmation": "unknown/not_confirmed."
       }
     },
     {
       "case_id": "ARK-TYPEDARRAY-CREATEFROMTYPEDARRAY-BYTE-LENGTH-OVERFLOW-I7KZJ7",
-      "CVE_or_advisory": "No CVE/security advisory verified. Upstream patch commit message references issue I7KZJ7 (\u201cCreateFromTypedArray byteLength data overflow\u201d); direct issue page was inaccessible in this verification pass.",
+      "CVE_or_advisory": "No CVE/security advisory verified. Upstream patch commit message references issue I7KZJ7 (“CreateFromTypedArray byteLength data overflow”); direct issue page was inaccessible in this verification pass.",
       "source_and_verification_date": [
         "https://gitee.com/openharmony/arkcompiler_ets_runtime/issues/I7KZJ7",
         "https://gitee.com/openharmony/arkcompiler_ets_runtime/commit/9f586b533be0275f3e3327e05c64f3aed28b7de3"
@@ -1828,13 +1845,13 @@
         "positive": "Exact vulnerable first-parent source: uint32_t elementSize * elementLength reaches AllocateArrayBuffer byteLength and SetValueInBuffer loop controlled by elementLength; production CLI candidate at source line 237.",
         "fixed": "Exact !4425 fixed merge widens before multiplication: uint64_t byteLength = elementSize * static_cast<uint64_t>(elementLength); production CLI has no same-root candidate.",
         "safe": "Real !8451 CreateSharedFromTypedArray safe variant: uint64_t multiplication with static_cast<uint64_t>(elementLength), sendable allocator, and elementLength-bounded copy loop; production CLI 0 diagnostics, direct flow model records may_overflow=false. Inspected to extend allocator support, so classify as a development control, not an independent holdout. A synthetic pre-multiply-widening unit control also passes.",
-        "unrelated": "Real !4688 TypedArrayConstructor int32_t\u2192uint32_t length-conversion pair 3c1a50cfb1206ce63afcd2d0ef2b1e81668f2e3c \u2192 82c21d656880923800c94b53b035c76d219313b5: production CLI 0\u21920 for this product/allocation/copy rule. It is an unrelated integer-conversion control, not evidence that the !4688 component is safe.",
+        "unrelated": "Real !4688 TypedArrayConstructor int32_t→uint32_t length-conversion pair 3c1a50cfb1206ce63afcd2d0ef2b1e81668f2e3c → 82c21d656880923800c94b53b035c76d219313b5: production CLI 0→0 for this product/allocation/copy rule. It is an unrelated integer-conversion control, not evidence that the !4688 component is safe.",
         "variant": "!8451 CreateSharedFromTypedArray is a related safe mechanism variant and development sample; !4688 remains an unrelated integer-conversion control. No independent vulnerable same-mechanism variant validated.",
         "independent_holdout": "none; requirement remains open"
       },
       "real_source_rescans": {
         "pre_rule": "v0.8.9 production CLI: 0 diagnostics on both; both blocked/detector_model_incomplete although AST parse is complete.",
-        "post_rule": "Matched production ohscan-run v0.8.10: exact vulnerable parent one rule candidate at line 237 (allocation 255, loop 275), exact fixed merge zero same-root candidates. Both AST parses complete; both detector runs blocked and file analyses partial/detector_model_incomplete. Real !4688 parent/fix unrelated control 0\u21920 on same scope/profile. Parent CLI initially encountered a Windows access violation in the old nested Tree-sitter Node walk; replacing the sink path with a bounded function-body text scan removed the crash. The rule remains partial."
+        "post_rule": "Matched production ohscan-run v0.8.10: exact vulnerable parent one rule candidate at line 237 (allocation 255, loop 275), exact fixed merge zero same-root candidates. Both AST parses complete; both detector runs blocked and file analyses partial/detector_model_incomplete. Real !4688 parent/fix unrelated control 0→0 on same scope/profile. Parent CLI initially encountered a Windows access violation in the old nested Tree-sitter Node walk; replacing the sink path with a bounded function-body text scan removed the crash. The rule remains partial."
       },
       "evidence_paths": [
         "c8_20261018/coverage_ledger.json",
@@ -1877,10 +1894,10 @@
         "No independent vulnerable same-mechanism positive holdout. !7532 supplies an unseen safe refactor variant only; its file analyses are partial/blocked.",
         "The official !4245 CreateFromArrayBuffer patch scan retains the I7KZJ7 candidate in untouched CreateFromTypedArray on both sides, so it cannot serve as a second positive/fix pair."
       ],
-      "next_step": "Search exact pinned Ark history for a distinct vulnerable integer-product\u2192buffer-allocation\u2192copy fix outside CreateFromTypedArray; inspect source before scanning, then run its exact parent/fix and a newly unseen safe control with the production ohscan-run before any rule change.",
+      "next_step": "Search exact pinned Ark history for a distinct vulnerable integer-product→buffer-allocation→copy fix outside CreateFromTypedArray; inspect source before scanning, then run its exact parent/fix and a newly unseen safe control with the production ohscan-run before any rule change.",
       "evidence_dimensions": {
         "public_disclosure_fact": "unverified as a security disclosure; upstream patch message references issue I7KZJ7, whose page was inaccessible. No CVE claimed.",
-        "source_root_cause_match": "source patch and test diff confirm a uint32_t elementSize\u00d7elementLength overflow concern and widening to uint64_t.",
+        "source_root_cause_match": "source patch and test diff confirm a uint32_t elementSize×elementLength overflow concern and widening to uint64_t.",
         "static_detection": "Observed exact-source parent-only root-specific candidate through production ohscan-run v0.8.10. Fixed side has no same-root candidate. Both full-file detector analyses are partial/blocked; not admitted as complete detection.",
         "component_dynamic_reproduction": "not_run.",
         "product_vulnerability_confirmation": "unknown/not_confirmed."
@@ -1898,7 +1915,7 @@
       "regression_results": {
         "focused": "tests/detectors/ark_runtime/test_size_overflow.py + test_runtime_exception.py + test_unseen_detector.py: 38 passed, 2 skipped in 0.19s after the sendable allocator variant was added.",
         "full_ark_runtime": "tests/detectors/ark_runtime: 133 passed, 1 failed, 10 skipped in 69.37s. Sole failure is test_dependency_manifest.py::ExactSnapshotDependencyManifestTests::test_recomputation_is_stable_and_incomplete_profile_blocks; it expected ACTUAL_INCLUDE_CLOSURE but observed unresolved C1_PRODUCT_BUILD_PROFILE, C2_CASE_MATRIX, PARSER_BINARY_IDENTITY. This is outside C8 ownership and was not modified.",
-        "production_replay": "v0.8.10 matched !4425 pair parent 1 root candidate \u2192 fixed 0 root candidates; real !4688 control 0\u21920; !8451 sendable safe dev variant 0. All scans AST complete and file analysis partial/blocked."
+        "production_replay": "v0.8.10 matched !4425 pair parent 1 root candidate → fixed 0 root candidates; real !4688 control 0→0; !8451 sendable safe dev variant 0. All scans AST complete and file analysis partial/blocked."
       },
       "post_rule_controls": {
         "independent_safe_refactor_variant": {
@@ -2036,7 +2053,7 @@
         "unrelated_control": "not applicable",
         "variant_control": "not assessed"
       },
-      "real_source_rescan_result": "Production ohscan-run v0.8.10 0\u21920 for the multiplication rule; both reports blocked/partial.",
+      "real_source_rescan_result": "Production ohscan-run v0.8.10 0→0 for the multiplication rule; both reports blocked/partial.",
       "evidence_paths": [
         "i4688_unrelated_control_identity.json",
         "reports/i4688-unrelated-parent-v0.8.10.json",
@@ -2190,7 +2207,7 @@
         "unrelated_control": "not applicable",
         "variant_control": "not assessed"
       },
-      "real_source_rescan_result": "Production ohscan-run v0.8.10 0\u21920 on exact scoped files; report completed_with_limitations and detector status blocked.",
+      "real_source_rescan_result": "Production ohscan-run v0.8.10 0→0 on exact scoped files; report completed_with_limitations and detector status blocked.",
       "evidence_paths": [
         "reports/i10468-baseline-parent-v0.8.10.json",
         "reports/i10468-baseline-fixed-v0.8.10.json"
@@ -2425,7 +2442,7 @@
           }
         }
       },
-      "miss_reason": "No miss on the exact !11196 direct parent/fix pair (1\u21920 before and after model extension). Current a65/master semantic selector enters the analyzer; 0 diagnostics are accompanied by partial/blocked file analysis and unresolved target/type-origin observations (a65 Filter line 1563, master Filter line 1507). No exact-binding rejection caused those zero results. The stale limitation string was corrected and covered by a regression test.",
+      "miss_reason": "No miss on the exact !11196 direct parent/fix pair (1→0 before and after model extension). Current a65/master semantic selector enters the analyzer; 0 diagnostics are accompanied by partial/blocked file analysis and unresolved target/type-origin observations (a65 Filter line 1563, master Filter line 1507). No exact-binding rejection caused those zero results. The stale limitation string was corrected and covered by a regression test.",
       "implementation_status": "Extended shared production TypeOrigin semantics for the reviewed glue-aware LoadHClass overload and two-argument builder constructors; bound five supporting header identities in RuntimeTypeModel.api_overload_evidence; added mismatch and correct-result-origin regressions. Production parent/fix result unchanged and remains candidate-only; full real-file analysis remains partial.",
       "test_controls": {
         "positive": "2ea501258ab4155826b64f01b499b43d1911e0e2: exact parent candidate remains at Filter store after model change; report reports/typeorigin-v0810-model-overload-i11196-direct-parent.json",
@@ -2436,7 +2453,7 @@
         "upstream_regression": "Upstream PR Filter regression source identified; build and execution not run.",
         "unit_regression": "python -m pytest tests/detectors/ark_runtime/test_type_origin.py tests/detectors/ark_runtime/test_exception_guard.py tests/detectors/ark_runtime/test_runtime_exception.py tests/detectors/ark_runtime/test_unseen_detector.py tests/detectors/ark_runtime/test_parser_owner.py -q: 72 passed, 4 skipped."
       },
-      "real_source_rescan_result": "Production ohscan-run same one-file light-ast scope: exact !11196 direct parent/fix remains 1\u21920 after API-model and limitation-label changes; C1 a65 and official master both yield 0 candidate diagnostics but blocked/partial semantic analysis. The zero results are unresolved/unknown, not safety passes.",
+      "real_source_rescan_result": "Production ohscan-run same one-file light-ast scope: exact !11196 direct parent/fix remains 1→0 after API-model and limitation-label changes; C1 a65 and official master both yield 0 candidate diagnostics but blocked/partial semantic analysis. The zero results are unresolved/unknown, not safety passes.",
       "evidence_paths": [
         "research/experiments/ark_runtime/c8_20261018/reports/typeorigin-v0810-i11196-direct-parent.json",
         "research/experiments/ark_runtime/c8_20261018/reports/typeorigin-v0810-i11196-direct-fix.json",
@@ -2455,7 +2472,7 @@
       "evidence_dimensions": {
         "public_disclosure_fact": "Upstream issue/PR labels Filter behavior as outbound; no CVE independently verified.",
         "source_root_cause_match": "Supported by direct diff at allocation/type-token/store sequence.",
-        "static_detection": "Candidate 1\u21920 on direct parent/fix with partial file coverage.",
+        "static_detection": "Candidate 1→0 on direct parent/fix with partial file coverage.",
         "component_dynamic_reproduction": "Not run; regression source exists upstream.",
         "product_vulnerability_confirmation": "Not established."
       },
@@ -2466,7 +2483,7 @@
         "No complete safe/unrelated control or untouched same-mechanism historical positive.",
         "Upstream regression not built or run; product/release association and impact are unknown."
       ],
-      "next_step": "Instrument the existing TypeOrigin graph analysis at a65 Filter lines 1542\u20131563 and master Filter lines 1498\u20131507 to identify where fresh-result identity is lost across the exception branch and loop entry/backedge. Add only source-grounded CFG/dataflow support with positive, fixed, safe, early-exit and rename/wrapper controls; rerun exact !11196 pair, a65, and master.",
+      "next_step": "Instrument the existing TypeOrigin graph analysis at a65 Filter lines 1542–1563 and master Filter lines 1498–1507 to identify where fresh-result identity is lost across the exception branch and loop entry/backedge. Add only source-grounded CFG/dataflow support with positive, fixed, safe, early-exit and rename/wrapper controls; rerun exact !11196 pair, a65, and master.",
       "api_semantic_evidence": [
         {
           "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
@@ -2587,7 +2604,7 @@
         "research/experiments/ark_runtime/c8_20261018/reports/typeguard-v0810-ia7e8-parent.json",
         "research/experiments/ark_runtime/c8_20261018/reports/typeguard-v0810-ia7e8-fix.json",
         "tests/detectors/ark_runtime/test_receiver_guard.py",
-        "research/deliveries/c-line/OHScanner_G\u76d8\u6e90\u7801\u6f0f\u6d1e\u5ba1\u67e5\u8bb0\u5f55_20261018.md"
+        "research/deliveries/c-line/OHScanner_G盘源码漏洞审查记录_20261018.md"
       ],
       "evidence_dimensions": {
         "public_disclosure_fact": "Upstream merged bugfix and regression source are locally pinned; no CVE/security advisory classification verified. Browser could not retrieve PR/issue pages in this pass.",
@@ -2605,6 +2622,268 @@
       ],
       "next_step": "Bind exact product compile actions and transitive include/macro closure for both !9063 commits, then find and replay a distinct official TypedArray history pair outside Filter without changing the rule.",
       "api_semantic_evidence": "Exact source pair and regression test. The modeled invariant accepts IsTypedArray(receiver) or GetObjectType(LoadHClass(receiver)) -> IsFastTypeArray and requires the true branch to dominate the accessor."
+    },
+    {
+      "case_id": "ARK-ARRAY-FINDINDEX-CALLBACK-PENDING-EXCEPTION-I9K03B",
+      "CVE_or_advisory": "Upstream commit df668db447d7b19ee38fe7925638feffdd2c9bd6 references issue I9K03B; issue page contents and any security classification not independently verified; no CVE verified.",
+      "source_and_verification_date": [
+        "Official OpenHarmony arkcompiler_ets_runtime Git object history in D:\\openHarmonyScanner\\tmp\\c-line-callback-holdout-history-20261019.git",
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime/issues/I9K03B",
+        "Official manifest snapshot tag/manifest_tag_20240521_132858.xml pins arkcompiler_ets_runtime to 3ad6d4c17d24fd4e1bb9a42067b36cc498d0979f (source association only)",
+        "research/experiments/ark_runtime/c8_20261018/branch_control_contract_i9k03b_20261019.json"
+      ],
+      "verified_on": "2026-10-19",
+      "component": "Ark Runtime compiler IR, BuiltinsArrayStubBuilder::FindIndex",
+      "root_cause": "After JSCallDispatch invokes a callback, the optimized stable-array path branches on TaggedIsException(retValue). The pending exception state can differ from the returned sentinel; a path can reach FastToBoolean(retValue) while the thread has a pending exception. The fix changes that branch to HasPendingException(glue). The non-stable path retains the old predicate in both parent and fix and is still a candidate.",
+      "lane": "C / Ark Runtime compiler and runtime safety",
+      "affected_versions_evidence": "Exact I9K03B parent/fix source pair is verified; no release/product build maps either commit. A separate 2024-05-21 official manifest snapshot pins Ark Runtime to 3ad6d4c17d24fd4e1bb9a42067b36cc498d0979f, but does not prove an actual compiled product.",
+      "vulnerable_commit": "a3bbeab9883c7c22d4bdc0e65b3b516215d39e0d",
+      "vulnerable_tree": "af0321fb130de3e69613d61323cc337f0a4836a7",
+      "vulnerable_files": [
+        {
+          "path": "ecmascript/compiler/builtins/builtins_array_stub_builder.cpp",
+          "blob": "03ee6ac8e1249e95d1db7d50ee249fa7f17fa7e1",
+          "sha256": "58c636d216da0c4c532fe1ade3831cfd41969af1f921ae864595056a9481df09",
+          "bytes": 206834
+        }
+      ],
+      "fixed_commit": "df668db447d7b19ee38fe7925638feffdd2c9bd6",
+      "fixed_tree": "7ad1bcd12c8f35982d04fdab329a43555039cff1",
+      "fixed_files": [
+        {
+          "path": "ecmascript/compiler/builtins/builtins_array_stub_builder.cpp",
+          "blob": "d0ba20e09cbafffacf035a659cfeabaca67ae39d",
+          "sha256": "12bb0fe98368bc07b03d9cb1f13c8d11dcdbaab5c67b04e1ed335afbb766f022",
+          "bytes": 206832
+        }
+      ],
+      "regression_test": {
+        "path": "test/moduletest/arrayfindindex/arrayfindindex.js",
+        "parent_blob": "7a6019d7264489175b573376bbbc710fdb3615ee",
+        "fixed_blob": "b2bacfc7d5d1323509cdebea33e81f25aea5c3ab",
+        "scenario": "new class with BigInt-keyed field is enumerated in callback; callback then called as function; FindIndex catches and prints TypeError. Test is source evidence only; it was not executed."
+      },
+      "product_build_association": "unknown; a65 profile mismatch remains. The 2024-05-21 manifest pin is source snapshot association only, with no matching successful build action or shipped binary.",
+      "existing_detector_and_rule": "ohscanner.ark.runtime.type_safety; ark.runtime.callback-exception-before-result-conversion; model v0.8.12 / semantic-contract-v13; production M2 CLI explicit selection; default admission remains research_candidate.",
+      "baseline_scan": {
+        "entry": "Production M2 CLI ohscan-run",
+        "scanner_commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+        "model_version": "0.8.10",
+        "profile": "light-ast",
+        "scope": [
+          "ecmascript/compiler/builtins/builtins_array_stub_builder.cpp"
+        ],
+        "parent": {
+          "diagnostics": 0,
+          "status": "completed_with_limitations",
+          "detector_status": "blocked"
+        },
+        "fixed": {
+          "diagnostics": 0,
+          "status": "completed_with_limitations",
+          "detector_status": "blocked"
+        },
+        "miss_reason": "Runtime exception model only covered JSFunction::Call result conversion and did not analyze generated JSCallDispatch CFG."
+      },
+      "implementation_status": "v0.8.12 adds source-validated inherited CamelCase Branch CFG support only when the scanned C++ source set proves an unambiguous three-argument Branch declaration, a parsed StubBuilder::Branch implementation mapping its condition to IfTrue/IfFalse and the correct label parameters, and a parsed fully qualified class inheritance chain. Missing/ambiguous/inverted contract remains unknown. The exact I9K03B pair uses uppercase BRANCH, so its 2->1 delta is a historical regression check of the existing model, not an effect of the new alias.",
+      "controls": {
+        "exact_positive_parent": "I9K03B exact parent, v0.8.12, same five-file support scope: candidates at target lines 2234 and 2292.",
+        "exact_fixed_source": "Exact fix, same scope: candidate at line 2292 remains on the non-stable path unchanged by the patch; it is unresolved and not suppressed.",
+        "cross_branch_source_variant": "2024-05-21 official manifest pin 3ad6d4c17d24fd4e1bb9a42067b36cc498d0979f exercises CamelCase Branch; the inherited control contract is verified and production CLI emits two FindIndex candidates. This was used to develop the control contract and is not an independent holdout; no fixed pair was established for this pin.",
+        "unit_controls": "Runtime-exception and unseen-detector focused suites: 44 passed, 2 skipped. Includes verified/missing contract, swapped-edge rejection, derived override, same-name namespace collision, pending-guard safe path and identifier-renaming controls.",
+        "same_scope_legacy_baseline": "The v0.8.10 e4 five-file scan returned not_applicable with no supported language; invalid as a zero-result comparator. The earlier v0.8.11 single-file zero result lacked support-source contract and was partial/unknown.",
+        "safe_unrelated_real_control": "None established for this Branch subcase.",
+        "independent_holdout": "None; the manifest pin was used during rule development and must remain development data."
+      },
+      "real_source_rescan_result": {
+        "profile": "light-ast; production M2 ohscan-run; same five-file scope for all v0.8.12 replays",
+        "scope": [
+          "ecmascript/compiler/builtins/builtins_array_stub_builder.cpp",
+          "ecmascript/compiler/builtins/builtins_array_stub_builder.h",
+          "ecmascript/compiler/builtins/builtins_stubs.h",
+          "ecmascript/compiler/stub_builder.h",
+          "ecmascript/compiler/stub_builder.cpp"
+        ],
+        "i9k03b_parent": {
+          "commit": "a3bbeab9883c7c22d4bdc0e65b3b516215d39e0d",
+          "diagnostics": 2,
+          "locations": [
+            2234,
+            2292
+          ],
+          "status": "completed_with_limitations",
+          "detector_status": "blocked",
+          "target_ast": "complete",
+          "file_outcome": "partial",
+          "elapsed_seconds": 0.07391910000296775
+        },
+        "i9k03b_fix": {
+          "commit": "df668db447d7b19ee38fe7925638feffdd2c9bd6",
+          "diagnostics": 1,
+          "locations": [
+            2292
+          ],
+          "status": "completed_with_limitations",
+          "detector_status": "blocked",
+          "target_ast": "complete",
+          "file_outcome": "partial",
+          "elapsed_seconds": 0.07201229999191128
+        },
+        "manifest_pin_variant": {
+          "commit": "3ad6d4c17d24fd4e1bb9a42067b36cc498d0979f",
+          "diagnostics": 2,
+          "locations": [
+            1282,
+            1340
+          ],
+          "status": "completed_with_limitations",
+          "detector_status": "blocked",
+          "target_ast": "complete",
+          "file_outcome": "partial",
+          "elapsed_seconds": 0.03715090001060162,
+          "contract_verified": true
+        },
+        "legacy_same_scope_baseline": {
+          "scanner": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+          "version": "0.8.10",
+          "diagnostics": 0,
+          "detector_status": "not_applicable",
+          "valid_comparator": false,
+          "reason": "no source with supported language"
+        },
+        "scope_comparison": "I9K03B 2->1 is stable/non-stable path output; exact source diff only changes the stable path. One-file v0.8.11 manifest replay had 0 diagnostics but was unknown without support contract; scope differs and is not a comparable baseline."
+      },
+      "evidence_paths": [
+        "research/experiments/ark_runtime/c8_20261018/README.md",
+        "research/experiments/ark_runtime/c8_20261018/checkpoint.json",
+        "research/experiments/ark_runtime/c8_20261018/runtime-exception-i9k03b-source-identity-20261019.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/runtime-exception-v0811-i9k03b-parent-20261019.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/runtime-exception-v0811-i9k03b-fixed-20261019.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/runtime-exception-v0811-i9k03b-parent-baseline-e4-20261019.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/runtime-exception-v0811-i9k03b-fixed-baseline-e4-20261019.json",
+        "research/experiments/ark_runtime/c8_20261018/branch_control_contract_i9k03b_20261019.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/runtime-exception-v0812-i9k03b-parent-expanded-scope-20261019.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/runtime-exception-v0812-i9k03b-fixed-expanded-scope-20261019.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/runtime-exception-v0812-i9k03b-manifest-tag-20240521-20261019.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/runtime-exception-v0810-e4-i9k03b-manifest-tag-20240521-20261019.json",
+        "tests/detectors/ark_runtime/test_runtime_exception.py"
+      ],
+      "remaining_blockers": [
+        "Public issue contents/security classification and release/product mapping remain unverified.",
+        "The exact I9K03B fix retains the non-stable line-2292 candidate; its semantics remain unresolved.",
+        "Target C++ parsing is complete but detector coverage is partial/blocked due other callback paths; builtins_stubs.h is parser-partial.",
+        "No independent real safe/unrelated control or untouched same-mechanism holdout exists for the CamelCase Branch subcase.",
+        "No exact build profile, macro expansion, runtime build/test, component reproduction, shipped product mapping, or impact evidence."
+      ],
+      "next_step": "Search the pinned local Ark history for a source-disjoint generated callback case whose owner inherits the verified Branch contract and whose source has a matching pending-exception early exit; freeze the full source pair before production-scanning at the same five-file scope. If none exists in the pinned ref/commit set, record the searched boundary and leave the independent-control gate open.",
+      "performance_and_coverage_delta": {
+        "baseline_v0810_same_scope": {
+          "elapsed_seconds": 9.6e-06,
+          "peak_memory": "unavailable",
+          "status": "not_applicable; invalid for comparison"
+        },
+        "current_v0812_parent": {
+          "elapsed_seconds": 0.07391910000296775,
+          "peak_memory": "unavailable",
+          "coverage": "partial/blocked"
+        },
+        "current_v0812_fix": {
+          "elapsed_seconds": 0.07201229999191128,
+          "peak_memory": "unavailable",
+          "coverage": "partial/blocked"
+        },
+        "manifest_pin_variant": {
+          "elapsed_seconds": 0.03715090001060162,
+          "peak_memory": "unavailable",
+          "coverage": "partial/blocked"
+        },
+        "interpretation": "No like-for-like runtime comparison: old scope baseline is not_applicable and prior one-file run did not include the source contract."
+      },
+      "product_build_profile_search": {
+        "searched_on": "2026-10-19",
+        "exact_profile_found": false,
+        "checked_profile_path": "research/experiments/ark_runtime/c1_20261017/product_profile_20261019.v1.json",
+        "checked_profile_sha256": "44f40f1c4c8bacc05869f40d1cb42846c0f058d0514ba8397a0aaafd7df8591d",
+        "profile_bound_ark_commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "profile_bound_ark_tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "profile_compile_commands_sha256": "f4ac150e2af2d2d0eff5da063e5be3beee973c459d998c50ca119530019cee7e",
+        "profile_compile_commands_bytes": 4103004071,
+        "historical_pair_commits": [
+          "a3bbeab9883c7c22d4bdc0e65b3b516215d39e0d",
+          "df668db447d7b19ee38fe7925638feffdd2c9bd6"
+        ],
+        "search_result": "Neither historical commit occurs in the C1/C4 product profile identity records. Recursive D:\\OpenHarmony807 compile_commands.json enumeration returned only third-party/LLVM test databases, no product action corresponding to these historical commits. Existing C1 profile explicitly pins a65, not this pair.",
+        "decision": "Do not reuse a65 flags or generated headers for I9K03B. Exact product manifest revision, matching GN args, compile command, and generated-input closure are required before build/runtime validation."
+      }
+    },
+    {
+      "case_id": "ARK-HIST-FINDINDEX-TAGGED-EXCEPTION-GUARD-I943QV-20240229",
+      "CVE_or_advisory": "No CVE or security advisory verified. Commit message references issue I943QV; issue page was not accessible for independent classification.",
+      "source_and_verification_date": [
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime/issues/I943QV",
+        "local pinned Git commit 0aab2028c1f8b90d60064210d2a0ab94876528ba and parent 18188466e748a26ac6cf1eeaac74e6fa36389324"
+      ],
+      "verified_on": "2026-10-19",
+      "component": "Ark Runtime compiler BuiltinsArrayStubBuilder::FindIndex",
+      "root_cause": "Potential earlier same-mechanism candidate: this historical FindIndex checks TaggedIsException(retValue) after JSCallDispatch, returns/exits on the sentinel branch, and converts the value only on the other branch. A later exact I9K03B fix changes this FindIndex guard from TaggedIsException(retValue) to HasPendingException(glue), supporting same-family relevance; however, no direct fixed pair or issue association exists for this older snapshot, so vulnerability status remains unconfirmed.",
+      "lane": "C / Ark Runtime compiler and runtime safety",
+      "affected_versions_evidence": "Exact upstream commit source only; no release tag, product manifest or build association established.",
+      "vulnerable_commit": null,
+      "vulnerable_tree": null,
+      "vulnerable_files": [],
+      "fixed_commit": null,
+      "fixed_tree": null,
+      "fixed_files": [],
+      "product_build_association": "unknown; no product build/profile binding",
+      "existing_detector_and_rule": "ohscanner.ark.runtime.type_safety v0.8.12; ark.runtime.callback-exception-before-result-conversion",
+      "baseline_scan": {
+        "entry": "M2 production CLI ohscan-run",
+        "profile": "light-ast",
+        "scope": [
+          "ecmascript/compiler/builtins/builtins_array_stub_builder.cpp",
+          "ecmascript/compiler/builtins/builtins_array_stub_builder.h",
+          "ecmascript/compiler/builtins/builtins_stubs.h",
+          "ecmascript/compiler/stub_builder.h",
+          "ecmascript/compiler/stub_builder.cpp"
+        ],
+        "result": "2 unassessed candidates at FindIndex lines 1431 and 1489; completed_with_limitations; 4/5 source files parse complete, one partial; no build profile or macro expansion"
+      },
+      "miss_reason": "Not a labelled safe control. The production model tracks possible pending exception across the JSCallDispatch result and does not currently prove the TaggedIsException false edge clears that state. Need bind version-specific JSCallDispatch semantics before deciding whether these are false positives or valid candidates.",
+      "implementation_status": "Investigation/development control only; no rule change made from this observation.",
+      "controls": {
+        "positive": null,
+        "fixed": null,
+        "safe": "not a safe label; guard presence alone did not establish safety, and later same-function I9K03B fix changes the guard predicate",
+        "unrelated": null,
+        "variant": "exact full historical source; not used as a holdout and not a vulnerability label"
+      },
+      "real_source_rescan": "Production M2 v0.8.12 emitted two same-family candidates in this historical FindIndex implementation at lines 1431 and 1489; the older snapshot predates the verified I9K03B guard change. Treat as an earlier same-mechanism candidate, not a control or confirmed vulnerability.",
+      "evidence_paths": [
+        "research/experiments/ark_runtime/c8_20261018/reports/runtime-exception-v0812-i943qv-safe-pattern-development-20261019.json",
+        "research/experiments/ark_runtime/c8_20261018/reports/runtime-exception-v0812-i943qv-safe-pattern-development-20261019.md",
+        "research/experiments/ark_runtime/c8_20261018/branch_function_history_candidates_20261019.json",
+        "research/experiments/ark_runtime/c8_20261018/i943qv_to_i9k03b_guard_history_20261019.txt"
+      ],
+      "remaining_blockers": [
+        "I943QV issue/disclosure classification not independently verified",
+        "No direct vulnerable/fixed pair for this snapshot; relation to later I9K03B fix is same function/mechanism but not a proven disclosure association",
+        "JSCallDispatch mode/exception semantics not fully source-bound",
+        "AST support file partial; no macro expansion, exact product profile, dynamic test, or product binding"
+      ],
+      "next_step": "The exact guard history is bound in i943qv_to_i9k03b_guard_history_20261019.txt. Next bind I9K03B regression test blobs and determine whether each of the two older FindIndex candidates corresponds to the corrected path; retain unknown status until then."
     }
-  ]
+  ],
+  "latest_history_search": {
+    "date": "2026-10-19",
+    "boundary": "locally pinned Ark Runtime Git DB; 31 Branch( source-history commits, 16 snapshots with callback/exception markers, 27 complete parsed function candidates; no scan-time fetch",
+    "result": "No independent safe/unrelated holdout established. The production replay of 0aab2028 finds two candidates in a TaggedIsException guarded path; exact I9K03B fix later changes the same FindIndex guard to HasPendingException, making 0aab2028 a plausible earlier same-mechanism candidate, not a safety label.",
+    "evidence": [
+      "research/experiments/ark_runtime/c8_20261018/branch_source_history_search_20261019.txt",
+      "research/experiments/ark_runtime/c8_20261018/branch_source_history_candidate_matrix_20261019.json",
+      "research/experiments/ark_runtime/c8_20261018/branch_function_history_candidates_20261019.json",
+      "research/experiments/ark_runtime/c8_20261018/reports/runtime-exception-v0812-i943qv-safe-pattern-development-20261019.json",
+      "research/experiments/ark_runtime/c8_20261018/i943qv_to_i9k03b_guard_history_20261019.txt"
+    ],
+    "next_operation": "Bind I9K03B regression-test blobs and map the two 0aab2028 FindIndex candidates to the corrected source path; retain unknown status until reviewed."
+  }
 }

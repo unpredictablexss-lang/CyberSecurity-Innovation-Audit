@@ -1,0 +1,29 @@
+C8 exact FindIndex guard history: I943QV snapshot to I9K03B fix (2026-10-19)
+
+Source DB: D:/openHarmonyScanner/tmp/c-line-callback-holdout-history-20261019.git
+No fetch was performed.
+
+I943QV-era snapshot:
+  commit  0aab2028c1f8b90d60064210d2a0ab94876528ba
+  parent  18188466e748a26ac6cf1eeaac74e6fa36389324
+  tree    c96c90133c7b726ddb34932692e75a55ababb5b5
+  file blob ecmascript/compiler/builtins/builtins_array_stub_builder.cpp
+          cbadf9345bc570d445edcd2a69efc2373068483c
+  commit title: opt Array.map issue:I943QV
+
+I9K03B vulnerable parent and fixed commit:
+  parent  a3bbeab9883c7c22d4bdc0e65b3b516215d39e0d
+  fix     df668db447d7b19ee38fe7925638feffdd2c9bd6
+  fix title: 修改array.findIndex 接口IR化异常没有正常抛出
+  fix message references https://gitee.com/openharmony/arkcompiler_ets_runtime/issues/I9K03B
+  exact source diff changes FindIndex guard from
+    TaggedIsException(retValue)
+  to
+    HasPendingException(glue)
+
+Reproducible history queries (run from scanner checkout):
+  git --git-dir D:/openHarmonyScanner/tmp/c-line-callback-holdout-history-20261019.git log --ancestry-path --reverse --format="%H %P %cI %s" -S"TaggedIsException(retValue)" 0aab2028c1f8b90d60064210d2a0ab94876528ba..df668db447d7b19ee38fe7925638feffdd2c9bd6 -- ecmascript/compiler/builtins/builtins_array_stub_builder.cpp
+
+Observed output: the only matching commit in this ancestry interval is df668db447d7b19ee38fe7925638feffdd2c9bd6 (2024-04-28T10:10:50+08:00), with parent a3bbeab9883c7c22d4bdc0e65b3b516215d39e0d and the I9K03B subject above. This binds a same-function guard change and issue reference, not a disclosure or product-version association for the older snapshot.
+
+The I943QV-era production replay is saved at reports/runtime-exception-v0812-i943qv-safe-pattern-development-20261019.json/.md. It found two candidates at FindIndex lines 1431 and 1489 in a five-file scope; status completed_with_limitations, parse 4 complete / 1 partial, no build profile or macro expansion. This snapshot is a plausible earlier same-mechanism candidate, not a safe control, confirmed vulnerable release, or holdout. Runtime/build/product evidence is absent.

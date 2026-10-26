@@ -1,0 +1,172 @@
+{
+  "schema": "ohscanner.c1.graph-npm-staging/v1",
+  "status": "all_locked_npm_inputs_staged",
+  "node_version": "v14.21.1",
+  "node_sha256": "6f920cf526ac67c66756848a9622d29d8596b136fec7b93cfe43f8290fc2d223",
+  "registry": "https://repo.huaweicloud.com/repository/npm/",
+  "network_namespace_isolated": false,
+  "source_and_runtime_mounts_read_only": true,
+  "lifecycle_scripts_enabled": false,
+  "packages": [
+    {
+      "source_path": "developtools/ace_js2bundle/ace-loader",
+      "manifest_project": "developtools/ace_js2bundle",
+      "commit": "9da4e6b49ce9b6d7429193dd4734acab6de9feb6",
+      "tree": "a72ffc3c9685094e4fd4bf675f1c5fa45b557524",
+      "package_json_sha256": "ba2d853c268e115d4ca1f8331c3d2473fe30d9e7268ee26ad1ae09c771d0934a",
+      "package_json_git_blob": "b5772631fb7c0a260c3b69be211e65a7f8284474",
+      "package_lock_sha256": "5f68037cbc095063f56bf5915464b0bb9f1bc1ae9f0da710f77571fd2e5d5b36",
+      "package_lock_git_blob": "723b5df67179ad90d06fc5581229cd2035248ec7",
+      "lock_audit": {
+        "packages": 598,
+        "missing_integrity": 0,
+        "non_mirror_url": 0,
+        "git_or_file_url": 0
+      },
+      "npm_ci_command": [
+        "unshare",
+        "--user",
+        "--map-root-user",
+        "--mount",
+        "--fork",
+        "/bin/bash",
+        "-c",
+        "set -euo pipefail\nstage=$1; node=$2; project=$3; cache=$4; registry=$5\nmount --make-rprivate /\nmount --bind \"$stage\" \"$stage\"\nmount -o remount,rw,bind \"$stage\"\nmount --bind \"$project\" \"$project\"\nmount -o remount,ro,bind \"$project\"\nmount --bind \"$node\" \"$node\"\nmount -o remount,ro,bind \"$node\"\nmount --bind \"$cache\" \"$cache\"\nmount -o remount,rw,bind \"$cache\"\nmkdir -p \"$stage/home\" \"$stage/tmp\"\nexport HOME=\"$stage/home\" TMPDIR=\"$stage/tmp\" PATH=\"$node/bin:$PATH\"\nexport npm_config_cache=\"$cache\" npm_config_ignore_scripts=true npm_config_audit=false npm_config_fund=false npm_config_update_notifier=false npm_config_userconfig=/dev/null\ncd \"$stage\"\nprintf 'project='; findmnt -n -T \"$project\" -o TARGET,OPTIONS\nprintf 'node='; findmnt -n -T \"$node\" -o TARGET,OPTIONS\nprintf 'stage='; findmnt -n -T \"$stage\" -o TARGET,OPTIONS\nprintf 'cache='; findmnt -n -T \"$cache\" -o TARGET,OPTIONS\nprintf 'node_version='; \"$node/bin/node\" --version\nprintf 'npm_version='; \"$node/bin/npm\" --version\nexec \"$node/bin/npm\" ci --ignore-scripts --no-audit --no-fund --registry \"$registry\" --cache \"$cache\"\n",
+        "--",
+        "/home/deepsleep/c-line-c1-profile-20261018/graph-npm-stage-20261019/developtools__ace_js2bundle__ace-loader",
+        "/home/deepsleep/c-line-c1-profile-20261018/prebuilts-stage-20261019/build-tools/common/nodejs/node-v14.21.1-linux-x64",
+        "/home/deepsleep/c-line-c1-profile-20261018/openharmony-git-archive-20261019/developtools/ace_js2bundle/ace-loader",
+        "/home/deepsleep/c-line-c1-profile-20261018/graph-npm-cache-20261019",
+        "https://repo.huaweicloud.com/repository/npm/"
+      ],
+      "returncode": 0,
+      "reused_completed_install": true,
+      "lifecycle_scripts_enabled": false,
+      "log_sha256": "ccb4378fda329cc2ebbe36f0e329511c69787c2386bfe0e94ed72b0fc3449d2f",
+      "staging_path": "/home/deepsleep/c-line-c1-profile-20261018/graph-npm-stage-20261019/developtools__ace_js2bundle__ace-loader/node_modules",
+      "inventory": {
+        "path": "npm_node_modules_inventory_20261019/developtools__ace_js2bundle__ace-loader.json",
+        "sha256": "913fb2a9ba38eae1eceacb7b22705967638603be48e8ee8952695669f48a8981",
+        "file_count": 12282,
+        "directory_count": 1941,
+        "symlink_count": 51
+      },
+      "mount_evidence": [
+        "project=/home/deepsleep/c-line-c1-profile-20261018/openharmony-git-archive-20261019/developtools/ace_js2bundle/ace-loader ro,relatime,discard,errors=remount-ro,data=ordered",
+        "node=/home/deepsleep/c-line-c1-profile-20261018/prebuilts-stage-20261019/build-tools/common/nodejs/node-v14.21.1-linux-x64 ro,relatime,discard,errors=remount-ro,data=ordered",
+        "stage=/home/deepsleep/c-line-c1-profile-20261018/graph-npm-stage-20261019/developtools__ace_js2bundle__ace-loader rw,relatime,discard,errors=remount-ro,data=ordered",
+        "cache=/home/deepsleep/c-line-c1-profile-20261018/graph-npm-cache-20261019 rw,relatime,discard,errors=remount-ro,data=ordered",
+        "node_version=v14.21.1",
+        "npm_version=6.14.17",
+        "added 598 packages in 342.532s"
+      ]
+    },
+    {
+      "source_path": "third_party/parse5/packages/parse5",
+      "manifest_project": "third_party/parse5",
+      "commit": "e2741d61789d82093c07ea5e74035a155944f290",
+      "tree": "86df48e0c2adfd018559028407238abdf8041366",
+      "package_json_sha256": "23f04a828fe7cfd95b77bd4cc1bd6392b7fcec73798b658380cba5c2e01532cb",
+      "package_json_git_blob": "c021d5fcb2f7fe366bae0d66618e227bece1dbab",
+      "package_lock_sha256": "04da4b00d4ee63724da451b57719e751ecdc9ed5074f6a448fdd53168a605165",
+      "package_lock_git_blob": "dcbe9d80e5782e767eb0481cf7a14fe2b6f1dc9d",
+      "lock_audit": {
+        "packages": 3,
+        "missing_integrity": 0,
+        "non_mirror_url": 0,
+        "git_or_file_url": 0
+      },
+      "npm_ci_command": [
+        "unshare",
+        "--user",
+        "--map-root-user",
+        "--mount",
+        "--fork",
+        "/bin/bash",
+        "-c",
+        "set -euo pipefail\nstage=$1; node=$2; project=$3; cache=$4; registry=$5\nmount --make-rprivate /\nmount --bind \"$stage\" \"$stage\"\nmount -o remount,rw,bind \"$stage\"\nmount --bind \"$project\" \"$project\"\nmount -o remount,ro,bind \"$project\"\nmount --bind \"$node\" \"$node\"\nmount -o remount,ro,bind \"$node\"\nmount --bind \"$cache\" \"$cache\"\nmount -o remount,rw,bind \"$cache\"\nmkdir -p \"$stage/home\" \"$stage/tmp\"\nexport HOME=\"$stage/home\" TMPDIR=\"$stage/tmp\" PATH=\"$node/bin:$PATH\"\nexport npm_config_cache=\"$cache\" npm_config_ignore_scripts=true npm_config_audit=false npm_config_fund=false npm_config_update_notifier=false npm_config_userconfig=/dev/null\ncd \"$stage\"\nprintf 'project='; findmnt -n -T \"$project\" -o TARGET,OPTIONS\nprintf 'node='; findmnt -n -T \"$node\" -o TARGET,OPTIONS\nprintf 'stage='; findmnt -n -T \"$stage\" -o TARGET,OPTIONS\nprintf 'cache='; findmnt -n -T \"$cache\" -o TARGET,OPTIONS\nprintf 'node_version='; \"$node/bin/node\" --version\nprintf 'npm_version='; \"$node/bin/npm\" --version\nexec \"$node/bin/npm\" ci --ignore-scripts --no-audit --no-fund --registry \"$registry\" --cache \"$cache\"\n",
+        "--",
+        "/home/deepsleep/c-line-c1-profile-20261018/graph-npm-stage-20261019/third_party__parse5__packages__parse5",
+        "/home/deepsleep/c-line-c1-profile-20261018/prebuilts-stage-20261019/build-tools/common/nodejs/node-v14.21.1-linux-x64",
+        "/home/deepsleep/c-line-c1-profile-20261018/openharmony-git-archive-20261019/third_party/parse5/packages/parse5",
+        "/home/deepsleep/c-line-c1-profile-20261018/graph-npm-cache-20261019",
+        "https://repo.huaweicloud.com/repository/npm/"
+      ],
+      "returncode": 0,
+      "reused_completed_install": false,
+      "lifecycle_scripts_enabled": false,
+      "log_sha256": "67b2bdc71bda310d974172a299cd980c317f32bc7dfb8dd44c6280384ce9fdd8",
+      "staging_path": "/home/deepsleep/c-line-c1-profile-20261018/graph-npm-stage-20261019/third_party__parse5__packages__parse5/node_modules",
+      "inventory": {
+        "path": "npm_node_modules_inventory_20261019/third_party__parse5__packages__parse5.json",
+        "sha256": "5c0e5d3bfa157e36db8b9b591bd2cc61078d698f7ec94090b589a1e5d492cbcc",
+        "file_count": 196,
+        "directory_count": 26,
+        "symlink_count": 3
+      },
+      "mount_evidence": [
+        "project=/home/deepsleep/c-line-c1-profile-20261018/openharmony-git-archive-20261019/third_party/parse5/packages/parse5 ro,relatime,discard,errors=remount-ro,data=ordered",
+        "node=/home/deepsleep/c-line-c1-profile-20261018/prebuilts-stage-20261019/build-tools/common/nodejs/node-v14.21.1-linux-x64 ro,relatime,discard,errors=remount-ro,data=ordered",
+        "stage=/home/deepsleep/c-line-c1-profile-20261018/graph-npm-stage-20261019/third_party__parse5__packages__parse5 rw,relatime,discard,errors=remount-ro,data=ordered",
+        "cache=/home/deepsleep/c-line-c1-profile-20261018/graph-npm-cache-20261019 rw,relatime,discard,errors=remount-ro,data=ordered",
+        "node_version=v14.21.1",
+        "npm_version=6.14.17",
+        "added 3 packages in 0.648s"
+      ]
+    },
+    {
+      "source_path": "third_party/weex-loader",
+      "manifest_project": "third_party/weex-loader",
+      "commit": "7e94bb435896bd29edd098d7bc845bfc4cf098de",
+      "tree": "d5ae6137bfa4065f44d9976b3730abbb957bf968",
+      "package_json_sha256": "c35f0041f9f4c1a9b7df28807889d4b79f65974b81afb0ca59c7e1bd7bb935ba",
+      "package_json_git_blob": "10d06efa1420f2507aca8b5330218ddbb784ba43",
+      "package_lock_sha256": "f8eaf8f113a68d5dd53557af45abd3304e2180f89bc1481c328cb72963aa5751",
+      "package_lock_git_blob": "adf6c1e873116d44367f75d6edaabb436f939a21",
+      "lock_audit": {
+        "packages": 205,
+        "missing_integrity": 0,
+        "non_mirror_url": 0,
+        "git_or_file_url": 0
+      },
+      "npm_ci_command": [
+        "unshare",
+        "--user",
+        "--map-root-user",
+        "--mount",
+        "--fork",
+        "/bin/bash",
+        "-c",
+        "set -euo pipefail\nstage=$1; node=$2; project=$3; cache=$4; registry=$5\nmount --make-rprivate /\nmount --bind \"$stage\" \"$stage\"\nmount -o remount,rw,bind \"$stage\"\nmount --bind \"$project\" \"$project\"\nmount -o remount,ro,bind \"$project\"\nmount --bind \"$node\" \"$node\"\nmount -o remount,ro,bind \"$node\"\nmount --bind \"$cache\" \"$cache\"\nmount -o remount,rw,bind \"$cache\"\nmkdir -p \"$stage/home\" \"$stage/tmp\"\nexport HOME=\"$stage/home\" TMPDIR=\"$stage/tmp\" PATH=\"$node/bin:$PATH\"\nexport npm_config_cache=\"$cache\" npm_config_ignore_scripts=true npm_config_audit=false npm_config_fund=false npm_config_update_notifier=false npm_config_userconfig=/dev/null\ncd \"$stage\"\nprintf 'project='; findmnt -n -T \"$project\" -o TARGET,OPTIONS\nprintf 'node='; findmnt -n -T \"$node\" -o TARGET,OPTIONS\nprintf 'stage='; findmnt -n -T \"$stage\" -o TARGET,OPTIONS\nprintf 'cache='; findmnt -n -T \"$cache\" -o TARGET,OPTIONS\nprintf 'node_version='; \"$node/bin/node\" --version\nprintf 'npm_version='; \"$node/bin/npm\" --version\nexec \"$node/bin/npm\" ci --ignore-scripts --no-audit --no-fund --registry \"$registry\" --cache \"$cache\"\n",
+        "--",
+        "/home/deepsleep/c-line-c1-profile-20261018/graph-npm-stage-20261019/third_party__weex-loader",
+        "/home/deepsleep/c-line-c1-profile-20261018/prebuilts-stage-20261019/build-tools/common/nodejs/node-v14.21.1-linux-x64",
+        "/home/deepsleep/c-line-c1-profile-20261018/openharmony-git-archive-20261019/third_party/weex-loader",
+        "/home/deepsleep/c-line-c1-profile-20261018/graph-npm-cache-20261019",
+        "https://repo.huaweicloud.com/repository/npm/"
+      ],
+      "returncode": 0,
+      "reused_completed_install": false,
+      "lifecycle_scripts_enabled": false,
+      "log_sha256": "9cbc0d2f461c7fbea096864e14915530b40bdadb2d14f473035c525aad98dda5",
+      "staging_path": "/home/deepsleep/c-line-c1-profile-20261018/graph-npm-stage-20261019/third_party__weex-loader/node_modules",
+      "inventory": {
+        "path": "npm_node_modules_inventory_20261019/third_party__weex-loader.json",
+        "sha256": "b10cf086b4df15947d9183eb94c003dd966bcc9176dd07d20ba9df58670f7353",
+        "file_count": 4140,
+        "directory_count": 561,
+        "symlink_count": 22
+      },
+      "mount_evidence": [
+        "project=/home/deepsleep/c-line-c1-profile-20261018/openharmony-git-archive-20261019/third_party/weex-loader ro,relatime,discard,errors=remount-ro,data=ordered",
+        "node=/home/deepsleep/c-line-c1-profile-20261018/prebuilts-stage-20261019/build-tools/common/nodejs/node-v14.21.1-linux-x64 ro,relatime,discard,errors=remount-ro,data=ordered",
+        "stage=/home/deepsleep/c-line-c1-profile-20261018/graph-npm-stage-20261019/third_party__weex-loader rw,relatime,discard,errors=remount-ro,data=ordered",
+        "cache=/home/deepsleep/c-line-c1-profile-20261018/graph-npm-cache-20261019 rw,relatime,discard,errors=remount-ro,data=ordered",
+        "node_version=v14.21.1",
+        "npm_version=6.14.17",
+        "added 205 packages in 1.161s"
+      ]
+    }
+  ],
+  "scope_note": "Only package manifests from exact manifest-pinned snapshots were installed. All tarballs were resolved through lockfile URLs and integrity values; npm lifecycle scripts were disabled. The outputs are external staging and are mounted read-only for a later no-network Ninja dry-run."
+}

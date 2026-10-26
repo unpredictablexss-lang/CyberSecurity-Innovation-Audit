@@ -1,0 +1,11 @@
+{
+  "reviewer_id": "",
+  "signed_name": "",
+  "participated_in_detector_or_rule_design_tuning": false,
+  "seen_predictions_or_tuning_results_for_these_cases": false,
+  "prior_public_source_or_patch_exposure": "none",
+  "can_label_independently_without_contact": true,
+  "other_conflict": "none",
+  "signed_utc": "",
+  "signature_acknowledgement": "I attest that these statements are accurate before receiving any case source materials."
+}

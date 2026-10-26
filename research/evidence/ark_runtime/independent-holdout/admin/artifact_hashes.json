@@ -1,0 +1,5 @@
+{
+  "status": "superseded",
+  "reason": "Legacy index referenced artifacts no longer present in this package. Use package_hashes.json for the current package file hashes.",
+  "algorithm": "sha256"
+}
