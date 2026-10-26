@@ -1,0 +1,7 @@
+2f70907e39185ea463793134c22f2e1f18049be0	refs/tags/OpenHarmony-v5.0.2-Release
+e8ec08bf6f410304e16c67a34e983e5976e7dad5	refs/tags/OpenHarmony-v5.0.3-Release
+ac789fc32d0cf6030892c83276cf4a743aae1167	refs/tags/OpenHarmony-v5.1.0-Release
+6e6dce96128781786ebc2e446785a2f3caf8d9aa	refs/tags/OpenHarmony-v6.0-Release
+9d4339629bf3b53b03ef980d84b030380ebeea30	refs/tags/OpenHarmony-v6.1-LTS
+0c2687d6839abe6649aad5476802b8a1d0ccdc4d	refs/tags/OpenHarmony-v6.1-Release
+42be4c80d081910883e856297a4e0c8e6fb9227e	refs/tags/OpenHarmony-v7.0-Release

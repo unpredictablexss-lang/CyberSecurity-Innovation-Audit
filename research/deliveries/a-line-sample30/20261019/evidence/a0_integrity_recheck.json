@@ -1,0 +1,290 @@
+{
+  "schema_version": "t1-a0-integrity-recheck-v1",
+  "created_at": "2026-10-19",
+  "a0_root": "D:\\openHarmonyScanner\\CyberSecurity-Innovation-Audit\\research\\deliveries\\a-line-sample30\\20261018",
+  "artifact_manifest": {
+    "path": "evidence/hashes.json",
+    "sha256": "06ae700e4754e5255761f4fa5577e2a311e7f3fbedc2e78f6bab6a77ff5a9f63",
+    "listed_count": 97,
+    "verified_count": 97,
+    "errors": []
+  },
+  "function_extraction": {
+    "path": "poc/ohscanner-contacts-path-traversal/generated/extraction_manifest.json",
+    "function_count": 11,
+    "verified_count": 11,
+    "errors": []
+  },
+  "poc_runs": {
+    "results": {
+      "count": 10,
+      "exit_code_counts": {
+        "0": 3,
+        "1": 4,
+        "64": 3
+      },
+      "assertion_pass_count": 4,
+      "rows": [
+        {
+          "mode": "attack",
+          "repetition": "1",
+          "exit_code": 64,
+          "assertion_pass": null,
+          "victim_after": null
+        },
+        {
+          "mode": "attack",
+          "repetition": "2",
+          "exit_code": 64,
+          "assertion_pass": null,
+          "victim_after": null
+        },
+        {
+          "mode": "attack",
+          "repetition": "3",
+          "exit_code": 64,
+          "assertion_pass": null,
+          "victim_after": null
+        },
+        {
+          "mode": "safe",
+          "repetition": "2",
+          "exit_code": 1,
+          "assertion_pass": null,
+          "victim_after": null
+        },
+        {
+          "mode": "safe",
+          "repetition": "3",
+          "exit_code": 1,
+          "assertion_pass": null,
+          "victim_after": null
+        },
+        {
+          "mode": "fixed",
+          "repetition": "1",
+          "exit_code": 1,
+          "assertion_pass": null,
+          "victim_after": null
+        },
+        {
+          "mode": "fixed",
+          "repetition": "2",
+          "exit_code": 1,
+          "assertion_pass": true,
+          "victim_after": true
+        },
+        {
+          "mode": "fixed-safe",
+          "repetition": "1",
+          "exit_code": 0,
+          "assertion_pass": true,
+          "victim_after": true
+        },
+        {
+          "mode": "fixed-safe",
+          "repetition": "2",
+          "exit_code": 0,
+          "assertion_pass": true,
+          "victim_after": true
+        },
+        {
+          "mode": "fixed-safe",
+          "repetition": "3",
+          "exit_code": 0,
+          "assertion_pass": true,
+          "victim_after": true
+        }
+      ]
+    },
+    "results-final": {
+      "count": 12,
+      "exit_code_counts": {
+        "0": 8,
+        "139": 4
+      },
+      "assertion_pass_count": 8,
+      "rows": [
+        {
+          "mode": "attack",
+          "repetition": "1",
+          "exit_code": 0,
+          "assertion_pass": true,
+          "victim_after": false
+        },
+        {
+          "mode": "attack",
+          "repetition": "2",
+          "exit_code": 139,
+          "assertion_pass": null,
+          "victim_after": null
+        },
+        {
+          "mode": "attack",
+          "repetition": "3",
+          "exit_code": 0,
+          "assertion_pass": true,
+          "victim_after": false
+        },
+        {
+          "mode": "safe",
+          "repetition": "1",
+          "exit_code": 0,
+          "assertion_pass": true,
+          "victim_after": true
+        },
+        {
+          "mode": "safe",
+          "repetition": "2",
+          "exit_code": 0,
+          "assertion_pass": true,
+          "victim_after": true
+        },
+        {
+          "mode": "safe",
+          "repetition": "3",
+          "exit_code": 139,
+          "assertion_pass": null,
+          "victim_after": null
+        },
+        {
+          "mode": "fixed",
+          "repetition": "1",
+          "exit_code": 0,
+          "assertion_pass": true,
+          "victim_after": true
+        },
+        {
+          "mode": "fixed",
+          "repetition": "2",
+          "exit_code": 139,
+          "assertion_pass": null,
+          "victim_after": null
+        },
+        {
+          "mode": "fixed",
+          "repetition": "3",
+          "exit_code": 0,
+          "assertion_pass": true,
+          "victim_after": true
+        },
+        {
+          "mode": "fixed-safe",
+          "repetition": "1",
+          "exit_code": 0,
+          "assertion_pass": true,
+          "victim_after": true
+        },
+        {
+          "mode": "fixed-safe",
+          "repetition": "2",
+          "exit_code": 0,
+          "assertion_pass": true,
+          "victim_after": true
+        },
+        {
+          "mode": "fixed-safe",
+          "repetition": "3",
+          "exit_code": 139,
+          "assertion_pass": null,
+          "victim_after": null
+        }
+      ]
+    },
+    "results-ubsan": {
+      "count": 12,
+      "exit_code_counts": {
+        "0": 12
+      },
+      "assertion_pass_count": 12,
+      "rows": [
+        {
+          "mode": "attack",
+          "repetition": "1",
+          "exit_code": 0,
+          "assertion_pass": true,
+          "victim_after": false
+        },
+        {
+          "mode": "attack",
+          "repetition": "2",
+          "exit_code": 0,
+          "assertion_pass": true,
+          "victim_after": false
+        },
+        {
+          "mode": "attack",
+          "repetition": "3",
+          "exit_code": 0,
+          "assertion_pass": true,
+          "victim_after": false
+        },
+        {
+          "mode": "safe",
+          "repetition": "1",
+          "exit_code": 0,
+          "assertion_pass": true,
+          "victim_after": true
+        },
+        {
+          "mode": "safe",
+          "repetition": "2",
+          "exit_code": 0,
+          "assertion_pass": true,
+          "victim_after": true
+        },
+        {
+          "mode": "safe",
+          "repetition": "3",
+          "exit_code": 0,
+          "assertion_pass": true,
+          "victim_after": true
+        },
+        {
+          "mode": "fixed",
+          "repetition": "1",
+          "exit_code": 0,
+          "assertion_pass": true,
+          "victim_after": true
+        },
+        {
+          "mode": "fixed",
+          "repetition": "2",
+          "exit_code": 0,
+          "assertion_pass": true,
+          "victim_after": true
+        },
+        {
+          "mode": "fixed",
+          "repetition": "3",
+          "exit_code": 0,
+          "assertion_pass": true,
+          "victim_after": true
+        },
+        {
+          "mode": "fixed-safe",
+          "repetition": "1",
+          "exit_code": 0,
+          "assertion_pass": true,
+          "victim_after": true
+        },
+        {
+          "mode": "fixed-safe",
+          "repetition": "2",
+          "exit_code": 0,
+          "assertion_pass": true,
+          "victim_after": true
+        },
+        {
+          "mode": "fixed-safe",
+          "repetition": "3",
+          "exit_code": 0,
+          "assertion_pass": true,
+          "victim_after": true
+        }
+      ]
+    }
+  },
+  "asan_ubsan_probe_status": "asan_ubsan_probe_exit=139",
+  "interpretation": "Only the 12/12 results-ubsan rows are functional mechanism replay evidence; the adapter is not the OpenHarmony product or real permission path. results and results-final retain failed/partial runs."
+}

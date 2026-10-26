@@ -1,0 +1,219 @@
+{
+  "remote": "https://gitcode.com/openharmony/applications_contacts_data.git",
+  "checked_refs": [
+    {
+      "ref": "refs/heads/OpenHarmony-5.0.2-Release",
+      "expected_commit": "f518eaccc5185585f6fd8ed15904edcc23fd911c",
+      "observed_commit": "f518eaccc5185585f6fd8ed15904edcc23fd911c",
+      "commit_match": true,
+      "tree": "942fbd077860086c5b8d9eb66b036e8d04f0f4cb",
+      "search_exit": 1,
+      "source_hits": [],
+      "files": [
+        {
+          "path": "dataBusiness/contacts/src/contacts_data_ability.cpp",
+          "exists": true,
+          "blob": "d37d03ce1691b33355554d993e1b8e3fe6a035e9",
+          "size_bytes": 28875,
+          "sha256": "6107f4630c36e1ddc00dfb17092438713ccb05e6a22f56b5e6fa07ff5b7b01b1"
+        }
+      ]
+    },
+    {
+      "ref": "refs/heads/OpenHarmony-5.0.3-Release",
+      "expected_commit": "bcde45a36405b00278bdbaf1b5295b2d6f5f4ff8",
+      "observed_commit": "bcde45a36405b00278bdbaf1b5295b2d6f5f4ff8",
+      "commit_match": true,
+      "tree": "57442ab767543caaf651a2574ced1497d14f5d1e",
+      "search_exit": 1,
+      "source_hits": [],
+      "files": [
+        {
+          "path": "dataBusiness/contacts/src/contacts_data_ability.cpp",
+          "exists": true,
+          "blob": "d37d03ce1691b33355554d993e1b8e3fe6a035e9",
+          "size_bytes": 28875,
+          "sha256": "6107f4630c36e1ddc00dfb17092438713ccb05e6a22f56b5e6fa07ff5b7b01b1"
+        }
+      ]
+    },
+    {
+      "ref": "refs/heads/OpenHarmony-5.1.0-Release",
+      "expected_commit": "39b02924878967be4baab5dfe16741a4d71d39db",
+      "observed_commit": "39b02924878967be4baab5dfe16741a4d71d39db",
+      "commit_match": true,
+      "tree": "5e21206ccc5943c52008a11a092ba7f0cddfb342",
+      "search_exit": 1,
+      "source_hits": [],
+      "files": [
+        {
+          "path": "dataBusiness/contacts/src/contacts_data_ability.cpp",
+          "exists": true,
+          "blob": "d37d03ce1691b33355554d993e1b8e3fe6a035e9",
+          "size_bytes": 28875,
+          "sha256": "6107f4630c36e1ddc00dfb17092438713ccb05e6a22f56b5e6fa07ff5b7b01b1"
+        }
+      ]
+    },
+    {
+      "ref": "refs/heads/OpenHarmony-6.0-Release",
+      "expected_commit": "a75adf146dcf0be65ab6f6f1e5026430047773e2",
+      "observed_commit": "a75adf146dcf0be65ab6f6f1e5026430047773e2",
+      "commit_match": true,
+      "tree": "7f27b6a66cf1178e3283f5252d07115c007c7130",
+      "search_exit": 1,
+      "source_hits": [],
+      "files": [
+        {
+          "path": "dataBusiness/contacts/src/contacts_data_ability.cpp",
+          "exists": true,
+          "blob": "d37d03ce1691b33355554d993e1b8e3fe6a035e9",
+          "size_bytes": 28875,
+          "sha256": "6107f4630c36e1ddc00dfb17092438713ccb05e6a22f56b5e6fa07ff5b7b01b1"
+        }
+      ]
+    },
+    {
+      "ref": "refs/heads/OpenHarmony-6.1-Release",
+      "expected_commit": "b11f36cfdb9cc57644a2d9b208b0b4eb63b24206",
+      "observed_commit": "b11f36cfdb9cc57644a2d9b208b0b4eb63b24206",
+      "commit_match": true,
+      "tree": "da1c7a4626463bd22326f51dddd6292986c4dd0a",
+      "search_exit": 1,
+      "source_hits": [],
+      "files": [
+        {
+          "path": "dataBusiness/contacts/src/contacts_data_ability.cpp",
+          "exists": true,
+          "blob": "d37d03ce1691b33355554d993e1b8e3fe6a035e9",
+          "size_bytes": 28875,
+          "sha256": "6107f4630c36e1ddc00dfb17092438713ccb05e6a22f56b5e6fa07ff5b7b01b1"
+        }
+      ]
+    },
+    {
+      "ref": "refs/heads/OpenHarmony-6.1-LTS",
+      "expected_commit": "b02aadfc2d801ee30573fcb2d13490298e146fea",
+      "observed_commit": "b02aadfc2d801ee30573fcb2d13490298e146fea",
+      "commit_match": true,
+      "tree": "ef183625ccbc842f47b076eb75e68b665d7c21c6",
+      "search_exit": 0,
+      "source_hits": [
+        "refs/remotes/origin/OpenHarmony-6.1-LTS:contacts/src/contacts_api.cpp:1236:    valuesBucketPortrait.Put(\"PortraitFileName\", fileName);",
+        "refs/remotes/origin/OpenHarmony-6.1-LTS:dataBusiness/contacts/include/contacts_data_ability.h:138:    std::string &portraitFileName, std::string &contactId, std::string &rawContactId, bool &isValid);",
+        "refs/remotes/origin/OpenHarmony-6.1-LTS:dataBusiness/contacts/src/contacts_data_ability.cpp:769:    std::string portraitFileName = \"\";",
+        "refs/remotes/origin/OpenHarmony-6.1-LTS:dataBusiness/contacts/src/contacts_data_ability.cpp:773:    GetPortraitValue(value, portraitFileName, contactId, rawContactId, isValid);",
+        "refs/remotes/origin/OpenHarmony-6.1-LTS:dataBusiness/contacts/src/contacts_data_ability.cpp:774:    if (!isValid || portraitFileName.empty() || contactId.empty() || rawContactId.empty()) {",
+        "refs/remotes/origin/OpenHarmony-6.1-LTS:dataBusiness/contacts/src/contacts_data_ability.cpp:783:    std::string srcFilePath = groupPath + portraitFileName;",
+        "refs/remotes/origin/OpenHarmony-6.1-LTS:dataBusiness/contacts/src/contacts_data_ability.cpp:789:        fileUtils.DeleteFile(srcFilePath);",
+        "refs/remotes/origin/OpenHarmony-6.1-LTS:dataBusiness/contacts/src/contacts_data_ability.cpp:794:    fileUtils.DeleteFile(srcFilePath);",
+        "refs/remotes/origin/OpenHarmony-6.1-LTS:dataBusiness/contacts/src/contacts_data_ability.cpp:853:    std::string &portraitFileName, std::string &contactId, std::string &rawContactId, bool &isValid)",
+        "refs/remotes/origin/OpenHarmony-6.1-LTS:dataBusiness/contacts/src/contacts_data_ability.cpp:855:    portraitFileName = GetStringValueFromDataShareValue(dataShareValue, \"PortraitFileName\", isValid);",
+        "refs/remotes/origin/OpenHarmony-6.1-LTS:dataBusiness/contacts/src/contacts_data_ability.cpp:857:        HILOG_DEBUG(\"not have portraitFileName\");"
+      ],
+      "files": [
+        {
+          "path": "dataBusiness/contacts/src/contacts_data_ability.cpp",
+          "exists": true,
+          "blob": "32c6a26a9a6c1f4ec3172f45bc3dbe4d3668abe6",
+          "size_bytes": 80944,
+          "sha256": "70bb1da2cb107649dd2bb39358aeb56983f613ee0bdd6216d805bbd39c8df383"
+        }
+      ]
+    },
+    {
+      "ref": "refs/heads/OpenHarmony-7.0-Release",
+      "expected_commit": "77df58072f19e37f4aa996829386e218487de0a2",
+      "observed_commit": "77df58072f19e37f4aa996829386e218487de0a2",
+      "commit_match": true,
+      "tree": "33eeb415a27bf42c111e22aaddfdcc313625b80d",
+      "search_exit": 0,
+      "source_hits": [
+        "refs/remotes/origin/OpenHarmony-7.0-Release:contacts/src/contacts_api.cpp:1343:    valuesBucketPortrait.Put(\"PortraitFileName\", fileName);",
+        "refs/remotes/origin/OpenHarmony-7.0-Release:contactsCJ/src/portrait_ffi.cpp:163:    valuesBucket.Put(\"PortraitFileName\", identity.fileName);",
+        "refs/remotes/origin/OpenHarmony-7.0-Release:dataBusiness/contacts/include/contacts_data_ability.h:148:    std::string &portraitFileName, std::string &contactId, std::string &rawContactId, bool &isValid);",
+        "refs/remotes/origin/OpenHarmony-7.0-Release:dataBusiness/contacts/src/contacts_data_ability.cpp:780:    std::string portraitFileName = \"\";",
+        "refs/remotes/origin/OpenHarmony-7.0-Release:dataBusiness/contacts/src/contacts_data_ability.cpp:784:    GetPortraitValue(value, portraitFileName, contactId, rawContactId, isValid);",
+        "refs/remotes/origin/OpenHarmony-7.0-Release:dataBusiness/contacts/src/contacts_data_ability.cpp:785:    if (!isValid || portraitFileName.empty() || contactId.empty() || rawContactId.empty()) {",
+        "refs/remotes/origin/OpenHarmony-7.0-Release:dataBusiness/contacts/src/contacts_data_ability.cpp:794:    std::string srcFilePath = groupPath + portraitFileName;",
+        "refs/remotes/origin/OpenHarmony-7.0-Release:dataBusiness/contacts/src/contacts_data_ability.cpp:800:        fileUtils.DeleteFile(srcFilePath);",
+        "refs/remotes/origin/OpenHarmony-7.0-Release:dataBusiness/contacts/src/contacts_data_ability.cpp:805:    fileUtils.DeleteFile(srcFilePath);",
+        "refs/remotes/origin/OpenHarmony-7.0-Release:dataBusiness/contacts/src/contacts_data_ability.cpp:864:    std::string &portraitFileName, std::string &contactId, std::string &rawContactId, bool &isValid)",
+        "refs/remotes/origin/OpenHarmony-7.0-Release:dataBusiness/contacts/src/contacts_data_ability.cpp:866:    portraitFileName = GetStringValueFromDataShareValue(dataShareValue, \"PortraitFileName\", isValid);",
+        "refs/remotes/origin/OpenHarmony-7.0-Release:dataBusiness/contacts/src/contacts_data_ability.cpp:868:        HILOG_DEBUG(\"not have portraitFileName\");"
+      ],
+      "files": [
+        {
+          "path": "dataBusiness/contacts/src/contacts_data_ability.cpp",
+          "exists": true,
+          "blob": "ded9abef3e9d644fd5922937dfccacbd2f84dd8c",
+          "size_bytes": 85278,
+          "sha256": "dbf48222b5ea7f08ac6d460062c8077e1d1824d0ac14e9c4860fbfef80995a79"
+        }
+      ]
+    },
+    {
+      "ref": "refs/heads/master",
+      "expected_commit": "341cc3bf41b48e9a5f278dd088f40a2041d2f1c9",
+      "observed_commit": "341cc3bf41b48e9a5f278dd088f40a2041d2f1c9",
+      "commit_match": true,
+      "tree": "2054824c04bb403eeea128a9262edfb3001efa4f",
+      "search_exit": 0,
+      "source_hits": [
+        "refs/remotes/origin/master:contacts/src/contacts_api.cpp:1365:    valuesBucketPortrait.Put(\"PortraitFileName\", fileName);",
+        "refs/remotes/origin/master:contactsCJ/src/portrait_ffi.cpp:179:    valuesBucket.Put(\"PortraitFileName\", identity.fileName);",
+        "refs/remotes/origin/master:dataBusiness/contacts/include/contacts_data_ability.h:148:    std::string &portraitFileName, std::string &contactId, std::string &rawContactId, bool &isValid);",
+        "refs/remotes/origin/master:dataBusiness/contacts/src/contacts_data_ability.cpp:772:    std::string portraitFileName = \"\";",
+        "refs/remotes/origin/master:dataBusiness/contacts/src/contacts_data_ability.cpp:776:    GetPortraitValue(value, portraitFileName, contactId, rawContactId, isValid);",
+        "refs/remotes/origin/master:dataBusiness/contacts/src/contacts_data_ability.cpp:777:    if (!isValid || portraitFileName.empty() || contactId.empty() || rawContactId.empty()) {",
+        "refs/remotes/origin/master:dataBusiness/contacts/src/contacts_data_ability.cpp:786:    std::string srcFilePath = groupPath + portraitFileName;",
+        "refs/remotes/origin/master:dataBusiness/contacts/src/contacts_data_ability.cpp:792:        fileUtils.DeleteFile(srcFilePath);",
+        "refs/remotes/origin/master:dataBusiness/contacts/src/contacts_data_ability.cpp:797:    fileUtils.DeleteFile(srcFilePath);",
+        "refs/remotes/origin/master:dataBusiness/contacts/src/contacts_data_ability.cpp:856:    std::string &portraitFileName, std::string &contactId, std::string &rawContactId, bool &isValid)",
+        "refs/remotes/origin/master:dataBusiness/contacts/src/contacts_data_ability.cpp:858:    portraitFileName = GetStringValueFromDataShareValue(dataShareValue, \"PortraitFileName\", isValid);",
+        "refs/remotes/origin/master:dataBusiness/contacts/src/contacts_data_ability.cpp:860:        HILOG_DEBUG(\"not have portraitFileName\");"
+      ],
+      "files": [
+        {
+          "path": "dataBusiness/contacts/src/contacts_data_ability.cpp",
+          "exists": true,
+          "blob": "c93e950725adc93276916b3c96c5ac7a5bb5b6b7",
+          "size_bytes": 85339,
+          "sha256": "c9d1f03da5994f32b6af7254ba505eb616713209222f48f1f91117c4827201b6"
+        }
+      ]
+    },
+    {
+      "ref": "refs/heads/weekly_20261012",
+      "expected_commit": "341cc3bf41b48e9a5f278dd088f40a2041d2f1c9",
+      "observed_commit": "341cc3bf41b48e9a5f278dd088f40a2041d2f1c9",
+      "commit_match": true,
+      "tree": "2054824c04bb403eeea128a9262edfb3001efa4f",
+      "search_exit": 0,
+      "source_hits": [
+        "refs/remotes/origin/weekly_20261012:contacts/src/contacts_api.cpp:1365:    valuesBucketPortrait.Put(\"PortraitFileName\", fileName);",
+        "refs/remotes/origin/weekly_20261012:contactsCJ/src/portrait_ffi.cpp:179:    valuesBucket.Put(\"PortraitFileName\", identity.fileName);",
+        "refs/remotes/origin/weekly_20261012:dataBusiness/contacts/include/contacts_data_ability.h:148:    std::string &portraitFileName, std::string &contactId, std::string &rawContactId, bool &isValid);",
+        "refs/remotes/origin/weekly_20261012:dataBusiness/contacts/src/contacts_data_ability.cpp:772:    std::string portraitFileName = \"\";",
+        "refs/remotes/origin/weekly_20261012:dataBusiness/contacts/src/contacts_data_ability.cpp:776:    GetPortraitValue(value, portraitFileName, contactId, rawContactId, isValid);",
+        "refs/remotes/origin/weekly_20261012:dataBusiness/contacts/src/contacts_data_ability.cpp:777:    if (!isValid || portraitFileName.empty() || contactId.empty() || rawContactId.empty()) {",
+        "refs/remotes/origin/weekly_20261012:dataBusiness/contacts/src/contacts_data_ability.cpp:786:    std::string srcFilePath = groupPath + portraitFileName;",
+        "refs/remotes/origin/weekly_20261012:dataBusiness/contacts/src/contacts_data_ability.cpp:792:        fileUtils.DeleteFile(srcFilePath);",
+        "refs/remotes/origin/weekly_20261012:dataBusiness/contacts/src/contacts_data_ability.cpp:797:    fileUtils.DeleteFile(srcFilePath);",
+        "refs/remotes/origin/weekly_20261012:dataBusiness/contacts/src/contacts_data_ability.cpp:856:    std::string &portraitFileName, std::string &contactId, std::string &rawContactId, bool &isValid)",
+        "refs/remotes/origin/weekly_20261012:dataBusiness/contacts/src/contacts_data_ability.cpp:858:    portraitFileName = GetStringValueFromDataShareValue(dataShareValue, \"PortraitFileName\", isValid);",
+        "refs/remotes/origin/weekly_20261012:dataBusiness/contacts/src/contacts_data_ability.cpp:860:        HILOG_DEBUG(\"not have portraitFileName\");"
+      ],
+      "files": [
+        {
+          "path": "dataBusiness/contacts/src/contacts_data_ability.cpp",
+          "exists": true,
+          "blob": "c93e950725adc93276916b3c96c5ac7a5bb5b6b7",
+          "size_bytes": 85339,
+          "sha256": "c9d1f03da5994f32b6af7254ba505eb616713209222f48f1f91117c4827201b6"
+        }
+      ]
+    }
+  ],
+  "note": "Ref tips queried 2026-10-19 local date; shallow depth-1 source snapshots, not full history."
+}

@@ -1,0 +1,164 @@
+{
+  "schema_version": "t1-source-object-audit-v1",
+  "created_at": "2026-10-19",
+  "contacts_tip": {
+    "commit": "341cc3bf41b48e9a5f278dd088f40a2041d2f1c9",
+    "tree": "2054824c04bb403eeea128a9262edfb3001efa4f"
+  },
+  "datashare_tip": {
+    "commit": "560c5cdadf08b4beeb691e93d70ff32cc2dca8bd",
+    "tree": "f731230c116c94d7619f5514c828b33ffac69924"
+  },
+  "a0_source_objects": [
+    {
+      "label": "contacts_data_ability.cpp",
+      "repository_commit": "341cc3bf41b48e9a5f278dd088f40a2041d2f1c9",
+      "tree": "2054824c04bb403eeea128a9262edfb3001efa4f",
+      "path": "dataBusiness/contacts/src/contacts_data_ability.cpp",
+      "expected_blob": "c93e950725adc93276916b3c96c5ac7a5bb5b6b7",
+      "observed_blob": "c93e950725adc93276916b3c96c5ac7a5bb5b6b7",
+      "expected_sha256": "c9d1f03da5994f32b6af7254ba505eb616713209222f48f1f91117c4827201b6",
+      "observed_sha256": "c9d1f03da5994f32b6af7254ba505eb616713209222f48f1f91117c4827201b6",
+      "expected_size": 85339,
+      "observed_size": 85339,
+      "pass": true
+    },
+    {
+      "label": "contacts_datashare_stub_impl.cpp",
+      "repository_commit": "341cc3bf41b48e9a5f278dd088f40a2041d2f1c9",
+      "tree": "2054824c04bb403eeea128a9262edfb3001efa4f",
+      "path": "dataBusiness/contacts/src/contacts_datashare_stub_impl.cpp",
+      "expected_blob": "d738c4931bb40ac53519657fb2daa3febfae2bce",
+      "observed_blob": "d738c4931bb40ac53519657fb2daa3febfae2bce",
+      "expected_sha256": "a913de9c273ef055de9203f83e890067a8594f1028dce6526844228585aa87a4",
+      "observed_sha256": "a913de9c273ef055de9203f83e890067a8594f1028dce6526844228585aa87a4",
+      "expected_size": 29986,
+      "observed_size": 29986,
+      "pass": true
+    },
+    {
+      "label": "file_utils.cpp",
+      "repository_commit": "341cc3bf41b48e9a5f278dd088f40a2041d2f1c9",
+      "tree": "2054824c04bb403eeea128a9262edfb3001efa4f",
+      "path": "ability/common/utils/src/file_utils.cpp",
+      "expected_blob": "7d39485e3b3f253d474d8e49952e16ced7ccd605",
+      "observed_blob": "7d39485e3b3f253d474d8e49952e16ced7ccd605",
+      "expected_sha256": "4de09b2a9de7ad538044e1e0b9f2ea84cc8acf9bf6a5cd1b7431c861a59d181f",
+      "observed_sha256": "4de09b2a9de7ad538044e1e0b9f2ea84cc8acf9bf6a5cd1b7431c861a59d181f",
+      "expected_size": 6843,
+      "observed_size": 6843,
+      "pass": true
+    },
+    {
+      "label": "uri_utils.cpp",
+      "repository_commit": "341cc3bf41b48e9a5f278dd088f40a2041d2f1c9",
+      "tree": "2054824c04bb403eeea128a9262edfb3001efa4f",
+      "path": "ability/common/utils/src/uri_utils.cpp",
+      "expected_blob": "c051e31adc244c6ce633381e3c750bb041f3c3c1",
+      "observed_blob": "c051e31adc244c6ce633381e3c750bb041f3c3c1",
+      "expected_sha256": "7a6552a4e50ca3ef322dedc01b4a88d0fb548a32de794c93a6d454415499b1b0",
+      "observed_sha256": "7a6552a4e50ca3ef322dedc01b4a88d0fb548a32de794c93a6d454415499b1b0",
+      "expected_size": 2733,
+      "observed_size": 2733,
+      "pass": true
+    },
+    {
+      "label": "module.json",
+      "repository_commit": "341cc3bf41b48e9a5f278dd088f40a2041d2f1c9",
+      "tree": "2054824c04bb403eeea128a9262edfb3001efa4f",
+      "path": "entry/src/main/module.json",
+      "expected_blob": "1183c1acf75a373b0d24519497e639107e2d1978",
+      "observed_blob": "1183c1acf75a373b0d24519497e639107e2d1978",
+      "expected_sha256": "3ba2545592f4fbe95f8ba838264ec017638c546e417599a02feb8aade378c856",
+      "observed_sha256": "3ba2545592f4fbe95f8ba838264ec017638c546e417599a02feb8aade378c856",
+      "expected_size": 7730,
+      "observed_size": 7730,
+      "pass": true
+    },
+    {
+      "label": "datashare_stub.cpp",
+      "repository_commit": "560c5cdadf08b4beeb691e93d70ff32cc2dca8bd",
+      "tree": "f731230c116c94d7619f5514c828b33ffac69924",
+      "path": "frameworks/native/provider/src/datashare_stub.cpp",
+      "expected_blob": "cb62502d82c0534a6b9466f7a5d0a9e122d85693",
+      "observed_blob": "cb62502d82c0534a6b9466f7a5d0a9e122d85693",
+      "expected_sha256": "cc742b1811c6c6ce2c351e27619a74ec1e5f472502a7a712c50d49fbaeed667a",
+      "observed_sha256": "cc742b1811c6c6ce2c351e27619a74ec1e5f472502a7a712c50d49fbaeed667a",
+      "expected_size": 26370,
+      "observed_size": 26370,
+      "pass": true
+    },
+    {
+      "label": "datashare_itypes_utils.cpp",
+      "repository_commit": "560c5cdadf08b4beeb691e93d70ff32cc2dca8bd",
+      "tree": "f731230c116c94d7619f5514c828b33ffac69924",
+      "path": "frameworks/native/common/src/datashare_itypes_utils.cpp",
+      "expected_blob": "8e6d1fafc8fb5d9b4d2d02357564a6b512d7f755",
+      "observed_blob": "8e6d1fafc8fb5d9b4d2d02357564a6b512d7f755",
+      "expected_sha256": "89dcced0d37d46c98bcb7bd2cb6d941f6b1342902287e9667f1afd330d85dc77",
+      "observed_sha256": "89dcced0d37d46c98bcb7bd2cb6d941f6b1342902287e9667f1afd330d85dc77",
+      "expected_size": 69041,
+      "observed_size": 69041,
+      "pass": true
+    },
+    {
+      "label": "datashare_values_bucket.h",
+      "repository_commit": "560c5cdadf08b4beeb691e93d70ff32cc2dca8bd",
+      "tree": "f731230c116c94d7619f5514c828b33ffac69924",
+      "path": "interfaces/inner_api/common/include/datashare_values_bucket.h",
+      "expected_blob": "03f15ab65e6dd106ce066ff3a47097dbf853899c",
+      "observed_blob": "03f15ab65e6dd106ce066ff3a47097dbf853899c",
+      "expected_sha256": "dde5f37c9f9099cad4846b2013c6f97279d79266fabd33bfc0b2bfb9f3f23eab",
+      "observed_sha256": "dde5f37c9f9099cad4846b2013c6f97279d79266fabd33bfc0b2bfb9f3f23eab",
+      "expected_size": 2475,
+      "observed_size": 2475,
+      "pass": true
+    }
+  ],
+  "a0_source_objects_pass": 8,
+  "permission_definition_comparison": [
+    {
+      "label": "openHarmony-manifest-pin",
+      "commit": "fe40d5e6c19071c29916903c777f168b2b85e404",
+      "tree": "903e2add75bf348d3ece15a4bcc43a4fec0937d0",
+      "path": "services/accesstokenmanager/permission_definitions.json",
+      "blob": "bda95c3549fed44e956f9832c816c50ddafb5952",
+      "sha256": "2155f44fdb28a21f7f5423f0f327f06fcce6efae922e868ff59e85c26fedba33",
+      "size_bytes": 455517,
+      "permission": {
+        "name": "ohos.permission.WRITE_CONTACTS",
+        "grantMode": "user_grant",
+        "availableLevel": "system_basic",
+        "availableType": "SYSTEM",
+        "since": 8,
+        "deprecated": "",
+        "provisionEnable": true,
+        "distributedSceneEnable": false,
+        "label": "$string:ohos_lab_write_contacts",
+        "description": "$string:ohos_desc_write_contacts"
+      }
+    },
+    {
+      "label": "remote-master",
+      "commit": "f811ac9fcebe948bff04e03a2af68929e6309976",
+      "tree": "ce1b9ce349973c4d1f0a52b8ad2750c0cca5258e",
+      "path": "services/accesstokenmanager/permission_definitions.json",
+      "blob": "bda95c3549fed44e956f9832c816c50ddafb5952",
+      "sha256": "2155f44fdb28a21f7f5423f0f327f06fcce6efae922e868ff59e85c26fedba33",
+      "size_bytes": 455517,
+      "permission": {
+        "name": "ohos.permission.WRITE_CONTACTS",
+        "grantMode": "user_grant",
+        "availableLevel": "system_basic",
+        "availableType": "SYSTEM",
+        "since": 8,
+        "deprecated": "",
+        "provisionEnable": true,
+        "distributedSceneEnable": false,
+        "label": "$string:ohos_lab_write_contacts",
+        "description": "$string:ohos_desc_write_contacts"
+      }
+    }
+  ],
+  "permission_files_equal": true
+}

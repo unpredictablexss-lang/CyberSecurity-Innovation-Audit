@@ -1,0 +1,85 @@
+{
+  "schema_version": "t1-upstream-history-audit-v1",
+  "remote": "https://gitcode.com/openharmony/applications_contacts_data.git",
+  "checked_at_local_date": "2026-10-19",
+  "master_commit": "341cc3bf41b48e9a5f278dd088f40a2041d2f1c9",
+  "master_tree": "2054824c04bb403eeea128a9262edfb3001efa4f",
+  "master_reachable_commit_count": 561,
+  "exact_pattern_commits": [
+    {
+      "commit": "e30029d888d45ee1355743a2947bcbb60056c375",
+      "tree": "557afe89411dea99bd5e71dd026a545c3844645c",
+      "date": "2026-02-12",
+      "subject": "联系人数据库合入主干"
+    },
+    {
+      "commit": "92644f4550a74d5b93dedacdae11ca69f0f3e4f2",
+      "tree": "557afe89411dea99bd5e71dd026a545c3844645c",
+      "date": "2026-03-02",
+      "subject": "联系人数据库合入主干"
+    },
+    {
+      "commit": "17444baf5d45b1bc55a0c8ce7e1c90eb1a3f342f",
+      "tree": "1a553c12785c013b5862b47a44e9396638811e95",
+      "date": "2026-03-04",
+      "subject": "修复fuzztest编译问题"
+    }
+  ],
+  "first_exact_pattern_commit_in_master_history": {
+    "commit": "e30029d888d45ee1355743a2947bcbb60056c375",
+    "parent": "a7fb1ce32b382a841d165e0b098502dcb724b2d1",
+    "tree": "557afe89411dea99bd5e71dd026a545c3844645c",
+    "date": "2026-02-12",
+    "subject": "联系人数据库合入主干",
+    "parent_tree_has_exact_tokens": false,
+    "function_at_intro": {
+      "sha256": "ff59434934e7d1a4d3cd77b7a3e14fa7f538fe40a668707762495a0b38c8bd06",
+      "bytes": 1413,
+      "line_start": 767
+    },
+    "function_at_master": {
+      "sha256": "ff59434934e7d1a4d3cd77b7a3e14fa7f538fe40a668707762495a0b38c8bd06",
+      "bytes": 1413,
+      "line_start": 770
+    },
+    "function_unchanged_exact_hash": true
+  },
+  "release_tag_relations": [
+    {
+      "tag": "OpenHarmony-v5.0.2-Release",
+      "commit": "f518eaccc5185585f6fd8ed15904edcc23fd911c",
+      "introduction_is_ancestor": false
+    },
+    {
+      "tag": "OpenHarmony-v5.0.3-Release",
+      "commit": "f518eaccc5185585f6fd8ed15904edcc23fd911c",
+      "introduction_is_ancestor": false
+    },
+    {
+      "tag": "OpenHarmony-v5.1.0-Release",
+      "commit": "39b02924878967be4baab5dfe16741a4d71d39db",
+      "introduction_is_ancestor": false
+    },
+    {
+      "tag": "OpenHarmony-v6.0-Release",
+      "commit": "e7ab7da19173979c071f07bbb250d58d7e98b270",
+      "introduction_is_ancestor": false
+    },
+    {
+      "tag": "OpenHarmony-v6.1-Release",
+      "commit": "1b18ffcdfa3a76a0fe97b1f820bc593d4cd6fe60",
+      "introduction_is_ancestor": false
+    },
+    {
+      "tag": "OpenHarmony-v6.1-LTS",
+      "commit": "b02aadfc2d801ee30573fcb2d13490298e146fea",
+      "introduction_is_ancestor": true
+    },
+    {
+      "tag": "OpenHarmony-v7.0-Release",
+      "commit": "77df58072f19e37f4aa996829386e218487de0a2",
+      "introduction_is_ancestor": true
+    }
+  ],
+  "interpretation": "Exact path construction/deletion appears in Contacts mainline history from the Feb 2026 source integration commit and the function body is unchanged at current master. This is source-history evidence, not proof of the first affected product version or its installed-component mapping."
+}

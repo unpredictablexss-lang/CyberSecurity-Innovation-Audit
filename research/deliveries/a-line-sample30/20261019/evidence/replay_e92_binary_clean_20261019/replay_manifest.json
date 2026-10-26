@@ -1,0 +1,344 @@
+{
+  "schema_version": "contacts-path-traversal-supplemental-replay-v1",
+  "created_at_local_date": "2026-10-19",
+  "purpose": "Supplemental runtime replay of existing A0 mechanism-harness binaries; not the original PoC image, not an OpenHarmony product replay.",
+  "source": {
+    "a0_delivery": "D:/openHarmonyScanner/CyberSecurity-Innovation-Audit/research/deliveries/a-line-sample30/20261018",
+    "input_mount": "/sandbox/input (read-only bind of A0 results-ubsan)",
+    "output_mount": "/sandbox/out (only writable bind; this dated evidence directory)",
+    "control_script": "replay.sh",
+    "control_script_sha256": "52d2a05321243c60c477f91e9f88f8020726206e1368377907fb6c90bee4112a",
+    "source_integrity": "A0 artifact manifest 97/97 and extracted function snippets 11/11; see a0_integrity_recheck.json"
+  },
+  "binary_provenance": {
+    "input_hashes": {
+      "target_ubsan": "5c4db9da90446790b79e32f013090ef759294fbe200c3b9cfe575efcc790f691",
+      "patched_ubsan": "7e6382dfe1560855334ca56c1a701588ae292b2f4ac55d046c8b38d7f282c5b8"
+    },
+    "a0_build_log_hashes": {
+      "target_ubsan": "5c4db9da90446790b79e32f013090ef759294fbe200c3b9cfe575efcc790f691",
+      "patched_ubsan": "7e6382dfe1560855334ca56c1a701588ae292b2f4ac55d046c8b38d7f282c5b8"
+    },
+    "hashes_match_a0": {
+      "target_ubsan": true,
+      "patched_ubsan": true
+    },
+    "prebuilt_binaries_used": true,
+    "recompiled_in_this_run": false
+  },
+  "docker": {
+    "engine": "Docker Engine 29.1.3, Ubuntu 24.04.4 LTS / WSL2",
+    "image_id": "sha256:e92d5365460142169ddd21d489bc9157d003c61e3382351c8f8516f3e38f96ae",
+    "image_tag": "ohscanner-validation:local",
+    "repo_digests": [],
+    "reported_original_poc_image_id": "sha256:1f28ead56a68352c2bbbbd4fb45523a237f271dc3be827b073b9274986a2a829",
+    "original_poc_image_available_now": false,
+    "original_image_check": "docker image inspect returned No such image; this supplemental image is not equated with the reported original PoC image",
+    "runtime_controls": {
+      "network": "none",
+      "root_filesystem": "read-only",
+      "user": "65534:65534 (nobody)",
+      "capabilities": "ALL dropped",
+      "no_new_privileges": true,
+      "pids_limit": 64,
+      "memory": "512m",
+      "memory_swap": "512m",
+      "cpus": 1,
+      "nofile_ulimit": "64:64",
+      "tmpfs": [
+        "/tmp:rw,nosuid,nodev,noexec,size=67108864,uid=65534,gid=65534",
+        "/data:rw,nosuid,nodev,noexec,size=67108864,uid=65534,gid=65534"
+      ],
+      "input_mount_read_only": true,
+      "output_mount": "only writable bind mount"
+    }
+  },
+  "docker_argv": [
+    "docker",
+    "run",
+    "--rm",
+    "--network",
+    "none",
+    "--read-only",
+    "--user",
+    "65534:65534",
+    "--cap-drop",
+    "ALL",
+    "--security-opt",
+    "no-new-privileges",
+    "--pids-limit",
+    "64",
+    "--memory",
+    "512m",
+    "--memory-swap",
+    "512m",
+    "--cpus",
+    "1",
+    "--ulimit",
+    "nofile=64:64",
+    "--tmpfs",
+    "/tmp:rw,nosuid,nodev,noexec,size=67108864,uid=65534,gid=65534",
+    "--tmpfs",
+    "/data:rw,nosuid,nodev,noexec,size=67108864,uid=65534,gid=65534",
+    "--mount",
+    "type=bind,src=<A0 results-ubsan>,dst=/sandbox/input,readonly",
+    "--mount",
+    "type=bind,src=<dated replay directory>,dst=/sandbox/out",
+    "--mount",
+    "type=bind,src=<dated replay.sh>,dst=/sandbox/replay.sh,readonly",
+    "--entrypoint",
+    "/bin/sh",
+    "sha256:e92d5365460142169ddd21d489bc9157d003c61e3382351c8f8516f3e38f96ae",
+    "/sandbox/replay.sh"
+  ],
+  "summary": {
+    "row_count": 12,
+    "process_exit_code_0_count": 12,
+    "adapter_assertion_pass_count": 12,
+    "runs": [
+      {
+        "mode": "attack",
+        "repetition": 1,
+        "process_exit_code": 0,
+        "adapter_assertion_pass": true,
+        "adapter_return_code": -1,
+        "victim_before": true,
+        "victim_after": false,
+        "source_after": true,
+        "photo_output_after": false,
+        "log": "logs/attack_r1.log"
+      },
+      {
+        "mode": "attack",
+        "repetition": 2,
+        "process_exit_code": 0,
+        "adapter_assertion_pass": true,
+        "adapter_return_code": -1,
+        "victim_before": true,
+        "victim_after": false,
+        "source_after": true,
+        "photo_output_after": false,
+        "log": "logs/attack_r2.log"
+      },
+      {
+        "mode": "attack",
+        "repetition": 3,
+        "process_exit_code": 0,
+        "adapter_assertion_pass": true,
+        "adapter_return_code": -1,
+        "victim_before": true,
+        "victim_after": false,
+        "source_after": true,
+        "photo_output_after": false,
+        "log": "logs/attack_r3.log"
+      },
+      {
+        "mode": "safe",
+        "repetition": 1,
+        "process_exit_code": 0,
+        "adapter_assertion_pass": true,
+        "adapter_return_code": 0,
+        "victim_before": true,
+        "victim_after": true,
+        "source_after": false,
+        "photo_output_after": true,
+        "log": "logs/safe_r1.log"
+      },
+      {
+        "mode": "safe",
+        "repetition": 2,
+        "process_exit_code": 0,
+        "adapter_assertion_pass": true,
+        "adapter_return_code": 0,
+        "victim_before": true,
+        "victim_after": true,
+        "source_after": false,
+        "photo_output_after": true,
+        "log": "logs/safe_r2.log"
+      },
+      {
+        "mode": "safe",
+        "repetition": 3,
+        "process_exit_code": 0,
+        "adapter_assertion_pass": true,
+        "adapter_return_code": 0,
+        "victim_before": true,
+        "victim_after": true,
+        "source_after": false,
+        "photo_output_after": true,
+        "log": "logs/safe_r3.log"
+      },
+      {
+        "mode": "fixed",
+        "repetition": 1,
+        "process_exit_code": 0,
+        "adapter_assertion_pass": true,
+        "adapter_return_code": -1,
+        "victim_before": true,
+        "victim_after": true,
+        "source_after": true,
+        "photo_output_after": false,
+        "log": "logs/fixed_r1.log"
+      },
+      {
+        "mode": "fixed",
+        "repetition": 2,
+        "process_exit_code": 0,
+        "adapter_assertion_pass": true,
+        "adapter_return_code": -1,
+        "victim_before": true,
+        "victim_after": true,
+        "source_after": true,
+        "photo_output_after": false,
+        "log": "logs/fixed_r2.log"
+      },
+      {
+        "mode": "fixed",
+        "repetition": 3,
+        "process_exit_code": 0,
+        "adapter_assertion_pass": true,
+        "adapter_return_code": -1,
+        "victim_before": true,
+        "victim_after": true,
+        "source_after": true,
+        "photo_output_after": false,
+        "log": "logs/fixed_r3.log"
+      },
+      {
+        "mode": "fixed-safe",
+        "repetition": 1,
+        "process_exit_code": 0,
+        "adapter_assertion_pass": true,
+        "adapter_return_code": 0,
+        "victim_before": true,
+        "victim_after": true,
+        "source_after": false,
+        "photo_output_after": true,
+        "log": "logs/fixed-safe_r1.log"
+      },
+      {
+        "mode": "fixed-safe",
+        "repetition": 2,
+        "process_exit_code": 0,
+        "adapter_assertion_pass": true,
+        "adapter_return_code": 0,
+        "victim_before": true,
+        "victim_after": true,
+        "source_after": false,
+        "photo_output_after": true,
+        "log": "logs/fixed-safe_r2.log"
+      },
+      {
+        "mode": "fixed-safe",
+        "repetition": 3,
+        "process_exit_code": 0,
+        "adapter_assertion_pass": true,
+        "adapter_return_code": 0,
+        "victim_before": true,
+        "victim_after": true,
+        "source_after": false,
+        "photo_output_after": true,
+        "log": "logs/fixed-safe_r3.log"
+      }
+    ]
+  },
+  "limitations": [
+    "Prebuilt A0 binaries were executed; this run did not reproduce the original build toolchain. The e92 image has no g++; a separate compile attempt failed and is retained at replay_e92_20261019/logs/compile.log.",
+    "The shim returns true from TelephonyPermission::CheckPermission; this does not verify real WRITE_CONTACTS enforcement.",
+    "DataShare IPC/provider, BundleMgr group-dir, product UID/SELinux policy, HAP/image inclusion, and product-specific file accessibility are not executed.",
+    "The fixed binary is the A0 patched test adapter, not an official upstream fix.",
+    "The A0 ASan/UBSan attack probe remains exit 139; this supplemental replay uses UBSan binaries only."
+  ],
+  "output_files": [
+    {
+      "path": "logs/attack_r1.log",
+      "size_bytes": 136,
+      "sha256": "af7a9a8236a7d2f0cd719515c235d85ca2b5f5b320bb74045d2e4b0bd164b4dc"
+    },
+    {
+      "path": "logs/attack_r2.log",
+      "size_bytes": 136,
+      "sha256": "af7a9a8236a7d2f0cd719515c235d85ca2b5f5b320bb74045d2e4b0bd164b4dc"
+    },
+    {
+      "path": "logs/attack_r3.log",
+      "size_bytes": 136,
+      "sha256": "af7a9a8236a7d2f0cd719515c235d85ca2b5f5b320bb74045d2e4b0bd164b4dc"
+    },
+    {
+      "path": "logs/completed_at_utc.txt",
+      "size_bytes": 21,
+      "sha256": "0457f9e201450e3c3e0e4d20910e21a7a14b4d996c2e44fbc0257c23d8d38dd2"
+    },
+    {
+      "path": "logs/docker_engine.txt",
+      "size_bytes": 89,
+      "sha256": "d56a5eeb35e54233d9d0f6f788e4a0fca1eaac3f1569cf5c3b9067dbb047cf5f"
+    },
+    {
+      "path": "logs/fixed-safe_r1.log",
+      "size_bytes": 138,
+      "sha256": "0dbf427fa9e73a6fc7b607dd80eb6e8b73bafdcdfbaeb6d67a05508eea165ec9"
+    },
+    {
+      "path": "logs/fixed-safe_r2.log",
+      "size_bytes": 138,
+      "sha256": "0dbf427fa9e73a6fc7b607dd80eb6e8b73bafdcdfbaeb6d67a05508eea165ec9"
+    },
+    {
+      "path": "logs/fixed-safe_r3.log",
+      "size_bytes": 138,
+      "sha256": "0dbf427fa9e73a6fc7b607dd80eb6e8b73bafdcdfbaeb6d67a05508eea165ec9"
+    },
+    {
+      "path": "logs/fixed_r1.log",
+      "size_bytes": 134,
+      "sha256": "5032c4f4a4a21e1fd5216146cdf3890991c07c27e1bec313304ca60829cabfff"
+    },
+    {
+      "path": "logs/fixed_r2.log",
+      "size_bytes": 134,
+      "sha256": "5032c4f4a4a21e1fd5216146cdf3890991c07c27e1bec313304ca60829cabfff"
+    },
+    {
+      "path": "logs/fixed_r3.log",
+      "size_bytes": 134,
+      "sha256": "5032c4f4a4a21e1fd5216146cdf3890991c07c27e1bec313304ca60829cabfff"
+    },
+    {
+      "path": "logs/image_metadata.txt",
+      "size_bytes": 197,
+      "sha256": "9ff410e96a97810e6d4e38f2c168098e58bc4f02b6413e060093f3a4f048968a"
+    },
+    {
+      "path": "logs/input_binary_hashes.txt",
+      "size_bytes": 159,
+      "sha256": "d5a2e8e59e41569b867ecb0a47ea9b5329e8688ea6ecf1095f3fc8bebca56c3e"
+    },
+    {
+      "path": "logs/safe_r1.log",
+      "size_bytes": 132,
+      "sha256": "985977423342d0e1f4ec83d087c3212e96c1765fc4b9c86c203f8ba7bb9f56ba"
+    },
+    {
+      "path": "logs/safe_r2.log",
+      "size_bytes": 132,
+      "sha256": "985977423342d0e1f4ec83d087c3212e96c1765fc4b9c86c203f8ba7bb9f56ba"
+    },
+    {
+      "path": "logs/safe_r3.log",
+      "size_bytes": 132,
+      "sha256": "985977423342d0e1f4ec83d087c3212e96c1765fc4b9c86c203f8ba7bb9f56ba"
+    },
+    {
+      "path": "replay.sh",
+      "size_bytes": 850,
+      "sha256": "52d2a05321243c60c477f91e9f88f8020726206e1368377907fb6c90bee4112a"
+    },
+    {
+      "path": "run_summary.tsv",
+      "size_bytes": 396,
+      "sha256": "6a213959aa9b063ed94af724ca644632e792e7a32759bbc8c90571a9cf0ac696"
+    }
+  ]
+}
