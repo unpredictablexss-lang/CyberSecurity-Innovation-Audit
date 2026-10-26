@@ -133,6 +133,12 @@ def _returned_caller_class(value):
 @dataclass
 class State:
     env: dict = field(default_factory=dict)
+    # Local reference/pointer aliases to Parcel-derived request values. The
+    # target key lets mutations through an alias invalidate later proofs.
+    request_aliases: dict = field(default_factory=dict)
+    request_pointer_aliases: frozenset = frozenset()
+    request_pointer_vars: frozenset = frozenset()
+    request_pointer_unknowns: frozenset = frozenset()
     auth: frozenset = frozenset()
     descriptor: frozenset = frozenset()
     owner: frozenset = frozenset()
@@ -178,7 +184,7 @@ class State:
     returned: Value = UNKNOWN
 
     def fork(self, **kwargs):
-        return replace(self, env=dict(self.env), **kwargs)
+        return replace(self, env=dict(self.env), request_aliases=dict(self.request_aliases), **kwargs)
 
 
 @dataclass(frozen=True)
@@ -524,7 +530,7 @@ class Interpreter:
                             owner = source[n.start_byte:n.end_byte].decode() if n else ""
                             break
                         parent = parent.parent
-                params, parcels = [], []
+                params, parcels, ref_params = [], [], []
                 plist = dec.child_by_field_name("parameters")
                 for param in plist.named_children if plist else ():
                     pd = param.child_by_field_name("declarator")
@@ -536,12 +542,17 @@ class Interpreter:
                     pname_node = ids[-1] if ids else pd
                     pname = source[pname_node.start_byte:pname_node.end_byte].decode()
                     params.append(pname)
-                    if re.search(r"\b(?:MessageParcel|Parcel)\b",source[param.start_byte:param.end_byte].decode()):
+                    parameter_text = source[param.start_byte:param.end_byte].decode()
+                    if ("&" in parameter_text
+                            and "const" not in parameter_text.split("&", 1)[0]):
+                        ref_params.append(pname)
+                    if re.search(r"\b(?:MessageParcel|Parcel)\b",parameter_text):
                         parcels.append(pname)
                 body = node.child_by_field_name("body")
                 if body and not node.has_error:
                     self.functions.append(Function(unit.path, terminal(q), q, owner, node, body,
                                                    source, tuple(params), tuple(parcels[:1]),
+                                                   tuple(ref_params),
                                                    line=node.start_point[0] + 1,
                                                    reply_params=tuple(parcels[1:])))
         self._build_index(units)
@@ -862,7 +873,21 @@ class Interpreter:
                 env[key] = values.pop() if len(values) == 1 else UNKNOWN
             def intersection(attr):
                 return frozenset.intersection(*(getattr(s, attr) for s in group))
-            result.append(State(env=env, auth=intersection("auth"),
+            alias_names = set().union(*(s.request_aliases.keys() for s in group))
+            request_aliases = {name: frozenset().union(*(
+                s.request_aliases.get(name, frozenset()) for s in group))
+                for name in alias_names}
+            pointer_aliases = frozenset().union(*(s.request_pointer_aliases for s in group))
+            pointer_vars = frozenset().union(*(s.request_pointer_vars for s in group))
+            pointer_unknowns = frozenset().union(*(s.request_pointer_unknowns for s in group))
+            for name in pointer_vars:
+                if any(name not in s.request_aliases or name in s.request_pointer_unknowns
+                       for s in group):
+                    pointer_unknowns = pointer_unknowns | {name}
+            result.append(State(env=env, request_aliases=request_aliases,
+                                request_pointer_aliases=pointer_aliases,
+                                request_pointer_vars=pointer_vars,
+                                request_pointer_unknowns=pointer_unknowns, auth=intersection("auth"),
                                 descriptor=intersection("descriptor"), owner=intersection("owner"),
                                 lower=intersection("lower"), upper=intersection("upper"), size_lower=intersection("size_lower"), caller_class=intersection("caller_class"),
                                 # A view live on every path is still a view; an
@@ -1569,6 +1594,13 @@ class Interpreter:
                 cap = args[1].key if index == 3 else self.capacities.get(args[0].key)
                 upper = any(key == length and (cap is not None and bound in (cap,"sizeof("+args[0].key+")"))
                             for key, bound in state.upper)
+                # A direct local `new T[n]` allocation states its exact capacity.
+                # Keep the fact on the pointer value so reassignment invalidates
+                # it, and only credit the copy when its length is the same
+                # request-derived expression.
+                allocated = args[0]
+                if allocated.kind == "allocation" and allocated.key == length:
+                    upper = True
                 if not upper or length not in state.lower:
                     self.emit("DATA-01", "ipc.parcel.copy-range", fn, node, state,
                               "Parcel-derived copy length " + length + " lacks matched nonnegative/destination-capacity bounds.",
@@ -1966,6 +1998,8 @@ class Interpreter:
                 helper = self.delegated(fn, callee)
             if helper is not None:
                 self.note_shadowed_role_predicate(helper)
+            self.invalidate_mutable_request_arguments(
+                fn, node, state, args, helper, name)
             implementation = guard = None
             if helper is None:
                 implementation, guard, required_role = self.one_hop_dispatch(
@@ -2144,7 +2178,11 @@ class Interpreter:
                                  definition.line), op=="=="))
                         return Value("predicate",predicate=("auth_unknown",symbol,op=="=="))
                 if left.kind == "request" and right.kind != "request":
-                    if op=="<" and right.key=="0":
+                    if op in ("<", "<=") and right.key=="0":
+                        # On the continuation after `if (n < 0) return` or
+                        # `if (n <= 0) return`, the signed length is
+                        # nonnegative. The <= form is common in IPC handlers;
+                        # treating it as an upper bound loses this fact.
                         return Value("predicate",predicate=("lower",left.key,False))
                     if op in ("<", "<="):
                         return Value("predicate",predicate=("upper",(left.key,right.key),True))
@@ -2174,8 +2212,17 @@ class Interpreter:
             typ=fn.text(node.child_by_field_name("type"))
             if typ=="HCameraDevice":
                 self.action(fn,node,state,"CreateCameraDevice",[])
+            allocation = None
+            declarator = node.child_by_field_name("declarator")
+            if declarator is not None and declarator.type == "new_declarator":
+                sizes = declarator.named_children
+                size = sizes[-1] if sizes else None
+                if size is not None and size.type == "identifier":
+                    length = self.value(fn, size, state, depth)
+                    if length.kind == "request":
+                        allocation = Value("allocation", length.key)
             for child in node.named_children:self.value(fn,child,state,depth)
-            return UNKNOWN
+            return allocation or UNKNOWN
         if node.type=="field_expression" and fn.text(node.child_by_field_name("field"))=="processName":
             base=self.value(fn,node.child_by_field_name("argument"),state,depth)
             if base.kind=="caller_info":return Value("caller_process",base.key)
@@ -2196,9 +2243,105 @@ class Interpreter:
                 # from the parcel unexamined whenever it was used to store.
                 self.value(fn,left_node,state,depth)
             left=fn.text(left_node)
-            value=self.value(fn,node.child_by_field_name("right"),state,depth)
+            operator = fn.text(node.child_by_field_name("operator"))
+            if operator != "=" and left_node is not None and left_node.type == "identifier":
+                current = state.env.get(left, UNKNOWN)
+                if current.kind == "request":
+                    self.invalidate_request_value(
+                        state, left,
+                        "Request-derived value " + left
+                        + " is changed by compound assignment; related range/allocation facts were invalidated.")
+                    # Preserve Parcel taint for later candidate detection, but
+                    # do not reuse bounds or capacity facts for the old value.
+                    self.assign(state, left, Value("request", left, "mutated"))
+                    return state.env[left]
+            right_node = node.child_by_field_name("right")
+            if (operator != "" and left_node is not None
+                    and left_node.type == "pointer_expression"
+                    and fn.text(left_node.child_by_field_name("operator")) == "*"):
+                target_node = left_node.child_by_field_name("argument")
+                target_name = fn.text(target_node) if target_node is not None else ""
+                if (target_name in state.request_pointer_unknowns
+                        or target_name not in state.request_aliases):
+                    self.invalidate_all_request_facts(
+                        state, "Write through unknown request pointer " + target_name
+                        + " invalidated request range/allocation facts.")
+                elif target_name:
+                    self.invalidate_request_value(
+                        state, target_name,
+                        "Write through request pointer alias " + target_name
+                        + " invalidated the origin range/allocation facts.")
+            if (operator != "" and left_node is not None
+                    and left_node.type == "subscript_expression"):
+                base_node = left_node.child_by_field_name("argument")
+                base_name = fn.text(base_node) if base_node is not None else ""
+                if base_name in state.request_pointer_vars:
+                    if (base_name in state.request_pointer_unknowns
+                            or base_name not in state.request_aliases):
+                        self.invalidate_all_request_facts(
+                            state, "Write through unknown request pointer " + base_name
+                            + " invalidated request range/allocation facts.")
+                    else:
+                        self.invalidate_request_value(
+                            state, base_name,
+                            "Write through request pointer alias " + base_name
+                            + " invalidated the origin range/allocation facts.")
+            if (operator == "=" and left in state.request_aliases
+                    and left not in state.request_pointer_vars):
+                self.invalidate_request_value(
+                    state, left,
+                    "Request-derived value behind reference alias " + left
+                    + " is assigned a new value; related range/allocation facts were invalidated.")
+            if (operator == "=" and left in state.request_pointer_vars):
+                new_keys = frozenset()
+                if right_node is not None and right_node.type == "pointer_expression":
+                    target = right_node.child_by_field_name("argument")
+                    if target is not None and target.type == "identifier":
+                        target_name = fn.text(target)
+                        target_value = state.env.get(target_name, UNKNOWN)
+                        new_keys = (state.request_aliases.get(target_name)
+                                    or (frozenset({target_value.key})
+                                        if target_value.kind == "request" else frozenset()))
+                elif right_node is not None and right_node.type == "identifier":
+                    target_name = fn.text(right_node)
+                    target_value = state.env.get(target_name, UNKNOWN)
+                    new_keys = (state.request_aliases.get(target_name)
+                                or (frozenset({target_value.key})
+                                    if target_value.kind == "request" else frozenset()))
+                if new_keys:
+                    state.request_aliases[left] = frozenset(new_keys)
+                    state.request_pointer_aliases = state.request_pointer_aliases | {left}
+                    state.request_pointer_unknowns = state.request_pointer_unknowns - {left}
+                else:
+                    self.invalidate_request_value(
+                        state, left,
+                        "Request pointer alias " + left
+                        + " is rebound to an unresolved target; prior range/allocation facts were invalidated.")
+                    state.request_aliases.pop(left, None)
+                    state.request_pointer_aliases = state.request_pointer_aliases - {left}
+                    state.request_pointer_unknowns = state.request_pointer_unknowns | {left}
+            value=self.value(fn,right_node,state,depth)
             self.assign(state,left,value)
             return state.env[left]
+        if node.type == "update_expression":
+            # `n++`, `--n`, and their postfix/prefix forms change the value
+            # without an assignment_expression node. Invalidate both range
+            # facts and any allocation sized from the old request value.
+            argument = node.child_by_field_name("argument")
+            if argument is not None and argument.type == "identifier":
+                variable = fn.text(argument)
+                self.invalidate_request_value(
+                    state, variable,
+                    "Request-derived value " + variable
+                    + " is updated in place; related range/allocation facts were invalidated.")
+            else:
+                for identifier in walk(argument, "identifier") if argument else ():
+                    variable = fn.text(identifier)
+                    self.invalidate_request_value(
+                        state, variable,
+                        "Request-derived value " + variable
+                        + " is updated in place; related range/allocation facts were invalidated.")
+            return UNKNOWN
         if node.type == "subscript_expression":
             base_node = node.child_by_field_name("argument")
             base = self.value(fn, base_node, state, depth)
@@ -2327,6 +2470,14 @@ class Interpreter:
         # Reassignment invalidates guard facts about the old value.
         old=state.env.get(name)
         if old:
+            if old.kind == "request":
+                # A capacity expression names the value used at allocation
+                # time. If that request value is rebound, do not let the old
+                # capacity prove a later copy safe merely because the spelling
+                # of the variable stayed the same.
+                for target, allocated in tuple(state.env.items()):
+                    if allocated.kind == "allocation" and allocated.key == old.key:
+                        state.env[target] = UNKNOWN
             state.lower=state.lower-{old.key}
             state.upper=frozenset((k,b) for k,b in state.upper if k!=old.key)
             state.owner=state.owner-{old.key}
@@ -2344,6 +2495,86 @@ class Interpreter:
             value=replace(value,key=name)
             state.parcel_views=state.parcel_views|{name}
         state.env[name]=value
+
+    def invalidate_request_value(self, state, variable, reason):
+        current = state.env.get(variable, UNKNOWN)
+        keys = (state.request_aliases.get(variable)
+                or (frozenset({current.key}) if current.kind == "request" else frozenset()))
+        if not keys:
+            return False
+        has_range = (bool(keys & state.lower)
+                     or any(bound_key in keys for bound_key, _bound in state.upper))
+        has_allocation = any(value.kind == "allocation" and value.key in keys
+                             for value in state.env.values())
+        if not has_range and not has_allocation:
+            return False
+        state.lower = state.lower - keys
+        state.upper = frozenset((bound_key, bound) for bound_key, bound in state.upper
+                                if bound_key not in keys)
+        for name, value in tuple(state.env.items()):
+            if value.kind == "allocation" and value.key in keys:
+                state.env[name] = UNKNOWN
+            elif value.kind == "request" and value.key in keys:
+                state.env[name] = Value("request", value.key, "mutated")
+        self.limitations.add(reason)
+        return True
+
+    def invalidate_mutable_request_arguments(self, fn, node, state, args, helper, name):
+        """Drop range/allocation facts when a call may change a request value.
+
+        Local non-const reference parameters and explicit address arguments are
+        source-visible mutation channels. An unresolved call receiving a bare
+        request-derived scalar is also uncertain: it may bind a C++ reference,
+        so this bounded interpreter cannot keep an allocation/copy proof across
+        that call. The small set of modeled value APIs is handled by their own
+        transfer functions and is exempt here.
+        """
+        arguments = node.child_by_field_name("arguments")
+        supplied = list(arguments.named_children) if arguments is not None else []
+        if not supplied:
+            return
+        value_apis = (set(self.policy.copy_calls) | set(self.policy.parcel_view_calls)
+                      | set(self.policy.parcel_reads) | set(self.policy.parcel_dest_reads)
+                      | set(self.policy.boolean_permissions) | set(self.policy.result_permissions))
+        ref_positions = ({index for index, parameter in enumerate(helper.params)
+                          if parameter in helper.ref_params} if helper is not None else set())
+        for index, argument in enumerate(supplied):
+            variable = None
+            explicit_address = (argument.type in ("unary_expression", "pointer_expression")
+                                and fn.text(argument.child_by_field_name("operator")) == "&")
+            target = (argument.child_by_field_name("argument")
+                      if explicit_address else argument)
+            if target is not None and target.type == "identifier":
+                variable = fn.text(target)
+            may_mutate = (explicit_address or index in ref_positions
+                          or (helper is not None and variable in state.request_aliases)
+                          or (helper is not None and variable in state.request_pointer_vars)
+                          or (helper is None and name not in value_apis))
+            if not variable or not may_mutate:
+                continue
+            if variable in state.request_pointer_unknowns:
+                self.invalidate_all_request_facts(
+                    state, "Unknown request pointer " + variable
+                    + " is passed to " + name + "; request range/allocation facts were invalidated.")
+                continue
+            self.invalidate_request_value(state, variable,
+                "Request-derived value " + variable + " is passed to " + name
+                + " with unresolved mutation effects; related range/allocation facts were invalidated.")
+
+    def invalidate_all_request_facts(self, state, reason):
+        keys = {value.key for value in state.env.values() if value.kind == "request"}
+        keys.update(key for key, _bound in state.upper)
+        keys.update(state.lower)
+        if not keys:
+            return
+        state.lower = state.lower - keys
+        state.upper = frozenset((key, bound) for key, bound in state.upper if key not in keys)
+        for name, value in tuple(state.env.items()):
+            if value.kind == "allocation" and value.key in keys:
+                state.env[name] = UNKNOWN
+            elif value.kind == "request" and value.key in keys:
+                state.env[name] = Value("request", value.key, "mutated")
+        self.limitations.add(reason)
 
     def refine(self,fn,node,state,truth,depth):
         if node is None:return [state.fork()]
@@ -2483,7 +2714,52 @@ class Interpreter:
                         d=dec.child_by_field_name("declarator")
                         ids=list(walk(d,"identifier")) if d else []
                         name=fn.text(ids[-1] if ids else d)
-                        self.assign(s,name,self.value(fn,dec.child_by_field_name("value"),s,depth))
+                        initializer = dec.child_by_field_name("value")
+                        pointer_decl = (d is not None
+                                        and any(part.type == "pointer_declarator"
+                                                for part in walk(d, "pointer_declarator"))
+                                        and "const" not in fn.text(node).split("*", 1)[0])
+                        if pointer_decl:
+                            s.request_pointer_vars = s.request_pointer_vars | {name}
+                            s.request_pointer_unknowns = s.request_pointer_unknowns | {name}
+                        ref_alias = (d is not None and d.type == "reference_declarator"
+                                     and "const" not in fn.text(node).split("&", 1)[0]
+                                     and initializer is not None and initializer.type == "identifier")
+                        address_alias = (initializer is not None
+                                         and initializer.type in ("unary_expression", "pointer_expression")
+                                         and fn.text(initializer.child_by_field_name("operator")) == "&"
+                                         and "const" not in fn.text(node).split("*", 1)[0])
+                        if ref_alias or address_alias:
+                            target = initializer if ref_alias else initializer.child_by_field_name("argument")
+                            origin = fn.text(target) if target is not None and target.type == "identifier" else ""
+                            if origin:
+                                origin_value = s.env.get(origin, UNKNOWN)
+                                origin_keys = s.request_aliases.get(origin)
+                                if not origin_keys and origin_value.kind == "request":
+                                    origin_keys = frozenset({origin_value.key})
+                                if origin_keys:
+                                    # A same-name alias may shadow an outer local
+                                    # whose lifetime is outside this block. Keep
+                                    # every possible origin because block-scope
+                                    # restoration is not modeled here.
+                                    s.request_aliases[name] = (frozenset(origin_keys)
+                                        | s.request_aliases.get(name, frozenset()))
+                                    if address_alias:
+                                        s.request_pointer_aliases = s.request_pointer_aliases | {name}
+                                        s.request_pointer_unknowns = s.request_pointer_unknowns - {name}
+                                    else:
+                                        s.request_pointer_aliases = s.request_pointer_aliases - {name}
+                                self.invalidate_request_value(
+                                    s, origin,
+                                    "Request-derived value " + origin
+                                    + " escapes through a local alias; related range/allocation facts were invalidated.")
+                        self.assign(s,name,self.value(fn,initializer,s,depth))
+                    elif dec.type == "pointer_declarator":
+                        name_node = next(walk(dec, "identifier"), None)
+                        name = fn.text(name_node) if name_node is not None else ""
+                        if name and "const" not in fn.text(node).split("*", 1)[0]:
+                            s.request_pointer_vars = s.request_pointer_vars | {name}
+                            s.request_pointer_unknowns = s.request_pointer_unknowns | {name}
                     elif dec.type=="array_declarator":
                         name=fn.text(dec.child_by_field_name("declarator"));size=fn.text(dec.child_by_field_name("size"))
                         self.capacities[name]=size
