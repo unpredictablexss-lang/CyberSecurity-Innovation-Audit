@@ -1,0 +1,12 @@
+CLI command:
+python -m src.cli ohscan-run --repo-dir D:/openHarmonyScanner/openharmony/arkcompiler/ets_runtime --repository openharmony/arkcompiler_ets_runtime --commit a65a2853ccae13da167d9aa4720ab8b11ec16656 --include ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp --detector ohscanner.ark.runtime.type_safety
+
+Exit: 1 (failed before scan)
+Error: Git object operation failed (rev-parse --verify): warning: unable to access '.git/config': Invalid argument; fatal: unknown error occurred while reading the configuration files.
+
+Independent local byte checks:
+- target SHA-256 76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c; Git blob 68fb3b0adc4f9062889a861be51b7be90362e37a
+- creator SHA-256 3159eee6989838659438af89353dfd37a890c259f60c3af0195110e016a411e0; Git blob 991ac5ac034a1a027e3200787ec25c55b3f15b69
+- .git/HEAD text: a65a2853ccae13da167d9aa4720ab8b11ec16656
+
+These byte checks do not replace commit/tree verification; .git/objects is unavailable through the checkout.
