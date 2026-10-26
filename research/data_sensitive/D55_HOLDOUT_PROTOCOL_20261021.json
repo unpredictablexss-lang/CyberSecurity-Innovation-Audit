@@ -1,228 +1,39 @@
 {
   "schema_version": 1,
   "protocol_id": "D55",
-  "protocol_version": "1.1-draft",
-  "status": "preregistered_protocol_only",
+  "protocol_version": "2.0-optional-development",
+  "status": "OPTIONAL_NOT_RUN",
+  "authorization": "config/collaboration/standing_authorization.json",
+  "blocks_development": false,
+  "blocking_prerequisites": [],
+  "current_stop_decision": "NONE_CONTINUE_AVAILABLE_DEVELOPMENT_AND_SCANS",
   "accuracy_evaluation_started": false,
   "labels_created": false,
   "metrics_computed": false,
   "scanner_modified": false,
   "protocol_document": "D55_INDEPENDENT_HOLDOUT_PREREGISTRATION.md",
   "execution_task_document": "D55_HOLDOUT_EXECUTION_TASK.md",
-  "governance_basis": [
-    {
-      "path": "D5_MAIN_READINESS.md",
-      "fact": "M2 is not met; an independent labeled holdout and accuracy/performance evidence are still required."
-    },
-    {
-      "path": "D5_HOLDOUT_LABELS.md",
-      "fact": "No independent blinded real-source labels are recorded; precision and recall are not estimable."
-    },
-    {
-      "path": "D41_HOLDOUT_PREREGISTRATION.md",
-      "fact": "D41 froze detector 0.17.0 and is not current-version accuracy evidence."
-    },
-    {
-      "path": "D41_HOLDOUT_RESULTS.md",
-      "fact": "D41's 99-case packet was post-scan stratified and has zero independent labels; it is not a population accuracy sample."
-    },
-    {
-      "path": "D48_HOLDOUT_PREREGISTRATION.md",
-      "fact": "D48 is a convenience source sample; its 97 files were partial, scan was blocked, and no labels are available."
-    },
-    {
-      "path": "D49_KNOWN_CVE_REPLAY/README.md and D50_COMPONENT_CVE_REPLAY/README.md",
-      "fact": "These are component/CVE replay evidence with partial coverage, not independently sampled and labeled holdout data."
-    },
-    {
-      "path": "D52_PASTEBOARD_PERMISSION_20261020.md and D53_PASTEBOARD_PRODUCT_PROFILE_20261021.md",
-      "fact": "Pasteboard records are targeted source/config investigations; D53 source/config correlation does not establish a built product."
-    }
-  ],
   "evaluation_tracks": [
     "ohscanner.data.sensitive_exposure",
     "ohscanner.known_disclosed_cves"
   ],
-  "track_metrics_must_not_be_pooled": true,
-  "pre_registered_decision_thresholds": {
-    "status": "proposed_pending_D_owner_approval_before_source_selection_and_label_access",
-    "precision_point_estimate_minimum": 0.9,
-    "precision_95pct_lower_bound_minimum": 0.8,
-    "recall_point_estimate_minimum": 0.8,
-    "recall_95pct_lower_bound_minimum": 0.7,
-    "maximum_two_sided_95pct_interval_half_width": 0.1,
-    "unknown_as_error_conservative_lower_bound_must_pass_same_threshold": true,
-    "thresholds_are_fixed_before_source_selection_and_labels": true,
-    "failure_or_not_estimable_means_track_m2_criterion_not_met": true
-  },
-  "known_cve_universe": {
-    "catalog_path": "D_KNOWN_CVE_SCAN_20261019.md",
-    "catalog_git_blob": "5e71601423a3247b45fb4ce9adf28323b471dcb5",
-    "catalog_sha256": "577731fe7f2b252e895c4e1ec93e6ee494db7d3583fc848bb9173ba47eb660e0",
-    "identifiers": [
-      "CVE-2022-45877", "CVE-2025-9900", "CVE-2025-25212", "CVE-2025-27247",
-      "CVE-2025-57052", "CVE-2026-25850", "CVE-2026-28733", "CVE-2026-28751",
-      "CVE-2026-27648", "CVE-2026-33636", "CVE-2026-46675", "CVE-2026-67215",
-      "CVE-2026-67216", "CVE-2026-92391", "CVE-2026-9079", "CVE-2026-92392",
-      "CVE-2026-58313"
-    ],
-    "primary_advisory_manifest": "required_per_identifier; publisher, canonical URL, retrieval date, immutable saved bytes SHA-256, affected/fixed version scope",
-    "required_advisory_fields": ["publisher", "canonical_url", "retrieval_date", "immutable_saved_bytes_sha256", "affected_and_fixed_version_scope"],
-    "primary_advisory_hashes_collected": false,
-    "source_instances_must_be_content_disjoint_from_rule_development_examples": true,
-    "generalization_claim": "within this fixed catalog only; not discovery of novel CVEs",
-    "execution_gate": "known_cve_track_not_ready_until_advisory_manifest_is_complete_and_hashed"
-  },
   "sampling": {
-    "unit": "repository_snapshot",
-    "selection": "preregistered_stratified_random_selection_from_independent_inventory",
-    "minimum_repository_snapshots": 20,
-    "minimum_eligible_source_files": 1000,
-    "minimum_source_families": 4,
-    "minimums_are_precision_guarantees": false,
-    "minimums_are_power_calculation": false,
-    "minimums_rationale": "administrative workload floors against a tiny pilot; repository clustering can make effective sample much smaller than file count",
-    "planning_formula": "n_eff >= z_0.975^2 * p * (1-p) / h^2; n_raw >= n_eff * DEFF / (1-r)",
-    "planning_formula_inputs": ["approved targets and interval half-width h", "plausible precision/recall/prevalence ranges from data outside D55", "strata allocation", "repository cluster-size distribution", "anticipated ICC or DEFF", "inclusion weights", "label completion rate"],
-    "recall_positive_count_planning_requires": "positive prevalence and sampling fractions to estimate required repository/source scope",
-    "required_pre_label_design_simulation": "simulate registered stratified repository selection and cluster bootstrap; freeze inputs/output before scan or labels",
-    "missing_input_or_insufficient_power_action": "remain not_ready; expand or redesign before scanning",
-    "required_pre_label_planning": "freeze design-based precision planning simulation using sampling frame, cluster-size distribution, and plausible prevalence range; grow cohort before scan/label access if it cannot support target interval widths",
-    "final_sufficiency_depends_on": "observed cluster-aware intervals, effective sample size, and pre-registered thresholds",
-    "if_frame_or_independence_unavailable": "stop_not_ready; do not substitute D41, D48, D49-D53, prior D development, or synthetic cases"
+    "selection": "choose_available_pinned_public_source_and_disclose_method",
+    "development_examples": "allowed_for_regression; not relabelled_as_independent_holdout"
   },
-  "source_identity_and_deduplication": {
-    "submodules": "include only exact pinned gitlink commit/tree with frozen recursive manifest; unavailable gitlink is explicit unavailable scope and may fail coverage gate",
-    "symlinks": "record mode 120000, link blob, literal target; do not follow absolute/broken/cyclic/out-of-tree targets; in-tree aliases map to one canonical target file",
-    "development_overlap": "identical raw blob SHA-256 across any repo/path/commit excludes that source unit from D55",
-    "within_holdout_cross_repo_same_blob": "one canonical source-content unit; deterministic owner is lexicographically smallest repo/commit/path in complete pre-scan frame; only owner row is eligible for selection and aliases are not independent sample units",
-    "vendor_copies": "exact copies use blob grouping; modified vendor copies require provenance/content comparison; confirmed derivatives share overlap group; unresolved derivative status blocks source before scan",
-    "canonical_content_key": "raw file bytes SHA-256 plus language/path-policy class, with repo/tree/path retained as context",
-    "unresolved_identity_action": "pending and stop affected stratum; do not score"
-  },
-  "freeze_requirements": [
-    "protocol hash",
-    "independent source-frame hash and timestamp",
-    "cohort and exclusion ledger hashes",
-    "selection procedure and seed commitment",
-    "repository commit/tree and eligible scope hashes",
-    "clean scanner full commit SHA",
-    "detector/model/profile/parser/postprocessor/config hashes",
-    "runtime environment and replay driver hash",
-    "raw scan output bundle hash"
-  ],
   "labeling": {
-    "independent_blind_reviewers_required": 2,
-    "independent_adjudicator_required_for_disagreements": true,
-    "source_label_field": "source_label",
-    "source_labels": ["supported_risk", "protected_safe", "unrelated", "unknown"],
-    "product_applicability_field": "product_applicability",
-    "product_applicability_values": ["supported", "refuted", "unknown"],
-    "product_applicability_is_independent_of_source_label": true,
-    "source_only_product_applicability": "unknown",
-    "product_unknown_does_not_change_source_level_metrics": true,
-    "product_unknown_does_not_change_source_level_precision_or_recall": true,
-    "prediction_blind_full_scope_review_required_for_recall": true,
+    "independent_blind_reviewers_required": 0,
+    "independent_adjudicator_required_for_disagreements": false,
+    "custodian_required": false,
+    "signed_custody_required": false,
     "unknown_is_retained_and_not_coerced": true,
-    "label_fields": [
-      "case_id",
-      "track",
-      "source_label",
-      "claim_scope",
-      "support_evidence",
-      "contradicting_evidence",
-      "entry_and_control",
-      "source_to_sink_or_cve_condition",
-      "coverage_confidence",
-      "product_applicability",
-      "review_notes"
-    ]
+    "formal_metrics": "only_on_suitable_reliable_labels_with_disclosed_methodology"
   },
-  "finding_matching": {
-    "freeze_before_unblinding": true,
-    "identity_fields": ["track", "repo", "commit/tree", "source/sink or CVE root-cause identity", "affected function/path", "trigger condition"],
-    "match_rule": "same snapshot and exact normalized root cause, or overlapping spans in same function with reviewer-confirmed same condition/trigger",
-    "sensitive_exposure_identity": "source object, sensitive datum, sink operation, function/path, trigger",
-    "known_cve_identity": "CVE ID, vulnerable package/source instance, affected version condition, root-cause unit",
-    "multiple_rule_hits_same_root_cause": "deduplicate once",
-    "ambiguous_mapping": "unknown_match; separately counted and excluded until adjudicated blind"
-  },
-  "coverage_and_unknown_aggregation": {
-    "mutually_exclusive_file_statuses_and_precedence": ["excluded", "not_run", "failed", "partial", "complete"],
-    "eligible_file_reconciliation": "not_run + failed + partial + complete",
-    "run_blocked_and_task_limited_are_separate_overlapping_fields": true,
-    "candidate_count_is_separate_attribute": true,
-    "partial_or_not_run_no_hit_is_negative": false,
-    "unknown_categories": ["unknown_candidate", "unknown_reference", "unknown_match"],
-    "population_claim_minimum_complete_file_coverage": 0.9,
-    "population_claim_max_not_run_plus_failed_file_coverage": 0.05,
-    "population_claim_max_unknown_reviewed_source_units": 0.1,
-    "threshold_failure_action": "stop_population_claim; retain counts; primary metrics not_estimable for target population; subgroup descriptive only"
-  },
-  "metric_denominators": {
-    "precision": "TP / (TP + FP) among adjudicable frozen scanner findings; show unknown candidate count/rate and adjudicable fraction",
-    "recall": "TP / (TP + FN) over all independently identified adjudicated supported_risk units in exhaustively reviewed scope, or a valid preregistered probability sample with design weights",
-    "unknown": "reported separately; never silently assigned to TP, FP, FN, or TN",
-    "empty_or_invalid_denominator": "not_estimable",
-    "unknown_sensitivity": "precision: unknown candidates and matches as FP; recall: unknown references and matches as missed positives (FN); ambiguous candidate never TP",
-    "interval_design": "stratified repository-cluster bootstrap, design-weighted Hájek ratio, 10,000 replicates, PCG64 seed frozen before labels, percentile 2.5/97.5 bounds",
-    "design_effect": "bootstrap variance under stratified cluster design divided by variance under file/finding-level SRS resampling of same weighted records; report DEFF and n_eff=n/DEFF",
-    "invalid_interval": "more than 5 percent bootstrap replicates with zero or undefined denominator => not_estimable",
-    "small_cluster_rule": "fewer than 8 repositories in any contributing stratum or fewer than 20 total clusters => no inferential CI; 8-19 clusters descriptive/inconclusive with leave-one-repository-out sensitivity",
-    "sufficiency": "at least 20 clusters, required lower bounds met, and each 95 percent CI half-width <=0.10; planning floor alone does not guarantee sufficiency"
-  },
-  "hard_stop_conditions": [
-    "No auditable independent sampling frame or source-independence evidence",
-    "Source commit/tree/scope/blob identity cannot be verified",
-    "Scanner is dirty or detector/model/profile/parser/scope hashes are missing or changed after freeze",
-    "Selection, exclusions, inclusion probabilities, or seed are missing or influenced by scan output",
-    "Fewer than two independent qualified reviewers, prediction disclosure before label freeze, or incomplete review for recall",
-    "Missing original label files, adjudication record, source-bound evidence, or hash-frozen analysis inputs",
-    "Coverage fails 90 percent complete, 5 percent maximum not-run plus failed, or 10 percent maximum source-unit unknown gate",
-    "Any stratum has fewer than 8 repo clusters or track has fewer than 20 clusters for inferential claims",
-    "Bootstrap has over 5 percent undefined-denominator replicates",
-    "Known-CVE advisory evidence manifest or frozen finding matcher is incomplete",
-    "Partial or not-run coverage prevents the particular claim from being judged",
-    "Minimum cohort floors not met; stop population claim and report descriptive pilot only",
-    "Source/output mutated or reproducibility cannot be reconstructed"
-  ],
-  "m2_exit_criteria": [
-    "Independent and provenance-bound cohort selected using the preregistered auditable design",
-    "Scanner bundle frozen before scan and labels",
-    "Two independent blind labels per unit plus independent adjudication of disagreements/metric-relevant unknowns",
-    "Exhaustive prediction-blind miss review or valid weighted probability design for recall",
-    "Track-specific TP/FP/FN/unknown, precision/recall denominators and intervals, coverage, runtime, and peak RSS reported",
-    "Reproducible raw artifacts and hash-verifying scoring code",
-    "D owner review of limitations and readiness evidence",
-    "each track passes preregistered lower-bound and interval-width thresholds or remains explicitly inconclusive"
-  ],
-  "current_missing_inputs": [
-    "independent source inventory and frozen sampling frame",
-    "prior-use overlap ledger and eligible cohort with verified identities",
-    "pre-scan selection record, inclusion probabilities, and seed record",
-    "frozen scanner and model/profile/parser/configuration hashes for the target evaluation version",
-    "pre-label precision planning simulation and frozen sufficiency decision",
-    "primary advisory source snapshots and SHA-256 for every known-CVE catalog identifier",
-    "versioned frozen candidate-to-reference finding matcher",
-    "frozen coverage/unknown aggregation implementation and stop report",
-    "two qualified independent reviewers and conflict declarations",
-    "independent adjudicator availability",
-    "approved immutable storage for sealed predictions and separated labels"
-  ],
-  "current_stop_decision": "stop_before_source_selection_and_scan_until_missing_inputs_are_provided_and_frozen; known-CVE track additionally blocked on primary advisory hash manifest",
+  "hard_stop_conditions": [],
   "current_metric_status": {
-    "tp": "not_computed",
-    "fp": "not_computed",
-    "fn": "not_computed",
-    "tn": "not_computed",
-    "precision": "not_estimable",
-    "recall": "not_estimable",
-    "accuracy": "not_computed"
+    "precision": null,
+    "recall": null,
+    "reason": "No reliable formal evaluation labels were created; this does not block development."
   },
-  "protocol_json_validation": {
-    "duplicate_object_keys_allowed": false,
-    "strict_object_pairs_hook_validation_required": true,
-    "normal_parser_that_silently_keeps_last_duplicate_is_sufficient": false
-  },
-  "scope_limit": "Source-level holdout evidence cannot establish product applicability or satisfy M3 by itself."
+  "completion_rule": "available_source_or_component_results_relevant_controls_and_limitations"
 }

@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "decision_date": "2026-10-20",
+  "authority": "project_team_lead",
+  "source": "Explicit user instruction to persist authorization and remove project-imposed development blockers",
+  "status": "ACTIVE_UNTIL_REVOKED_BY_USER",
+  "scope": "OHScanner project, all development lanes, later tasks and worktrees",
+  "authorized_actions": [
+    "project_code_tests_docs_and_dependency_changes",
+    "necessary_shared_file_changes_with_conflict_review",
+    "public_source_acquisition_and_version_selection",
+    "local_builds_and_isolated_component_pocs",
+    "patch_and_regression_validation",
+    "local_commits_and_routine_branch_delivery_and_integration"
+  ],
+  "development_prerequisites_removed": [
+    "per_task_owner_or_integrator_approval",
+    "lane_allowlist_as_write_permission",
+    "product_model_fingerprint_image_or_full_build_profile",
+    "all_16_cases_closed_before_any_case_delivery",
+    "independent_holdout_before_development_or_source_reports",
+    "human_reviewer_adjudicator_custodian_and_signed_blind_custody",
+    "repeated_acceptance_or_second_layer_review_without_a_concrete_defect",
+    "product_admission_before_component_poc_or_task_completion"
+  ],
+  "scope_check_mode": "advisory",
+  "missing_inputs": "record_unknown_or_not_run_and_continue_executable_work",
+  "task_completion": "concrete_implementation_relevant_tests_and_available_evidence_report",
+  "formal_accuracy_metrics": "optional; publish only with suitable labelled evidence and disclosed methodology",
+  "product_confirmation": "optional; claim only when supported by actual product evidence",
+  "preserve": [
+    "teammate_uncommitted_work_and_original_evidence",
+    "truthful_results_source_versions_and_known_limitations",
+    "local_isolation_for_target_code_and_secret_protection"
+  ],
+  "platform_permissions": "unchanged; this file records project authorization only"
+}
