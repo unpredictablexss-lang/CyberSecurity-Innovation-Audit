@@ -1,0 +1,87 @@
+{
+  "date": "2026-10-19",
+  "scanner_head": "9b99f106883ef58304d9e6702fea562bb7f8f331",
+  "python": "3.13.9",
+  "focused_test_command": "python -m unittest tests.detectors.test_cpp_pointer_offset_underflow -v",
+  "focused_test_result": "PASS: 4/4",
+  "related_module_command": "python -m unittest tests.detectors.test_cpp_memory_safety_detectors -v",
+  "related_module_result": "FAIL: 18 passed, 1 failed; failure test_manifest_is_hash_bound_and_covers_four_control_classes at first mismatch bounds_positive.cpp actual 116 bytes vs manifest 111 bytes.",
+  "fixture_manifest_mismatches": [
+    {
+      "file": "bounds_positive.cpp",
+      "category": "positive",
+      "actual_bytes": 116,
+      "actual_sha256": "8b423d6aa6857209206e14dbd69615c00824f22f9ac9ef85f304081406b24e3a",
+      "manifest_bytes": 111,
+      "manifest_sha256": "f5f74d0be5fb61f8194dd4529d725a34441d18fe672467824f456e16371bc571"
+    },
+    {
+      "file": "bounds_fixed.cpp",
+      "category": "fixed",
+      "actual_bytes": 161,
+      "actual_sha256": "da570c3aca6e38ff31723aea8a935d611a8f19ca5a1a3c02605753e24f3d9681",
+      "manifest_bytes": 154,
+      "manifest_sha256": "f253adaaee561c9cbeedd877d33d251d0c8106cb4c1e2a2141faa5dcddcf165d"
+    },
+    {
+      "file": "bounds_safe.cpp",
+      "category": "safe",
+      "actual_bytes": 105,
+      "actual_sha256": "3b3f9442bb090cf20f3856c5be24fcd008f87130d57cc78141608695fd1abb2f",
+      "manifest_bytes": 100,
+      "manifest_sha256": "1ba17501f075c4b6a3c87e9b39f91bef33897bb2f1b37b166564964b4e2f7694"
+    },
+    {
+      "file": "bounds_unrelated.cpp",
+      "category": "unrelated",
+      "actual_bytes": 92,
+      "actual_sha256": "2c3b1fd544c652a9653891fe2a361d061aa22b9fb0042e78787bd27aadf0c3c7",
+      "manifest_bytes": 89,
+      "manifest_sha256": "90182adb2e52c7d6b13068553a54bb176524b2a94036c79cc0239d559c685e67"
+    },
+    {
+      "file": "integer_positive.cpp",
+      "category": "positive",
+      "actual_bytes": 232,
+      "actual_sha256": "df047b550bcfb34f5df558c84e16dbf9da58ad85bd51dadf59b34e8fc92efd06",
+      "manifest_bytes": 224,
+      "manifest_sha256": "8cbb48b5ba9eddb8b9ab2fe6787a5f97db2f3753493acf7b1ae9a28588221e9d"
+    },
+    {
+      "file": "integer_fixed.cpp",
+      "category": "fixed",
+      "actual_bytes": 180,
+      "actual_sha256": "56bdf0486be1bab6c8ccc8fe42373dcb17ea26d7214f7c420497db6c338c87cf",
+      "manifest_bytes": 174,
+      "manifest_sha256": "bf1d8980899d15380c588dd89540d099084b646b5b819c80d233759b2e259234"
+    },
+    {
+      "file": "integer_safe.cpp",
+      "category": "safe",
+      "actual_bytes": 188,
+      "actual_sha256": "254674d8b18a46cb54f9b376fac96dfd9f9dfe566989e686703a47e2c04030d9",
+      "manifest_bytes": 182,
+      "manifest_sha256": "a428fd7768c4e37fea2c3238c610502f5ac6ea15b1d719af1081e111272f17a3"
+    },
+    {
+      "file": "integer_unrelated.cpp",
+      "category": "unrelated",
+      "actual_bytes": 81,
+      "actual_sha256": "abb82b1c2b47acd42c9fb699468db1479c345733354cf1dc274884e33e43e83e",
+      "manifest_bytes": 77,
+      "manifest_sha256": "1f6598c32cae8d9d2a766a7c5db6079ba5b72a03072b4651f5a9efde64babb81"
+    },
+    {
+      "file": "unknown_partial.cpp",
+      "category": "unknown",
+      "actual_bytes": 55,
+      "actual_sha256": "ee3fb36bff4e67c3614e5c08e22d0bd4a24ef9a79251dac22d1c8face8261b21",
+      "manifest_bytes": 53,
+      "manifest_sha256": "1f3a22b825e147ce2a37d51d830e76f36bb60777e26e49bdf79e15dc479076b9"
+    }
+  ],
+  "component_build": "PASS: isolated upstream v4.7.0 and exact fix commit built under WSL2 with GCC 13.3.0 and CMake 4.4.4; CMake installed only under workspace tmp. The self-contained replay script passed from a fresh unique directory on repeated runs r2 and r3. See runtime-reproduction-20261019.json and replay-script-run-r3.log.",
+  "dynamic_reproduction": "PASS: vulnerable caller-height 1 segfault exit 139; exact fix returns pixel exit 0; equal-height control exits 0 on both.",
+  "openharmony_product_build": "NOT_RUN: out/rk3568 contains only build.1792344452.3203762.log (SHA-256 4f0e45b366f3b50b67ac9e66c473784965beee59f9368a9ea0028ed05b17d52c), which reports required prebuilts/build-tools/linux-x86/bin/ninja missing. No args.gn, build.ninja, compile_commands.json or generated global_parts_info.",
+  "openharmony_product_build_log_sha256": "4f0e45b366f3b50b67ac9e66c473784965beee59f9368a9ea0028ed05b17d52c"
+}

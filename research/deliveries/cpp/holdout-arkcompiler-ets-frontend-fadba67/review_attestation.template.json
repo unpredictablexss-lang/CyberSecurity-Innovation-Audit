@@ -1,0 +1,10 @@
+{
+  "schema": "c-line-blind-review-attestation-v1",
+  "reviewer_role": "",
+  "independent_from_rule_development": null,
+  "saw_detector_output_before_labeling": null,
+  "blind_packet_only_until_labels_completed": null,
+  "reviewed_detector_version": "0.3.10",
+  "labels_completed_utc": "",
+  "notes": ""
+}

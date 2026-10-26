@@ -10,7 +10,7 @@ from time import perf_counter
 
 from .model import AnalysisBudget, RuntimeTypeModel, OWNER
 from .runtime_ir import build_graph
-from .syntax import parse_functions, walk
+from .syntax import parse_functions, parser_environment, walk
 from .type_origin import OriginEvaluator
 
 
@@ -57,6 +57,9 @@ def analyze_unit(unit, *, model=None, budget=None, research_partial=False):
     model, budget = model or RuntimeTypeModel(), budget or AnalysisBudget()
     if model.build_profile != 'assumed:NDEBUG=1;ENABLE_ASM_ASSERT=0;not_product_build_verified':
         return AnalysisResult('limited', 'not_analyzed', limitations=('model_build_profile_unresolved',),
+                              model_digest=model.digest)
+    if parser_environment() != model.parser_environment:
+        return AnalysisResult('limited', 'not_analyzed', limitations=('parser_environment_mismatch',),
                               model_digest=model.digest)
     start = perf_counter()
     data = unit.text.encode('utf-8')
@@ -240,8 +243,11 @@ def analyze_unit(unit, *, model=None, budget=None, research_partial=False):
                                                     region_end_byte=fn.node.end_byte)
                                             for o in observations[first_observation:]]
     observations = _unique_observations(observations)
-    if any(o.kind == 'unknown' for o in observations):
+    unknown_observations = [o for o in observations if o.kind == 'unknown']
+    if unknown_observations:
         limitations.append('unresolved_local_observations')
+        limitations.extend('unknown_observation:' + str(item.line) + ':' + item.reason
+                           for item in unknown_observations)
     if not observations and any(x in limitations for x in ('target_function_parse_error', 'caller_signature_mismatch',
                                                           'target_conditional_compilation_unresolved',
                                                           'ambiguous_target_definition', 'model_creator_type_shadowed')):

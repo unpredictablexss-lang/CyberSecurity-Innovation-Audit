@@ -1,0 +1,30 @@
+{
+  "synthetic_commit": "ef42021d7597d3ca008c08567f0d698df39a4fa3",
+  "tree": "65f42cf3e86c5484802093f86e5f2babd623b573",
+  "sources": {
+    "png.c": {
+      "git_blob": "a0cad0197e760013abf67eb5c23ce5e4055cdb4d",
+      "sha256": "0d8e45e9039cf04088764a09dcda7b24695f199288a44e11dba54ebfaca1c730"
+    },
+    "pngset.c": {
+      "git_blob": "95a075f8b9ec4528c0adcfc7d67c26c067dccaa4",
+      "sha256": "f68c1181a63c81b0e247ce770bf762407b6bce58634fd4a48a37fd68cec03d95"
+    },
+    "pngread.c": {
+      "git_blob": "03816867ebc768431d9c9b368433f28c70c866af",
+      "sha256": "cb200ca0dadbf37f8903055ef05e0a52c670cc8a8ff7dcb84140fb19ad1f4dfe"
+    },
+    "pngrtran.c": {
+      "git_blob": "4741b1b6315030eefae6ed63200f3367b4168f14",
+      "sha256": "6334e4ce5043ef6a896d74630222cc54146b618cc010fe8761c4a7c8b5859169"
+    }
+  },
+  "scope": [
+    "png.c",
+    "pngset.c",
+    "pngread.c",
+    "pngrtran.c"
+  ],
+  "origin_source_dir": "D:\\openHarmonyScanner\\tmp\\libpng-oh-install-runtime-20261019\\libpng-1.6.55",
+  "note": "Synthetic Git snapshot binds exact output of OpenHarmony third_party/libpng/install.py; it is not an upstream commit."
+}

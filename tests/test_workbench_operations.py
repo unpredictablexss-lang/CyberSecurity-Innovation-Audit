@@ -314,9 +314,11 @@ class OperationEndToEndTests(unittest.TestCase):
         base = {"repository_id": self.repo["id"], "include_paths": ["."], "detector_ids": self.detectors,
                 "timeout_seconds": 30, "memory_mb": 512}
         sha_range = self.client.post("/api/v1/operations/revision-ranges", headers=headers, json={
-            **base, "baseline": self.commits[0], "endpoint": self.commits[1]})
+            **base, "audit_mode": "static_only", "baseline": self.commits[0], "endpoint": self.commits[1]})
         self.assertEqual(sha_range.status_code, 201, sha_range.text)
         self.assertEqual(sha_range.json()["spec"]["commits"], [self.commits[1]])
+        self.assertEqual(sha_range.json()["spec"]["audit_mode"], "static_only")
+        self.assertEqual([self.store.job(key)["spec"]["audit_mode"] for key in sha_range.json()["spec"]["scan_ids"]], ["static_only", "static_only"])
         range_result = self._run_operation(sha_range.json())
         self.assertEqual(range_result["result"]["baseline"], self.commits[0])
         self.assertEqual(range_result["result"]["endpoint"], self.commits[1])
@@ -325,6 +327,8 @@ class OperationEndToEndTests(unittest.TestCase):
             **base, "branch": "HEAD", "start": "2025-01-02T00:00:00+00:00",
             "end": "2025-01-03T00:00:00+00:00", "timezone": "UTC"})
         self.assertEqual(date_range.status_code, 201, date_range.text)
+        self.assertEqual(date_range.json()["spec"]["audit_mode"], "standard_review")
+        self.assertEqual([self.store.job(key)["spec"]["audit_mode"] for key in date_range.json()["spec"]["scan_ids"]], ["standard_review", "standard_review"])
         selection = date_range.json()["spec"]["date_selection"]
         self.assertEqual(selection["selected_commits"], [self.commits[1]])
         self.assertEqual(selection["baseline"], self.commits[0])
@@ -350,9 +354,11 @@ class OperationEndToEndTests(unittest.TestCase):
         self.assertEqual(date_result["result"]["date_selection"]["boundary"], "[start,end)")
 
         matrix = self.client.post("/api/v1/operations/version-matrices", headers=headers, json={
-            **base, "case_id": case_id, "commits": self.commits[:2]})
+            **base, "audit_mode": "static_only", "case_id": case_id, "commits": self.commits[:2]})
         self.assertEqual(matrix.status_code, 201, matrix.text)
         self.assertEqual(matrix.json()["spec"]["commits"], self.commits[:2])
+        self.assertEqual(matrix.json()["spec"]["audit_mode"], "static_only")
+        self.assertEqual([self.store.job(key)["spec"]["audit_mode"] for key in matrix.json()["spec"]["scan_ids"]], ["static_only", "static_only"])
         matrix_result = self._run_operation(matrix.json())
         self.assertEqual(len(matrix_result["result"]["versions"]), 2)
         self.assertEqual(len(matrix_result["result"]["comparisons"]), 1)
@@ -365,6 +371,8 @@ class OperationEndToEndTests(unittest.TestCase):
             **base, "baseline_ref": "refs/heads/main", "endpoint_ref": "refs/heads/feature"})
         self.assertEqual(branch_comparison.status_code, 201, branch_comparison.text)
         branch_spec = branch_comparison.json()["spec"]
+        self.assertEqual(branch_spec["audit_mode"], "standard_review")
+        self.assertEqual([self.store.job(key)["spec"]["audit_mode"] for key in branch_spec["scan_ids"]], ["standard_review", "standard_review"])
         self.assertEqual(branch_spec["baseline"], self.commits[2])
         self.assertEqual(branch_spec["endpoint"], self.feature_commit)
         self.assertEqual(branch_spec["baseline_ref"], "refs/heads/main")

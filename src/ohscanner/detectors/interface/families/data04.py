@@ -17,3 +17,9 @@ FAMILY = "DATA-04"
 TITLE = "sensitive result written to the reply parcel"
 CWE = "CWE-200"
 RULES = ("ipc.data.sensitive-flow",)
+
+# The reviewed AppMgr API fills bundleName and uid through reference outputs;
+# only these exact positions are treated as caller-visible disclosure sources.
+POLICY = {
+    "disclosure_output_calls": (("GetBundleNameByPid", (1, 2)),),
+}

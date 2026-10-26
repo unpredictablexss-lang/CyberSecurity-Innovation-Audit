@@ -1,0 +1,4 @@
+Invocation: `python -m unittest tests.detectors.test_cpp_resource_lifetime_detector -v`
+Result: 9 tests passed, 1 failed (2026-10-19).
+Failure: `test_manifest_is_hash_bound_and_covers_control_classes`; current dirty `tests/detectors/fixtures/cpp_resource_lifetime/positive_double_free.cpp` is 116 bytes while the existing manifest expects 110. The fixture and manifest were not modified.
+Focused selected tests passed 3/3: recursive cleanup candidate/controls, cross-member alias UAF controls, renamed alias/incomplete scope.

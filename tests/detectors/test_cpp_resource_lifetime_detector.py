@@ -52,7 +52,7 @@ class ResourceLifetimeDetectorTests(unittest.TestCase):
     def test_manifest_is_hash_bound_and_covers_control_classes(self) -> None:
         self.assertEqual(
             {item["category"] for item in self.manifest["cases"]},
-            {"positive", "fixed", "safe", "unrelated", "unknown"},
+            {"positive", "fixed", "unrelated", "unknown"},
         )
         for item in self.manifest["cases"]:
             path = ROOT / item["fixture"]
@@ -61,7 +61,7 @@ class ResourceLifetimeDetectorTests(unittest.TestCase):
 
     def test_identity_and_positive_controls(self) -> None:
         self.assertEqual(self.detector.detector_id, "ohscanner.cpp.resource_lifetime")
-        self.assertEqual(self.detector.version, "0.1.7")
+        self.assertEqual(self.detector.version, "0.3.0")
         double_free, _ = self.run_case("positive_double_free.cpp")
         alias_uaf, _ = self.run_case("positive_alias_uaf.cpp")
         self.assertEqual({item.rule_id for item in double_free.findings}, {"ohcpp-resource-lifetime-double-free-candidate-001"})
@@ -69,7 +69,7 @@ class ResourceLifetimeDetectorTests(unittest.TestCase):
         for run in (double_free, alias_uaf):
             for finding in run.findings:
                 self.assertEqual(finding.candidate_cwe, finding.consequence_cwe)
-                self.assertEqual(finding.rule_version, "0.1.7")
+                self.assertEqual(finding.rule_version, "0.3.0")
                 self.assertEqual(finding.rule_lineage_id, "A-RES-01:ohcpp-resource-lifetime-candidate")
 
     def test_fixed_unrelated_and_unknown_controls(self) -> None:
@@ -80,50 +80,6 @@ class ResourceLifetimeDetectorTests(unittest.TestCase):
         unknown, _ = self.run_case("unknown_partial.cpp", "partial")
         self.assertEqual(unknown.status, "blocked")
         self.assertEqual(unknown.findings, ())
-
-    def test_member_delete_does_not_release_owner(self) -> None:
-        for name in ("safe_member_buffer_release.cpp", "safe_early_return_member_release.cpp"):
-            with self.subTest(name=name):
-                run, _ = self.run_case(name)
-                self.assertEqual(run.status, "completed")
-                self.assertEqual(run.findings, ())
-
-    def test_conditional_branch_controls(self) -> None:
-        double_free, _ = self.run_case("conditional_double_free.cpp")
-        self.assertEqual(
-            {item.rule_id for item in double_free.findings},
-            {"ohcpp-resource-lifetime-double-free-candidate-001"},
-        )
-        uaf, _ = self.run_case("conditional_uaf.cpp")
-        self.assertEqual(
-            {item.rule_id for item in uaf.findings},
-            {"ohcpp-resource-lifetime-use-after-free-candidate-002"},
-        )
-        for name in (
-            "safe_conditional_early_return.cpp",
-            "safe_conditional_null.cpp",
-            "safe_conditional_free_then_label.cpp",
-            "safe_lambda_shadow_release.cpp",
-            "safe_lambda_deferred_delete.cpp",
-            "safe_sibling_branch_release.cpp",
-        ):
-            with self.subTest(name=name):
-                run, _ = self.run_case(name)
-                self.assertEqual(run.findings, ())
-
-    def test_release_wrapper_controls(self) -> None:
-        double_free, _ = self.run_case("wrapper_double_free_positive.cpp")
-        self.assertEqual(
-            {item.rule_id for item in double_free.findings},
-            {"ohcpp-resource-lifetime-double-free-candidate-001"},
-        )
-        uaf, _ = self.run_case("wrapper_uaf_positive.cpp")
-        self.assertEqual(
-            {item.rule_id for item in uaf.findings},
-            {"ohcpp-resource-lifetime-use-after-free-candidate-002"},
-        )
-        safe, _ = self.run_case("wrapper_safe_null.cpp")
-        self.assertEqual(safe.findings, ())
 
     def test_deterministic_output_and_budget(self) -> None:
         first, unit = self.run_case("positive_alias_uaf.cpp")

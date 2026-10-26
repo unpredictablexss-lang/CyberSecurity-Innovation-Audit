@@ -1,0 +1,185 @@
+{
+  "files": [
+    {
+      "file": "dataBusiness/contacts/src/contacts_data_ability.cpp",
+      "lf_sha256": "c9d1f03da5994f32b6af7254ba505eb616713209222f48f1f91117c4827201b6",
+      "manifest": "c9d1f03da5994f32b6af7254ba505eb616713209222f48f1f91117c4827201b6",
+      "size_lf": 85339,
+      "size_manifest": 85339,
+      "match": true
+    },
+    {
+      "file": "dataBusiness/contacts/src/contacts_datashare_stub_impl.cpp",
+      "lf_sha256": "a913de9c273ef055de9203f83e890067a8594f1028dce6526844228585aa87a4",
+      "manifest": "a913de9c273ef055de9203f83e890067a8594f1028dce6526844228585aa87a4",
+      "size_lf": 29986,
+      "size_manifest": 29986,
+      "match": true
+    },
+    {
+      "file": "ability/common/utils/src/file_utils.cpp",
+      "lf_sha256": "4de09b2a9de7ad538044e1e0b9f2ea84cc8acf9bf6a5cd1b7431c861a59d181f",
+      "manifest": "4de09b2a9de7ad538044e1e0b9f2ea84cc8acf9bf6a5cd1b7431c861a59d181f",
+      "size_lf": 6843,
+      "size_manifest": 6843,
+      "match": true
+    }
+  ],
+  "functions": [
+    {
+      "id": "contacts_batch_insert",
+      "hash_ok": true,
+      "lines_ok": true,
+      "inc_ok": true,
+      "lines": [
+        601,
+        660
+      ],
+      "expected_lines": [
+        601,
+        660
+      ]
+    },
+    {
+      "id": "batch_insert_one_by_one",
+      "hash_ok": true,
+      "lines_ok": true,
+      "inc_ok": true,
+      "lines": [
+        696,
+        732
+      ],
+      "expected_lines": [
+        696,
+        732
+      ]
+    },
+    {
+      "id": "process_single_insert",
+      "hash_ok": true,
+      "lines_ok": true,
+      "inc_ok": true,
+      "lines": [
+        734,
+        768
+      ],
+      "expected_lines": [
+        734,
+        768
+      ]
+    },
+    {
+      "id": "handle_contact_portrait",
+      "hash_ok": true,
+      "lines_ok": true,
+      "inc_ok": true,
+      "lines": [
+        770,
+        800
+      ],
+      "expected_lines": [
+        770,
+        800
+      ]
+    },
+    {
+      "id": "save_portrait_file_and_blob",
+      "hash_ok": true,
+      "lines_ok": true,
+      "inc_ok": true,
+      "lines": [
+        802,
+        841
+      ],
+      "expected_lines": [
+        802,
+        841
+      ]
+    },
+    {
+      "id": "build_portrait_value",
+      "hash_ok": true,
+      "lines_ok": true,
+      "inc_ok": true,
+      "lines": [
+        843,
+        853
+      ],
+      "expected_lines": [
+        843,
+        853
+      ]
+    },
+    {
+      "id": "get_portrait_value",
+      "hash_ok": true,
+      "lines_ok": true,
+      "inc_ok": true,
+      "lines": [
+        855,
+        874
+      ],
+      "expected_lines": [
+        855,
+        874
+      ]
+    },
+    {
+      "id": "get_string_value",
+      "hash_ok": true,
+      "lines_ok": true,
+      "inc_ok": true,
+      "lines": [
+        876,
+        892
+      ],
+      "expected_lines": [
+        876,
+        892
+      ]
+    },
+    {
+      "id": "datashare_stub_batch_insert",
+      "hash_ok": true,
+      "lines_ok": true,
+      "inc_ok": true,
+      "lines": [
+        260,
+        306
+      ],
+      "expected_lines": [
+        260,
+        306
+      ]
+    },
+    {
+      "id": "file_utils_get_group_path",
+      "hash_ok": true,
+      "lines_ok": true,
+      "inc_ok": true,
+      "lines": [
+        155,
+        175
+      ],
+      "expected_lines": [
+        155,
+        175
+      ]
+    },
+    {
+      "id": "file_utils_delete_file",
+      "hash_ok": true,
+      "lines_ok": true,
+      "inc_ok": true,
+      "lines": [
+        208,
+        215
+      ],
+      "expected_lines": [
+        208,
+        215
+      ]
+    }
+  ],
+  "all_ok": true
+}

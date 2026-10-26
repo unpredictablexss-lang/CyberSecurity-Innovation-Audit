@@ -1,0 +1,324 @@
+{
+  "schema": 1,
+  "purpose": "Static research replay across two exact source profiles; candidate delta only.",
+  "validated_vulnerability": 0,
+  "product_impact": "unknown",
+  "comparison": {
+    "before_candidates": 1,
+    "after_candidates": 0,
+    "interpretation": "A static candidate difference does not prove vulnerability introduction, exploitability, or a verified fix."
+  },
+  "runs": [
+    {
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "profile_id": "dsoftbus-tcp-json-d33177135ec6",
+      "detector_id": "ohscanner.data.sensitive_exposure",
+      "detector_version": "0.4.0",
+      "source_identity": "manifest-bound Git blobs; local cache; not a product checkout",
+      "required_files": 10,
+      "parsing": {
+        "parsing_status": {
+          "complete": 4,
+          "partial": 6
+        },
+        "languages": {
+          "c": 6,
+          "cpp": 4
+        }
+      },
+      "status": "blocked",
+      "file_outcomes": [
+        [
+          "adapter/common/include/softbus_adapter_log.h",
+          "partial"
+        ],
+        [
+          "adapter/common/log/softbus_adapter_log.c",
+          "partial"
+        ],
+        [
+          "core/common/include/softbus_log.h",
+          "partial"
+        ],
+        [
+          "core/common/log/softbus_log.c",
+          "partial"
+        ],
+        [
+          "core/common/softbus_property/softbus_feature_config.c",
+          "partial"
+        ],
+        [
+          "core/transmission/common/include/softbus_app_info.h",
+          "partial"
+        ],
+        [
+          "core/transmission/common/include/softbus_message_open_channel.h",
+          "partial"
+        ],
+        [
+          "core/transmission/common/src/softbus_message_open_channel.c",
+          "partial"
+        ],
+        [
+          "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+          "partial"
+        ],
+        [
+          "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_sessionconn.c",
+          "partial"
+        ]
+      ],
+      "findings": [
+        {
+          "file": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+          "line": 671,
+          "symbol": "ProcessReceivedData",
+          "rule_id": "data.log.sensitive-value",
+          "candidate_cwe": "CWE-532",
+          "source_sha256": "1c2b9ff35d5c0b726692358231722d830f7a96daf805450c01fb40fb53cbc6f9",
+          "message": "Candidate local sensitive-material dependency: core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c:649 source DecryptMessage successful output crypInfo.out may carry Base64 session key -> reviewed one-hop parameter 2 -> MsgCryptInfo.out -> 671 SoftBusLog public operand 0",
+          "evidence_obligations": [
+            {
+              "kind": "local_flow",
+              "description": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c:649 source DecryptMessage successful output crypInfo.out may carry Base64 session key -> reviewed one-hop parameter 2 -> MsgCryptInfo.out -> 671 SoftBusLog public operand 0",
+              "status": "unknown"
+            },
+            {
+              "kind": "source_semantics",
+              "description": "Successful DecryptMessage output can contain request JSON with Base64 session key, evidenced by PackRequest/UnpackRequest; not every packet is secret. Request path and contents remain obligations.",
+              "status": "unknown"
+            },
+            {
+              "kind": "runtime_log_visibility",
+              "description": "Verify production level, privacy switches, build branch and unauthorized readers.",
+              "status": "unknown"
+            },
+            {
+              "kind": "execution_and_identity",
+              "description": "Verify initialization, API binding, return status, branch feasibility and pointer aliases.",
+              "status": "unknown"
+            },
+            {
+              "kind": "security_impact",
+              "description": "Prove recoverable secret material and concrete impact; no automatic confirmation.",
+              "status": "unknown"
+            },
+            {
+              "kind": "historical_model",
+              "description": "dsoftbus-tcp-json-d33177135ec6 / 0.2.0-historical.1",
+              "status": "unknown"
+            },
+            {
+              "kind": "request_payload",
+              "description": "Pinned source shows StartVerifySession sends FLAG_REQUEST and PackRequest adds SESSION_KEY; verify this exact path executes in the target product.",
+              "status": "unknown"
+            },
+            {
+              "kind": "message_kind",
+              "description": "The log runs before FLAG_REPLY dispatch and also sees replies; only the request JSON is evidenced to carry SESSION_KEY.",
+              "status": "unknown"
+            },
+            {
+              "kind": "log_adapter",
+              "description": "SoftBusLog vsprintf_s to 256-byte buffer -> SoftBusOutPrint -> public HiLog or printf. Level/config/format success/truncation/readers remain conditional.",
+              "status": "unknown"
+            }
+          ]
+        }
+      ],
+      "limitations": [
+        "Candidate only: runtime log readers, production enablement and impact require independent review.",
+        "Detailed private Tree-sitter statements pending owner-approved shared expression facts; no new global frontend.",
+        "Function-local syntax dependencies, not CFG/alias/full-program proof; no secret values recorded.",
+        "Model scope is exact repository/commit; receiver/typedef identity and include binding remain obligations.",
+        "Private/default-private operands withheld under modeled HiLog semantics, not proof of all product privacy configurations.",
+        "adapter/common/include/softbus_adapter_log.h: Historical profile 0.2.0-historical.1; conditional request payload, runtime/build/readers unknown",
+        "adapter/common/include/softbus_adapter_log.h: detailed syntax partial",
+        "adapter/common/include/softbus_adapter_log.h: preprocessor/build context not expanded",
+        "adapter/common/log/softbus_adapter_log.c: Historical profile 0.2.0-historical.1; conditional request payload, runtime/build/readers unknown",
+        "adapter/common/log/softbus_adapter_log.c: preprocessor/build context not expanded",
+        "adapter/common/log/softbus_adapter_log.c: unsupported statement preproc_ifdef at line 20",
+        "adapter/common/log/softbus_adapter_log.c: unsupported statement switch_statement at line 24",
+        "core/common/include/softbus_log.h: Historical profile 0.2.0-historical.1; conditional request payload, runtime/build/readers unknown",
+        "core/common/include/softbus_log.h: calls in return expression not analyzed",
+        "core/common/include/softbus_log.h: detailed syntax partial",
+        "core/common/include/softbus_log.h: preprocessor/build context not expanded",
+        "core/common/log/softbus_log.c: Historical profile 0.2.0-historical.1; conditional request payload, runtime/build/readers unknown",
+        "core/common/log/softbus_log.c: array element value is not whole string material",
+        "core/common/log/softbus_log.c: branch merge is may-flow; no path feasibility proof",
+        "core/common/log/softbus_log.c: preprocessor/build context not expanded",
+        "core/common/log/softbus_log.c: short-circuit effects are may-flow; no path feasibility proof",
+        "core/common/softbus_property/softbus_feature_config.c: Historical profile 0.2.0-historical.1; conditional request payload, runtime/build/readers unknown",
+        "core/common/softbus_property/softbus_feature_config.c: branch merge is may-flow; no path feasibility proof",
+        "core/common/softbus_property/softbus_feature_config.c: historical buffer copy/format output status not summarized; output withheld",
+        "core/common/softbus_property/softbus_feature_config.c: preprocessor/build context not expanded",
+        "core/common/softbus_property/softbus_feature_config.c: short-circuit effects are may-flow; no path feasibility proof",
+        "core/transmission/common/include/softbus_app_info.h: Historical profile 0.2.0-historical.1; conditional request payload, runtime/build/readers unknown",
+        "core/transmission/common/include/softbus_app_info.h: detailed syntax partial",
+        "core/transmission/common/include/softbus_app_info.h: preprocessor/build context not expanded",
+        "core/transmission/common/include/softbus_message_open_channel.h: Historical profile 0.2.0-historical.1; conditional request payload, runtime/build/readers unknown",
+        "core/transmission/common/include/softbus_message_open_channel.h: detailed syntax partial",
+        "core/transmission/common/include/softbus_message_open_channel.h: preprocessor/build context not expanded",
+        "core/transmission/common/src/softbus_message_open_channel.c: Historical profile 0.2.0-historical.1; conditional request payload, runtime/build/readers unknown",
+        "core/transmission/common/src/softbus_message_open_channel.c: branch merge is may-flow; no path feasibility proof",
+        "core/transmission/common/src/softbus_message_open_channel.c: pointer/member assignment requires alias proof",
+        "core/transmission/common/src/softbus_message_open_channel.c: preprocessor/build context not expanded",
+        "core/transmission/common/src/softbus_message_open_channel.c: short-circuit effects are may-flow; no path feasibility proof",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c: Historical profile 0.2.0-historical.1; conditional request payload, runtime/build/readers unknown",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c: branch merge is may-flow; no path feasibility proof",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c: break/continue exits need enclosing-loop proof; loops not analyzed",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c: calls in return expression not analyzed",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c: conditional effects are may-flow; no path feasibility proof",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c: conditional value is may-flow; no path feasibility proof",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c: detailed syntax partial",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c: historical buffer copy/format output status not summarized; output withheld",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c: pointer/member assignment requires alias proof",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c: preprocessor/build context not expanded",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c: reviewed success-edge summary; branch feasibility is unproved and request/reply is not filtered at the log site",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c: short-circuit effects are may-flow; no path feasibility proof",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c: unmodeled call may mutate/escape sensitive value: SoftBusFree",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c: unmodeled call may mutate/escape sensitive value: cJSON_Parse",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c: unsupported statement preproc_def at line 101",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c: unsupported statement preproc_def at line 217",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c: unsupported statement preproc_def at line 295",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_sessionconn.c: Historical profile 0.2.0-historical.1; conditional request payload, runtime/build/readers unknown",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_sessionconn.c: branch merge is may-flow; no path feasibility proof",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_sessionconn.c: break/continue exits need enclosing-loop proof; loops not analyzed",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_sessionconn.c: compound assignment semantics incomplete",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_sessionconn.c: detailed syntax partial",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_sessionconn.c: historical buffer copy/format output status not summarized; output withheld",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_sessionconn.c: preprocessor/build context not expanded",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_sessionconn.c: short-circuit effects are may-flow; no path feasibility proof"
+      ]
+    },
+    {
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "profile_id": "dsoftbus-tcp-json-63efce3ff7f2",
+      "detector_id": "ohscanner.data.sensitive_exposure",
+      "detector_version": "0.4.0",
+      "source_identity": "manifest-bound Git blobs; local cache; not a product checkout",
+      "required_files": 10,
+      "parsing": {
+        "parsing_status": {
+          "complete": 4,
+          "partial": 6
+        },
+        "languages": {
+          "c": 6,
+          "cpp": 4
+        }
+      },
+      "status": "blocked",
+      "file_outcomes": [
+        [
+          "adapter/common/include/softbus_adapter_log.h",
+          "partial"
+        ],
+        [
+          "adapter/common/log/softbus_adapter_log.c",
+          "partial"
+        ],
+        [
+          "core/common/include/softbus_log.h",
+          "partial"
+        ],
+        [
+          "core/common/log/softbus_log.c",
+          "partial"
+        ],
+        [
+          "core/common/softbus_property/softbus_feature_config.c",
+          "partial"
+        ],
+        [
+          "core/transmission/common/include/softbus_app_info.h",
+          "partial"
+        ],
+        [
+          "core/transmission/common/include/softbus_message_open_channel.h",
+          "partial"
+        ],
+        [
+          "core/transmission/common/src/softbus_message_open_channel.c",
+          "partial"
+        ],
+        [
+          "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+          "partial"
+        ],
+        [
+          "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_sessionconn.c",
+          "partial"
+        ]
+      ],
+      "findings": [],
+      "limitations": [
+        "Candidate only: runtime log readers, production enablement and impact require independent review.",
+        "Detailed private Tree-sitter statements pending owner-approved shared expression facts; no new global frontend.",
+        "Function-local syntax dependencies, not CFG/alias/full-program proof; no secret values recorded.",
+        "Model scope is exact repository/commit; receiver/typedef identity and include binding remain obligations.",
+        "Private/default-private operands withheld under modeled HiLog semantics, not proof of all product privacy configurations.",
+        "adapter/common/include/softbus_adapter_log.h: Historical profile 0.2.0-historical.1; conditional request payload, runtime/build/readers unknown",
+        "adapter/common/include/softbus_adapter_log.h: detailed syntax partial",
+        "adapter/common/include/softbus_adapter_log.h: preprocessor/build context not expanded",
+        "adapter/common/log/softbus_adapter_log.c: Historical profile 0.2.0-historical.1; conditional request payload, runtime/build/readers unknown",
+        "adapter/common/log/softbus_adapter_log.c: preprocessor/build context not expanded",
+        "adapter/common/log/softbus_adapter_log.c: unsupported statement preproc_ifdef at line 20",
+        "adapter/common/log/softbus_adapter_log.c: unsupported statement switch_statement at line 24",
+        "core/common/include/softbus_log.h: Historical profile 0.2.0-historical.1; conditional request payload, runtime/build/readers unknown",
+        "core/common/include/softbus_log.h: calls in return expression not analyzed",
+        "core/common/include/softbus_log.h: detailed syntax partial",
+        "core/common/include/softbus_log.h: preprocessor/build context not expanded",
+        "core/common/log/softbus_log.c: Historical profile 0.2.0-historical.1; conditional request payload, runtime/build/readers unknown",
+        "core/common/log/softbus_log.c: array element value is not whole string material",
+        "core/common/log/softbus_log.c: branch merge is may-flow; no path feasibility proof",
+        "core/common/log/softbus_log.c: preprocessor/build context not expanded",
+        "core/common/log/softbus_log.c: short-circuit effects are may-flow; no path feasibility proof",
+        "core/common/softbus_property/softbus_feature_config.c: Historical profile 0.2.0-historical.1; conditional request payload, runtime/build/readers unknown",
+        "core/common/softbus_property/softbus_feature_config.c: branch merge is may-flow; no path feasibility proof",
+        "core/common/softbus_property/softbus_feature_config.c: historical buffer copy/format output status not summarized; output withheld",
+        "core/common/softbus_property/softbus_feature_config.c: preprocessor/build context not expanded",
+        "core/common/softbus_property/softbus_feature_config.c: short-circuit effects are may-flow; no path feasibility proof",
+        "core/transmission/common/include/softbus_app_info.h: Historical profile 0.2.0-historical.1; conditional request payload, runtime/build/readers unknown",
+        "core/transmission/common/include/softbus_app_info.h: detailed syntax partial",
+        "core/transmission/common/include/softbus_app_info.h: preprocessor/build context not expanded",
+        "core/transmission/common/include/softbus_message_open_channel.h: Historical profile 0.2.0-historical.1; conditional request payload, runtime/build/readers unknown",
+        "core/transmission/common/include/softbus_message_open_channel.h: detailed syntax partial",
+        "core/transmission/common/include/softbus_message_open_channel.h: preprocessor/build context not expanded",
+        "core/transmission/common/src/softbus_message_open_channel.c: Historical profile 0.2.0-historical.1; conditional request payload, runtime/build/readers unknown",
+        "core/transmission/common/src/softbus_message_open_channel.c: branch merge is may-flow; no path feasibility proof",
+        "core/transmission/common/src/softbus_message_open_channel.c: pointer/member assignment requires alias proof",
+        "core/transmission/common/src/softbus_message_open_channel.c: preprocessor/build context not expanded",
+        "core/transmission/common/src/softbus_message_open_channel.c: short-circuit effects are may-flow; no path feasibility proof",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c: Historical profile 0.2.0-historical.1; conditional request payload, runtime/build/readers unknown",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c: branch merge is may-flow; no path feasibility proof",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c: break/continue exits need enclosing-loop proof; loops not analyzed",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c: calls in return expression not analyzed",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c: conditional effects are may-flow; no path feasibility proof",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c: conditional value is may-flow; no path feasibility proof",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c: detailed syntax partial",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c: historical buffer copy/format output status not summarized; output withheld",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c: pointer/member assignment requires alias proof",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c: preprocessor/build context not expanded",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c: reviewed success-edge summary; branch feasibility is unproved and request/reply is not filtered at the log site",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c: short-circuit effects are may-flow; no path feasibility proof",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c: unmodeled call may mutate/escape sensitive value: SoftBusFree",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c: unmodeled call may mutate/escape sensitive value: cJSON_Parse",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c: unsupported statement preproc_def at line 101",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c: unsupported statement preproc_def at line 217",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c: unsupported statement preproc_def at line 295",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_sessionconn.c: Historical profile 0.2.0-historical.1; conditional request payload, runtime/build/readers unknown",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_sessionconn.c: branch merge is may-flow; no path feasibility proof",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_sessionconn.c: break/continue exits need enclosing-loop proof; loops not analyzed",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_sessionconn.c: compound assignment semantics incomplete",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_sessionconn.c: detailed syntax partial",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_sessionconn.c: historical buffer copy/format output status not summarized; output withheld",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_sessionconn.c: preprocessor/build context not expanded",
+        "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_sessionconn.c: short-circuit effects are may-flow; no path feasibility proof"
+      ]
+    }
+  ]
+}

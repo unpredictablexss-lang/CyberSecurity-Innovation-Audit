@@ -1,0 +1,536 @@
+{
+  "schema": "ark-runtime-c1-typedarray-sink-bindings-v3",
+  "repository": "openharmony/arkcompiler_ets_runtime",
+  "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+  "expected_tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+  "resolved_tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+  "tree_matches": true,
+  "object_store": "/mnt/d/openHarmonyScanner/openharmony/.repo/projects/arkcompiler/ets_runtime.git",
+  "checkout_root": "D:\\openHarmonyScanner\\openharmony\\arkcompiler\\ets_runtime",
+  "checkout_matches_pinned_objects": true,
+  "git_lazy_fetch_disabled": true,
+  "scope": "exact source identity for sink chain and selected method/macro/type declarations; not full dependency closure, compiler macro expansion, a build, runtime, or security-impact proof",
+  "reviewed_contract_sources": {
+    "method_registration_and_class_macro": [
+      "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.h",
+      "ecmascript/compiler/builtins/builtins_call_signature_list.h",
+      "ecmascript/compiler/builtins/builtins_call_signature.h"
+    ],
+    "inheritance_and_builder_contract": [
+      "ecmascript/compiler/builtins/builtins_stubs.h",
+      "ecmascript/compiler/stub_builder.h",
+      "ecmascript/compiler/stub_builder-inl.h"
+    ],
+    "target_creator_method_dependencies": [
+      "ecmascript/compiler/builtins/builtins_array_stub_builder.h",
+      "ecmascript/compiler/builtins/builtins_arraybuffer_stub_builder.h",
+      "ecmascript/compiler/call_stub_builder.h",
+      "ecmascript/compiler/new_object_stub_builder.h",
+      "ecmascript/base/typed_array_helper-inl.h"
+    ],
+    "ir_and_element_type_declarations": [
+      "ecmascript/compiler/circuit_builder_helper.h",
+      "ecmascript/compiler/gate.h",
+      "ecmascript/compiler/variable_type.h",
+      "ecmascript/js_dataview.h",
+      "ecmascript/js_hclass.h",
+      "ecmascript/js_typed_array.h",
+      "ecmascript/js_arraybuffer.h"
+    ],
+    "runtime_build_gate_sources": [
+      "BUILD.gn",
+      "js_runtime_config.gni",
+      "ecmascript/compiler/BUILD.gn"
+    ],
+    "interpretation": "These pinned files support source-level declarations and registration review only. No preprocessor/compiler expansion, overload resolution, or full active include closure was captured."
+  },
+  "static_runtime_build_graph": {
+    "observations": [
+      {
+        "id": "typedarray_source_in_optimizer_list",
+        "path": "ecmascript/compiler/BUILD.gn",
+        "line": 86,
+        "source_line": "\"builtins/builtins_typedarray_stub_builder.cpp\","
+      },
+      {
+        "id": "optimizer_source_set_declared",
+        "path": "ecmascript/compiler/BUILD.gn",
+        "line": 292,
+        "source_line": "ohos_source_set(\"libark_jsoptimizer_set\") {"
+      },
+      {
+        "id": "optimizer_source_set_consumes_list",
+        "path": "ecmascript/compiler/BUILD.gn",
+        "line": 294,
+        "source_line": "sources = libark_jsoptimizer_sources"
+      },
+      {
+        "id": "host_stub_compiler_declared",
+        "path": "ecmascript/compiler/BUILD.gn",
+        "line": 521,
+        "source_line": "ohos_executable(\"ark_stub_compiler\") {"
+      },
+      {
+        "id": "host_stub_compiler_depends_on_optimizer_set",
+        "path": "ecmascript/compiler/BUILD.gn",
+        "line": 532,
+        "source_line": "\":libark_jsoptimizer_set\","
+      },
+      {
+        "id": "gen_stub_file_action_declared",
+        "path": "ecmascript/compiler/BUILD.gn",
+        "line": 663,
+        "source_line": "action(\"gen_stub_file\") {"
+      },
+      {
+        "id": "gen_stub_file_uses_host_compiler",
+        "path": "ecmascript/compiler/BUILD.gn",
+        "line": 666,
+        "source_line": "deps = [ \"$js_root/ecmascript/compiler:ark_stub_compiler(${host_toolchain})\" ]"
+      },
+      {
+        "id": "gen_stub_file_emits_stub_an",
+        "path": "ecmascript/compiler/BUILD.gn",
+        "line": 753,
+        "source_line": "outputs = [ \"$stub_file_gen_dir/stub.an\" ]"
+      },
+      {
+        "id": "package_group_declared",
+        "path": "BUILD.gn",
+        "line": 93,
+        "source_line": "group(\"ark_js_packages\") {"
+      },
+      {
+        "id": "package_group_depends_on_runtime",
+        "path": "BUILD.gn",
+        "line": 98,
+        "source_line": "\":libark_jsruntime\","
+      },
+      {
+        "id": "package_group_depends_on_stub_an",
+        "path": "BUILD.gn",
+        "line": 99,
+        "source_line": "\"ecmascript/compiler:stub.an\","
+      },
+      {
+        "id": "optimizer_shared_library_arch_gate",
+        "path": "BUILD.gn",
+        "line": 110,
+        "source_line": "if (is_clang && clang_version != \"9.0.3\" && current_cpu == \"arm64\" &&\nis_ohos) {\ndeps += [\n\"ecmascript/compiler:ark_aot_compiler\",\n\"ecmascript/compiler:libark_jsoptimizer\",",
+        "source_lines": [
+          "if (is_clang && clang_version != \"9.0.3\" && current_cpu == \"arm64\" &&",
+          "is_ohos) {",
+          "deps += [",
+          "\"ecmascript/compiler:ark_aot_compiler\",",
+          "\"ecmascript/compiler:libark_jsoptimizer\","
+        ]
+      },
+      {
+        "id": "optimizer_shared_library_package_dep",
+        "path": "BUILD.gn",
+        "line": 114,
+        "source_line": "\"ecmascript/compiler:libark_jsoptimizer\","
+      }
+    ],
+    "interpretation": "Text-level GN graph only. Conditions are not evaluated; package selection, generated outputs and product runtime use remain unverified."
+  },
+  "bindings": [
+    {
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "expected_blob": "68fb3b0adc4f9062889a861be51b7be90362e37a",
+      "resolved_blob": "68fb3b0adc4f9062889a861be51b7be90362e37a",
+      "recomputed_blob": "68fb3b0adc4f9062889a861be51b7be90362e37a",
+      "expected_sha256": "76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c",
+      "sha256": "76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c",
+      "checkout_sha256": "76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c",
+      "checkout_matches": true,
+      "bytes": 150610,
+      "matches": true
+    },
+    {
+      "path": "ecmascript/compiler/new_object_stub_builder.cpp",
+      "expected_blob": "991ac5ac034a1a027e3200787ec25c55b3f15b69",
+      "resolved_blob": "991ac5ac034a1a027e3200787ec25c55b3f15b69",
+      "recomputed_blob": "991ac5ac034a1a027e3200787ec25c55b3f15b69",
+      "expected_sha256": "3159eee6989838659438af89353dfd37a890c259f60c3af0195110e016a411e0",
+      "sha256": "3159eee6989838659438af89353dfd37a890c259f60c3af0195110e016a411e0",
+      "checkout_sha256": "3159eee6989838659438af89353dfd37a890c259f60c3af0195110e016a411e0",
+      "checkout_matches": true,
+      "bytes": 151323,
+      "matches": true
+    },
+    {
+      "path": "ecmascript/js_typed_array.cpp",
+      "expected_blob": "098c2a22cae3152af3a59063dda25e145f03bbd7",
+      "resolved_blob": "098c2a22cae3152af3a59063dda25e145f03bbd7",
+      "recomputed_blob": "098c2a22cae3152af3a59063dda25e145f03bbd7",
+      "expected_sha256": "e67c0ce082885efb6fa5894f7a1998a41eb4cddfa2e381c8335497e10e2b9bbe",
+      "sha256": "e67c0ce082885efb6fa5894f7a1998a41eb4cddfa2e381c8335497e10e2b9bbe",
+      "checkout_sha256": "e67c0ce082885efb6fa5894f7a1998a41eb4cddfa2e381c8335497e10e2b9bbe",
+      "checkout_matches": true,
+      "bytes": 41859,
+      "matches": true
+    },
+    {
+      "path": "ecmascript/stubs/runtime_stubs.cpp",
+      "expected_blob": "14dc06350881b1fa0fdabeeb8465ae9063224d6c",
+      "resolved_blob": "14dc06350881b1fa0fdabeeb8465ae9063224d6c",
+      "recomputed_blob": "14dc06350881b1fa0fdabeeb8465ae9063224d6c",
+      "expected_sha256": "0c390fb329387ff75943089da0e7eecab4bc1df21da1be4f33db969b2bf79a46",
+      "sha256": "0c390fb329387ff75943089da0e7eecab4bc1df21da1be4f33db969b2bf79a46",
+      "checkout_sha256": "0c390fb329387ff75943089da0e7eecab4bc1df21da1be4f33db969b2bf79a46",
+      "checkout_matches": true,
+      "bytes": 243885,
+      "matches": true
+    },
+    {
+      "path": "ecmascript/stubs/runtime_stub_list.h",
+      "expected_blob": "b570a0b2a016fd808e005eb23e16f80896d0c6fd",
+      "resolved_blob": "b570a0b2a016fd808e005eb23e16f80896d0c6fd",
+      "recomputed_blob": "b570a0b2a016fd808e005eb23e16f80896d0c6fd",
+      "expected_sha256": "fcf0b1daa2660dbbae359ea5a88ee0743d69db994539fc11342e05b394b08e22",
+      "sha256": "fcf0b1daa2660dbbae359ea5a88ee0743d69db994539fc11342e05b394b08e22",
+      "checkout_sha256": "fcf0b1daa2660dbbae359ea5a88ee0743d69db994539fc11342e05b394b08e22",
+      "checkout_matches": true,
+      "bytes": 34309,
+      "matches": true
+    },
+    {
+      "path": "ecmascript/base/typed_array_helper.cpp",
+      "expected_blob": "bcb422fe67f4e670adcca31fffd4da7e2b3b0b21",
+      "resolved_blob": "bcb422fe67f4e670adcca31fffd4da7e2b3b0b21",
+      "recomputed_blob": "bcb422fe67f4e670adcca31fffd4da7e2b3b0b21",
+      "expected_sha256": "3c42388b716e82601cee4e43aedddc8ac709fe1363b0753c7efa24745380110d",
+      "sha256": "3c42388b716e82601cee4e43aedddc8ac709fe1363b0753c7efa24745380110d",
+      "checkout_sha256": "3c42388b716e82601cee4e43aedddc8ac709fe1363b0753c7efa24745380110d",
+      "checkout_matches": true,
+      "bytes": 65211,
+      "matches": true
+    },
+    {
+      "path": "ecmascript/builtins/builtins_typedarray.cpp",
+      "expected_blob": "0fc27c213e1ea80d93e1e3807eec11baf2634832",
+      "resolved_blob": "0fc27c213e1ea80d93e1e3807eec11baf2634832",
+      "recomputed_blob": "0fc27c213e1ea80d93e1e3807eec11baf2634832",
+      "expected_sha256": "14507ac872dc34a6c20b6f448678466f119de94a4ed1de6d91e269640936c81c",
+      "sha256": "14507ac872dc34a6c20b6f448678466f119de94a4ed1de6d91e269640936c81c",
+      "checkout_sha256": "14507ac872dc34a6c20b6f448678466f119de94a4ed1de6d91e269640936c81c",
+      "checkout_matches": true,
+      "bytes": 100209,
+      "matches": true
+    },
+    {
+      "path": "ecmascript/builtins/builtins_typedarray.h",
+      "expected_blob": "b291181c949c7038b7030a216f5bdc0e7474a1c2",
+      "resolved_blob": "b291181c949c7038b7030a216f5bdc0e7474a1c2",
+      "recomputed_blob": "b291181c949c7038b7030a216f5bdc0e7474a1c2",
+      "expected_sha256": "651d426c00c1d8bc6503c1d717decf42b28c61c57336e9418ad422604a6a1be7",
+      "sha256": "651d426c00c1d8bc6503c1d717decf42b28c61c57336e9418ad422604a6a1be7",
+      "checkout_sha256": "651d426c00c1d8bc6503c1d717decf42b28c61c57336e9418ad422604a6a1be7",
+      "checkout_matches": true,
+      "bytes": 15709,
+      "matches": true
+    },
+    {
+      "path": "ecmascript/builtins/builtins_arraybuffer.cpp",
+      "expected_blob": "2aa22c58803df690a5a2b326451e02297dc5e2f6",
+      "resolved_blob": "2aa22c58803df690a5a2b326451e02297dc5e2f6",
+      "recomputed_blob": "2aa22c58803df690a5a2b326451e02297dc5e2f6",
+      "expected_sha256": "4d388d997313cf7c900f1f0d54fbe826266845665424e32cc9dd4cdbaa62dcc9",
+      "sha256": "4d388d997313cf7c900f1f0d54fbe826266845665424e32cc9dd4cdbaa62dcc9",
+      "checkout_sha256": "4d388d997313cf7c900f1f0d54fbe826266845665424e32cc9dd4cdbaa62dcc9",
+      "checkout_matches": true,
+      "bytes": 43945,
+      "matches": true
+    },
+    {
+      "path": "ecmascript/builtins/builtins_arraybuffer.h",
+      "expected_blob": "c938b4263bdae62c1418dc8ca159b2ba8bc0a493",
+      "resolved_blob": "c938b4263bdae62c1418dc8ca159b2ba8bc0a493",
+      "recomputed_blob": "c938b4263bdae62c1418dc8ca159b2ba8bc0a493",
+      "expected_sha256": "c2a4fb1a18e785d1f105eee52ac71a38386b93a6ac80b685c438edf48e3fe9e6",
+      "sha256": "c2a4fb1a18e785d1f105eee52ac71a38386b93a6ac80b685c438edf48e3fe9e6",
+      "checkout_sha256": "c2a4fb1a18e785d1f105eee52ac71a38386b93a6ac80b685c438edf48e3fe9e6",
+      "checkout_matches": true,
+      "bytes": 8998,
+      "matches": true
+    },
+    {
+      "path": "ecmascript/object_operator.cpp",
+      "expected_blob": "d885881517adb4a892ec9968cfd3e457e2bc2afd",
+      "resolved_blob": "d885881517adb4a892ec9968cfd3e457e2bc2afd",
+      "recomputed_blob": "d885881517adb4a892ec9968cfd3e457e2bc2afd",
+      "expected_sha256": "05f1eed11c34f0dd178b35515ca7b7fbbe737a5468fdb8abb2727d8e1abfe21b",
+      "sha256": "05f1eed11c34f0dd178b35515ca7b7fbbe737a5468fdb8abb2727d8e1abfe21b",
+      "checkout_sha256": "05f1eed11c34f0dd178b35515ca7b7fbbe737a5468fdb8abb2727d8e1abfe21b",
+      "checkout_matches": true,
+      "bytes": 47496,
+      "matches": true
+    },
+    {
+      "path": "ecmascript/global_env.h",
+      "expected_blob": "715a0c316fd7bb52fe382eec85adb450c8ce7628",
+      "resolved_blob": "715a0c316fd7bb52fe382eec85adb450c8ce7628",
+      "recomputed_blob": "715a0c316fd7bb52fe382eec85adb450c8ce7628",
+      "expected_sha256": "c3bbff0a1f911ea620f7bceb5e58ab6899204bed3da0aa38ecb48bf8f029da3f",
+      "sha256": "c3bbff0a1f911ea620f7bceb5e58ab6899204bed3da0aa38ecb48bf8f029da3f",
+      "checkout_sha256": "c3bbff0a1f911ea620f7bceb5e58ab6899204bed3da0aa38ecb48bf8f029da3f",
+      "checkout_matches": true,
+      "bytes": 20712,
+      "matches": true
+    },
+    {
+      "path": "ecmascript/compiler/BUILD.gn",
+      "expected_blob": "e6f28ab0562deea4a0ece18851e1ea927b806c1d",
+      "resolved_blob": "e6f28ab0562deea4a0ece18851e1ea927b806c1d",
+      "recomputed_blob": "e6f28ab0562deea4a0ece18851e1ea927b806c1d",
+      "expected_sha256": "34f23416b2983f5635c00f881b444c4b15975e7ff8d9657b03ae65847ada103a",
+      "sha256": "34f23416b2983f5635c00f881b444c4b15975e7ff8d9657b03ae65847ada103a",
+      "checkout_sha256": "34f23416b2983f5635c00f881b444c4b15975e7ff8d9657b03ae65847ada103a",
+      "checkout_matches": true,
+      "bytes": 23777,
+      "matches": true
+    },
+    {
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.h",
+      "expected_blob": "017286724e4cd6df1a369589293efe920660c4c6",
+      "resolved_blob": "017286724e4cd6df1a369589293efe920660c4c6",
+      "recomputed_blob": "017286724e4cd6df1a369589293efe920660c4c6",
+      "expected_sha256": "f5b25eed46bfe6e951c6ad8b79ff76bfee8d402868839d21e6d41cd84ef3f8e3",
+      "sha256": "f5b25eed46bfe6e951c6ad8b79ff76bfee8d402868839d21e6d41cd84ef3f8e3",
+      "checkout_sha256": "f5b25eed46bfe6e951c6ad8b79ff76bfee8d402868839d21e6d41cd84ef3f8e3",
+      "checkout_matches": true,
+      "bytes": 7999,
+      "matches": true
+    },
+    {
+      "path": "ecmascript/compiler/builtins/builtins_call_signature_list.h",
+      "expected_blob": "694d77ca7f92656b13650c4b115b3cbeee5917f0",
+      "resolved_blob": "694d77ca7f92656b13650c4b115b3cbeee5917f0",
+      "recomputed_blob": "694d77ca7f92656b13650c4b115b3cbeee5917f0",
+      "expected_sha256": "d54119de6af7ccf12268409af9ec053ebbf44f404956e216394da1499e197958",
+      "sha256": "d54119de6af7ccf12268409af9ec053ebbf44f404956e216394da1499e197958",
+      "checkout_sha256": "d54119de6af7ccf12268409af9ec053ebbf44f404956e216394da1499e197958",
+      "checkout_matches": true,
+      "bytes": 26173,
+      "matches": true
+    },
+    {
+      "path": "ecmascript/compiler/builtins/builtins_call_signature.h",
+      "expected_blob": "1ad9f2cc2203c7c4d64aa3a41c818452425c2491",
+      "resolved_blob": "1ad9f2cc2203c7c4d64aa3a41c818452425c2491",
+      "recomputed_blob": "1ad9f2cc2203c7c4d64aa3a41c818452425c2491",
+      "expected_sha256": "9701044182b36129d9bd5b0d24e8cd8dcee81b8a03327e2d397f0d5f208372e9",
+      "sha256": "9701044182b36129d9bd5b0d24e8cd8dcee81b8a03327e2d397f0d5f208372e9",
+      "checkout_sha256": "9701044182b36129d9bd5b0d24e8cd8dcee81b8a03327e2d397f0d5f208372e9",
+      "checkout_matches": true,
+      "bytes": 21206,
+      "matches": true
+    },
+    {
+      "path": "ecmascript/compiler/builtins/builtins_stubs.h",
+      "expected_blob": "5edb8446151cb3b21f43bcbaceeb9d777dd89801",
+      "resolved_blob": "5edb8446151cb3b21f43bcbaceeb9d777dd89801",
+      "recomputed_blob": "5edb8446151cb3b21f43bcbaceeb9d777dd89801",
+      "expected_sha256": "6dfb74b71c999d063a4391ebd5f848769b11df518c7b8fd88cc794a70e92e4a7",
+      "sha256": "6dfb74b71c999d063a4391ebd5f848769b11df518c7b8fd88cc794a70e92e4a7",
+      "checkout_sha256": "6dfb74b71c999d063a4391ebd5f848769b11df518c7b8fd88cc794a70e92e4a7",
+      "checkout_matches": true,
+      "bytes": 9069,
+      "matches": true
+    },
+    {
+      "path": "ecmascript/compiler/builtins/builtins_array_stub_builder.h",
+      "expected_blob": "c9b5a66c12c657533047286ec79406a639fb8232",
+      "resolved_blob": "c9b5a66c12c657533047286ec79406a639fb8232",
+      "recomputed_blob": "c9b5a66c12c657533047286ec79406a639fb8232",
+      "expected_sha256": "1804426bca64803a2a7b70c63004eb5236718daa075c67d74c68fd5f21ef151c",
+      "sha256": "1804426bca64803a2a7b70c63004eb5236718daa075c67d74c68fd5f21ef151c",
+      "checkout_sha256": "1804426bca64803a2a7b70c63004eb5236718daa075c67d74c68fd5f21ef151c",
+      "checkout_matches": true,
+      "bytes": 12190,
+      "matches": true
+    },
+    {
+      "path": "ecmascript/compiler/builtins/builtins_arraybuffer_stub_builder.h",
+      "expected_blob": "89167b4a2160f153a9445c19e3488756bbde8576",
+      "resolved_blob": "89167b4a2160f153a9445c19e3488756bbde8576",
+      "recomputed_blob": "89167b4a2160f153a9445c19e3488756bbde8576",
+      "expected_sha256": "85e68db5ae84bffba1247d8ce186edd7e562c6560a0b82cfe3422e7669d906aa",
+      "sha256": "85e68db5ae84bffba1247d8ce186edd7e562c6560a0b82cfe3422e7669d906aa",
+      "checkout_sha256": "85e68db5ae84bffba1247d8ce186edd7e562c6560a0b82cfe3422e7669d906aa",
+      "checkout_matches": true,
+      "bytes": 2671,
+      "matches": true
+    },
+    {
+      "path": "ecmascript/compiler/call_stub_builder.h",
+      "expected_blob": "d1fb1b9ef28ff8c928a6e8dfdd9aed67e42ef6aa",
+      "resolved_blob": "d1fb1b9ef28ff8c928a6e8dfdd9aed67e42ef6aa",
+      "recomputed_blob": "d1fb1b9ef28ff8c928a6e8dfdd9aed67e42ef6aa",
+      "expected_sha256": "18af6653e22c36dc1fce30d9b7b7eda9d616084add2b1c6d1faa6d89c6c895ae",
+      "sha256": "18af6653e22c36dc1fce30d9b7b7eda9d616084add2b1c6d1faa6d89c6c895ae",
+      "checkout_sha256": "18af6653e22c36dc1fce30d9b7b7eda9d616084add2b1c6d1faa6d89c6c895ae",
+      "checkout_matches": true,
+      "bytes": 9597,
+      "matches": true
+    },
+    {
+      "path": "ecmascript/compiler/stub_builder.h",
+      "expected_blob": "9e2fbd3ede1da91133dcd936018285e597944515",
+      "resolved_blob": "9e2fbd3ede1da91133dcd936018285e597944515",
+      "recomputed_blob": "9e2fbd3ede1da91133dcd936018285e597944515",
+      "expected_sha256": "a11ca83c0a8bbe16ea4ce9dabb2ab3aca2ee9c680a95433371e79494e2a92cb0",
+      "sha256": "a11ca83c0a8bbe16ea4ce9dabb2ab3aca2ee9c680a95433371e79494e2a92cb0",
+      "checkout_sha256": "a11ca83c0a8bbe16ea4ce9dabb2ab3aca2ee9c680a95433371e79494e2a92cb0",
+      "checkout_matches": true,
+      "bytes": 93596,
+      "matches": true
+    },
+    {
+      "path": "ecmascript/compiler/stub_builder-inl.h",
+      "expected_blob": "c0521ab7a55cd63850736c2db8a290115965373c",
+      "resolved_blob": "c0521ab7a55cd63850736c2db8a290115965373c",
+      "recomputed_blob": "c0521ab7a55cd63850736c2db8a290115965373c",
+      "expected_sha256": "e3e840771be228a2c5e6c15576ecdf3f06175622b5840525520345f1d22d76be",
+      "sha256": "e3e840771be228a2c5e6c15576ecdf3f06175622b5840525520345f1d22d76be",
+      "checkout_sha256": "e3e840771be228a2c5e6c15576ecdf3f06175622b5840525520345f1d22d76be",
+      "checkout_matches": true,
+      "bytes": 176499,
+      "matches": true
+    },
+    {
+      "path": "ecmascript/compiler/circuit_builder_helper.h",
+      "expected_blob": "d990380aff718b31de4cafa35663cb2d70f10300",
+      "resolved_blob": "d990380aff718b31de4cafa35663cb2d70f10300",
+      "recomputed_blob": "d990380aff718b31de4cafa35663cb2d70f10300",
+      "expected_sha256": "7b3c9dd0934e9edbed1d4774e0bb92ef01ed32fbf05f8138cefcaa4e49ce0f18",
+      "sha256": "7b3c9dd0934e9edbed1d4774e0bb92ef01ed32fbf05f8138cefcaa4e49ce0f18",
+      "checkout_sha256": "7b3c9dd0934e9edbed1d4774e0bb92ef01ed32fbf05f8138cefcaa4e49ce0f18",
+      "checkout_matches": true,
+      "bytes": 12356,
+      "matches": true
+    },
+    {
+      "path": "ecmascript/compiler/gate.h",
+      "expected_blob": "e1f47a40708012e5d42995fe82e4be097cc2cd19",
+      "resolved_blob": "e1f47a40708012e5d42995fe82e4be097cc2cd19",
+      "recomputed_blob": "e1f47a40708012e5d42995fe82e4be097cc2cd19",
+      "expected_sha256": "85330dc30f41373d97864afe5289990f14c56198b07cec6c1fac7ce50e8f09f5",
+      "sha256": "85330dc30f41373d97864afe5289990f14c56198b07cec6c1fac7ce50e8f09f5",
+      "checkout_sha256": "85330dc30f41373d97864afe5289990f14c56198b07cec6c1fac7ce50e8f09f5",
+      "checkout_matches": true,
+      "bytes": 11348,
+      "matches": true
+    },
+    {
+      "path": "ecmascript/compiler/variable_type.h",
+      "expected_blob": "72008694c6a16f6532b261d0d9d2493273e383ce",
+      "resolved_blob": "72008694c6a16f6532b261d0d9d2493273e383ce",
+      "recomputed_blob": "72008694c6a16f6532b261d0d9d2493273e383ce",
+      "expected_sha256": "7269b2111d2be7464b38ccf7029786e83a34b4159a16fa1d1759f18c7a5aca55",
+      "sha256": "7269b2111d2be7464b38ccf7029786e83a34b4159a16fa1d1759f18c7a5aca55",
+      "checkout_sha256": "7269b2111d2be7464b38ccf7029786e83a34b4159a16fa1d1759f18c7a5aca55",
+      "checkout_matches": true,
+      "bytes": 3822,
+      "matches": true
+    },
+    {
+      "path": "ecmascript/compiler/new_object_stub_builder.h",
+      "expected_blob": "ecdf871b20e884e013ce0f26877ef404e4950cb0",
+      "resolved_blob": "ecdf871b20e884e013ce0f26877ef404e4950cb0",
+      "recomputed_blob": "ecdf871b20e884e013ce0f26877ef404e4950cb0",
+      "expected_sha256": "d84a72bb1a252fb9ea2b8ff01e702c3a0c952681e211d8f1a850f1880217778b",
+      "sha256": "d84a72bb1a252fb9ea2b8ff01e702c3a0c952681e211d8f1a850f1880217778b",
+      "checkout_sha256": "d84a72bb1a252fb9ea2b8ff01e702c3a0c952681e211d8f1a850f1880217778b",
+      "checkout_matches": true,
+      "bytes": 12540,
+      "matches": true
+    },
+    {
+      "path": "ecmascript/js_dataview.h",
+      "expected_blob": "070c89334ccfd102f02153863176e05295113bfd",
+      "resolved_blob": "070c89334ccfd102f02153863176e05295113bfd",
+      "recomputed_blob": "070c89334ccfd102f02153863176e05295113bfd",
+      "expected_sha256": "4ad3254492a91ee9f22e61eefa1fd98932fdeea5becdb29b79339306d79da802",
+      "sha256": "4ad3254492a91ee9f22e61eefa1fd98932fdeea5becdb29b79339306d79da802",
+      "checkout_sha256": "4ad3254492a91ee9f22e61eefa1fd98932fdeea5becdb29b79339306d79da802",
+      "checkout_matches": true,
+      "bytes": 1884,
+      "matches": true
+    },
+    {
+      "path": "ecmascript/js_hclass.h",
+      "expected_blob": "fca61941b181d1796d485e387054221d6f136337",
+      "resolved_blob": "fca61941b181d1796d485e387054221d6f136337",
+      "recomputed_blob": "fca61941b181d1796d485e387054221d6f136337",
+      "expected_sha256": "36d38fd0d12b05c21069a663418b569063e96912f6758b9611b832a78477d4e3",
+      "sha256": "36d38fd0d12b05c21069a663418b569063e96912f6758b9611b832a78477d4e3",
+      "checkout_sha256": "36d38fd0d12b05c21069a663418b569063e96912f6758b9611b832a78477d4e3",
+      "checkout_matches": true,
+      "bytes": 106789,
+      "matches": true
+    },
+    {
+      "path": "ecmascript/js_typed_array.h",
+      "expected_blob": "d59bc3138542afa22bfe2a2f42f5fa756a6dae1a",
+      "resolved_blob": "d59bc3138542afa22bfe2a2f42f5fa756a6dae1a",
+      "recomputed_blob": "d59bc3138542afa22bfe2a2f42f5fa756a6dae1a",
+      "expected_sha256": "a22084f1746bbfe86656a92d4847bebfab3057e667b25bcb0853cc648c29e669",
+      "sha256": "a22084f1746bbfe86656a92d4847bebfab3057e667b25bcb0853cc648c29e669",
+      "checkout_sha256": "a22084f1746bbfe86656a92d4847bebfab3057e667b25bcb0853cc648c29e669",
+      "checkout_matches": true,
+      "bytes": 7275,
+      "matches": true
+    },
+    {
+      "path": "ecmascript/js_arraybuffer.h",
+      "expected_blob": "a6da193e8a91fe42706aab71ce71d92c00bb8adf",
+      "resolved_blob": "a6da193e8a91fe42706aab71ce71d92c00bb8adf",
+      "recomputed_blob": "a6da193e8a91fe42706aab71ce71d92c00bb8adf",
+      "expected_sha256": "fe09165a245f519938012ad9deab67635cc0d52953fb26151771504fb23fe863",
+      "sha256": "fe09165a245f519938012ad9deab67635cc0d52953fb26151771504fb23fe863",
+      "checkout_sha256": "fe09165a245f519938012ad9deab67635cc0d52953fb26151771504fb23fe863",
+      "checkout_matches": true,
+      "bytes": 2280,
+      "matches": true
+    },
+    {
+      "path": "ecmascript/base/typed_array_helper-inl.h",
+      "expected_blob": "172fa188b64ed23d0714c4f4cd0ef66bcbb8e1cf",
+      "resolved_blob": "172fa188b64ed23d0714c4f4cd0ef66bcbb8e1cf",
+      "recomputed_blob": "172fa188b64ed23d0714c4f4cd0ef66bcbb8e1cf",
+      "expected_sha256": "ecad66a6acb1a19f4eed9b84ce9f86f565348ad0be8c3411643ebace7a8ee559",
+      "sha256": "ecad66a6acb1a19f4eed9b84ce9f86f565348ad0be8c3411643ebace7a8ee559",
+      "checkout_sha256": "ecad66a6acb1a19f4eed9b84ce9f86f565348ad0be8c3411643ebace7a8ee559",
+      "checkout_matches": true,
+      "bytes": 22772,
+      "matches": true
+    },
+    {
+      "path": "BUILD.gn",
+      "expected_blob": "b3c8effde42ae810e825437b7cfcaabf1a3fdbdf",
+      "resolved_blob": "b3c8effde42ae810e825437b7cfcaabf1a3fdbdf",
+      "recomputed_blob": "b3c8effde42ae810e825437b7cfcaabf1a3fdbdf",
+      "expected_sha256": "8e5f0d4d829578200b75175ea81e8ef2c8370fe4c331ab6a3b255cad95988a89",
+      "sha256": "8e5f0d4d829578200b75175ea81e8ef2c8370fe4c331ab6a3b255cad95988a89",
+      "checkout_sha256": "8e5f0d4d829578200b75175ea81e8ef2c8370fe4c331ab6a3b255cad95988a89",
+      "checkout_matches": true,
+      "bytes": 82005,
+      "matches": true
+    },
+    {
+      "path": "js_runtime_config.gni",
+      "expected_blob": "c8d1de004c93829a5236f497b911d268647a8761",
+      "resolved_blob": "c8d1de004c93829a5236f497b911d268647a8761",
+      "recomputed_blob": "c8d1de004c93829a5236f497b911d268647a8761",
+      "expected_sha256": "c088d81878bd6b3c38244e8e1ee9ab90252f64029d85e68a6c23163725c3bbb1",
+      "sha256": "c088d81878bd6b3c38244e8e1ee9ab90252f64029d85e68a6c23163725c3bbb1",
+      "checkout_sha256": "c088d81878bd6b3c38244e8e1ee9ab90252f64029d85e68a6c23163725c3bbb1",
+      "checkout_matches": true,
+      "bytes": 22839,
+      "matches": true
+    }
+  ],
+  "all_bindings_match": true
+}

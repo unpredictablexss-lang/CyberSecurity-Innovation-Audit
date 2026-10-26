@@ -1,0 +1,15 @@
+[
+  {
+    "sample_id": "write_bounds_safe",
+    "data_origin": "synthetic",
+    "family": "DATA-02",
+    "expected_rule": null,
+    "file": "write_bounds_safe.cpp",
+    "split": "design",
+    "variant": "safe",
+    "control_rules": [
+      "ipc.parcel.write-bounds"
+    ],
+    "notes": "ReadRawData writes exactly the declared destination size; no Parcel-derived request value controls the write length."
+  }
+]

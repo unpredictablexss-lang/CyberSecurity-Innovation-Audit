@@ -1,0 +1,252 @@
+{
+  "vulnerable_parent_6_0": {
+    "commit": "5ab1905a8fba8d07e9ab4a9453a7787ec274a1a8",
+    "blob": "78e83fea67a2db3297cc59f07566a0c0b6153e7a",
+    "bytes": 185698,
+    "sha256": "aa401c305ed30b70007917d97b726986a26aff2d00fb49649466533f4a48a920",
+    "parse_status": "partial",
+    "parse_issues": [
+      {
+        "kind": "missing",
+        "start_line": 2807,
+        "end_line": 2807
+      },
+      {
+        "kind": "error",
+        "start_line": 3255,
+        "end_line": 3255
+      },
+      {
+        "kind": "error",
+        "start_line": 3256,
+        "end_line": 3259
+      },
+      {
+        "kind": "error",
+        "start_line": 5011,
+        "end_line": 5011
+      },
+      {
+        "kind": "error",
+        "start_line": 5011,
+        "end_line": 5011
+      },
+      {
+        "kind": "error",
+        "start_line": 5016,
+        "end_line": 5016
+      },
+      {
+        "kind": "error",
+        "start_line": 5016,
+        "end_line": 5016
+      },
+      {
+        "kind": "error",
+        "start_line": 5020,
+        "end_line": 5020
+      },
+      {
+        "kind": "error",
+        "start_line": 5020,
+        "end_line": 5021
+      },
+      {
+        "kind": "error",
+        "start_line": 5026,
+        "end_line": 5026
+      },
+      {
+        "kind": "error",
+        "start_line": 5026,
+        "end_line": 5026
+      },
+      {
+        "kind": "error",
+        "start_line": 5032,
+        "end_line": 5032
+      },
+      {
+        "kind": "error",
+        "start_line": 5032,
+        "end_line": 5032
+      },
+      {
+        "kind": "error",
+        "start_line": 5037,
+        "end_line": 5037
+      },
+      {
+        "kind": "error",
+        "start_line": 5037,
+        "end_line": 5037
+      },
+      {
+        "kind": "error",
+        "start_line": 5043,
+        "end_line": 5043
+      },
+      {
+        "kind": "error",
+        "start_line": 5043,
+        "end_line": 5043
+      },
+      {
+        "kind": "error",
+        "start_line": 5048,
+        "end_line": 5048
+      },
+      {
+        "kind": "error",
+        "start_line": 5048,
+        "end_line": 5048
+      },
+      {
+        "kind": "error",
+        "start_line": 5054,
+        "end_line": 5054
+      },
+      {
+        "kind": "error",
+        "start_line": 5054,
+        "end_line": 5054
+      },
+      {
+        "kind": "error",
+        "start_line": 5059,
+        "end_line": 5059
+      },
+      {
+        "kind": "error",
+        "start_line": 5059,
+        "end_line": 5059
+      }
+    ],
+    "function_found": true
+  },
+  "fixed_merge_6_0": {
+    "commit": "4cf313408de7b6d807465ea2bb22e434269b7c5e",
+    "blob": "27e93e338ced03aeed6e7d892e29d4d0740f3653",
+    "bytes": 185982,
+    "sha256": "332a66637fef9c669fdb85dd74c9be861fb01adb8fa8a95871e1a407e9210483",
+    "parse_status": "partial",
+    "parse_issues": [
+      {
+        "kind": "missing",
+        "start_line": 2807,
+        "end_line": 2807
+      },
+      {
+        "kind": "error",
+        "start_line": 3255,
+        "end_line": 3255
+      },
+      {
+        "kind": "error",
+        "start_line": 3256,
+        "end_line": 3259
+      },
+      {
+        "kind": "error",
+        "start_line": 5017,
+        "end_line": 5017
+      },
+      {
+        "kind": "error",
+        "start_line": 5017,
+        "end_line": 5017
+      },
+      {
+        "kind": "error",
+        "start_line": 5022,
+        "end_line": 5022
+      },
+      {
+        "kind": "error",
+        "start_line": 5022,
+        "end_line": 5022
+      },
+      {
+        "kind": "error",
+        "start_line": 5026,
+        "end_line": 5026
+      },
+      {
+        "kind": "error",
+        "start_line": 5026,
+        "end_line": 5027
+      },
+      {
+        "kind": "error",
+        "start_line": 5032,
+        "end_line": 5032
+      },
+      {
+        "kind": "error",
+        "start_line": 5032,
+        "end_line": 5032
+      },
+      {
+        "kind": "error",
+        "start_line": 5038,
+        "end_line": 5038
+      },
+      {
+        "kind": "error",
+        "start_line": 5038,
+        "end_line": 5038
+      },
+      {
+        "kind": "error",
+        "start_line": 5043,
+        "end_line": 5043
+      },
+      {
+        "kind": "error",
+        "start_line": 5043,
+        "end_line": 5043
+      },
+      {
+        "kind": "error",
+        "start_line": 5049,
+        "end_line": 5049
+      },
+      {
+        "kind": "error",
+        "start_line": 5049,
+        "end_line": 5049
+      },
+      {
+        "kind": "error",
+        "start_line": 5054,
+        "end_line": 5054
+      },
+      {
+        "kind": "error",
+        "start_line": 5054,
+        "end_line": 5054
+      },
+      {
+        "kind": "error",
+        "start_line": 5060,
+        "end_line": 5060
+      },
+      {
+        "kind": "error",
+        "start_line": 5060,
+        "end_line": 5060
+      },
+      {
+        "kind": "error",
+        "start_line": 5065,
+        "end_line": 5065
+      },
+      {
+        "kind": "error",
+        "start_line": 5065,
+        "end_line": 5065
+      }
+    ],
+    "function_found": true
+  }
+}

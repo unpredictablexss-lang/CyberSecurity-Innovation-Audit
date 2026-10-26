@@ -14,25 +14,29 @@ class Value:
     may_differ: bool = False
     detail: str = ''
     valid: bool = True
+    exception_sensitive: bool = False
 
 
 UNKNOWN = Value()
 
 
 class OriginState:
-    def __init__(self, values=None, equivalent=(), invalidated=(), predicates=(), effects=()):
+    def __init__(self, values=None, equivalent=(), invalidated=(), predicates=(), effects=(), exception_checked=()):
         self.values = dict(values or {})
         self.equivalent = frozenset(equivalent)
         self.invalidated = frozenset(invalidated)
         self.predicates = frozenset(predicates)
         self.effects = frozenset(effects)
+        self.exception_checked = frozenset(exception_checked)
 
     def copy(self):
-        return OriginState(self.values, self.equivalent, self.invalidated, self.predicates, self.effects)
+        return OriginState(self.values, self.equivalent, self.invalidated, self.predicates,
+                           self.effects, self.exception_checked)
 
     def key(self):
         return (tuple(sorted(self.values.items())), tuple(sorted(self.equivalent)),
-                tuple(sorted(self.invalidated)), tuple(sorted(self.predicates)), tuple(sorted(self.effects)))
+                tuple(sorted(self.invalidated)), tuple(sorted(self.predicates)), tuple(sorted(self.effects)),
+                tuple(sorted(self.exception_checked)))
 
 
 class OriginEvaluator:
@@ -125,6 +129,9 @@ class OriginEvaluator:
                         for key, value in state.values.items()}
         state.equivalent = frozenset()
         state.predicates = frozenset()
+        # An unknown call can create a new pending exception, so a prior
+        # HasPendingException(false) fact cannot guard later object reads.
+        state.exception_checked = frozenset()
         state.effects |= frozenset(((call.start_point[0] + 1, self.fn.call_name(call)),))
         # Without the C++ callee declaration, GateRef arguments could be bound
         # by non-const reference. Retain aliases of the old object but forget
@@ -235,13 +242,17 @@ class OriginEvaluator:
             hclass = self.value(args[0], state)
             if hclass.kind == 'hclass':
                 cyclic = any(start <= node.start_byte < end for start, end in self.cyclic_ranges)
+                details = [part for part in (hclass.detail, 'cyclic_sample' if cyclic else '') if part]
                 return Value('type', identity=f'token:{node.start_byte}', origin=hclass.origin,
                              origin_line=node.start_point[0] + 1, valid=hclass.valid,
-                             detail='cyclic_sample' if cyclic else '')
+                             detail=','.join(details))
         if name in ('LoadHClass', 'this->LoadHClass') and len(args) == 1:
             obj = self.value(args[0], state)
             if obj.kind == 'object':
-                return Value('hclass', origin=obj.identity, origin_line=node.start_point[0] + 1)
+                unchecked_exception = (obj.exception_sensitive and obj.identity not in state.exception_checked)
+                return Value('hclass', origin=obj.identity, origin_line=node.start_point[0] + 1,
+                             detail='exception_state_unchecked' if unchecked_exception else '',
+                             valid=not unchecked_exception)
         receiver = node.child_by_field_name('function')
         if receiver and receiver.type == 'field_expression':
             field = fn.text(receiver.child_by_field_name('field'))
@@ -253,7 +264,8 @@ class OriginEvaluator:
                 if source.kind == 'object':
                     return Value('object', f'new:{node.start_byte}', origin=source.identity,
                                  origin_line=source.origin_line, creation_line=node.start_point[0] + 1,
-                                 may_differ=self.model.species_may_change_type)
+                                 may_differ=self.model.species_may_change_type,
+                                 exception_sensitive=True)
         return Value('unknown', identity=f'expr:{node.start_byte}')
 
     def update(self, instruction, state):
@@ -309,6 +321,8 @@ class OriginEvaluator:
         token = self.value(args[model.token_argument], state)
         if target.kind != 'object' or token.kind != 'type':
             return ('unknown', target, token, 'unresolved_target_or_type_origin')
+        if 'exception_state_unchecked' in token.detail.split(','):
+            return ('unknown', target, token, 'new_typed_array_type_read_before_exception_check')
         guarantee = (self.token_key(token), target.identity)
         if guarantee in state.equivalent or (token.origin == target.identity and token.valid):
             return ('matched', target, token, 'target_origin_or_proved_type_equality')
@@ -326,6 +340,14 @@ class OriginEvaluator:
     def refine(self, condition, truth, state):
         fn = self.fn
         written = compact(fn.text(condition))
+        if (condition.type == 'call_expression' and fn.call_name(condition) == 'HasPendingException'
+                and len(fn.arguments(condition)) == 1 and not truth and not fn.resolve('HasPendingException', condition)):
+            # A false pending-exception branch validates only exception-
+            # sensitive objects already created and still tracked on this path.
+            state.exception_checked |= frozenset(
+                value.identity for value in state.values.values()
+                if value.kind == 'object' and value.exception_sensitive)
+            return state
         if written in ('true', 'True()', 'Boolean(true)'):
             return state if truth else None
         if written in ('false', 'False()', 'Boolean(false)'):

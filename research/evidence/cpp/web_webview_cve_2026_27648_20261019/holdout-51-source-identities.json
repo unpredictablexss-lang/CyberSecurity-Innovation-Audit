@@ -1,0 +1,64 @@
+{
+  "designation": "independent same-mechanism held-out release branch; not used to author/refine detector v0.3.6",
+  "source_repository": "OpenHarmony-TPC/chromium_src",
+  "source_files": {
+    "vulnerable": {
+      "upstream_commit": "5e47fecda669ff1f8834e11ab9cc9aaa2502355b",
+      "path": "ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc",
+      "blob": "3be4407670b14e520ae2639b15fca849d0f162ba",
+      "bytes": 145993,
+      "sha256": "0c21055eaa88a049c21193afb1622596223e6319aee1ab92323055536434b547",
+      "fragment_sha256": "53320b9416f57cb394c6148b66589850922bb748171e2ba80f73cf77e6764c6d",
+      "fragment_bytes": 4428,
+      "parse_status_full_file": "partial",
+      "parse_status_fragment": "complete",
+      "parse_issues_full_file": 1,
+      "function_ranges": [
+        {
+          "name": "FlowbufStrAtIndex",
+          "start_line": 3525,
+          "end_line": 3552
+        },
+        {
+          "name": "ProcessNativeProxyResultNewFlowbuf",
+          "start_line": 3554,
+          "end_line": 3671
+        }
+      ]
+    },
+    "fixed": {
+      "upstream_commit": "9082c13cea0f423b99ba0dc7ca105515e7373d44",
+      "path": "ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc",
+      "blob": "2963dd2659a59dcea89e84bb5867d49906b83e8c",
+      "bytes": 146277,
+      "sha256": "eb00268d20acc55ed978b22313411782956049b84638dc8d7187fe3837cd8c8b",
+      "fragment_sha256": "a21333d1542ec8f1d6fde741465c4e4169948ddb663adfc7b9a79321c8d6913e",
+      "fragment_bytes": 4712,
+      "parse_status_full_file": "partial",
+      "parse_status_fragment": "complete",
+      "parse_issues_full_file": 1,
+      "function_ranges": [
+        {
+          "name": "FlowbufStrAtIndex",
+          "start_line": 3525,
+          "end_line": 3557
+        },
+        {
+          "name": "ProcessNativeProxyResultNewFlowbuf",
+          "start_line": 3559,
+          "end_line": 3677
+        }
+      ]
+    }
+  },
+  "snapshots": {
+    "vulnerable": {
+      "synthetic_commit": "17859babfa4450c9921a54918865907ed545482a",
+      "synthetic_tree": "266ca9ca7f3705478afecb41b8156ff5c2d05cba"
+    },
+    "fixed": {
+      "synthetic_commit": "c533fbf42f77112ab0d650f2dc3719f02f88a7af",
+      "synthetic_tree": "85b398bc546f5a2ce913b6804510b05466e9b023"
+    }
+  }
+}

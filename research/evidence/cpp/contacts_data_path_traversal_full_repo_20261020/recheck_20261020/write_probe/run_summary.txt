@@ -1,0 +1,6 @@
+attack-write#1 code=0 :: {"mode":"attack-write","return_code":0,"written_outside_photo":true,"written_png_header":true,"src_after":false,"pass":true}
+attack-write#2 code=0 :: {"mode":"attack-write","return_code":0,"written_outside_photo":true,"written_png_header":true,"src_after":false,"pass":true}
+attack-write#3 code=0 :: {"mode":"attack-write","return_code":0,"written_outside_photo":true,"written_png_header":true,"src_after":false,"pass":true}
+fixed-write#1 code=0 :: {"mode":"fixed-write","return_code":-1,"written_outside_photo":false,"written_png_header":false,"src_after":true,"pass":true}
+fixed-write#2 code=0 :: {"mode":"fixed-write","return_code":-1,"written_outside_photo":false,"written_png_header":false,"src_after":true,"pass":true}
+fixed-write#3 code=0 :: {"mode":"fixed-write","return_code":-1,"written_outside_photo":false,"written_png_header":false,"src_after":true,"pass":true}

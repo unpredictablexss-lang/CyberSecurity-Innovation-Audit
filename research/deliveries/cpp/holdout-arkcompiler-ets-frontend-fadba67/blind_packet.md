@@ -20,555 +20,457 @@ std::string NormalizePathForExportFilter(std::string fileName)
 
 ## F002
 
-Symbol: `ark::es2panda::lsp::ShouldCollectExportInfo`. Source-relative lines: 89–93.
+Source: `ets2panda/lsp/src/class_hierarchy_info.cpp`; symbol: `ark::es2panda::lsp::CreateClassPropertyItem`. Source-relative lines: 172–185.
 
 ```cpp
-bool ShouldCollectExportInfo(const std::string &fileName)
+std::shared_ptr<ClassPropertyItem> CreateClassPropertyItem(const ir::ClassProperty *property,
+                                                           const std::string &propertyName, std::string detail)
 {
-    static constexpr std::string_view OH_SDK_ETS_DIR = "/sdk/default/openharmony/ets/";
-    return NormalizePathForExportFilter(fileName).find(OH_SDK_ETS_DIR) == std::string::npos;
+    if (property == nullptr || propertyName.empty() || detail.empty()) {
+        return nullptr;
+    }
+    AccessModifierStyle access = AccessModifierStyle::PUBLIC;
+    if (property->IsProtected()) {
+        access = AccessModifierStyle::PROTECTED;
+    }
+    auto item = std::make_shared<ClassPropertyItem>(access, std::move(detail));
+    item->SetVariableName(propertyName);
+    return item;
 }
 ```
 
 ## F003
 
-Symbol: `ark::es2panda::lsp::NormalizeTypeText`. Source-relative lines: 139–156.
+Source: `ets2panda/lsp/src/create_type_help_items.cpp`; symbol: `ark::es2panda::lsp::GetEffectiveTypeParameterDeclarations`. Source-relative lines: 54–81.
 
 ```cpp
-std::string NormalizeTypeText(std::string typeText)
+std::vector<checker::Type *> GetEffectiveTypeParameterDeclarations(const ir::AstNode *node,
+                                                                   std::vector<checker::Type *> &result)
 {
-    std::string normalized;
-    normalized.reserve(typeText.size());
-    bool pendingSpace = false;
-    for (unsigned char c : typeText) {
-        if (std::isspace(c) != 0) {
-            pendingSpace = !normalized.empty();
-            continue;
-        }
-        if (pendingSpace) {
-            normalized.push_back(' ');
-            pendingSpace = false;
-        }
-        normalized.push_back(static_cast<char>(c));
+    if (node == nullptr) {
+        return result;
     }
-    return normalized;
+    const ir::TSTypeParameterDeclaration *typeParams = nullptr;
+    if (node->IsClassDefinition()) {
+        typeParams = node->AsClassDefinition()->TypeParams();
+    } else if (node->IsTSInterfaceDeclaration()) {
+        typeParams = node->AsTSInterfaceDeclaration()->TypeParams();
+    } else if (node->IsTSTypeAliasDeclaration()) {
+        typeParams = node->AsTSTypeAliasDeclaration()->TypeParams();
+    } else if (node->IsETSStructDeclaration()) {
+        typeParams = node->AsETSStructDeclaration()->Definition()->TypeParams();
+    } else if (node->IsTSEnumDeclaration()) {
+        auto members = node->AsTSEnumDeclaration()->Members();
+        for (auto member : members) {
+            result.push_back(reinterpret_cast<checker::Type *>(member->AsTSEnumMember()->Type()));
+        }
+    }
+    if (typeParams != nullptr) {
+        for (auto *param : typeParams->Params()) {
+            result.push_back(reinterpret_cast<checker::Type *>(param));
+        }
+    }
+    return result;
 }
 ```
 
 ## F004
 
-Symbol: `ark::es2panda::lsp::BuildDisplayNameForExport`. Source-relative lines: 202–212.
+Source: `ets2panda/lsp/src/formatting/formatting_context.cpp`; symbol: `ark::es2panda::lsp::&FormattingContext::GetNextToken()const`. Source-relative lines: 65–68.
 
 ```cpp
-std::string BuildDisplayNameForExport(ir::AstNodeType declType, const ir::AstNode *owner)
+const lexer::Token &FormattingContext::GetNextToken() const
 {
-    if (declType != ir::AstNodeType::FUNCTION_DECLARATION) {
-        return "";
-    }
-    auto *func = FindScriptFunctionOwner(owner);
-    if (func == nullptr) {
-        return "";
-    }
-    return GetFunctionReturnTypeForIndex(func);
+    return nextToken_;
 }
 ```
 
 ## F005
 
-Symbol: `ark::es2panda::lsp::IsImportOwnerIdentifier`. Source-relative lines: 228–243.
+Source: `ets2panda/lsp/src/formatting/smart_indenter.cpp`; symbol: `ark::es2panda::lsp::GetActualIndentationForListStartLine`. Source-relative lines: 423–430.
 
 ```cpp
-bool IsImportOwnerIdentifier(const ir::Identifier *declIdentifier)
+static size_t GetActualIndentationForListStartLine(const IndentContext &ctx, const std::vector<ir::AstNode *> &list)
 {
-    if (declIdentifier == nullptr) {
-        return false;
+    if (list.empty()) {
+        return UNKNOWN_INDENT;
     }
 
-    auto *parent = declIdentifier->Parent();
-    if (parent == nullptr || parent->Parent() == nullptr) {
-        return false;
-    }
-    if (!parent->Parent()->IsETSImportDeclaration()) {
-        return false;
-    }
-
-    return parent->IsImportSpecifier() || parent->IsImportDefaultSpecifier() || parent->IsImportNamespaceSpecifier();
+    return GetIndentationForNode(ctx, list[0]);
 }
 ```
 
 ## F006
 
-Symbol: `ark::es2panda::lsp::BuildSymbolId`. Source-relative lines: 317–340.
+Source: `ets2panda/lsp/src/get_definition_at_position.cpp`; symbol: `ark::es2panda::lsp::GetInvalidTypeOnlyExportTarget`. Source-relative lines: 143–164.
 
 ```cpp
-SymbolId BuildSymbolId(const ir::AstNode *declNode, const ir::Identifier *identifier, const public_lib::Context *ctx)
+static ir::Identifier *GetInvalidTypeOnlyExportTarget(const varbinder::ExportFact &fact, parser::Program *targetProgram,
+                                                      util::StringView importedName)
 {
-    if (declNode == nullptr || identifier == nullptr) {
-        return 0;
+    if (!fact.isInvalid || !fact.isExplicitTypeOnly || !fact.isLocalAlias || fact.sourceProgram != targetProgram ||
+        fact.exportedName != importedName || fact.variable == nullptr || fact.variable->Declaration() == nullptr) {
+        return nullptr;
     }
 
-    std::string key;
-    if (declNode->IsIdentifier()) {
-        key = BuildModuleSymbolKey(declNode->AsIdentifier(), ctx);
+    auto *node = fact.variable->Declaration()->Node();
+    if (node == nullptr || node->Program() != targetProgram) {
+        return nullptr;
     }
-    if (key.empty()) {
-        const auto declFileName = GetNodeFileName(declNode, ctx);
-        auto start = declNode->Start().index;
-        auto end = declNode->End().index;
-        // For "ETSGLOBAL" and the "main" function within it, there is no need to add them to the symbol table.
-        if (start == 0 && end == 0 && !declFileName.empty()) {
-            return 0;
-        }
-        key = declFileName + ":" + std::to_string(start) + ":" + std::to_string(end) + ":" +
-              std::string(identifier->Name()) + ":" + std::to_string(static_cast<int>(declNode->Type()));
+    auto *identifier = node->IsIdentifier() ? node : node->FindChild([&fact](ir::AstNode *child) {
+        return child->IsIdentifier() && child->AsIdentifier()->Name() == fact.localName &&
+               child->AsIdentifier()->Variable() == fact.variable;
+    });
+    if (identifier == nullptr || !identifier->IsIdentifier() || identifier->AsIdentifier()->Name() != fact.localName ||
+        identifier->AsIdentifier()->Variable() != fact.variable) {
+        return nullptr;
     }
-
-    return static_cast<SymbolId>(std::hash<std::string> {}(key));
+    return identifier->AsIdentifier();
 }
 ```
 
 ## F007
 
-Symbol: `ark::es2panda::lsp::HasBuiltinTypeVariable`. Source-relative lines: 352–356.
+Source: `ets2panda/lsp/src/get_signature.cpp`; symbol: `ark::es2panda::lsp::ClassPropertyHandler`. Source-relative lines: 89–127.
 
 ```cpp
-bool HasBuiltinTypeVariable(const checker::Type *type)
+ir::AstNode *ClassPropertyHandler(std::string sourceCode, size_t position, ir::AstNode *node, es2panda_Context *context)
 {
-    auto *const variable = type != nullptr ? type->Variable() : nullptr;
-    return variable != nullptr && variable->HasFlag(varbinder::VariableFlags::BUILTIN_TYPE);
+    auto targetPos = FindClassNameStart(std::string(std::move(sourceCode)), position);
+    auto methodName = std::string(node->AsIdentifier()->Name());
+    auto targetNode = GetTouchingToken(context, targetPos, false);
+    if (targetNode == nullptr || !targetNode->IsIdentifier()) {
+        return nullptr;
+    }
+    auto declNode = compiler::DeclarationFromIdentifier(targetNode->AsIdentifier());
+    if (declNode == nullptr || !declNode->IsClassProperty()) {
+        return nullptr;
+    }
+    ir::Expression *typeRef;
+    if (declNode->AsClassProperty()->TypeAnnotation() != nullptr) {
+        typeRef = declNode->AsClassProperty()->TypeAnnotation();
+    } else {
+        auto value = declNode->AsClassProperty()->Value();
+        if (value == nullptr || !value->IsETSNewClassInstanceExpression()) {
+            return nullptr;
+        }
+        typeRef = value->AsETSNewClassInstanceExpression()->GetTypeRef();
+    }
+    if (typeRef == nullptr || !typeRef->IsETSTypeReference()) {
+        return nullptr;
+    }
+    auto part = typeRef->AsETSTypeReference()->Part();
+    if (part == nullptr) {
+        return nullptr;
+    }
+    auto className = part->GetIdent();
+    auto classNode = compiler::DeclarationFromIdentifier(className->AsIdentifier());
+    if (classNode == nullptr) {
+        return nullptr;
+    }
+    auto methodNode = classNode->FindChild([&methodName](ir::AstNode *childNode) {
+        return childNode->IsMethodDefinition() && childNode->AsMethodDefinition()->Key()->ToString() == methodName;
+    });
+    return methodNode;
 }
 ```
 
 ## F008
 
-Symbol: `ark::es2panda::lsp::IsDefinitionNode`. Source-relative lines: 380–386.
+Source: `ets2panda/lsp/src/lsp_utils.cpp`; symbol: `ark::es2panda::lsp::ApplyRefactorTextChangesToSource`. Source-relative lines: 76–111.
 
 ```cpp
-bool IsDefinitionNode(const ir::AstNode *node, const ir::AstNode *owner)
+std::string ApplyRefactorTextChangesToSource(const std::string &source, const std::vector<TextChange> &textChanges)
 {
-    if (node == nullptr || owner == nullptr) {
-        return false;
+    if (textChanges.empty()) {
+        return source;
     }
-    return node->Start().index == owner->Start().index && node->End().index == owner->End().index;
+
+    std::vector<const TextChange *> ordered;
+    ordered.reserve(textChanges.size());
+    for (const auto &change : textChanges) {
+        ordered.push_back(&change);
+    }
+    std::stable_sort(ordered.begin(), ordered.end(),
+                     [](const TextChange *lhs, const TextChange *rhs) { return lhs->span.start < rhs->span.start; });
+
+    std::string result;
+    result.reserve(source.size());
+    size_t cursor = 0;
+    for (const auto *change : ordered) {
+        if (change->span.start > source.size()) {
+            continue;
+        }
+        const size_t originalStart = change->span.start;
+        const size_t start = std::max(originalStart, cursor);
+        const size_t remaining = source.size() - originalStart;
+        const size_t end = originalStart + std::min(change->span.length, remaining);
+        if (cursor < start) {
+            result.append(source, cursor, start - cursor);
+        }
+        result.append(change->newText);
+        cursor = std::max(cursor, end);
+    }
+    if (cursor < source.size()) {
+        result.append(source, cursor, source.size() - cursor);
+    }
+    return result;
 }
 ```
 
 ## F009
 
-Symbol: `ark::es2panda::lsp::DeduplicateAndSortReferences`. Source-relative lines: 432–450.
+Source: `ets2panda/lsp/src/refactors/convert_arrow_braces.cpp`; symbol: `ark::es2panda::lsp::GenerateBlockBody`. Source-relative lines: 156–160.
 
 ```cpp
-void DeduplicateAndSortReferences(std::vector<ReferenceInfo> &refs)
+static std::string GenerateBlockBody(ir::AstNode *blockBody)
 {
-    std::sort(refs.begin(), refs.end(), [](const ReferenceInfo &lhs, const ReferenceInfo &rhs) {
-        if (lhs.fileName != rhs.fileName) {
-            return lhs.fileName < rhs.fileName;
-        }
-        if (lhs.start != rhs.start) {
-            return lhs.start < rhs.start;
-        }
-        return lhs.length < rhs.length;
-    });
-    refs.erase(std::unique(refs.begin(), refs.end(),
-                           // CC-OFFNXT(G.FMT.06-CPP) project code style
-                           [](const ReferenceInfo &lhs, const ReferenceInfo &rhs) {
-                               return lhs.fileName == rhs.fileName && lhs.start == rhs.start &&
-                                      lhs.length == rhs.length;
-                           }),  // CC-OFF(G.FMT.02-CPP) project code style
-               refs.end());
+    std::string bodyContent = blockBody->DumpEtsSrc();
+    return "{ " + bodyContent + " }";
 }
 ```
 
 ## F010
 
-Symbol: `ark::es2panda::lsp::ResolveSymbolId`. Source-relative lines: 482–495.
+Source: `ets2panda/lsp/src/refactors/convert_overload_list.cpp`; symbol: `ark::es2panda::lsp::ConvertOverloadListRefactor::ConvertOverloadListRefactor`. Source-relative lines: 167–170.
 
 ```cpp
-SymbolId ResolveSymbolId(const public_lib::Context *ctx, const ir::AstNode *targetNode,
-                         const ir::Identifier *identifier, ir::AstNode *owner)
+ConvertOverloadListRefactor::ConvertOverloadListRefactor()
 {
-    if (identifier == nullptr) {
-        return 0;
-    }
-    if (targetNode != nullptr && targetNode->IsETSTypeReference() && IsIntrinsicTypeReference(ctx, targetNode)) {
-        return BuildIntrinsicTypeReferenceSymbolId(identifier->Name());
-    }
-    if (owner == nullptr) {
-        return 0;
-    }
-    return BuildSymbolId(owner, identifier, ctx);
+    AddKind(std::string(CONVERT_OVERLOAD_LIST_ACTION.kind));
 }
 ```
 
 ## F011
 
-Symbol: `ark::es2panda::lsp::GetReferenceIdentifierAndOwner`. Source-relative lines: 542–555.
+Source: `ets2panda/lsp/src/refactors/extract_symbol_impl.cpp`; symbol: `ark::es2panda::lsp::FindNextNonIndentAfterOptionalBlankLine`. Source-relative lines: 2384–2397.
 
 ```cpp
-void GetReferenceIdentifierAndOwner(const ir::AstNode *targetNode, const ir::Identifier **identifier,
-                                    ir::AstNode **owner)
+static size_t FindNextNonIndentAfterOptionalBlankLine(std::string_view source, size_t insertPos)
 {
-    if (targetNode->IsETSTypeReference()) {
-        auto *typeReference = targetNode->AsETSTypeReference();
-        *identifier = typeReference->BaseName();
-        if (*identifier != nullptr) {
-            *owner = ark::es2panda::lsp::GetOwner(const_cast<ir::Identifier *>(*identifier));
-        }
-    } else if (targetNode->IsIdentifier()) {
-        *identifier = targetNode->AsIdentifier();
-        *owner = ark::es2panda::lsp::GetOwner(const_cast<ir::AstNode *>(targetNode));
+    size_t probe = std::min(insertPos, source.size());
+    while (probe < source.size() && IsIndentChar(source[probe])) {
+        ++probe;
     }
+    if (probe < source.size() && IsLineBreakChar(source[probe])) {
+        probe = NormalizeInsertPos(source, probe);
+        while (probe < source.size() && IsIndentChar(source[probe])) {
+            ++probe;
+        }
+    }
+    return probe;
 }
 ```
 
 ## F012
 
-Symbol: `ark::es2panda::lsp::AddReferenceFromNode`. Source-relative lines: 585–615.
+Source: `ets2panda/lsp/src/refactors/generate_override_methods.cpp`; symbol: `ark::es2panda::lsp::ParamNameFor`. Source-relative lines: 206–224.
 
 ```cpp
-void AddReferenceFromNode(const public_lib::Context *ctx, const ir::AstNode *targetNode,
-                          std::unordered_set<std::string> &localDedup, FileIndexData &fileIndex)
+static std::string ParamNameFor(const ir::AstNode *param)
 {
-    if (targetNode == nullptr) {
-        return;
+    if (param == nullptr) {
+        return "param";
     }
-
-    const ir::Identifier *identifier = nullptr;
-    ir::AstNode *owner = nullptr;
-    GetReferenceIdentifierAndOwner(targetNode, &identifier, &owner);
-
-    const SymbolId symbolId = ResolveSymbolId(ctx, targetNode, identifier, owner);
-    if (symbolId == 0) {
-        return;
+    if (param->IsETSParameterExpression()) {
+        auto *ident = param->AsETSParameterExpression()->Ident();
+        if (ident != nullptr && ident->IsIdentifier()) {
+            return ident->Name().Mutf8();
+        }
     }
-    auto refInfo = BuildReferenceInfo(ctx, targetNode, identifier);
-    if (!refInfo.has_value()) {
-        return;
+    if (param->IsAssignmentPattern()) {
+        auto *left = param->AsAssignmentPattern()->Left();
+        if (left != nullptr && left->IsIdentifier()) {
+            return left->AsIdentifier()->Name().Mutf8();
+        }
     }
-    auto &[ref, end] = refInfo.value();
-    if (!RegisterReference(symbolId, ref, end, localDedup, fileIndex)) {
-        return;
-    }
-    if (owner == nullptr) {
-        return;
-    }
-    const bool ownerIsImportAlias = owner->IsIdentifier() && IsImportOwnerIdentifier(owner->AsIdentifier());
-    if (IsDefinitionNode(targetNode, owner) && !ownerIsImportAlias) {
-        AddDefinitionAndExportInfo(symbolId, ref, identifier, owner);
-    }
+    return "param";
 }
 ```
 
 ## F013
 
-Symbol: `ark::es2panda::lsp::BuildImportFileReferencesForProgram`. Source-relative lines: 679–691.
+Source: `ets2panda/lsp/src/register_code_fix/add_local_variable.cpp`; symbol: `ark::es2panda::lsp::AddLocalVariable::IsNonThisPropertyAccess`. Source-relative lines: 298–316.
 
 ```cpp
-void BuildImportFileReferencesForProgram(const public_lib::Context *ctx, parser::Program *program,
-                                         std::unordered_set<std::string> &localDedup, FileIndexData &fileIndex)
+bool AddLocalVariable::IsNonThisPropertyAccess(es2panda_Context *context, size_t pos)
 {
-    if (program == nullptr || program->Ast() == nullptr || !program->Ast()->IsETSModule()) {
-        return;
+    auto *token = GetTouchingToken(context, pos, false);
+    if (token == nullptr || !token->IsIdentifier()) {
+        return false;
     }
-    for (auto *statement : program->Ast()->AsETSModule()->Statements()) {
-        if (statement == nullptr || !statement->IsETSImportDeclaration()) {
-            continue;
-        }
-        AddFileReferenceFromImportDecl(ctx, statement->AsETSImportDeclaration(), localDedup, fileIndex);
+
+    auto *parent = token->Parent();
+    if (parent == nullptr || !parent->IsMemberExpression()) {
+        return false;
     }
+
+    auto *memberExpr = parent->AsMemberExpression();
+    if (memberExpr->Property() != token) {
+        return false;
+    }
+
+    return memberExpr->Object() != nullptr && !memberExpr->Object()->IsThisExpression();
 }
 ```
 
 ## F014
 
-Symbol: `ark::es2panda::lsp::AddReExportReference`. Source-relative lines: 745–756.
+Source: `ets2panda/lsp/src/register_code_fix/constructor_for_derived_need_super_call.cpp`; symbol: `ark::es2panda::lsp::ConstructorDerivedNeedSuper::NeedsSuperCall`. Source-relative lines: 76–99.
 
 ```cpp
-void AddReExportReference(const ReExportIndexState &state, const ir::Identifier *identifier, SymbolId symbolId)
+bool ConstructorDerivedNeedSuper::NeedsSuperCall(ir::ScriptFunction *scriptFunc)
 {
-    if (identifier == nullptr || symbolId == 0) {
-        return;
+    if (scriptFunc == nullptr || scriptFunc->Body() == nullptr || !scriptFunc->Body()->IsBlockStatement()) {
+        return false;
     }
-    auto refInfo = BuildReferenceInfo(state.ctx, identifier, identifier);
-    if (!refInfo.has_value()) {
-        return;
+
+    auto *block = scriptFunc->Body()->AsBlockStatement();
+    for (const auto *stmt : block->Statements()) {
+        if (!stmt->IsExpressionStatement()) {
+            continue;
+        }
+        const auto *exprStmt = stmt->AsExpressionStatement();
+        const auto *expr = exprStmt->GetExpression();
+        if (!expr->IsCallExpression()) {
+            continue;
+        }
+        const auto *callExpr = expr->AsCallExpression();
+        const auto *callee = callExpr->Callee();
+        if (callee != nullptr && callee->IsSuperExpression()) {
+            return false;
+        }
     }
-    auto &[ref, end] = refInfo.value();
-    RegisterReference(symbolId, ref, end, state.localDedup, state.fileIndex);
+    return true;
 }
 ```
 
 ## F015
 
-Symbol: `ark::es2panda::lsp::BuildReExportReferenceForSpecifier`. Source-relative lines: 789–818.
+Source: `ets2panda/lsp/src/register_code_fix/fix_class_super_must_precede_this_access.cpp`; symbol: `ark::es2panda::lsp::FixClassSuperMustPrecedeThisAccess::FixClassSuperMustPrecedeThisAccess`. Source-relative lines: 107–112.
 
 ```cpp
-void BuildReExportReferenceForSpecifier(const ReExportIndexState &state, const ir::ETSImportDeclaration *importDecl,
-                                        ir::AstNode *specifier)
+FixClassSuperMustPrecedeThisAccess::FixClassSuperMustPrecedeThisAccess()
 {
-    if (specifier == nullptr || !specifier->IsImportSpecifier()) {
-        return;
-    }
-    auto *importSpecifier = specifier->AsImportSpecifier();
-    const auto *imported = importSpecifier->Imported();
-    if (imported == nullptr) {
-        return;
-    }
-    const auto importedName = varbinder::NormalizeReExportName(imported->Name());
-    auto *symbolOwner = ResolveReExportOwnerFromBinding(state.ctx, importSpecifier);
-    if (symbolOwner == nullptr) {
-        symbolOwner = ResolveReExportOwnerFromSource(state.program, importDecl, importedName);
-    }
-    if (symbolOwner == nullptr) {
-        return;
-    }
-    const auto *local = importSpecifier->Local();
-    const auto symbolId = BuildSymbolId(symbolOwner, local == nullptr ? imported : local, state.ctx);
-    state.handledIdentifiers.insert(imported);
-    if (local != nullptr) {
-        state.handledIdentifiers.insert(local);
-    }
-    if (imported->Name() == importedName) {
-        AddReExportReference(state, imported, symbolId);
-    }
-    AddReExportReference(state, local, symbolId);
+    auto errorCodes = CLASS_SUPER_MUST_PRECEDE_THIS_ACCESS.GetSupportedCodeNumbers();
+    SetErrorCodes({errorCodes.begin(), errorCodes.end()});
+    SetFixIds({CLASS_SUPER_MUST_PRECEDE_THIS_ACCESS.GetFixId().data()});
 }
 ```
 
 ## F016
 
-Symbol: `ark::es2panda::lsp::BuildSymbolReferenceIndexForProgram`. Source-relative lines: 839–872.
+Source: `ets2panda/lsp/src/register_code_fix/fix_missing_call_parantheses.cpp`; symbol: `ark::es2panda::lsp::FixMissingCallParantheses::GetCodeActions`. Source-relative lines: 32–38.
 
 ```cpp
-bool BuildSymbolReferenceIndexForProgram(const public_lib::Context *ctx, parser::Program *program)
+std::vector<CodeFixAction> FixMissingCallParantheses::GetCodeActions(const CodeFixContext &context)
 {
-    const std::string fileName = std::string(program->SourceFilePath());
-    RemoveFileContributions(fileName);
-
-    FileIndexData fileIndex {};
-    fileIndex.source = std::string(program->SourceCode());
-
-    std::unordered_set<std::string> localDedup {};
-    std::unordered_set<const ir::AstNode *> handledReExportIdentifiers {};
-    BuildImportFileReferencesForProgram(ctx, program, localDedup, fileIndex);
-    ReExportIndexState reExportState {ctx, program, handledReExportIdentifiers, localDedup, fileIndex};
-    BuildReExportReferencesForProgram(reExportState);
-    auto *astRoot = reinterpret_cast<ir::AstNode *>(program->Ast());
-    astRoot->IterateRecursively([ctx, &handledReExportIdentifiers, &localDedup, &fileIndex](ir::AstNode *node) {
-        ProcessNodeForSymbolIndex(ctx, node, handledReExportIdentifiers, localDedup, fileIndex);
-    });
-
-    std::sort(fileIndex.symbolOccurrences.begin(), fileIndex.symbolOccurrences.end(),
-              // CC-OFFNXT(G.FMT.06-CPP) project code style
-              [](const SymbolOccurrence &lhs, const SymbolOccurrence &rhs) {
-                  if (lhs.start != rhs.start) {
-                      return lhs.start < rhs.start;
-                  }
-                  return lhs.end < rhs.end;  // CC-OFF(G.FMT.02-CPP) project code style
-              });
-
-    for (auto &[symbolId, refs] : g_symbolReferences) {
-        DeduplicateAndSortReferences(refs);
+    std::vector<CodeFixAction> returnedActions;
+    if (context.errorCode == G_FIX_MISSING_CALL_PARANTHESES_CODE) {
     }
-
-    g_fileIndices[fileName] = std::move(fileIndex);
-    return true;
+    return returnedActions;
 }
 ```
 
 ## F017
 
-Symbol: `ark::es2panda::lsp::BuildSymbolReferenceIndexForContext`. Source-relative lines: 889–897.
+Source: `ets2panda/lsp/src/register_code_fix/fix_remove_illegal_await.cpp`; symbol: `ark::es2panda::lsp::IsPromiseReturnType`. Source-relative lines: 228–235.
 
 ```cpp
-bool BuildSymbolReferenceIndexForContext(es2panda_Context *context)
+bool IsPromiseReturnType(ir::TypeNode *returnType)
 {
-    auto *ctx = reinterpret_cast<public_lib::Context *>(context);
-    if (ctx->parserProgram == nullptr || ctx->parserProgram->Ast() == nullptr) {
+    if (returnType == nullptr) {
         return false;
     }
 
-    return BuildSymbolReferenceIndexForProgram(ctx, ctx->parserProgram);
+    return IsPromiseType(returnType->TsType()) || IsPromiseReturnTypeByName(returnType);
 }
 ```
 
 ## F018
 
-Symbol: `ark::es2panda::lsp::GetReferencesAtPositionFromIndex`. Source-relative lines: 940–993.
+Source: `ets2panda/lsp/src/register_code_fix/fix_spelling_for_type.cpp`; symbol: `ark::es2panda::lsp::FixSpellingForType::MakeChangeForFixSpellingForType`. Source-relative lines: 89–100.
 
 ```cpp
-References GetReferencesAtPositionFromIndex(es2panda_Context *context, size_t position)
+void FixSpellingForType::MakeChangeForFixSpellingForType(ChangeTracker &changeTracker, es2panda_Context *context,
+                                                         size_t pos, const std::string &target)
 {
-    References result {};
-    if (context == nullptr) {
-        return result;
+    auto *token = GetTouchingTokenRightMatch(context, pos);
+    if (token == nullptr || !token->IsIdentifier()) {
+        return;
     }
 
-    auto *ctx = reinterpret_cast<public_lib::Context *>(context);
-    const std::string fileName = ctx->sourceFileName;
-    auto fileIt = g_fileIndices.find(fileName);
-    if (fileIt == g_fileIndices.end()) {
-        return result;
-    }
-
-    SymbolId hitSymbol = 0;
-    size_t hitLength = static_cast<size_t>(-1);
-    for (const auto &occurrence : fileIt->second.symbolOccurrences) {
-        if (position < occurrence.start || position >= occurrence.end) {
-            continue;
-        }
-        const size_t currentLength = occurrence.end - occurrence.start;
-        if (currentLength <= hitLength) {
-            hitLength = currentLength;
-            hitSymbol = occurrence.symbolId;
-        }
-    }
-
-    if (hitSymbol == 0) {
-        return result;
-    }
-
-    auto refsIt = g_symbolReferences.find(hitSymbol);
-    if (refsIt == g_symbolReferences.end()) {
-        return result;
-    }
-
-    auto refs = refsIt->second;
-    auto defIt = g_symbolDefinitions.find(hitSymbol);
-    if (defIt != g_symbolDefinitions.end()) {
-        const auto &defRef = defIt->second;
-        result.definitionInfo = DefinitionInfo(defRef.fileName, defRef.start, defRef.length);
-        refs.erase(std::remove_if(refs.begin(), refs.end(),
-                                  // CC-OFFNXT(G.FMT.06-CPP) project code style
-                                  [defRef](const ReferenceInfo &ref) {
-                                      return ref.fileName == defRef.fileName && ref.start == defRef.start &&
-                                             ref.length == defRef.length;
-                                  }),  // CC-OFF(G.FMT.02-CPP) project code style
-                   refs.end());
-    }
-
-    DeduplicateAndSortReferences(refs);
-    result.referenceInfos = std::move(refs);
-    return result;
+    auto ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(context);
+    TextRange range = {token->Start().index, token->End().index};
+    changeTracker.ReplaceRangeWithText(ctx->sourceFile, range, target);
 }
 ```
 
 ## F019
 
-Symbol: `ark::es2panda::lsp::GetIndexedFileSource`. Source-relative lines: 1024–1031.
+Source: `ets2panda/lsp/src/register_code_fix/remove_catch_type_annotation.cpp`; symbol: `ark::es2panda::lsp::RemoveCatchTypeAnnotation::RemoveCatchTypeAnnotation`. Source-relative lines: 75–80.
 
 ```cpp
-std::string GetIndexedFileSource(const std::string &fileName)
+RemoveCatchTypeAnnotation::RemoveCatchTypeAnnotation()
 {
-    auto it = g_fileIndices.find(fileName);
-    if (it == g_fileIndices.end()) {
-        return "";
-    }
-    return it->second.source;
+    auto errorCodes = REMOVE_CATCH_TYPE_ANNOTATION.GetSupportedCodeNumbers();
+    SetErrorCodes({errorCodes.begin(), errorCodes.end()});
+    SetFixIds({REMOVE_CATCH_TYPE_ANNOTATION.GetFixId().data()});
 }
 ```
 
 ## F020
 
-Symbol: `ark::es2panda::lsp::LevenshteinDistance`. Source-relative lines: 1079–1127.
+Source: `ets2panda/lsp/src/services/import_utils.cpp`; symbol: `ark::es2panda::lsp::FormatImportSpecifier`. Source-relative lines: 197–203.
 
 ```cpp
-int LevenshteinDistance(const std::string &s1, const std::string &s2, int maxDistance)
+std::string FormatImportSpecifier(const std::pair<std::string, std::string> &specifier)
 {
-    // Use scaled costs: insert/delete = COST_SCALE, substitute = 2*COST_SCALE, case-only change = 1
-    constexpr int COST_SCALE = 10;
-    constexpr int INSERT_COST = COST_SCALE;
-    constexpr int DELETE_COST = COST_SCALE;
-
-    auto len1 = static_cast<int>(s1.size());
-    auto len2 = static_cast<int>(s2.size());
-
-    if (len1 == 0) {
-        return len2 <= maxDistance ? len2 * COST_SCALE : -1;
+    if (specifier.first == specifier.second) {
+        return specifier.first;
     }
-    if (len2 == 0) {
-        return len1 <= maxDistance ? len1 * COST_SCALE : -1;
-    }
-
-    std::vector<int> prevRow(len2 + 1);
-    std::vector<int> currRow(len2 + 1);
-
-    // Initialize first row
-    for (int j = 0; j <= len2; j++) {
-        prevRow[j] = j * INSERT_COST;
-    }
-
-    int maxDistanceScaled = maxDistance * COST_SCALE;
-
-    for (int i = 1; i <= len1; i++) {
-        currRow[0] = i * DELETE_COST;
-        int rowMin = currRow[0];
-
-        for (int j = 1; j <= len2; j++) {
-            int cost = GetSubstitutionCost(s1[i - 1], s2[j - 1]);
-
-            currRow[j] = std::min({prevRow[j] + DELETE_COST, currRow[j - 1] + INSERT_COST, prevRow[j - 1] + cost});
-            rowMin = std::min(rowMin, currRow[j]);
-        }
-
-        // Early termination: if the minimum value in current row exceeds threshold, give up
-        if (rowMin > maxDistanceScaled) {
-            return -1;
-        }
-
-        std::swap(prevRow, currRow);
-    }
-
-    int result = prevRow[len2];
-    return result <= maxDistanceScaled ? result : -1;
+    return specifier.first + " as " + specifier.second;
 }
 ```
 
 ## F021
 
-Symbol: `ark::es2panda::lsp::FindSimilarSymbolNames`. Source-relative lines: 1188–1228.
+Source: `ets2panda/lsp/src/signature_help_items.cpp`; symbol: `ark::es2panda::lsp::CreateSignatureHelpItem`. Source-relative lines: 82–115.
 
 ```cpp
-std::vector<std::string> FindSimilarSymbolNames(const std::string &query, const std::string &fileName)
+SignatureHelpItem CreateSignatureHelpItem(checker::Signature &signature)
 {
-    std::vector<std::string> candidates;
-
-    for (const auto &[symbolId, refInfos] : g_symbolReferences) {
-        for (const auto &refInfo : refInfos) {
-            if (refInfo.fileName != fileName) {
-                continue;
+    const checker::SignatureInfo *signatureInfo = signature.GetSignatureInfo();
+    SignatureHelpItem item;
+    if (!signatureInfo->typeParams.empty()) {
+        item.SetPrefixDisplayParts(CreatePunctuation("<"));
+        for (auto it = signatureInfo->typeParams.begin(); it != signatureInfo->typeParams.end(); ++it) {
+            std::string typeName = (*it)->ToString();
+            item.SetPrefixDisplayParts(CreateTypeName(typeName));
+            if (std::next(it) != signatureInfo->typeParams.end()) {
+                item.SetPrefixDisplayParts(CreatePunctuation(","));
+                item.SetSeparatorDisplayParts(CreatePunctuation(","));
             }
-            // Extract symbol name from g_fileIndices source using the reference position
-            auto fileIt = g_fileIndices.find(refInfo.fileName);
-            if (fileIt == g_fileIndices.end()) {
-                continue;
-            }
-            const auto &source = fileIt->second.source;
-            if (refInfo.start >= source.size()) {
-                continue;
-            }
-
-            // Extract the identifier text from source at reference position
-            size_t nameStart = refInfo.start;
-            size_t nameEnd = nameStart;
-            while (nameEnd < source.size() && (isalnum(source[nameEnd]) != 0 || source[nameEnd] == '_')) {
-                nameEnd++;
-            }
-            std::string symbolName = source.substr(nameStart, nameEnd - nameStart);
-            if (symbolName.empty()) {
-                continue;
-            }
-
-            candidates.push_back(symbolName);
         }
+        item.SetPrefixDisplayParts(CreatePunctuation(">"));
+    }
+    item.SetPrefixDisplayParts(CreatePunctuation("("));
+
+    SetSignatureHelpParameter(signatureInfo, item);
+
+    item.SetSuffixDisplayParts(CreatePunctuation(")"));
+
+    if (signature.HasFunction() ||
+        (signature.OwnerVar() != nullptr && signature.OwnerVar()->HasFlag(varbinder::VariableFlags::METHOD))) {
+        item.SetSuffixDisplayParts(CreatePunctuation(":"));
+    } else {
+        item.SetSuffixDisplayParts(CreatePunctuation("=>"));
     }
 
-    std::string best = GetSpellingSuggestion(query, candidates);
-    std::vector<std::string> result;
-    if (!best.empty()) {
-        result.push_back(best);
-    }
-    return result;
+    std::string returnType = signature.ReturnType()->ToString();
+    item.SetSuffixDisplayParts(CreateTypeName(returnType));
+
+    return item;
 }
 ```
 

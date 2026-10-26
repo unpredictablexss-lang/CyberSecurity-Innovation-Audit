@@ -4,6 +4,7 @@ import {
   Button,
   Card,
   Checkbox,
+  Collapse,
   Col,
   ConfigProvider,
   Descriptions,
@@ -46,10 +47,16 @@ import AuditPlanView from "../features/audits/AuditPlanView";
 import SourceEvidence from "../SourceEvidence";
 import CandidateActions from "../features/workbench/CandidateActions";
 import { requestGate } from "../features/audits/model";
+import { disclosureReviewed, disclosureSelectionMatches } from "../features/audits/egressDisclosure.js";
+import { analysisStatusLabel, coverageSummaryLabel, groupingBasisLabel, groupingSymbolLabel, obligationDescriptionLabel, obligationKindLabel, obligationStatusLabel, reportLimitationLabel, riskReasonsLabel, scanStageLabel, taskReportStatusLabel, taskTriageStatusLabel, triageStateLabel } from "../features/workbench/riskLabels.js";
 const { Text, Title, Paragraph } = Typography;
-export default function JobDetail({ id, initialTab = "findings", candidateId }: { id: string; initialTab?: string; candidateId?: string }) {
+export default function JobDetail({ id, initialTab = "findings", candidateId, sourceFile, sourceLine, health }: { id: string; initialTab?: string; candidateId?: string; sourceFile?: string; sourceLine?: number; health?: any }) {
   const [job, setJob] = useState<any>(null);
   const [report, setReport] = useState<any>(null);
+  const [triageSummary, setTriageSummary] = useState<any>(null);
+  const [riskSummary, setRiskSummary] = useState<any>(null);
+  const [coverageSummary, setCoverageSummary] = useState<any>(null);
+  const [reportSnapshots, setReportSnapshots] = useState<any[]>([]);
   const [events, setEvents] = useState<any[]>([]);
   const [error, setError] = useState("");
   const [items, setItems] = useState<any[]>([]);
@@ -66,6 +73,17 @@ export default function JobDetail({ id, initialTab = "findings", candidateId }: 
   const candidateAutoOpened = useRef<string | null>(null);
   const [source, setSource] = useState<any>(null);
   const [selected, setSelected] = useState<React.Key[]>([]);
+  const [batchOpen, setBatchOpen] = useState(false);
+  const [batchBusy, setBatchBusy] = useState(false);
+  const [snapshotBusy, setSnapshotBusy] = useState(false);
+  const [batchPreview, setBatchPreview] = useState<any>(null);
+  const [batchDisclosureOpened, setBatchDisclosureOpened] = useState<string[]>([]);
+  const [batchSubmissionApproved, setBatchSubmissionApproved] = useState(false);
+  const [batchCandidateIds, setBatchCandidateIds] = useState<string[]>([]);
+  const [batchMode, setBatchMode] = useState<"single_shot" | "tool_agent">("single_shot");
+  const batchPreviewCandidateIds = (batchPreview?.candidates || []).map((item: any) => String(item.candidate_id));
+  const batchPreviewMatchesSelection = disclosureSelectionMatches(batchCandidateIds, batchPreviewCandidateIds);
+  const batchDisclosureReviewed = batchPreviewMatchesSelection && disclosureReviewed(batchDisclosureOpened, batchCandidateIds);
   const [caseOpen, setCaseOpen] = useState(false);
   const [caseForm] = Form.useForm();
   const [reviewForm] = Form.useForm();
@@ -107,9 +125,24 @@ export default function JobDetail({ id, initialTab = "findings", candidateId }: 
         if (!live) return;
         setJob(j);
         setEvents(e);
+        const triageRequest = api("/scans/" + id + "/triage");
         if (j.report_sha256) {
-          const r = await api("/scans/" + id + "/report");
-          if (live) setReport(r);
+          const [r, triage, risks, coverage] = await Promise.all([
+            api("/scans/" + id + "/report"),
+            triageRequest,
+            api("/scans/" + id + "/risks?limit=100"),
+            api("/scans/" + id + "/coverage"),
+          ]);
+          if (live) {
+            setReport(r); setTriageSummary(triage);
+            setRiskSummary(risks); setCoverageSummary(coverage);
+          }
+        } else {
+          const triage = await triageRequest;
+          if (live) {
+            setReport(null); setTriageSummary(triage);
+            setRiskSummary(null); setCoverageSummary(null);
+          }
         }
         if (terminal.has(j.status) && timer) clearInterval(timer);
       } catch (e) {
@@ -123,6 +156,30 @@ export default function JobDetail({ id, initialTab = "findings", candidateId }: 
       clearInterval(timer);
     };
   }, [id]);
+  useEffect(() => {
+    let live = true;
+    if (report?.snapshot_sha256) {
+      api("/scans/" + id + "/reports/snapshots")
+        .then((result) => { if (live) setReportSnapshots(result.items || []); })
+        .catch((e) => { if (live) setError(String(e)); });
+    } else {
+      setReportSnapshots([]);
+    }
+    return () => { live = false; };
+  }, [id, report?.snapshot_sha256]);
+  async function createCombinedReportSnapshot() {
+    setSnapshotBusy(true);
+    try {
+      const saved = await api("/scans/" + id + "/reports/snapshots", {});
+      const result = await api("/scans/" + id + "/reports/snapshots");
+      setReportSnapshots(result.items || []);
+      message.success("不可变审计报告快照已保存：" + String(saved.id).slice(0, 12));
+    } catch (e) {
+      setError(String(e));
+    } finally {
+      setSnapshotBusy(false);
+    }
+  }
   async function loadClusters() {
     try {
       const r = await api(
@@ -159,11 +216,64 @@ export default function JobDetail({ id, initialTab = "findings", candidateId }: 
     }
   }
   useEffect(() => {
+    if (!report || initialTab !== "source" || !sourceFile) return;
+    const allowed = report._workbench?.source_inventory?.some((item: any) => item.file === sourceFile);
+    if (!allowed) {
+      setError("引用源码不在本次扫描的固定源码清单中");
+      return;
+    }
+    let live = true;
+    api("/scans/" + id + "/source?file=" + encodeURIComponent(sourceFile))
+      .then((value) => { if (live) setSource(value); })
+      .catch((e) => { if (live) setError(String(e)); });
+    return () => { live = false; };
+  }, [id, report?.snapshot_sha256, initialTab, sourceFile]);
+  useEffect(() => {
     if (job && candidateId && candidateAutoOpened.current !== candidateId) {
       candidateAutoOpened.current = candidateId;
       void open({ id: candidateId });
     }
   }, [job?.id, candidateId]);
+  async function previewAgentBatch() {
+    const candidateIds = selected.map(String);
+    if (!candidateIds.length || candidateIds.length > 5) return;
+    setBatchCandidateIds(candidateIds);
+    setBatchPreview(null);
+    setBatchDisclosureOpened([]);
+    setBatchSubmissionApproved(false);
+    setBatchOpen(true);
+    setBatchBusy(true);
+    try {
+      const preview = await api("/operations/agent-investigations/batch/preview", {
+        job_id: id, candidate_ids: candidateIds, mode: batchMode,
+      });
+      setBatchPreview(preview);
+    } catch (e) {
+      message.error(String(e));
+      setBatchOpen(false);
+    } finally {
+      setBatchBusy(false);
+    }
+  }
+  async function enqueueAgentBatch() {
+    if (!batchPreview || !batchDisclosureReviewed || !batchSubmissionApproved) return;
+    setBatchBusy(true);
+    try {
+      const result = await api("/operations/agent-investigations/batch", {
+        job_id: id, candidate_ids: batchCandidateIds, mode: batchMode,
+        source_submission_approved: true, consent_sha256: batchPreview.consent_sha256,
+        consent_nonce: batchPreview.consent_nonce,
+      });
+      setBatchOpen(false); setBatchDisclosureOpened([]); setBatchSubmissionApproved(false);
+      setSelected([]);
+      message.success("已创建 " + result.created_count + " 个独立模型辅助研判任务");
+      if (result.operations?.[0]?.id) go("/tasks/operations/" + result.operations[0].id);
+    } catch (e) {
+      message.error(String(e));
+    } finally {
+      setBatchBusy(false);
+    }
+  }
   async function action(name: string) {
     try {
       const j = await api("/scans/" + id + "/" + name, {});
@@ -173,6 +283,32 @@ export default function JobDetail({ id, initialTab = "findings", candidateId }: 
       setError(String(e));
     }
   }
+  async function cancelTaskTriage() {
+    setBatchBusy(true);
+    try {
+      const result = await api("/scans/" + id + "/triage/cancel", {});
+      setTriageSummary(result);
+      message.info("已停止本审计后续模型研判；静态扫描与已有证据仍保留。");
+    } catch (e) {
+      message.error(String(e));
+    } finally {
+      setBatchBusy(false);
+    }
+  }
+  async function revokeTaskTriageAuthorization() {
+    const consent = triageSummary?.authorization?.consent_sha256;
+    if (!consent || triageSummary?.authorization?.revoked) return;
+    setBatchBusy(true);
+    try {
+      const result = await api("/scans/" + id + "/triage/revoke", { consent_sha256: consent });
+      setTriageSummary(result);
+      message.info("已撤销本次任务级模型外发授权；关联的自动研判任务已取消或正在停止。静态报告仍保留。");
+    } catch (e) {
+      message.error(String(e));
+    } finally {
+      setBatchBusy(false);
+    }
+  }
   if (!job) return error ? <Alert type="error" showIcon message={error} /> : <Spin />;
   const parse = report?.source_parsing.parsing_status || {};
   const coverage = report
@@ -180,6 +316,25 @@ export default function JobDetail({ id, initialTab = "findings", candidateId }: 
         ([detector, c]) => ({ detector, ...(c as any) }),
       )
     : [];
+  const agentProvider = health?.capabilities?.agent_provider;
+  const auditMode = job.spec.audit_mode || "legacy";
+  const triageProgress = triageSummary?.triage_progress || {};
+  const triageAuthorization = triageSummary?.authorization || {};
+  const triageCanCancel = (Number(triageProgress.pending_count || 0) > 0
+    || Number(triageProgress.r2_waiting_count || 0) > 0
+    || (auditMode === "standard_review" && triageAuthorization.authorized
+      && !triageAuthorization.revoked && !terminal.has(job.status)));
+  const auditCanCancel = !terminal.has(job.status) || triageCanCancel;
+  const triageLabels: Record<string, string> = {
+    not_started: "尚未开始", waiting_for_scan: "等待静态扫描报告",
+    stopping: "正在停止", cancelled: "已停止",
+    waiting_for_authorization: "等待本次任务外发授权",
+    in_progress: "处理中", completed: "已完成", partially_completed: "部分完成",
+    queued: "排队中", running: "处理中", completed_with_limitations: "完成但有限制",
+    blocked: "受阻", blocked_authorization_changed: "授权或计划已变化",
+    no_eligible_candidates: "没有适合自动研判的候选",
+    stopped: "授权已撤销", failed: "失败", timed_out: "超时", interrupted: "中断",
+  };
   return (
     <>
       <Header
@@ -193,15 +348,19 @@ export default function JobDetail({ id, initialTab = "findings", candidateId }: 
         extra={
           <Space>
             <State value={job.status} />
-            {!terminal.has(job.status) ? (
+            {auditCanCancel ? (
               <Button danger onClick={() => void action("cancel")}>
-                取消任务
+                取消整个审计
               </Button>
             ) : (
               <Button onClick={() => void action("retry")}>
                 按原 Commit 重试
               </Button>
             )}
+            {triageCanCancel && <Button danger loading={batchBusy}
+              onClick={() => void cancelTaskTriage()}>
+              仅停止智能研判
+            </Button>}
           </Space>
         }
       />
@@ -254,32 +413,130 @@ export default function JobDetail({ id, initialTab = "findings", candidateId }: 
           ]}
         />
       </Card>
-      <AuditPlanView plan={job.spec.audit_plan} />
-      {report && (
+      <AuditPlanView plan={job.spec.audit_plan} auditMode={job.spec.audit_mode} />
+      {job && <Card className="section-gap" title="审计阶段进度">
+        <Row gutter={18}>
+          <Col xs={24} md={8}><Descriptions size="small" column={1} title="静态扫描">
+            <Descriptions.Item label="状态"><State value={triageSummary?.scan_status || job.status} /></Descriptions.Item>
+            <Descriptions.Item label="阶段">{scanStageLabel(triageSummary?.scan_progress?.stage || job.stage)}</Descriptions.Item>
+          </Descriptions></Col>
+          <Col xs={24} md={8}><Descriptions size="small" column={1} title="报告">
+            <Descriptions.Item label="状态">{taskReportStatusLabel(triageSummary, job)}</Descriptions.Item>
+            <Descriptions.Item label="报告 SHA-256"><Hash value={job.report_sha256} /></Descriptions.Item>
+          </Descriptions></Col>
+          <Col xs={24} md={8}><Descriptions size="small" column={1} title="智能研判">
+            <Descriptions.Item label="状态">{taskTriageStatusLabel(triageSummary, job)}</Descriptions.Item>
+            <Descriptions.Item label="已完成 / 失败">{triageSummary?.triage_progress?.completed_count ?? 0} / {triageSummary?.triage_progress?.failed_count ?? 0}</Descriptions.Item>
+            <Descriptions.Item label="处理中 / 未研判">{triageSummary?.triage_progress?.pending_count ?? 0} / {triageSummary?.triage_progress?.not_triaged_count ?? riskSummary?.triage_counts?.not_triaged ?? 0}</Descriptions.Item>
+          </Descriptions></Col>
+        </Row>
+        <Text type="secondary">未授权、预算外和失败项保持未研判，不会被计为低风险。</Text>
+      </Card>}
+      {report && <>
         <Row gutter={18} className="section-gap">
           {[
-            {
-              title: "纳入源码文件",
-              value: report.scope.selected_source_files,
-            },
-            { title: "原始候选观测", value: report.diagnostic_count },
-            {
-              title: "部分 / 失败 / 未解析",
-              value:
-                (parse.partial || 0) +
-                (parse.failed || 0) +
-                (parse.not_run || 0),
-            },
-            { title: "已确认漏洞", value: report.validated_vulnerability ?? "unknown" },
+            { title: "纳入源码文件", value: report.scope.selected_source_files ?? "未知" },
+            { title: "原始候选观测", value: report.diagnostic_count ?? "未知" },
+            { title: "候选分组", value: clusterTotal },
+            { title: "人工确认漏洞", value: report.validated_vulnerability ?? "unknown" },
           ].map((x) => (
-            <Col span={6} key={x.title}>
-              <Card>
-                <Statistic {...x} />
-              </Card>
+            <Col xs={12} sm={12} xl={6} key={x.title}>
+              <Card><Statistic {...x} /></Card>
             </Col>
           ))}
         </Row>
-      )}
+        <Card className="section-gap" title="证据风险分层">
+          <Alert type="info" showIcon
+            message="风险层级由固定源码绑定、静态证据和人工逐项复核决定"
+            description="模型自报置信度或引文存在性不会提升风险层级。高可信风险仍是待复核候选；未研判和未知不代表安全。" />
+          <Row gutter={18} className="section-gap">{[
+            { title: "高可信候选", value: riskSummary?.counts?.high_confidence_candidate ?? "未知" },
+            { title: "待进一步验证", value: riskSummary?.counts?.further_validation ?? "未知" },
+            { title: "低优先级线索", value: riskSummary?.counts?.low_priority_manual ?? "未知" },
+            { title: "来源绑定未知", value: riskSummary?.counts?.unknown_source_binding ?? "未知" },
+            { title: "未研判候选", value: riskSummary?.triage_counts?.not_triaged ?? "未知" },
+            { title: "人工验证漏洞", value: riskSummary?.validated_vulnerability ?? "未知" },
+          ].map((x) => <Col xs={12} sm={8} xl={4} key={x.title}><Card size="small"><Statistic {...x} /></Card></Col>)}</Row>
+          <Table size="small" rowKey="candidate_id" pagination={false}
+            dataSource={(riskSummary?.items || []).slice(0, 20)}
+            columns={[
+              { title: "风险层级", dataIndex: "risk_tier_label" },
+              { title: "候选", dataIndex: "candidate_id", render: (value: string) => <Text code>{String(value).slice(0, 12)}</Text> },
+              { title: "规则", dataIndex: "rule_id" },
+              { title: "位置", render: (_: unknown, row: any) => row.file + ":" + row.line },
+              { title: "研判", render: (_: unknown, row: any) => triageStateLabel(row.triage?.state) },
+              { title: "下一步", render: (_: unknown, row: any) => riskReasonsLabel(row.reasons) },
+            ]} locale={{ emptyText: "当前扫描报告没有原始候选；这不代表仓库不存在漏洞。" }} />
+          {(riskSummary?.total || 0) > 20 && <Text type="secondary">按证据优先级显示前 20 项；完整候选可在“候选与复核”中检索。</Text>}
+        </Card>
+        <Card className="section-gap" title="源码解析覆盖（文件数）">
+          <Row gutter={18}>{[
+            { title: "完整解析", value: parse.complete ?? "未知" },
+            { title: "部分解析", value: parse.partial ?? "未知" },
+            { title: "解析失败", value: parse.failed ?? "未知" },
+            { title: "未运行解析", value: parse.not_run ?? "未知" },
+          ].map((x) => <Col xs={12} sm={6} key={x.title}><Statistic {...x} /></Col>)}</Row>
+          <Text type="secondary">覆盖数字与候选数量分开统计；部分、失败和未解析范围都保持未知。</Text>
+        </Card>
+        <Card className="section-gap" title="模型辅助研判进度">
+          {auditMode === "standard_review" ? <>
+            <Alert type="info" showIcon
+              message={"标准研判 · " + (triageLabels[triageSummary?.state] || "状态未知")}
+              description={triageSummary?.limitation || "静态扫描报告与候选已保存。未授权的任务不会发送源码；模型输出不会修改候选或确认状态。"} />
+            {triageSummary?.state === "cancelled" && <Alert className="section-gap" type="warning" showIcon
+              message="本审计的后续模型研判已停止"
+              description="静态扫描和已保存结果保留；其他审计不受影响。若要继续，可从候选详情单独创建新的调查预览并授权。" />}
+            {triageSummary?.authorization?.authorized && <>
+              <Descriptions className="section-gap" size="small" column={1} bordered>
+                <Descriptions.Item label="任务级授权">{triageSummary.authorization.revoked ? "已撤销" : "有效"}</Descriptions.Item>
+                <Descriptions.Item label="模型目的地">{triageSummary.authorization.provider?.endpoint_host} · {triageSummary.authorization.provider?.model}</Descriptions.Item>
+                <Descriptions.Item label="自动研判预算">最多 {triageSummary.authorization.candidate_limit} 条候选；Token 与请求次数受限</Descriptions.Item>
+                {triageSummary.authorization.conditional_r2_candidate_limit > 0 && <Descriptions.Item label="补充核查预算">最多 {triageSummary.authorization.conditional_r2_candidate_limit} 条高/严重候选；只在源码义务仍未解决时追加</Descriptions.Item>}
+                <Descriptions.Item label="工作台费用预算">{triageSummary.authorization.platform_cost_budget_enforced
+                  ? "USD " + triageSummary.authorization.cost_budget.maximum_usd
+                    + "（固定费率卡最坏估算 USD " + triageSummary.authorization.cost_budget.estimated_maximum_usd + "）"
+                  : "未设置可执行的费用预算"}</Descriptions.Item>
+                <Descriptions.Item label="Provider 账单">实际账单金额无法由本平台硬限制</Descriptions.Item>
+              </Descriptions>
+              {!triageSummary.authorization.revoked && <Button className="section-gap" danger loading={batchBusy}
+                onClick={() => void revokeTaskTriageAuthorization()}>撤销本次任务级模型外发授权</Button>}
+            </>}
+            {triageSummary?.batches?.length > 0 && <Table className="section-gap" size="small" rowKey="id"
+              pagination={false} dataSource={triageSummary.batches}
+              columns={[
+                { title: "批次", dataIndex: "id", render: (value: string) => <Text code>{String(value).slice(0, 12)}</Text> },
+                { title: "状态", dataIndex: "state", render: (value: string) => triageLabels[value] || value },
+                { title: "入选 / 候选", render: (_: unknown, row: any) => row.selected_count + " / " + row.candidate_count },
+                { title: "任务", dataIndex: "operation_ids", render: (ids: string[]) => ids?.length || 0 },
+                { title: "补充核查", render: (_: unknown, row: any) => {
+                  const followup = row.conditional_r2 || {};
+                  const labels: Record<string, string> = {
+                    not_requested: "未启用", awaiting_r1: "等待条件复核", queued: "已排队",
+                    budget_limited: "预算内部分排队", not_needed: "当前无需追加",
+                    blocked_authorization_changed: "授权变化，未追加",
+                  };
+                  return (labels[followup.state] || followup.state || "未启用")
+                    + (followup.operation_ids?.length ? " · " + followup.operation_ids.length + " 项" : "");
+                } },
+              ]} />}
+            {!agentProvider?.configured && <Alert className="section-gap" type="warning" showIcon
+              message="模型服务未配置"
+              description={<>静态扫描结果可继续复核。配置服务后才能生成模型外发预览。<Button type="link" onClick={() => go("/settings/agent")}>前往设置</Button></>} />}
+            {triageSummary?.items?.length > 0 && <Table className="section-gap" size="small" rowKey="id" pagination={false}
+              dataSource={triageSummary.items}
+              columns={[
+                { title: "候选", dataIndex: "candidate_id", render: (value: string) => <Text code>{String(value || "").slice(0, 12)}</Text> },
+                { title: "方式", dataIndex: "mode", render: (value: string) => value === "single_shot" ? "模型辅助研判（单轮）" : "工具增强调查（只读）" },
+                { title: "状态", dataIndex: "status", render: (value: string) => <State value={value} /> },
+                { title: "任务", dataIndex: "id", render: (value: string) => <Button size="small" onClick={() => go("/tasks/operations/" + value)}>查看</Button> },
+              ]} />}
+          </> : auditMode === "static_only" ? <Alert type="info" showIcon
+            message="本任务按“仅静态扫描”创建"
+            description="静态候选和覆盖报告已保存。若之后决定使用模型，可从候选详情单独发起外发预览并授权。" />
+            : <Alert type="info" showIcon message="历史任务未记录研判方式"
+              description="此任务按已有静态报告展示；后续模型调用仍需单独预览和授权。" />}
+        </Card>
+      </>}
       <Card className="section-gap">
         <Tabs
           defaultActiveKey={initialTab}
@@ -326,6 +583,19 @@ export default function JobDetail({ id, initialTab = "findings", candidateId }: 
                     >
                       关联调查案例（{selected.length}）
                     </Button>
+                    <Select aria-label="模型研判方式" value={batchMode} style={{ minWidth: 220 }}
+                      onChange={(value) => setBatchMode(value)}
+                      options={[
+                        { value: "single_shot", label: "模型辅助研判（单轮）" },
+                        { value: "tool_agent", label: "工具增强调查（只读）" },
+                      ]} />
+                    <Button
+                      type="primary"
+                      disabled={!selected.length || selected.length > 5 || !job?.report_sha256 || !agentProvider?.configured}
+                      onClick={() => void previewAgentBatch()}
+                    >
+                      预览并授权（{selected.length}/5）
+                    </Button>
                   </Space>
                   <Table<any>
                     rowKey="id"
@@ -355,17 +625,19 @@ export default function JobDetail({ id, initialTab = "findings", candidateId }: 
                         title: "规则 / CWE 候选",
                         render: (_: any, f: any) => (
                           <>
+                            {f.rule_id === "ohcpp-null-dereference-unknown-return-observation-001" &&
+                              <Tag color="gold">弱候选 · 待复核</Tag>}
                             <Text code>{f.rule_id}</Text>
                             <div className="muted">{f.candidate_cwe}</div>
                           </>
                         ),
                       },
                       {
-                        title: "分析状态",
+                        title: "静态检查状态",
                         render: (_: any, f: any) => (
-                          <State
-                            value={f.evidence.analysis_status || "unknown"}
-                          />
+                          <Tag color={f.evidence.analysis_status === "partial" ? "warning" : f.evidence.analysis_status === "failed" ? "error" : "default"}>
+                            {analysisStatusLabel(f.evidence.analysis_status || "unknown")}
+                          </Tag>
                         ),
                       },
                       {
@@ -430,7 +702,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId }: 
                         title: "文件 / 符号",
                         render: (_: any, group: any) => (
                           <>
-                            <Text code>{group.symbol || "(no symbol)"}</Text>
+                            <Text code>{groupingSymbolLabel(group.symbol)}</Text>
                             <div className="muted">{group.file}</div>
                           </>
                         ),
@@ -447,7 +719,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId }: 
                         ),
                       },
                       { title: "原始候选数", dataIndex: "observation_count" },
-                      { title: "分组依据", dataIndex: "grouping_basis" },
+                      { title: "分组依据", dataIndex: "grouping_basis", render: groupingBasisLabel },
                       { title: "根因结论", render: () => "未推断" },
                     ]}
                     locale={{ emptyText: "当前报告没有可分组的候选观测。" }}
@@ -464,12 +736,10 @@ export default function JobDetail({ id, initialTab = "findings", candidateId }: 
                 <>
                   <Alert
                     type="info"
-                    message={
-                      "解析：" +
-                      JSON.stringify(parse) +
-                      "；未被检测器认领：" +
-                      report.files_in_scope_without_a_claiming_detector.length
-                    }
+                    message={coverageSummaryLabel(
+                      parse,
+                      report.files_in_scope_without_a_claiming_detector.length,
+                    )}
                     description="解析完整、检测执行完成与安全性是不同维度。工作台提供任务级硬超时与进程地址空间限制；下列引擎原始限制不代表已实现检测器逐个隔离。"
                   />
                   <Table
@@ -545,6 +815,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId }: 
                 <>
                   <Select
                     showSearch
+                    value={source?.file}
                     style={{ width: "100%" }}
                     placeholder="选择本次纳入的源码"
                     options={report._workbench.source_inventory.map(
@@ -561,7 +832,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId }: 
                         .catch((e) => setError(String(e)))
                     }
                   />
-                  {source && <CodeView source={source} />}
+                  {source && <CodeView source={source} line={sourceLine || 1} />}
                 </>
               ) : (
                 <Empty description="无已验证源码清单" />
@@ -576,7 +847,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId }: 
                     items={events.map((e) => ({
                       children: (
                         <>
-                          <Text strong>{e.stage}</Text>
+                          <Text strong>{scanStageLabel(e.stage)}</Text>
                           <div>{e.message}</div>
                           <Text type="secondary">
                             {new Date(e.created_at).toLocaleString()}
@@ -595,7 +866,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId }: 
               children: report ? (
                 <>
                   <Paragraph>
-                    原始报告保持不可变；复核包包含追加记录与案例关联。当前没有运行时验证结论。
+                    静态原始报告独立保存；下面的合并报告冻结当时的风险分层、覆盖状态、研判进度和人工验证门结果。后续复核变化会生成新快照，不覆盖旧版本。
                   </Paragraph>
                   <Space wrap>
                     {[
@@ -609,7 +880,22 @@ export default function JobDetail({ id, initialTab = "findings", candidateId }: 
                         下载 {k}
                       </Button>
                     ))}
+                    <Button type="primary" loading={snapshotBusy}
+                      onClick={() => void createCombinedReportSnapshot()}>
+                      生成不可变合并报告快照
+                    </Button>
                   </Space>
+                  {reportSnapshots.length > 0 && <Table className="section-gap" size="small"
+                    rowKey="id" pagination={false} dataSource={reportSnapshots}
+                    columns={[
+                      { title: "快照", dataIndex: "id", render: (value: string) => <Text code>{String(value).slice(0, 12)}</Text> },
+                      { title: "生成时间", dataIndex: "created_at", render: (value: string) => new Date(value).toLocaleString() },
+                      { title: "内容 SHA-256", dataIndex: "content_sha256", render: (value: string) => <Hash value={value} /> },
+                      { title: "下载", render: (_: unknown, row: any) => <Space>
+                        <Button size="small" href={"/api/v1/scans/" + id + "/reports/snapshots/" + row.id + "/json"}>JSON</Button>
+                        <Button size="small" href={"/api/v1/scans/" + id + "/reports/snapshots/" + row.id + "/markdown"}>Markdown</Button>
+                      </Space> },
+                    ]} />}
                   <Descriptions
                     column={1}
                     className="section-gap"
@@ -630,7 +916,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId }: 
                   />
                   <ul>
                     {report.limitations.map((x: string, i: number) => (
-                      <li key={i}>{x}</li>
+                      <li key={i}>{reportLimitationLabel(x)}</li>
                     ))}
                   </ul>
                 </>
@@ -656,39 +942,64 @@ export default function JobDetail({ id, initialTab = "findings", candidateId }: 
           <>
             <Alert
               type="warning"
-              message={detail.rule_id + " · " + detail.candidate_cwe}
-              description={detail.message}
+              message={<Space wrap>
+                <Tag color="gold">规则候选 · 尚未确认</Tag>
+                <Text code>{detail.rule_id}</Text>
+                {detail.candidate_cwe && <Tag>{detail.candidate_cwe}</Tag>}
+              </Space>}
+              description={<div>
+                <Text type="secondary">检测器原始说明：用于定位候选线索，不代表漏洞已确认。</Text>
+                <div style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere", marginTop: 8 }}>
+                  {detail.message || "报告未提供规则说明。"}
+                </div>
+              </div>}
             />
-            <CandidateActions job={job} candidate={detail} />
-            <CodeView source={detail.source} line={detail.line} />
-            <SourceEvidence
-              key={detail.id}
-              jobId={id}
-              detail={detail}
-              reload={() => open(detail, { select: false, resetReview: false })}
-            />
+            {detail.source ? <>
+              <CandidateActions job={job} candidate={detail} />
+              <CodeView source={detail.source} line={detail.line} />
+              <SourceEvidence
+                key={detail.id}
+                jobId={id}
+                detail={detail}
+                reload={() => open(detail, { select: false, resetReview: false })}
+              />
+            </> : <Alert
+              className="section-gap"
+              type="warning"
+              showIcon
+              message="固定源码暂不可读"
+              description={<>{detail.source_limitation || "候选和报告仍保留；恢复固定源码访问前，复核结论保持未知。"} <Button type="link" onClick={() => go("/settings/sources")}>检查源码目录</Button></>}
+            />}
             <Row gutter={20} className="section-gap">
               <Col span={12}>
                 <Card title="证据义务">
+                  <Text type="secondary">以下是规则生成的核查提示，需结合固定源码逐项验证；当前标签不是漏洞结论。</Text>
                   {(detail.evidence.obligations || []).map(
                     (o: any, i: number) => (
                       <div className="obligation" key={i}>
-                        <Space>
-                          <Text strong>{o.kind}</Text>
-                          <Tag>{o.status}</Tag>
+                        <Space wrap>
+                          <Text strong>{obligationKindLabel(o.kind)}</Text>
+                          <Tag color={o.status === "unknown" ? "default" : "blue"}>
+                            {obligationStatusLabel(o.status)}
+                          </Tag>
                         </Space>
-                        <div>{o.description || o.detail || ""}</div>
+                        <div>{obligationDescriptionLabel(o.description || o.detail)}</div>
                       </div>
                     ),
                   )}
-                  <pre className="raw">
-                    {JSON.stringify(detail.evidence, null, 2)}
-                  </pre>
+                  <Collapse
+                    className="section-gap"
+                    items={[{
+                      key: "raw-evidence",
+                      label: "查看原始证据字段（JSON）",
+                      children: <pre className="raw">{JSON.stringify(detail.evidence, null, 2)}</pre>,
+                    }]}
+                  />
                 </Card>
               </Col>
               <Col span={12}>
                 <Card title="追加人工复核">
-                  <Form
+                  {detail.source ? <Form
                     form={reviewForm}
                     layout="vertical"
                     onFinish={async (values) => {
@@ -744,7 +1055,12 @@ export default function JobDetail({ id, initialTab = "findings", candidateId }: 
                     <Button type="primary" htmlType="submit">
                       保存追加记录
                     </Button>
-                  </Form>
+                  </Form> : <Alert
+                    type="info"
+                    showIcon
+                    message="暂不能追加源码复核"
+                    description="请先恢复此任务固定源码的授权读取，再打开候选证据并记录引用。"
+                  />}
                   <Timeline
                     className="section-gap"
                     items={detail.reviews.map((r: any) => ({
@@ -768,6 +1084,58 @@ export default function JobDetail({ id, initialTab = "findings", candidateId }: 
           </>
         )}
       </Drawer>
+      <Modal
+        title="模型辅助研判外发预览"
+        open={batchOpen}
+        width={900}
+        confirmLoading={batchBusy}
+        okText="批准并创建逐候选任务"
+        cancelText="取消"
+        okButtonProps={{ disabled: !batchPreview || !batchDisclosureReviewed || !batchSubmissionApproved }}
+        onOk={() => void enqueueAgentBatch()}
+        onCancel={() => { setBatchOpen(false); setBatchDisclosureOpened([]); setBatchSubmissionApproved(false); }}
+      >
+        {batchBusy && !batchPreview ? <Spin /> : batchPreview ? <>
+          <Alert type="warning" showIcon message={"确认后将为每条候选分别创建一个" + (batchMode === "single_shot" ? "单轮模型辅助研判" : "有界工具增强调查") + "任务；下列源码上下文会发送给所示模型端点。模型结论仍是候选，需人工审核。"} />
+          <Descriptions className="section-gap" bordered size="small" column={2}>
+            <Descriptions.Item label="模型端点">{batchPreview.provider?.endpoint_host || "未显示"}</Descriptions.Item>
+            <Descriptions.Item label="候选数">{batchPreview.candidate_count}</Descriptions.Item>
+            <Descriptions.Item label="最大模型调用">{batchPreview.aggregate_budget?.max_model_calls}</Descriptions.Item>
+            <Descriptions.Item label="最大结构化修复调用">{batchPreview.aggregate_budget?.max_validation_repair_calls}</Descriptions.Item>
+            <Descriptions.Item label="最大输入 Token">{batchPreview.aggregate_budget?.max_total_input_tokens}</Descriptions.Item>
+            <Descriptions.Item label="最大输出 Token">{batchPreview.aggregate_budget?.max_total_output_tokens}</Descriptions.Item>
+            <Descriptions.Item label="顺序执行最坏耗时（秒）">{batchPreview.aggregate_budget?.max_wall_seconds_sequential}</Descriptions.Item>
+            <Descriptions.Item label="整批预算费用最高估算（非硬上限）">{batchPreview.aggregate_budget_cost_estimate
+              ? <Space wrap><Text>≤ USD {batchPreview.aggregate_budget_cost_estimate.maximum_usd}{batchPreview.aggregate_budget_cost_estimate.maximum_cny ? " / CNY " + batchPreview.aggregate_budget_cost_estimate.maximum_cny : ""}；{batchPreview.aggregate_budget_cost_estimate.candidate_or_arm_count} 个任务；{batchPreview.aggregate_budget_cost_estimate.maximum_cny ? "USD/CNY 为独立官方价目参考；" : ""}按{batchPreview.aggregate_budget_cost_estimate.basis === "realtime_payg_all_input_uncached" ? "实时按量费率、输入全部按缓存未命中" : "峰值费率、输入全部按缓存未命中"}</Text><a href={batchPreview.aggregate_budget_cost_estimate.rate_source_url} target="_blank" rel="noreferrer">费率来源</a></Space>
+              : "费用未知（该 Provider / 模型没有匹配的已知费率）"}</Descriptions.Item>
+          </Descriptions>
+          <Text type="secondary">预览指纹：{batchPreview.consent_sha256}</Text>
+          {batchPreview.candidates?.map((item: any) => <Card key={item.candidate_id} size="small" className="section-gap" title={item.file + ":" + (item.line ?? "?")}>
+            <Text code>{item.candidate_id}</Text>
+            <Text type="secondary">源码 SHA-256：{item.preview?.binding?.source_sha256}；UTF-8 字节：{item.preview?.initial_context_utf8_bytes}；脱敏类别：{(item.preview?.sensitive_redactions || []).join(", ") || "无"}</Text>
+            <Collapse activeKey={batchDisclosureOpened.includes(String(item.candidate_id)) ? [String(item.candidate_id)] : []}
+              onChange={(keys) => {
+                const opened = Array.isArray(keys) ? keys.map(String) : [String(keys)];
+                const next = batchDisclosureOpened.filter((key) => key !== String(item.candidate_id));
+                if (opened.includes(String(item.candidate_id))) next.push(String(item.candidate_id));
+                setBatchDisclosureOpened(next);
+                if (!disclosureReviewed(next, batchCandidateIds)) setBatchSubmissionApproved(false);
+              }}
+              items={[{ key: String(item.candidate_id), label: "展开该候选实际发送的完整上下文与工具范围", children: <>
+                <Text strong>发送给模型的完整初始上下文（JSON）</Text>
+                <pre className="raw">{JSON.stringify(item.preview?.initial_context || {}, null, 2)}</pre>
+                <Paragraph className="section-gap" type="secondary">可能追加的只读工具数据范围：{(item.preview?.additional_tool_data_scope || []).join(" ") || "无"}</Paragraph>
+              </> }]} />
+          </Card>)}
+          <ul>{batchPreview.disclosure?.map((line: string) => <li key={line}>{line}</li>)}</ul>
+          {!batchPreviewMatchesSelection && <Alert className="section-gap" type="error" showIcon message="预览候选与所选候选不一致，不能授权批量发送。请关闭并重新生成预览。" />}
+          <Checkbox checked={batchSubmissionApproved}
+            disabled={!batchDisclosureReviewed}
+            onChange={(event) => setBatchSubmissionApproved(event.target.checked)}>
+            我已逐条展开并检查所有候选的完整外发上下文与工具范围，允许按此预览向模型发送
+          </Checkbox>
+        </> : <Text>正在生成预览…</Text>}
+      </Modal>
       <Modal
         open={caseOpen}
         title="建立调查案例"

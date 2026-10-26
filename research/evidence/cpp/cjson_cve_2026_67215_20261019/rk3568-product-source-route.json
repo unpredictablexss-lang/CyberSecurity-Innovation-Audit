@@ -1,0 +1,79 @@
+{
+  "case_id": "cjson-cve-2026-67215",
+  "verification_date": "2026-10-19",
+  "product": "rk3568",
+  "source_observations": [
+    "vendor config identifies product rk3568, type standard, inheriting productdefine/common/inherit/rich.json and chipset_common.json",
+    "resolved out/ohos_config.json reports os_level standard, product rk3568, board rk3568",
+    "rich inheritance includes cJSON component",
+    "third_party/cJSON/BUILD.gn compiles cJSON.c and cJSON_Utils.c only when ohos_lite is defined; its other branch compiles cJSON.c only",
+    "build/config/BUILDCONFIG.gn defines is_lite_system as is_mini_system || is_small_system and imports build/lite/ohos_var.gni only for is_lite_system; the lite file defines ohos_lite=true",
+    "available rk3568 logs show HB stopped before GN generation because prebuilts/build-tools/linux-x86/bin/ninja is missing; --help also failed as unsupported option",
+    "no args.gn, generated build.ninja, global_parts_info, compile_commands, or link manifest exists under out/rk3568"
+  ],
+  "assessment": "Source configuration points to the standard cJSON branch, which excludes cJSON_Utils.c and the vulnerable JSON Patch ApplyPatches API. Exact generated GN args/target/link remain unverified, so product vulnerability status stays unknown rather than not_affected.",
+  "product_vulnerability_confirmation": "unknown",
+  "evidence_files": [
+    {
+      "path": "vendor/hihope/rk3568/config.json",
+      "role": "product",
+      "size_bytes": 10569,
+      "sha256": "46dc640a6ca988687245de967f4e2ec3aebd20ed3423472c48b89bc845c28408"
+    },
+    {
+      "path": "productdefine/common/inherit/rich.json",
+      "role": "product_inherit",
+      "size_bytes": 35215,
+      "sha256": "f7fb7b340e555347de56af035e3b5883c18a60a6ea4d1e8502ee2a8cef3256c8"
+    },
+    {
+      "path": "third_party/cJSON/BUILD.gn",
+      "role": "component_build",
+      "size_bytes": 1988,
+      "sha256": "34ff66b0f74b6c0cd1af93a860ce2f6401768bc4ff7e6f1e7877cc3ca1d31108"
+    },
+    {
+      "path": "third_party/cJSON/bundle.json",
+      "role": "component_manifest",
+      "size_bytes": 1111,
+      "sha256": "d9f6bbbc85952d8b47d87712fca922e06a1db52a9441af1a59b29747f6985599"
+    },
+    {
+      "path": "build/config/BUILDCONFIG.gn",
+      "role": "standard_build_config",
+      "size_bytes": 40061,
+      "sha256": "33a49c43ff2ae82c2e5c3178f157f615b7caf4933b6a8239c6c483b8174abb8c"
+    },
+    {
+      "path": "build/lite/ohos_var.gni",
+      "role": "lite_build_config",
+      "size_bytes": 3443,
+      "sha256": "a5e9e72f1f390f17db206940052e60431670b88d258f6a9c5e872243b6959bc0"
+    },
+    {
+      "path": "build/hb/util/preloader/preloader_process_data.py",
+      "role": "product_os_level_mapping",
+      "size_bytes": 20776,
+      "sha256": "f62db644b7cba952c27f4c46994d8cb9aa7a3fc5ef3bcc7752a79b44970c487c"
+    },
+    {
+      "path": "out/ohos_config.json",
+      "role": "resolved_product_config",
+      "size_bytes": 979,
+      "sha256": "892999ca037150188322fc21eab63bd030acdeb10e8720cd5c91398d0bd806a8"
+    },
+    {
+      "path": "out/rk3568/build.1792344452.3203762.log",
+      "role": "failed_build_log",
+      "size_bytes": 1793,
+      "sha256": "4f0e45b366f3b50b67ac9e66c473784965beee59f9368a9ea0028ed05b17d52c"
+    },
+    {
+      "path": "out/rk3568/build.log",
+      "role": "failed_help_log",
+      "size_bytes": 1024,
+      "sha256": "2a36bdef86773bcb12236a3c625038085a9ee4103a3ff8b5bd5a87766bbb209b"
+    }
+  ],
+  "next_operation": "Resolve generated rk3568 GN arguments and component graph from an isolated supported build environment; do not modify/download the checked-out prebuilts in-place. Completion condition: confirm is_lite_system/ohos_lite and cJSON_Utils source inclusion in selected targets or retain final linkage unknown."
+}

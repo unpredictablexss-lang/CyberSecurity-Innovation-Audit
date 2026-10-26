@@ -34,3 +34,15 @@ RULES = (
     "ipc.auth.service-identity",
     "ipc.auth.request-identity",
 )
+
+# Disclosed CVE-2024-12082 contract: the PID lookup is restricted to SA callers.
+# Kept repository and fully-qualified-method scoped; this is a reviewed API fact,
+# not a rule that keys on a CVE string or method name alone.
+POLICY = {
+    "repository_caller_class_contracts": (
+        ("openharmony/ability_ability_runtime",
+         "AppMgrServiceInner::GetBundleNameByPid",
+         "<sa-caller>",
+         ("GetAppRunningRecordByPid",)),
+    ),
+}

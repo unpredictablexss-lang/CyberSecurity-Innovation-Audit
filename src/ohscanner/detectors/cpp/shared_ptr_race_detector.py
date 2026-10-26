@@ -26,7 +26,6 @@ lexical scope.
 from __future__ import annotations
 
 import re
-from collections import Counter
 from dataclasses import dataclass, replace
 from typing import Dict, FrozenSet, Iterable, List, Optional, Sequence, Set, Tuple
 
@@ -37,7 +36,6 @@ from src.ohscanner.contracts import (
     ScanContext,
     SourceUnit,
 )
-from .memory_safety import parameter_names
 
 
 _RULE_ID = "ohcpp-shared-ptr-race-candidate-001"
@@ -116,13 +114,6 @@ class _FunctionShape:
     name: str
     owner_class: Optional[str]
     span: _Span
-    params: str = ""
-
-
-def _is_constructor_function(function: Optional[_FunctionShape]) -> bool:
-    if function is None or not function.owner_class:
-        return False
-    return function.owner_class.rsplit("::", 1)[-1] == function.name
 
 
 @dataclass(frozen=True)
@@ -165,130 +156,6 @@ class _MemberAccess:
     unreliable_lock_reasons: FrozenSet[str]
     function_name: str
     function_span: Optional[_Span]
-
-
-@dataclass(frozen=True)
-class MemberAccessRecord:
-    """Method-level access fact for candidate triage; never a verdict."""
-
-    file: str
-    line: int
-    column: int
-    class_name: str
-    qualified_class_name: str
-    member: str
-    operation: str
-    atomic: bool
-    function_name: str
-    held_mutexes: Tuple[str, ...]
-    unreliable_lock_reasons: Tuple[str, ...]
-    in_constructor: bool
-
-    def to_dict(self) -> Dict[str, object]:
-        return {
-            "file": self.file,
-            "line": self.line,
-            "column": self.column,
-            "class_name": self.class_name,
-            "qualified_class_name": self.qualified_class_name,
-            "member": self.member,
-            "operation": self.operation,
-            "atomic": self.atomic,
-            "function_name": self.function_name,
-            "held_mutexes": list(self.held_mutexes),
-            "unreliable_lock_reasons": list(self.unreliable_lock_reasons),
-            "in_constructor": self.in_constructor,
-        }
-
-
-def member_access_groups(
-    records: Sequence[MemberAccessRecord],
-    findings: Sequence[DetectorFinding] = (),
-) -> Tuple[Dict[str, object], ...]:
-    """Aggregate access facts by qualified class/member for triage only.
-
-    Categories are audit labels, not verdicts:
-
-    - ``atomic_only``: every modeled access uses the atomic shared_ptr API.
-    - ``stable_owner``: reads only; the pairwise rule emits no candidate.
-    - ``constructor_only``: mutation happens only in constructor bodies
-      (``initialization``); post-construction reads stay quiet.
-    - ``write_only``: writes without reads in the narrowed scope; no pair.
-    - ``mutable_owner``: reads and post-construction writes in one function.
-    - ``cross_function_unknown``: post-construction writes and reads span more
-      than one function or file, so the access protocol remains unknown.
-    """
-
-    grouped: Dict[Tuple[str, str], List[MemberAccessRecord]] = {}
-    for record in records:
-        grouped.setdefault((record.qualified_class_name, record.member), []).append(record)
-
-    candidate_counts = Counter((item.file, item.symbol) for item in findings)
-    candidate_owners: Dict[Tuple[str, str], List[Tuple[str, str]]] = {}
-    for key, items in grouped.items():
-        for file in {item.file for item in items}:
-            candidate_owners.setdefault((file, key[1]), []).append(key)
-
-    rows: List[Dict[str, object]] = []
-    for key in sorted(grouped):
-        accesses = grouped[key]
-        files = sorted({item.file for item in accesses})
-        functions = sorted({item.function_name for item in accesses})
-        reads = sum(item.operation == "read" for item in accesses)
-        writes = sum(item.operation == "write" for item in accesses)
-        initializations = sum(item.operation == "initialization" for item in accesses)
-        atomic_only = all(item.atomic for item in accesses)
-        if atomic_only:
-            category = "atomic_only"
-        elif writes == 0 and initializations == 0:
-            category = "stable_owner"
-        elif writes == 0:
-            category = "constructor_only"
-        elif reads == 0:
-            category = "write_only"
-        elif len(functions) > 1 or len(files) > 1:
-            category = "cross_function_unknown"
-        else:
-            category = "mutable_owner"
-
-        candidate_findings = 0
-        ambiguous_findings = 0
-        for file in files:
-            count = candidate_counts.get((file, key[1]), 0)
-            if not count:
-                continue
-            owners = candidate_owners.get((file, key[1]), [])
-            if len(owners) == 1:
-                candidate_findings += count
-            else:
-                ambiguous_findings += count
-
-        rows.append({
-            "qualified_class_name": key[0],
-            "class_name": accesses[0].class_name,
-            "member": key[1],
-            "category": category,
-            "files": files,
-            "functions": functions,
-            "accesses": len(accesses),
-            "reads": reads,
-            "writes": writes,
-            "initializations": initializations,
-            "post_construction_writes": writes,
-            "initialization_positions": [
-                f"{item.file}:{item.line}"
-                for item in accesses
-                if item.operation == "initialization"
-            ],
-            "lock_identities": sorted({
-                lock for item in accesses for lock in item.held_mutexes
-            }),
-            "unlocked_accesses": sum(not item.held_mutexes for item in accesses),
-            "atomic_only": atomic_only,
-            "candidate_findings": candidate_findings,
-            "ambiguous_findings": ambiguous_findings,
-        })
-    return tuple(rows)
 
 
 def _mask_comments_and_literals(text: str) -> str:
@@ -533,7 +400,6 @@ def _function_spans(
                 name=name,
                 owner_class=owner_class,
                 span=_Span(match.start(), closing + 1),
-                params=match.group("params"),
             )
         )
     return tuple(sorted(found, key=lambda item: (item.span.start, item.name)))
@@ -1220,12 +1086,6 @@ def _analyze_unit(
             object_bindings,
             known_class_names,
         )
-        if (
-            function is not None
-            and access_kind == "unqualified"
-            and name in parameter_names(function.params)
-        ):
-            continue
         if access_kind != "this" and _is_shadowed(
             locals_by_name.get(name, ()), name, token.start()
         ):
@@ -1304,18 +1164,6 @@ def _analyze_unit(
             lock_scopes, token.start()
         )
         atomic_operation = _atomic_access_kind(masked, token.start())
-        in_initializer = (
-            atomic_operation is None
-            and function is not None
-            and token.start() < masked.find("{", function.span.start)
-        )
-        in_constructor_body = (
-            atomic_operation is None and _is_constructor_function(function)
-        )
-        looks_like_write = (
-            atomic_operation is None
-            and _looks_like_write(masked, token.start(), name)
-        )
         accesses_by_member[key].append(
             _MemberAccess(
                 unit=unit,
@@ -1330,10 +1178,17 @@ def _analyze_unit(
                         "compare_exchange_strong",
                         "compare_exchange_weak",
                     }
-                    or (looks_like_write and not in_constructor_body)
+                    or (
+                        atomic_operation is None
+                        and _looks_like_write(masked, token.start(), name)
+                    )
                     else (
                         "initialization"
-                        if in_initializer or (looks_like_write and in_constructor_body)
+                        if (
+                            atomic_operation is None
+                            and function is not None
+                            and token.start() < masked.find("{", function.span.start)
+                        )
                         else "read"
                     )
                 ),
@@ -1375,7 +1230,7 @@ def _analyze_unit(
 
 class SharedPtrRaceDetector:
     detector_id = "ohscanner.cpp.shared_ptr_race"
-    version = "0.5.3"
+    version = "0.5.1"
     supported_languages = ("cpp",)
     required_facts = ()
 
@@ -1383,27 +1238,13 @@ class SharedPtrRaceDetector:
         self, context: ScanContext, units: Tuple[SourceUnit, ...]
     ) -> DetectorRun:
         del context
-        run, _records = self.analyze(units)
-        return run
-
-    def analyze(
-        self, units: Sequence[SourceUnit]
-    ) -> Tuple[DetectorRun, Tuple[MemberAccessRecord, ...]]:
-        """Return the candidate run plus method-level access facts.
-
-        The records feed the A-line triage only; they do not change findings
-        and are not part of the public detector contract.
-        """
         selected = tuple(unit for unit in units if unit.language in self.supported_languages)
         if not selected:
-            return (
-                DetectorRun(
-                    detector_id=self.detector_id,
-                    version=self.version,
-                    status="blocked",
-                    limitations=("not_applicable: no source with supported language.",),
-                ),
-                (),
+            return DetectorRun(
+                detector_id=self.detector_id,
+                version=self.version,
+                status="blocked",
+                limitations=("not_applicable: no source with supported language.",),
             )
 
         ordered = tuple(
@@ -1463,40 +1304,11 @@ class SharedPtrRaceDetector:
                 "No CFG, dataflow, cross-function escape, template instantiation, alias resolution or real product build is modeled.",
             )
         )
-        records: List[MemberAccessRecord] = []
-        for key in sorted(access_sink):
-            for access in sorted(
-                access_sink[key], key=lambda item: (item.unit.path, item.position)
-            ):
-                line, column = _line_col(access.unit.text, access.position)
-                records.append(MemberAccessRecord(
-                    file=access.unit.path,
-                    line=line,
-                    column=column,
-                    class_name=access.member.class_name,
-                    qualified_class_name=access.member.qualified_class_name,
-                    member=access.member.name,
-                    operation=access.operation,
-                    atomic=access.atomic,
-                    function_name=access.function_name,
-                    held_mutexes=tuple(sorted(access.held_mutexes)),
-                    unreliable_lock_reasons=tuple(
-                        sorted(access.unreliable_lock_reasons)
-                    ),
-                    in_constructor=(
-                        access.function_name.rsplit("::", 1)[-1]
-                        == access.member.class_name
-                    ),
-                ))
-        records.sort(key=lambda item: (item.file, item.line, item.column, item.member))
-        return (
-            DetectorRun(
-                detector_id=self.detector_id,
-                version=self.version,
-                status=status,
-                analyzed_files=tuple(sorted(analyzed_files)),
-                findings=_stable_unique(findings),
-                limitations=tuple(sorted(set(limitations))),
-            ),
-            tuple(records),
+        return DetectorRun(
+            detector_id=self.detector_id,
+            version=self.version,
+            status=status,
+            analyzed_files=tuple(sorted(analyzed_files)),
+            findings=_stable_unique(findings),
+            limitations=tuple(sorted(set(limitations))),
         )

@@ -1,0 +1,4 @@
+# trivial ASan binary (int main(){return 0;}), 20 runs, docker default seccomp
+139 0 0 139 0 0 0 139 0 139 139 0 0 0 139 0 0 0 0 0 
+# same binary, setarch x86_64 -R (ASLR off) + seccomp=unconfined, 20 runs
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 

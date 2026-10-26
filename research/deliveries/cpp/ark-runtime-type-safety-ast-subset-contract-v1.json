@@ -1,0 +1,150 @@
+{
+  "schema": "ohscanner.ark.runtime.type_safety.ast-subset-contract/v1",
+  "detector": "ohscanner.ark.runtime.type_safety",
+  "detector_version": "0.3.10",
+  "freeze_manifest": "research/deliveries/cpp/ark-runtime-c-line-algorithm-freeze-20261018.json",
+  "model_digest_sha256": "c8ad85c8eb55ee3d83d44266c259b36a2d38ea56997178ad7395073ab5b1eec4",
+  "scope": "Research-only structural contract for the bounded Filter type-origin analyzer. This contract does not enable the detector in the public Runner.",
+  "identity_trust_roots": {
+    "repository": "openharmony/arkcompiler_ets_runtime",
+    "provenance": "git_object only",
+    "profile_selection": "exact full commit must select one frozen source profile; unknown commits are blocked. The model records the matching tree OID as review provenance, while ScanRequest currently carries and the adapter enforces commit plus every declared source blob; it does not independently compare a request tree OID.",
+    "target_path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+    "target_source_identity": "Recompute Git blob ID from supplied UTF-8 bytes and compare both the pinned model blob and the shared source_blob_oid fact before analysis.",
+    "creator_path": "ecmascript/compiler/new_object_stub_builder.cpp",
+    "creator_source_identity": "Recompute Git blob ID from supplied UTF-8 bytes and compare both the pinned model blob and the shared source_blob_oid fact before analysis.",
+    "dependencies": "Every pinned C++ source dependency is present, language-tagged cpp, and byte-checked against the model blob. GN/GNI dependencies are represented only as build_config_blob_oid facts and are never forged into C++ SourceUnit values.",
+    "ast_is_not_identity": true,
+    "partial_ast_cannot_modify": [
+      "repository",
+      "commit",
+      "target path",
+      "target Git blob",
+      "creator path",
+      "creator Git blob",
+      "dependency Git blobs"
+    ]
+  },
+  "semantic_contract": {
+    "active_caller": {
+      "qualified_name": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "Variable*",
+        "Label*",
+        "Label*"
+      ],
+      "definition_must_be_unique": true,
+      "method_controls_not_active": [
+        "CopyWithin",
+        "Set",
+        "With"
+      ]
+    },
+    "creator": {
+      "qualified_owner": "panda::ecmascript::kungfu::NewObjectStubBuilder",
+      "member": "NewTypedArray",
+      "argument_count": 4,
+      "receiver_must_resolve_to_modelled_builder_binding": true
+    },
+    "sink": {
+      "member": "StoreTypedArrayElement",
+      "argument_count": 5,
+      "target_argument_zero_based": 1,
+      "type_token_argument_zero_based": 4,
+      "definition_signature_must_match": true
+    },
+    "owner_and_type_resolution": "Tree-sitter lexical namespace/class owner and parameter spelling are only local structural evidence. Macro expansion, C++ overload resolution, inheritance, implicit conversions, and build-selected declarations are unknown unless separately proven by a compiler profile.",
+    "source_profiles": [
+      {
+        "commit": "830e85b40240677039719fcbf14f721ad3b19050",
+        "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+        "target_blob": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+        "creator_blob": "757b8d050d306d349822600deacb295c7a54245e"
+      },
+      {
+        "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+        "tree": "82af11ced4297818410ccf61906b703d25b69165",
+        "target_blob": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+        "creator_blob": "757b8d050d306d349822600deacb295c7a54245e"
+      }
+    ]
+  },
+  "ast_and_generated_graph_subset": {
+    "parser": "Tree-sitter C++ structural parser; exact tree-sitter 0.26.0, tree-sitter-cpp 0.23.4 and grammar ABI 14 are model-bound; a mismatch fails before AST analysis.",
+    "production_precondition": "SourceUnit.parse_status == complete, parser reports no error nodes, shared AST eligibility fact exists, exact source bindings pass, and model/build profile is resolved.",
+    "research_partial_precondition": "Explicit research_partial entry point only; source bytes and Git blob must still match, the selected function itself must parse and resolve uniquely, and all partial-contamination limitations must remain attached.",
+    "supported_statement_forms": [
+      "compound_statement",
+      "declaration without lambda or writable alias",
+      "expression_statement",
+      "return_statement without host return expression",
+      "comment",
+      "empty_statement"
+    ],
+    "generated_control_operations": [
+      "BRANCH",
+      "Bind",
+      "Jump",
+      "LoopBegin",
+      "LoopEnd"
+    ],
+    "control_requirements": [
+      "label identity resolves to a local Label binding",
+      "control arity matches the modeled operation",
+      "external labels are not rebound",
+      "duplicate/unresolved labels remain unknown",
+      "cyclic allocation sites cannot reuse one static creation identity"
+    ],
+    "unsupported_host_constructs_fail_closed": [
+      "if_statement",
+      "switch_statement",
+      "for_statement",
+      "while_statement",
+      "do_statement",
+      "try_statement",
+      "preproc_if",
+      "preproc_ifdef",
+      "lambda_expression",
+      "unsupported_statement",
+      "unmodeled return expression",
+      "unmodeled C++ assignment/effect"
+    ],
+    "symbol_policy": "Only explicit operation/arity sets in RuntimeTypeModel are summarized. Same spelling without the exact modeled receiver, scope, arity, owner, and dependency evidence is unknown or not applicable.",
+    "effect_policy": "Unknown calls invalidate sampled runtime type/HClass facts and exception checks; unsupported aliasing, nested side effects, writes, or generated control produce unknown/partial, never safe.",
+    "budget_policy": "Byte, instruction, scope-depth, state, step, and wall-time exhaustion cannot yield a complete safe result. Incomplete functions are discarded while earlier observations remain scoped and the file remains partial."
+  },
+  "result_semantics": {
+    "candidate": "A bounded symbolic path reports a differing modeled type-token origin. This is a source-level candidate, not proof of a runtime type mismatch or security impact.",
+    "matched": "A bounded modeled path proves origin/equality for that path only; this is not a component-level safe verdict.",
+    "unknown": "The target or relevant effect/type/edge cannot be resolved under the declared subset.",
+    "partial": "Some source was inspected but parse, dependency, effect, build, or budget obligations remain unresolved; findings retain partial coverage.",
+    "blocked": "Source/profile/version/repository/target/dependency identity fails before semantic analysis.",
+    "safe_verdict_supported": false
+  },
+  "required_regressions": [
+    "research/tests/test_ark_runtime_type_safety_binding.py::test_partial_ast_cannot_override_creator_blob_identity",
+    "research/tests/test_ark_runtime_type_safety_binding.py::test_partial_parse_cannot_override_mismatched_target_git_blob",
+    "research/tests/test_ark_runtime_type_safety_binding.py::test_exact_blob_identity_does_not_admit_a_partial_target",
+    "research/tests/test_ark_runtime_type_safety_binding.py::test_same_name_function_at_unbound_path_is_rejected_before_analysis",
+    "research/tests/test_ark_runtime_type_safety_binding.py::test_rejects_same_version_but_mutated_model_digest_before_analysis",
+    "research/tests/test_ark_runtime_current_partial_replay.py::test_parent_candidate_and_fix_unknown_remain_partial",
+    "research/tests/test_ark_runtime_exception_guard.py::test_partial_source_never_becomes_a_public_complete_result",
+    "research/tests/test_ark_runtime_exception_guard.py::test_typedarray_method_matrix_is_explicitly_partial",
+    "research/tests/test_ark_runtime_type_safety_freeze.py::test_parser_environment_drift_fails_closed_before_analysis"
+  ],
+  "admission_invariant": {
+    "public_runner_registered": false,
+    "admission_status": "blocked",
+    "execution_enabled": false
+  },
+  "known_unresolved_contract_items": [
+    "Historical parent/fix translation units remain parser-partial and lack matching compiler preprocessing/build profiles.",
+    "The current a65 product Clang AST/build evidence does not transfer to either historical source profile.",
+    "No matching product image or Ark VM execution establishes actual species behavior, entry/attacker control, or security impact.",
+    "The independent ETS Frontend blind applicability review is labelled for all 21/21 samples (21.2% of complete translation units and 0.92% of complete-file function definitions); three labels are unknown, and semantic recall/component-wide accuracy remain unmeasured.",
+    "The native parser binary digest is not separately recorded; package versions and grammar ABI are frozen."
+  ]
+}

@@ -1,6 +1,6 @@
 # OHScanner：新 Agent 从这里开始
 
-更新：2026-10-18。负责人本轮集成验收为 http://localhost:18778；18775、原入口与未提交工作保留，详见当前状态。项目是 OpenHarmony 开源代码漏洞挖掘竞赛工具，不是通用 Web 漏扫器。
+更新：2026-10-20。PR [#36](https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/pull/36) 已合入 `main`，合并提交 `2a807d58007c48b9fc87795cf961ba4057f89240` 包含当前 8765 源码快照、A 路径遍历候选、最新 B IPC 0.12.13、C 显式研究候选及前端修改。实跑的 8765 服务仍来自 `/home/audit/ohscanner/worktrees/ohscanner-8765-integrated-20261019`，分支 `integration/ohscanner-8765-20261019`，HEAD `99556c81dbd013e981f3c472e391ce2e5902c5e5`；服务返回 HTTP 200，原工作树仍有两处未提交侧栏 UI 修改，尚未重启至 main 代码。发布验证及证据边界见[当前状态](项目现状与下一步.md)。项目是 OpenHarmony 开源代码漏洞挖掘竞赛工具，不是通用 Web 漏扫器。
 本目录六份 Markdown 是当前权威方案；其中“目标”不是“已实现”。
 历史教程、阶段路线图和长篇状态流水已从当前目录移除，证据可按 Git 固定提交追溯。
 
@@ -22,7 +22,7 @@
 准确性、完整性、CWE/CVE、可执行 PoC、影响模块/版本、修复、性能和创新均需有实际证据。
 当前可运行快照扫描、证据复核、源码同步/区间/版本/只读调查操作；运营面支持按 committer 时间预览 first-parent 区间和直接比较两个 branch/tag 端点。标准 WSL Docker Worker 仍不可用；一次 Windows 暂存桥接 AUTH-01 组件 Harness 不证明标准 WSL Worker 可重复运行或产品入口可达。完整竞赛漏洞证据闭环尚未收口。
 
-面板使用 misans@5.0.0 / MiSans VF Web 的 CDN 样式；网络不可用时回退系统字体。仓库不打包 MiSans 字体文件。使用声明与许可说明见“开发协作与交付指南”。
+面板内嵌与工作区 HTML 原型相同的 MiSans VF 5.0.0 Web 字体，可离线加载；字体和许可文件随前端资源保留，不单独分发。使用声明与许可说明见“开发协作与交付指南”。
 有价值的真实缺陷优先于告警数量、空菜单或把所有语言/工具列进能力清单。
 
 ## 两个容易混淆的维度
@@ -50,3 +50,7 @@ Core-only / 单次 LLM review / 工具型 Agent 是另一个实验比较维度�
 保留未提交改动；不整体覆盖 runner/catalog。未知保持 unknown，规则/模型输出默认 candidate。
 本机入口 /home/audit/ohscanner/app；Windows 浏览器 http://localhost:8765。
 历史基线 143fa63 保留旧文档；缺失实验细节用固定 Git 版本查，不重新恢复一套“旧权威方案”。
+
+## 2026-10-20 隔离端到端验收补充
+
+当前工作树在隔离端口 18776 和临时数据目录完成仓库发现、固定版本扫描、候选/覆盖查看、报告快照与重复生成检查。测试发现并修复缺失哈希导致任务详情白屏的问题。完整证据和边界见 [面板功能与验收](面板功能与验收.md) 与 [智能审计差距复核](../research/deliveries/smart_audit/P0_BASELINE_AND_GAP.md)。8765 未重启，所有发现仍为 candidate/unknown。

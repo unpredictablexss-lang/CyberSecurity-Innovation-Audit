@@ -1,0 +1,39 @@
+{
+  "schema": "c-line-official-manifest-snapshot-check-v1",
+  "repository": "openharmony/arkcompiler_ets_runtime",
+  "checked_at": "2026-10-19",
+  "snapshots": [
+    {
+      "manifest_ref": "origin/OpenHarmony-5.1.0-Release",
+      "tag_file": "tag/manifest_20250315001244.xml",
+      "runtime_commit": "b1019cb77aa49c9e2206ea82db3b22584d93cde7",
+      "runtime_commit_date": "2025-03-14",
+      "runtime_subject": "!11219 bug:modify cowarray",
+      "parent": "0b3225b82514c3be7c06e438d601f3ed4dcdc5db",
+      "ancestry_to_historical_parent_830e85b": false,
+      "ancestry_to_historical_fix_a0e3048": false,
+      "root_BUILD_gn_sha256": "8ddb71a30af7fc50e23a4011a8f433cad451e395fd5851f83b4c8003bfc3ceb2",
+      "compiler_BUILD_gn_sha256": "1fa2cb604a658b70cd888b2db5a39abbea46a443850c9bc262ad0714535aaa6f",
+      "productdefine_common_revision": "918950a47431b488556fca6579bf3797f4ec5d7c"
+    },
+    {
+      "manifest_ref": "origin/OpenHarmony_feature_20250327",
+      "tag_file": "tag/manifest_2025-03-27_02_45_05.xml",
+      "runtime_commit": "fc64764bab7efc1e84cf56b23bdb89b68c2ca08b",
+      "runtime_commit_date": "2025-03-26",
+      "runtime_subject": "!10911 Fix failing to load ai file in taskpool",
+      "parent": "299e1e9ba95d33ab944ef1dfa73dbb582d4a3d21",
+      "ancestry_to_historical_parent_830e85b": false,
+      "ancestry_to_historical_fix_a0e3048": false,
+      "root_BUILD_gn_sha256": "8ddb71a30af7fc50e23a4011a8f433cad451e395fd5851f83b4c8003bfc3ceb2",
+      "compiler_BUILD_gn_sha256": "1fa2cb604a658b70cd888b2db5a39abbea46a443850c9bc262ad0714535aaa6f",
+      "productdefine_common_revision": "44e16f8b933b4f2089fc2291e5b55816dbd3c7aa"
+    }
+  ],
+  "interpretation": "Both nested official manifest snapshots pin exact runtime commits and exact productdefine_common revisions. The runtime commits do not descend from the analyzed historical parent/fix commits in the local runtime object graph. The snapshots share identical root and compiler BUILD.gn byte hashes with each other, but this does not establish equivalence to the historical parent/fix GN files, identify the exact target product/board, or resolve generated args.gn/compile commands. Treat as official snapshot context only; it does not close the historical product build-profile gap.",
+  "disposition": {
+    "public_runner_admission": "blocked",
+    "execution_enabled": false,
+    "product_vulnerability_promotion": false
+  }
+}

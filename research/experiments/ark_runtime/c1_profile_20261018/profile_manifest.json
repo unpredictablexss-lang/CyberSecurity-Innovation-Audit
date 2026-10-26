@@ -62,7 +62,11 @@
       "bytes": 117629,
       "sha256": "52f528dada321a140a29be2d55ef9053fda818cbdca93758425f1a25f6286d55",
       "source": "local current manifest snapshot; read-only file hash",
-      "claims": ["runtime revision", "vendor revision", "board revision"]
+      "claims": [
+        "runtime revision",
+        "vendor revision",
+        "board revision"
+      ]
     },
     {
       "id": "target-build-gn",
@@ -70,7 +74,9 @@
       "bytes": 82005,
       "sha256": "8e5f0d4d829578200b75175ea81e8ef2c8370fe4c331ab6a3b255cad95988a89",
       "source": "local checkout; not accepted as exact-commit content without its verified blob id",
-      "claims": ["GN source contains libark_jsruntime build declarations; not sufficient to resolve product compile command"]
+      "claims": [
+        "GN source contains libark_jsruntime build declarations; not sufficient to resolve product compile command"
+      ]
     },
     {
       "id": "product-config",
@@ -78,7 +84,9 @@
       "bytes": 10569,
       "sha256": "46dc640a6ca988687245de967f4e2ec3aebd20ed3423472c48b89bc845c28408",
       "source": "blob fc7fed801d07f19f05a752878e738d8d40f1bc01 in pinned vendor commit",
-      "claims": ["rk3568 product identity and selected product properties"]
+      "claims": [
+        "rk3568 product identity and selected product properties"
+      ]
     },
     {
       "id": "board-config",
@@ -86,7 +94,9 @@
       "bytes": 812,
       "sha256": "ca368f4a9db0302b4cd6c656c30e0c196070591251ac8777079861c0fd7d45b4",
       "source": "blob 12776e4d60dea146dd31c91ca93f84b3e41f6920 in pinned board commit",
-      "claims": ["armv8-a, cortex-a55 and clang board declarations"]
+      "claims": [
+        "armv8-a, cortex-a55 and clang board declarations"
+      ]
     },
     {
       "id": "target-source",
@@ -94,15 +104,48 @@
       "bytes": 150610,
       "sha256": "76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c",
       "source": "git show from exact Ark Runtime commit; blob 68fb3b0adc4f9062889a861be51b7be90362e37a",
-      "claims": ["source content identity"]
+      "claims": [
+        "source content identity"
+      ]
     }
   ],
   "input_file_checks": [
-    {"path_from_workspace_parent": "openharmony-manifest-current-20261018.xml", "sha256": "52f528dada321a140a29be2d55ef9053fda818cbdca93758425f1a25f6286d55"},
-    {"path_from_workspace_parent": "openharmony/vendor/hihope/rk3568/config.json", "sha256": "46dc640a6ca988687245de967f4e2ec3aebd20ed3423472c48b89bc845c28408"},
-    {"path_from_workspace_parent": "openharmony/device/board/hihope/rk3568/config.gni", "sha256": "ca368f4a9db0302b4cd6c656c30e0c196070591251ac8777079861c0fd7d45b4"},
-    {"path_from_workspace_parent": "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp", "sha256": "76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c"},
-    {"path_from_workspace_parent": "openharmony/arkcompiler/ets_runtime/BUILD.gn", "sha256": "8e5f0d4d829578200b75175ea81e8ef2c8370fe4c331ab6a3b255cad95988a89"}
+    {
+      "path_from_workspace_parent": "openharmony-manifest-current-20261018.xml",
+      "sha256": "52f528dada321a140a29be2d55ef9053fda818cbdca93758425f1a25f6286d55"
+    },
+    {
+      "path_from_workspace_parent": "openharmony/vendor/hihope/rk3568/config.json",
+      "sha256": "46dc640a6ca988687245de967f4e2ec3aebd20ed3423472c48b89bc845c28408"
+    },
+    {
+      "path_from_workspace_parent": "openharmony/device/board/hihope/rk3568/config.gni",
+      "sha256": "ca368f4a9db0302b4cd6c656c30e0c196070591251ac8777079861c0fd7d45b4"
+    },
+    {
+      "path_from_workspace_parent": "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "sha256": "76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c"
+    },
+    {
+      "path_from_workspace_parent": "openharmony/arkcompiler/ets_runtime/BUILD.gn",
+      "sha256": "8e5f0d4d829578200b75175ea81e8ef2c8370fe4c331ab6a3b255cad95988a89"
+    },
+    {
+      "path_from_workspace_parent": "openharmony/out/ohos_config.json",
+      "sha256": "ffcb35be2e46d7b346a0e65bd4a9f7f7503626aaa7727a06344ba318cb3ddda3"
+    },
+    {
+      "path_from_workspace_parent": "openharmony/out/hb_args/setargs.json",
+      "sha256": "9ea6c8de2b4f2db63c0b925e1ea30d62ba5e422063920381fa33276ba398a2a5"
+    },
+    {
+      "path_from_workspace_parent": "openharmony/out/hb_args/buildargs.json",
+      "sha256": "32dd5c3a5e9b1f92db185eba3899598a825a119296f04d4f52424f5f258c5a01"
+    },
+    {
+      "path_from_workspace_parent": "openharmony/out/hb_args/envargs.json",
+      "sha256": "ec59d8b5996eadd22efb59796ecb01e7c4f9c1f8873ba0afc63fb70998461082"
+    }
   ],
   "missing_evidence": [
     "matching product out/<product>/compile_commands.json entry or equivalent Ninja command record",
@@ -114,6 +157,82 @@
   "fail_closed": {
     "profile_usable": false,
     "rule": "Do not synthesize macros, include flags, compiler identity, or generated inputs from product JSON or source BUILD.gn alone. Missing or mismatched evidence keeps status blocked and replay exits nonzero.",
-    "digest_changes_on": ["compiler identity/version", "target triple", "ordered argv", "defines", "ordered include paths", "generated input hashes", "dependency closure hashes", "pinned source identities"]
+    "digest_changes_on": [
+      "compiler identity/version",
+      "target triple",
+      "ordered argv",
+      "defines",
+      "ordered include paths",
+      "generated input hashes",
+      "dependency closure hashes",
+      "pinned source identities"
+    ]
+  },
+  "observed_output_state": {
+    "status": "present_but_not_matching_pinned_product_build",
+    "files": [
+      {
+        "path": "openharmony/out/ohos_config.json",
+        "bytes": 984,
+        "sha256": "ffcb35be2e46d7b346a0e65bd4a9f7f7503626aaa7727a06344ba318cb3ddda3",
+        "evidence_class": "resolved_build_framework_config",
+        "claims": [
+          "product and board paths",
+          "target CPU",
+          "configured output directory"
+        ]
+      },
+      {
+        "path": "openharmony/out/hb_args/setargs.json",
+        "bytes": 850,
+        "sha256": "9ea6c8de2b4f2db63c0b925e1ea30d62ba5e422063920381fa33276ba398a2a5",
+        "evidence_class": "build argument schema/defaults",
+        "claims": [
+          "available product selection syntax; not a record of the invocation"
+        ]
+      },
+      {
+        "path": "openharmony/out/hb_args/buildargs.json",
+        "bytes": 21408,
+        "sha256": "32dd5c3a5e9b1f92db185eba3899598a825a119296f04d4f52424f5f258c5a01",
+        "evidence_class": "build argument schema/defaults",
+        "claims": [
+          "argument names and defaults; not resolved values or a build invocation"
+        ]
+      },
+      {
+        "path": "openharmony/out/hb_args/envargs.json",
+        "bytes": 3470,
+        "sha256": "ec59d8b5996eadd22efb59796ecb01e7c4f9c1f8873ba0afc63fb70998461082",
+        "evidence_class": "build argument schema/defaults",
+        "claims": [
+          "argument names and defaults; not resolved values or a build invocation"
+        ]
+      }
+    ],
+    "resolved_config_fields": {
+      "product": "rk3568",
+      "board": "rk3568",
+      "product_path": "D:\\openHarmonyScanner\\openharmony\\vendor\\hihope\\rk3568",
+      "device_path": "D:\\openHarmonyScanner\\openharmony\\device\\board\\rockchip\\rk3568",
+      "target_cpu": "arm",
+      "out_path": "D:\\openHarmonyScanner\\openharmony\\out\\rk3568",
+      "compile_mode": "cross"
+    },
+    "candidate_comparison": {
+      "pinned_product_candidate": "hihope/rk3568",
+      "pinned_device_build_path": "device/board/hihope/rk3568",
+      "observed_device_path": "device/board/rockchip/rk3568",
+      "device_path_matches": false
+    },
+    "out_directory_files": {
+      "hb_args": 3,
+      "dfx": 0,
+      "rk3568_output_directory_exists": false,
+      "compile_commands_found": false,
+      "args_gn_found": false,
+      "build_ninja_found": false
+    },
+    "interpretation": "Framework configuration points to the hihope vendor product and arm CPU but names a rockchip device path, unlike the pinned hihope board path. hb_args files describe argument schemas/defaults and do not prove an invocation. No product compile graph or binary is present; do not use these files as the C1 product build profile."
   }
 }

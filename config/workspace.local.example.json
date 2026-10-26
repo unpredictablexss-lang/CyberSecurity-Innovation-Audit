@@ -1,12 +1,12 @@
 {
-  "app": "/home/audit/ohscanner/app",
-  "python": "/home/audit/ohscanner/envs/web/bin/python",
-  "node_bin": "/home/audit/ohscanner/tools/node/bin",
-  "data": "/home/audit/ohscanner-workbench/verification-data",
+  "app": "app",
+  "python": "envs/web/bin/python",
+  "node_bin": null,
+  "data": "../ohscanner-workbench/verification-data",
   "target_roots": [
-    "/home/audit/openharmony-targets",
-    "/home/audit/openharmony-audit/perf-corpus",
-    "/home/audit/openharmony-audit/ipc-research/repos"
+    "../openharmony-targets",
+    "../openharmony-audit/perf-corpus",
+    "../openharmony-audit/ipc-research/repos"
   ],
   "port": 8765
 }

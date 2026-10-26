@@ -24,6 +24,7 @@ class SourceFile:
     sha256: str
     parse_status: str = "not_run"
     blob_oid: str | None = None
+    archive_binding: dict | None = None
 
     def __post_init__(self):
         safe_relative_path(self.path)
@@ -35,6 +36,22 @@ class SourceFile:
             raise ValueError("invalid parse status")
         if self.blob_oid is not None and not re.fullmatch(r"(?:[a-f0-9]{40}|[a-f0-9]{64})", self.blob_oid):
             raise ValueError("invalid blob ID")
+        if self.blob_oid is not None and self.archive_binding is not None:
+            raise ValueError("source cannot be both a Git blob and an archive member")
+        if self.archive_binding is not None:
+            binding = self.archive_binding
+            if (not isinstance(binding, dict) or not isinstance(binding.get("archive_path"), str)
+                    or not isinstance(binding.get("member_path"), str)
+                    or not all(isinstance(binding.get(key), str) and re.fullmatch(r"[a-f0-9]{64}", binding[key])
+                               for key in ("archive_sha256", "member_sha256"))
+                    or not isinstance(binding.get("archive_blob_oid"), str)
+                    or not re.fullmatch(r"(?:[a-f0-9]{40}|[a-f0-9]{64})", binding["archive_blob_oid"])):
+                raise ValueError("invalid archive member source binding")
+            safe_relative_path(binding["archive_path"])
+            safe_relative_path(binding["member_path"])
+            if (self.path != binding["archive_path"] + ".members/" + binding["member_path"]
+                    or binding["member_sha256"] != self.sha256):
+                raise ValueError("archive binding differs from indexed source")
 
 
 @dataclass(frozen=True)
@@ -64,6 +81,9 @@ class SourceManifest:
             raise ValueError("immutable source files required")
         if any(f.blob_oid is not None and len(f.blob_oid) != len(self.commit) for f in self.files):
             raise ValueError("mixed blob object format")
+        if any(f.archive_binding is not None and len(f.archive_binding["archive_blob_oid"]) != len(self.commit)
+               for f in self.files):
+            raise ValueError("mixed archive blob object format")
         if len({f.path for f in self.files}) != len(self.files):
             raise ValueError("duplicate source path")
         expected = snapshot_digest(sorted(self.files, key=lambda f: f.path))
@@ -75,6 +95,9 @@ class SourceManifest:
             if path != ".":
                 safe_relative_path(path)
         if any(not any(p == "." or f.path == p or f.path.startswith(p + "/")
+                       or (f.archive_binding is not None and
+                           (f.archive_binding["archive_path"] == p or
+                            f.archive_binding["archive_path"].startswith(p + "/")))
                        for p in self.include_paths) for f in self.files):
             raise ValueError("source file outside declared scope")
         if not isinstance(self.available_facts, tuple) or not all(isinstance(f, str) and f for f in self.available_facts):
@@ -134,9 +157,14 @@ def manifest_from_context(context: ScanContext, git_tree: str, inventory: dict,
         raise ValueError("inventory file count mismatch")
     if inventory["selected_source_bytes"] != sum(len(u.text.encode("utf-8")) for u in context.units):
         raise ValueError("inventory byte count mismatch")
-    if inventory["tracked_entries"] != sum(inventory[k] for k in names[1:-1]):
+    archives = inventory.get("source_archives", [])
+    archived_sources = sum(item.get("selected_sources", 0) for item in archives
+                           if item.get("status") in ("indexed", "partial"))
+    tracked_archive_count = sum(item.get("status") != "skipped_oversize" for item in archives)
+    tracked_source_count = inventory["selected_source_files"] - archived_sources + tracked_archive_count
+    if inventory["tracked_entries"] != sum(inventory[k] for k in names[1:-1]) - inventory["selected_source_files"] + tracked_source_count:
         raise ValueError("inventory counts do not close")
-    skipped = inventory.get("skipped", [])
+    skipped = [item for item in inventory.get("skipped", []) if "file" in item]
     if not isinstance(skipped, list) or any(
             not isinstance(item, dict) or item.get("reason") not in ("oversize", "non_utf8")
             or not isinstance(item.get("file"), str) for item in skipped):
@@ -154,20 +182,28 @@ def manifest_from_context(context: ScanContext, git_tree: str, inventory: dict,
             source = by_path.get(unit.path)
             if source is None or source.language != unit.language or source.data != unit.text.encode("utf-8"):
                 raise ValueError("Git source/context content mismatch")
-            blob = b"blob " + str(len(source.data)).encode() + b"\0" + source.data
-            digest = hashlib.sha1(blob).hexdigest() if len(context.request.commit) == 40 else hashlib.sha256(blob).hexdigest()
-            if digest != source.oid:
-                raise ValueError("Git blob identity/content mismatch")
-            blobs[unit.path] = source.oid
+            if source.archive_binding is not None:
+                if source.archive_binding.get("member_sha256") != hashlib.sha256(source.data).hexdigest():
+                    raise ValueError("Git archive member identity/content mismatch")
+                blobs[unit.path] = None
+            else:
+                blob = b"blob " + str(len(source.data)).encode() + b"\0" + source.data
+                digest = hashlib.sha1(blob).hexdigest() if len(context.request.commit) == 40 else hashlib.sha256(blob).hexdigest()
+                if digest != source.oid:
+                    raise ValueError("Git blob identity/content mismatch")
+                blobs[unit.path] = source.oid
     return SourceManifest(
         repository=context.request.repository, commit=context.request.commit,
         git_tree=git_tree, snapshot_sha256=context.request.snapshot_sha256,
         files=tuple(SourceFile(u.path, u.language, u.sha256, u.parse_status,
-                               blobs.get(u.path)) for u in context.units),
+                               blobs.get(u.path),
+                               next((src.archive_binding for src in sources or () if src.path == u.path), None))
+                     for u in context.units),
         include_paths=tuple(inventory.get("declared_scope", ())),
         available_facts=tuple(sorted(context.shared_facts)),
         unclassified_entries=inventory["non_source"],
         skipped_entries=sum(inventory[k] for k in ("symlinks", "submodules", "oversize", "binary_or_non_utf8")),
-        skipped_files=tuple(sorted((item["file"], item["reason"]) for item in skipped)),
+        skipped_files=tuple(sorted((item["file"], item["reason"]) for item in skipped
+                                   if item.get("reason") in ("oversize", "non_utf8"))),
         provenance="context_snapshot_checked", profile_id=context.request.profile_id,
     )

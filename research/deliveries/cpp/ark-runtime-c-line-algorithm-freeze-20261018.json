@@ -1,15 +1,15 @@
 {
   "schema": "c-line-algorithm-freeze-v1",
   "detector": "ohscanner.ark.runtime.type_safety",
-  "detector_version": "0.3.2",
+  "detector_version": "0.3.10",
   "rule_id": "ark.runtime.typedarray-store-type-origin",
-  "model_sha256": "6f26027b58baed730d5b8287c77f4c5f763873ab5f78416c8484f6a712f212df",
+  "model_sha256": "c8ad85c8eb55ee3d83d44266c259b36a2d38ea56997178ad7395073ab5b1eec4",
   "implementation_sha256": {
-    "research/full_scan_20261018/lanes/c/analysis.py": "6be789fcf9ef96b6bd8726c72d38c1294a5665085905c63defef88bddcdd38ee",
-    "research/full_scan_20261018/lanes/c/detector.py": "0421c00c414f71872c851477406f29de7e846c80fe811314c0078f20bdca37b2",
-    "research/full_scan_20261018/lanes/c/model.py": "c19f9f3744faf059c546a1d4ff01d47ee5e6885fa21e27fbce2e21b0504d1b60",
+    "research/full_scan_20261018/lanes/c/analysis.py": "edaac88ca3c0c70c5dc4547148f5f339fea954c077601c64cc284e0ca598b7c7",
+    "research/full_scan_20261018/lanes/c/detector.py": "f0ee5c21fcaa5891a8abb0d021594426c2a1ad1ba407cb27f155ed54a968608d",
+    "research/full_scan_20261018/lanes/c/model.py": "e6c92f7734de5c809003bf5574db13f327f73dcf3c0aa5532074a911addcaa06",
     "research/full_scan_20261018/lanes/c/runtime_ir.py": "f3c2c85f086e223cb5897150f7d1e6890bf568599a287c1a6fe6e5411c2a39ca",
-    "research/full_scan_20261018/lanes/c/syntax.py": "efcd76fc5312acf0021ecce701f9506ece1db781f7ba51e6c702b75125e6e5c4",
+    "research/full_scan_20261018/lanes/c/syntax.py": "44d1d28e81549354a54d06d0ccbee7798aaf902ac48248852cead483dd79911c",
     "research/full_scan_20261018/lanes/c/type_origin.py": "e4bd9eb47c508fb0cdfa482e5eaf6133d99c643f505d0455c61f01fa9356b795"
   },
   "source_profiles": [
@@ -29,19 +29,31 @@
     }
   ],
   "verification": {
-    "binding_and_historical_control_tests": 27,
+    "binding_and_historical_control_tests": 34,
     "public_gate_tests": 1,
     "result": "passed",
     "fixtures_are_partial_source_replays": true,
     "public_runner_registered": false,
     "admission_status": "blocked",
-    "execution_enabled": false
+    "execution_enabled": false,
+    "total_tests_in_latest_command": 38,
+    "model_digest_mismatch_control": "passed: same-version mutated RuntimeTypeModel is blocked before semantic analysis",
+    "parser_environment_mismatch_control": "passed: runtime/grammar/ABI drift is rejected before AST analysis"
   },
-  "bound_model_source_count_per_profile": 30,
-  "freeze_scope": "Research holdout only. C-line matcher frozen; version 0.3.2 adds fail-closed exact dependency and model-version binding. The ETS Frontend same-name control is a blind applicability packet only; it has no prior C result and no labels. Any matcher change invalidates semantic holdout evaluation.",
+  "bound_model_source_count_per_profile": 40,
+  "implementation_support_sha256": {
+    "src/ohscanner/git_source.py": "7305fcc588dc389cccf1a7fbfa0be50863997c3b9b30617b2b74fd1559f68a57",
+    "src/ohscanner/indexing.py": "3fbd6272ff955d2fa1a913f97c7c55dcc206d003b75f015846a39c2c9693bbe5"
+  },
+  "freeze_scope": "Research holdout only. C-line matcher frozen; version 0.3.10 fails closed on model-version, full model-digest, parser-environment, Git-object provenance, and target-path mismatch, binds declared C++ and GN source dependencies to their Git blob IDs, and semantically analyzes only exact Filter and binds the TypedArray/buffer/runtime-stub sink chain and species-protector invalidation path. CopyWithin, Set, and With remain review controls, not active semantic callers. The ETS Frontend same-name control is a blind applicability packet only; it has no prior C result and no labels. Any matcher change invalidates semantic holdout evaluation.",
   "limitations": [
     "Historical Ark Runtime target AST remains partial; research analysis preserves parse_dependency_contamination_unknown.",
-    "No product GN compile profile, complete preprocessing, compiler type resolution, or runtime species execution is included.",
-    "Independent reviewer labels are not present; do not calculate precision, recall, or root-cause rates from developer controls."
-  ]
+    "The historical parent/fix replay profiles lack matching product GN/preprocessing/compiler-type profiles; the separate current-a65 C1 target build does not transfer. No Ark Runtime species execution or product security-impact confirmation is included.",
+    "Version 0.3.10 binds Tree-sitter runtime, C++ grammar package, and grammar ABI in RuntimeTypeModel and fails closed on mismatch; native parser binary digest is not separately recorded."
+  ],
+  "parser_environment": {
+    "tree-sitter": "0.26.0",
+    "tree-sitter-cpp": "0.23.4",
+    "cpp_grammar_abi": "14"
+  }
 }

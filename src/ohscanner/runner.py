@@ -89,6 +89,7 @@ def _normalized(context, detector, selected, run, elapsed, error=None,
         diagnostic_id = _diagnostic_id(detector.detector_id, finding, unit.sha256)
         byte_start, byte_end = line_byte_range(unit.text, finding.line)
         blob_oids = context.shared_facts.get("source_blob_oid", {})
+        archive_bindings = context.shared_facts.get("source_archive_binding", {})
         observation = {
             "repository": context.request.repository,
             "commit": context.request.commit,
@@ -104,6 +105,7 @@ def _normalized(context, detector, selected, run, elapsed, error=None,
             "line": finding.line,
             "message": finding.message,
             "source_blob_oid": blob_oids.get(finding.file),
+            "source_archive_binding": archive_bindings.get(finding.file),
             "source_sha256": unit.sha256,
             "byte_start": byte_start,
             "byte_end": byte_end,
@@ -125,7 +127,8 @@ def _normalized(context, detector, selected, run, elapsed, error=None,
             consequence_cwe=finding.consequence_cwe,
             finding_identity_id=identity_record["stable"]["id"],
             occurrence_id=identity_record["occurrence"]["id"],
-            finding_identity=identity_record))
+            finding_identity=identity_record,
+            source_archive_binding=archive_bindings.get(finding.file)))
     findings.sort(key=lambda item: (item.file, item.line or 0, item.rule_id or "", item.diagnostic_id))
     limitations = list(run.limitations)
     provenance_limitation = (

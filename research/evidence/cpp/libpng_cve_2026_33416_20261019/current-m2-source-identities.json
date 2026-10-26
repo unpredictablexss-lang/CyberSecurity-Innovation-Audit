@@ -1,0 +1,120 @@
+{
+  "declared_repository": "pnggroup/libpng",
+  "source_origin": "pre-existing explicitly downloaded/hash-bound SourceForge 1.6.55 and 1.6.56 extracted release trees; scan snapshot is synthetic transport only",
+  "scope": [
+    "pngset.c",
+    "png.c",
+    "pngread.c",
+    "pngrtran.c"
+  ],
+  "scans": {
+    "vulnerable": {
+      "synthetic_commit": "afad740f043acd9bee412677d0a5ff1e046aaa24",
+      "tree": "5d18312a3b10c4aa1a488b91ac41d010606640ef",
+      "snapshot_sha256": "f80ae78bc09612fd5b8c5a925f858b41e15711319d0a794cafeb4764f7ec73d9",
+      "detector": "ohscanner.cpp.resource_lifetime",
+      "detector_version": "0.1.9",
+      "status": "blocked",
+      "diagnostic_count": 2,
+      "parse_coverage": {
+        "partial": 4
+      },
+      "elapsed_seconds": 0.32451830000354676,
+      "files": {
+        "pngset.c": {
+          "blob": "3e63c2724ec8737482d1746a790cfe0840c3a83e",
+          "byte_length": 57534,
+          "source_sha256": "9bd59a79669db37b2ecc481439481eb5f49bf77bee0de4b1aba649915609b3d0"
+        },
+        "png.c": {
+          "blob": "a0cad0197e760013abf67eb5c23ce5e4055cdb4d",
+          "byte_length": 135426,
+          "source_sha256": "0d8e45e9039cf04088764a09dcda7b24695f199288a44e11dba54ebfaca1c730"
+        },
+        "pngread.c": {
+          "blob": "af2f44c9ca8eaa40177b2ae5612c0eccc0f625a5",
+          "byte_length": 143336,
+          "source_sha256": "feee8bdd4c553cc4f01bb288a868d4b83e1ce0f75014a96163a49eb32119cba6"
+        },
+        "pngrtran.c": {
+          "blob": "1fce9af121d1073d465e5d57a4278a67c522db69",
+          "byte_length": 171647,
+          "source_sha256": "4df05c2e5db00911817d7f125c862524205895f34a65106e016d351f7e6edb53"
+        }
+      },
+      "independent_source_verification": {
+        "checked_against": "D:\\openHarmonyScanner\\tmp\\libpng-runtime-cve-2026-33416-20261019\\vulnerable-official",
+        "files_checked": 4,
+        "source_hash_mismatches": 0,
+        "blob_mismatches": 0,
+        "byte_length_mismatches": 0,
+        "report_scope_entries": 4,
+        "report_source_bindings": "all diagnostics bound to exact pngrtran.c SHA-256",
+        "checked_date": "2026-10-19"
+      }
+    },
+    "fixed": {
+      "synthetic_commit": "dcd78000a2e39558bd0b9340633d7acff796d37b",
+      "tree": "444dba821b3f8b58326ce85d0daf056f64029ec7",
+      "snapshot_sha256": "21cfd3bac010b1ba63611630ac8381487a9455c24591618cb16bb52e0a600eae",
+      "detector": "ohscanner.cpp.resource_lifetime",
+      "detector_version": "0.1.9",
+      "status": "blocked",
+      "diagnostic_count": 0,
+      "parse_coverage": {
+        "partial": 4
+      },
+      "elapsed_seconds": 0.3321643999952357,
+      "files": {
+        "pngset.c": {
+          "blob": "b9ccb7fb156d134265133541209be1ab12034366",
+          "byte_length": 58711,
+          "source_sha256": "d3a203e40b6a6000a7cb78a61e0fd9664b0c39a65d82260efedb0f0184a8bc19"
+        },
+        "png.c": {
+          "blob": "fda0a8e6ae06b42c672d9e5ae476a4259a29e357",
+          "byte_length": 135428,
+          "source_sha256": "29a37cedb5be5597aafa3cab62a223c0accbd6016edfff97386471a6e118100c"
+        },
+        "pngread.c": {
+          "blob": "24199689a76b2cac8e75ca8bb37fd67e62d9f53b",
+          "byte_length": 143404,
+          "source_sha256": "2a2c02673c7dcd6853f3efe8cc16c893df3f7bdffe7b53abde835e7c6e4c6fc3"
+        },
+        "pngrtran.c": {
+          "blob": "978dac588801a111ebd9917a74179e081ea39290",
+          "byte_length": 172600,
+          "source_sha256": "6b724ff0047cced71884176296aac10a6fc1d2592477034bbd622222ded3373f"
+        }
+      },
+      "independent_source_verification": {
+        "checked_against": "D:\\openHarmonyScanner\\tmp\\libpng-runtime-cve-2026-33416-20261019\\fixed",
+        "files_checked": 4,
+        "source_hash_mismatches": 0,
+        "blob_mismatches": 0,
+        "byte_length_mismatches": 0,
+        "report_scope_entries": 4,
+        "report_source_bindings": "no diagnostics to bind",
+        "checked_date": "2026-10-19"
+      }
+    }
+  },
+  "vulnerable_findings": [
+    {
+      "file": "pngrtran.c",
+      "line": 1187,
+      "rule_id": "ohcpp-resource-lifetime-cross-member-alias-uaf-candidate-003",
+      "rule_version": "0.1.9",
+      "source_sha256": "4df05c2e5db00911817d7f125c862524205895f34a65106e016d351f7e6edb53",
+      "message": "Candidate only (partial cross-unit lifetime evidence): member alias `png_ptr->trans_alpha = info_ptr->trans_alpha` at pngset.c:1178, deallocator-shaped call `png_free` receives `info_ptr->trans_alpha` at png.c:522, and the aliased member `png_ptr->trans_alpha` is read here. Call order, same-object identity, callee release semantics, path feasibility, and ownership transfer remain unknown."
+    },
+    {
+      "file": "pngrtran.c",
+      "line": 1228,
+      "rule_id": "ohcpp-resource-lifetime-cross-member-alias-uaf-candidate-003",
+      "rule_version": "0.1.9",
+      "source_sha256": "4df05c2e5db00911817d7f125c862524205895f34a65106e016d351f7e6edb53",
+      "message": "Candidate only (partial cross-unit lifetime evidence): member alias `info_ptr->palette = png_ptr->palette` at pngset.c:798, deallocator-shaped call `png_free` receives `info_ptr->palette` at png.c:656, and the aliased member `png_ptr->palette` is read here. Call order, same-object identity, callee release semantics, path feasibility, and ownership transfer remain unknown."
+    }
+  ]
+}

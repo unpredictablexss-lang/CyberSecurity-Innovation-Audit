@@ -74,6 +74,549 @@ class ParcelArgumentPositionTests(unittest.TestCase):
         self.assertNotIn('ipc.parcel.write-bounds', rules)
 
 
+class ParcelAllocatedDestinationTests(unittest.TestCase):
+    def test_exact_new_array_capacity_and_nonnegative_fail_fast_are_safe(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertNotIn('ipc.parcel.copy-range', rules)
+
+    def test_dynamic_array_without_nonnegative_guard_stays_a_candidate(self):
+        rules = rules_for('int n=data.ReadInt32(); char *dst=new char[n]; '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_non_exiting_nonnegative_check_does_not_guard_the_copy(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) { Log("bad length"); } '
+                          'char *dst=new char[n]; '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_rebinding_the_allocation_length_invalidates_capacity(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; n=data.ReadInt32(); '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_incrementing_the_allocation_length_invalidates_capacity(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; n++; '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_prefix_decrement_invalidates_the_nonnegative_fact(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; --n; '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_compound_increment_preserves_request_taint_and_invalidates_facts(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; n+=1; '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_compound_decrement_preserves_request_taint_and_invalidates_facts(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; n-=1; '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_unresolved_call_may_mutate_a_request_length_by_reference(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; Bump(n); '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_unresolved_explicit_address_call_invalidates_length_facts(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; Bump(&n); '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_unresolved_call_with_dereferenced_pointer_offset_invalidates_facts(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; int *p=&n; Mutate(*(p+0)); '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_unresolved_call_with_dereferenced_address_of_request_value_invalidates_facts(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; Mutate(*(&n)); '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_unresolved_call_with_ambiguous_request_lvalue_invalidates_all_origins(self):
+        for expression in ('choose ? n : m', 'choose ? m : n'):
+            with self.subTest(expression=expression):
+                rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                                  'int m=data.ReadInt32(); if(m<=0) return -1; '
+                                  'char *dst=new char[m]; int choose=data.ReadInt32(); '
+                                  'Mutate(' + expression + '); '
+                                  'const char *src=data.ReadBuffer(m); memcpy(dst,src,m);')
+                self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_conditional_lvalue_assignment_invalidates_all_possible_request_origins(self):
+        for expression in ('choose ? n : m', 'choose ? m : n'):
+            with self.subTest(expression=expression):
+                rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                                  'int m=data.ReadInt32(); if(m<=0) return -1; '
+                                  'char *dst=new char[m]; int choose=data.ReadInt32(); '
+                                  '(' + expression + ')=5; '
+                                  'const char *src=data.ReadBuffer(m); memcpy(dst,src,m);')
+                self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_reference_bound_to_conditional_request_lvalue_keeps_all_origins(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'int m=data.ReadInt32(); if(m<=0) return -1; '
+                          'char *dst=new char[m]; int choose=data.ReadInt32(); '
+                          'int& alias=(choose ? n : m); Unknown(alias); '
+                          'const char *src=data.ReadBuffer(m); memcpy(dst,src,m);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_reference_bound_through_conditional_request_addresses_keeps_all_origins(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'int m=data.ReadInt32(); if(m<=0) return -1; '
+                          'char *dst=new char[m]; int choose=data.ReadInt32(); '
+                          'int& alias=*(choose ? &n : &m); Unknown(alias); '
+                          'const char *src=data.ReadBuffer(m); memcpy(dst,src,m);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_reference_bound_through_unknown_request_pointer_invalidates_facts(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; int *p=&n; int *q=p+0; '
+                          'int& alias=*q; Unknown(alias); '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_write_through_reference_bound_to_unknown_request_pointer_invalidates_facts(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; int *p=&n; int *q=p+0; '
+                          'int& alias=*q; alias++; '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_unresolved_call_through_pointer_to_unrelated_local_preserves_facts(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; int unrelated=2; int *p=&unrelated; '
+                          'Unknown(p); const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertNotIn('ipc.parcel.copy-range', rules)
+
+    def test_memcpy_to_pointer_to_unrelated_local_preserves_facts(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; int unrelated=2; int *p=&unrelated; '
+                          'int replacement=3; memcpy(p,&replacement,sizeof(int)); '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertNotIn('ipc.parcel.copy-range', rules)
+
+    def test_unresolved_call_with_indexed_request_pointer_invalidates_facts(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; int *p=&n; Mutate(p[0]); '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_unresolved_call_with_commuted_indexed_pointer_invalidates_facts(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; int *p=&n; Mutate(0[p]); '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_unresolved_pointer_mutator_with_offset_invalidates_facts(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; int *p=&n; MutatePtr(p+0); '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_unresolved_pointer_mutator_with_address_of_index_invalidates_facts(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; int *p=&n; MutatePtr(&p[0]); '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_parcel_read_through_dereferenced_pointer_remains_candidate_free(self):
+        rules = rules_for('int n=data.ReadInt32(); int *p=&n; ReadBuffer(*p); '
+                          'if(n<=0) return -1; char *dst=new char[n]; '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertNotIn('ipc.parcel.copy-range', rules)
+
+    def test_memcpy_address_of_indexed_request_pointer_invalidates_facts(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; int *p=&n; int replacement=8; '
+                          'memcpy(&p[0], &replacement, sizeof(n)); '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_memcpy_c_cast_address_of_indexed_pointer_invalidates_facts(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; int *p=&n; int replacement=8; '
+                          'memcpy((void*)&p[0], &replacement, sizeof(n)); '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_ambiguous_memcpy_pointer_destination_invalidates_every_possible_origin(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'int m=data.ReadInt32(); if(m<=0) return -1; '
+                          'char *dst=new char[m]; int *p=&n; int *q=&m; '
+                          'int choose=data.ReadInt32(); int replacement=8; '
+                          'memcpy(choose ? p : q, &replacement, sizeof(int)); '
+                          'const char *src=data.ReadBuffer(m); memcpy(dst,src,m);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_ambiguous_memcpy_destination_includes_direct_address_origin(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'int m=data.ReadInt32(); if(m<=0) return -1; '
+                          'char *dst=new char[m]; int *p=&n; int choose=data.ReadInt32(); '
+                          'int replacement=8; memcpy(choose ? p : &m, &replacement, sizeof(int)); '
+                          'const char *src=data.ReadBuffer(m); memcpy(dst,src,m);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_ambiguous_memcpy_destination_includes_reference_alias_origin(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'int m=data.ReadInt32(); if(m<=0) return -1; '
+                          'char *dst=new char[m]; int *p=&n; int& alias=m; '
+                          'int choose=data.ReadInt32(); int replacement=8; '
+                          'memcpy(choose ? p : &alias, &replacement, sizeof(int)); '
+                          'const char *src=data.ReadBuffer(m); memcpy(dst,src,m);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_unknown_request_pointer_memcpy_destination_invalidates_facts(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'int m=data.ReadInt32(); if(m<=0) return -1; '
+                          'char *dst=new char[m]; int *p=&n; int choose=data.ReadInt32(); '
+                          'int *q; q=choose ? p : nullptr; int replacement=8; '
+                          'memcpy(q, &replacement, sizeof(int)); '
+                          'const char *src=data.ReadBuffer(m); memcpy(dst,src,m);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_fresh_malloc_destination_does_not_alias_request_length(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; char *scratch=(char*)malloc(16); '
+                          'memcpy(scratch,dst,1); '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertNotIn('ipc.parcel.copy-range', rules)
+
+    def test_fresh_std_malloc_destination_does_not_alias_request_length(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; char *scratch=(char*)std::malloc(16); '
+                          'memcpy(scratch,dst,1); '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertNotIn('ipc.parcel.copy-range', rules)
+
+    def test_conditional_request_or_malloc_pointer_remains_unknown(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; int *p=&n; int choose=data.ReadInt32(); '
+                          'int *q=choose ? p : (int*)malloc(sizeof(int)); int replacement=8; '
+                          'memcpy(q,&replacement,sizeof(int)); '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_resolved_nonconst_reference_mutator_invalidates_length_facts(self):
+        text = (HEADER + 'void Fixture_flow::Bump(int &value) { value++; }\n'
+                + SIGNATURE + DESCRIPTOR
+                + 'int n=data.ReadInt32(); if(n<=0) return -1; '
+                  'char *dst=new char[n]; Bump(n); '
+                  'const char *src=data.ReadBuffer(n); memcpy(dst,src,n); return 0;\n}\n')
+        rules = {finding.rule_id for finding in findings_for(text)}
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_resolved_pointer_mutator_invalidates_explicit_address_argument(self):
+        text = (HEADER + 'void Fixture_flow::Bump(int *value) { (*value)++; }\n'
+                + SIGNATURE + DESCRIPTOR
+                + 'int n=data.ReadInt32(); if(n<=0) return -1; '
+                  'char *dst=new char[n]; Bump(&n); '
+                  'const char *src=data.ReadBuffer(n); memcpy(dst,src,n); return 0;\n}\n')
+        rules = {finding.rule_id for finding in findings_for(text)}
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_local_nonconst_reference_alias_invalidates_origin_facts(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; int& alias=n; alias++; '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_local_pointer_alias_invalidates_origin_facts(self):
+        text = (HEADER + 'void Fixture_flow::Bump(int *value) { (*value)++; }\n'
+                + SIGNATURE + DESCRIPTOR
+                + 'int n=data.ReadInt32(); if(n<=0) return -1; '
+                  'char *dst=new char[n]; int *alias=&n; Bump(alias); '
+                  'const char *src=data.ReadBuffer(n); memcpy(dst,src,n); return 0;\n}\n')
+        rules = {finding.rule_id for finding in findings_for(text)}
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_reference_alias_passed_to_reference_mutator_keeps_candidate(self):
+        text = (HEADER + 'void Fixture_flow::Bump(int &value) { value++; }\n'
+                + SIGNATURE + DESCRIPTOR
+                + 'int n=data.ReadInt32(); if(n<=0) return -1; '
+                  'char *dst=new char[n]; int& alias=n; Bump(alias); '
+                  'const char *src=data.ReadBuffer(n); memcpy(dst,src,n); return 0;\n}\n')
+        rules = {finding.rule_id for finding in findings_for(text)}
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_reference_alias_mutated_after_facts_are_established(self):
+        rules = rules_for('int n=data.ReadInt32(); int& alias=n; '
+                          'if(n<=0) return -1; char *dst=new char[n]; alias++; '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_pointer_alias_passed_after_facts_are_established(self):
+        text = (HEADER + 'void Fixture_flow::Bump(int *value) { (*value)++; }\n'
+                + SIGNATURE + DESCRIPTOR
+                + 'int n=data.ReadInt32(); int *alias=&n; '
+                  'if(n<=0) return -1; char *dst=new char[n]; Bump(alias); '
+                  'const char *src=data.ReadBuffer(n); memcpy(dst,src,n); return 0;\n}\n')
+        rules = {finding.rule_id for finding in findings_for(text)}
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_unused_const_pointer_alias_does_not_drop_proven_capacity(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; const int *alias=&n; '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertNotIn('ipc.parcel.copy-range', rules)
+
+    def test_unused_nonconst_pointer_alias_does_not_drop_proven_capacity(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; int *alias=&n; '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertNotIn('ipc.parcel.copy-range', rules)
+
+    def test_parenthesized_pointer_write_invalidates_length_facts(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; int *p=&n; (*p)+=1; '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_reference_alias_initialized_from_dereferenced_request_pointer_invalidates(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; int *p=&n; int& alias=*p; alias++; '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_parenthesized_dereference_reference_alias_assignment_invalidates(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; int *p=&n; int& alias=(*p); alias=100; '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_pointer_arithmetic_dereference_reference_alias_invalidates(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; int *p=&n; int& alias=*(p+0); alias=100; '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_pointer_copy_alias_reference_dereference_invalidates(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; int *p=&n; int *q=p; int& alias=*q; alias++; '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_address_dereference_reference_alias_invalidates(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; int& alias=*(&n); alias++; '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_indexed_reference_alias_mutation_invalidates_origin_facts(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; int *p=&n; int& alias=p[0]; alias++; '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_commuted_indexed_reference_alias_mutation_invalidates_origin_facts(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; int *p=&n; int& alias=0[p]; alias++; '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_unused_indexed_reference_alias_keeps_proven_capacity(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; int *p=&n; int& alias=p[0]; '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertNotIn('ipc.parcel.copy-range', rules)
+
+    def test_unknown_call_receiving_dereferenced_request_pointer_invalidates(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; int *p=&n; Mutate(*p); '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_known_parcel_read_receiving_dereferenced_request_pointer_preserves_facts(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; int *p=&n; data.ReadBuffer(*p); '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertNotIn('ipc.parcel.copy-range', rules)
+
+    def test_parcel_value_writer_receiving_dereferenced_request_pointer_preserves_facts(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; int *p=&n; data.WriteInt32(*p); '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertNotIn('ipc.parcel.copy-range', rules)
+
+    def test_unused_nonconst_reference_alias_does_not_drop_proven_capacity(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; int& alias=n; '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertNotIn('ipc.parcel.copy-range', rules)
+
+    def test_unknown_call_receiving_local_reference_alias_invalidates_facts(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; int& alias=n; Unknown(alias); '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_unknown_call_receiving_local_pointer_alias_invalidates_facts(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; int *alias=&n; Unknown(alias); '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_memcpy_destination_alias_write_invalidates_length_facts(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; int *p=&n; int replacement=100; '
+                          'memcpy(p,&replacement,sizeof(n)); '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_memcpy_source_alias_read_preserves_length_facts(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; int *p=&n; '
+                          'memcpy(dst,p,sizeof(n)); '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertNotIn('ipc.parcel.copy-range', rules)
+
+    def test_c_style_cast_memcpy_destination_alias_invalidates_length_facts(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; int *p=&n; int replacement=100; '
+                          'memcpy((void*)p,&replacement,sizeof(n)); '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_c_style_cast_memcpy_source_alias_read_preserves_length_facts(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; int *p=&n; '
+                          'memcpy(dst,(const void*)p,sizeof(n)); '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertNotIn('ipc.parcel.copy-range', rules)
+
+    def test_memcpy_pointer_offset_destination_alias_invalidates_length_facts(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; int *p=&n; int replacement=100; '
+                          'memcpy(p+0,&replacement,sizeof(n)); '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_parenthesized_memcpy_pointer_offset_destination_invalidates_facts(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; int *p=&n; int replacement=100; '
+                          'memcpy((p+0),&replacement,sizeof(n)); '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_cast_memcpy_pointer_offset_destination_alias_invalidates_length_facts(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; int *p=&n; int replacement=100; '
+                          'memcpy((void*)(p+0),&replacement,sizeof(n)); '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_memcpy_pointer_offset_source_alias_read_preserves_length_facts(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; int *p=&n; '
+                          'memcpy(dst,p+0,sizeof(n)); '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertNotIn('ipc.parcel.copy-range', rules)
+
+    def test_pointer_alias_rebind_updates_origin_before_mutating_helper(self):
+        text = (HEADER + 'void Fixture_flow::Bump(int *value) { (*value)++; }\n'
+                + SIGNATURE + DESCRIPTOR
+                + 'int n=data.ReadInt32(); if(n<=0) return -1; char *first=new char[n]; '
+                  'int m=data.ReadInt32(); if(m<=0) return -1; char *dst=new char[m]; '
+                  'int *alias=&n; alias=&m; Bump(alias); '
+                  'const char *src=data.ReadBuffer(m); memcpy(dst,src,m); return 0;\n}\n')
+        rules = {finding.rule_id for finding in findings_for(text)}
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_reference_alias_assignment_invalidates_origin_facts(self):
+        rules = rules_for('int n=data.ReadInt32(); int& alias=n; '
+                          'if(n<=0) return -1; char *dst=new char[n]; '
+                          'alias=data.ReadInt32(); '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_pointer_declared_before_assignment_tracks_request_origin(self):
+        text = (HEADER + 'void Fixture_flow::Bump(int *value) { (*value)++; }\n'
+                + SIGNATURE + DESCRIPTOR
+                + 'int n=data.ReadInt32(); if(n<=0) return -1; char *dst=new char[n]; '
+                  'int *alias; alias=&n; Bump(alias); '
+                  'const char *src=data.ReadBuffer(n); memcpy(dst,src,n); return 0;\n}\n')
+        rules = {finding.rule_id for finding in findings_for(text)}
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_write_through_request_pointer_invalidates_origin_facts(self):
+        rules = rules_for('int n=data.ReadInt32(); int *p=&n; '
+                          'if(n<=0) return -1; char *dst=new char[n]; '
+                          '*p=data.ReadInt32(); '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_indexed_write_through_request_pointer_invalidates_origin_facts(self):
+        rules = rules_for('int n=data.ReadInt32(); int *p=&n; '
+                          'if(n<=0) return -1; char *dst=new char[n]; '
+                          'p[0]=data.ReadInt32(); '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_indexed_write_through_offset_request_pointer_invalidates_origin_facts(self):
+        rules = rules_for('int n=data.ReadInt32(); int *p=&n; '
+                          'if(n<=0) return -1; char *dst=new char[n]; '
+                          '(p+1)[-1]=data.ReadInt32(); '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_commuted_indexed_write_through_request_pointer_invalidates_origin_facts(self):
+        rules = rules_for('int n=data.ReadInt32(); int *p=&n; '
+                          'if(n<=0) return -1; char *dst=new char[n]; '
+                          '0[p]=data.ReadInt32(); '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_compound_write_through_request_pointer_invalidates_origin_facts(self):
+        rules = rules_for('int n=data.ReadInt32(); int *p=&n; '
+                          'if(n<=0) return -1; char *dst=new char[n]; '
+                          '*p+=1; '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_compound_indexed_write_invalidates_request_pointer_origin(self):
+        rules = rules_for('int n=data.ReadInt32(); int *p=&n; '
+                          'if(n<=0) return -1; char *dst=new char[n]; '
+                          'p[0]+=1; '
+                          'const char *src=data.ReadBuffer(n); memcpy(dst,src,n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_shadowed_pointer_alias_keeps_outer_origin_in_candidate_state(self):
+        text = (HEADER + 'void Fixture_flow::Bump(int *value) { (*value)++; }\n'
+                + SIGNATURE + DESCRIPTOR
+                + 'int n=data.ReadInt32(); int *alias=&n; if(n<=0) return -1; '
+                  'char *dst=new char[n]; int m=data.ReadInt32(); '
+                  'if(m<=0) return -1; char *other=new char[m]; '
+                  '{ int *alias=&m; } Bump(alias); '
+                  'const char *src=data.ReadBuffer(n); memcpy(dst,src,n); return 0;\n}\n')
+        rules = {finding.rule_id for finding in findings_for(text)}
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_different_copy_length_does_not_match_allocation_capacity(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *dst=new char[n]; '
+                          'const char *src=data.ReadBuffer(n+1); memcpy(dst,src,n+1);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+    def test_new_array_capacity_does_not_apply_to_an_unrelated_destination(self):
+        rules = rules_for('int n=data.ReadInt32(); if(n<=0) return -1; '
+                          'char *owned=new char[n]; char *dst=data.ReadBuffer(n); '
+                          'memcpy(dst,data.ReadBuffer(n),n);')
+        self.assertIn('ipc.parcel.copy-range', rules)
+
+
 class ParcelIndexBoundTests(unittest.TestCase):
     def test_index_bound_against_another_buffer_does_not_match(self):
         rules = rules_for('char dst[64]; int idx=data.ReadInt32(); '

@@ -1,0 +1,74 @@
+"mode","repetition","exit_code","stdout","log"
+"attack","1","64","usage: target_adapter attack|fixed|safe|fixed-safe","logs/attack_r1.log"
+"attack","2","64","usage: target_adapter attack|fixed|safe|fixed-safe","logs/attack_r2.log"
+"attack","3","64","usage: target_adapter attack|fixed|safe|fixed-safe","logs/attack_r3.log"
+"safe","2","1","terminate called after throwing an instance of 'std::filesystem::__cxx11::filesystem_error'
+  what():  filesystem error: cannot remove: Read-only file system [/data]
+AddressSanitizer:DEADLYSIGNAL
+=================================================================
+==1==ERROR: AddressSanitizer: SEGV on unknown address (pc 0x7e267d5ab50f bp 0x7e267d5827c0 sp 0x7fff44b34130 T0)
+==1==The signal is caused by a READ memory access.
+==1==Hint: this fault was caused by a dereference of a high value address (see register values below).  Disassemble the provided pc to learn which register was used.
+    #0 0x7e267d5ab50f in abort (/lib/x86_64-linux-gnu/libc.so.6+0x2650f)
+    #1 0x7e267df38918  (/lib/x86_64-linux-gnu/libstdc++.so.6+0x9d918)
+    #2 0x7e267df43e19  (/lib/x86_64-linux-gnu/libstdc++.so.6+0xa8e19)
+    #3 0x7e267df43e84 in std::terminate() (/lib/x86_64-linux-gnu/libstdc++.so.6+0xa8e84)
+    #4 0x7e267df440d7 in __cxa_throw (/lib/x86_64-linux-gnu/libstdc++.so.6+0xa90d7)
+    #5 0x7e267df3ca6f  (/lib/x86_64-linux-gnu/libstdc++.so.6+0xa1a6f)
+    #6 0x7e267e009f28 in std::filesystem::remove_all(std::filesystem::__cxx11::path const&) (/lib/x86_64-linux-gnu/libstdc++.so.6+0x16ef28)
+    #7 0x599f7cbf1c27 in main /sandbox/work/target_adapter.cpp:113
+    #8 0x7e267d5ac249  (/lib/x86_64-linux-gnu/libc.so.6+0x27249)
+    #9 0x7e267d5ac304 in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x27304)
+    #10 0x599f7cbe9870 in _start (/sandbox/out/target_adapter+0x8a870)
+
+AddressSanitizer can not provide additional info.
+SUMMARY: AddressSanitizer: SEGV (/lib/x86_64-linux-gnu/libc.so.6+0x2650f) in abort
+==1==ABORTING","logs/safe_r2.log"
+"safe","3","1","terminate called after throwing an instance of 'std::filesystem::__cxx11::filesystem_error'
+  what():  filesystem error: cannot remove: Read-only file system [/data]
+AddressSanitizer:DEADLYSIGNAL
+=================================================================
+==1==ERROR: AddressSanitizer: SEGV on unknown address (pc 0x70641ac8a50f bp 0x70641ac617c0 sp 0x7fffd102b1d0 T0)
+==1==The signal is caused by a READ memory access.
+==1==Hint: this fault was caused by a dereference of a high value address (see register values below).  Disassemble the provided pc to learn which register was used.
+    #0 0x70641ac8a50f in abort (/lib/x86_64-linux-gnu/libc.so.6+0x2650f)
+    #1 0x70641b617918  (/lib/x86_64-linux-gnu/libstdc++.so.6+0x9d918)
+    #2 0x70641b622e19  (/lib/x86_64-linux-gnu/libstdc++.so.6+0xa8e19)
+    #3 0x70641b622e84 in std::terminate() (/lib/x86_64-linux-gnu/libstdc++.so.6+0xa8e84)
+    #4 0x70641b6230d7 in __cxa_throw (/lib/x86_64-linux-gnu/libstdc++.so.6+0xa90d7)
+    #5 0x70641b61ba6f  (/lib/x86_64-linux-gnu/libstdc++.so.6+0xa1a6f)
+    #6 0x70641b6e8f28 in std::filesystem::remove_all(std::filesystem::__cxx11::path const&) (/lib/x86_64-linux-gnu/libstdc++.so.6+0x16ef28)
+    #7 0x568c7d1fbc27 in main /sandbox/work/target_adapter.cpp:113
+    #8 0x70641ac8b249  (/lib/x86_64-linux-gnu/libc.so.6+0x27249)
+    #9 0x70641ac8b304 in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x27304)
+    #10 0x568c7d1f3870 in _start (/sandbox/out/target_adapter+0x8a870)
+
+AddressSanitizer can not provide additional info.
+SUMMARY: AddressSanitizer: SEGV (/lib/x86_64-linux-gnu/libc.so.6+0x2650f) in abort
+==1==ABORTING","logs/safe_r3.log"
+"fixed","1","1","System.Object[]","logs/fixed_r1.log"
+"fixed","2","1","terminate called after throwing an instance of 'std::filesystem::__cxx11::filesystem_error'
+  what():  filesystem error: cannot remove: Read-only file system [/data]
+AddressSanitizer:DEADLYSIGNAL
+=================================================================
+==1==ERROR: AddressSanitizer: SEGV on unknown address (pc 0x7579fb80a50f bp 0x7579fb7e17c0 sp 0x7ffecd86ace0 T0)
+==1==The signal is caused by a READ memory access.
+==1==Hint: this fault was caused by a dereference of a high value address (see register values below).  Disassemble the provided pc to learn which register was used.
+    #0 0x7579fb80a50f in abort (/lib/x86_64-linux-gnu/libc.so.6+0x2650f)
+    #1 0x7579fc197918  (/lib/x86_64-linux-gnu/libstdc++.so.6+0x9d918)
+    #2 0x7579fc1a2e19  (/lib/x86_64-linux-gnu/libstdc++.so.6+0xa8e19)
+    #3 0x7579fc1a2e84 in std::terminate() (/lib/x86_64-linux-gnu/libstdc++.so.6+0xa8e84)
+    #4 0x7579fc1a30d7 in __cxa_throw (/lib/x86_64-linux-gnu/libstdc++.so.6+0xa90d7)
+    #5 0x7579fc19ba6f  (/lib/x86_64-linux-gnu/libstdc++.so.6+0xa1a6f)
+    #6 0x7579fc268f28 in std::filesystem::remove_all(std::filesystem::__cxx11::path const&) (/lib/x86_64-linux-gnu/libstdc++.so.6+0x16ef28)
+    #7 0x5e7dc0247dc7 in main /sandbox/work/target_adapter.cpp:113
+    #8 0x7579fb80b249  (/lib/x86_64-linux-gnu/libc.so.6+0x27249)
+    #9 0x7579fb80b304 in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x27304)
+    #10 0x5e7dc023f870 in _start (/sandbox/out/patched_target_adapter+0x8b870)
+
+AddressSanitizer can not provide additional info.
+SUMMARY: AddressSanitizer: SEGV (/lib/x86_64-linux-gnu/libc.so.6+0x2650f) in abort
+==1==ABORTING","logs/fixed_r2.log"
+"fixed-safe","1","0","{""mode"":""fixed-safe"",""return_code"":0,""victim_before"":true,""victim_after"":true,""source_after"":false,""photo_output_after"":true,""pass"":true}","logs/fixed-safe_r1.log"
+"fixed-safe","2","0","{""mode"":""fixed-safe"",""return_code"":0,""victim_before"":true,""victim_after"":true,""source_after"":false,""photo_output_after"":true,""pass"":true}","logs/fixed-safe_r2.log"
+"fixed-safe","3","0","{""mode"":""fixed-safe"",""return_code"":0,""victim_before"":true,""victim_after"":true,""source_after"":false,""photo_output_after"":true,""pass"":true}","logs/fixed-safe_r3.log"

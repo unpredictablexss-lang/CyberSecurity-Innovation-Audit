@@ -1,0 +1,1040 @@
+{
+  "schema": "c-line-ets-frontend-lsp-syntax-census-v1",
+  "provenance": {
+    "repository": "openharmony/arkcompiler_ets_frontend",
+    "commit": "fadba67b0bdf625d30d69e0940e26c52992669df",
+    "tree": "cae995ac693e849ac9d71bb38ec961da58aaeadb",
+    "subtree": "ets2panda/lsp/src/",
+    "selection": "all tracked C++ translation units in the pinned subtree; syntax only; detector output not consulted"
+  },
+  "files": [
+    {
+      "path": "ets2panda/lsp/src/api.cpp",
+      "mode": "100644",
+      "blob_oid": "f6f6556b0672f1283a82aba88238de6efb4f8d8e",
+      "bytes": 54078,
+      "sha256": "cddf3e559a686ea3efcc0714ec33cb29b68bf2c739d22171011b5db60d537773",
+      "parse_status": "partial",
+      "parse_error_or_missing_nodes": 1,
+      "function_definitions": 72
+    },
+    {
+      "path": "ets2panda/lsp/src/applicable_refactors.cpp",
+      "mode": "100644",
+      "blob_oid": "602cfeb76c8a38fd3139a3abc190aa102847003c",
+      "bytes": 1044,
+      "sha256": "bb99f1dd941ff3e4cdca5579f162120e7675a0fbd2d413c28cf6960de19ea45d",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 1
+    },
+    {
+      "path": "ets2panda/lsp/src/brace_matching.cpp",
+      "mode": "100644",
+      "blob_oid": "1ddb618a890ea331cecfcb2cabcae5d10b5ed9f4",
+      "bytes": 1839,
+      "sha256": "4fb69406396757bce0db9461e859a2692bfdc54e4103996e0d9be36b7e1e70a1",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 2
+    },
+    {
+      "path": "ets2panda/lsp/src/cancellation_token.cpp",
+      "mode": "100644",
+      "blob_oid": "5c16856944e85a9068973d2da9897794cddeeb1b",
+      "bytes": 1556,
+      "sha256": "0a67f7d836e1ec5e41cea0846388178b240d61c29f8299a51f679affda6dc5e6",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 3
+    },
+    {
+      "path": "ets2panda/lsp/src/class_hierarchy.cpp",
+      "mode": "100644",
+      "blob_oid": "d8534ef26da2b0b47c01a7acf97065efe3d47f4f",
+      "bytes": 34040,
+      "sha256": "4ec48ffcd5779230754b1549867e7efa9ea5cbe8c1c527dab614e37d38db81db",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 37
+    },
+    {
+      "path": "ets2panda/lsp/src/class_hierarchy_info.cpp",
+      "mode": "100644",
+      "blob_oid": "94abaa29253203feecde9f8bed26d83ba71d1c96",
+      "bytes": 13318,
+      "sha256": "64e369b7e7aca32061574ef29dc4da19a3497ec8221c13fe6e14a530a7f903a5",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 21
+    },
+    {
+      "path": "ets2panda/lsp/src/classifier.cpp",
+      "mode": "100644",
+      "blob_oid": "7576cec8faafdd5c638837b7a3ddb088c04bc627",
+      "bytes": 8725,
+      "sha256": "086ced559c689ce0c186cb3ccb1ad133186d99ac9ad06b378d21333ca31df49d",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 7
+    },
+    {
+      "path": "ets2panda/lsp/src/code_fix_provider.cpp",
+      "mode": "100644",
+      "blob_oid": "3807c878e5c31ac608ca9dfa295249d63ffbe471",
+      "bytes": 11051,
+      "sha256": "e0bc334a7cd9f4b17cc9a456e0b90a7594d05d2aed3c0b08d988b684ca1bd187",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 17
+    },
+    {
+      "path": "ets2panda/lsp/src/completions.cpp",
+      "mode": "100644",
+      "blob_oid": "5dd1280e0b97f19543caef4b10bac4478513369d",
+      "bytes": 124669,
+      "sha256": "c10571b6fb69ce561912047138ca4748141cc1bda1a722b35a63728ca917b8a5",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 169
+    },
+    {
+      "path": "ets2panda/lsp/src/completions_details.cpp",
+      "mode": "100644",
+      "blob_oid": "1943ab98c765ab13883813fa6342afbed39a3fa1",
+      "bytes": 5030,
+      "sha256": "6fc1b9077e6916e152b17e4d25f254aa14930ef565b9dcf9e73a697ec18cde70",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 3
+    },
+    {
+      "path": "ets2panda/lsp/src/create_type_help_items.cpp",
+      "mode": "100644",
+      "blob_oid": "df3b07e7d8859c309ad88801ebccdd1bd3d2742c",
+      "bytes": 5861,
+      "sha256": "fea517a7de880d47af5707118bf801f0f41606e4ba14dd72c54d138b9912187d",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 4
+    },
+    {
+      "path": "ets2panda/lsp/src/find_references.cpp",
+      "mode": "100644",
+      "blob_oid": "67e704ca244cb31fe11b555db51d9f4afa469ba7",
+      "bytes": 9097,
+      "sha256": "ddc6acde40719c7724084e9965f7f6fc33f13de285a4cb595e27d484d067c377",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 5
+    },
+    {
+      "path": "ets2panda/lsp/src/find_rename_locations.cpp",
+      "mode": "100644",
+      "blob_oid": "3476cdcf830ab6509da1c2d7817821cac684a56c",
+      "bytes": 5105,
+      "sha256": "770f2dd3df1a00fb05a467b6a60d63a2aebd19b7648c6d3121da238b7dae108d",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 6
+    },
+    {
+      "path": "ets2panda/lsp/src/find_safe_delete_location.cpp",
+      "mode": "100644",
+      "blob_oid": "f7fd097ea8a7c417ce41b4515fda383dbfdd1d63",
+      "bytes": 3076,
+      "sha256": "9842f2b4971b99cf74197daf807bb255933c8cf7dabb82a3cbd06ed60ef5cf85",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 1
+    },
+    {
+      "path": "ets2panda/lsp/src/formatting/formatting.cpp",
+      "mode": "100644",
+      "blob_oid": "162b5275264f89f3914fc84a4b2224cdf1aa1908",
+      "bytes": 16173,
+      "sha256": "013a7b2740c66b05c55556ef72ffd0db8ad1003622702f18b336619c72c1ac3b",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 23
+    },
+    {
+      "path": "ets2panda/lsp/src/formatting/formatting_context.cpp",
+      "mode": "100644",
+      "blob_oid": "36016e5360a51122e8593eb1f885b9279dee8486",
+      "bytes": 2918,
+      "sha256": "45f4ae1bf739d97996f73f0fbc525c867f37162ac00d1f23037e910f27d1657f",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 18
+    },
+    {
+      "path": "ets2panda/lsp/src/formatting/formatting_settings.cpp",
+      "mode": "100644",
+      "blob_oid": "399daa30bc32c7ffa15f85457e2c6154a85aa4f6",
+      "bytes": 996,
+      "sha256": "969c2d9d519999925401bedb94e132c93773a0acdd6ce0f5caa6baad0cd84187",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 1
+    },
+    {
+      "path": "ets2panda/lsp/src/formatting/rules.cpp",
+      "mode": "100644",
+      "blob_oid": "8bd4d3735db6a7bfbe5e09b87f1030da07ad84a3",
+      "bytes": 74924,
+      "sha256": "ef28660edc2c3c6f5e6b084ef0211f61c720a226e7bc3923580694275e72a274",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 97
+    },
+    {
+      "path": "ets2panda/lsp/src/formatting/rules_map.cpp",
+      "mode": "100644",
+      "blob_oid": "ed67ca6475fc28e66cbd8df548c2814be972fad3",
+      "bytes": 6806,
+      "sha256": "6ee4ce19e175b5d6f19cf5ff0aa3c90369af0823f938c9c2cd1570e2aa36f7ee",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 9
+    },
+    {
+      "path": "ets2panda/lsp/src/formatting/smart_indenter.cpp",
+      "mode": "100644",
+      "blob_oid": "86dc3e47a121b857357d765eff80263b1b788eb8",
+      "bytes": 32765,
+      "sha256": "e80fc495c8119560f165548583a481b20cc1870c4e059a938aa2bf7559ecf436",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 43
+    },
+    {
+      "path": "ets2panda/lsp/src/generate_constructor.cpp",
+      "mode": "100644",
+      "blob_oid": "2828b34bac003befb43b068dfad873f7ab336901",
+      "bytes": 9872,
+      "sha256": "51b7e0dd686b3bd8e750ee98ad493ef813560d20ba0fb7de85a2d8fdcce976e6",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 13
+    },
+    {
+      "path": "ets2panda/lsp/src/get_adjusted_location.cpp",
+      "mode": "100644",
+      "blob_oid": "180b9b80bb209149cba85d90b6560f778d1297d3",
+      "bytes": 19687,
+      "sha256": "42ae383c175f58433c4c638c59e7adcb64aea8fa63a9147f2d610b5c6fc10800",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 34
+    },
+    {
+      "path": "ets2panda/lsp/src/get_class_property_info.cpp",
+      "mode": "100644",
+      "blob_oid": "e25136f34683e7e5841d71d1c6ac2f0652b77f20",
+      "bytes": 3335,
+      "sha256": "88c411e24fccb366d6b6939419c3245f0d97e429dc4a9d4a08cd224ee9a9fae5",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 4
+    },
+    {
+      "path": "ets2panda/lsp/src/get_definition_and_bound_span.cpp",
+      "mode": "100644",
+      "blob_oid": "319410776e8c099f2bceab837b8a746168084fc1",
+      "bytes": 1559,
+      "sha256": "734dd673657112861f38bc48fcfdb99fa72039661a5b851380c51864bd7044d8",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 1
+    },
+    {
+      "path": "ets2panda/lsp/src/get_definition_at_position.cpp",
+      "mode": "100644",
+      "blob_oid": "5e9e56d4d6837c26407fa621ee241959b187dca1",
+      "bytes": 10399,
+      "sha256": "c34bea0c5cbdebf655ec7a30ac1f667d0bc0bde43e3c1adfc96c5eda4b4f1126",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 8
+    },
+    {
+      "path": "ets2panda/lsp/src/get_edits_for_refactor.cpp",
+      "mode": "100644",
+      "blob_oid": "cc88c2f07953db3a667c08ffa31e2aab8a028f37",
+      "bytes": 1246,
+      "sha256": "f14c583bd59ab82372a1d34d3aa7fc563cb2d4bd0ea641e477fd5d244904facd",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 1
+    },
+    {
+      "path": "ets2panda/lsp/src/get_name_or_dotted_name_span.cpp",
+      "mode": "100644",
+      "blob_oid": "81a5d52aff566a667613616c56bd49ca008ea1b2",
+      "bytes": 4490,
+      "sha256": "c6d195c2a344406a8bfe03cf44784285ef1612d8ba2e90c25a0126f147883cf1",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 5
+    },
+    {
+      "path": "ets2panda/lsp/src/get_node.cpp",
+      "mode": "100644",
+      "blob_oid": "fa9ea5fea6026f135008bce38bcce5cdd328db09",
+      "bytes": 1985,
+      "sha256": "1ddd154047bbf3e1dcae8d7211ae40823d0bbfa74119148c2276c6c3a0dca482",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 3
+    },
+    {
+      "path": "ets2panda/lsp/src/get_safe_delete_info.cpp",
+      "mode": "100644",
+      "blob_oid": "fa7d778264c42caef8c3141276c26561586fc67e",
+      "bytes": 5257,
+      "sha256": "17271d6008ccc82a15075a441b103a56a59173364b8d2c07607b2272d8292f98",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 6
+    },
+    {
+      "path": "ets2panda/lsp/src/get_signature.cpp",
+      "mode": "100644",
+      "blob_oid": "f50ca0a225250ccb2b5bc1ac7c7645d063ef135d",
+      "bytes": 7707,
+      "sha256": "48cce120dd0b5e4363d8b827e685454e79b6b6169684eff0a66e8bbe1357932a",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 5
+    },
+    {
+      "path": "ets2panda/lsp/src/inlay_hints.cpp",
+      "mode": "100644",
+      "blob_oid": "87260d55cdff1b2db3259fdc2c1fbdf2f5d02a5b",
+      "bytes": 17899,
+      "sha256": "5b732b61b4a0e44c091005855cd8a67d2662fe725f2ad6fc3c12156220218686",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 30
+    },
+    {
+      "path": "ets2panda/lsp/src/internal_api.cpp",
+      "mode": "100644",
+      "blob_oid": "b1e94639c7a1b4a0f38e0f713c606ad3b52d6c1b",
+      "bytes": 65317,
+      "sha256": "d19a37874ec406f7f70209ce50dd1ed8dbeab4029afe8e2ce01492e7665808d5",
+      "parse_status": "partial",
+      "parse_error_or_missing_nodes": 2,
+      "function_definitions": 106
+    },
+    {
+      "path": "ets2panda/lsp/src/isolated_declaration.cpp",
+      "mode": "100644",
+      "blob_oid": "604a01a799f17eaba65288ac7f101339aee6fb57",
+      "bytes": 13042,
+      "sha256": "66edda75571df4ed6519747842c5f8c19625ac5e28870a64377419bfd25b9986",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 17
+    },
+    {
+      "path": "ets2panda/lsp/src/line_column_offset.cpp",
+      "mode": "100644",
+      "blob_oid": "80e6c6351fd4a01c17ae70f0c6cbaf2f9fb6f09f",
+      "bytes": 1464,
+      "sha256": "5a8efbd8a9a20b8f0112a77bd7df8478874aa8e4bbfff8fe5acd2d29ab936831",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 1
+    },
+    {
+      "path": "ets2panda/lsp/src/lsp_utils.cpp",
+      "mode": "100644",
+      "blob_oid": "c35f4e527362b512710596d2436dc71fdff78ce2",
+      "bytes": 4231,
+      "sha256": "e40efe8222f9569572f42ed9b0b223f3f7c3479ff08f286c10e1f28ba4f51f20",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 4
+    },
+    {
+      "path": "ets2panda/lsp/src/navigate_to.cpp",
+      "mode": "100644",
+      "blob_oid": "a9b80a4cefccacb129b79ec4dcea8046dacb71fb",
+      "bytes": 5887,
+      "sha256": "d8095c66dbab659034331db3da392901238d1318e842c3c5cc39e6548f7ad797",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 10
+    },
+    {
+      "path": "ets2panda/lsp/src/node_matchers.cpp",
+      "mode": "100644",
+      "blob_oid": "7c029470b5fe7bada8131cb3784e45f0f9154748",
+      "bytes": 36926,
+      "sha256": "4ba387a5141c10b70da6e87d7aaf4f92a107fd551cf2ba4061a18eb2c79c4973",
+      "parse_status": "partial",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 59
+    },
+    {
+      "path": "ets2panda/lsp/src/organize_imports.cpp",
+      "mode": "100644",
+      "blob_oid": "483b2c2334ea810f43b48d0f2b681d1f6d16625d",
+      "bytes": 10922,
+      "sha256": "4bb31434c8a52265e8ac0126e3f2819c58f307e54b073d14bfe1e4ba329bcbd4",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 10
+    },
+    {
+      "path": "ets2panda/lsp/src/quick_info.cpp",
+      "mode": "100644",
+      "blob_oid": "292475bfcff93adead1858b9d78b7c03115c3f6f",
+      "bytes": 66499,
+      "sha256": "148b4189fbef3fe1fc8232cdf47e66c58b435feac78ebd4515cbf3230e7fb3de",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 83
+    },
+    {
+      "path": "ets2panda/lsp/src/refactor_provider.cpp",
+      "mode": "100644",
+      "blob_oid": "92398e55cc8a22c2e5083f303f7a1196e4778ceb",
+      "bytes": 2177,
+      "sha256": "e7a0f1ae46c2cee16e167199731ce76f35f07f5a737ee36fb2deb5e21d458a6b",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 5
+    },
+    {
+      "path": "ets2panda/lsp/src/refactors/convert_arrow_braces.cpp",
+      "mode": "100644",
+      "blob_oid": "df2d8486cb7033f329f23e863feefbb1aa636e04",
+      "bytes": 8035,
+      "sha256": "f6fdc5d860c137f95e17e7bd3d6928b50538aea4ee28760242053e21add31bd9",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 15
+    },
+    {
+      "path": "ets2panda/lsp/src/refactors/convert_chain.cpp",
+      "mode": "100644",
+      "blob_oid": "0291b2ee8b9715da8f0098408ba5ec4dd071f827",
+      "bytes": 15755,
+      "sha256": "eb572b756a0129c595ad49d77f5c7e14442c1756e576be31c7d78984f7a7ae58",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 28
+    },
+    {
+      "path": "ets2panda/lsp/src/refactors/convert_function.cpp",
+      "mode": "100644",
+      "blob_oid": "bc4e3b0b8904a462135a1efff972763dc21eaa9e",
+      "bytes": 15052,
+      "sha256": "7c8b742a870700425be0a4ce25bff2b635d5a2a9e53afc08a2ccc707356eda14",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 16
+    },
+    {
+      "path": "ets2panda/lsp/src/refactors/convert_function_to_class.cpp",
+      "mode": "100644",
+      "blob_oid": "d94e142f4648a4bd1c11d5e1ca74253e56192b1c",
+      "bytes": 19517,
+      "sha256": "749f0c17bb4a58888d47f6f3fda80e0214b753c3bbaecdbca40eb903da9b1988",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 25
+    },
+    {
+      "path": "ets2panda/lsp/src/refactors/convert_import.cpp",
+      "mode": "100644",
+      "blob_oid": "75cb67f99c32884292f4c0a09d4c7c5768c9b37e",
+      "bytes": 15389,
+      "sha256": "b0b3744e07f82d539ffde713b2269260302b73a4655265670bd14c05c927e26f",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 17
+    },
+    {
+      "path": "ets2panda/lsp/src/refactors/convert_overload_list.cpp",
+      "mode": "100644",
+      "blob_oid": "ec08f8d0f5ce5f41372f862fe6eb666e7f10f661",
+      "bytes": 11498,
+      "sha256": "23990849fdcfc2168a5a660e6cce5064ec6920f934d841956a144b8873092fad",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 15
+    },
+    {
+      "path": "ets2panda/lsp/src/refactors/convert_params_to_object.cpp",
+      "mode": "100644",
+      "blob_oid": "f0a94b7d5ac9662da8e3498ebefd573fddca8287",
+      "bytes": 12021,
+      "sha256": "a79388f0940ad358bd0c28420246fde617b443d95e55e2d404e7f216107ef8eb",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 16
+    },
+    {
+      "path": "ets2panda/lsp/src/refactors/convert_template.cpp",
+      "mode": "100644",
+      "blob_oid": "b0c90fbd37c61e693a8bc50ab3c1d07fb7783ec8",
+      "bytes": 5642,
+      "sha256": "ad4be876e4341ec844a02fccacb732b2cd08313ee6c5c1191a01b80b6d2e4a22",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 6
+    },
+    {
+      "path": "ets2panda/lsp/src/refactors/extract_symbol.cpp",
+      "mode": "100644",
+      "blob_oid": "cc95783b3dfacbd2c63933c9cd9b5b0274ab40b9",
+      "bytes": 189374,
+      "sha256": "98117c21efd81d8eb948de2ccf8a5318059f3a9e36ad3cfcfcfbb2d85dca695f",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 278
+    },
+    {
+      "path": "ets2panda/lsp/src/refactors/extract_symbol_impl.cpp",
+      "mode": "100644",
+      "blob_oid": "28a0669166b02da8cec435396fc35e236245df98",
+      "bytes": 225912,
+      "sha256": "c9fe96b32127f85f85155687f9e2169f807e569388b668a2358b3a51626fc91f",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 247
+    },
+    {
+      "path": "ets2panda/lsp/src/refactors/extract_symbol_impl_edits.cpp",
+      "mode": "100644",
+      "blob_oid": "1f6f3bb2c5804d432af9b5980bdce34bab04f36e",
+      "bytes": 211803,
+      "sha256": "6969a57c6ccc6760aea04437ec724f735a926c6f3f42ca03c12aeeb2d5b97bce",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 244
+    },
+    {
+      "path": "ets2panda/lsp/src/refactors/extract_type.cpp",
+      "mode": "100644",
+      "blob_oid": "6a443b69b8a3a0971c247508187313f88055a62d",
+      "bytes": 49533,
+      "sha256": "fdfe676779f2ecb5032ee992a8b8350703857baf0805aefe8db6735ae50bc5db",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 70
+    },
+    {
+      "path": "ets2panda/lsp/src/refactors/generate_constructor.cpp",
+      "mode": "100644",
+      "blob_oid": "fa88785bc97cac99084165498be9051d45f4466b",
+      "bytes": 12269,
+      "sha256": "5ad9f61d2ee60014f7f03a3e507eeaf517f00cab7a5f049bef8baef98f0550b3",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 18
+    },
+    {
+      "path": "ets2panda/lsp/src/refactors/generate_getters_and_setters.cpp",
+      "mode": "100644",
+      "blob_oid": "cf0faf1bc22191dd014dd082c4a5a67ce750f473",
+      "bytes": 7779,
+      "sha256": "c50df333184df8ee2a5b22e545ae69773f9c8dcc6b69ef15df1be295c7c5114e",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 10
+    },
+    {
+      "path": "ets2panda/lsp/src/refactors/generate_override_methods.cpp",
+      "mode": "100644",
+      "blob_oid": "8ff763270da714f7f25d9cb8c02d47d61b550929",
+      "bytes": 15068,
+      "sha256": "98b8153e001cf9d1b1cc0cfd528f661fdf30ac1ab64b4d136026884a65063b3d",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 22
+    },
+    {
+      "path": "ets2panda/lsp/src/refactors/infer_function_return_type.cpp",
+      "mode": "100644",
+      "blob_oid": "8071a5e7af77e2d9d3753c9432e9c841a4e86250",
+      "bytes": 9896,
+      "sha256": "6011c53bd2901e064948a47c3da888fa3446a280365dee2990a03af13ea85a61",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 8
+    },
+    {
+      "path": "ets2panda/lsp/src/refactors/move_to_new_file.cpp",
+      "mode": "100644",
+      "blob_oid": "b3fba52e3721ed838c79a1eb49c76a991f0ff85b",
+      "bytes": 10309,
+      "sha256": "ac81c5eac964726325807068893eec80ae1b2afbb2335bc7bd656423812a6290",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 12
+    },
+    {
+      "path": "ets2panda/lsp/src/refactors/refactor_types.cpp",
+      "mode": "100644",
+      "blob_oid": "4a9c1a1980ea54739c968e77aa90539f0c460961",
+      "bytes": 1546,
+      "sha256": "c19d53a4922c0742fd6d10bef8e2c6fc2a5d129bab8c110a8e6d66517f75edfe",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 6
+    },
+    {
+      "path": "ets2panda/lsp/src/references.cpp",
+      "mode": "100644",
+      "blob_oid": "f118a96809fee4411efd440a48167c33b7085a0c",
+      "bytes": 4359,
+      "sha256": "b6a5f4c9ea38a6ae7f72c0f5f1d812dae82bb4448b4241d9e989d3565c40b9b7",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 5
+    },
+    {
+      "path": "ets2panda/lsp/src/register_code_fix/add_local_variable.cpp",
+      "mode": "100644",
+      "blob_oid": "3f6695d6d739c5e735e44714aaefbeec2ed50f15",
+      "bytes": 17648,
+      "sha256": "dd30487d2075d283c900bfbeed70eb509aaeef368213c3066ff6c9fcf052f3d2",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 24
+    },
+    {
+      "path": "ets2panda/lsp/src/register_code_fix/add_missing_declare_property.cpp",
+      "mode": "100644",
+      "blob_oid": "ab1752cce7a4f76407937768ade88c79ec9b57af",
+      "bytes": 4256,
+      "sha256": "a2dbcd79cc97429932fee4017df02cebf58ed351006d106b699397ec9209278d",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 5
+    },
+    {
+      "path": "ets2panda/lsp/src/register_code_fix/add_missing_new_operator.cpp",
+      "mode": "100644",
+      "blob_oid": "07834af6db54c8bc95ff6d0bd79bda57a405767a",
+      "bytes": 4979,
+      "sha256": "512fd6191efb85b19643f4cf84ba912f719e2843638b537f64c104eabfcbb680",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 6
+    },
+    {
+      "path": "ets2panda/lsp/src/register_code_fix/add_name_to_nameless_parameter.cpp",
+      "mode": "100644",
+      "blob_oid": "0ad2e0b734a570de9dfb9443025c37e66b9310f3",
+      "bytes": 7292,
+      "sha256": "2eb951f967df33ff1dfc2d4049e8939fd5b4a879aa7bbc1c41c06260711763f1",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 14
+    },
+    {
+      "path": "ets2panda/lsp/src/register_code_fix/constructor_for_derived_need_super_call.cpp",
+      "mode": "100644",
+      "blob_oid": "16af499d9d5d94d161c8e659b9c588a3e53a0a88",
+      "bytes": 7031,
+      "sha256": "3f811e64958e4e0262f514ff899877b8c53763535e938d1562d418983b4e4602",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 11
+    },
+    {
+      "path": "ets2panda/lsp/src/register_code_fix/convert_const_to_let.cpp",
+      "mode": "100644",
+      "blob_oid": "4d91d17813b7123cbe56596d304de48cffa9092c",
+      "bytes": 4189,
+      "sha256": "352ba4d5e3cfb12d1c45f323b52bc93d888dc7fb82ebb90b8b854255da45e32a",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 5
+    },
+    {
+      "path": "ets2panda/lsp/src/register_code_fix/fix_add_function_return_statement.cpp",
+      "mode": "100644",
+      "blob_oid": "780e97769d6ce387a5d239e1421f8dd3f2d799c2",
+      "bytes": 6596,
+      "sha256": "651ffbac52aa56b1e6b708d85193767f94a5f57b32dcabe4316bf776896c896e",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 7
+    },
+    {
+      "path": "ets2panda/lsp/src/register_code_fix/fix_class_doesnt_implement_inherited_abstract_member.cpp",
+      "mode": "100644",
+      "blob_oid": "a3a1232938e115214454a2db15b2ca9010cace67",
+      "bytes": 7183,
+      "sha256": "ab1c2c9f28c68d4a1d0f5dba26f6cc955e7460d4b5a7c9290c0b2b74b68354ca",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 8
+    },
+    {
+      "path": "ets2panda/lsp/src/register_code_fix/fix_class_incorrectly_implements_interface.cpp",
+      "mode": "100644",
+      "blob_oid": "43d0d00c45a9e51d24aa7a19bf2403d834611a22",
+      "bytes": 13145,
+      "sha256": "dc57069bda0c31e6982b4f7e2bb6ad81930f2750ef252adce44ac810b4e183fc",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 14
+    },
+    {
+      "path": "ets2panda/lsp/src/register_code_fix/fix_class_super_must_precede_this_access.cpp",
+      "mode": "100644",
+      "blob_oid": "87b0eda57ac18e7b7425b5a1cb93c27c3f2874b1",
+      "bytes": 5464,
+      "sha256": "252603c249441fce6168e2308ff516f33c2fa4b085db068af7f5b0e0ee278b89",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 6
+    },
+    {
+      "path": "ets2panda/lsp/src/register_code_fix/fix_extends_interface_becomes_implements.cpp",
+      "mode": "100644",
+      "blob_oid": "5ce8a8cf8c4780207985eaeb5ac5562397365524",
+      "bytes": 4659,
+      "sha256": "4cc9c903e57df0a9897fdc9c7662b34f3362839c65f287af7b031abe511961b8",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 5
+    },
+    {
+      "path": "ets2panda/lsp/src/register_code_fix/fix_forbidden_any_type.cpp",
+      "mode": "100644",
+      "blob_oid": "a00d349ad269ce8bf6d3d8512ad1f09db078f104",
+      "bytes": 3725,
+      "sha256": "5cfcba20dd4fdf7d38dbdb7eb96d4e241c45b73e6f9ad51e53abbe7b4f67af14",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 5
+    },
+    {
+      "path": "ets2panda/lsp/src/register_code_fix/fix_import_non_exported_member.cpp",
+      "mode": "100644",
+      "blob_oid": "ba845201280e3ae291e5ba5796e2dd413551788f",
+      "bytes": 9110,
+      "sha256": "82ea4cc7317bc4f2f25d7e04f218135e4e53a00b0da8dcf26f268408861f8b6f",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 9
+    },
+    {
+      "path": "ets2panda/lsp/src/register_code_fix/fix_import_source.cpp",
+      "mode": "100644",
+      "blob_oid": "988cb29bae94ffb9cf608c500b8dc67026b78385",
+      "bytes": 13747,
+      "sha256": "2fbb04fe613e42c20808de4876ca6040107cfbc8d946b17fb606e65dab9629f1",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 20
+    },
+    {
+      "path": "ets2panda/lsp/src/register_code_fix/fix_missing_call_parantheses.cpp",
+      "mode": "100644",
+      "blob_oid": "6c414f7f7e86bbdbd5b864d4dafffd1cf14d5f1c",
+      "bytes": 1930,
+      "sha256": "c27f2e41ee2faf5cd2c0adeebf671cd881a65eaedb7b8a36c42e59cc14419105",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 3
+    },
+    {
+      "path": "ets2panda/lsp/src/register_code_fix/fix_nan_equality.cpp",
+      "mode": "100644",
+      "blob_oid": "f1040baacc001ff077433096dfc93fe8360c013a",
+      "bytes": 5093,
+      "sha256": "c70c9ee167277bb1100a088bb3faec6ec211da9733b4d6f5da33bfd428871030",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 5
+    },
+    {
+      "path": "ets2panda/lsp/src/register_code_fix/fix_property_assignment.cpp",
+      "mode": "100644",
+      "blob_oid": "5093c6808ccaf9741734814014af38891b5bca81",
+      "bytes": 5049,
+      "sha256": "bbe4967a7e01b456774cb909d380f060a6e33c8b348f443d8557e5c148566b3b",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 6
+    },
+    {
+      "path": "ets2panda/lsp/src/register_code_fix/fix_remove_duplicate_export_import.cpp",
+      "mode": "100644",
+      "blob_oid": "9ef9fe52aaeb83a64bef65339e44ecf8a47fb693",
+      "bytes": 8570,
+      "sha256": "2b88cd28bcf61ff9e0c1cb45c4e9ca71db6e6e1a4cd965c694d436f5260cf8f1",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 11
+    },
+    {
+      "path": "ets2panda/lsp/src/register_code_fix/fix_remove_illegal_await.cpp",
+      "mode": "100644",
+      "blob_oid": "ccd464cf83efa22347d92bc30e5e05fcee10b294",
+      "bytes": 14932,
+      "sha256": "b476ff82c310b429d7f304eb148ff63d793e854a1f8a9d2e5d8e74b597f600bd",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 20
+    },
+    {
+      "path": "ets2panda/lsp/src/register_code_fix/fix_remove_override_modifier.cpp",
+      "mode": "100644",
+      "blob_oid": "6f0c8b41016341a436c051700bb7edce6ecdae35",
+      "bytes": 4134,
+      "sha256": "22001d383260295b52334bfcf2391110ac7af11fe832e0be6d6037ddc0c1ed35",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 6
+    },
+    {
+      "path": "ets2panda/lsp/src/register_code_fix/fix_return_type_in_async_function.cpp",
+      "mode": "100644",
+      "blob_oid": "b6977036d98b871bf77f6852cc5d8c7fb1cb3cc8",
+      "bytes": 6037,
+      "sha256": "3527eeeb197382056303338c1d9a9684133317f20c67df903d5427a117acffc9",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 6
+    },
+    {
+      "path": "ets2panda/lsp/src/register_code_fix/fix_spelling.cpp",
+      "mode": "100644",
+      "blob_oid": "775a2750bf5a36c922a58f3c31f38dd54031ef47",
+      "bytes": 6381,
+      "sha256": "1d6bcd6ced6d6fe88ac4697db42d35353f125237e4df46d91cf22086230c13a7",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 6
+    },
+    {
+      "path": "ets2panda/lsp/src/register_code_fix/fix_spelling_for_property.cpp",
+      "mode": "100644",
+      "blob_oid": "b99a725695f9eda8c999c16e19ee7806d3935b93",
+      "bytes": 6444,
+      "sha256": "c07b24b3b2509538c22f7c48f0d157bf8f60d444d7518fc43701cd2d3e5449ab",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 6
+    },
+    {
+      "path": "ets2panda/lsp/src/register_code_fix/fix_spelling_for_type.cpp",
+      "mode": "100644",
+      "blob_oid": "86e4e120afabf6bc35a60d8a2452590ca5b24a74",
+      "bytes": 7217,
+      "sha256": "121ca28d858aa67990ae168d5de7cf29e2fee779a6a77c24f98cd1c1bab17dab",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 8
+    },
+    {
+      "path": "ets2panda/lsp/src/register_code_fix/fix_unreachable_code.cpp",
+      "mode": "100644",
+      "blob_oid": "c68b6b8d396acf481e11aa84eb8d827dfb64b682",
+      "bytes": 11502,
+      "sha256": "96cbd210c452965959346d5de965f9a87b5c25739d0e04b0ed15bb3c3f3c4c18",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 14
+    },
+    {
+      "path": "ets2panda/lsp/src/register_code_fix/forgotten_this_property_access.cpp",
+      "mode": "100644",
+      "blob_oid": "090e20ed59a167c9cb2060d4c1112b303f1f06a2",
+      "bytes": 4629,
+      "sha256": "12fd18219672c8a919c41b8b2b0f8acbc0335aca2e67abec7ea84221c1642541",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 6
+    },
+    {
+      "path": "ets2panda/lsp/src/register_code_fix/import_fixes.cpp",
+      "mode": "100644",
+      "blob_oid": "54ffeb4dedd422ca38bec4fc05413479d0abce87",
+      "bytes": 7883,
+      "sha256": "bbb7dd2a0463aefcee04f56ae4e4f4f71afd57231cd61d9d603b2ec166dee69d",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 7
+    },
+    {
+      "path": "ets2panda/lsp/src/register_code_fix/remove_accidental_call_parentheses.cpp",
+      "mode": "100644",
+      "blob_oid": "62b6cbed0acb5ad4127eb49417ff74bc98207977",
+      "bytes": 4669,
+      "sha256": "3a5df90ed94a602df17035608ec8980997eb3fdb7478735223e69f4e0f9ed5e6",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 7
+    },
+    {
+      "path": "ets2panda/lsp/src/register_code_fix/remove_catch_type_annotation.cpp",
+      "mode": "100644",
+      "blob_oid": "0a2cc5c68b86e3cf73a2ab041b4ee355486d22a1",
+      "bytes": 4489,
+      "sha256": "8b629b25ee40c4892582e0bedc6512b4bb79d19fb232d416eb7675bd86e8738c",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 5
+    },
+    {
+      "path": "ets2panda/lsp/src/register_code_fix/ui_plugin_suggest.cpp",
+      "mode": "100644",
+      "blob_oid": "8d06e5ef119dd1f8072e31f6351c93194920be70",
+      "bytes": 6074,
+      "sha256": "67488a0477ebbcb1c8f2745f26857a71dcfcf36a1159701b394eb07db6f610f1",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 8
+    },
+    {
+      "path": "ets2panda/lsp/src/rename.cpp",
+      "mode": "100644",
+      "blob_oid": "dcdd2eafc76d8b54f52d15206f5dd88b401834fc",
+      "bytes": 19780,
+      "sha256": "e5b15474328e0eb4a38b432cf3636ec77dac66101e00b683d9564cd677a639f8",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 31
+    },
+    {
+      "path": "ets2panda/lsp/src/script_element_kind.cpp",
+      "mode": "100644",
+      "blob_oid": "171d1051a4557ce1b36e808f2def98228a12c17c",
+      "bytes": 13705,
+      "sha256": "ec9a2b622152896b33fbea17e7f3622b6490c03e20f3bf1550cf6d859859391b",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 11
+    },
+    {
+      "path": "ets2panda/lsp/src/services/import_utils.cpp",
+      "mode": "100644",
+      "blob_oid": "cc4fd8ff8864ae8b4786916911a12ca2fdf46f14",
+      "bytes": 12905,
+      "sha256": "5b413869f1ad6d1676a39faaad2313a938c71e6776408c0243ab24b3e496cfd0",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 18
+    },
+    {
+      "path": "ets2panda/lsp/src/services/services.cpp",
+      "mode": "100644",
+      "blob_oid": "687e86322f1829dab7e304871c64be81e7c0383d",
+      "bytes": 2163,
+      "sha256": "36974d4c30ba70374dcf5d7e5c383aed0558c8613724e189bcfd8733c5bdd261",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 1
+    },
+    {
+      "path": "ets2panda/lsp/src/services/text_change/change_tracker.cpp",
+      "mode": "100644",
+      "blob_oid": "e01e216744006cbc7457b0ef0659dd5955361a3d",
+      "bytes": 36106,
+      "sha256": "1aed3405809e9647b97c6664a290d03c25c8bfa33520649484c74bbbc17d73c5",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 69
+    },
+    {
+      "path": "ets2panda/lsp/src/services/utilities.cpp",
+      "mode": "100644",
+      "blob_oid": "7d0a83db3206471aa0a2b213e6e769bff16d9cdb",
+      "bytes": 1939,
+      "sha256": "992070c6fe87bfd22fbae00c642cea389a27c4b3798bd1892dbf4fe3c02daf75",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 5
+    },
+    {
+      "path": "ets2panda/lsp/src/signature_help.cpp",
+      "mode": "100644",
+      "blob_oid": "5311c3aa45e9e71802a07deb1e93ce36c7f99ff0",
+      "bytes": 15764,
+      "sha256": "3da9a34209143d7e6c0749e692d4c6093d0f824a6dbae0dbb1521223629a6d46",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 20
+    },
+    {
+      "path": "ets2panda/lsp/src/signature_help_items.cpp",
+      "mode": "100644",
+      "blob_oid": "ce0ac2b6d0efcdb670070db89697241f5b9bc156",
+      "bytes": 5901,
+      "sha256": "caed6e34823a221e462882b7287fe48b4900ac568c30abba71648fd9fde1251c",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 4
+    },
+    {
+      "path": "ets2panda/lsp/src/string_completions.cpp",
+      "mode": "100644",
+      "blob_oid": "33e7280dffb496a43f54f3f00416a948416abe32",
+      "bytes": 5231,
+      "sha256": "0b62ba8312429c944583e2abb8c96bfb6c2c21afe124d944c8b6e361f8d506b6",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 5
+    },
+    {
+      "path": "ets2panda/lsp/src/suggestion_diagnostics.cpp",
+      "mode": "100644",
+      "blob_oid": "5086217f4e2d2a1b864f4e9cc630efebaace1ebf",
+      "bytes": 9580,
+      "sha256": "24701ff28fb624a0f0ef4deff2d7084e8bdbdaf61a1e71cbb7f9785096eff7dc",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 16
+    },
+    {
+      "path": "ets2panda/lsp/src/symbol_reference_index.cpp",
+      "mode": "100644",
+      "blob_oid": "39bec9bd9abd6e5d570bbbce21e34afba6c5f916",
+      "bytes": 46366,
+      "sha256": "b9809fd39fe3f3b058e19008f51968b3d6f5ba56a0ed3203d4f08e7104f36847",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 57
+    },
+    {
+      "path": "ets2panda/lsp/src/todo_comments.cpp",
+      "mode": "100644",
+      "blob_oid": "15eba3e3cfe6771b155748273ab5a84c54ff7492",
+      "bytes": 8252,
+      "sha256": "e6834f898195ce5959a5e3c1671fa4fbe9354245ceb1ed6dfaa89b4f3c7cea03",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 10
+    },
+    {
+      "path": "ets2panda/lsp/src/types.cpp",
+      "mode": "100644",
+      "blob_oid": "5abeead248803ea49159d96d3c2bd64bf7808c85",
+      "bytes": 2854,
+      "sha256": "76d312b43cffd103b8ac4a54e5cf6af2dbb07563c8f3add7dac9dd5c9fe1fd22",
+      "parse_status": "complete",
+      "parse_error_or_missing_nodes": 0,
+      "function_definitions": 18
+    }
+  ],
+  "summary": {
+    "tracked_cpp_files": 102,
+    "complete_files": 99,
+    "partial_files": 3,
+    "failed_files": 0,
+    "function_definitions": 2530,
+    "function_definitions_in_complete_files": 2293
+  }
+}

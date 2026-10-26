@@ -1,0 +1,231 @@
+{
+  "vulnerable": {
+    "full_parse": "partial",
+    "full_parse_issues": 23,
+    "function_ranges": [
+      {
+        "name": "FlowbufStrAtIndex",
+        "start": 4428,
+        "end": 4458
+      },
+      {
+        "name": "ProcessNativeProxyResultNewFlowbuf",
+        "start": 4460,
+        "end": 4586
+      }
+    ],
+    "fragment_parse": "complete",
+    "fragment_issues": [],
+    "bounds": {
+      "status": "completed",
+      "findings": [
+        {
+          "line": 85,
+          "source_line": "dataList[curIndex] =",
+          "rule_id": "ohcpp-memory-bounds-vector-index-candidate-004",
+          "symbol": "dataList",
+          "message": "Candidate only: dynamic container `dataList` is indexed by `curIndex` without a modeled same-loop upper bound. Container-size aliases, signed conversions, mutation, complete CFG and reachability remain unknown."
+        },
+        {
+          "line": 87,
+          "source_line": "dataSize[curIndex] = strLen;",
+          "rule_id": "ohcpp-memory-bounds-vector-index-candidate-004",
+          "symbol": "dataSize",
+          "message": "Candidate only: dynamic container `dataSize` is indexed by `curIndex` without a modeled same-loop upper bound. Container-size aliases, signed conversions, mutation, complete CFG and reachability remain unknown."
+        },
+        {
+          "line": 96,
+          "source_line": "dataList[curIndex] =",
+          "rule_id": "ohcpp-memory-bounds-vector-index-candidate-004",
+          "symbol": "dataList",
+          "message": "Candidate only: dynamic container `dataList` is indexed by `curIndex` without a modeled same-loop upper bound. Container-size aliases, signed conversions, mutation, complete CFG and reachability remain unknown."
+        },
+        {
+          "line": 98,
+          "source_line": "dataSize[curIndex] = strLen;",
+          "rule_id": "ohcpp-memory-bounds-vector-index-candidate-004",
+          "symbol": "dataSize",
+          "message": "Candidate only: dynamic container `dataSize` is indexed by `curIndex` without a modeled same-loop upper bound. Container-size aliases, signed conversions, mutation, complete CFG and reachability remain unknown."
+        },
+        {
+          "line": 116,
+          "source_line": "dataList[curIndex] =",
+          "rule_id": "ohcpp-memory-bounds-vector-index-candidate-004",
+          "symbol": "dataList",
+          "message": "Candidate only: dynamic container `dataList` is indexed by `curIndex` without a modeled same-loop upper bound. Container-size aliases, signed conversions, mutation, complete CFG and reachability remain unknown."
+        },
+        {
+          "line": 118,
+          "source_line": "dataSize[curIndex] = size;",
+          "rule_id": "ohcpp-memory-bounds-vector-index-candidate-004",
+          "symbol": "dataSize",
+          "message": "Candidate only: dynamic container `dataSize` is indexed by `curIndex` without a modeled same-loop upper bound. Container-size aliases, signed conversions, mutation, complete CFG and reachability remain unknown."
+        },
+        {
+          "line": 126,
+          "source_line": "dataList[curIndex] = std::move(data);",
+          "rule_id": "ohcpp-memory-bounds-vector-index-candidate-004",
+          "symbol": "dataList",
+          "message": "Candidate only: dynamic container `dataList` is indexed by `curIndex` without a modeled same-loop upper bound. Container-size aliases, signed conversions, mutation, complete CFG and reachability remain unknown."
+        },
+        {
+          "line": 127,
+          "source_line": "dataSize[curIndex] = size;",
+          "rule_id": "ohcpp-memory-bounds-vector-index-candidate-004",
+          "symbol": "dataSize",
+          "message": "Candidate only: dynamic container `dataSize` is indexed by `curIndex` without a modeled same-loop upper bound. Container-size aliases, signed conversions, mutation, complete CFG and reachability remain unknown."
+        },
+        {
+          "line": 131,
+          "source_line": "dataList[curIndex] =",
+          "rule_id": "ohcpp-memory-bounds-vector-index-candidate-004",
+          "symbol": "dataList",
+          "message": "Candidate only: dynamic container `dataList` is indexed by `curIndex` without a modeled same-loop upper bound. Container-size aliases, signed conversions, mutation, complete CFG and reachability remain unknown."
+        },
+        {
+          "line": 133,
+          "source_line": "dataSize[curIndex] = jsonString.size();",
+          "rule_id": "ohcpp-memory-bounds-vector-index-candidate-004",
+          "symbol": "dataSize",
+          "message": "Candidate only: dynamic container `dataSize` is indexed by `curIndex` without a modeled same-loop upper bound. Container-size aliases, signed conversions, mutation, complete CFG and reachability remain unknown."
+        },
+        {
+          "line": 140,
+          "source_line": "dataList[curIndex] =",
+          "rule_id": "ohcpp-memory-bounds-vector-index-candidate-004",
+          "symbol": "dataList",
+          "message": "Candidate only: dynamic container `dataList` is indexed by `curIndex` without a modeled same-loop upper bound. Container-size aliases, signed conversions, mutation, complete CFG and reachability remain unknown."
+        },
+        {
+          "line": 142,
+          "source_line": "dataSize[curIndex] = strLen;",
+          "rule_id": "ohcpp-memory-bounds-vector-index-candidate-004",
+          "symbol": "dataSize",
+          "message": "Candidate only: dynamic container `dataSize` is indexed by `curIndex` without a modeled same-loop upper bound. Container-size aliases, signed conversions, mutation, complete CFG and reachability remain unknown."
+        }
+      ]
+    },
+    "integer_bounds": {
+      "status": "completed",
+      "findings": []
+    }
+  },
+  "fixed": {
+    "full_parse": "partial",
+    "full_parse_issues": 23,
+    "function_ranges": [
+      {
+        "name": "FlowbufStrAtIndex",
+        "start": 4428,
+        "end": 4463
+      },
+      {
+        "name": "ProcessNativeProxyResultNewFlowbuf",
+        "start": 4465,
+        "end": 4592
+      }
+    ],
+    "fragment_parse": "complete",
+    "fragment_issues": [],
+    "bounds": {
+      "status": "completed",
+      "findings": [
+        {
+          "line": 122,
+          "source_line": "dataList[curIndex] =",
+          "rule_id": "ohcpp-memory-bounds-vector-index-candidate-004",
+          "symbol": "dataList",
+          "message": "Candidate only: dynamic container `dataList` is indexed by `curIndex` without a modeled same-loop upper bound. Container-size aliases, signed conversions, mutation, complete CFG and reachability remain unknown."
+        },
+        {
+          "line": 124,
+          "source_line": "dataSize[curIndex] = size;",
+          "rule_id": "ohcpp-memory-bounds-vector-index-candidate-004",
+          "symbol": "dataSize",
+          "message": "Candidate only: dynamic container `dataSize` is indexed by `curIndex` without a modeled same-loop upper bound. Container-size aliases, signed conversions, mutation, complete CFG and reachability remain unknown."
+        },
+        {
+          "line": 132,
+          "source_line": "dataList[curIndex] = std::move(data);",
+          "rule_id": "ohcpp-memory-bounds-vector-index-candidate-004",
+          "symbol": "dataList",
+          "message": "Candidate only: dynamic container `dataList` is indexed by `curIndex` without a modeled same-loop upper bound. Container-size aliases, signed conversions, mutation, complete CFG and reachability remain unknown."
+        },
+        {
+          "line": 133,
+          "source_line": "dataSize[curIndex] = size;",
+          "rule_id": "ohcpp-memory-bounds-vector-index-candidate-004",
+          "symbol": "dataSize",
+          "message": "Candidate only: dynamic container `dataSize` is indexed by `curIndex` without a modeled same-loop upper bound. Container-size aliases, signed conversions, mutation, complete CFG and reachability remain unknown."
+        },
+        {
+          "line": 137,
+          "source_line": "dataList[curIndex] =",
+          "rule_id": "ohcpp-memory-bounds-vector-index-candidate-004",
+          "symbol": "dataList",
+          "message": "Candidate only: dynamic container `dataList` is indexed by `curIndex` without a modeled same-loop upper bound. Container-size aliases, signed conversions, mutation, complete CFG and reachability remain unknown."
+        },
+        {
+          "line": 139,
+          "source_line": "dataSize[curIndex] = jsonString.size();",
+          "rule_id": "ohcpp-memory-bounds-vector-index-candidate-004",
+          "symbol": "dataSize",
+          "message": "Candidate only: dynamic container `dataSize` is indexed by `curIndex` without a modeled same-loop upper bound. Container-size aliases, signed conversions, mutation, complete CFG and reachability remain unknown."
+        }
+      ]
+    },
+    "integer_bounds": {
+      "status": "completed",
+      "findings": []
+    }
+  },
+  "unguarded_vector": {
+    "fragment_parse": "complete",
+    "bounds": {
+      "status": "completed",
+      "findings": [
+        {
+          "line": 2,
+          "source_line": "void f(std::vector<int>& v, int index) { v[index] = 1; }",
+          "rule_id": "ohcpp-memory-bounds-vector-index-candidate-004",
+          "symbol": "v",
+          "message": "Candidate only: dynamic container `v` is indexed by `index` without a modeled same-loop upper bound. Container-size aliases, signed conversions, mutation, complete CFG and reachability remain unknown."
+        }
+      ]
+    },
+    "integer_bounds": {
+      "status": "completed",
+      "findings": []
+    }
+  },
+  "guarded_vector": {
+    "fragment_parse": "complete",
+    "bounds": {
+      "status": "completed",
+      "findings": [
+        {
+          "line": 2,
+          "source_line": "void f(std::vector<int>& v, int index) { if (index >= 0 && index < static_cast<int>(v.size())) v[index] = 1; }",
+          "rule_id": "ohcpp-memory-bounds-vector-index-candidate-004",
+          "symbol": "v",
+          "message": "Candidate only: dynamic container `v` is indexed by `index` without a modeled same-loop upper bound. Container-size aliases, signed conversions, mutation, complete CFG and reachability remain unknown."
+        }
+      ]
+    },
+    "integer_bounds": {
+      "status": "completed",
+      "findings": []
+    }
+  },
+  "guarded_loop_vector": {
+    "fragment_parse": "complete",
+    "bounds": {
+      "status": "completed",
+      "findings": []
+    },
+    "integer_bounds": {
+      "status": "completed",
+      "findings": []
+    }
+  }
+}

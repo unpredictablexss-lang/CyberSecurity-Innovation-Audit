@@ -1,8 +1,13 @@
 """Strict first-party Detector adapter. The catalog is intentionally unchanged."""
 import json
+from hashlib import sha1
 from src.ohscanner.contracts import DetectorRun, DetectorFinding, EvidenceObligation
 from .analysis import analyze_unit
-from .model import AnalysisBudget, RuntimeTypeModel, DETECTOR_ID, RULE_ID, VERSION
+from .model import (AnalysisBudget, RuntimeTypeModel, DETECTOR_ID, RULE_ID, VERSION,
+                    MODEL_REPOSITORY)
+
+TARGET_SOURCE_PATH = 'ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp'
+FROZEN_MODEL_SHA256 = 'c8ad85c8eb55ee3d83d44266c259b36a2d38ea56997178ad7395073ab5b1eec4'
 
 
 class ArkRuntimeTypeSafetyDetector:
@@ -19,6 +24,44 @@ class ArkRuntimeTypeSafetyDetector:
 
     def detect(self, context, units):
         findings, outcomes, inspected, limitations = [], [], [], []
+        if self.model.version != self.version:
+            return self._blocked(units, 'model_version_mismatch')
+        if self.model.digest != FROZEN_MODEL_SHA256:
+            return self._blocked(units, 'model_digest_mismatch')
+        # Matching API spellings in another revision do not satisfy the model.
+        identity = context.request
+        if identity.provenance != 'git_object':
+            return self._blocked(units, 'model_source_provenance_mismatch')
+        if identity.repository != MODEL_REPOSITORY:
+            return self._blocked(units, 'model_repository_mismatch')
+        source_bindings = self.model.bindings_for_commit(identity.commit)
+        if not source_bindings:
+            return self._blocked(units, 'model_commit_mismatch')
+        if not any(path == TARGET_SOURCE_PATH for _, path, _ in source_bindings):
+            return self._blocked(units, 'model_target_source_binding_missing')
+        if identity.target_id != 'current-component:' + MODEL_REPOSITORY:
+            return self._blocked(units, 'model_target_mismatch')
+        if any(unit.path != TARGET_SOURCE_PATH for unit in units):
+            return self._blocked(units, 'model_target_path_mismatch')
+        all_units = {u.path: u for u in context.units}
+        blob_oids = context.shared_facts.get('source_blob_oid', {})
+        build_blob_oids = context.shared_facts.get('build_config_blob_oid', {})
+        for commit, path, expected_oid in source_bindings:
+            if path.endswith(('.gn', '.gni')):
+                if commit != identity.commit:
+                    return self._blocked(units, 'model_dependency_commit_mismatch')
+                if build_blob_oids.get(path) != expected_oid:
+                    return self._blocked(units, 'required_model_build_source_blob_missing_or_mismatched:' + path)
+                continue
+            unit = all_units.get(path)
+            if commit != identity.commit:
+                return self._blocked(units, 'model_dependency_commit_mismatch')
+            if unit is None or unit.language != 'cpp':
+                return self._blocked(units, 'required_model_source_missing:' + path)
+            raw = unit.text.encode('utf-8')
+            git_oid = sha1(b'blob ' + str(len(raw)).encode() + b'\0' + raw).hexdigest()
+            if blob_oids.get(path) != expected_oid or git_oid != expected_oid:
+                return self._blocked(units, 'required_model_source_blob_mismatch:' + path)
         failed = False
         bound = {u.path: u.sha256 for u in context.units}
         for unit in sorted(units, key=lambda u: u.path):
@@ -65,3 +108,8 @@ class ArkRuntimeTypeSafetyDetector:
                            tuple(inspected), tuple(findings), tuple(sorted(set(limitations + [
                                'Narrow local syntax/IR model; no whole-program type or exploitability proof.',
                            ]))), tuple(outcomes))
+
+    def _blocked(self, units, reason):
+        rows = tuple(sorted((u.path, 'not_analyzed') for u in units))
+        return DetectorRun(self.detector_id, self.version, 'blocked', file_outcomes=rows,
+                           limitations=(reason, 'Exact source binding failed; model was not executed.'))

@@ -1,0 +1,130 @@
+{
+  "schema_version": "source-extraction-v1",
+  "source_root": "D:\\openHarmonyScanner\\CyberSecurity-Innovation-Audit\\tmp\\openharmony-full-repos-20261020\\contacts_data",
+  "files": {
+    "dataBusiness/contacts/src/contacts_data_ability.cpp": {
+      "sha256": "c9d1f03da5994f32b6af7254ba505eb616713209222f48f1f91117c4827201b6",
+      "size_bytes": 85339
+    },
+    "dataBusiness/contacts/src/contacts_datashare_stub_impl.cpp": {
+      "sha256": "a913de9c273ef055de9203f83e890067a8594f1028dce6526844228585aa87a4",
+      "size_bytes": 29986
+    },
+    "ability/common/utils/src/file_utils.cpp": {
+      "sha256": "4de09b2a9de7ad538044e1e0b9f2ea84cc8acf9bf6a5cd1b7431c861a59d181f",
+      "size_bytes": 6843
+    }
+  },
+  "functions": [
+    {
+      "id": "contacts_batch_insert",
+      "file": "dataBusiness/contacts/src/contacts_data_ability.cpp",
+      "needle": "int ContactsDataAbility::BatchInsert(const Uri &uri,",
+      "line_start": 601,
+      "line_end": 660,
+      "snippet_sha256": "d065ea01cf629b719b294ca7dd65edd52956e3a609b543d3d50740c81ec88325",
+      "snippet_bytes": 3148,
+      "output": "contacts_batch_insert.inc"
+    },
+    {
+      "id": "batch_insert_one_by_one",
+      "file": "dataBusiness/contacts/src/contacts_data_ability.cpp",
+      "needle": "int ContactsDataAbility::batchInsertHandleOneByOne(const Uri &uri, std::string isSyncFromCloud,",
+      "line_start": 696,
+      "line_end": 732,
+      "snippet_sha256": "36806eea09c6b3f52bed78a72ee17f55b387708af09ba0df98f94e74e3f63c56",
+      "snippet_bytes": 1591,
+      "output": "batch_insert_one_by_one.inc"
+    },
+    {
+      "id": "process_single_insert",
+      "file": "dataBusiness/contacts/src/contacts_data_ability.cpp",
+      "needle": "int ContactsDataAbility::ProcessSingleInsert(DataShare::DataShareValuesBucket &rawContactValues,",
+      "line_start": 734,
+      "line_end": 768,
+      "snippet_sha256": "3d4018b94f5b8e7495efe652f80f5dc13884fe0af1c0ba31ad1baea46d1fa95f",
+      "snippet_bytes": 1488,
+      "output": "process_single_insert.inc"
+    },
+    {
+      "id": "handle_contact_portrait",
+      "file": "dataBusiness/contacts/src/contacts_data_ability.cpp",
+      "needle": "int ContactsDataAbility::HandleContactPortrait(DataShare::DataShareValuesBucket &value)",
+      "line_start": 770,
+      "line_end": 800,
+      "snippet_sha256": "a988128ed2b52c3aed3d6805dbfbd3f3cdf355e1eeb4c03776a85fcac54a9888",
+      "snippet_bytes": 1412,
+      "output": "handle_contact_portrait.inc"
+    },
+    {
+      "id": "save_portrait_file_and_blob",
+      "file": "dataBusiness/contacts/src/contacts_data_ability.cpp",
+      "needle": "int ContactsDataAbility::SavePortraitFileAndBlob(const std::string &srcFilePath, const std::string &filePath,",
+      "line_start": 802,
+      "line_end": 841,
+      "snippet_sha256": "72032d1758fbf1962b6da70c3a5d8ebbf2233d27b8d69682e764a51db4a50b76",
+      "snippet_bytes": 1795,
+      "output": "save_portrait_file_and_blob.inc"
+    },
+    {
+      "id": "build_portrait_value",
+      "file": "dataBusiness/contacts/src/contacts_data_ability.cpp",
+      "needle": "void ContactsDataAbility::BuildPortraitValue(DataShare::DataShareValuesBucket &value, const std::string &contactId,",
+      "line_start": 843,
+      "line_end": 853,
+      "snippet_sha256": "d4b6261d71918a8f2643f23b70800103d526a770fe385dc751b4a07a6016aaac",
+      "snippet_bytes": 533,
+      "output": "build_portrait_value.inc"
+    },
+    {
+      "id": "get_portrait_value",
+      "file": "dataBusiness/contacts/src/contacts_data_ability.cpp",
+      "needle": "void ContactsDataAbility::GetPortraitValue(const DataShare::DataShareValuesBucket &dataShareValue,",
+      "line_start": 855,
+      "line_end": 874,
+      "snippet_sha256": "417a0134bfd3bb3391a64e96d6fc6eeb00863e41ee4615e57d7bba987731f622",
+      "snippet_bytes": 754,
+      "output": "get_portrait_value.inc"
+    },
+    {
+      "id": "get_string_value",
+      "file": "dataBusiness/contacts/src/contacts_data_ability.cpp",
+      "needle": "std::string ContactsDataAbility::GetStringValueFromDataShareValue(",
+      "line_start": 876,
+      "line_end": 892,
+      "snippet_sha256": "c3222f346a8d53a2d44fd2a9eb5df07b6493d6d442fe96c5bd4ccde1fbc972ef",
+      "snippet_bytes": 530,
+      "output": "get_string_value.inc"
+    },
+    {
+      "id": "datashare_stub_batch_insert",
+      "file": "dataBusiness/contacts/src/contacts_datashare_stub_impl.cpp",
+      "needle": "int ContactsDataShareStubImpl::BatchInsert(const Uri &uri, const std::vector<DataShareValuesBucket> &values)",
+      "line_start": 260,
+      "line_end": 306,
+      "snippet_sha256": "124e5cd4bc25781a115194d18b170318fe04b4eccc1791411bc35a21c9f02214",
+      "snippet_bytes": 2699,
+      "output": "datashare_stub_batch_insert.inc"
+    },
+    {
+      "id": "file_utils_get_group_path",
+      "file": "ability/common/utils/src/file_utils.cpp",
+      "needle": "bool FileUtils::GetGroupPath(std::string &groupPath)",
+      "line_start": 155,
+      "line_end": 175,
+      "snippet_sha256": "57624eb2fdbf162669efd3a4b70866dfe89daad9fb7c7a044ca77ae36e862d8c",
+      "snippet_bytes": 745,
+      "output": "file_utils_get_group_path.inc"
+    },
+    {
+      "id": "file_utils_delete_file",
+      "file": "ability/common/utils/src/file_utils.cpp",
+      "needle": "bool FileUtils::DeleteFile(const std::string &filePath)",
+      "line_start": 208,
+      "line_end": 215,
+      "snippet_sha256": "5e0ff2d73a112908f124e0999a45956363b915f82a34ea835d79e34ce428a11d",
+      "snippet_bytes": 198,
+      "output": "file_utils_delete_file.inc"
+    }
+  ]
+}

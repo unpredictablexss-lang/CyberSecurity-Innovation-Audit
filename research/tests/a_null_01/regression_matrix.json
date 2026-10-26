@@ -117,55 +117,58 @@
       "sink": "member_dereference",
       "guard_relation": "none",
       "error_path": "not_applicable",
-      "unknown_reasons": ["unresolved_function_return_nullability", "cross_function_alias"]
+      "unknown_reasons": [
+        "unresolved_function_return_nullability",
+        "cross_function_alias"
+      ]
     },
     {
       "fixture": "vulnerable_guard_not_dominating.cpp",
       "fixture_category": "vulnerable",
       "parse_status": "complete",
       "expected_observation": "candidate_shape",
-      "expected_coverage": "complete",
+      "expected_coverage": "partial",
       "expected_finding_count": 1,
       "null_source": "parameter_may_be_null",
       "sink": "member_dereference",
-      "guard_relation": "not_dominating",
-      "error_path": "not_applicable"
+      "guard_relation": "unknown",
+      "error_path": "guard_relation_unresolved_without_cfg"
     },
     {
       "fixture": "vulnerable_error_path_falls_through.cpp",
       "fixture_category": "vulnerable",
       "parse_status": "complete",
       "expected_observation": "candidate_shape",
-      "expected_coverage": "complete",
+      "expected_coverage": "partial",
       "expected_finding_count": 1,
       "null_source": "parameter_may_be_null",
       "sink": "member_dereference",
-      "guard_relation": "not_dominating",
-      "error_path": "error_branch_falls_through"
+      "guard_relation": "unknown",
+      "error_path": "lexical_error_branch_falls_through"
     },
     {
       "fixture": "fixed_parameter_early_return.cpp",
       "fixture_category": "fixed",
       "parse_status": "complete",
       "expected_observation": "no_candidate_shape",
-      "expected_coverage": "complete",
+      "expected_coverage": "partial",
       "expected_finding_count": 0,
       "null_source": "parameter_may_be_null",
       "sink": "member_dereference",
-      "guard_relation": "dominating",
-      "error_path": "early_return"
+      "guard_relation": "unknown",
+      "error_path": "lexical_protecting_early_return_pattern"
     },
     {
       "fixture": "fixed_local_guarded_deref.cpp",
       "fixture_category": "fixed",
       "parse_status": "complete",
       "expected_observation": "no_candidate_shape",
-      "expected_coverage": "complete",
+      "expected_coverage": "partial",
       "expected_finding_count": 0,
       "null_source": "parameter_may_be_null",
       "sink": "unary_dereference",
-      "guard_relation": "dominating",
-      "error_path": "early_return"
+      "guard_relation": "unknown",
+      "error_path": "lexical_protecting_early_return_pattern"
     },
     {
       "fixture": "safe_address_of_local.cpp",
@@ -184,12 +187,12 @@
       "fixture_category": "safe",
       "parse_status": "complete",
       "expected_observation": "no_candidate_shape",
-      "expected_coverage": "complete",
+      "expected_coverage": "partial",
       "expected_finding_count": 0,
       "null_source": "parameter_may_be_null",
       "sink": "member_dereference",
-      "guard_relation": "dominating",
-      "error_path": "positive_guard_only"
+      "guard_relation": "unknown",
+      "error_path": "lexical_protecting_positive_guard_pattern"
     },
     {
       "fixture": "unrelated_no_pointer_shape.cpp",
@@ -214,7 +217,10 @@
       "sink": "macro_expanded_unary_dereference",
       "guard_relation": "unknown",
       "error_path": "not_applicable",
-      "unknown_reasons": ["macro_not_expanded", "compile_context_missing"]
+      "unknown_reasons": [
+        "macro_not_expanded",
+        "compile_context_missing"
+      ]
     },
     {
       "fixture": "unknown_template.cpp",
@@ -227,7 +233,10 @@
       "sink": "dependent_unary_dereference",
       "guard_relation": "unknown",
       "error_path": "not_applicable",
-      "unknown_reasons": ["template_instantiation_unknown", "type_system_unknown"]
+      "unknown_reasons": [
+        "template_instantiation_unknown",
+        "type_system_unknown"
+      ]
     },
     {
       "fixture": "unknown_exception_destructor.cpp",
@@ -238,9 +247,13 @@
       "expected_finding_count": 1,
       "null_source": "smart_pointer_value_unknown_nullability",
       "sink": "member_dereference",
-      "guard_relation": "not_dominating",
+      "guard_relation": "unknown",
       "error_path": "exception_unmodeled",
-      "unknown_reasons": ["exception_edges_unknown", "destructor_order_unknown", "cross_function_alias"]
+      "unknown_reasons": [
+        "exception_edges_unknown",
+        "destructor_order_unknown",
+        "cross_function_alias"
+      ]
     },
     {
       "fixture": "unknown_indirect_call.cpp",
@@ -253,7 +266,10 @@
       "sink": "indirect_call_argument",
       "guard_relation": "unknown",
       "error_path": "not_applicable",
-      "unknown_reasons": ["function_pointer_target_unresolved", "callee_dereference_unknown"]
+      "unknown_reasons": [
+        "function_pointer_target_unresolved",
+        "callee_dereference_unknown"
+      ]
     },
     {
       "fixture": "unknown_cross_function_alias.cpp",
@@ -266,7 +282,10 @@
       "sink": "member_dereference",
       "guard_relation": "none",
       "error_path": "not_applicable",
-      "unknown_reasons": ["cross_function_alias", "function_return_nullability_unknown"]
+      "unknown_reasons": [
+        "cross_function_alias",
+        "function_return_nullability_unknown"
+      ]
     },
     {
       "fixture": "unknown_failed_parse.cpp",
@@ -279,7 +298,9 @@
       "sink": "unknown",
       "guard_relation": "unknown",
       "error_path": "unknown",
-      "unknown_reasons": ["parse_failed"]
+      "unknown_reasons": [
+        "parse_failed"
+      ]
     },
     {
       "fixture": "not_analyzed_no_cpp_shape.js",

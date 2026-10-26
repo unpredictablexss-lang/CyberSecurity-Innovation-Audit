@@ -2,76 +2,1260 @@
   "schema_version": 1,
   "updated_at": "2026-10-19",
   "lane": "A_CPP",
-  "status_dimensions": ["public_disclosure_fact", "source_root_cause_match", "static_detection", "component_dynamic_reproduction", "product_vulnerability_confirmation"],
+  "status_dimensions": [
+    "public_disclosure_fact",
+    "source_root_cause_match",
+    "static_detection",
+    "component_dynamic_reproduction",
+    "product_vulnerability_confirmation"
+  ],
   "cases": [
     {
       "case_id": "libtiff-cve-2025-9900",
       "cve_advisory": "CVE-2025-9900",
-      "sources_verification_date": {"date": "2026-10-19", "links": ["https://access.redhat.com/security/cve/cve-2025-9900", "https://gitlab.com/libtiff/libtiff/-/issues/704", "https://gitlab.com/libtiff/libtiff/-/merge_requests/732", "https://libtiff.gitlab.io/libtiff/releases/v4.7.1.html", "https://www.openwall.com/lists/oss-security/2025/09/26/3"]},
+      "sources_verification_date": {
+        "date": "2026-10-19",
+        "links": [
+          "https://access.redhat.com/security/cve/cve-2025-9900",
+          "https://gitlab.com/libtiff/libtiff/-/issues/704",
+          "https://gitlab.com/libtiff/libtiff/-/merge_requests/732",
+          "https://libtiff.gitlab.io/libtiff/releases/v4.7.1.html",
+          "https://www.openwall.com/lists/oss-security/2025/09/26/3"
+        ]
+      },
       "component": "libtiff",
       "root_cause": "Unsigned output-row subtraction (rheight - img.height) feeds scaled pointer offset raster + delta*rwidth; when caller's crop/output height is less than image height, the underflow can point before raster.",
       "lane": "A_CPP",
       "affected_versions_basis": "Upstream issue/MR and v4.7.1 release note identify issue #704 and fix; exact affected product versions are not established.",
       "source_identities": {
-        "vulnerable": {"commit": "9dff73bebc5661f2dace6f16e14cf9e857172f4e", "tree": "986499c84247e9a1f49560128bbe7580d8ebea1a", "file": "libtiff/tif_getimage.c", "blob": "6c7b5031a1937bb48cc79808a59618d8a4f6237e"},
-        "fixed": {"commit": "3e0dcf0ec651638b2bd849b2e6f3124b36890d99", "parent": "14da830be4bf4d6d3daafcbd892426aa6c164242", "tree": "77361ef7262189e16a2010b5c333f6b275d17f09", "file": "libtiff/tif_getimage.c", "blob": "2774caa0eef24bce2a619d2686a23d59fb5ef9db"},
-        "openharmony": {"commit": "d4a0516c477dfbaf1153ae295893ab75aadd63d4", "tree": "33beab3b3b50fe6678b1a74ed48ac3b69084c6ec", "file": "libtiff/tif_getimage.c", "blob": "5121e85b9eb2bc734b557892c0968f629d370b82", "sha256": "4b664c80e2e208c2a9cd33042419f69e590ff088c1a3befe99581d1b1df5471a"}
+        "vulnerable": {
+          "commit": "9dff73bebc5661f2dace6f16e14cf9e857172f4e",
+          "tree": "986499c84247e9a1f49560128bbe7580d8ebea1a",
+          "file": "libtiff/tif_getimage.c",
+          "blob": "6c7b5031a1937bb48cc79808a59618d8a4f6237e",
+          "parent": "95911a1c2cb5f701e3d6678a95493d9692027ab6",
+          "source_sha256": "cf39474735eba839a097a540fbc3f5f17791d6f7496a1800e04dbefc0e7d13e3",
+          "header_blob": "225f3c1bfeabae2b31a5f35fbfd12d14b570dcd8",
+          "header_sha256": "70119b9db897a364821a108ff0adc09f26c20ad9b6d9e943eb376ee3edb6166f"
+        },
+        "fixed": {
+          "commit": "3e0dcf0ec651638b2bd849b2e6f3124b36890d99",
+          "parent": "14da830be4bf4d6d3daafcbd892426aa6c164242",
+          "tree": "77361ef7262189e16a2010b5c333f6b275d17f09",
+          "file": "libtiff/tif_getimage.c",
+          "blob": "2774caa0eef24bce2a619d2686a23d59fb5ef9db",
+          "source_sha256": "de1bb87b9c2882c73f1045d9510e30d997afb48c52179a62b647aed4c6cee7d8",
+          "header_blob": "6a7ab2f5b7f6697020dfbcac57f8c2617c4b1074",
+          "header_sha256": "7923903a85c15c047a22bfe52ef1901939d6a7e656c75b814fcb86c6179b120c"
+        },
+        "openharmony": {
+          "commit": "d4a0516c477dfbaf1153ae295893ab75aadd63d4",
+          "tree": "33beab3b3b50fe6678b1a74ed48ac3b69084c6ec",
+          "file": "libtiff/tif_getimage.c",
+          "blob": "5121e85b9eb2bc734b557892c0968f629d370b82",
+          "sha256": "4b664c80e2e208c2a9cd33042419f69e590ff088c1a3befe99581d1b1df5471a",
+          "source_sha256": "4b664c80e2e208c2a9cd33042419f69e590ff088c1a3befe99581d1b1df5471a"
+        }
       },
-      "product_build_association": "BUILD.gn includes tif_getimage.c; actual product build/profile and shipped binary association unknown.",
-      "existing_detector_rule": "ohcpp-integer-bounds-pointer-offset-underflow-candidate-004; detector version 0.2.4",
-      "baseline_scan": {"result": "partial_no_diagnostic", "scope": ["libtiff/tif_getimage.c", "libtiff/tiffio.h"], "note": "M2 production CLI; both files parser-partial/blocked, so this is not a complete negative."},
+      "product_build_association": "Local out/ohos_config.json identifies rk3568; pinned vendor/hihope/rk3568/config.json lists image_framework and libtiff (identities in caller-analysis JSON). The tiffplugin target links libtiff when has_libtiff; generated global_parts_info/args.gn/build.ninja/out/rk3568/final binary absent, so final linkage unconfirmed. Known image-framework decoder passes TIFF tag dimensions used for allocation; Dell backend also writes and passes same dimensions. These source call paths do not evidence rheight<img.height. ImageSource public API accepts streams, byte buffers, paths and FDs; selected plugin receives the stream. App-level trust/permission boundary unknown. Source identities are recorded in caller-analysis artifact. Existing out/rk3568 has only build.1792344452.3203762.log, which fails before GN generation due to missing OpenHarmony prebuilts/build-tools/linux-x86/bin/ninja; no args.gn/global_parts_info/build.ninja/final binary. Recheck 2026-10-19: GN 2026 (47b40ef4) and Ninja 1.13.2 binaries are now present and runnable from the workspace WSL path (SHA-256 in runtime build follow-up); stale log cannot be treated as current tool availability. hb build --help was attempted on Python 3.14.0 and fails during import because this OH build frontend imports removed stdlib module pipes. No output graph was generated and existing out/rk3568 was not modified. Compatibility recheck: hb build --help succeeds under WSL Python 3.14 when a temporary /tmp-only pipes.quote shim is added via PYTHONPATH. This resolves the help/import blocker, but GN generation was not attempted because hb derives and writes multiple shared paths under out/ (including rk3568 configuration, hb_args, preloader/products_ext); no verified isolated-output mode was established. Current local OH check confirms BUILD.gn includes tif_getimage.c and lists generated libtiff/config include roots plus GN feature defines; install.sh runs autogen/configure/CMake to produce config headers. BUILD.gn SHA-256 23fe746dc2f2e1bfe6972e078238ce46c296f252cf8f5ac80f75e9538aa70f25; install.sh SHA-256 8990f0eeb2efc05add8711213597719e92516398aa3f4cdc6cd6cb6803ba44c7. `openharmony/out/rk3568` has only logs and lacks build.ninja, selected args/profile, generated config outputs and compile_commands.json; actual product profile remains unavailable.",
+      "existing_detector_rule": "ohcpp-integer-bounds-pointer-offset-underflow-candidate-004; detector version 0.2.6; handles direct addition and compound += with optional size_t/uintptr_t cast; strict positive branch and early-return guards suppress modeled shape",
+      "baseline_scan": {
+        "result": "partial_no_diagnostic",
+        "scope": [
+          "libtiff/tif_getimage.c",
+          "libtiff/tiffio.h"
+        ],
+        "note": "M2 production CLI; both files parser-partial/blocked, so this is not a complete negative."
+      },
       "miss_reason": "Baseline rule lacked modeling for unsigned dimension subtraction feeding a scaled pointer offset; parser partial limited whole-file proof.",
       "implementation_status": "implemented_and_registered_in_existing_integer_bounds_detector",
-      "controls": {"positive": "v4.7.0 and OpenHarmony d4 source each produce candidate at source line 621", "fixed": "exact fix commit 3e0dcf0 produces no same-rule diagnostic", "safe": "lower-bound early-return / positive guard fixture quiet", "unrelated": "signed/scalar lookalikes quiet", "variant": "renamed pointer/member same-mechanism holdout fixture post-freeze detects; synthetic only", "incomplete": "parser partial is explicitly blocked/limited"},
-      "real_source_rescan": "Vulnerable upstream v4.7.0: 1 candidate; fixed patch commit: 0 same-rule candidates; OpenHarmony d4a0516: 1 candidate at line 621. All M2 runs report partial parser limitations; candidate evidence only.",
-      "status": {"public_disclosure_fact": "verified", "source_root_cause_match": "verified_by_patch_and_source", "static_detection": "candidate_partial_parse", "component_dynamic_reproduction": "not_run", "product_vulnerability_confirmation": "unknown"},
-      "evidence_path": "research/evidence/cpp/libtiff_cve_2025_9900_20261018/",
-      "remaining_blockers": ["parser is partial on source scope: tif_getimage.c errors at 1383, 1393, 1687, 1707, missing at 1831/error 1833 around UNROLL8 macro syntax; tiffio.h missing nodes at 483, 485, 487, 489, 496, 498 and 650 around compiler attributes/configuration", "no component build/runtime reproduction", "actual product build profile and reachable call context unknown"],
-      "next_step": "Submit the saved shared-parser prerequisite request for explicit pinned preprocessing/compile configuration; replay the exact two-file vulnerable/fixed scope and require complete parse or retain partial/blocked. Separately build isolated v4.7.0/fixed controls once a usable build profile/toolchain is available."
+      "controls": {
+        "positive": "Upstream v4.7.0 production CLI candidate at line 621; focused detector positive passes; isolated runtime mismatch (image height 2/output height 1) SIGSEGVs at guard page, exit 139. New unguarded compound `pointer += (size_t)(unsigned_left - unsigned_member) * scale` variant produces a candidate.",
+        "fixed": "Exact upstream fix commit: production CLI no same-rule diagnostic (partial); isolated runtime on identical harness/output height returns normally, exit 0.",
+        "safe": "Same isolated harness with output height equal to image height returns normally on vulnerable and fixed builds; focused lower-bound guard fixture passes. New strict `rheight > img.height` enclosing-branch fixture matches the fixed crop guard form and passes after the refinement. Same compound/cast expression inside a strict `left > member` branch is quiet; the pre-change regression emitted a candidate before the guard recognizer update. Final regression uses the exact upstream fixed expression `raster += (size_t)(h - img->height) * w` inside `if (h > img->height)`; no same-rule candidate.",
+        "unrelated": "Focused unrelated arithmetic control passes.",
+        "variant": "Renamed member/dimension mechanism test passes; prior synthetic held-out variant CLI candidate with complete parse.",
+        "incomplete": "Focused incomplete-input test passes; real vulnerable/fixed/OpenHarmony source scans remain parser-partial/blocked."
+      },
+      "real_source_rescan": "Current-checkout M2 CLI v0.2.6 revalidation on exact pinned upstream vulnerable/fixed and OpenHarmony commits: 1 candidate at vulnerable tif_getimage.c:621, 0 same-rule on fixed commit, and 1 at OpenHarmony line 621. All three component scans remain partial/blocked (2/2 source files); fixed absence is corroborated by patch source but not promoted to whole-file safe. Post-freeze complete-parse structural holdout emits one candidate. Reports and times are in the current_checkout_revalidation object. Current-turn lazy-fetch-disabled scope probe: exact same vulnerable/fixed upstream commits scanned on tif_getimage.c alone produce 0/0 with 1/1 partial/blocked; restoring tiffio.h in identical production CLI recovers 1 vulnerable candidate at line 621 vs 0 fixed, with 2/2 partial/blocked. Fresh reports `turn-tif-getimage-*` and `turn-twofile-*`; focused rule tests rerun 6/6.",
+      "status": {
+        "public_disclosure_fact": "verified",
+        "source_root_cause_match": "verified_by_patch_and_source",
+        "static_detection": "vulnerable_candidate_fixed_quiet_both_partial_parse",
+        "component_dynamic_reproduction": "reproduced_in_isolated_upstream_build_only",
+        "product_vulnerability_confirmation": "unknown_known_source_callers_use_equal_dimensions_product_build_unresolved"
+      },
+      "evidence_path": "research/evidence/cpp/libtiff_cve_2025_9900_20261018/ Also: research/evidence/cpp/libtiff_cve_2025_9900_20261018/openharmony-caller-analysis-20261019.md/.json and runtime-reproduction-20261019.json.; research/evidence/cpp/libtiff_cve_2025_9900_20261018/post-guardfix-vulnerable.json; research/evidence/cpp/libtiff_cve_2025_9900_20261018/post-guardfix-fixed.json; research/evidence/cpp/libtiff_cve_2025_9900_20261018/post-guardfix-vulnerable.json; research/evidence/cpp/libtiff_cve_2025_9900_20261018/post-guardfix-fixed.json; tests/detectors/test_cpp_pointer_offset_underflow.py; research/evidence/cpp/libtiff_cve_2025_9900_20261018/post-guardfix-openharmony.json; research/evidence/cpp/libtiff_cve_2025_9900_20261018/post-guardfix-openharmony.md; current-turn single-vs-two-file production M2 scope probe and focused 6/6 test recorded in research/evidence/cpp/libtiff_cve_2025_9900_20261018/turn-{tif-getimage,twofile}-* and tests/detectors/test_cpp_pointer_offset_underflow.py",
+      "remaining_blockers": [
+        "parser is partial on source scope: tif_getimage.c errors at 1383, 1393, 1687, 1707, missing at 1831/error 1833 around UNROLL8 macro syntax; tiffio.h missing nodes at 483, 485, 487, 489, 496, 498 and 650 around compiler attributes/configuration",
+        "no component build/runtime reproduction",
+        "Related memory-safety detector test module has a pre-existing shared fixture/manifest mismatch (18 pass, 1 fail); source fixtures were not modified.",
+        "Parser is still partial on both source files; no product build/profile, actual caller reachability, attacker control of output height or product impact established.",
+        "ImageSource caller data origin/permissions are unresolved; API accepts caller-provided bytes/streams/FDs but that alone does not show attacker access.",
+        "OpenHarmony product build graph is absent; existing rk3568 build log stops at missing prebuilt ninja before GN generation. Build toolchain/selected args.gn not reconstructed.",
+        "Build-tool recheck found GN/Ninja binaries but OH hb frontend cannot start under WSL Python 3.14 because pipes was removed; identify a compatible Python 3.12 runtime or isolated non-mutating GN generation route, then resolve tiffplugin linkage. No source or output mutation attempted.",
+        "Before product GN generation, establish an isolated OH checkout/output overlay for all hb writes; help-only works with temporary pipes shim, but GN graph was not generated to avoid modifying shared output state.",
+        "Current-turn scope probe shows candidate disappears when tiffio.h is omitted, while it reappears in two-file scope; both scopes remain partial/blocked, so the header dependency is established but completeness is not.",
+        "A-line cannot bind a libtiff preprocessing profile: OH GN/install/CMake source identifies generated headers and target include roots, but selected product args and generated configuration/build graph are absent. Exact fresh evidence is in A_LINE_PARSER_PREREQUISITE_REQUEST_20261019.md."
+      ],
+      "next_step": "Keep this case partial/blocked and switch to the next actionable full-parse root family. Preserve the two-file M2 candidate differential; do not generate configuration with host defaults or run package scripts without a pinned product profile.",
+      "current_checkout_revalidation": {
+        "scanner_head": "9b99f106883ef58304d9e6702fea562bb7f8f331",
+        "detector": "ohscanner.cpp.integer_bounds",
+        "detector_version": "0.2.6",
+        "scope": [
+          "libtiff/tif_getimage.c",
+          "libtiff/tiffio.h"
+        ],
+        "vulnerable": {
+          "commit": "9dff73bebc5661f2dace6f16e14cf9e857172f4e",
+          "snapshot_sha256": "dda2fe1af73132372d00a491714b80dcf51a6056a1acc0e60259fc4e922a748a",
+          "result": "1 CWE-191/787 candidate at tif_getimage.c:621; partial/blocked 2/2",
+          "elapsed_seconds": 0.0866,
+          "report": "research/evidence/cpp/libtiff_cve_2025_9900_20261018/revalidation-v026-vulnerable.json"
+        },
+        "fixed": {
+          "commit": "3e0dcf0ec651638b2bd849b2e6f3124b36890d99",
+          "snapshot_sha256": "c7b380f2774adc947c493f919086e4a48cd4c0dfd1e6d6041e6e9ae2587817d5",
+          "result": "0 same-rule diagnostics; partial/blocked 2/2, not a clean safety verdict",
+          "elapsed_seconds": 0.0907,
+          "report": "research/evidence/cpp/libtiff_cve_2025_9900_20261018/revalidation-v026-fixed.json"
+        },
+        "openharmony": {
+          "commit": "d4a0516c477dfbaf1153ae295893ab75aadd63d4",
+          "snapshot_sha256": "6a8d746b97e9914698d1511a4b8cee0f11b1d1dea665826d9d687025512ae835",
+          "result": "1 candidate at tif_getimage.c:621; partial/blocked 2/2",
+          "elapsed_seconds": 0.0882,
+          "report": "research/evidence/cpp/libtiff_cve_2025_9900_20261018/revalidation-v026-openharmony.json"
+        },
+        "heldout_variant": {
+          "commit": "f6a34c25b8265d2af539159897b563d7adf51ae5",
+          "snapshot_sha256": "f7ab85558e49646dcec269c8b69c6e8558f421c5ebfbbab3a9db7b031602e190",
+          "result": "1 candidate at src/crop_rows.c:4; complete parse",
+          "elapsed_seconds": 0.0019,
+          "kind": "post-freeze synthetic structural holdout, not independent real CVE sample",
+          "report": "research/evidence/cpp/libtiff_cve_2025_9900_20261018/revalidation-v026-holdout.json"
+        },
+        "focused_tests": "tests/detectors/test_cpp_pointer_offset_underflow.py: 6/6 passed on 2026-10-19",
+        "single_file_scope_probe": {
+          "detector": "ohscanner.cpp.integer_bounds",
+          "detector_version": "0.2.6",
+          "lazy_fetch": false,
+          "vulnerable": {
+            "commit": "9dff73bebc5661f2dace6f16e14cf9e857172f4e",
+            "tree": "986499c84247e9a1f49560128bbe7580d8ebea1a",
+            "file_blob": "6c7b5031a1937bb48cc79808a59618d8a4f6237e",
+            "file_sha256": "cf39474735eba839a097a540fbc3f5f17791d6f7496a1800e04dbefc0e7d13e3",
+            "scope": [
+              "libtiff/tif_getimage.c"
+            ],
+            "parse": "1 partial",
+            "result": "0 diagnostics; blocked",
+            "elapsed_seconds": 0.0578275,
+            "report": "research/evidence/cpp/libtiff_cve_2025_9900_20261018/turn-tif-getimage-vulnerable.json"
+          },
+          "fixed": {
+            "commit": "3e0dcf0ec651638b2bd849b2e6f3124b36890d99",
+            "tree": "77361ef7262189e16a2010b5c333f6b275d17f09",
+            "file_blob": "2774caa0eef24bce2a619d2686a23d59fb5ef9db",
+            "file_sha256": "de1bb87b9c2882c73f1045d9510e30d997afb48c52179a62b647aed4c6cee7d8",
+            "scope": [
+              "libtiff/tif_getimage.c"
+            ],
+            "parse": "1 partial",
+            "result": "0 diagnostics; blocked",
+            "elapsed_seconds": 0.071516,
+            "report": "research/evidence/cpp/libtiff_cve_2025_9900_20261018/turn-tif-getimage-fixed.json"
+          },
+          "interpretation": "Narrow file scope omits tiffio.h and yielded zero diagnostics on both partial files; this is not a fixed or safe result. Same commits with tiffio.h included recover vulnerable candidate at line 621 and fixed zero, still 2/2 partial. This isolates a scope/model dependency but not complete semantic coverage.",
+          "two_file_reports": {
+            "vulnerable": "research/evidence/cpp/libtiff_cve_2025_9900_20261018/turn-twofile-vulnerable.json",
+            "fixed": "research/evidence/cpp/libtiff_cve_2025_9900_20261018/turn-twofile-fixed.json"
+          },
+          "focused_test": "python -m unittest tests.detectors.test_cpp_pointer_offset_underflow -v; 6/6 passed on 2026-10-19"
+        }
+      }
     },
     {
       "case_id": "libpng-ghsa-qvg3-h654-xq3j",
-      "cve_advisory": "GHSA-qvg3-h654-xq3j",
-      "sources_verification_date": {"date": "2026-10-19", "links": ["https://github.com/pnggroup/libpng/security/advisories/GHSA-qvg3-h654-xq3j"]},
-      "component": "libpng", "root_cause": "Use-after-free / stale pointer lifecycle during zlib input handling (advisory-level description; exact source path not established in this round).", "lane": "A_CPP",
+      "cve_advisory": "CVE-2026-46675 / GHSA-qvg3-h654-xq3j",
+      "sources_verification_date": {
+        "date": "2026-10-19",
+        "links": [
+          "https://github.com/pnggroup/libpng/security/advisories/GHSA-qvg3-h654-xq3j",
+          "https://github.com/pnggroup/libpng/commit/aa77ef38c17ab2fc1b41bec09fb973c6a386641d",
+          "https://github.com/pnggroup/libpng/commit/aa77ef38c17ab2fc1b41bec09fb973c6a386641d.patch"
+        ]
+      },
+      "component": "libpng",
+      "root_cause": "Official libpng advisory: after failed/incomplete zTXt/iTXt/iCCP decompression, a released zstream can retain nonzero avail_in and next_in into chunk-buffer or stack storage. If the application calls png_read_info then png_read_end without starting row reads, IDAT refill is skipped and inflation can read the stale pointer. Fix aa77ef38c17ab2fc1b41bec09fb973c6a386641d adds png_inflate_detach_buffers and clears zstream input/output pointers and counters on acquisition and release.",
+      "lane": "A_CPP",
       "affected_versions_basis": "Advisory says affected through 1.6.58 and fixed 1.6.59; local archive is 1.6.55.",
-      "source_identities": {"openharmony": {"commit": "e57b1079564a02a50321ec528aa6e41884979d32", "tree": "02b17492f4490ff2e4d17ba74e2080358a500059", "archive_blob": "975cee2aca0eda6bfa3e9b7a1336c956fcf1b094", "archive_sha256": "71a2c5b1218f60c4c6d2f1954c7eb20132156cae90bdb90b566c24db002782a6"}},
-      "product_build_association": "GN builds extracted archive; product profile unverified.", "existing_detector_rule": "none selected", "baseline_scan": "not_run", "miss_reason": "Not analyzed beyond advisory/source inventory.", "implementation_status": "unanalysed",
-      "controls": {"positive": "not_run", "fixed": "not_run", "safe": "not_run", "unrelated": "not_run", "variant": "not_run", "incomplete": "not_run"}, "real_source_rescan": "not_run",
-      "status": {"public_disclosure_fact": "verified_advisory", "source_root_cause_match": "unverified", "static_detection": "not_run", "component_dynamic_reproduction": "not_run", "product_vulnerability_confirmation": "unknown"},
-      "evidence_path": "research/evidence/cpp/ (archive/source hash notes from 2026-10-19 work session)", "remaining_blockers": ["precise upstream fix commit and reproducible vulnerable/fixed source pair not yet established", "product build identity unknown"], "next_step": "Pin exact advisory fix commit and source path; scan local extracted 1.6.55 before selecting this family."
+      "source_identities": {
+        "openharmony": {
+          "commit": "e57b1079564a02a50321ec528aa6e41884979d32",
+          "tree": "02b17492f4490ff2e4d17ba74e2080358a500059",
+          "archive_blob": "975cee2aca0eda6bfa3e9b7a1336c956fcf1b094",
+          "archive_sha256": "71a2c5b1218f60c4c6d2f1954c7eb20132156cae90bdb90b566c24db002782a6",
+          "generated_pngrutil_sha256": "871e76294344c9f9671ca5a2c86d45e3631b6087b805568e8f7a15864b3fec2c"
+        },
+        "upstream_vulnerable_tag": {
+          "tag": "v1.6.55",
+          "commit": "c3e304954a9cfd154bc0dfbfea2b01cd61d6546d",
+          "file": "pngrutil.c",
+          "blob": "a4eda54c8cb3d36cf1651dba159067b65030e3aa",
+          "sha256": "b328fb05352226866b1e44c8cddd3e03df35413f1f38f4d81ba51afe4f2333a5e"
+        },
+        "upstream_fix_parent": {
+          "commit": "4eeb825ab26605ed34cd74495d4cce920939fe9f",
+          "file": "pngrutil.c",
+          "blob": "5513951681f52da994ba72c96af135bfede5393e",
+          "sha256": "f67dbcc82dce533ec0a768184a142216f6ac3d9e68f2a35d5cd90c4667b24d1c",
+          "tree": "not_obtained"
+        },
+        "upstream_fixed": {
+          "commit": "aa77ef38c17ab2fc1b41bec09fb973c6a386641d",
+          "file": "pngrutil.c",
+          "blob": "482f0ae8dfd4793e7a4f266b609bc5c8b9e9334a",
+          "sha256": "a1d62bc61c118b225c60549ea8de3065ae84642af56dd3776bf4692fb0f6aa5e",
+          "tree": "not_obtained"
+        }
+      },
+      "product_build_association": "GN builds extracted archive; product profile unverified.",
+      "existing_detector_rule": "none selected",
+      "baseline_scan": "Production M2 v0.1.9 one-file pngrutil.c scans in synthetic byte-bound snapshot e283ed5d3a74c0112f092ddb1003c97e0e9a4717: upstream v1.6.55, upstream fix parent, fix commit, and OpenHarmony install-generated source all 0 diagnostics, blocked, parse partial. This is not a miss or safe result. Reports in research/evidence/cpp/libpng_cve_2026_46675_20261019/.",
+      "miss_reason": "Cannot classify a static miss: parser partial blocks every scanned variant; production parsing reports broad ERROR spans from macro-heavy raw C source.",
+      "implementation_status": "not_implemented; static rule blocked by production parser partial coverage and cross-function zstream/buffer lifetime facts",
+      "controls": {
+        "positive": "Corrected malformed zTXt + long tEXt; vulnerable generated OH 1.6.55 no-row API sequence triggers ASan heap-use-after-free in png_zlib_inflate:529.",
+        "fixed": "Explicit official-fix transplant source build shows no same ASan report; no-row call later errors on IDAT.",
+        "safe": "Vulnerable and transplant read-rows-before-read_end controls complete without ASan; valid compressed zTXt no-row controls show no ASan but intentionally minimal image later errors at IDAT.",
+        "unrelated": "No independent unrelated component input evaluated for this root cause.",
+        "variant": "No independent same-mechanism variant tested; iTXt/iCCP described by GHSA not separately reproduced.",
+        "incomplete": "Original short trigger rejected as zTXt too short and retained; corrected trigger source/content hashes and six retry logs recorded."
+      },
+      "real_source_rescan": "Production M2 current scanner, same one-file scope per snapshot variant: v1.6.55 source, fix parent, fixed commit, and OpenHarmony generated source each parse partial, detector blocked, 0 diagnostics; elapsed ~0.085s. No interpretable before/after static result. Component ASan attempt: two OH-generated 1.6.55-based isolated builds succeeded (vulnerable and explicit transplant). Trigger was rejected as zTXt too short before stale-pointer path. Vulnerable no-row/read-row/valid inputs showed no ASan report but are inconclusive; transplant runtime not run. UAF remains unverified. Corrected fixture component ASan matrix: OH-generated vulnerable 1.6.55 triggers heap-use-after-free only for invalid-window zTXt + long tEXt and png_read_info→png_read_end without rows; ASan read is png_zlib_inflate:529 via png_read_IDAT_data/png_read_finish_IDAT/png_read_end; freed allocation traces to zTXt png_read_buffer growth. Read-rows control completes clean. Explicit official-fix transplant no-row/read-row runs show no ASan UAF (no-row later rejects IDAT). Valid-zTXt no-row controls on both builds show no ASan report but image later errors at IDAT. Component root cause dynamically reproduced; product reachability unknown.",
+      "status": {
+        "public_disclosure_fact": "verified_official_GHSA_CVE_2026_46675_and_upstream_fix_patch",
+        "source_root_cause_match": "verified_on_official_v1.6.55_source_and_OpenHarmony_generated_pngrutil_context; product API sequence remains unknown",
+        "static_detection": "blocked_partial_zero_diagnostics; production parse errors span pngrutil.c and detector not implemented for this cross-function state",
+        "component_dynamic_reproduction": "confirmed_component_heap_UAF_on_OH_generated_1.6.55; repair_transplant_and_read_rows_control_suppress_same_report",
+        "product_vulnerability_confirmation": "unknown_product_caller_build_linkage_input_control_and_impact"
+      },
+      "evidence_path": "research/evidence/cpp/libpng_cve_2026_46675_20261019/README.md and baseline-* reports; source copies in D:/openHarmonyScanner/tmp/libpng-ghsa-qvg3-source-20261019; synthetic scanner repo in D:/openHarmonyScanner/tmp/libpng-ghsa-qvg3-scan-20261019; research/evidence/cpp/libpng_cve_2026_46675_20261019/asan-vulnerable-trigger-no-rows.log; research/evidence/cpp/libpng_cve_2026_46675_20261019/asan-vulnerable-trigger-read-rows.log; research/evidence/cpp/libpng_cve_2026_46675_20261019/asan-vulnerable-valid-no-rows.log; research/evidence/cpp/libpng_cve_2026_46675_20261019/asan-vulnerable-trigger-no-rows-retry.log; research/evidence/cpp/libpng_cve_2026_46675_20261019/asan-vulnerable-trigger-read-rows-retry.log; research/evidence/cpp/libpng_cve_2026_46675_20261019/asan-fixed-trigger-no-rows-retry.log; research/evidence/cpp/libpng_cve_2026_46675_20261019/asan-fixed-trigger-read-rows-retry.log; research/evidence/cpp/libpng_cve_2026_46675_20261019/asan-vulnerable-valid-no-rows-retry.log; research/evidence/cpp/libpng_cve_2026_46675_20261019/asan-fixed-valid-no-rows-retry.log",
+      "remaining_blockers": [
+        "Production parser reports partial on pngrutil.c due raw macro-heavy C; 0 diagnostics cannot establish miss/fix/safe.",
+        "No bounded ASan reproduction of malformed chunk + png_read_info/png_read_end call sequence, fixed build, or safe API control for this advisory.",
+        "No product build graph/API call path or attacker-control evidence; GHSA says the call sequence is uncommon.",
+        "Upstream tree hashes were not obtained by available APIs; commit, path, Git blob and file SHA are pinned.",
+        "Component ASan UAF reproduced, but no production detector rule or static hit exists because the C parser returns partial coverage on the real pngrutil.c; product API reachability/build association unknown."
+      ],
+      "next_step": "Inspect and advance the explicit shared parser profile request for complete, source-mapped C coverage on generated pngrutil.c; in parallel, evaluate whether the registered integer-bounds CVE-2025-9900 family satisfies full A-line minimum closure despite parser-partial real files. Do not add libpng lexical fallback. If no shared parser route is available, work another complete-parse root family while keeping libpng static status blocked."
     },
     {
       "case_id": "libpng-ghsa-m4pc-p4q3-4c7j",
       "cve_advisory": "GHSA-m4pc-p4q3-4c7j",
-      "sources_verification_date": {"date": "2026-10-19", "links": ["https://github.com/pnggroup/libpng/security/advisories/GHSA-m4pc-p4q3-4c7j"]},
-      "component": "libpng", "root_cause": "Cross-struct aliased palette/transparency allocations create a stale pointer/UAF when one owner frees storage still consumed by row transforms; patch intends independent buffers.", "lane": "A_CPP",
-      "affected_versions_basis": "Local archive 1.6.55 is within advisory affected range. Install script lists CVE-2026-33416.patch, but dry-run reported pngset.c hunk failure and truncated patch; script catches patch failure and continues, so backport application is unconfirmed.",
-      "source_identities": {"openharmony": {"commit": "e57b1079564a02a50321ec528aa6e41884979d32", "tree": "02b17492f4490ff2e4d17ba74e2080358a500059", "archive_blob": "975cee2aca0eda6bfa3e9b7a1336c956fcf1b094", "archive_sha256": "71a2c5b1218f60c4c6d2f1954c7eb20132156cae90bdb90b566c24db002782a6", "source_files_sha256": {"pngread.c": "feee8bdd4c553cc4f01bb288a868d4b83e1ce0f75014a96163a49eb32119cba6", "pngrutil.c": "b328fb05352226866b1e44c8cdd3e03df35413f1f38f4d81ba51afe4f2333a5e", "pngset.c": "9bd59a79669db37b2ecc481439481eb5f49bf77bee0de4b1aba649915609b3d0"}}, "upstream_fix_reference": "aa77ef3 (short reference only; full identity not yet verified)"},
-      "product_build_association": "GN compiles 1.6.55 extracted source; exact applied patch set/build output unknown.", "existing_detector_rule": "none selected", "baseline_scan": "not_run", "miss_reason": "Not selected this cycle; patch application ambiguity blocks fixed-source baseline pairing.", "implementation_status": "unanalysed; patch dry-run discrepancy recorded",
-      "controls": {"positive": "not_run", "fixed": "not_run", "safe": "not_run", "unrelated": "not_run", "variant": "not_run", "incomplete": "not_run"}, "real_source_rescan": "not_run",
-      "status": {"public_disclosure_fact": "verified_advisory", "source_root_cause_match": "source_and_patch_partially_inspected", "static_detection": "not_run", "component_dynamic_reproduction": "not_run", "product_vulnerability_confirmation": "unknown"},
-      "evidence_path": "openharmony/third_party/libpng/CVE-2026-33416.patch (source tree; dry-run only; no package modifications)", "remaining_blockers": ["patch is malformed/truncated or incompatible at pngset.c hunk #2", "actual build install.py catches failure and continues; compiled patch state unknown", "no dynamic reproduction"], "next_step": "Investigate the failed pngset.c hunk against pristine 1.6.55 and verify actual build patch output before any root-cause detector work."
+      "sources_verification_date": {
+        "date": "2026-10-19",
+        "links": [
+          "https://github.com/pnggroup/libpng/security/advisories/GHSA-m4pc-p4q3-4c7j"
+        ]
+      },
+      "component": "libpng",
+      "root_cause": "png_set_PLTE aliases one heap palette between png_info and png_struct; png_set_tRNS similarly aliases trans_alpha. Releasing/replacing through png_info leaves png_struct pointers dangling while row transforms later read/write them. Advisory says attacker controls PNG tRNS values; exact triggering app call pattern is required.",
+      "lane": "A_CPP",
+      "affected_versions_basis": "Official advisory identifies 1.2.1 through 1.6.55 as affected and 1.6.56/1.8.0 as fixed. OpenHarmony recipe uses a pinned 1.6.55 tarball plus a multi-patch install script; full ordered install replay applies the setter ownership copies despite an independent patch hunk failure. Product-linked build output is not available.",
+      "source_identities": {
+        "openharmony": {
+          "commit": "e57b1079564a02a50321ec528aa6e41884979d32",
+          "tree": "02b17492f4490ff2e4d17ba74e2080358a500059",
+          "archive_blob": "975cee2aca0eda6bfa3e9b7a1336c956fcf1b094",
+          "archive_sha256": "71a2c5b1218f60c4c6d2f1954c7eb20132156cae90bdb90b566c24db002782a6",
+          "source_files_sha256": {
+            "pngread.c": "feee8bdd4c553cc4f01bb288a868d4b83e1ce0f75014a96163a49eb32119cba6",
+            "pngrutil.c": "b328fb05352226866b1e44c8cdd3e03df35413f1f38f4d81ba51afe4f2333a5e",
+            "pngset.c": "9bd59a79669db37b2ecc481439481eb5f49bf77bee0de4b1aba649915609b3d0"
+          },
+          "post_partial_patch_sha256": {
+            "pngread.c": "3c0f5801a9c819c21fb1238352f8e3241e76b2140ea79f11345b066dbf8ab46d",
+            "pngrutil.c": "b328fb05352226866b1e44c8cdd3e03df35413f1f38f4d81ba51afe4f2333a5e",
+            "pngset.c": "0424686efb3ebb2721a10c2496260be836bbec559c11ba6aa92913fb25ebdf00"
+          }
+        },
+        "upstream_fixes": [
+          {
+            "commit": "23019269764e35ed8458e517f1897bd3c54820eb",
+            "parent": "0c37b8fbffe779314f3c842e16983ceec5930af1",
+            "path_family": "trans_alpha"
+          },
+          {
+            "commit": "7ea9eea884a2328cc7fdcb3c0c00246a50d90667",
+            "parent": "a3a21443ed12bfa1ef46fa0d4fb2b74a0fa34a25",
+            "path_family": "palette"
+          },
+          {
+            "commit": "c1b0318b393c90679e6fa5bc1d329fd5d5012ec1",
+            "parent": "7ea9eea884a2328cc7fdcb3c0c00246a50d90667",
+            "path_family": "palette_followup"
+          }
+        ],
+        "upstream_vulnerable_tag": {
+          "tag": "v1.6.55",
+          "commit": "c3e304954a9cfd154bc0dfbfea2b01cd61d6546d",
+          "tree": "e01f5780f93eaa6d74cca003bb39b427c8f1e910",
+          "mirror": "https://gitlab.com/gitlab-org/build/omnibus-mirror/libpng.git",
+          "source_files_sha256": {
+            "png.c": "0d8e45e9039cf04088764a09dcda7b24695f199288a44e11dba54ebfaca1c730",
+            "pngread.c": "feee8bdd4c553cc4f01bb288a868d4b83e1ce0f75014a96163a49eb32119cba6",
+            "pngrtran.c": "4df05c2e5db00911817d7f125c862524205895f34a65106e016d351f7e6edb53",
+            "pngrutil.c": "b328fb05352226866b1e44c8cdd3e03df35413f1f38f4d81ba51afe4f2333a5e",
+            "pngset.c": "9bd59a79669db37b2ecc481439481eb5f49bf77bee0de4b1aba649915609b3d0"
+          }
+        },
+        "upstream_fixed_tag": {
+          "tag": "v1.6.56",
+          "commit": "d5515b5b8be3901aac04e5bd8bd5c89f287bcd33",
+          "tree": "a28bb962645843af84063c77f574f6d88da79f76",
+          "mirror": "https://gitlab.com/gitlab-org/build/omnibus-mirror/libpng.git",
+          "source_files_sha256": {
+            "png.c": "29a37cedb5be5597aafa3cab62a223c0accbd6016edfff97386471a6e118100c",
+            "pngread.c": "2a2c02673c7dcd6853f3efe8cc16c893df3f7bdffe7b53abde835e7c6e4c6fc3",
+            "pngrtran.c": "6b724ff0047cced71884176296aac10a6fc1d2592477034bbd622222ded3373f",
+            "pngrutil.c": "748f956c603df9bafeaf82ad23f5d9ce57e2d7b0be21a68868eba46615cf8ddc",
+            "pngset.c": "d3a203e40b6a6000a7cb78a61e0fd9664b0c39a65d82260efedb0f0184a8bc19"
+          }
+        },
+        "openharmony_install_generated": {
+          "synthetic_commit": "ef42021d7597d3ca008c08567f0d698df39a4fa3",
+          "tree": "65f42cf3e86c5484802093f86e5f2babd623b573",
+          "source_hash_manifest": "research/evidence/cpp/libpng_cve_2026_33416_20261019/openharmony-install-source-snapshot.json",
+          "runtime_source_dir": "workspace tmp/libpng-oh-install-runtime-20261019/libpng-1.6.55"
+        }
+      },
+      "product_build_association": "Local OH source pins libpng archive 1.6.55 and BUILD.gn action invokes install.py. Replaying the full install.py sequence on copied component inputs returns 0 although one CVE patch comment hunk rejects; the tRNS setter hunk succeeds in this ordered run and subsequent CVE patches are applied. Resulting generated source passes tested tRNS/PLTE API sequences under ASan. BUILD.gn action inputs omit CVE-2026-33416.patch, CVE-2026-33636.patch and CVE-2026-34757.patch although install.py consumes them, so incremental invalidation is unbound to those patch inputs. Selected product global_parts_info/final link is absent; product linkage remains unknown. Source-route review: rk3568 product selects image_framework with upgrade_skia; non-cross-platform GN omits legacy pngplugin. Skia decode uses libpng, but system-vs-bundled selection depends on is_official_build, whose product args are absent. Local bundled externals/libpng is empty. Targeted source hashes and both possible link routes are in product-build-route-20261019.json. Revalidated current out state: only old hb build logs exist; out/hb_args/buildargs.json is the argument schema/defaults, not a recorded command line. No generated product args/graph/link manifest is present.",
+      "existing_detector_rule": "ohscanner.cpp.resource_lifetime / ohcpp-resource-lifetime-cross-member-alias-uaf-candidate-003 (detector v0.1.9; shared with recursive-cleanup rule)",
+      "baseline_scan": {
+        "result": "zero_diagnostics_partial_blocked",
+        "synthetic_snapshot_commit": "f3ef808f45af32fabed16e1796ee82598c17e9f7",
+        "tree": "47d092e8fc7e5c94a03bea1bd50fcfd10defe23d",
+        "scope": [
+          "pngset.c",
+          "png.c",
+          "pngread.c",
+          "pngrtran.c"
+        ],
+        "report": "research/evidence/cpp/libpng_cve_2026_33416_20261019/baseline-alias-chain-local-1.6.55.json"
+      },
+      "miss_reason": "Baseline is blocked before semantic analysis: lifetime detector supports C++ only; resource-lifetime detector rejects partial parse. Independently, current rule semantics do not model cross-struct field alias -> png_free_data release -> later dereference across functions.",
+      "implementation_status": "implemented_and_registered_A_line_resource_lifetime_detector_v0.1.9_candidate_rule; current exact source replay revalidated; full-file parsing remains partial",
+      "controls": {
+        "positive": "Current M2: vulnerable SourceForge 1.6.55 exact file-byte snapshot yields two source-bound rule-003 CWE-416 candidates at pngrtran.c:1187 and 1228; ASan component triggers for both paths are recorded.",
+        "fixed": "Current M2: exact SourceForge 1.6.56 source-byte snapshot yields zero same-rule candidates, but all four C files remain parser-partial/blocked. Not a clean safety result. ASan fixed 1.6.56 exits 0 for both API sequences.",
+        "safe": "No-free API controls exit 0; focused tests keep independent copied storage and unrelated releases quiet; fixed release controls quiet. Parser partial remains.",
+        "unrelated": "Focused unrelated cross-member release/use controls remain quiet; current exact source hits are the two paired tRNS and palette aliases described by advisory.",
+        "variant": "Post-freeze renamed-field/destroy-wrapper synthetic production-CLI variant yields one candidate and complete parse; structural holdout only, not an independent real-world labeled sample.",
+        "incomplete": "Focused partial-only alias declaration stays blocked without a finding; real source M2 reports retain valid partial candidates.",
+        "dynamic_positive": "Pinned vulnerable 1.6.55 source ASan: tRNS free then update_info reports heap-use-after-free at pngrtran.c:1187; PLTE free then row read reports heap-use-after-free at pngrtran.c:4482; exit 134.",
+        "dynamic_fixed": "Official 1.6.56 source: both corresponding triggers exit 0 and decode completes.",
+        "dynamic_safe": "Vulnerable 1.6.55 source with no intermediate png_free_data call: both tRNS and PLTE inputs decode cleanly under ASan.",
+        "openharmony_install_replay": "Copied pinned OH libpng component directory to isolated tmp, ran exact install.py arguments/ordered patch set; rc 0 although one pngrutil comment hunk rejects. Resulting generated source has independent palette and trans_alpha allocation and no tRNS/PLTE cross-struct setter alias; ASan tRNS and PLTE triggers both exit 0.",
+        "openharmony_install_static": "Production M2 CLI on exact 4-file generated-source snapshot: 0 diagnostics, all 4 files parser partial, resource detector blocked. This is unknown/partial, not proof of fixed or safe source."
+      },
+      "real_source_rescan": "Fresh M2 current-checkout v0.1.9 replay on hash-bound SourceForge 1.6.55 and 1.6.56 release files in identical four-file scope: vulnerable 2 cross-member alias UAF candidates at pngrtran.c:1187/1228, fixed 0 same-rule; both 4/4 partial/blocked. Synthetic snapshot commits and exact source identities are in current-m2-source-identities.json. Existing isolated ASan reproduction confirms component mechanism for both vulnerable paths and quiet fixed/no-free controls. OpenHarmony generated full install source remains 0 findings with 4/4 partial. Current-turn independent production CLI replay (same scanner HEAD, detector v0.1.9, exact four-file scope): vulnerable synthetic byte snapshot afad740f043acd9bee412677d0a5ff1e046aaa24/tree 5d18312a3b10c4aa1a488b91ac41d010606640ef emitted 2 source-bound candidates at pngrtran.c:1187/1228 in 0.3335 s; fixed byte snapshot dcd78000a2e39558bd0b9340633d7acff796d37b/tree 444dba821b3f8b58326ce85d0daf056f64029ec7 emitted 0 same-rule candidates in 0.3342 s; both 4/4 partial and blocked. Exact OpenHarmony full install.py generated-source snapshot ef42021d7597d3ca008c08567f0d698df39a4fa3/tree 65f42cf3e86c5484802093f86e5f2babd623b573 emitted 0 in 0.3400 s, also 4/4 partial/blocked. Reports turn-rerun-vulnerable/fixed/openharmony-install.{json,md}; hashes are in each report and existing source manifest.",
+      "status": {
+        "public_disclosure_fact": "verified_official_advisory",
+        "source_root_cause_match": "verified_both_alias_paths_in_advisory_and_vulnerable/fixed_source_diff",
+        "static_detection": "current_M2_v0.1.9_synthetic_source_snapshot_vulnerable_2_candidates_fixed_0; 4/4 partial both; no complete parse verdict; post-freeze synthetic variant 1 candidate",
+        "component_dynamic_reproduction": "reproduced_in_isolated_ASan_build_of_pinned_1.6.55_source_for_tRNS_and_PLTE; fixed_1.6.56_and_no-free_controls_quiet; full ordered OH install-generated source also survives tested tRNS/PLTE triggers under ASan",
+        "product_vulnerability_confirmation": "unknown"
+      },
+      "evidence_path": "research/evidence/cpp/libpng_cve_2026_33416_20261019/; cross-regression-v0.1.9-vulnerable/fixed reports verify the curl recursion rule does not change the prior libpng 2/0 candidate comparison runtime-reproduction-20261019.json, runtime_trns_uaf.c, trigger_trns.png, trigger_palette.png, ASan logs and build logs. openharmony-install-replay.log, openharmony-install-source-snapshot.json, openharmony-install-source-production-scan.{json,md}, runtime-openharmony-install-{trns,palette}.log, build-openharmony-install-replay.log. product-build-route-20261019.json.; current-m2-vulnerable.json/.md; current-m2-fixed.json/.md; current-m2-source-identities.json; README.md current-checkout M2 revalidation section; current-turn fresh production M2 reruns: turn-rerun-vulnerable.json/.md, turn-rerun-fixed.json/.md, turn-rerun-openharmony-install.json/.md",
+      "remaining_blockers": [
+        "all upstream source scope files parse partial; static result remains candidate and detector blocked",
+        "cross-function identity/path feasibility and attacker-trigger obligations are unresolved",
+        "Production parser remains partial on all 4 C files; lexical candidate heuristic does not prove cross-struct identity, path feasibility, caller control, or impact.",
+        "OH install-generated source is ASan-quiet for the two reproduced sequences, but selected product global_parts_info, generated GN/Ninja graph, incremental patch invalidation, final linked binary/source binding, and application call reachability remain unknown.",
+        "The generated OH source M2 report has 4/4 parser partial and 0 findings; static candidate disappearance cannot be treated as fixed/safe proof.",
+        "Product config proves image_framework selection but not whether product args select system OH libpng or bundled Skia libpng; Skia external source dir is empty in this checkout and no product GN graph resolves the branch.",
+        "All four real C source files parse partial in production M2; fixed zero is not clean.",
+        "A-line detector suite recheck: 149 ran, 4 failed and 3 errored due existing dirty fixture/manifest byte/hash mismatches; focused cross-member/vector cases passed.",
+        "Product-selected libpng binary, application PNG call sequence, permission/trust boundary and product impact remain unknown."
+      ],
+      "next_step": "Analyze the source-mapped parser issue nodes from these exact four-file reports, prioritizing whether the current shared parser can parse the source when supplied only an explicit source-bound macro/include profile. Do not change shared parser files in A-line. Extend A_LINE_PARSER_PREREQUISITE_REQUEST_20261019.md with the exact fresh vulnerable/fixed/OH generated report identities and the minimal missing syntax/config facts; completion: a reviewer can reproduce the same source identity and determine whether a shared profile is technically sufficient. If no approved profile is available, retain blocked status and proceed only with already complete-parse root families.",
+      "audit_addenda": [
+        "research/evidence/cpp/libpng_cve_2026_33416_20261019/quantize-ownership-audit-20261019.md"
+      ],
+      "current_checkout_revalidation": {
+        "scanner_head": "9b99f106883ef58304d9e6702fea562bb7f8f331",
+        "detector": "ohscanner.cpp.resource_lifetime",
+        "detector_version": "0.1.9",
+        "scope": [
+          "pngset.c",
+          "png.c",
+          "pngread.c",
+          "pngrtran.c"
+        ],
+        "vulnerable": {
+          "synthetic_commit": "afad740f043acd9bee412677d0a5ff1e046aaa24",
+          "tree": "5d18312a3b10c4aa1a488b91ac41d010606640ef",
+          "snapshot_sha256": "f80ae78bc09612fd5b8c5a925f858b41e15711319d0a794cafeb4764f7ec73d9",
+          "result": "2 candidate diagnostics; 4/4 partial/blocked",
+          "elapsed_seconds": 0.32451830000354676,
+          "report": "research/evidence/cpp/libpng_cve_2026_33416_20261019/current-m2-vulnerable.json"
+        },
+        "fixed": {
+          "synthetic_commit": "dcd78000a2e39558bd0b9340633d7acff796d37b",
+          "tree": "444dba821b3f8b58326ce85d0daf056f64029ec7",
+          "snapshot_sha256": "21cfd3bac010b1ba63611630ac8381487a9455c24591618cb16bb52e0a600eae",
+          "result": "0 same-rule diagnostics; 4/4 partial/blocked, not safe",
+          "elapsed_seconds": 0.3321643999952357,
+          "report": "research/evidence/cpp/libpng_cve_2026_33416_20261019/current-m2-fixed.json"
+        },
+        "identities": "research/evidence/cpp/libpng_cve_2026_33416_20261019/current-m2-source-identities.json",
+        "source_binding_recheck": {
+          "vulnerable_files_match": 4,
+          "fixed_files_match": 4,
+          "match_dimensions": [
+            "byte_length",
+            "source_sha256",
+            "git_blob_oid"
+          ],
+          "scope_files": 4,
+          "vulnerable_findings_source_binding": "bound",
+          "fixed_findings": "none",
+          "date": "2026-10-19"
+        }
+      }
     },
     {
       "case_id": "curl-cve-2026-92391",
       "cve_advisory": "CVE-2026-92391",
-      "sources_verification_date": {"date": "2026-10-19", "links": ["https://curl.se/docs/CVE-2026-92391.html"]},
-      "component": "curl", "root_cause": "Recursive MIME cleanup through nested parts can exhaust stack; official advisory says affected 7.56.0–8.22.0 and fix reference d7546809d5bd548b69ec49fca2 (short hash).", "lane": "A_CPP",
-      "affected_versions_basis": "Local source 8.8.0 within advisory range; GN includes lib/mime.c.", "source_identities": {"openharmony": {"commit": "1386bb128bb060b284309397b97adcaaec21c003", "tree": "b96addd5821a610eb0ceacc7e7a83deda64690c2", "file": "lib/mime.c", "blob": "1f94afee2c93300a4bf70e743dbd552075cb8b1c", "sha256": "e3a41025c00fa47b1b23bff6d28ac66119b7d5bd13035e3436c817a6ca53327b"}},
-      "product_build_association": "Build file includes mime.c; actual profile/reachability unknown.", "existing_detector_rule": "none selected", "baseline_scan": "not_run", "miss_reason": "Not selected this cycle.", "implementation_status": "source inventory only", "controls": {"positive": "not_run", "fixed": "not_run", "safe": "not_run", "unrelated": "not_run", "variant": "not_run", "incomplete": "not_run"}, "real_source_rescan": "not_run", "status": {"public_disclosure_fact": "verified_advisory", "source_root_cause_match": "likely_recursive_cleanup_chain_source_inspected", "static_detection": "not_run", "component_dynamic_reproduction": "not_run", "product_vulnerability_confirmation": "unknown"}, "evidence_path": "source inventory notes (2026-10-19)", "remaining_blockers": ["full fix commit identity and upstream before/after source pair not pinned", "no runtime trigger proof"], "next_step": "Resolve full upstream patch identity, enumerate recursive cleanup call graph and inspect depth controls before implementing." 
+      "sources_verification_date": {
+        "date": "2026-10-19",
+        "links": [
+          "https://curl.se/docs/CVE-2026-92391.html",
+          "https://github.com/curl/curl/commit/d7546809d5bd548b69ec49fca26565c8f6f0d344.patch",
+          "https://github.com/curl/curl/commit/ce0881edee3c78609eae49665fb70264d8786d29.patch"
+        ]
+      },
+      "component": "curl",
+      "root_cause": "CVE-2026-92391: curl_mime_free recursively destroys nested MIME subparts through part->freefunc(part->arg); mime_subparts_free invokes curl_mime_free on child structures, so API-created nesting consumes one C stack frame per level without a depth bound. The fix walks the parent chain iteratively.",
+      "lane": "A_CPP",
+      "affected_versions_basis": "Official curl advisory: affected 7.56.0 through 8.22.0; fixed 8.23.0. OpenHarmony source declares version 8.8.0 in README.OpenSource and include/curl/curlver.h.",
+      "source_identities": {
+        "openharmony": {
+          "manifest_project": "third_party_curl",
+          "commit": "1386bb128bb060b284309397b97adcaaec21c003",
+          "tree": "b96addd5821a610eb0ceacc7e7a83deda64690c2",
+          "file": "third_party/curl/lib/mime.c",
+          "blob": "1f94afee2c93300a4bf70e743dbd552075cb8b1c",
+          "sha256": "e3a41025c00fa47b1b23bff6d28ac66119b7d5bd13035e3436c817a6ca53327b",
+          "version_evidence": [
+            "third_party/curl/README.OpenSource",
+            "third_party/curl/include/curl/curlver.h"
+          ],
+          "git_checkout_note": "Submodule .git/config unreadable on Windows; commit/tree from fixed manifest, file SHA verified; M2 used an exact-byte synthetic snapshot."
+        },
+        "upstream_8_22_0": {
+          "tag": "curl-8_22_0",
+          "commit": "01346829096c61b372692f6dc43ffa778c6caccd",
+          "tree": "6ae23d9333713707a02588b44ed238a50e8b3bde",
+          "file_blob": "600437576581be08f9026881c39178857a1c5939",
+          "file_sha256": "1f3388f52881524fda0bc11c453aca75adda7d7e77d65393ec558d396dc3483d"
+        },
+        "upstream_fix_parent": {
+          "commit": "10c5f8e72238e94e62d6d35a6ebd34ddb5bca1df",
+          "tree": "d49558109ddc4b587fafe2eff1c19b11917c65b6",
+          "file_blob": "635eb310ad2081f8d2e213b908c939ff6ec9acb7",
+          "file_sha256": "b07d2332f13c2e529fbbe4c88251bb28c02b9154bf70c0ac31a675cc53b0088e"
+        },
+        "upstream_fixed": {
+          "commit": "d7546809d5bd548b69ec49fca26565c8f6f0d344",
+          "tree": "52a8416729366487cdd3b6012071f5f8370e769f",
+          "file_blob": "3522679a16e2fa560c581413bf946d38e332bea4",
+          "file_sha256": "ea7f9adccf81b578d97e8b6e115535e043b7f8c589177a2597963a4f12462b81"
+        },
+        "upstream_8_23_0": {
+          "tag": "curl-8_23_0",
+          "commit": "3163ec065643ba20709f190111f42c3e1fe95273",
+          "tree": "4e5e74de5a67ab3268dffc8999ba72b5ce41c0b8",
+          "file_blob": "f491f22f95ac495205925f6025d49fc5f7943d45",
+          "file_sha256": "651178f1a254072797a8e9aa8f4146a6f949f63a1eb828db7c379f271ff8734f"
+        },
+        "introduction_commit": {
+          "commit": "ce0881edee3c78609eae49665fb70264d8786d29",
+          "tree": "e4f5cda7865f3e73664dca5c4eb6a7a648c1e2d2",
+          "file_blob": "759ade08599c3d13acbef002d67f70d31207fa53",
+          "file_sha256": "780c0d838e8b46fc364794548b7329d6d505b4da9f4d5e04b93d64394d40ce78"
+        }
+      },
+      "product_build_association": "third_party/curl/BUILD.gn includes lib/mime.c in curl_source for curl library targets. Product target/profile selection and application MIME API reachability are unknown. Known checked netstack C++, NAPI and Cangjie multipart consumers construct flat root forms and no subparts call was found in those source trees; exact product build/caller coverage is incomplete. Current source-callsite recheck in foundation/applications/base/interfaces found no curl_mime_subparts calls. Four readable consumers create flat root MIME forms in request upload and native/JS/Cangjie netstack. Source hashes and callsites are in openharmony-mime-callsite-scan-20261019.md. This weakens evidence for the nested-depth trigger on those call paths but does not establish exhaustive product reachability or a safe verdict. Traced base/request JS upload schema through NAPI and adapter: ETS UploadConfig files/data arrays contain flat File and {name,value} entries only; SetMimePost adds each directly under one curl_mime root and does not call curl_mime_subparts; cleanup goes through curl_easy_cleanup/curl_multi_cleanup. This source path cannot express deep nesting through the public config, but product/module selection, caller permissions, other consumers and runtime behavior remain unknown. Hashes and trace are in openharmony-mime-callsite-scan-20261019.md. Further source trace: JS NAPI public MultiFormData, native HttpMultiFormData and Cangjie CMultiFormData/CArrMultiFormData are flat records only; each producer adds records to a single root and its request context calls curl_mime_free at destruction. Source identities/hashes are in openharmony-mime-callsite-scan-20261019.md. These paths cannot express recursive subparts through their declared request records, but other raw libcurl callers/product targets remain unverified.",
+      "existing_detector_rule": "ohscanner.cpp.resource_lifetime; ohcpp-resource-exhaustion-recursive-cleanup-candidate-001 (detector version 0.1.9)",
+      "baseline_scan": {
+        "openharmony_local": {
+          "diagnostics": 0,
+          "detector_version": "0.1.8",
+          "snapshot_commit": "2b7419e1dcb97d99a8e65105a66dcb8331fcb6d4",
+          "scope": [
+            "lib/mime.c"
+          ],
+          "parse": "complete",
+          "report": "research/evidence/cpp/curl_cve_2026_92391_20261019/baseline-oh-local-mime.json"
+        },
+        "upstream_v8_22_0": {
+          "commit": "01346829096c61b372692f6dc43ffa778c6caccd",
+          "diagnostics": 0,
+          "detector_version": "0.1.8",
+          "parse": "complete",
+          "report": "research/evidence/cpp/curl_cve_2026_92391_20261019/upstream-v8.22.0.json"
+        },
+        "fix_parent": {
+          "commit": "10c5f8e72238e94e62d6d35a6ebd34ddb5bca1df",
+          "diagnostics": 0,
+          "detector_version": "0.1.8",
+          "parse": "complete",
+          "report": "research/evidence/cpp/curl_cve_2026_92391_20261019/parent-of-fix.json"
+        }
+      },
+      "miss_reason": "Complete parse and requested file scope; v0.1.8 had no callback-mediated nested cleanup recursion rule.",
+      "implementation_status": "implemented_and_registered_in_existing_resource_lifetime_detector; detector version 0.1.9; component-level static and runtime closure achieved; candidate-only product assessment",
+      "controls": {
+        "positive": "production CLI v0.1.9: affected v8.22.0 and exact fix parent each emit 1 candidate; local OH 8.8.0 emits 1; independently replayed current checkout emits 1 at line 1509 on pinned v8.22.0",
+        "fixed": "production CLI exact fix commit d7546809d5bd548b69ec49fca26565c8f6f0d344 and curl 8.23.0 tag emit 0 same-rule candidates; complete parse; independently replayed current checkout exact fix commit emits 0 same-rule candidates",
+        "safe": "bounded-depth callback control stays quiet; cleanup callback field cleared before helper control stays quiet; 2026-10-19 focused rerun: recursive callback cycle controls, fixed/unrelated/unknown controls, release-wrapper controls and deterministic budget/output pass 4/4.",
+        "unrelated": "unrelated direct recursion control stays quiet",
+        "variant": "post-freeze renamed/wrapper synthetic mechanism holdout through production CLI emits 1 without CVE input; complete parse",
+        "incomplete": "partial source unit retains candidate and detector blocked in focused test"
+      },
+      "real_source_rescan": "Fresh current-checkout M2 CLI replay: pinned vulnerable curl 8.22.0 has 1 candidate at lib/mime.c:1509; exact official fix has 0 same-rule candidates; both parse complete. Post-freeze complete-parse structural holdout has 1 candidate. Component runtime results remain prior bounded local ASan-independent reproduction in README; no product binary run.",
+      "status": {
+        "public_disclosure_fact": "verified_official_curl_advisory_and_official_patch",
+        "source_root_cause_match": "verified_in_vulnerable_tag_fix_parent_local_OH_source_and_fix_diff",
+        "static_detection": "component root family closed at static/component scope: vulnerable_1_fixed_0_complete_parse; local_OH_1_candidate; post-freeze synthetic mechanism holdout_1; product vulnerability remains unknown",
+        "component_dynamic_reproduction": "reproduced_offline_in_isolated_static_build: vulnerable 8.22.0 frees depth-10000 MIME chain with SIGSEGV at 256 KiB stack; exact fix commit frees same depth successfully; depth-50 vulnerable control succeeds; no network involved; independently replayed saved vulnerable/fixed binaries this turn: vulnerable depth-10000 stack-256 exit 139; fixed same depth exit 0; depth-50 controls both exit 0",
+        "product_vulnerability_confirmation": "unknown; one examined OpenHarmony upload API path is structurally flat and cannot express nested subparts through its public config; product linkage and other caller paths remain incomplete"
+      },
+      "evidence_path": "research/evidence/cpp/curl_cve_2026_92391_20261019/ (final-code reports verified-v8.22-final, verified-fix-parent-final, verified-fixed-final, verified-oh-final, verified-holdout-final); upstream objects explicitly fetched to D:/openHarmonyScanner/tmp/curl-upstream-pins-20261019.git; local OH file SHA bound to manifest and byte-identical synthetic snapshot; component build/runtime logs, harness, binaries, hashes and root-cause card in README/runtime_* under same evidence directory; current-checkout replay logs and test result documented in evidence README and replay-* reports.; OpenHarmony consumer precheck in openharmony-mime-callsite-scan-20261019.md.; tests/detectors/test_cpp_resource_lifetime_detector.py; research/evidence/cpp/curl_cve_2026_92391_20261019/verified-v8.22-final.json; research/evidence/cpp/curl_cve_2026_92391_20261019/verified-fix-parent-final.json; research/evidence/cpp/curl_cve_2026_92391_20261019/verified-fixed-final.json; research/evidence/cpp/curl_cve_2026_92391_20261019/verified-holdout-final.json; current-turn 4/4 focused regression recorded in research/evidence/cpp/curl_cve_2026_92391_20261019/README.md; current-turn scoped MIME consumer search with four source hashes and flat-form callsites in research/evidence/cpp/curl_cve_2026_92391_20261019/openharmony-mime-callsite-scan-20261019.md",
+      "remaining_blockers": [
+        "exact product target/profile and caller API reachability unknown",
+        "actual attack control/depth and process-level availability impact unknown",
+        "upstream mirror source transfer was explicitly performed via GitLab omnibus mirror; local OH submodule Git config is unreadable",
+        "runtime reproduction establishes component behavior only; application API reachability, attacker control/depth and product availability impact unknown",
+        "Consumer precheck found only flat MIME construction and no curl_mime_subparts calls under checked OpenHarmony foundation/applications/base/interfaces trees; this weakens known path evidence but does not establish exhaustive product reachability or a safe verdict.",
+        "Focused selected module tests pass 4/4 this turn; full resource-lifetime module still has known 9/10 result due pre-existing dirty fixture-size mismatch (116 actual vs 110 manifest).",
+        "Current focused source search found no nested curl_mime_subparts call in foundation/applications/base/interfaces; observed four MIME consumers are flat. Full workspace search had inaccessible paths and product build selection/linkage is missing, so reachability/safety remains unknown.",
+        "Four traced OpenHarmony API paths use flat multipart schemas and no curl_mime_subparts; source-only evidence excludes deep nesting through those representations, not other direct libcurl users or selected-product/runtime behavior."
+      ],
+      "next_step": "Inventory direct libcurl API consumers outside the four verified request paths in accessible OpenHarmony application/component roots; if none are found, record exact searchable roots and inaccessible exclusions, then bind curl build targets to an available product graph or retain product-level reachability unknown.",
+      "current_checkout_revalidation": {
+        "scanner_head": "9b99f106883ef58304d9e6702fea562bb7f8f331",
+        "detector": "ohscanner.cpp.resource_lifetime",
+        "detector_version": "0.1.9",
+        "scope": [
+          "lib/mime.c"
+        ],
+        "cve_metadata_supplied": false,
+        "vulnerable": {
+          "commit": "01346829096c61b372692f6dc43ffa778c6caccd",
+          "snapshot_sha256": "c0ca047682dce16d7aec8a1607b06f7a0420602a6a0ae13b8195f6629a1ac730",
+          "result": "1 candidate at lib/mime.c:1509; complete parse",
+          "elapsed_seconds": 0.08943490000092424,
+          "report": "research/evidence/cpp/curl_cve_2026_92391_20261019/revalidation-v019-vulnerable.json"
+        },
+        "fixed": {
+          "commit": "d7546809d5bd548b69ec49fca26565c8f6f0d344",
+          "snapshot_sha256": "cbc4bf484c7dacefd8869f7917b00983569e8d012470e88f278fc6104744c2f6",
+          "result": "0 same-rule candidates; complete parse",
+          "elapsed_seconds": 0.0823406999988947,
+          "report": "research/evidence/cpp/curl_cve_2026_92391_20261019/revalidation-v019-fixed.json"
+        },
+        "heldout_variant": {
+          "commit": "64e5f0a007b800bf693591636a30b66fdd3b499d",
+          "snapshot_sha256": "28c564b06fd4051d186e720fa7910b3d7f991fc2ce8fe0044f87bb96107e708e",
+          "result": "1 candidate at variant.c:12; complete parse",
+          "elapsed_seconds": 0.002024699999310542,
+          "kind": "post-freeze synthetic mechanism holdout",
+          "report": "research/evidence/cpp/curl_cve_2026_92391_20261019/revalidation-v019-holdout.json"
+        },
+        "focused_tests": "recursive cleanup cycle/controls and release-wrapper controls: 2/2 passed on 2026-10-19"
+      }
     },
     {
       "case_id": "cjson-cve-2026-67216",
-      "cve_advisory": "CVE-2026-67216", "sources_verification_date": {"date": "2026-10-19", "links": ["https://access.redhat.com/security/cve/cve-2026-67216"]},
-      "component": "cJSON", "root_cause": "Potential exponential comparison complexity in recursive cJSON_Compare on attacker-shaped matching documents; application invocation is a required condition per advisory.", "lane": "A_CPP", "affected_versions_basis": "Local cJSON source 1.7.19; exact affected/fixed boundary not established.", "source_identities": {"openharmony": {"commit": "0c2c9dff82cc85539c8362132d7a5f6bf7d1e748", "tree": "0d8e50cc18f9ae178e9969eed40f8a0c94fb3856", "file": "cJSON.c", "blob": "152b2caa479c9f448001652913c980a6dafb82e0", "sha256": "427c72055ae68467b451599f36da074351a5ca53f6e103cd30064e32cf0fffbb"}},
-      "product_build_association": "Component source identified; product use of cJSON_Compare unknown.", "existing_detector_rule": "none selected", "baseline_scan": "not_run", "miss_reason": "Not selected this cycle.", "implementation_status": "source inventory only", "controls": {"positive": "not_run", "fixed": "not_run", "safe": "not_run", "unrelated": "not_run", "variant": "not_run", "incomplete": "not_run"}, "real_source_rescan": "not_run", "status": {"public_disclosure_fact": "verified_advisory", "source_root_cause_match": "not_proven", "static_detection": "not_run", "component_dynamic_reproduction": "not_run", "product_vulnerability_confirmation": "unknown"}, "evidence_path": "source inventory notes (2026-10-19)", "remaining_blockers": ["no upstream fix identified", "no component/application invocation evidence"], "next_step": "Find an upstream mitigation and independent complexity regression before assessing detector feasibility." 
+      "cve_advisory": "CVE-2026-67216",
+      "sources_verification_date": {
+        "date": "2026-10-19",
+        "links": [
+          "https://access.redhat.com/security/cve/cve-2026-67216",
+          "https://github.com/advisories/GHSA-ff2v-f99f-wm3f",
+          "https://github.com/DaveGamble/cJSON/pull/1078",
+          "https://github.com/advisories/ghsa-ff2v-f99f-wm3f",
+          "https://github.com/DaveGamble/cJSON/issues/1073",
+          "https://github.com/DaveGamble/cJSON/pull/1078"
+        ]
+      },
+      "component": "cJSON",
+      "root_cause": "Red Hat describes excessive CPU cost when a host application compares attacker-influenced deeply nested JSON structures with cJSON_Compare. Bounded tests on local hash-matched cJSON 1.7.19 show steep recursive matching cost for equal binary objects at depth 8-14; duplicate and unique keys both exhibit it. Exact advisory recurrence and affected/fixed boundary remain unverified.",
+      "lane": "A_CPP",
+      "affected_versions_basis": "Local cJSON source 1.7.19; exact affected/fixed boundary not established.",
+      "source_identities": {
+        "openharmony": {
+          "commit": "0c2c9dff82cc85539c8362132d7a5f6bf7d1e748",
+          "tree": "0d8e50cc18f9ae178e9969eed40f8a0c94fb3856",
+          "file": "cJSON.c",
+          "blob": "152b2caa479c9f448001652913c980a6dafb82e0",
+          "sha256": "427c72055ae68467b451599f36da074351a5ca53f6e103cd30064e32cf0fffbb"
+        }
+      },
+      "product_build_association": "rk3568 standard source config selects the cJSON target branch that builds cJSON.c (which exposes cJSON_Compare); final generated args/link and any application invocation remain unknown.",
+      "existing_detector_rule": "none selected",
+      "baseline_scan": "Existing production M2 v0.1.9 two-file source scan includes this exact cJSON.c: 0 diagnostics, blocked/partial because cJSON.c parser partial. It is not a static miss or safety result; report under cJSON-67215 evidence.",
+      "miss_reason": "No valid miss classification; the only available production scan is blocked by cJSON.c parser incompleteness, including missing AST nodes in the comparison region.",
+      "implementation_status": "not_implemented; production parse partial; no complete fixed-source control and no static rule",
+      "controls": {
+        "positive": "Bounded component cost probe: equal binary object trees at depths 8/10/12/14 cost 0.6/8.8/145/2267 ms with duplicate x keys and 0.6/10.6/172/2773 ms with unique x/y keys; depth 16 mode 0 and 1 hit CPU limit (exit 137). Exact commands and logs in evidence README.",
+        "fixed": "PR #1078 is not a fixed control: exact initial compare-guard commit 2ceb3abc1d9f9e37827c32caeee75dcdd0ed4802 and latest observed head d18fad4ae9c743ebe493135dc8576ac1e4521969 both retain similar expensive behavior (depth-14 duplicate-key equal trees 2.093s and 2.294s vs local OH 2.267s); depth 16 all hit 4 s CPU bound. PR guards recursion depth; no algorithmic CPU fix demonstrated.",
+        "safe": "Fast type-mismatch control ([] versus the generated object) returned false in 0.000 ms at depth 14 on OH, initial PR commit and latest PR head. A same-type top-level key mismatch cost about 1s and is not considered safe/low-cost. No product-level safe labeling.",
+        "unrelated": "not_run",
+        "variant": "not_run",
+        "incomplete": "same production baseline is partial/blocked for cJSON.c"
+      },
+      "real_source_rescan": "No CVE-specific static rescan; production M2 source scope remains blocked/partial (cJSON.c parser partial, 0 diagnostics uninterpretable). Bounded runtime probe used hash-matched local source only.",
+      "status": {
+        "public_disclosure_fact": "verified_red_hat_record_and_GHSA",
+        "source_root_cause_match": "local source structure and bounded expensive recursive matching behavior verified; exact advisory recurrence, attacker input class, product route and impact unknown",
+        "static_detection": "blocked_partial_zero_diagnostics",
+        "component_dynamic_reproduction": "bounded expensive matching reproduced on local component: depths 8-14 complete with steep growth for duplicate and unique key equal binary trees; depth 16 hit 4 s CPU limit, exit 137",
+        "product_vulnerability_confirmation": "unknown"
+      },
+      "evidence_path": "research/evidence/cpp/cjson_cve_2026_67216_20261019/README.md; shared cJSON source report in research/evidence/cpp/cjson_cve_2026_67215_20261019/; parser context probe/report in research/evidence/cpp/cjson_cve_2026_67216_20261019/parser_context_probe.py/.json; shared request updated with exact missing macro context.; research/evidence/cpp/cjson_cve_2026_67216_20261019/upstream-remediation-status-20261019.md",
+      "remaining_blockers": [
+        "No fixed CPU-complexity source or regression; PR #1078 remains open and its tested code guards recursion depth, not comparison work.",
+        "Production cJSON.c parser partial; current production scan cannot be interpreted as finding or safe.",
+        "No independent same-mechanism structural variant or detector regression.",
+        "No OH application call site, attacker-control, resource budget, or impact evidence.",
+        "As of 2026-10-19, upstream issue #1073 is open and says no confirmed fix version; PR #1078 is open/unmerged and addresses deep recursion stack limits, not the advisory exponential CPU work below its 1000-depth cap."
+      ],
+      "next_step": "Switch to a case with verified fixed source and complete or locally actionable production coverage: audit libpng CVE-2026-33416 existing lifetime-rule hit/fix pair, full OpenHarmony generated-source scans, and ASan controls. Do not count open PR #1078 as a fixed sample for CVE-2026-67216.",
+      "source_root_cause_match": "GHSA exponential CPU mechanism remains distinct from open PR #1078 depth-limit proposal; PR only caps recursion at CJSON_NESTING_LIMIT and does not remove duplicate symmetric traversal, so it is not a CVE-2026-67216 fixed control."
     },
     {
       "case_id": "cjson-cve-2026-67215",
-      "cve_advisory": "CVE-2026-67215", "sources_verification_date": {"date": "2026-10-19", "links": ["https://access.redhat.com/security/cve/cve-2026-67215"]},
-      "component": "cJSON", "root_cause": "Advisory describes recursive delete stack exhaustion after JSON Patch add/copy can graft duplicated trees; standard versus ohos_lite build controls whether cJSON_Utils.c is compiled.", "lane": "A_CPP", "affected_versions_basis": "Local source 1.7.19; fixed boundary/upstream remediation not identified.", "source_identities": {"openharmony": {"commit": "0c2c9dff82cc85539c8362132d7a5f6bf7d1e748", "tree": "0d8e50cc18f9ae178e9969eed40f8a0c94fb3856", "file": "cJSON_Utils.c", "blob": "8fa24f8e9bf452cf1ba49d1325c85423ce742c74", "sha256": "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9"}},
-      "product_build_association": "GN includes cJSON_Utils.c only under ohos_lite; actual profile unknown.", "existing_detector_rule": "none selected", "baseline_scan": "not_run", "miss_reason": "Not selected this cycle.", "implementation_status": "source inventory only", "controls": {"positive": "not_run", "fixed": "not_run", "safe": "not_run", "unrelated": "not_run", "variant": "not_run", "incomplete": "not_run"}, "real_source_rescan": "not_run", "status": {"public_disclosure_fact": "verified_advisory", "source_root_cause_match": "advisory_and_source_structure_only", "static_detection": "not_run", "component_dynamic_reproduction": "not_run", "product_vulnerability_confirmation": "unknown"}, "evidence_path": "source inventory notes (2026-10-19)", "remaining_blockers": ["actual build profile unknown", "no upstream fix and no runtime reproduction"], "next_step": "Resolve profile/build inclusion, trace patch add/copy object graph and identify upstream mitigation before rule work." 
+      "cve_advisory": "CVE-2026-67215",
+      "sources_verification_date": {
+        "date": "2026-10-19",
+        "links": [
+          "https://access.redhat.com/security/cve/cve-2026-67215",
+          "https://github.com/advisories/GHSA-5q3m-r3x7-8phg",
+          "https://github.com/DaveGamble/cJSON/issues/1073",
+          "https://github.com/DaveGamble/cJSON/pull/1064",
+          "https://github.com/DaveGamble/cJSON/pull/1078",
+          "https://github.com/DaveGamble/cJSON/issues/995",
+          "https://github.com/DaveGamble/cJSON/pulls",
+          "https://github.com/DaveGamble/cJSON/issues/1082",
+          "https://github.com/DaveGamble/cJSON/issues/1093"
+        ]
+      },
+      "component": "cJSON",
+      "root_cause": "Red Hat describes an untrusted JSON Patch add/copy sequence that duplicates and grafts subtrees beyond CJSON_NESTING_LIMIT; recursive cJSON_Delete can then exhaust the thread stack. A component runtime harness on the byte-hash-matched OH cJSON 1.7.19 sources generated depth 1402 from independently parsed depth-700 branches and reproduced SIGSEGV while deleting on a fresh 32 KiB thread stack.",
+      "lane": "A_CPP",
+      "affected_versions_basis": "OpenHarmony local source declares cJSON 1.7.19; Red Hat states no upstream fix as of 1.7.19. Exact affected range and fixed version are not established.",
+      "source_identities": {
+        "openharmony": {
+          "commit": "0c2c9dff82cc85539c8362132d7a5f6bf7d1e748",
+          "tree": "0d8e50cc18f9ae178e9969eed40f8a0c94fb3856",
+          "files": [
+            {
+              "file": "cJSON.c",
+              "blob": "152b2caa479c9f448001652913c980a6dafb82e0",
+              "sha256": "427c72055ae68467b451599f36da074351a5ca53f6e103cd30064e32cf0fffbb"
+            },
+            {
+              "file": "cJSON_Utils.c",
+              "blob": "8fa24f8e9bf452cf1ba49d1325c85423ce742c74",
+              "sha256": "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9"
+            }
+          ]
+        },
+        "scan_snapshot": {
+          "commit": "461676384f5d25c47042ddfccd7a89134d5f45d2",
+          "tree": "3c07134d5a05aa546b15739e32503a2ca192d258",
+          "sha256": "c0482c314ead7b9131426e7aa74f1073f734341c2ac56fb9a2578efecb51b3e7",
+          "note": "Synthetic two-file byte-identical snapshot; not upstream commit."
+        }
+      },
+      "product_build_association": "Resolved rk3568 config is os_level=standard and inherits rich.json, which includes cJSON. Source BUILD.gn includes cJSON_Utils.c only when ohos_lite is defined; standard branch builds cJSON.c alone. This points to omission of JSON Patch APIs in the standard route, but exact args.gn/global_parts_info/link manifest are missing, so final product linkage and product impact remain unknown. See rk3568-product-source-route.json.",
+      "existing_detector_rule": "ohscanner.cpp.resource_lifetime 0.1.9; recursive cleanup candidate rule exists but does not model this direct tree-delete/amplification chain.",
+      "baseline_scan": "Production CLI M2 v0.1.9, exact two-file scope; 0 diagnostics; overall blocked, parse complete=1/partial=1. cJSON_Utils.c complete; cJSON.c partial at lines 158-173 and 3152/3169, analysis_reason=detector_model_incomplete.",
+      "miss_reason": "No valid miss classification. Production light-AST parse is partial: CJSON_CDECL function-pointer declarations produce errors at lines 158-173 and tail missing nodes; the detector marks cJSON.c detector_model_incomplete. Direct parse_source replay reproduces 8 C issues; C++ grammar yields 84. 0 findings cannot establish miss or safety.",
+      "implementation_status": "not_implemented; production parser remains partial for cJSON.c; no upstream fixed source/regression or fixed control exists.",
+      "controls": {
+        "positive": "component runtime: exact local OH source hashes; parsed branches depth 700 (<1000), one JSON Patch copy generated tree depth 1402, cJSON_Delete SIGSEGV on fresh pthread stack 32 KiB (exit 139); same result repeated at 64 KiB 5/5.",
+        "fixed": "not_run; official Red Hat record and upstream issue #1073 indicate no confirmed upstream fix/version as of 1.7.19",
+        "safe": "component input branches depth 400 -> generated depth 802, deletion succeeds on 64 KiB fresh pthread; depth-700 input -> depth 1402 succeeds on 128/256 KiB; depth 1402 repeatedly (5/5) crashes at 64 KiB and 32 KiB. Stack configuration matters.",
+        "unrelated": "not_run",
+        "variant": "not_run",
+        "incomplete": "production M2 confirms partial cJSON.c/blocked detector; no static result promoted"
+      },
+      "real_source_rescan": "Current M2 replay on exact-byte local OH cJSON.c/cJSON_Utils.c snapshot: 0 diagnostics, blocked, cJSON.c partial due CJSON_CDECL preprocessing context and missing nodes; cJSON_Utils.c complete. Reproduction and fix status are separate: component runtime stack exhaustion exists under saved constrained-thread conditions; no upstream fixed control exists. Zero diagnostics is uninterpretable as static miss/safety.",
+      "status": {
+        "public_disclosure_fact": "verified_red_hat_cve_record",
+        "source_root_cause_match": "verified_advisory_source_flow_and_component_runtime_on_hash_matched_local_sources; product entry and stack conditions unknown",
+        "static_detection": "blocked_partial_zero_diagnostics",
+        "component_dynamic_reproduction": "reproduced_local_OH_component: JSON Patch generated depth 1402 from two parsed depth-700 branches; cJSON_Delete SIGSEGV at fresh pthread stack 32KiB; safe controls pass at stated settings",
+        "product_vulnerability_confirmation": "unknown"
+      },
+      "evidence_path": "research/evidence/cpp/cjson_cve_2026_67215_20261019/README.md; runtime_json_patch_delete.c; runtime-thread-depth-*.log; runtime-hashes.txt; exploratory runtime-count-* and runtime-delete-depth-* logs retained with limitations; rk3568-product-source-route.json includes hashes of product config, GN branch and missing generated artifacts; research/evidence/cpp/cjson_cve_2026_67215_20261019/upstream-status-and-current-replay-20261019.md; revalidation-current.json/.md",
+      "remaining_blockers": [
+        "No upstream fix commit, fixed regression, or fixed-version control; issue #1073 is an open remediation request.",
+        "Production parser consumes raw C without CJSON_CDECL header/preprocessor context; cJSON.c remains partial and detector_model_incomplete.",
+        "No static rule implementation or production positive/fixed/safe/variant/incomplete regression set.",
+        "Product final graph/link absent; source config points to standard cJSON-only branch, but product binary association and API reachability remain unknown.",
+        "A-line cannot modify shared frontend/parser/contracts; source-bound preprocessing-context prerequisite remains pending shared-owner review."
+      ],
+      "next_step": "Keep this CVE blocked for implementation until a genuine fixed commit/test exists. Execute the next A-line family audit on the hash-bound libpng CVE-2026-33416 palette/tRNS lifetime pair: replay the exact local installer backport hunks and source-bound upstream fixes through production M2; determine whether the registered resource-lifetime rule gives complete-parse vulnerable/fixed discrimination. Completion: preserve positive/fixed/safe/incomplete reports and classify any patch-application mismatch without inferring selected product build.",
+      "component_dynamic_reproduction": "reproduced_local_OH_component: JSON Patch generated depth 1402 from two parsed depth-700 branches; cJSON_Delete SIGSEGV on fresh pthread stack 32KiB and 64KiB (64KiB repeated 5/5); depth-700 tree completes at 128/256KiB; safe depth-802 completes at 64KiB. Main-thread setrlimit experiments excluded.",
+      "upstream_remediation_recheck": {
+        "verified_date": "2026-10-19",
+        "status": "no_confirmed_fix_control",
+        "evidence": "Red Hat states no upstream fix as of 1.7.19; GHSA patched versions unknown; issue #1073 open, no linked branch/PR. PR #1064 is open and addresses MergePatch recursion under issue #995. PR #1078 remains open and bounds recursive comparison/merge-patch-generation paths. Neither changes JSON Patch add/copy subtree amplification followed by recursive cJSON_Delete, so neither is a fixed control for this root. Current official advisory is marked unreviewed and patched versions remain unknown. Current upstream PR index includes separate ApplyPatches UAF reports (#1082/#1084) and deep parser stack issue #1093; these are distinct roots and do not supply a fixed control for CVE-2026-67215.",
+        "report": "research/evidence/cpp/cjson_cve_2026_67215_20261019/upstream-status-and-current-replay-20261019.md"
+      },
+      "current_checkout_revalidation": {
+        "scanner_head": "9b99f106883ef58304d9e6702fea562bb7f8f331",
+        "detector": "ohscanner.cpp.resource_lifetime",
+        "detector_version": "0.1.9",
+        "scope": [
+          "third_party/cjson/cJSON.c",
+          "third_party/cjson/cJSON_Utils.c"
+        ],
+        "cve_metadata_supplied": false,
+        "snapshot_commit": "105eaddbf0d0110b07d16bdefc81ffc796e1444a",
+        "tree": "3c07134d5a05aa546b15739e32503a2ca192d258",
+        "snapshot_sha256": "c0482c314ead7b9131426e7aa74f1073f734341c2ac56fb9a2578efecb51b3e7",
+        "parse": "1 complete / 1 partial",
+        "result": "0 diagnostics; detector blocked; no valid miss or safety conclusion",
+        "elapsed_seconds": 0.10034640000230866,
+        "report": "research/evidence/cpp/cjson_cve_2026_67215_20261019/revalidation-current.json",
+        "source_files_sha256": {
+          "cJSON.c": "427c72055ae68467b451599f36da074351a5ca53f6e103cd30064e32cf0fffbb",
+          "cJSON_Utils.c": "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9"
+        },
+        "replay_note": "The prior temporary source repo path was absent; recreated a new isolated synthetic Git snapshot from byte-identical local OH files. Synthetic commit is not an upstream identity."
+      }
+    },
+    {
+      "case_id": "openharmony-cve-2026-27648",
+      "cve_advisory": "CVE-2026-27648 / OpenHarmony Security Notice 2026-04",
+      "sources_verification_date": {
+        "date": "2026-10-19",
+        "links": [
+          "https://gitcode.com/openharmony/security/blob/master/zh/security-disclosure/2026/2026-04.md",
+          "https://gitcode.com/openharmony-tpc/chromium_src/pull/7093",
+          "https://gitcode.com/openharmony-tpc/chromium_src/pull/7110",
+          "https://gitcode.com/openharmony-tpc/chromium_src/pull/7108"
+        ]
+      },
+      "component": "web_webview / OpenHarmony-TPC chromium_src",
+      "root_cause": "Flowbuffer parsing trusts header-derived entry lengths and indexes. FlowbufStrAtIndex sums lengths into offset, reads current strLen and returns dataSegment+offset without proving offset+strLen stays within MAX_FLOWBUF_DATA_SIZE. ProcessNativeProxyResultNewFlowbuf writes dataList[curIndex] in three loops without curIndex < dataListSize, where dataList is sized from argsSize + flowbufSize. Official fix adds a mapped-data range rejection and dynamic-vector index guards.",
+      "lane": "A_CPP",
+      "affected_versions_basis": "Official OpenHarmony 2026-04 security notice lists OpenHarmony-v5.0.3-Release, v5.1.0-Release and v6.0-Release, CVSS 8.8, remote arbitrary-code-execution impact. Those are release lines; current product exposure is not inferred.",
+      "source_identities": {
+        "6.0": {
+          "vulnerable_parent": {
+            "commit": "5ab1905a8fba8d07e9ab4a9453a7787ec274a1a8",
+            "tree": "4ed3b46721fbfe04059af4ddb18bcd5272ce4762",
+            "path": "arkweb/ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc",
+            "blob": "78e83fea67a2db3297cc59f07566a0c0b6153e7a",
+            "bytes": 185698,
+            "sha256": "aa401c305ed30b70007917d97b726986a26aff2d00fb49649466533f4a48a920"
+          },
+          "fixed_merge": {
+            "commit": "4cf313408de7b6d807465ea2bb22e434269b7c5e",
+            "tree": "a7769bf612be457e6e368f14ee355f3ea8ed2935",
+            "path": "arkweb/ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc",
+            "blob": "27e93e338ced03aeed6e7d892e29d4d0740f3653",
+            "bytes": 185982,
+            "sha256": "332a66637fef9c669fdb85dd74c9be861fb01adb8fa8a95871e1a407e9210483"
+          },
+          "diffstat": "arkweb/ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc | 12 +++++++++---\n 1 file changed, 9 insertions(+), 3 deletions(-)"
+        },
+        "5.1": {
+          "vulnerable_parent": {
+            "commit": "5e47fecda669ff1f8834e11ab9cc9aaa2502355b",
+            "tree": "b7cc3a22ec726ccd9f931ed5cbd790abeb75f509",
+            "path": "ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc",
+            "blob": "3be4407670b14e520ae2639b15fca849d0f162ba",
+            "bytes": 145993,
+            "sha256": "0c21055eaa88a049c21193afb1622596223e6319aee1ab92323055536434b547"
+          },
+          "fixed_merge": {
+            "commit": "9082c13cea0f423b99ba0dc7ca105515e7373d44",
+            "tree": "86768db6cba14e78f35897047d262d8d401433c5",
+            "path": "ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc",
+            "blob": "2963dd2659a59dcea89e84bb5867d49906b83e8c",
+            "bytes": 146277,
+            "sha256": "eb00268d20acc55ed978b22313411782956049b84638dc8d7187fe3837cd8c8b"
+          },
+          "diffstat": "ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc | 12 +++++++++---\n 1 file changed, 9 insertions(+), 3 deletions(-)"
+        },
+        "5.0.3": {
+          "vulnerable_parent": {
+            "commit": "0d1e61c6674498c0af7bd6f683eaa4a0be1a7f2b",
+            "tree": "3253e323c384803419dfd298b84123bcf30b5325",
+            "path": "ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc",
+            "blob": "24b1d57918fdd7ecf0b2cd7941c2c7698439ffe7",
+            "bytes": 143765,
+            "sha256": "aa9faa1d36f6d9149838ef8d3814815a7f3ca17dd2f79b1a144da12ce15b6c30"
+          },
+          "fixed_merge": {
+            "commit": "ffdf319542b161da7211dc33cbf3d4dc565f370f",
+            "tree": "ff5ddb9dba88a4613c6fd8286aef9c752f84b621",
+            "path": "ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc",
+            "blob": "f33db4afde159f271018675e30dbaf43cbc4a9d6",
+            "bytes": 144049,
+            "sha256": "e924c732a45134b14db061a256b0b9ad462b4d0579e80724d58e86c0be64fc72"
+          },
+          "diffstat": "ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc | 12 +++++++++---\n 1 file changed, 9 insertions(+), 3 deletions(-)"
+        }
+      },
+      "product_build_association": "Public notice ties affected release branches to web_webview/chromium_src. Current workspace does not contain web_webview; exact product image, source pin, binary linkage, flowbuffer entry route and attacker control are unknown.",
+      "existing_detector_rule": "ohcpp-memory-bounds-vector-index-candidate-004; ohscanner.cpp.bounds v0.3.6. Reports dynamic std::vector indexes without modeled same-loop bound; recognizes local same-branch nonnegative+size upper guard and conservative fixed-array lower+literal-upper branch guards. Mapped-byte extents and cross-loop flowbuffer count invariants remain unmodeled.",
+      "baseline_scan": {
+        "scanner_head": "9b99f106883ef58304d9e6702fea562bb7f8f331",
+        "scope": [
+          "arkweb/ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc"
+        ],
+        "profile": "light-ast",
+        "vulnerable_commit": "5ab1905a8fba8d07e9ab4a9453a7787ec274a1a8",
+        "fixed_commit": "4cf313408de7b6d807465ea2bb22e434269b7c5e",
+        "results": "integer_bounds 0/0; bounds 0/0; unsafe_memory_call 0/0; all runs blocked because file parse is partial",
+        "reports": "research/evidence/cpp/web_webview_cve_2026_27648_20261019/baseline-*.json"
+      },
+      "miss_reason": "No valid static miss classification: production parser reports partial because of syntax errors elsewhere in the large C++ source file; detectors fail closed at SourceUnit granularity. Further, the existing bounds model lacks an explicit std::vector capacity/index relationship and mapped-buffer extent proof.",
+      "implementation_status": "registered_v0.3.6_root_specific_flowbuffer_index_delta_validated_on_6.0_and_5.1_source_derived_functions; six_ordinary_argument_candidates_retained_unknown",
+      "controls": {
+        "positive": "Production CLI v0.3.6 reports six dynamic-vector write candidates in the vulnerable Flowbuffer while-loop sites on both 6.0 and untrained 5.1 branches. Root-cause diagnostic map binds each candidate to the exact source line/hash.",
+        "fixed": "At the same root-specific Flowbuffer while-loop sites, the fixed 6.0 and 5.1 fragments report zero candidates after `curIndex < dataListSize` guards were added. Each fixed source still has six ordinary-argument-loop candidates at different source positions; those are retained as unresolved capacity/signed-range obligations, not classified as the disclosed unguarded Flowbuffer-loop root.",
+        "safe": "Production M2 CLI same-loop vector.size() and same-if signed lower bound plus size_t-cast upper bound controls: 0 diagnostics. Added fixed-array positive-branch exact signed lower bound plus literal upper bound; weaker single-sided and || controls remain candidates in focused regression.",
+        "unrelated": "Guarded fixed-array independent control originally triggered ohcpp-memory-bounds-index-candidate-002. v0.3.6 now reports 0 in M2 CLI; rule only accepts same-function same-if conjunction index>=0 && index<literal capacity. No general false-positive claim.",
+        "variant": "5.1 vulnerable/fixed branch was not used in detector development and was evaluated as held-out: six root-loop sites report on vulnerable, zero at those sites on fixed. Its six ordinary-argument residuals are the same separate unresolved obligations; the sample is now consumed for future tuning.",
+        "incomplete": "Focused detector regression for partial C++ input blocks with no findings; incomplete input did not run in this M2 replay."
+      },
+      "real_source_rescan": "M2 production CLI v0.3.6 on exact source-derived complete function fragments: 6.0 and 5.1 both have 6 root-specific Flowbuffer-loop diagnostics on vulnerable and 0 such diagnostics on fixed; six ordinary argument writes remain candidates on each side. Full original 6.0 translation units were also scanned through M2: each parser coverage partial and detector blocked with zero diagnostics; no whole-file negative is claimed.",
+      "status": {
+        "public_disclosure_fact": "verified_official_OpenHarmony_2026_04_notice_and_three_merged_release_branch_fixes",
+        "source_root_cause_match": "verified_in_vulnerable_parent_to_official_patch_diff_for_6_0_5_1_5_0_3",
+        "static_detection": "root_specific_function_scope_vulnerable_6_fixed_0_on_6.0_and_heldout_5.1; six_nonroot_ordinary_index_candidates_unknown; full_translation_units_partial_blocked",
+        "component_dynamic_reproduction": "not_run",
+        "product_vulnerability_confirmation": "unknown"
+      },
+      "evidence_path": "research/evidence/cpp/web_webview_cve_2026_27648_20261019/README.md; fragment-m2-source-identities.json; create_fragment_m2_snapshots.py; post-v036-fragment-vulnerable.json/.md; post-v036-fragment-fixed.json/.md; post-v036-safe-vector.json/.md; post-v036-unrelated-array.json/.md; holdout-51-source-identities.json; build_holdout_51_snapshot.py; holdout-51-vulnerable.json/.md; holdout-51-fixed.json/.md; tests/detectors/test_cpp_memory_safety_detectors.py; final-v036-6.0-vulnerable.json/.md; final-v036-6.0-fixed.json/.md; final-v036-5.1-vulnerable.json/.md; final-v036-5.1-fixed.json/.md; get_flowbuf_count_no_lazy_search.json; get_flowbuf_count_source.txt; get_flowbuf_count_source_identities.json; full-suite-v036.log; root-cause-diagnostic-map-v036.json; full-tu-m2-source-identities.json; create_full_tu_m2_snapshots.py; final-v036-full-6.0-vulnerable.json/.md; final-v036-full-6.0-fixed.json/.md; cursor-arithmetic-analysis.json",
+      "remaining_blockers": [
+        "C++ production parser partial at unrelated pointer-to-member expressions; per-file fail-closed coverage prevents interpreting zero findings.",
+        "No explicit dynamic std::vector capacity/index or flowbuffer mapped-byte-extent model in the existing bounds detector.",
+        "No component runtime reproduction or product artifact/caller/attacker-control evidence.",
+        "Mapped Flowbuffer byte-span bounds are not modeled; no component build/runtime or product reachability evidence.",
+        "if-dominance is not modeled; positive-only index>=0 && index<vector.size() control remains a candidate.",
+        "Pinned promisor bare repo lacks the blob defining/referencing GetFlowbufCount; git grep attempted an automatic promisor fetch and failed to reach gitcode.com. No source was changed. Locate this definition only through a successful explicit acquisition of the exact official commit/source object; do not repeat the implicit-fetch query.",
+        "Six fixed-fragment vector candidates remain; prove the cross-loop argsSize/flowbufSize/curIndex invariant from exact source before suppressing them, or retain them.",
+        "Function-fragment M2 confirms registered CLI behavior but does not replace the whole-file scan, which remains parser-partial/blocked.",
+        "Six fixed 6.0 and six held-out 5.1 fragment candidates remain at ordinary args-loop writes. The cross-loop count invariant depends on GetFlowbufCount and exact flowbuffer entry semantics; do not suppress without proof.",
+        "5.1 was evaluated as an independent release-branch holdout and produced the same fixed residuals. It is consumed evidence for any subsequent tuning; a new held-out variant will be needed.",
+        "GetFlowbufCount is now source-bound in the exact vulnerable/fixed 6.0 and 5.1 files and returns a count bounded by MAX_ENTRIES; ordinary-argument fixed candidates still require proving size_t addition, int dataListSize conversion, signed curIndex range, and exact cursor progression.",
+        "Repository-wide no-lazy-fetch grep finds the relevant helper but reports many unrelated absent CAPI blobs; whole-component source closure is unavailable.",
+        "Six ordinary-argument-loop vector candidates remain on both versions; determine whether size_t capacity addition and int dataListSize/curIndex conversions are provably bounded, otherwise retain as separate potential overflow/index issues.",
+        "The full original source files parse partial, so whole-translation-unit CLI runs fail closed; complete parse is available only for the exact source-derived target function fragments.",
+        "No component runtime reproduction, product build association, entry reachability, attacker-control, or product impact evidence was collected."
+      ],
+      "next_step": "Audit official cJSON CVE-2026-67215 remediation and regression evidence for a genuine fixed commit and source control. If none exists, record the missing-fixed-source reason and move to the next disclosed A-line family with a verified fixed pair. Keep Flowbuffer ordinary-argument candidates unresolved; do not suppress without an exact integer/API range contract.",
+      "production_replay_v033": {
+        "scanner_head": "9b99f106883ef58304d9e6702fea562bb7f8f331",
+        "detector": "ohscanner.cpp.bounds",
+        "detector_version": "0.3.3",
+        "vulnerable": {
+          "commit": "5ab1905a8fba8d07e9ab4a9453a7787ec274a1a8",
+          "result": "0 diagnostics; partial/blocked, not a valid negative; research fragment 12 vector candidates",
+          "report": "research/evidence/cpp/web_webview_cve_2026_27648_20261019/post-v033-parent-bounds.json"
+        },
+        "fixed": {
+          "commit": "4cf313408de7b6d807465ea2bb22e434269b7c5e",
+          "result": "0 diagnostics; partial/blocked, not a safe verdict; research fragment 6 residual candidates",
+          "report": "research/evidence/cpp/web_webview_cve_2026_27648_20261019/post-v033-fixed-bounds.json"
+        },
+        "fragment_probe": "research/evidence/cpp/web_webview_cve_2026_27648_20261019/function-fragment-probe.json"
+      },
+      "production_replay_v034": {
+        "detector_version": "0.3.4",
+        "vulnerable": {
+          "commit": "5ab1905a8fba8d07e9ab4a9453a7787ec274a1a8",
+          "result": "0 diagnostics; partial/blocked",
+          "report": "research/evidence/cpp/web_webview_cve_2026_27648_20261019/post-v034-parent-bounds.json"
+        },
+        "fixed": {
+          "commit": "4cf313408de7b6d807465ea2bb22e434269b7c5e",
+          "result": "0 diagnostics; partial/blocked",
+          "report": "research/evidence/cpp/web_webview_cve_2026_27648_20261019/post-v034-fixed-bounds.json"
+        }
+      },
+      "production_replay_v035": {
+        "detector_version": "0.3.5",
+        "vulnerable": {
+          "commit": "5ab1905a8fba8d07e9ab4a9453a7787ec274a1a8",
+          "result": "0 diagnostics; partial/blocked",
+          "report": "research/evidence/cpp/web_webview_cve_2026_27648_20261019/post-v035-parent-bounds.json"
+        },
+        "fixed": {
+          "commit": "4cf313408de7b6d807465ea2bb22e434269b7c5e",
+          "result": "0 diagnostics; partial/blocked",
+          "report": "research/evidence/cpp/web_webview_cve_2026_27648_20261019/post-v035-fixed-bounds.json"
+        }
+      },
+      "production_replay_fragment_m2": {
+        "scanner_head": "9b99f106883ef58304d9e6702fea562bb7f8f331",
+        "detector": "ohscanner.cpp.bounds",
+        "detector_version": "0.3.6",
+        "profile": "light-ast",
+        "6.0_vulnerable": {
+          "upstream_commit": "5ab1905a8fba8d07e9ab4a9453a7787ec274a1a8",
+          "synthetic_snapshot_commit": "d5ab663b730bbda87452a31782aecb804139a23c",
+          "parse": "complete",
+          "diagnostics": 12,
+          "elapsed_seconds": 0.0098674,
+          "report": "research/evidence/cpp/web_webview_cve_2026_27648_20261019/final-v036-6.0-vulnerable.json"
+        },
+        "6.0_fixed": {
+          "upstream_commit": "4cf313408de7b6d807465ea2bb22e434269b7c5e",
+          "synthetic_snapshot_commit": "9116238d44dbf6c5e89f85d4ab073f3afae2ae21",
+          "parse": "complete",
+          "diagnostics": 6,
+          "elapsed_seconds": 0.0107252,
+          "report": "research/evidence/cpp/web_webview_cve_2026_27648_20261019/final-v036-6.0-fixed.json"
+        },
+        "5.1_holdout_vulnerable": {
+          "upstream_commit": "5e47fecda669ff1f8834e11ab9cc9aaa2502355b",
+          "synthetic_snapshot_commit": "17859babfa4450c9921a54918865907ed545482a",
+          "parse": "complete",
+          "diagnostics": 12,
+          "elapsed_seconds": 0.0101727,
+          "report": "research/evidence/cpp/web_webview_cve_2026_27648_20261019/final-v036-5.1-vulnerable.json"
+        },
+        "5.1_holdout_fixed": {
+          "upstream_commit": "9082c13cea0f423b99ba0dc7ca105515e7373d44",
+          "synthetic_snapshot_commit": "c533fbf42f77112ab0d650f2dc3719f02f88a7af",
+          "parse": "complete",
+          "diagnostics": 6,
+          "elapsed_seconds": 0.0107665,
+          "report": "research/evidence/cpp/web_webview_cve_2026_27648_20261019/final-v036-5.1-fixed.json"
+        },
+        "safe_vector": {
+          "synthetic_commit": "9c3a128a55f8824f554d776a357243f574b7cdca",
+          "diagnostics": 0,
+          "report": "research/evidence/cpp/web_webview_cve_2026_27648_20261019/post-v036-safe-vector.json"
+        },
+        "unrelated_guarded_array": {
+          "synthetic_commit": "fb363764192b00f2bef0cb1571e1179313df3fec",
+          "diagnostics": 0,
+          "report": "research/evidence/cpp/web_webview_cve_2026_27648_20261019/post-v036-unrelated-array.json"
+        },
+        "full_6_0_vulnerable": {
+          "upstream_commit": "5ab1905a8fba8d07e9ab4a9453a7787ec274a1a8",
+          "synthetic_snapshot_commit": "a15cbf4ef20673cfcf1856bf40a723b3ce026564",
+          "parse": "partial",
+          "run": "blocked",
+          "diagnostics": 0,
+          "report": "research/evidence/cpp/web_webview_cve_2026_27648_20261019/final-v036-full-6.0-vulnerable.json"
+        },
+        "full_6_0_fixed": {
+          "upstream_commit": "4cf313408de7b6d807465ea2bb22e434269b7c5e",
+          "synthetic_snapshot_commit": "fa0d92ccbf47b7cdc7efb727c79cbdfc168469eb",
+          "parse": "partial",
+          "run": "blocked",
+          "diagnostics": 0,
+          "report": "research/evidence/cpp/web_webview_cve_2026_27648_20261019/final-v036-full-6.0-fixed.json"
+        },
+        "limitations": "Synthetic commits package exact source-derived function bytes. The 5.1 variant was held out before first evaluation, but its fixed residual means the acceptance gate fails; future tuning requires a new holdout."
+      }
+    },
+    {
+      "sources_verification_date": {
+        "date": "2026-10-19",
+        "links": [
+          "https://gitee.com/openharmony/security/blob/master/zh/security-disclosure/2025/2025-07.md"
+        ]
+      },
+      "lane": "A_CPP",
+      "affected_versions_basis": "See OpenHarmony 2025-03/2025-07 security notice and historical A-line delivery; exact current product mapping remains unknown.",
+      "product_build_association": "Historical component-source replay only; no current product build, binary, entry or impact confirmation.",
+      "baseline_scan": {
+        "result": "historical_delivery_summary_only",
+        "scope": [
+          "historical vulnerable/fixed file pairs"
+        ],
+        "note": "Referenced raw report directory research/evidence/cpp/a_historical_memory_replay_20261017/ is absent in current checkout; this is not a current-head replay."
+      },
+      "miss_reason": "Not classified as current baseline miss; the prior detector replay is reported by the historical delivery only.",
+      "controls": {
+        "positive": "historical delivery summary only; raw per-run report unavailable",
+        "fixed": "historical delivery summary reports zero same-rule candidates",
+        "safe": "not independently revalidated this turn",
+        "unrelated": "not independently revalidated this turn",
+        "variant": "not independently revalidated this turn",
+        "incomplete": "not independently revalidated this turn"
+      },
+      "status": {
+        "public_disclosure_fact": "verified_by_official_openharmony_notice",
+        "source_root_cause_match": "historical_delivery_binding_not_rechecked_against_current_objects",
+        "static_detection": "historical_reported_candidate_not_currently_replayed",
+        "component_dynamic_reproduction": "historical_harness_summary_only_where_reported",
+        "product_vulnerability_confirmation": "unknown"
+      },
+      "evidence_path": "research/deliveries/cpp/A_MEMORY_SAFETY_DELIVERY_20261017.md; referenced raw artifacts research/evidence/cpp/a_historical_memory_replay_20261017/ absent in current checkout.",
+      "remaining_blockers": [
+        "restore original source-bound JSON/logs or recreate exact source snapshots",
+        "rerun vulnerable/fixed pair with current production CLI",
+        "verify each diagnostic location against root cause",
+        "verify product build, caller, attacker control and impact"
+      ],
+      "next_step": "Recover original historical artifacts or rerun exact pinned pairs using current production CLI and record full tree/blob/source hashes before claiming current detector support.",
+      "case_id": "openharmony-cve-2025-26690",
+      "cve_advisory": "CVE-2025-26690",
+      "component": "communication_dsoftbus",
+      "root_cause": "Null pointer dereference after allocation failure; historical fix adds allocation-result null guards.",
+      "source_identities": {
+        "vulnerable": {
+          "commit": "258662cd9840b55a31546a72d91027f6368cea84",
+          "file": "core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp"
+        },
+        "fixed": {
+          "commit": "192f3e11d74beeaa3d879333471deb8a24a7e1c5",
+          "file": "core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp"
+        }
+      },
+      "existing_detector_rule": "ohscanner.cpp.null_dereference 0.2.0 (historical delivery)",
+      "implementation_status": "historical_scan_reported_current_head_replay_pending",
+      "real_source_rescan": "Historical summary: vulnerable 5 candidates, fixed 0; raw diagnostics unavailable here and not revalidated on current scanner. Candidate-to-root mapping not individually confirmed.",
+      "component_dynamic_reproduction": "not established by recoverable current-checkout artifacts."
+    },
+    {
+      "sources_verification_date": {
+        "date": "2026-10-19",
+        "links": [
+          "https://lists.openatom.io/hyperkitty/list/security%40openharmony.io/thread/435GCMWA4TBKSDHCKDUQKITICCLLBCBI/"
+        ]
+      },
+      "lane": "A_CPP",
+      "affected_versions_basis": "See OpenHarmony 2025-03/2025-07 security notice and historical A-line delivery; exact current product mapping remains unknown.",
+      "product_build_association": "Historical component-source replay only; no current product build, binary, entry or impact confirmation.",
+      "baseline_scan": {
+        "result": "historical_delivery_summary_only",
+        "scope": [
+          "historical vulnerable/fixed file pairs"
+        ],
+        "note": "Referenced raw report directory research/evidence/cpp/a_historical_memory_replay_20261017/ is absent in current checkout; this is not a current-head replay."
+      },
+      "miss_reason": "Not classified as current baseline miss; the prior detector replay is reported by the historical delivery only.",
+      "controls": {
+        "positive": "historical delivery summary only; raw per-run report unavailable",
+        "fixed": "historical delivery summary reports zero same-rule candidates",
+        "safe": "not independently revalidated this turn",
+        "unrelated": "not independently revalidated this turn",
+        "variant": "not independently revalidated this turn",
+        "incomplete": "not independently revalidated this turn"
+      },
+      "status": {
+        "public_disclosure_fact": "verified_by_official_openharmony_notice",
+        "source_root_cause_match": "historical_delivery_binding_not_rechecked_against_current_objects",
+        "static_detection": "historical_reported_candidate_not_currently_replayed",
+        "component_dynamic_reproduction": "historical_harness_summary_only_where_reported",
+        "product_vulnerability_confirmation": "unknown"
+      },
+      "evidence_path": "research/deliveries/cpp/A_MEMORY_SAFETY_DELIVERY_20261017.md; referenced raw artifacts research/evidence/cpp/a_historical_memory_replay_20261017/ absent in current checkout.",
+      "remaining_blockers": [
+        "restore original source-bound JSON/logs or recreate exact source snapshots",
+        "rerun vulnerable/fixed pair with current production CLI",
+        "verify each diagnostic location against root cause",
+        "verify product build, caller, attacker control and impact"
+      ],
+      "next_step": "Recover original historical artifacts or rerun exact pinned pairs using current production CLI and record full tree/blob/source hashes before claiming current detector support.",
+      "case_id": "openharmony-cve-2025-0587",
+      "cve_advisory": "CVE-2025-0587",
+      "component": "arkcompiler_ets_runtime",
+      "root_cause": "Integer overflow / ToIndex-to-int32 range handling in atomic helper.",
+      "source_identities": {
+        "vulnerable": {
+          "commit": "cae11f121c030a90ba41d8e4d866f91292f25892",
+          "file": "ecmascript/base/atomic_helper.cpp"
+        },
+        "fixed": {
+          "commit": "5aa9c035e98911ec7ed28065a2138c2709792a42",
+          "file": "ecmascript/base/atomic_helper.cpp"
+        }
+      },
+      "existing_detector_rule": "ohscanner.cpp.integer_bounds 0.2.0 (historical delivery)",
+      "implementation_status": "historical_scan_reported_current_head_replay_pending",
+      "real_source_rescan": "Historical summary: vulnerable 1 candidate, fixed 0; raw reports unavailable here and not revalidated on current scanner.",
+      "component_dynamic_reproduction": "Historical generic integer harness only; no product runtime evidence."
+    },
+    {
+      "sources_verification_date": {
+        "date": "2026-10-19",
+        "links": [
+          "https://lists.openatom.io/hyperkitty/list/security%40openharmony.io/thread/435GCMWA4TBKSDHCKDUQKITICCLLBCBI/",
+          "https://nvd.nist.gov/vuln/detail/CVE-2025-23420"
+        ]
+      },
+      "lane": "A_CPP",
+      "affected_versions_basis": "See OpenHarmony 2025-03/2025-07 security notice and historical A-line delivery; exact current product mapping remains unknown.",
+      "product_build_association": "Historical component-source replay only; no current product build, binary, entry or impact confirmation.",
+      "baseline_scan": {
+        "result": "historical_delivery_summary_only",
+        "scope": [
+          "historical vulnerable/fixed file pairs"
+        ],
+        "note": "Referenced raw report directory research/evidence/cpp/a_historical_memory_replay_20261017/ is absent in current checkout; this is not a current-head replay."
+      },
+      "miss_reason": "Not classified as current baseline miss; the prior detector replay is reported by the historical delivery only.",
+      "controls": {
+        "positive": "historical delivery summary only; raw per-run report unavailable",
+        "fixed": "historical delivery summary reports zero same-rule candidates",
+        "safe": "not independently revalidated this turn",
+        "unrelated": "not independently revalidated this turn",
+        "variant": "not independently revalidated this turn",
+        "incomplete": "not independently revalidated this turn"
+      },
+      "status": {
+        "public_disclosure_fact": "verified_by_official_openharmony_notice",
+        "source_root_cause_match": "historical_delivery_binding_not_rechecked_against_current_objects",
+        "static_detection": "historical_reported_candidate_not_currently_replayed",
+        "component_dynamic_reproduction": "historical_harness_summary_only_where_reported",
+        "product_vulnerability_confirmation": "unknown"
+      },
+      "evidence_path": "research/deliveries/cpp/A_MEMORY_SAFETY_DELIVERY_20261017.md; referenced raw artifacts research/evidence/cpp/a_historical_memory_replay_20261017/ absent in current checkout.",
+      "remaining_blockers": [
+        "restore original source-bound JSON/logs or recreate exact source snapshots",
+        "rerun vulnerable/fixed pair with current production CLI",
+        "verify each diagnostic location against root cause",
+        "verify product build, caller, attacker control and impact"
+      ],
+      "next_step": "Recover original historical artifacts or rerun exact pinned pairs using current production CLI and record full tree/blob/source hashes before claiming current detector support.",
+      "case_id": "openharmony-cve-2025-23420",
+      "cve_advisory": "CVE-2025-23420",
+      "component": "arkcompiler_ets_runtime",
+      "root_cause": "Bounds/lifetime hazard in JSArray::SortElementsByObject under element instability during sorting; advisory classifies the issue as out-of-bounds write, historical mechanism harness reports UAF.",
+      "source_identities": {
+        "vulnerable": {
+          "commit": "aeee3fd12c03193545edea4b8e0fdfa3d9a03d11",
+          "file": "ecmascript/js_array.cpp",
+          "symbol": "JSArray::SortElementsByObject"
+        },
+        "fixed": {
+          "commit": "1b23531531e768398682582969c2a9f17e72cafe",
+          "file": "ecmascript/js_array.cpp",
+          "patch_sha256": "e0b61dde4058080ee28184d49b3d7da80e4ad428bc2030a04fc5f69bccbc0512"
+        }
+      },
+      "existing_detector_rule": "ohscanner.cpp.bounds 0.2.0 (historical delivery)",
+      "implementation_status": "historical_scan_reported_current_head_replay_pending",
+      "real_source_rescan": "Historical summary: vulnerable 5 candidates, fixed 0; raw reports unavailable here and not revalidated on current scanner. Candidate count is not root-cause count.",
+      "component_dynamic_reproduction": "Historical isolated ASan mechanism harness reports vulnerable UAF and fixed guard exits normally; not product build."
+    },
+    {
+      "sources_verification_date": {
+        "date": "2026-10-19",
+        "links": [
+          "https://lists.openatom.io/hyperkitty/list/security%40openharmony.io/thread/435GCMWA4TBKSDHCKDUQKITICCLLBCBI/"
+        ]
+      },
+      "lane": "A_CPP",
+      "affected_versions_basis": "See OpenHarmony 2025-03/2025-07 security notice and historical A-line delivery; exact current product mapping remains unknown.",
+      "product_build_association": "Historical component-source replay only; no current product build, binary, entry or impact confirmation.",
+      "baseline_scan": {
+        "result": "not_run_not_applicable",
+        "scope": [],
+        "note": "Historical report vulnerable/fixed counts N/A."
+      },
+      "miss_reason": "Not classified as current baseline miss; the prior detector replay is reported by the historical delivery only.",
+      "controls": {
+        "positive": "historical delivery summary only; raw per-run report unavailable",
+        "fixed": "historical delivery summary reports zero same-rule candidates",
+        "safe": "not independently revalidated this turn",
+        "unrelated": "not independently revalidated this turn",
+        "variant": "not independently revalidated this turn",
+        "incomplete": "not independently revalidated this turn"
+      },
+      "status": {
+        "public_disclosure_fact": "verified_by_official_openharmony_notice",
+        "source_root_cause_match": "advisory_description_only",
+        "static_detection": "not_run_not_applicable",
+        "component_dynamic_reproduction": "not_run",
+        "product_vulnerability_confirmation": "unknown"
+      },
+      "evidence_path": "research/deliveries/cpp/A_MEMORY_SAFETY_DELIVERY_20261017.md; referenced raw artifacts research/evidence/cpp/a_historical_memory_replay_20261017/ absent in current checkout.",
+      "remaining_blockers": [
+        "restore original source-bound JSON/logs or recreate exact source snapshots",
+        "rerun vulnerable/fixed pair with current production CLI",
+        "verify each diagnostic location against root cause",
+        "verify product build, caller, attacker control and impact"
+      ],
+      "next_step": "If A expands to this kernel OOB-read mechanism, pin source pair and run a dedicated detector-family baseline; otherwise retain not-scanned.",
+      "case_id": "openharmony-cve-2025-20042",
+      "cve_advisory": "CVE-2025-20042",
+      "component": "kernel_liteos_a",
+      "root_cause": "OpenHarmony notice describes out-of-bounds read; historical A report marked not applicable to lexical bounds.",
+      "source_identities": {},
+      "existing_detector_rule": "none applicable in historical A-line report",
+      "implementation_status": "assessed_not_applicable_not_scanned",
+      "real_source_rescan": "not_run; no finding, miss or safety conclusion."
+    },
+    {
+      "sources_verification_date": {
+        "date": "2026-10-19",
+        "links": [
+          "https://lists.openatom.io/hyperkitty/list/security%40openharmony.io/thread/435GCMWA4TBKSDHCKDUQKITICCLLBCBI/"
+        ]
+      },
+      "lane": "A_CPP",
+      "affected_versions_basis": "See OpenHarmony 2025-03/2025-07 security notice and historical A-line delivery; exact current product mapping remains unknown.",
+      "product_build_association": "Historical component-source replay only; no current product build, binary, entry or impact confirmation.",
+      "baseline_scan": {
+        "result": "not_run_not_applicable",
+        "scope": [],
+        "note": "Historical report vulnerable/fixed counts N/A."
+      },
+      "miss_reason": "Not classified as current baseline miss; the prior detector replay is reported by the historical delivery only.",
+      "controls": {
+        "positive": "historical delivery summary only; raw per-run report unavailable",
+        "fixed": "historical delivery summary reports zero same-rule candidates",
+        "safe": "not independently revalidated this turn",
+        "unrelated": "not independently revalidated this turn",
+        "variant": "not independently revalidated this turn",
+        "incomplete": "not independently revalidated this turn"
+      },
+      "status": {
+        "public_disclosure_fact": "verified_by_official_openharmony_notice",
+        "source_root_cause_match": "advisory_description_only",
+        "static_detection": "not_run_not_applicable",
+        "component_dynamic_reproduction": "not_run",
+        "product_vulnerability_confirmation": "unknown"
+      },
+      "evidence_path": "research/deliveries/cpp/A_MEMORY_SAFETY_DELIVERY_20261017.md; referenced raw artifacts research/evidence/cpp/a_historical_memory_replay_20261017/ absent in current checkout.",
+      "remaining_blockers": [
+        "restore original source-bound JSON/logs or recreate exact source snapshots",
+        "rerun vulnerable/fixed pair with current production CLI",
+        "verify each diagnostic location against root cause",
+        "verify product build, caller, attacker control and impact"
+      ],
+      "next_step": "If A expands to kernel authorization/bypass semantics, pin source pair and run a dedicated family baseline; otherwise retain not-scanned.",
+      "case_id": "openharmony-cve-2025-21098",
+      "cve_advisory": "CVE-2025-21098",
+      "component": "kernel_liteos_a",
+      "root_cause": "OpenHarmony notice describes permission bypass / information disclosure; historical A report marked not applicable to current A rules.",
+      "source_identities": {},
+      "existing_detector_rule": "none applicable in historical A-line report",
+      "implementation_status": "assessed_not_applicable_not_scanned",
+      "real_source_rescan": "not_run; no finding, miss or safety conclusion."
     }
-  ]
+  ],
+  "case_count_note": "12 listed cases: 10 have scan/replay records (7 current evidence-ledger cases plus 3 historical delivery summaries needing raw-artifact recovery); 2 kernel advisories were explicitly not scanned/not applicable under the prior A rules."
 }

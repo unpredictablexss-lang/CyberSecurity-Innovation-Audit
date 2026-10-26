@@ -1,0 +1,57 @@
+// 6.0-vulnerable 5ab1905a8fba8d07e9ab4a9453a7787ec274a1a8 arkweb/ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc:4412-4424
+int NWebHandlerDelegate::GetFlowbufCount(void* mem) {
+  int* header = static_cast<int*>(
+      mem);  // Cast the memory block to int* for easier access
+  int count = 0;
+  for (int i = 0; i < MAX_ENTRIES; i++) {
+    if (*(header + (i * 2) + 1) != 0) {
+      count++;
+    } else {
+      break;
+    }
+  }
+  return count;
+}
+
+// 6.0-fixed 4cf313408de7b6d807465ea2bb22e434269b7c5e arkweb/ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc:4412-4424
+int NWebHandlerDelegate::GetFlowbufCount(void* mem) {
+  int* header = static_cast<int*>(
+      mem);  // Cast the memory block to int* for easier access
+  int count = 0;
+  for (int i = 0; i < MAX_ENTRIES; i++) {
+    if (*(header + (i * 2) + 1) != 0) {
+      count++;
+    } else {
+      break;
+    }
+  }
+  return count;
+}
+
+// 5.1-vulnerable 5e47fecda669ff1f8834e11ab9cc9aaa2502355b ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc:3511-3522
+int NWebHandlerDelegate::GetFlowbufCount(void* mem){
+  int* header = static_cast<int*>(mem); // Cast the memory block to int* for easier access
+  int count = 0;
+  for (int i = 0; i < MAX_ENTRIES; i++) {
+    if (*(header + (i * 2) + 1) != 0) {
+      count++;
+    } else {
+      break;
+    }
+  }
+  return count;
+}
+
+// 5.1-fixed 9082c13cea0f423b99ba0dc7ca105515e7373d44 ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc:3511-3522
+int NWebHandlerDelegate::GetFlowbufCount(void* mem){
+  int* header = static_cast<int*>(mem); // Cast the memory block to int* for easier access
+  int count = 0;
+  for (int i = 0; i < MAX_ENTRIES; i++) {
+    if (*(header + (i * 2) + 1) != 0) {
+      count++;
+    } else {
+      break;
+    }
+  }
+  return count;
+}

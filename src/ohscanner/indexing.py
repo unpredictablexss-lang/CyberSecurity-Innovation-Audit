@@ -52,7 +52,8 @@ def prepare_git_context(repo_dir: Path, repository: str, commit: str,
         units=units,
         shared_facts={
             "ast": ast,
-            "source_blob_oid": {item.path: item.oid for item in sources},
+            "source_blob_oid": {item.path: item.oid for item in sources if item.archive_binding is None},
+            "source_archive_binding": {item.path: item.archive_binding for item in sources if item.archive_binding is not None},
             "facts_v1": build_syntax_facts(ast),
             "coverage": coverage,
         },
@@ -93,7 +94,9 @@ def run_git_index(repo_dir: Path, repository: str, commit: str,
         "source_units": [
             {
                 "file": u.path, "language": u.language, "sha256": u.sha256,
-                "blob_oid": source.oid, "loc": len(u.text.splitlines()),
+                "blob_oid": source.oid if source.archive_binding is None else None,
+                "archive_binding": source.archive_binding,
+                "loc": len(u.text.splitlines()),
                 "parse_status": u.parse_status, "parse_issues": list(u.parse_issues),
                 "ast_functions": len(context.shared_facts["ast"].get(u.path, {}).get("functions", [])),
                 "ast_calls": len(context.shared_facts["ast"].get(u.path, {}).get("calls", [])),
@@ -108,6 +111,7 @@ def run_git_index(repo_dir: Path, repository: str, commit: str,
             "Headers default to C++ grammar; no GN/product compile flags, macro instantiation or full device coverage.",
             "No vulnerability detector executed. candidate_count=0 is not a security finding.",
             "Non-UTF8 and oversized sources are skipped and counted; report scope reflects actual selected files.",
+            "Tracked tar.gz/tgz archives are read-only and bounded; archive member paths are virtual and bind to archive Git blob plus archive/member SHA-256.",
         ],
     }
     md = [

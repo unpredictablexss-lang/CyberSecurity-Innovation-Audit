@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-19",
+  "repository_inventory": "openharmony-project-heads.tsv plus local repo-managed Git object stores",
+  "known_callers": [
+    {
+      "component": "foundation/multimedia/image_framework",
+      "commit": "5fbe952024f16cb518a5a7cec24063cffcc038bd",
+      "tree": "33cb49524a6f2fdce502b74c1e6bc3e9f61193a9",
+      "file": "plugins/common/libs/image/libtiffplugin/src/tiff_decoder.cpp",
+      "blob": "952e20b050d5b2298017e99463f90ebf25892ed4",
+      "sha256": "844e37b83a24da27a3e41104d6f265395e39a5ca356ec393be873dbc2d69c643",
+      "call_line": 215,
+      "dimension_provenance": "GetImageSize reads TIFFTAG_IMAGEWIDTH/IMAGELENGTH into tiffSize_; Decode allocates from that pair and passes the same pair to TIFFReadRGBAImageOriented. Vulnerable condition rheight < img.height is not evidenced on this caller.",
+      "input": "TIFFClientOpenExt consumes InputDataStream; upstream trust boundary unknown.",
+      "build_gate": "tiffplugin ohos_shared_library links libtiff under has_libtiff. image_decode_config.gni defaults has_libtiff=true unless global_parts_info excludes thirdparty_libtiff. Selected product global_parts_info/args.gn unavailable.",
+      "source_entry": {
+        "file": "frameworks/innerkitsimpl/codec/src/image_source.cpp",
+        "blob": "fa7cc17ea8fc0052ac13f38bd42c967434302fe9",
+        "sha256": "d24f7fdeb133ab6b2f2e24351faa1926e63cda24eeaf83f4859c381810aa6b6b",
+        "api_header": "interfaces/innerkits/include/image_source.h",
+        "api_header_blob": "2e9ccbb988c06ca7e6f05c1ca9197c69ceb3b424",
+        "api_header_sha256": "79763cb76fca37c4fe92ff8d8f2200b274ba88056766f611fa15ec4d108e5e15",
+        "entry_facts": "CreateImageSource accepts stream, byte buffer, path or fd; DoCreateDecoder calls decoder->SetSource(sourceData). Actual caller trust/permissions unknown."
+      }
+    },
+    {
+      "component": "third_party/backends",
+      "commit": "d0621aa49910a02e8bd6876a22987bfa351818dd",
+      "tree": "2dfa719111170881dd7aad1a670959b9faf1ee50",
+      "file": "backend/dell1600n_net.c",
+      "blob": "45b0d2c76f0f25932440bd62d92460c6cb42334e",
+      "sha256": "17ce3441cf235f9aaaa0fc9b7ec1c3d01dec266ff552d0a3f3bee8b1350c8f3e",
+      "call_line": 1955,
+      "dimension_provenance": "Network-provided scanner pixel width/height are written as TIFF width/height tags and the same values passed as output width/height; no height mismatch in this call. This backend creates a temporary TIFF from scanner data. Product target selection unknown."
+    }
+  ],
+  "other_occurrences": "The local source-tree search also found libtiff command-line tools and the API definition; tools are not in third_party/libtiff BUILD.gn library source list.",
+  "manifest_conflict": "Image framework checkout commit 5fbe952... differs from revision c9647acc... in manifest-current-20261018.xml. Current checkout/object identity is recorded from project-heads and verified blob/SHA; do not silently bind it to the other manifest revision.",
+  "product_vulnerability_confirmation": "unknown; known callers reviewed pass equal heights, but product target selection, full call graph and other shipped binary consumers are not established.",
+  "product_config": {
+    "product": "rk3568",
+    "out_config_sha256": "872f8c20aee965d2d792623d381288f0f4e839f3368c19b1900c3fa34ccf4a58",
+    "config_component": "vendor/hihope",
+    "commit": "b40eabbe69943126c65df1f9ff28057f56e93e46",
+    "tree": "aa95785ef84ddde8d1c3622e2c2d80d6b388caeb",
+    "file": "rk3568/config.json",
+    "blob": "fc7fed801d07f19f05a752878e738d8d40f1bc01",
+    "sha256": "46dc640a6ca988687245de967f4e2ec3aebd20ed3423472c48b89bc845c28408",
+    "declared_components": [
+      "image_framework",
+      "libtiff"
+    ],
+    "build_graph_evidence": "tiffplugin GN target conditionally links libtiff when has_libtiff; actual generated global_parts_info, args.gn, build.ninja and out/rk3568 absent; final link not confirmed."
+  }
+}

@@ -1,0 +1,319 @@
+{
+  "detector": "ohscanner.cpp.bounds",
+  "detector_version": "0.3.6",
+  "rule_id": "ohcpp-memory-bounds-vector-index-candidate-004",
+  "basis": "Manual root-cause classification of source-bound production CLI diagnostics by enclosing source construct; does not change detector output or assert product reachability.",
+  "branches": {
+    "6.0": {
+      "vulnerable": {
+        "synthetic_commit": "d5ab663b730bbda87452a31782aecb804139a23c",
+        "upstream_commit": "d5ab663b730bbda87452a31782aecb804139a23c",
+        "parse": {
+          "complete": 1
+        },
+        "diagnostic_count": 12,
+        "source_fragment_sha256": "70e2cf35f6b143a7fdbf2e6c9a571817545ef9c9efe0199aa1e7c5e6e4afb973",
+        "patch_root_flowbuffer_loop_findings": [
+          {
+            "line": 85,
+            "symbol": "dataList",
+            "source_line": "dataList[curIndex] =",
+            "diagnostic_id": "ohscanner.cpp.bounds:836ead9731d0c8c6",
+            "source_sha256": "70e2cf35f6b143a7fdbf2e6c9a571817545ef9c9efe0199aa1e7c5e6e4afb973"
+          },
+          {
+            "line": 87,
+            "symbol": "dataSize",
+            "source_line": "dataSize[curIndex] = strLen;",
+            "diagnostic_id": "ohscanner.cpp.bounds:2e703f67e33ead10",
+            "source_sha256": "70e2cf35f6b143a7fdbf2e6c9a571817545ef9c9efe0199aa1e7c5e6e4afb973"
+          },
+          {
+            "line": 96,
+            "symbol": "dataList",
+            "source_line": "dataList[curIndex] =",
+            "diagnostic_id": "ohscanner.cpp.bounds:25bb532d75f19d3f",
+            "source_sha256": "70e2cf35f6b143a7fdbf2e6c9a571817545ef9c9efe0199aa1e7c5e6e4afb973"
+          },
+          {
+            "line": 98,
+            "symbol": "dataSize",
+            "source_line": "dataSize[curIndex] = strLen;",
+            "diagnostic_id": "ohscanner.cpp.bounds:60d2a335e5df2952",
+            "source_sha256": "70e2cf35f6b143a7fdbf2e6c9a571817545ef9c9efe0199aa1e7c5e6e4afb973"
+          },
+          {
+            "line": 140,
+            "symbol": "dataList",
+            "source_line": "dataList[curIndex] =",
+            "diagnostic_id": "ohscanner.cpp.bounds:46bfc0843196d3c0",
+            "source_sha256": "70e2cf35f6b143a7fdbf2e6c9a571817545ef9c9efe0199aa1e7c5e6e4afb973"
+          },
+          {
+            "line": 142,
+            "symbol": "dataSize",
+            "source_line": "dataSize[curIndex] = strLen;",
+            "diagnostic_id": "ohscanner.cpp.bounds:1d08b484d91bd508",
+            "source_sha256": "70e2cf35f6b143a7fdbf2e6c9a571817545ef9c9efe0199aa1e7c5e6e4afb973"
+          }
+        ],
+        "ordinary_argument_loop_findings": [
+          {
+            "line": 116,
+            "symbol": "dataList",
+            "source_line": "dataList[curIndex] =",
+            "diagnostic_id": "ohscanner.cpp.bounds:989bae9536a3dfba",
+            "source_sha256": "70e2cf35f6b143a7fdbf2e6c9a571817545ef9c9efe0199aa1e7c5e6e4afb973"
+          },
+          {
+            "line": 118,
+            "symbol": "dataSize",
+            "source_line": "dataSize[curIndex] = size;",
+            "diagnostic_id": "ohscanner.cpp.bounds:4fdcbb80a18b1ae2",
+            "source_sha256": "70e2cf35f6b143a7fdbf2e6c9a571817545ef9c9efe0199aa1e7c5e6e4afb973"
+          },
+          {
+            "line": 126,
+            "symbol": "dataList",
+            "source_line": "dataList[curIndex] = std::move(data);",
+            "diagnostic_id": "ohscanner.cpp.bounds:70b702d7ec8666a6",
+            "source_sha256": "70e2cf35f6b143a7fdbf2e6c9a571817545ef9c9efe0199aa1e7c5e6e4afb973"
+          },
+          {
+            "line": 127,
+            "symbol": "dataSize",
+            "source_line": "dataSize[curIndex] = size;",
+            "diagnostic_id": "ohscanner.cpp.bounds:581f017c937387e8",
+            "source_sha256": "70e2cf35f6b143a7fdbf2e6c9a571817545ef9c9efe0199aa1e7c5e6e4afb973"
+          },
+          {
+            "line": 131,
+            "symbol": "dataList",
+            "source_line": "dataList[curIndex] =",
+            "diagnostic_id": "ohscanner.cpp.bounds:df6edc2dca2d323c",
+            "source_sha256": "70e2cf35f6b143a7fdbf2e6c9a571817545ef9c9efe0199aa1e7c5e6e4afb973"
+          },
+          {
+            "line": 133,
+            "symbol": "dataSize",
+            "source_line": "dataSize[curIndex] = jsonString.size();",
+            "diagnostic_id": "ohscanner.cpp.bounds:d33158cd06ad4028",
+            "source_sha256": "70e2cf35f6b143a7fdbf2e6c9a571817545ef9c9efe0199aa1e7c5e6e4afb973"
+          }
+        ]
+      },
+      "fixed": {
+        "synthetic_commit": "9116238d44dbf6c5e89f85d4ab073f3afae2ae21",
+        "upstream_commit": "9116238d44dbf6c5e89f85d4ab073f3afae2ae21",
+        "parse": {
+          "complete": 1
+        },
+        "diagnostic_count": 6,
+        "source_fragment_sha256": "6d8f1982dae51a633959ba7a7cdeb78c6f1f29d85571ed98e7ffc0c789556e74",
+        "patch_root_flowbuffer_loop_findings": [],
+        "ordinary_argument_loop_findings": [
+          {
+            "line": 122,
+            "symbol": "dataList",
+            "source_line": "dataList[curIndex] =",
+            "diagnostic_id": "ohscanner.cpp.bounds:2e0e9a2475702881",
+            "source_sha256": "6d8f1982dae51a633959ba7a7cdeb78c6f1f29d85571ed98e7ffc0c789556e74"
+          },
+          {
+            "line": 124,
+            "symbol": "dataSize",
+            "source_line": "dataSize[curIndex] = size;",
+            "diagnostic_id": "ohscanner.cpp.bounds:867ee727effb40d4",
+            "source_sha256": "6d8f1982dae51a633959ba7a7cdeb78c6f1f29d85571ed98e7ffc0c789556e74"
+          },
+          {
+            "line": 132,
+            "symbol": "dataList",
+            "source_line": "dataList[curIndex] = std::move(data);",
+            "diagnostic_id": "ohscanner.cpp.bounds:dbceb439946ca918",
+            "source_sha256": "6d8f1982dae51a633959ba7a7cdeb78c6f1f29d85571ed98e7ffc0c789556e74"
+          },
+          {
+            "line": 133,
+            "symbol": "dataSize",
+            "source_line": "dataSize[curIndex] = size;",
+            "diagnostic_id": "ohscanner.cpp.bounds:37d9f72e02a9f8dd",
+            "source_sha256": "6d8f1982dae51a633959ba7a7cdeb78c6f1f29d85571ed98e7ffc0c789556e74"
+          },
+          {
+            "line": 137,
+            "symbol": "dataList",
+            "source_line": "dataList[curIndex] =",
+            "diagnostic_id": "ohscanner.cpp.bounds:0a05eeab287654e0",
+            "source_sha256": "6d8f1982dae51a633959ba7a7cdeb78c6f1f29d85571ed98e7ffc0c789556e74"
+          },
+          {
+            "line": 139,
+            "symbol": "dataSize",
+            "source_line": "dataSize[curIndex] = jsonString.size();",
+            "diagnostic_id": "ohscanner.cpp.bounds:d99838f772284cb3",
+            "source_sha256": "6d8f1982dae51a633959ba7a7cdeb78c6f1f29d85571ed98e7ffc0c789556e74"
+          }
+        ]
+      }
+    },
+    "5.1": {
+      "vulnerable": {
+        "synthetic_commit": "17859babfa4450c9921a54918865907ed545482a",
+        "upstream_commit": "17859babfa4450c9921a54918865907ed545482a",
+        "parse": {
+          "complete": 1
+        },
+        "diagnostic_count": 12,
+        "source_fragment_sha256": "53320b9416f57cb394c6148b66589850922bb748171e2ba80f73cf77e6764c6d",
+        "patch_root_flowbuffer_loop_findings": [
+          {
+            "line": 78,
+            "symbol": "dataList",
+            "source_line": "dataList[curIndex] = std::vector<uint8_t>(flowbuf_stdstr.begin(), flowbuf_stdstr.end());",
+            "diagnostic_id": "ohscanner.cpp.bounds:70fce2d8e55ce6c3",
+            "source_sha256": "53320b9416f57cb394c6148b66589850922bb748171e2ba80f73cf77e6764c6d"
+          },
+          {
+            "line": 79,
+            "symbol": "dataSize",
+            "source_line": "dataSize[curIndex] = strLen;",
+            "diagnostic_id": "ohscanner.cpp.bounds:fba8dc213f95e328",
+            "source_sha256": "53320b9416f57cb394c6148b66589850922bb748171e2ba80f73cf77e6764c6d"
+          },
+          {
+            "line": 88,
+            "symbol": "dataList",
+            "source_line": "dataList[curIndex] = std::vector<uint8_t>(flowbuf_stdstr.begin(), flowbuf_stdstr.end());",
+            "diagnostic_id": "ohscanner.cpp.bounds:0518752ebae010f7",
+            "source_sha256": "53320b9416f57cb394c6148b66589850922bb748171e2ba80f73cf77e6764c6d"
+          },
+          {
+            "line": 89,
+            "symbol": "dataSize",
+            "source_line": "dataSize[curIndex] = strLen;",
+            "diagnostic_id": "ohscanner.cpp.bounds:3fffbf3b3fb174d7",
+            "source_sha256": "53320b9416f57cb394c6148b66589850922bb748171e2ba80f73cf77e6764c6d"
+          },
+          {
+            "line": 129,
+            "symbol": "dataList",
+            "source_line": "dataList[curIndex] = std::vector<uint8_t>(flowbuf_stdstr.begin(), flowbuf_stdstr.end());",
+            "diagnostic_id": "ohscanner.cpp.bounds:4b92d6762f873ac2",
+            "source_sha256": "53320b9416f57cb394c6148b66589850922bb748171e2ba80f73cf77e6764c6d"
+          },
+          {
+            "line": 130,
+            "symbol": "dataSize",
+            "source_line": "dataSize[curIndex] = strLen;",
+            "diagnostic_id": "ohscanner.cpp.bounds:53f77a63361854e7",
+            "source_sha256": "53320b9416f57cb394c6148b66589850922bb748171e2ba80f73cf77e6764c6d"
+          }
+        ],
+        "ordinary_argument_loop_findings": [
+          {
+            "line": 107,
+            "symbol": "dataList",
+            "source_line": "dataList[curIndex] = std::vector<uint8_t>(argString.begin(), argString.end());",
+            "diagnostic_id": "ohscanner.cpp.bounds:4dab437430e2d539",
+            "source_sha256": "53320b9416f57cb394c6148b66589850922bb748171e2ba80f73cf77e6764c6d"
+          },
+          {
+            "line": 108,
+            "symbol": "dataSize",
+            "source_line": "dataSize[curIndex] = size;",
+            "diagnostic_id": "ohscanner.cpp.bounds:368817b7e101cc0a",
+            "source_sha256": "53320b9416f57cb394c6148b66589850922bb748171e2ba80f73cf77e6764c6d"
+          },
+          {
+            "line": 116,
+            "symbol": "dataList",
+            "source_line": "dataList[curIndex] = std::move(data);",
+            "diagnostic_id": "ohscanner.cpp.bounds:f157e719dfeefde2",
+            "source_sha256": "53320b9416f57cb394c6148b66589850922bb748171e2ba80f73cf77e6764c6d"
+          },
+          {
+            "line": 117,
+            "symbol": "dataSize",
+            "source_line": "dataSize[curIndex] = size;",
+            "diagnostic_id": "ohscanner.cpp.bounds:a8064115953eaa01",
+            "source_sha256": "53320b9416f57cb394c6148b66589850922bb748171e2ba80f73cf77e6764c6d"
+          },
+          {
+            "line": 121,
+            "symbol": "dataList",
+            "source_line": "dataList[curIndex] = std::vector<uint8_t>(jsonString.begin(), jsonString.end());",
+            "diagnostic_id": "ohscanner.cpp.bounds:a663a14dd3b4c7f7",
+            "source_sha256": "53320b9416f57cb394c6148b66589850922bb748171e2ba80f73cf77e6764c6d"
+          },
+          {
+            "line": 122,
+            "symbol": "dataSize",
+            "source_line": "dataSize[curIndex] = jsonString.size();",
+            "diagnostic_id": "ohscanner.cpp.bounds:86a0391a42c3a227",
+            "source_sha256": "53320b9416f57cb394c6148b66589850922bb748171e2ba80f73cf77e6764c6d"
+          }
+        ]
+      },
+      "fixed": {
+        "synthetic_commit": "c533fbf42f77112ab0d650f2dc3719f02f88a7af",
+        "upstream_commit": "c533fbf42f77112ab0d650f2dc3719f02f88a7af",
+        "parse": {
+          "complete": 1
+        },
+        "diagnostic_count": 6,
+        "source_fragment_sha256": "a21333d1542ec8f1d6fde741465c4e4169948ddb663adfc7b9a79321c8d6913e",
+        "patch_root_flowbuffer_loop_findings": [],
+        "ordinary_argument_loop_findings": [
+          {
+            "line": 113,
+            "symbol": "dataList",
+            "source_line": "dataList[curIndex] = std::vector<uint8_t>(argString.begin(), argString.end());",
+            "diagnostic_id": "ohscanner.cpp.bounds:2fa2d0f2e3e1f824",
+            "source_sha256": "a21333d1542ec8f1d6fde741465c4e4169948ddb663adfc7b9a79321c8d6913e"
+          },
+          {
+            "line": 114,
+            "symbol": "dataSize",
+            "source_line": "dataSize[curIndex] = size;",
+            "diagnostic_id": "ohscanner.cpp.bounds:5cf4c9cc5740ca48",
+            "source_sha256": "a21333d1542ec8f1d6fde741465c4e4169948ddb663adfc7b9a79321c8d6913e"
+          },
+          {
+            "line": 122,
+            "symbol": "dataList",
+            "source_line": "dataList[curIndex] = std::move(data);",
+            "diagnostic_id": "ohscanner.cpp.bounds:342f497c94e92f79",
+            "source_sha256": "a21333d1542ec8f1d6fde741465c4e4169948ddb663adfc7b9a79321c8d6913e"
+          },
+          {
+            "line": 123,
+            "symbol": "dataSize",
+            "source_line": "dataSize[curIndex] = size;",
+            "diagnostic_id": "ohscanner.cpp.bounds:60bdd0654b109d1b",
+            "source_sha256": "a21333d1542ec8f1d6fde741465c4e4169948ddb663adfc7b9a79321c8d6913e"
+          },
+          {
+            "line": 127,
+            "symbol": "dataList",
+            "source_line": "dataList[curIndex] = std::vector<uint8_t>(jsonString.begin(), jsonString.end());",
+            "diagnostic_id": "ohscanner.cpp.bounds:b823b48dc1ae5ce4",
+            "source_sha256": "a21333d1542ec8f1d6fde741465c4e4169948ddb663adfc7b9a79321c8d6913e"
+          },
+          {
+            "line": 128,
+            "symbol": "dataSize",
+            "source_line": "dataSize[curIndex] = jsonString.size();",
+            "diagnostic_id": "ohscanner.cpp.bounds:a9bb35f67094ed71",
+            "source_sha256": "a21333d1542ec8f1d6fde741465c4e4169948ddb663adfc7b9a79321c8d6913e"
+          }
+        ]
+      }
+    }
+  },
+  "interpretation": {
+    "6.0": "Six diagnostics in the vulnerable version are the dataList/dataSize writes in the three flowbuffer while loops. The official patch adds curIndex<dataListSize to those loops; the fixed function has none at those source positions. Six remaining fixed diagnostics are the pre-existing ordinary args loop writes and are not classified as the disclosed missing while-bound root cause. They remain unresolved candidate obligations regarding cursor/capacity arithmetic.",
+    "5.1": "The previously untrained branch exhibits the same split: six vulnerable flowbuffer-loop candidates disappear after the official guards, while six ordinary argument writes remain in both versions. The holdout is now consumed evidence.",
+    "scope_limit": "Function fragments were exact byte ranges extracted from hash-bound upstream translation units and scanned through the registered M2 CLI. Whole translation units remain partial/blocked; this is not product vulnerability confirmation."
+  }
+}

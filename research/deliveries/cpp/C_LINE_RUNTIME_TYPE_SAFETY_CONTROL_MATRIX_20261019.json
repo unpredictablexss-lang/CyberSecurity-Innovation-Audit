@@ -1,0 +1,492 @@
+{
+  "schema": "c-line-runtime-type-safety-control-matrix-v1",
+  "detector": "ohscanner.ark.runtime.type_safety",
+  "detector_version": "0.3.10",
+  "algorithm_freeze": "research/deliveries/cpp/ark-runtime-c-line-algorithm-freeze-20261018.json",
+  "algorithm_freeze_sha256": "f9b6da07aa69ea78ffc7ab89272accedec53d8db782a2f206a253cb1563b8bf9",
+  "status": "research_controls_only",
+  "interpretation": "Each evidence_label is scoped to the listed control result. analysis_coverage records parser/replay completeness; neither is a product verdict. Counts from this matrix are not accuracy, recall, or independent-review metrics. Official nested manifest snapshots pin nearby runtime/productdefine commits but are not ancestors of the analyzed parent/fix and do not resolve generated historical product build arguments. The exact parent/fix commits also include an upstream cross-type TypedArray Filter regression and one-line result-HClass store-type repair; this corroborates the narrow historical dataflow but does not provide parent runtime reproduction or security impact.",
+  "references": {
+    "freeze": {
+      "path": "research/deliveries/cpp/ark-runtime-c-line-algorithm-freeze-20261018.json",
+      "sha256": "f9b6da07aa69ea78ffc7ab89272accedec53d8db782a2f206a253cb1563b8bf9"
+    },
+    "type_safety_controls": {
+      "path": "research/tests/test_ark_runtime_exception_guard.py",
+      "sha256": "e5085b5e7daeb6e6afdb99abf8376ded35ed8cac6563ceb3d560f1d6560aaeef"
+    },
+    "partial_replay": {
+      "path": "research/tests/test_ark_runtime_current_partial_replay.py",
+      "sha256": "dabf800823aab995a0246d39a86ce86fa37a225bfa0a4c99246c79bdd90c56a7"
+    },
+    "binding_controls": {
+      "path": "research/tests/test_ark_runtime_type_safety_binding.py",
+      "sha256": "499db960975e224aceb4c7b108702072a56d9f782f6c2eefd039e05bbcfbd660"
+    },
+    "species_reference_control": {
+      "path": "research/deliveries/cpp/typedarray_species_behavior_control.js",
+      "sha256": "e48a8ee209f3fa90cc0aa51a8c2c1b440d625a00232975a67b81d17695299e0e"
+    },
+    "current_product_runtime_behavior": {
+      "path": "research/experiments/ark_runtime/c1_product_gn_20261019/runtime_behavior/runtime_behavior_record.json",
+      "sha256": "918cbc4f0e6edd1d950828bc10129dfec531c2fdb9d6f2494be7b429482c5b8c"
+    },
+    "current_product_runtime_behavior_readme": {
+      "path": "research/experiments/ark_runtime/c1_product_gn_20261019/runtime_behavior/README.md",
+      "sha256": "a566981ce5aff2f5e9df0fd0357faa8abda338d83568f9003eb266af7b7c5abd"
+    },
+    "parent_fixture": {
+      "path": "research/experiments/ark-runtime-exact-source-20261018/sources/type-origin-parent.cpp",
+      "sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422"
+    },
+    "fix_fixture": {
+      "path": "research/experiments/ark-runtime-exact-source-20261018/sources/type-origin-fix.cpp",
+      "sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e"
+    },
+    "current_product_build_profile": {
+      "path": "research/experiments/ark_runtime/c1_product_gn_20261019/profile.json",
+      "sha256": "ea5de4ee971b4559dadc8feb6967aa330633e328df45078ba000898759a7df10"
+    },
+    "current_product_artifact_verifier": {
+      "path": "research/experiments/ark_runtime/c1_product_gn_20261019/verify_profile_artifacts.py",
+      "sha256": "3b602c636df67bc31034a988966c3a37db420bdb39ea58f64a29a7776ccbb349"
+    },
+    "current_product_sink_binding": {
+      "path": "research/deliveries/cpp/C_LINE_C1_SINK_BINDING_20261019.json",
+      "sha256": "6776d5a76f2a9b008fa513ec039837e9a171f960b77a42d18232f76f5fc37dc7"
+    },
+    "ast_subset_contract": {
+      "path": "research/deliveries/cpp/ark-runtime-type-safety-ast-subset-contract-v1.json",
+      "sha256": "777e502c82e35d63204163987391ba5cf629002ed438ffee35f8a4a67f25ff06"
+    },
+    "ast_subset_contract_verifier": {
+      "path": "research/deliveries/cpp/verify_ark_runtime_ast_subset_contract.py",
+      "sha256": "4c7f5d3cef13aff04c861c48025aaa5abb967e9f859fb7a2b3caeee38b54ce43"
+    },
+    "ast_subset_contract_documentation": {
+      "path": "research/deliveries/cpp/ark-runtime-c-line-contract-20261018.md",
+      "sha256": "54fe3bbce24476afa01c4090512cdfac1c67868ba3d3c465402df130791d38c7"
+    },
+    "parser_freeze_control": {
+      "path": "research/tests/test_ark_runtime_type_safety_freeze.py",
+      "sha256": "982ea1337410d277b7646a0e1d3725b3e8deb39fdd6157947b4138d4382c9821"
+    },
+    "independent_holdout_labels": {
+      "path": "research/deliveries/cpp/holdout-arkcompiler-ets-frontend-fadba67/independent_reviewer_labels.csv",
+      "sha256": "0904b9984480a2327d58196565c02fc0e79cef07465d4ccdc45a60b387f417f5"
+    },
+    "independent_holdout_attestation": {
+      "path": "research/deliveries/cpp/holdout-arkcompiler-ets-frontend-fadba67/independent_reviewer_attestation.json",
+      "sha256": "e4e67be25dc05bbb243010e544508fb4a65e2a4af7b442dc938ab76a6aba2e4f"
+    },
+    "independent_holdout_report": {
+      "path": "research/deliveries/cpp/holdout-arkcompiler-ets-frontend-fadba67/independent_review_results.json",
+      "sha256": "27c89c4b3f1b096ebe0932c54e44bdfe2e9103499803b7eb57838555aa7003c6"
+    },
+    "independent_holdout_packet": {
+      "path": "research/deliveries/cpp/holdout-arkcompiler-ets-frontend-fadba67/blind_packet.md",
+      "sha256": "c23406de4796bceeee8c922bae6438267676c4439d498ce4c86479322f9886da"
+    },
+    "historical_partial_diagnosis": {
+      "path": "research/deliveries/cpp/C_LINE_HISTORICAL_PARTIAL_DIAGNOSIS_20261019.json",
+      "sha256": "0c50e15126f92e3062019a93954a2b0d734ed69b048ea634a6b7962a03154d7c"
+    },
+    "callback_mutation_probe": {
+      "path": "research/experiments/ark_runtime/c1_product_gn_20261019/runtime_behavior/species_callback_mutation_probe.js",
+      "sha256": "6897e69b7c3ebbdf5bdfb7182a1d3368eefadf606cafd472eac12ff05f63463b"
+    },
+    "callback_mutation_probe_output": {
+      "path": "research/experiments/ark_runtime/c1_product_gn_20261019/runtime_behavior/species_callback_mutation_probe.stdout",
+      "sha256": "852a403879f65017421ac192118cb742ef3bf5e70cb3bc78e7e872d42cc4015a"
+    },
+    "historical_gn_build_profile_audit": {
+      "path": "research/deliveries/cpp/C_LINE_HISTORICAL_GN_BUILD_PROFILE_AUDIT_20261019.json",
+      "sha256": "406d8c623c0974d72f34986062f29d14fe918de883cdd88a4fc8a0fb2291285a"
+    },
+    "current_product_source_and_security_review": {
+      "path": "research/deliveries/cpp/C_LINE_SPECIES_RUNTIME_SOURCE_REVIEW_20261018.md",
+      "sha256": "d59cafb85aff8de9d6ca27ec4d30267d2cf507162125c72b74ea4f7c307cce4d"
+    },
+    "official_manifest_snapshot_context": {
+      "path": "research/deliveries/cpp/C_LINE_OFFICIAL_MANIFEST_SNAPSHOT_CHECK_20261019.json",
+      "sha256": "43fb187c35264d9ccb7247f703704c0716908766b49d41ec16fe1d23f22d6c1b"
+    },
+    "historical_upstream_filter_evidence": {
+      "path": "research/deliveries/cpp/C_LINE_HISTORICAL_UPSTREAM_FILTER_EVIDENCE_20261019.md",
+      "sha256": "743872001f689e30e4f4d733086b3928fc9e74a272d62caf515d9d075644b303"
+    }
+  },
+  "controls": [
+    {
+      "id": "c1-subclass-filter-species",
+      "control": "C1 ARM32 VM subclass TypedArray @@species dispatch in Filter",
+      "evidence_label": "candidate",
+      "analysis_coverage": "current_product_vm_under_qemu_asm_interpreter_false",
+      "role": "runtime behavior candidate",
+      "evidence": [
+        "research/experiments/ark_runtime/c1_product_gn_20261019/runtime_behavior/runtime_behavior_record.json",
+        "research/experiments/ark_runtime/c1_product_gn_20261019/runtime_behavior/subclass_species_probe.js",
+        "research/experiments/ark_runtime/c1_product_gn_20261019/runtime_behavior/subclass_species_probe.stdout",
+        "ECMAScript 2025 §23.2.3.10 TypedArray.prototype.filter"
+      ],
+      "result": "Direct @@species reads return expected constructors, but Filter on DefaultDerived and CustomDerived returns Int8Array; Node v22.14 returns Derived and Uint16Species. An own source.constructor[Symbol.species] override is honored.",
+      "boundary": "Current C1 runtime semantic divergence only; no memory safety, product entry, attacker control, or security impact established."
+    },
+    {
+      "id": "c1-species-protector-perturbation",
+      "control": "C1 ARM32 VM: invalidate %TypedArray% species protector between two Filter calls",
+      "evidence_label": "candidate",
+      "analysis_coverage": "same_process_perturbation_passed_under_qemu_asm_interpreter_false",
+      "role": "runtime guard-causality control",
+      "evidence": [
+        "research/experiments/ark_runtime/c1_product_gn_20261019/runtime_behavior/runtime_behavior_record.json",
+        "research/experiments/ark_runtime/c1_product_gn_20261019/runtime_behavior/species_protector_perturbation.js",
+        "research/experiments/ark_runtime/c1_product_gn_20261019/runtime_behavior/species_protector_perturbation.stdout",
+        "pinned object_operator.cpp blob d885881517adb4a892ec9968cfd3e457e2bc2afd"
+      ],
+      "result": "Before mutation Filter returned Int8Array. Defining %TypedArray%[Symbol.species] invalidated the protector; the next Filter invoked the getter once and returned Uint16Array with value 6.",
+      "boundary": "Perturbation supports the fast-path explanation under QEMU; no device, entrypoint, attacker control, or security impact established."
+    },
+    {
+      "id": "c1-callback-species-protector-mutation",
+      "control": "C1 ARM32 VM: callback mutates %TypedArray% species during Filter",
+      "evidence_label": "partial",
+      "analysis_coverage": "same_call_callback_mutation_control_passed_under_qemu_asm_interpreter_false",
+      "role": "runtime callback ordering and result-creation control",
+      "evidence": [
+        "research/experiments/ark_runtime/c1_product_gn_20261019/runtime_behavior/runtime_behavior_record.json",
+        "research/experiments/ark_runtime/c1_product_gn_20261019/runtime_behavior/species_callback_mutation_probe.js",
+        "research/experiments/ark_runtime/c1_product_gn_20261019/runtime_behavior/species_callback_mutation_probe.stdout"
+      ],
+      "result": "The first callback redefines %TypedArray%[Symbol.species]. Both callbacks complete, the getter runs once, and Filter returns Uint8Array values 120 and 121.",
+      "boundary": "Current C1 VM/QEMU control only; does not establish historical parent/fix runtime behavior, product entry reachability, attacker control, or security impact."
+    },
+    {
+      "id": "c1-independent-runtime-controls",
+      "control": "C1 ARM32 VM isolated BigInt, side-effect, callback-mutation, and method-family controls",
+      "evidence_label": "partial",
+      "analysis_coverage": "four_isolated_controls_passed_under_qemu_asm_interpreter_false",
+      "role": "runtime safety controls",
+      "evidence": [
+        "research/experiments/ark_runtime/c1_product_gn_20261019/runtime_behavior/typedarray_runtime_additional_controls.js",
+        "research/experiments/ark_runtime/c1_product_gn_20261019/runtime_behavior/typedarray_runtime_additional_controls.stdout"
+      ],
+      "result": "Number/BigInt mismatch TypeError; callbacks-before-species and thrown sentinel identity; callback constructor mutation; Set/CopyWithin/With avoid @@species and With returns intrinsic type all passed.",
+      "boundary": "Targeted current-C1 QEMU controls only; not an independent blind holdout or full product/runtime coverage."
+    },
+    {
+      "id": "filter-parent",
+      "control": "exact historical Filter parent",
+      "evidence_label": "candidate",
+      "analysis_coverage": "partial",
+      "role": "historical positive",
+      "evidence": [
+        "research/tests/test_ark_runtime_current_partial_replay.py",
+        "research/deliveries/cpp/C_LINE_HISTORICAL_UPSTREAM_FILTER_EVIDENCE_20261019.md"
+      ],
+      "result": "Pinned parent replay remains a source-level candidate; the exact upstream fix changes Filter stores to use the result array HClass type and adds a cross-type prototype-mutation AOT regression, corroborating the mechanism without a parent runtime reproduction.",
+      "boundary": "Partial historical AST/build profile and no parent runtime reproduction; not a product vulnerability conclusion."
+    },
+    {
+      "id": "filter-fix",
+      "control": "exact historical Filter fix",
+      "evidence_label": "partial",
+      "analysis_coverage": "partial",
+      "role": "historical repair control",
+      "evidence": [
+        "research/tests/test_ark_runtime_current_partial_replay.py",
+        "research/deliveries/cpp/C_LINE_HISTORICAL_UPSTREAM_FILTER_EVIDENCE_20261019.md"
+      ],
+      "result": "Pinned fix source applies the result HClass type to Filter stores and adds the typedarrayfilter AOT regression; C1 later-profile source contains equivalent flow. The C1 regression ABC compiled, but emulator replay is unavailable here.",
+      "boundary": "Historical and C1 execution remain unverified for this exact regression; C1 is not an ancestor of the historical fix; no product-entry or impact evidence."
+    },
+    {
+      "id": "filter-post-exception-guard",
+      "control": "synthetic move of type read after exception guard",
+      "evidence_label": "partial",
+      "analysis_coverage": "partial",
+      "role": "repair control",
+      "evidence": [
+        "research/tests/test_ark_runtime_current_partial_replay.py"
+      ],
+      "result": "Synthetic ordering variant exercises exception-guard placement.",
+      "boundary": "Synthetic control only; not a historical target."
+    },
+    {
+      "id": "set-safe-origin",
+      "control": "Set uses same modeled origin",
+      "evidence_label": "partial",
+      "analysis_coverage": "partial",
+      "role": "safe method control",
+      "evidence": [],
+      "result": "Set path is checked against same-origin semantics.",
+      "boundary": "Method applicability remains partial."
+    },
+    {
+      "id": "copywithin",
+      "control": "CopyWithin method matrix",
+      "evidence_label": "partial",
+      "analysis_coverage": "partial",
+      "role": "method-family control",
+      "evidence": [],
+      "result": "CopyWithin control is retained separately from Filter.",
+      "boundary": "Method-family semantic coverage remains partial."
+    },
+    {
+      "id": "with",
+      "control": "With method matrix",
+      "evidence_label": "partial",
+      "analysis_coverage": "partial",
+      "role": "method-family control",
+      "evidence": [],
+      "result": "With control is retained separately from Filter.",
+      "boundary": "Method-family semantic coverage remains partial."
+    },
+    {
+      "id": "alias",
+      "control": "species result assigned through local alias",
+      "evidence_label": "partial",
+      "analysis_coverage": "partial",
+      "role": "alias control",
+      "evidence": [],
+      "result": "Alias assignment exercises local origin tracking.",
+      "boundary": "Analysis remains partial."
+    },
+    {
+      "id": "generated-reassignment",
+      "control": "reassignment across generated gate blocks",
+      "evidence_label": "partial",
+      "analysis_coverage": "partial",
+      "role": "side-effect/reassignment control",
+      "evidence": [],
+      "result": "Reassignment across generated gate blocks is retained.",
+      "boundary": "Analysis remains partial."
+    },
+    {
+      "id": "nested-creator",
+      "control": "creator nested inside unsupported wrapper",
+      "evidence_label": "partial",
+      "analysis_coverage": "partial",
+      "role": "nested-call control",
+      "evidence": [],
+      "result": "Nested creator call is exercised.",
+      "boundary": "Unsupported wrapper prevents complete proof."
+    },
+    {
+      "id": "looped-creator",
+      "control": "creator site in generated loop",
+      "evidence_label": "partial",
+      "analysis_coverage": "partial",
+      "role": "loop control",
+      "evidence": [],
+      "result": "Loop-contained creator site is exercised.",
+      "boundary": "Loop analysis remains partial."
+    },
+    {
+      "id": "model-macro",
+      "control": "model symbol redefined as a macro",
+      "evidence_label": "blocked",
+      "analysis_coverage": "not_analyzed",
+      "role": "macro identity control",
+      "evidence": [],
+      "result": "Analysis refuses macro-redefined modeled symbol.",
+      "boundary": "Blocked on macro semantics."
+    },
+    {
+      "id": "conditional-target",
+      "control": "Filter conditionally compiled under unresolved macro",
+      "evidence_label": "blocked",
+      "analysis_coverage": "not_analyzed",
+      "role": "build configuration control",
+      "evidence": [],
+      "result": "Analysis refuses unresolved conditional target identity.",
+      "boundary": "Blocked on build configuration."
+    },
+    {
+      "id": "type-shadow",
+      "control": "GateRef alias/type shadowing",
+      "evidence_label": "blocked",
+      "analysis_coverage": "not_analyzed",
+      "role": "type identity control",
+      "evidence": [],
+      "result": "Analysis refuses unresolved type shadowing.",
+      "boundary": "Blocked on type resolution."
+    },
+    {
+      "id": "derived-owner",
+      "control": "derived class defines same-name Filter",
+      "evidence_label": "partial",
+      "analysis_coverage": "complete_local_parse",
+      "role": "inheritance/name control",
+      "evidence": [],
+      "result": "Derived-class same-name Filter is distinguished locally.",
+      "boundary": "Inheritance/dispatch semantics remain partial."
+    },
+    {
+      "id": "different-path-spoof",
+      "control": "same-signature Filter in unbound spoof.cpp",
+      "evidence_label": "blocked",
+      "analysis_coverage": "not_analyzed",
+      "role": "source identity control",
+      "evidence": [
+        "research/tests/test_ark_runtime_type_safety_binding.py"
+      ],
+      "result": "Unbound same-signature target is rejected.",
+      "boundary": "Blocked by exact path/source identity binding."
+    },
+    {
+      "id": "creator-blob-mismatch",
+      "control": "declared creator blob differs from supplied source bytes",
+      "evidence_label": "blocked",
+      "analysis_coverage": "not_analyzed",
+      "role": "creator identity control",
+      "evidence": [
+        "research/tests/test_ark_runtime_type_safety_binding.py"
+      ],
+      "result": "Creator blob mismatch is rejected.",
+      "boundary": "Blocked on exact creator source binding."
+    },
+    {
+      "id": "species-reference-engine",
+      "control": "7 ECMAScript species and callback-order controls",
+      "evidence_label": "blocked",
+      "analysis_coverage": "reference_engine_only",
+      "role": "reference semantics",
+      "evidence": [],
+      "result": "Seven reference-engine controls document expected species/callback order.",
+      "boundary": "Reference engine is not the C1 product runtime."
+    },
+    {
+      "id": "public-runner",
+      "control": "catalog and public Runner admission state",
+      "evidence_label": "blocked",
+      "analysis_coverage": "public_admission",
+      "role": "admission control",
+      "evidence": [
+        "src/ohscanner/detectors/admission.py"
+      ],
+      "result": "Public detector remains blocked with execution_enabled=false.",
+      "boundary": "Private research controls do not admit the public Runner."
+    },
+    {
+      "id": "model-digest-tamper",
+      "control": "same detector version with mutated species model assumption",
+      "evidence_label": "blocked",
+      "analysis_coverage": "not_analyzed",
+      "role": "model identity control",
+      "evidence": [
+        "research/tests/test_ark_runtime_type_safety_binding.py"
+      ],
+      "result": "Model digest mismatch is rejected.",
+      "boundary": "Blocked on exact frozen model digest."
+    },
+    {
+      "id": "parser-environment-drift",
+      "control": "Tree-sitter runtime, C++ grammar package, or grammar ABI differs from frozen model",
+      "evidence_label": "blocked",
+      "analysis_coverage": "not_analyzed",
+      "role": "parser environment control",
+      "evidence": [
+        "research/tests/test_ark_runtime_type_safety_freeze.py"
+      ],
+      "result": "Parser environment mismatch is rejected before analysis.",
+      "boundary": "Blocked on exact parser environment binding."
+    },
+    {
+      "id": "historical-root-build-config-unbound",
+      "control": "Historical parent/fix runtime BUILD.gn inputs and generated build flags",
+      "evidence_label": "blocked",
+      "analysis_coverage": "build_config_source_audit_only;historical_args_unresolved",
+      "role": "historical build-context identity control",
+      "evidence": [
+        "research/deliveries/cpp/C_LINE_HISTORICAL_GN_BUILD_PROFILE_AUDIT_20261019.json",
+        "research/full_scan_20261018/lanes/c/model.py",
+        "research/deliveries/cpp/ark-runtime-type-safety-ast-subset-contract-v1.json"
+      ],
+      "result": "Exact compiler BUILD.gn blobs are bound but delegate to root BUILD.gn, which is not a declared model dependency. The only discovered local args.gn belongs to runtime commit 1b23531531e768398682582969c2a9f17e72cafe and has different target/creator blobs; current/fixed workspace manifests point to a65a2853 and 5d253ed7. Searches across 6,546 and 2,782 reachable manifest commits found neither parent nor fix revision. No compile_commands.json was found. Parent/fix args and resolved compile commands remain unavailable.",
+      "boundary": "Historical build-profile and macro assumptions remain blocked; neither current-a65 nor the unrelated rk3568/root/debug/asan profile transfers to parent/fix."
+    },
+    {
+      "id": "c1-set-method-no-species",
+      "control": "Set: no @@species read",
+      "evidence_label": "safe",
+      "analysis_coverage": "single_probe_passed_under_c1_arm32_qemu_asm_interpreter_false",
+      "role": "current-runtime method safety control",
+      "evidence": [
+        "research/experiments/ark_runtime/c1_product_gn_20261019/runtime_behavior/runtime_behavior_record.json",
+        "research/experiments/ark_runtime/c1_product_gn_20261019/runtime_behavior/typedarray_set_no_species_probe.js",
+        "research/experiments/ark_runtime/c1_product_gn_20261019/runtime_behavior/typedarray_set_no_species_probe.abc",
+        "research/experiments/ark_runtime/c1_product_gn_20261019/runtime_behavior/typedarray_set_no_species_probe.stdout"
+      ],
+      "result": "set mutates [1,2,3] to [1,9,3] without invoking the throwing subclass @@species getter.",
+      "boundary": "Exact current C1 VM/QEMU probe only; not a historical parent/fix result, complete product image/device result, entrypoint proof, or security-impact finding."
+    },
+    {
+      "id": "c1-copywithin-method-no-species",
+      "control": "CopyWithin: no @@species read",
+      "evidence_label": "safe",
+      "analysis_coverage": "single_probe_passed_under_c1_arm32_qemu_asm_interpreter_false",
+      "role": "current-runtime method safety control",
+      "evidence": [
+        "research/experiments/ark_runtime/c1_product_gn_20261019/runtime_behavior/runtime_behavior_record.json",
+        "research/experiments/ark_runtime/c1_product_gn_20261019/runtime_behavior/typedarray_copywithin_no_species_probe.js",
+        "research/experiments/ark_runtime/c1_product_gn_20261019/runtime_behavior/typedarray_copywithin_no_species_probe.abc",
+        "research/experiments/ark_runtime/c1_product_gn_20261019/runtime_behavior/typedarray_copywithin_no_species_probe.stdout"
+      ],
+      "result": "CopyWithin mutates [1,2,3] to [1,1,3] without invoking the throwing subclass @@species getter.",
+      "boundary": "Exact current C1 VM/QEMU probe only; not a historical parent/fix result, complete product image/device result, entrypoint proof, or security-impact finding."
+    },
+    {
+      "id": "c1-with-method-no-species",
+      "control": "With: no @@species read; intrinsic result",
+      "evidence_label": "safe",
+      "analysis_coverage": "single_probe_passed_under_c1_arm32_qemu_asm_interpreter_false",
+      "role": "current-runtime method safety control",
+      "evidence": [
+        "research/experiments/ark_runtime/c1_product_gn_20261019/runtime_behavior/runtime_behavior_record.json",
+        "research/experiments/ark_runtime/c1_product_gn_20261019/runtime_behavior/typedarray_with_no_species_probe.js",
+        "research/experiments/ark_runtime/c1_product_gn_20261019/runtime_behavior/typedarray_with_no_species_probe.abc",
+        "research/experiments/ark_runtime/c1_product_gn_20261019/runtime_behavior/typedarray_with_no_species_probe.stdout"
+      ],
+      "result": "With returns intrinsic Int8Array [7,2,3] without invoking the throwing subclass @@species getter.",
+      "boundary": "Exact current C1 VM/QEMU probe only; not a historical parent/fix result, complete product image/device result, entrypoint proof, or security-impact finding."
+    }
+  ],
+  "independent_holdout_review": {
+    "status": "complete_blind_applicability_review",
+    "algorithm_freeze_sha256": "f9b6da07aa69ea78ffc7ab89272accedec53d8db782a2f206a253cb1563b8bf9",
+    "source_repository": "openharmony/arkcompiler_ets_frontend",
+    "source_commit": "fadba67b0bdf625d30d69e0940e26c52992669df",
+    "samples_total": 21,
+    "labels_completed": 21,
+    "scope_counts": {
+      "out_of_scope": 20,
+      "uncertain": 1
+    },
+    "evidence_label_counts": {
+      "safe": 17,
+      "unknown": 3,
+      "candidate": 1
+    },
+    "unknown_samples": [
+      "F007",
+      "F014",
+      "F021"
+    ],
+    "candidate_sample": "F003",
+    "interpretation_limit": "clustered applicability/false-match review only; no semantic recall or component-wide precision/recall claim"
+  },
+  "historical_partial_diagnosis": {
+    "status": "root_cause_narrowed_but_replay_remains_partial",
+    "profiles": [
+      "parent",
+      "fix"
+    ],
+    "target_function_syntax": "complete_and_uniquely_resolved_in_both_profiles",
+    "translation_unit_parse": "partial_in_both_profiles",
+    "parser_errors_per_profile": 2,
+    "errors_outside_target_function": true,
+    "primary_cause": "Tree-sitter missing-semicolon nodes at macro-sensitive constructs: BRANCH(...) and BUILTIN_COMPILER_TYPED_ARRAY_TYPES(...).",
+    "interpretation_limit": "Does not validate macro expansion, build configuration, dependencies/types, or public Runner admission."
+  }
+}

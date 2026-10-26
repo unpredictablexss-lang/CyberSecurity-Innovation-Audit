@@ -1,0 +1,130 @@
+{
+  "schema": 1,
+  "experiment": "D5 isolated extracted ProcessReceivedData component behavior",
+  "scope": "Exact pinned function body with deterministic crypto/parser/logger stubs; not a full product build",
+  "sandbox": "No network namespace; user namespace root; mount namespace with tmpfs chroot containing only the static harness binary",
+  "before_commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+  "after_commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+  "versions": [
+    {
+      "source": {
+        "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+        "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+        "path": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+        "blob": "f929832bb488cef82cbc9c22427f548ae9935c98",
+        "sha256": "1c2b9ff35d5c0b726692358231722d830f7a96daf805450c01fb40fb53cbc6f9",
+        "size": 26736,
+        "checks": {
+          "size_matches": true,
+          "sha256_matches": true,
+          "git_blob_matches": true
+        }
+      },
+      "extracted_function_sha256": "5595d0950c9791b9ffbab8af77d6908288b07d72f0e3dc270f7328b74a36a96d",
+      "generated_c_sha256": "5981e7e71c6d570080fe29de0d4eecba505c4bd85cbdefd7cdcbff9749af3528",
+      "binary_sha256": "35dcd57cc89edbf3720cb7918092928dd74e4b5cdc5685710756e152c000c9c1",
+      "compiler": "gcc (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0",
+      "execution": "rootless_sandbox_pass",
+      "scenarios": [
+        {
+          "scenario": "valid_secret_request",
+          "observed": {
+            "return": 0,
+            "marker": 1,
+            "log_calls": 1,
+            "process_calls": 1
+          },
+          "elapsed_ms": 17.487,
+          "sandbox": "rootless user+mount+network namespace; tmpfs chroot; static binary"
+        },
+        {
+          "scenario": "valid_nonsecret_reply",
+          "observed": {
+            "return": 0,
+            "marker": 0,
+            "log_calls": 1,
+            "process_calls": 1
+          },
+          "elapsed_ms": 14.2,
+          "sandbox": "rootless user+mount+network namespace; tmpfs chroot; static binary"
+        },
+        {
+          "scenario": "decrypt_failure",
+          "observed": {
+            "return": -1,
+            "marker": 0,
+            "log_calls": 1,
+            "process_calls": 0
+          },
+          "elapsed_ms": 12.749,
+          "sandbox": "rootless user+mount+network namespace; tmpfs chroot; static binary"
+        }
+      ]
+    },
+    {
+      "source": {
+        "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+        "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+        "path": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+        "blob": "52ade9ae7136204a0174d94a77bf8dd008c9d505",
+        "sha256": "98d1dee8af6cb0761eae166264e5dfd25480cfe64bdf0b7ff9924f57f0ade4bc",
+        "size": 26641,
+        "checks": {
+          "size_matches": true,
+          "sha256_matches": true,
+          "git_blob_matches": true
+        }
+      },
+      "extracted_function_sha256": "db0006892b3cbd09dbddcfe4bf623cd08f833b104a913bc2de16605c2f379f46",
+      "generated_c_sha256": "72264cad641c50d180add75f64e78ddecfb8aea1da0802cdfedfb8c01a42fb24",
+      "binary_sha256": "310ff19057234402764d4850408f5b4df0f4bc31e0f620435c14433e10d5237d",
+      "compiler": "gcc (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0",
+      "execution": "rootless_sandbox_pass",
+      "scenarios": [
+        {
+          "scenario": "valid_secret_request",
+          "observed": {
+            "return": 0,
+            "marker": 0,
+            "log_calls": 0,
+            "process_calls": 1
+          },
+          "elapsed_ms": 13.895,
+          "sandbox": "rootless user+mount+network namespace; tmpfs chroot; static binary"
+        },
+        {
+          "scenario": "valid_nonsecret_reply",
+          "observed": {
+            "return": 0,
+            "marker": 0,
+            "log_calls": 0,
+            "process_calls": 1
+          },
+          "elapsed_ms": 13.448,
+          "sandbox": "rootless user+mount+network namespace; tmpfs chroot; static binary"
+        },
+        {
+          "scenario": "decrypt_failure",
+          "observed": {
+            "return": -1,
+            "marker": 0,
+            "log_calls": 1,
+            "process_calls": 0
+          },
+          "elapsed_ms": 13.936,
+          "sandbox": "rootless user+mount+network namespace; tmpfs chroot; static binary"
+        }
+      ]
+    }
+  ],
+  "component_assertions": "passed",
+  "product_h01_h08": "not_run",
+  "validated_vulnerability": 0,
+  "product_impact": "unknown",
+  "limitations": [
+    "DecryptMessage, cJSON, ProcessMessage, SoftBusLog backend, build flags, and log service are deterministic stubs.",
+    "The harness proves only whether this exact function body passes a synthetic decrypted request to the stub logger.",
+    "It does not establish a product build, real cryptographic path, persistent log output, unauthorized reader, affected release, or vulnerability confirmation.",
+    "The full product H01-H08 matrix remains not_run; this is not Docker/API/Worker/public Runner integration."
+  ]
+}

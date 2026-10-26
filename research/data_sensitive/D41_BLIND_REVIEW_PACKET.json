@@ -1,0 +1,916 @@
+{
+  "schema": 1,
+  "title": "D41 blind source review packet",
+  "state": "pending_independent_labels",
+  "source_commit_manifest": "D41_HOLDOUT_MANIFEST.json",
+  "candidate_sample_per_repo_max": 8,
+  "control_sample_per_repo_max": 10,
+  "case_count": 99,
+  "independent_labeler_required": true,
+  "review_labels": [
+    "supported_risk",
+    "protected_safe",
+    "unrelated",
+    "unknown"
+  ],
+  "review_instructions": [
+    "Do not edit the detector or model before labeling.",
+    "Inspect the exact file from the listed commit and verify the listed file SHA-256.",
+    "Record line-bound evidence for a sensitive source, flow, and output/sink plus supporting and contradicting controls.",
+    "Use unknown for insufficient type, control-flow, build, or log-reader evidence; no case is a confirmed product vulnerability by packet inclusion.",
+    "This stratified review packet is sampled after the static scan and is not a population accuracy estimate; it supports manual case review only."
+  ],
+  "cases": [
+    {
+      "case_id": "D41-19dc86a50036",
+      "repository": "openharmony/inputmethod_imf",
+      "commit": "7777cba9eb19085af8e7b90088531028d2937460",
+      "tree": "3edaf7b3825158e13177a8ed61fa1689905229ba",
+      "file": "frameworks/js/napi/inputmethodability/js_input_method_engine_setting.cpp",
+      "anchor_line": 79,
+      "source_sha256": "16799181cd98833e21448da8ec713dfbf71abe6db9dab81a098792e8a3ec240a"
+    },
+    {
+      "case_id": "D41-7d927c3cde2f",
+      "repository": "openharmony/inputmethod_imf",
+      "commit": "7777cba9eb19085af8e7b90088531028d2937460",
+      "tree": "3edaf7b3825158e13177a8ed61fa1689905229ba",
+      "file": "services/adapter/app_mgr_adapter/src/app_mgr_adapter.cpp",
+      "anchor_line": 67,
+      "source_sha256": "c1cb79b075211fbe3d9b2a1c60afcc0013bf2bed94d6f59bffecda0f0a4f3dd9"
+    },
+    {
+      "case_id": "D41-778845641800",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "window_scene/common/src/session_permission.cpp",
+      "anchor_line": 118,
+      "source_sha256": "42d5f9ec4370d578788228ddc8c506b230ea90d186d006c15d49df970a934b6e"
+    },
+    {
+      "case_id": "D41-f9bb978c0bc5",
+      "repository": "openharmony/inputmethod_imf",
+      "commit": "7777cba9eb19085af8e7b90088531028d2937460",
+      "tree": "3edaf7b3825158e13177a8ed61fa1689905229ba",
+      "file": "frameworks/js/napi/inputmethodability/js_input_method_engine_setting.cpp",
+      "anchor_line": 77,
+      "source_sha256": "16799181cd98833e21448da8ec713dfbf71abe6db9dab81a098792e8a3ec240a"
+    },
+    {
+      "case_id": "D41-080fdbc38bdb",
+      "repository": "openharmony/telephony_call_manager",
+      "commit": "6638d1b37f278d7ed380d907674820e7467cedf8",
+      "tree": "3eb7742bdcd1507ad75cfe9c580ff7fefe4f9d41",
+      "file": "services/call/call_state_observer/include/wired_headset.h",
+      "anchor_line": 48,
+      "source_sha256": "00929014843e9618026356e9d8a12f73237073fb2c9c79fc652cefcc5b1b7ffc"
+    },
+    {
+      "case_id": "D41-5dfa073cf92b",
+      "repository": "openharmony/telephony_call_manager",
+      "commit": "6638d1b37f278d7ed380d907674820e7467cedf8",
+      "tree": "3eb7742bdcd1507ad75cfe9c580ff7fefe4f9d41",
+      "file": "services/audio/include/audio_state/alerting_state.h",
+      "anchor_line": 21,
+      "source_sha256": "2b383ecad1fc73ac06e169f1a35c9e68237be66192bcbe81782f3a99b963f0e8"
+    },
+    {
+      "case_id": "D41-e97a834b0604",
+      "repository": "openharmony/security_certificate_manager",
+      "commit": "5fcc0b6379567a70176307c281360be2ba281d6b",
+      "tree": "f3e078b356ac0724d8ab267d73ab85e69b9b44ad",
+      "file": "interfaces/kits/napi/src/cm_napi_get_ukey_cert_list.cpp",
+      "anchor_line": 93,
+      "source_sha256": "0201f067467c6f7fc4767dfb365d9ea18ba81d20db0618fe0fd68da03c87449e"
+    },
+    {
+      "case_id": "D41-a542c168515a",
+      "repository": "openharmony/telephony_call_manager",
+      "commit": "6638d1b37f278d7ed380d907674820e7467cedf8",
+      "tree": "3eb7742bdcd1507ad75cfe9c580ff7fefe4f9d41",
+      "file": "services/audio/include/audio_device_manager.h",
+      "anchor_line": 110,
+      "source_sha256": "bb7bf82d4b4dc0ecc915a47c7bb7d20797b289afdf392b3610cb359278ba6607"
+    },
+    {
+      "case_id": "D41-9758ada206f1",
+      "repository": "openharmony/security_certificate_manager",
+      "commit": "5fcc0b6379567a70176307c281360be2ba281d6b",
+      "tree": "f3e078b356ac0724d8ab267d73ab85e69b9b44ad",
+      "file": "interfaces/kits/ani/certificate_manager_ani/include/cm_get_cred_list_impl.h",
+      "anchor_line": 45,
+      "source_sha256": "8128e26e8d48ead5fcbe3d88f266e276bc5e12d61ac9b7b5b05b95043099274a"
+    },
+    {
+      "case_id": "D41-efc71fe4181a",
+      "repository": "openharmony/telephony_call_manager",
+      "commit": "6638d1b37f278d7ed380d907674820e7467cedf8",
+      "tree": "3eb7742bdcd1507ad75cfe9c580ff7fefe4f9d41",
+      "file": "services/call_voice_assistant/src/call_voice_assistant_manager.cpp",
+      "anchor_line": 696,
+      "source_sha256": "fd14aac4296d2f1b5c84c19aee68e1fff484d068e06de709a3e12b85f975430d"
+    },
+    {
+      "case_id": "D41-75457888aa37",
+      "repository": "openharmony/telephony_call_manager",
+      "commit": "6638d1b37f278d7ed380d907674820e7467cedf8",
+      "tree": "3eb7742bdcd1507ad75cfe9c580ff7fefe4f9d41",
+      "file": "frameworks/native/src/call_manager_service_proxy.cpp",
+      "anchor_line": 533,
+      "source_sha256": "89b4adc17a3396f9c5791c50266c3bb07cd37f12445bad114a75bd336329df13"
+    },
+    {
+      "case_id": "D41-1ddd90d6b849",
+      "repository": "openharmony/security_certificate_manager",
+      "commit": "5fcc0b6379567a70176307c281360be2ba281d6b",
+      "tree": "f3e078b356ac0724d8ab267d73ab85e69b9b44ad",
+      "file": "interfaces/kits/napi/src/dialog/dialog_callback/cm_napi_dialog_callback_int_bool.cpp",
+      "anchor_line": 6,
+      "source_sha256": "d8de6c9379fe8bde034cc80dadae89cd1b4ea186ead5bdf95336abd0417a1e47"
+    },
+    {
+      "case_id": "D41-3079636cf5ac",
+      "repository": "openharmony/inputmethod_imf",
+      "commit": "7777cba9eb19085af8e7b90088531028d2937460",
+      "tree": "3edaf7b3825158e13177a8ed61fa1689905229ba",
+      "file": "common/src/inputmethod_trace.cpp",
+      "anchor_line": 58,
+      "source_sha256": "d027715d7d4c142f204c23200af5d272fcba37fab970554e8ec83b048c05413a"
+    },
+    {
+      "case_id": "D41-afd2bec8a2ea",
+      "repository": "openharmony/security_certificate_manager",
+      "commit": "5fcc0b6379567a70176307c281360be2ba281d6b",
+      "tree": "f3e078b356ac0724d8ab267d73ab85e69b9b44ad",
+      "file": "interfaces/kits/napi/src/dialog/cm_napi_open_uninstall_dialog.cpp",
+      "anchor_line": 142,
+      "source_sha256": "35f7b5d74010c1f68a8aedf5e220725e84c176f376108383953e525b962f28d1"
+    },
+    {
+      "case_id": "D41-0b80d31fb895",
+      "repository": "openharmony/inputmethod_imf",
+      "commit": "7777cba9eb19085af8e7b90088531028d2937460",
+      "tree": "3edaf7b3825158e13177a8ed61fa1689905229ba",
+      "file": "frameworks/js/napi/inputmethodability/js_input_method_engine_setting.cpp",
+      "anchor_line": 104,
+      "source_sha256": "16799181cd98833e21448da8ec713dfbf71abe6db9dab81a098792e8a3ec240a"
+    },
+    {
+      "case_id": "D41-202879fdf6e8",
+      "repository": "openharmony/security_huks",
+      "commit": "4ae4e0db461f137672719d43ffc6c5b1b6c05be8",
+      "tree": "9c922a60d815a34eb96c060274ed863fd3a6fea8",
+      "file": "frameworks/crypto_lite/cipher/src/cipher_rsa.c",
+      "anchor_line": 63,
+      "source_sha256": "003b379738a0846ed0dce599db3f2fbf7fbcc9694cc9e0b5d08ecb5684824539"
+    },
+    {
+      "case_id": "D41-87099c22f3c8",
+      "repository": "openharmony/security_huks",
+      "commit": "4ae4e0db461f137672719d43ffc6c5b1b6c05be8",
+      "tree": "9c922a60d815a34eb96c060274ed863fd3a6fea8",
+      "file": "interfaces/kits/napi/src/v8/huks_napi_delete_key.cpp",
+      "anchor_line": 61,
+      "source_sha256": "750ec69b2c49bc90c4e6def15e957a85851c6385afaff4d3370101df82f97900"
+    },
+    {
+      "case_id": "D41-9cb26ab54fd2",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "window_scene/session/host/include/move_resampler.h",
+      "anchor_line": 218,
+      "source_sha256": "5f14770a236d7714eb3abc70d5714b41420759a6e5b3be6f81c29030933a54c2"
+    },
+    {
+      "case_id": "D41-bab09664f722",
+      "repository": "openharmony/security_huks",
+      "commit": "4ae4e0db461f137672719d43ffc6c5b1b6c05be8",
+      "tree": "9c922a60d815a34eb96c060274ed863fd3a6fea8",
+      "file": "frameworks/crypto_lite/cipher/src/cipher_rsa.c",
+      "anchor_line": 171,
+      "source_sha256": "003b379738a0846ed0dce599db3f2fbf7fbcc9694cc9e0b5d08ecb5684824539"
+    },
+    {
+      "case_id": "D41-e9d7721db260",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "085a5d0e2dc1c90a4b676bad55675a1cf12a6380",
+      "tree": "daef3c4c6bc50ead50610846a958c29ae669f0f3",
+      "file": "services/camera_service/src/camera_privacy.cpp",
+      "anchor_line": 167,
+      "source_sha256": "768c5b2bd05d7a709b6ec3cf15909ca365875996152bc8ac5de632d155480b2b"
+    },
+    {
+      "case_id": "D41-618eb01919cc",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "extension/window_extension/src/js_window_extension.cpp",
+      "anchor_line": 343,
+      "source_sha256": "38e60dec3b9170fe44007a1c07d6a2504c04cbac6e80be2ba7bee743a5ece72e"
+    },
+    {
+      "case_id": "D41-33433dac7783",
+      "repository": "openharmony/telephony_call_manager",
+      "commit": "6638d1b37f278d7ed380d907674820e7467cedf8",
+      "tree": "3eb7742bdcd1507ad75cfe9c580ff7fefe4f9d41",
+      "file": "services/call/include/cs_call.h",
+      "anchor_line": 19,
+      "source_sha256": "3627d35f47349e72bc4a71a2f42e493c2f14b16196a5334959a8833b0815a4ab"
+    },
+    {
+      "case_id": "D41-ce1143f57906",
+      "repository": "openharmony/telephony_call_manager",
+      "commit": "6638d1b37f278d7ed380d907674820e7467cedf8",
+      "tree": "3eb7742bdcd1507ad75cfe9c580ff7fefe4f9d41",
+      "file": "services/call_manager_service/src/call_manager_service_stub.cpp",
+      "anchor_line": 781,
+      "source_sha256": "a45264a6b32b7bd874697d52f40f9cc7825e9a72a757b831f0d1745978197ca3"
+    },
+    {
+      "case_id": "D41-29bb1dfdd616",
+      "repository": "openharmony/telephony_call_manager",
+      "commit": "6638d1b37f278d7ed380d907674820e7467cedf8",
+      "tree": "3eb7742bdcd1507ad75cfe9c580ff7fefe4f9d41",
+      "file": "services/telephony_interaction/src/call_status_callback_stub.cpp",
+      "anchor_line": 416,
+      "source_sha256": "f41e291a9fe890c23cda6b611497ab52c35512608532684613896177d4c4f3aa"
+    },
+    {
+      "case_id": "D41-0192470969b2",
+      "repository": "openharmony/security_certificate_manager",
+      "commit": "5fcc0b6379567a70176307c281360be2ba281d6b",
+      "tree": "f3e078b356ac0724d8ab267d73ab85e69b9b44ad",
+      "file": "services/cert_manager_standard/cert_manager_service/main/os_dependency/idl/cm_ipc/cm_ipc_service.h",
+      "anchor_line": 110,
+      "source_sha256": "781bef81fffd1085328ce5f511590396bc7c0ca4749b1d49b2aeb3491171b5cb"
+    },
+    {
+      "case_id": "D41-99113caf8155",
+      "repository": "openharmony/security_huks",
+      "commit": "4ae4e0db461f137672719d43ffc6c5b1b6c05be8",
+      "tree": "9c922a60d815a34eb96c060274ed863fd3a6fea8",
+      "file": "frameworks/huks_standard/main/crypto_engine/mbedtls/src/hks_mbedtls_hmac.c",
+      "anchor_line": 120,
+      "source_sha256": "6be286b376d4d06332be99d43842149225da888b00bd2ec06814d01239407da8"
+    },
+    {
+      "case_id": "D41-209e07cd63af",
+      "repository": "openharmony/telephony_call_manager",
+      "commit": "6638d1b37f278d7ed380d907674820e7467cedf8",
+      "tree": "3eb7742bdcd1507ad75cfe9c580ff7fefe4f9d41",
+      "file": "frameworks/native/src/call_manager_proxy.cpp",
+      "anchor_line": 740,
+      "source_sha256": "00902a5091d3c6c0a8048d25a13e0d70ccd88ca06acb6f65396246fd54fb238a"
+    },
+    {
+      "case_id": "D41-cd51d0c1cead",
+      "repository": "openharmony/security_certificate_manager",
+      "commit": "5fcc0b6379567a70176307c281360be2ba281d6b",
+      "tree": "f3e078b356ac0724d8ab267d73ab85e69b9b44ad",
+      "file": "services/cert_manager_standard/cert_manager_service/main/os_dependency/dialog/cm_system_dialog_connection.cpp",
+      "anchor_line": 18,
+      "source_sha256": "d0d4e3bccdb25ccac36f901e0641fed7aacd458ae0352a27d9e7f91cdbc08351"
+    },
+    {
+      "case_id": "D41-d7a845d345f5",
+      "repository": "openharmony/security_certificate_manager",
+      "commit": "5fcc0b6379567a70176307c281360be2ba281d6b",
+      "tree": "f3e078b356ac0724d8ab267d73ab85e69b9b44ad",
+      "file": "services/cert_manager_standard/cert_manager_engine/main/core/src/cert_manager_service.c",
+      "anchor_line": 1355,
+      "source_sha256": "5867eab0da5763f5f7ec0e90f001231f8c02926a412ebb933318807d6460de5f"
+    },
+    {
+      "case_id": "D41-4855bfce699c",
+      "repository": "openharmony/telephony_call_manager",
+      "commit": "6638d1b37f278d7ed380d907674820e7467cedf8",
+      "tree": "3eb7742bdcd1507ad75cfe9c580ff7fefe4f9d41",
+      "file": "services/distributed_call/src/distributed_communication/distributed_data_controller.cpp",
+      "anchor_line": 18,
+      "source_sha256": "ebece485d23fe45e333aa46bcf3c0bbc40b59167bf47a446d382e07702002cc3"
+    },
+    {
+      "case_id": "D41-42dee2200c2e",
+      "repository": "openharmony/security_certificate_manager",
+      "commit": "5fcc0b6379567a70176307c281360be2ba281d6b",
+      "tree": "f3e078b356ac0724d8ab267d73ab85e69b9b44ad",
+      "file": "interfaces/kits/napi/src/cm_napi_common.cpp",
+      "anchor_line": 531,
+      "source_sha256": "1bc33deb3c64ef714560c2bd6213dc4a93a5892131b3e0faf8a98d7d51791cfc"
+    },
+    {
+      "case_id": "D41-9ad769f01062",
+      "repository": "openharmony/security_certificate_manager",
+      "commit": "5fcc0b6379567a70176307c281360be2ba281d6b",
+      "tree": "f3e078b356ac0724d8ab267d73ab85e69b9b44ad",
+      "file": "services/cert_manager_standard/cert_manager_engine/main/rdb/include/cm_rdb_config.h",
+      "anchor_line": 9,
+      "source_sha256": "be44762cb18839bec819311b14696b94fecd27b2da79228f0f7397bc5e9a171b"
+    },
+    {
+      "case_id": "D41-f457ffa0b1fc",
+      "repository": "openharmony/security_huks",
+      "commit": "4ae4e0db461f137672719d43ffc6c5b1b6c05be8",
+      "tree": "9c922a60d815a34eb96c060274ed863fd3a6fea8",
+      "file": "frameworks/crypto_lite/cipher/src/cipher_rsa.c",
+      "anchor_line": 60,
+      "source_sha256": "003b379738a0846ed0dce599db3f2fbf7fbcc9694cc9e0b5d08ecb5684824539"
+    },
+    {
+      "case_id": "D41-66c37e71cfe7",
+      "repository": "openharmony/security_huks",
+      "commit": "4ae4e0db461f137672719d43ffc6c5b1b6c05be8",
+      "tree": "9c922a60d815a34eb96c060274ed863fd3a6fea8",
+      "file": "frameworks/crypto_lite/cipher/src/cipher_rsa.c",
+      "anchor_line": 52,
+      "source_sha256": "003b379738a0846ed0dce599db3f2fbf7fbcc9694cc9e0b5d08ecb5684824539"
+    },
+    {
+      "case_id": "D41-981997519470",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "085a5d0e2dc1c90a4b676bad55675a1cf12a6380",
+      "tree": "daef3c4c6bc50ead50610846a958c29ae669f0f3",
+      "file": "services/deferred_processing_service/src/schedule/state/video_process_time_state.cpp",
+      "anchor_line": 31,
+      "source_sha256": "e159ffa09dea77939b019fc7256df99a618800513af00a7af0d1666683a03e2c"
+    },
+    {
+      "case_id": "D41-5e7bdf825ff4",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "window_scene/session/host/include/scb_system_session.h",
+      "anchor_line": 55,
+      "source_sha256": "62c3cda4ac979f84c004ca902122c77c51c8f0f842ff2c7eb70fd825dba846c3"
+    },
+    {
+      "case_id": "D41-7910b9cc407c",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "085a5d0e2dc1c90a4b676bad55675a1cf12a6380",
+      "tree": "daef3c4c6bc50ead50610846a958c29ae669f0f3",
+      "file": "moviefile/src/movie_file/plugin/movie_file_audio_package_node.cpp",
+      "anchor_line": 1,
+      "source_sha256": "ab05ebede14c4e78b03afcf7280f74834ad98ef3a262b9d337d144c384216704"
+    },
+    {
+      "case_id": "D41-63d9602ea74b",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "085a5d0e2dc1c90a4b676bad55675a1cf12a6380",
+      "tree": "daef3c4c6bc50ead50610846a958c29ae669f0f3",
+      "file": "common/utils/watermark_exif_metadata/include/watermark_exif_metadata_interface.h",
+      "anchor_line": 8,
+      "source_sha256": "b26f559e5f4281a1e42149be09e3a298dd857c2376697ccdd12e5ff57f70e75f"
+    },
+    {
+      "case_id": "D41-78b4db35fdb2",
+      "repository": "openharmony/security_certificate_manager",
+      "commit": "5fcc0b6379567a70176307c281360be2ba281d6b",
+      "tree": "f3e078b356ac0724d8ab267d73ab85e69b9b44ad",
+      "file": "interfaces/kits/napi/src/cm_napi_get_ukey_cert_list.cpp",
+      "anchor_line": 208,
+      "source_sha256": "0201f067467c6f7fc4767dfb365d9ea18ba81d20db0618fe0fd68da03c87449e"
+    },
+    {
+      "case_id": "D41-478262453a67",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "interfaces/kits/napi/window_runtime/window_napi/js_transition_controller.h",
+      "anchor_line": 24,
+      "source_sha256": "e049d372762f0bbabe1aa3b6cd4b7aae56562ae7ff9f76497f1278b68b9e2437"
+    },
+    {
+      "case_id": "D41-4092f29d9f4c",
+      "repository": "openharmony/security_huks",
+      "commit": "4ae4e0db461f137672719d43ffc6c5b1b6c05be8",
+      "tree": "9c922a60d815a34eb96c060274ed863fd3a6fea8",
+      "file": "frameworks/huks_standard/main/core/include/hks_verifier.h",
+      "anchor_line": 21,
+      "source_sha256": "674ab01c02bc06d918975e7e7913dae5c990dd5ad296ee47a1147d26f912b605"
+    },
+    {
+      "case_id": "D41-bef047c1ef5e",
+      "repository": "openharmony/telephony_call_manager",
+      "commit": "6638d1b37f278d7ed380d907674820e7467cedf8",
+      "tree": "3eb7742bdcd1507ad75cfe9c580ff7fefe4f9d41",
+      "file": "services/call/include/call_wired_headset.h",
+      "anchor_line": 2,
+      "source_sha256": "ee7a16c63dd0c904e34fcf7ad4e2519f121d6941fd8ddde26563ccf6024c1389"
+    },
+    {
+      "case_id": "D41-45ddf0eff39d",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "utils/include/window_error_msg.h",
+      "anchor_line": 35,
+      "source_sha256": "9b0541f09147a48ecf898a08e41afdb10e8dbe65dfba4621512ecf2c934356b8"
+    },
+    {
+      "case_id": "D41-d7950dc19a0a",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "window_scene/interfaces/kits/napi/session_manager_service/napi/js_session_manager_service.h",
+      "anchor_line": 19,
+      "source_sha256": "dabe1227fe809bd510ca94f7b9f2eb44ba0436ff927921a9958c46a611e477ab"
+    },
+    {
+      "case_id": "D41-276ea551c4b2",
+      "repository": "openharmony/inputmethod_imf",
+      "commit": "7777cba9eb19085af8e7b90088531028d2937460",
+      "tree": "3edaf7b3825158e13177a8ed61fa1689905229ba",
+      "file": "interfaces/kits/c/inputmethod_cursor_info_capi.h",
+      "anchor_line": 15,
+      "source_sha256": "ca2d8526116aa2cbf77d2d7d5697355bbc8896e3ca7f1ab224ced3f6cf5c52a8"
+    },
+    {
+      "case_id": "D41-1f8d6006f8b7",
+      "repository": "openharmony/inputmethod_imf",
+      "commit": "7777cba9eb19085af8e7b90088531028d2937460",
+      "tree": "3edaf7b3825158e13177a8ed61fa1689905229ba",
+      "file": "common/imf_hisysevent/include/ima_hisysevent_reporter.h",
+      "anchor_line": 28,
+      "source_sha256": "b6535cb6fb22e7cc3f2b69a2f1bf8385404e3bfd77eca180d11ced0b159d7ae9"
+    },
+    {
+      "case_id": "D41-c4441827526d",
+      "repository": "openharmony/security_certificate_manager",
+      "commit": "5fcc0b6379567a70176307c281360be2ba281d6b",
+      "tree": "f3e078b356ac0724d8ab267d73ab85e69b9b44ad",
+      "file": "interfaces/kits/napi/src/cm_napi_set_cert_status.cpp",
+      "anchor_line": 100,
+      "source_sha256": "a12d12c7ff544579e5fbddb43371d6a4c199c60e28af29847071ee229b740480"
+    },
+    {
+      "case_id": "D41-2baba1d6a2b3",
+      "repository": "openharmony/telephony_call_manager",
+      "commit": "6638d1b37f278d7ed380d907674820e7467cedf8",
+      "tree": "3eb7742bdcd1507ad75cfe9c580ff7fefe4f9d41",
+      "file": "services/call/src/net_call_base.cpp",
+      "anchor_line": 22,
+      "source_sha256": "287e88ffde881e34fb5a2b297acc064e72a234fb5c41c93c3e9abfcd67268319"
+    },
+    {
+      "case_id": "D41-7ed7add17bf7",
+      "repository": "openharmony/security_certificate_manager",
+      "commit": "5fcc0b6379567a70176307c281360be2ba281d6b",
+      "tree": "f3e078b356ac0724d8ab267d73ab85e69b9b44ad",
+      "file": "interfaces/kits/ani/certificate_manager_ani/src/cm_get_cert_store_path.cpp",
+      "anchor_line": 34,
+      "source_sha256": "97ed7f0ca5314686368d15e68f09e26717134067fee07d3d264498f1962d41fc"
+    },
+    {
+      "case_id": "D41-557bd0f6fa35",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "interfaces/kits/napi/window_runtime/window_manager_napi/window_manager_module.cpp",
+      "anchor_line": 26,
+      "source_sha256": "64c999cc20dcef34f5dfe0caba0e89bfab7d60e82cec7cb72b1e4445d0356c76"
+    },
+    {
+      "case_id": "D41-638b8c2357f8",
+      "repository": "openharmony/telephony_call_manager",
+      "commit": "6638d1b37f278d7ed380d907674820e7467cedf8",
+      "tree": "3eb7742bdcd1507ad75cfe9c580ff7fefe4f9d41",
+      "file": "services/call_manager_service/src/call_manager_service_stub.cpp",
+      "anchor_line": 779,
+      "source_sha256": "a45264a6b32b7bd874697d52f40f9cc7825e9a72a757b831f0d1745978197ca3"
+    },
+    {
+      "case_id": "D41-dfb7a16bd6a7",
+      "repository": "openharmony/inputmethod_imf",
+      "commit": "7777cba9eb19085af8e7b90088531028d2937460",
+      "tree": "3edaf7b3825158e13177a8ed61fa1689905229ba",
+      "file": "common/imf_hisysevent/include/imf_hisysevent_reporter.h",
+      "anchor_line": 46,
+      "source_sha256": "f0da12dcdd08da0b461e1a72e15c594fa770d19c1425ec455b4a8af5d3fa5e31"
+    },
+    {
+      "case_id": "D41-1762ba8ceb13",
+      "repository": "openharmony/telephony_call_manager",
+      "commit": "6638d1b37f278d7ed380d907674820e7467cedf8",
+      "tree": "3eb7742bdcd1507ad75cfe9c580ff7fefe4f9d41",
+      "file": "frameworks/native/src/call_manager_service_proxy.cpp",
+      "anchor_line": 537,
+      "source_sha256": "89b4adc17a3396f9c5791c50266c3bb07cd37f12445bad114a75bd336329df13"
+    },
+    {
+      "case_id": "D41-ec2acd34c3db",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "085a5d0e2dc1c90a4b676bad55675a1cf12a6380",
+      "tree": "daef3c4c6bc50ead50610846a958c29ae669f0f3",
+      "file": "services/camera_service/src/hcamera_device_manager.cpp",
+      "anchor_line": 588,
+      "source_sha256": "814d060cfe2d4d106fefb79347a2bba5d09b81ac32046647686441a8a6384464"
+    },
+    {
+      "case_id": "D41-dfb493001a24",
+      "repository": "openharmony/security_certificate_manager",
+      "commit": "5fcc0b6379567a70176307c281360be2ba281d6b",
+      "tree": "f3e078b356ac0724d8ab267d73ab85e69b9b44ad",
+      "file": "interfaces/kits/ani/certificate_manager_ani/include/cm_get_cert_info_impl.h",
+      "anchor_line": 7,
+      "source_sha256": "4d7ba7a538178c549ae3ddbf54590548a58a8711b92328fa85ac078ef7aefb89"
+    },
+    {
+      "case_id": "D41-480e5d5661d0",
+      "repository": "openharmony/security_huks",
+      "commit": "4ae4e0db461f137672719d43ffc6c5b1b6c05be8",
+      "tree": "9c922a60d815a34eb96c060274ed863fd3a6fea8",
+      "file": "frameworks/crypto_lite/cipher/src/cipher_rsa.c",
+      "anchor_line": 143,
+      "source_sha256": "003b379738a0846ed0dce599db3f2fbf7fbcc9694cc9e0b5d08ecb5684824539"
+    },
+    {
+      "case_id": "D41-b3b00090c179",
+      "repository": "openharmony/inputmethod_imf",
+      "commit": "7777cba9eb19085af8e7b90088531028d2937460",
+      "tree": "3edaf7b3825158e13177a8ed61fa1689905229ba",
+      "file": "frameworks/common/src/inputmethod_display_listener.cpp",
+      "anchor_line": 96,
+      "source_sha256": "409d0ef0ee5d4369df8cfc5adc5b97e55e0f982ae9c08e23d274aa327f768376"
+    },
+    {
+      "case_id": "D41-add49d6ab5a2",
+      "repository": "openharmony/telephony_call_manager",
+      "commit": "6638d1b37f278d7ed380d907674820e7467cedf8",
+      "tree": "3eb7742bdcd1507ad75cfe9c580ff7fefe4f9d41",
+      "file": "interfaces/innerkits/call_manager_errors.h",
+      "anchor_line": 278,
+      "source_sha256": "03ba9ef2e9228430589f306587bf69281976b71ea1865eb7a71ec38e746b641b"
+    },
+    {
+      "case_id": "D41-b8744bdc2860",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "wmserver/include/avoid_area_controller.h",
+      "anchor_line": 35,
+      "source_sha256": "f8cf130d0a3c5d828a979ad0148f18e3ea0187df4ae5fefe32f1d9d6515c3f6c"
+    },
+    {
+      "case_id": "D41-9a9dc473bfab",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "085a5d0e2dc1c90a4b676bad55675a1cf12a6380",
+      "tree": "daef3c4c6bc50ead50610846a958c29ae669f0f3",
+      "file": "common/utils/camera_notification/src/camera_notification_proxy.cpp",
+      "anchor_line": 53,
+      "source_sha256": "0c6433393177a0486115aa49440c78bcc60241bb66516c286abfe8e024fbc493"
+    },
+    {
+      "case_id": "D41-1d5d02f122e5",
+      "repository": "openharmony/security_huks",
+      "commit": "4ae4e0db461f137672719d43ffc6c5b1b6c05be8",
+      "tree": "9c922a60d815a34eb96c060274ed863fd3a6fea8",
+      "file": "frameworks/crypto_lite/cipher/src/cipher_rsa.c",
+      "anchor_line": 70,
+      "source_sha256": "003b379738a0846ed0dce599db3f2fbf7fbcc9694cc9e0b5d08ecb5684824539"
+    },
+    {
+      "case_id": "D41-ac7969916852",
+      "repository": "openharmony/security_huks",
+      "commit": "4ae4e0db461f137672719d43ffc6c5b1b6c05be8",
+      "tree": "9c922a60d815a34eb96c060274ed863fd3a6fea8",
+      "file": "services/huks_standard/huks_service/main/plugin_proxy/include/hks_plugin_adapter.h",
+      "anchor_line": 33,
+      "source_sha256": "bceb6ea2fceb9765a230b141d640898a0f2ac2e142dc0873622b36a910bfbadc"
+    },
+    {
+      "case_id": "D41-de21fe22e800",
+      "repository": "openharmony/inputmethod_imf",
+      "commit": "7777cba9eb19085af8e7b90088531028d2937460",
+      "tree": "3edaf7b3825158e13177a8ed61fa1689905229ba",
+      "file": "frameworks/js/napi/inputmethodability/js_input_method_engine_setting.cpp",
+      "anchor_line": 103,
+      "source_sha256": "16799181cd98833e21448da8ec713dfbf71abe6db9dab81a098792e8a3ec240a"
+    },
+    {
+      "case_id": "D41-36265390cefc",
+      "repository": "openharmony/inputmethod_imf",
+      "commit": "7777cba9eb19085af8e7b90088531028d2937460",
+      "tree": "3edaf7b3825158e13177a8ed61fa1689905229ba",
+      "file": "frameworks/js/napi/inputmethodability/js_input_method_engine_setting.cpp",
+      "anchor_line": 75,
+      "source_sha256": "16799181cd98833e21448da8ec713dfbf71abe6db9dab81a098792e8a3ec240a"
+    },
+    {
+      "case_id": "D41-6550bfa68688",
+      "repository": "openharmony/telephony_call_manager",
+      "commit": "6638d1b37f278d7ed380d907674820e7467cedf8",
+      "tree": "3eb7742bdcd1507ad75cfe9c580ff7fefe4f9d41",
+      "file": "frameworks/native/src/cellular_call_proxy.cpp",
+      "anchor_line": 755,
+      "source_sha256": "220ded767c9bd30c4d3b9b2cf602237cf6fdcfb91341d920272f791cf24d8eb3"
+    },
+    {
+      "case_id": "D41-ba8c604c2a0b",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "085a5d0e2dc1c90a4b676bad55675a1cf12a6380",
+      "tree": "daef3c4c6bc50ead50610846a958c29ae669f0f3",
+      "file": "services/camera_service/src/camera_privacy.cpp",
+      "anchor_line": 155,
+      "source_sha256": "768c5b2bd05d7a709b6ec3cf15909ca365875996152bc8ac5de632d155480b2b"
+    },
+    {
+      "case_id": "D41-17d828ea51e6",
+      "repository": "openharmony/inputmethod_imf",
+      "commit": "7777cba9eb19085af8e7b90088531028d2937460",
+      "tree": "3edaf7b3825158e13177a8ed61fa1689905229ba",
+      "file": "frameworks/js/napi/inputmethodability/js_input_method_engine_setting.cpp",
+      "anchor_line": 83,
+      "source_sha256": "16799181cd98833e21448da8ec713dfbf71abe6db9dab81a098792e8a3ec240a"
+    },
+    {
+      "case_id": "D41-8063e0ef90a8",
+      "repository": "openharmony/inputmethod_imf",
+      "commit": "7777cba9eb19085af8e7b90088531028d2937460",
+      "tree": "3edaf7b3825158e13177a8ed61fa1689905229ba",
+      "file": "services/adapter/res_sched_adapter/include/res_sched_adapter.h",
+      "anchor_line": 27,
+      "source_sha256": "1dcecbf1c2e30c0b7b90fb5a31be8ca3579d6003cf8fb1327292f12196ac9b09"
+    },
+    {
+      "case_id": "D41-a99372f22c6d",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "085a5d0e2dc1c90a4b676bad55675a1cf12a6380",
+      "tree": "daef3c4c6bc50ead50610846a958c29ae669f0f3",
+      "file": "services/camera_service/binder/client/include/hstream_capture_thumbnail_callback_proxy.h",
+      "anchor_line": 2,
+      "source_sha256": "a51f37f08756efcd62de9dd9b9e73430f582e91e6e2c5125fff938ba78eefe8c"
+    },
+    {
+      "case_id": "D41-41066905112c",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "wm/include/zidl/get_snapshot_callback_stub.h",
+      "anchor_line": 33,
+      "source_sha256": "1312ca7f9462bdf035bfe6acfd01759743e6f6dc666d0b8f9115d6026912882e"
+    },
+    {
+      "case_id": "D41-445d1dd6ecef",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "085a5d0e2dc1c90a4b676bad55675a1cf12a6380",
+      "tree": "daef3c4c6bc50ead50610846a958c29ae669f0f3",
+      "file": "mediastream/src/filter/metadata_filter.cpp",
+      "anchor_line": 115,
+      "source_sha256": "6d02e1046896f1af6fcedc1b8ead8d8c3f5820ba973948131de8523b3cef97e4"
+    },
+    {
+      "case_id": "D41-32e8c5e25ce9",
+      "repository": "openharmony/security_huks",
+      "commit": "4ae4e0db461f137672719d43ffc6c5b1b6c05be8",
+      "tree": "9c922a60d815a34eb96c060274ed863fd3a6fea8",
+      "file": "frameworks/huks_standard/main/os_dependency/sysinfo/src/hks_get_process_info_passthrough.c",
+      "anchor_line": 19,
+      "source_sha256": "b2c9c3a26cdcf06d181be4a456a291ec485d79a3c653861aaa7bb2ff0efc96fd"
+    },
+    {
+      "case_id": "D41-72887e4fdad6",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "085a5d0e2dc1c90a4b676bad55675a1cf12a6380",
+      "tree": "daef3c4c6bc50ead50610846a958c29ae669f0f3",
+      "file": "frameworks/native/camera/extension/src/output/depth_data_output.cpp",
+      "anchor_line": 47,
+      "source_sha256": "e6247404f9b876ef04faf314c021b89cb828f7f26ffcd15fce29857eb1e0b114"
+    },
+    {
+      "case_id": "D41-57143c4a7a28",
+      "repository": "openharmony/inputmethod_imf",
+      "commit": "7777cba9eb19085af8e7b90088531028d2937460",
+      "tree": "3edaf7b3825158e13177a8ed61fa1689905229ba",
+      "file": "frameworks/ets/extension/ani/include/ets_inputmethod_extension.h",
+      "anchor_line": 26,
+      "source_sha256": "e8eb1cd2f9c337004a415474f93f55a6fcf1a7f7c8680d2b55cf2a95ca05e781"
+    },
+    {
+      "case_id": "D41-bc9bf49ae2d3",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "085a5d0e2dc1c90a4b676bad55675a1cf12a6380",
+      "tree": "daef3c4c6bc50ead50610846a958c29ae669f0f3",
+      "file": "mediastream/include/event.h",
+      "anchor_line": 82,
+      "source_sha256": "b9867fdd744d8817e87ed5ecf66c0b182972de2a4144a59ddd3118e003b81d03"
+    },
+    {
+      "case_id": "D41-8845cf822d72",
+      "repository": "openharmony/security_certificate_manager",
+      "commit": "5fcc0b6379567a70176307c281360be2ba281d6b",
+      "tree": "f3e078b356ac0724d8ab267d73ab85e69b9b44ad",
+      "file": "services/cert_manager_standard/cert_manager_engine/main/core/src/cert_manager_auth_list_mgr.c",
+      "anchor_line": 550,
+      "source_sha256": "6f59b4146daa6a11c76181479406041a15456cd3951d9477c315d1f1410aefd0"
+    },
+    {
+      "case_id": "D41-4352400af0a2",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "window_scene/common/src/session_permission.cpp",
+      "anchor_line": 134,
+      "source_sha256": "42d5f9ec4370d578788228ddc8c506b230ea90d186d006c15d49df970a934b6e"
+    },
+    {
+      "case_id": "D41-5275b916d61b",
+      "repository": "openharmony/inputmethod_imf",
+      "commit": "7777cba9eb19085af8e7b90088531028d2937460",
+      "tree": "3edaf7b3825158e13177a8ed61fa1689905229ba",
+      "file": "frameworks/native/inputmethod_ability/src/input_method_ability_utils.cpp",
+      "anchor_line": 22,
+      "source_sha256": "69ad5d0d013e8a35e1fb1336ba3110956cddcfe5ff942f256cb3e779e5aa2b0a"
+    },
+    {
+      "case_id": "D41-a4a317ef1a90",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "085a5d0e2dc1c90a4b676bad55675a1cf12a6380",
+      "tree": "daef3c4c6bc50ead50610846a958c29ae669f0f3",
+      "file": "services/deferred_processing_service/include/base/dps.h",
+      "anchor_line": 29,
+      "source_sha256": "51c8b1f59c70b6f951158cd377610c5556dc6ac871cb9ed2a9d25d8d7a56bc73"
+    },
+    {
+      "case_id": "D41-51c691dd9482",
+      "repository": "openharmony/security_certificate_manager",
+      "commit": "5fcc0b6379567a70176307c281360be2ba281d6b",
+      "tree": "f3e078b356ac0724d8ab267d73ab85e69b9b44ad",
+      "file": "services/cert_manager_standard/cert_manager_engine/main/core/include/cert_manager_mem.h",
+      "anchor_line": 22,
+      "source_sha256": "bf68d9afa53755ddbc8d718f61e37949bad64af4d06122057b2b16f4bac6cd04"
+    },
+    {
+      "case_id": "D41-ea07f2b533b0",
+      "repository": "openharmony/inputmethod_imf",
+      "commit": "7777cba9eb19085af8e7b90088531028d2937460",
+      "tree": "3edaf7b3825158e13177a8ed61fa1689905229ba",
+      "file": "frameworks/js/napi/inputmethodability/js_input_method_engine_setting.cpp",
+      "anchor_line": 76,
+      "source_sha256": "16799181cd98833e21448da8ec713dfbf71abe6db9dab81a098792e8a3ec240a"
+    },
+    {
+      "case_id": "D41-167158abf305",
+      "repository": "openharmony/inputmethod_imf",
+      "commit": "7777cba9eb19085af8e7b90088531028d2937460",
+      "tree": "3edaf7b3825158e13177a8ed61fa1689905229ba",
+      "file": "frameworks/js/napi/inputmethodability/js_input_method_engine_setting.cpp",
+      "anchor_line": 82,
+      "source_sha256": "16799181cd98833e21448da8ec713dfbf71abe6db9dab81a098792e8a3ec240a"
+    },
+    {
+      "case_id": "D41-3cbe1184435d",
+      "repository": "openharmony/security_huks",
+      "commit": "4ae4e0db461f137672719d43ffc6c5b1b6c05be8",
+      "tree": "9c922a60d815a34eb96c060274ed863fd3a6fea8",
+      "file": "frameworks/crypto_lite/cipher/src/cipher_rsa.c",
+      "anchor_line": 56,
+      "source_sha256": "003b379738a0846ed0dce599db3f2fbf7fbcc9694cc9e0b5d08ecb5684824539"
+    },
+    {
+      "case_id": "D41-1ddb4e060d39",
+      "repository": "openharmony/telephony_call_manager",
+      "commit": "6638d1b37f278d7ed380d907674820e7467cedf8",
+      "tree": "3eb7742bdcd1507ad75cfe9c580ff7fefe4f9d41",
+      "file": "services/audio/src/audio_device_manager.cpp",
+      "anchor_line": 486,
+      "source_sha256": "dd4c4946e1c50d505cecd29be5dd44da15ca17c4d41e016c3a7d96b49023c46f"
+    },
+    {
+      "case_id": "D41-7ad0db121354",
+      "repository": "openharmony/telephony_call_manager",
+      "commit": "6638d1b37f278d7ed380d907674820e7467cedf8",
+      "tree": "3eb7742bdcd1507ad75cfe9c580ff7fefe4f9d41",
+      "file": "frameworks/native/src/cellular_call_proxy.cpp",
+      "anchor_line": 758,
+      "source_sha256": "220ded767c9bd30c4d3b9b2cf602237cf6fdcfb91341d920272f791cf24d8eb3"
+    },
+    {
+      "case_id": "D41-1b4bef1aed6f",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "wmserver/include/window_manager_agent_controller.h",
+      "anchor_line": 50,
+      "source_sha256": "51fa596ca51c5b4e90073259da62ffe2b02a10dc9f7704e71aa668f35cf6c77a"
+    },
+    {
+      "case_id": "D41-1df028ca50dd",
+      "repository": "openharmony/inputmethod_imf",
+      "commit": "7777cba9eb19085af8e7b90088531028d2937460",
+      "tree": "3edaf7b3825158e13177a8ed61fa1689905229ba",
+      "file": "services/identity_checker/include/identity_checker.h",
+      "anchor_line": 5,
+      "source_sha256": "ec29bfac02335a111fd81ab0b7e5cbee967e3962645d7afb852e370e37555aef"
+    },
+    {
+      "case_id": "D41-05a2e6006dbf",
+      "repository": "openharmony/security_huks",
+      "commit": "4ae4e0db461f137672719d43ffc6c5b1b6c05be8",
+      "tree": "9c922a60d815a34eb96c060274ed863fd3a6fea8",
+      "file": "services/huks_standard/huks_engine/main/core_dependency/src/hks_core_useriam_wrap.cpp",
+      "anchor_line": 64,
+      "source_sha256": "b12a36994edc1f9e92ae19b0f9b8d8bde960175016e1838348ef3fe0f67f1962"
+    },
+    {
+      "case_id": "D41-4b4150ab97a9",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "085a5d0e2dc1c90a4b676bad55675a1cf12a6380",
+      "tree": "daef3c4c6bc50ead50610846a958c29ae669f0f3",
+      "file": "services/camera_service/src/hcamera_device_manager.cpp",
+      "anchor_line": 599,
+      "source_sha256": "814d060cfe2d4d106fefb79347a2bba5d09b81ac32046647686441a8a6384464"
+    },
+    {
+      "case_id": "D41-445d199579f8",
+      "repository": "openharmony/security_huks",
+      "commit": "4ae4e0db461f137672719d43ffc6c5b1b6c05be8",
+      "tree": "9c922a60d815a34eb96c060274ed863fd3a6fea8",
+      "file": "services/huks_standard/huks_service/main/os_dependency/sa/sa_mgr/hks_samgr_server.h",
+      "anchor_line": 6,
+      "source_sha256": "e761c13b0f109aed8b5ebdf826a931e98c84a0477b7334a4f356524dfd30012e"
+    },
+    {
+      "case_id": "D41-8c9181773be6",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "085a5d0e2dc1c90a4b676bad55675a1cf12a6380",
+      "tree": "daef3c4c6bc50ead50610846a958c29ae669f0f3",
+      "file": "services/deferred_processing_service/src/post_processor/video_process_result.cpp",
+      "anchor_line": 2,
+      "source_sha256": "301ee3ef80361baa0f190ed6ee63422ec19202acb14f4119743f42a3f7bf1786"
+    },
+    {
+      "case_id": "D41-c5a09e59b972",
+      "repository": "openharmony/security_certificate_manager",
+      "commit": "5fcc0b6379567a70176307c281360be2ba281d6b",
+      "tree": "f3e078b356ac0724d8ab267d73ab85e69b9b44ad",
+      "file": "services/cert_manager_standard/cert_manager_service/main/os_dependency/idl/cm_ipc/cm_ipc_service.c",
+      "anchor_line": 249,
+      "source_sha256": "8e526424c77647c05b071ba50ff584cd9a49c9ecf9024009ee15c043dd3e2d73"
+    },
+    {
+      "case_id": "D41-e06ddb2790d6",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "utils/src/surface_reader.cpp",
+      "anchor_line": 221,
+      "source_sha256": "8358dfb0769afd9e205e91582df16ec4e2ecf3abc7ba3fc416810fde9615276b"
+    },
+    {
+      "case_id": "D41-f4ab5ff1f48c",
+      "repository": "openharmony/security_huks",
+      "commit": "4ae4e0db461f137672719d43ffc6c5b1b6c05be8",
+      "tree": "9c922a60d815a34eb96c060274ed863fd3a6fea8",
+      "file": "services/huks_standard/huks_service/main/core/src/hks_report_three_stage.cpp",
+      "anchor_line": 115,
+      "source_sha256": "7760ed37335ae223f526702d7abaa8dae9c89e89dcd9a7828f354aecbd1e3326"
+    },
+    {
+      "case_id": "D41-c32bdad64ebf",
+      "repository": "openharmony/security_huks",
+      "commit": "4ae4e0db461f137672719d43ffc6c5b1b6c05be8",
+      "tree": "9c922a60d815a34eb96c060274ed863fd3a6fea8",
+      "file": "frameworks/crypto_lite/cipher/src/cipher_rsa.c",
+      "anchor_line": 170,
+      "source_sha256": "003b379738a0846ed0dce599db3f2fbf7fbcc9694cc9e0b5d08ecb5684824539"
+    },
+    {
+      "case_id": "D41-83d1f5080515",
+      "repository": "openharmony/security_certificate_manager",
+      "commit": "5fcc0b6379567a70176307c281360be2ba281d6b",
+      "tree": "f3e078b356ac0724d8ab267d73ab85e69b9b44ad",
+      "file": "interfaces/kits/napi/src/cm_napi_common.cpp",
+      "anchor_line": 350,
+      "source_sha256": "1bc33deb3c64ef714560c2bd6213dc4a93a5892131b3e0faf8a98d7d51791cfc"
+    },
+    {
+      "case_id": "D41-a6b93a5b4e83",
+      "repository": "openharmony/security_huks",
+      "commit": "4ae4e0db461f137672719d43ffc6c5b1b6c05be8",
+      "tree": "9c922a60d815a34eb96c060274ed863fd3a6fea8",
+      "file": "interfaces/kits/napi/src/v9/huks_napi_has_key_item.cpp",
+      "anchor_line": 30,
+      "source_sha256": "70b6cdaf42d7f84b8a0cadbd0823a0c07191decf438e04b230288a6f4c473961"
+    },
+    {
+      "case_id": "D41-c47a7076f98c",
+      "repository": "openharmony/security_huks",
+      "commit": "4ae4e0db461f137672719d43ffc6c5b1b6c05be8",
+      "tree": "9c922a60d815a34eb96c060274ed863fd3a6fea8",
+      "file": "frameworks/huks_standard/main/os_dependency/ipc/src/hks_samgr_client_proxy.c",
+      "anchor_line": 54,
+      "source_sha256": "ce59ac8dbefa30e391dafd8ac6b0612cfbdaa9510577352e409964d702dd204d"
+    },
+    {
+      "case_id": "D41-bc889d5fb9b9",
+      "repository": "openharmony/security_certificate_manager",
+      "commit": "5fcc0b6379567a70176307c281360be2ba281d6b",
+      "tree": "f3e078b356ac0724d8ab267d73ab85e69b9b44ad",
+      "file": "interfaces/kits/napi/include/cm_napi_sign_verify.h",
+      "anchor_line": 5,
+      "source_sha256": "56529ee7aa656fec4c3ce195a44aee45ad01065523b3cf24d35fdc787046e483"
+    }
+  ]
+}

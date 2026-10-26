@@ -1,0 +1,116 @@
+{
+  "verified_date": "2026-10-19",
+  "product": "rk3568 local product config",
+  "inferences": [
+    "Product config selects image_framework with image_framework_feature_upgrade_skia=true.",
+    "image_build_legacy_codec_plugins is true only for mingw/mac/android/ios; rk3568 OHOS target follows non-legacy branch, so legacy pngplugin is not selected from that group.",
+    "Skia m133 has skia_use_libpng_decode=true by default and its PNG decode target uses libpng.",
+    "Skia system-vs-bundled selection depends on skia_use_system_libpng = is_official_build && !is_wasm when skia_use_system_lib=false; OH Skia defaults skia_use_system_lib=false and global GN default is_official_build=false. Product args override is not available, so actual branch is unknown.",
+    "Local Skia third_party/externals/libpng directory is empty; this does not prove what a generated build would fetch or use.",
+    "No global_parts_info, args.gn, build.ninja, compile_commands.json, or final link manifest is available under out/rk3568."
+  ],
+  "file_identities": [
+    {
+      "path": "D:\\openHarmonyScanner\\openharmony\\third_party\\libpng\\install.py",
+      "exists": true,
+      "sha256": "20885a01fb0a2b32bee55943d1146185984f6662e2c3775d1391db46af3531a2"
+    },
+    {
+      "path": "D:\\openHarmonyScanner\\openharmony\\third_party\\libpng\\BUILD.gn",
+      "exists": true,
+      "sha256": "20dfc025f4abfbf2ab243eeb0a6b4972e6f26c3ab4dc7004e6db0426a1c82e2c"
+    },
+    {
+      "path": "D:\\openHarmonyScanner\\openharmony\\third_party\\libpng\\bundle.json",
+      "exists": true,
+      "sha256": "563e1205161b687d20025cdd64efe0bc2cb6cbc6a0002dcf3bab50f7ec65bc96"
+    },
+    {
+      "path": "D:\\openHarmonyScanner\\openharmony\\third_party\\libpng\\CVE-2026-33416.patch",
+      "exists": true,
+      "sha256": "6665573be26ee7fd9d41daea9056b80b2ebc7f7c16687c98be8949e443737201"
+    },
+    {
+      "path": "D:\\openHarmonyScanner\\openharmony\\third_party\\libpng\\CVE-2026-33636.patch",
+      "exists": true,
+      "sha256": "139e5523c83c36c16aa93996e9786769f389d9690106430dc6b4bae9cab69746"
+    },
+    {
+      "path": "D:\\openHarmonyScanner\\openharmony\\third_party\\libpng\\CVE-2026-34757.patch",
+      "exists": true,
+      "sha256": "a337957d7e9555b9f26b6ac23a9d6b7b4365f550c65c4d64e005bd047469ba19"
+    },
+    {
+      "path": "D:\\openHarmonyScanner\\openharmony\\vendor\\hihope\\rk3568\\config.json",
+      "exists": true,
+      "sha256": "46dc640a6ca988687245de967f4e2ec3aebd20ed3423472c48b89bc845c28408"
+    },
+    {
+      "path": "D:\\openHarmonyScanner\\openharmony\\foundation\\multimedia\\image_framework\\ide\\image_decode_config.gni",
+      "exists": true,
+      "sha256": "32fa92d118f5ea1098106cbac6ab9b2cb7462de682ab9eff0788aec01279d369"
+    },
+    {
+      "path": "D:\\openHarmonyScanner\\openharmony\\foundation\\multimedia\\image_framework\\plugins\\common\\libs\\BUILD.gn",
+      "exists": true,
+      "sha256": "52c0838768a3329f725543906f513da66c056d1e5d4a8a96c708ffea1a70b46a"
+    },
+    {
+      "path": "D:\\openHarmonyScanner\\openharmony\\foundation\\multimedia\\image_framework\\plugins\\common\\libs\\image\\libpngplugin\\BUILD.gn",
+      "exists": true,
+      "sha256": "c052fcb2d7b226134bd857117a8efbd555bd8765e5e72ab656e29413398363ee"
+    },
+    {
+      "path": "D:\\openHarmonyScanner\\openharmony\\third_party\\skia\\m133\\gn\\oh_skia.gni",
+      "exists": true,
+      "sha256": "fe054462377747dd3b123fe876952021623806ae103e2af209a8fc0307d0135c"
+    },
+    {
+      "path": "D:\\openHarmonyScanner\\openharmony\\third_party\\skia\\m133\\gn\\skia.gni",
+      "exists": true,
+      "sha256": "c0b33a39496f6df9c5459f44b762224aa17ff79d7e27f5bf7b06dd9c786ef630"
+    },
+    {
+      "path": "D:\\openHarmonyScanner\\openharmony\\third_party\\skia\\m133\\third_party\\libpng\\BUILD.gn",
+      "exists": true,
+      "sha256": "ee55bf56206b3ea12cf00601e17881885d9f6eef9cb6afa11eccc00692d15999"
+    },
+    {
+      "path": "D:\\openHarmonyScanner\\openharmony\\build\\config\\BUILDCONFIG.gn",
+      "exists": true,
+      "sha256": "33a49c43ff2ae82c2e5c3178f157f615b7caf4933b6a8239c6c483b8174abb8c"
+    },
+    {
+      "path": "openharmony/out/ohos_config.json",
+      "sha256": "892999ca037150188322fc21eab63bd030acdeb10e8720cd5c91398d0bd806a8"
+    },
+    {
+      "path": "openharmony/out/hb_args/buildargs.json",
+      "sha256": "b0884f99b2d1b7af1129a71bbb86cc63cd2246ea867145988928fd1cced57ebe"
+    },
+    {
+      "path": "openharmony/out/rk3568/build.log",
+      "sha256": "2a36bdef86773bcb12236a3c625038085a9ee4103a3ff8b5bd5a87766bbb209b"
+    },
+    {
+      "path": "openharmony/out/rk3568/build.1792344452.3203762.log",
+      "sha256": "4f0e45b366f3b50b67ac9e66c473784965beee59f9368a9ea0028ed05b17d52c"
+    }
+  ],
+  "existing_build_state": {
+    "product_config": "out/ohos_config.json identifies product/board rk3568 and out_path out/rk3568",
+    "hb_args": "out/hb_args/buildargs.json contains the argument schema/defaults, not a prior invocation record or selected GN args",
+    "rk3568_output_entries": [
+      "build.log",
+      "build.1792344452.3203762.log"
+    ],
+    "available_generated_manifests": [],
+    "log_findings": "build.log is an old 2026-10-18 hb --help invocation error; no GN generation or Ninja graph evidence.",
+    "sha256": {
+      "openharmony/out/ohos_config.json": "892999ca037150188322fc21eab63bd030acdeb10e8720cd5c91398d0bd806a8",
+      "openharmony/out/hb_args/buildargs.json": "b0884f99b2d1b7af1129a71bbb86cc63cd2246ea867145988928fd1cced57ebe",
+      "openharmony/out/rk3568/build.log": "2a36bdef86773bcb12236a3c625038085a9ee4103a3ff8b5bd5a87766bbb209b",
+      "openharmony/out/rk3568/build.1792344452.3203762.log": "4f0e45b366f3b50b67ac9e66c473784965beee59f9368a9ea0028ed05b17d52c"
+    }
+  }
+}

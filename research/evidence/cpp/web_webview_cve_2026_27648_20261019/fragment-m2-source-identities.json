@@ -1,0 +1,51 @@
+{
+  "basis": "Exact function ranges extracted from hash-bound upstream source commits; synthetic commits only package these exact bytes for local M2 CLI replay.",
+  "source_path": "arkweb/ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc",
+  "snapshots": {
+    "vulnerable": {
+      "upstream_commit": "5ab1905a8fba8d07e9ab4a9453a7787ec274a1a8",
+      "synthetic_snapshot_commit": "d5ab663b730bbda87452a31782aecb804139a23c",
+      "synthetic_tree": "7ce64a93174c9ce59b38b090a5589f9b37e37ba3",
+      "fragment_sha256": "70e2cf35f6b143a7fdbf2e6c9a571817545ef9c9efe0199aa1e7c5e6e4afb973",
+      "fragment_bytes": 4684,
+      "function_ranges": [
+        {
+          "name": "FlowbufStrAtIndex",
+          "start_line": 4428,
+          "end_line": 4458
+        },
+        {
+          "name": "ProcessNativeProxyResultNewFlowbuf",
+          "start_line": 4460,
+          "end_line": 4586
+        }
+      ],
+      "fragment_parse_status": "complete",
+      "fragment_parse_issues": [],
+      "controls_sha256": "d93fd02ef193e929132a54e4d9db6b7b9d49d96801b48533e11cfb2f18d4cd86"
+    },
+    "fixed": {
+      "upstream_commit": "4cf313408de7b6d807465ea2bb22e434269b7c5e",
+      "synthetic_snapshot_commit": "9116238d44dbf6c5e89f85d4ab073f3afae2ae21",
+      "synthetic_tree": "8e34b51637ec72032c4bd345abc9b70650458e46",
+      "fragment_sha256": "6d8f1982dae51a633959ba7a7cdeb78c6f1f29d85571ed98e7ffc0c789556e74",
+      "fragment_bytes": 4968,
+      "function_ranges": [
+        {
+          "name": "FlowbufStrAtIndex",
+          "start_line": 4428,
+          "end_line": 4463
+        },
+        {
+          "name": "ProcessNativeProxyResultNewFlowbuf",
+          "start_line": 4465,
+          "end_line": 4592
+        }
+      ],
+      "fragment_parse_status": "complete",
+      "fragment_parse_issues": [],
+      "controls_sha256": "d93fd02ef193e929132a54e4d9db6b7b9d49d96801b48533e11cfb2f18d4cd86"
+    }
+  },
+  "controls_sha256": "d93fd02ef193e929132a54e4d9db6b7b9d49d96801b48533e11cfb2f18d4cd86"
+}

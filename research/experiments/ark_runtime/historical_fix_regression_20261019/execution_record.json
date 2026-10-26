@@ -1,0 +1,28 @@
+{
+  "historical_fix_commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+  "c1_runtime_commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+  "qemu_version": "qemu-arm version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)\nCopyright (c) 2003-2023 Fabrice Bellard and the QEMU Project developers",
+  "qemu_sha256": "47a63bcbdf3030cf42230a0521dae38ff9d62ba1268d5cafc7d8ccf7da7c761c",
+  "vm_sha256": "c6b51a8036fc40415da3c02a7bb1e1b732f9e7fe094fca33ce5f29ad19c9c4c5",
+  "es2abc_sha256": "84029e93a9b067df86f6bf5a9880f199187beedd7292da42a4c169c48943a474",
+  "source_blob_oid": "ef25a446c3d91d3019a7fa09d6a9702fe8e670e6",
+  "exact": {
+    "compile_exit": 0,
+    "run_exit": -6,
+    "abc_sha256": "af0ef12cc7aa4f37ee86899d1a15985fcfcd170c4341b7791f2a6d9c30245ba3",
+    "stdout_sha256": "81b2bd4ea98c8db66554fbc8d7637a1a69a130f331feb732b75caab4c4868fd5",
+    "stderr_sha256": "aad5a8824a43f2747603331e1d0015735fd045128f005730e49cc06dd251f960",
+    "stdout": "success\n",
+    "stderr_tail": "rver. Errno: 2\nHiLogAdapter_init: Can't connect to server. Errno: 2\nHiLogAdapter_init: Can't connect to server. Errno: 2\nHiLogAdapter_init: Can't connect to server. Errno: 2\nHiLogAdapter_init: Can't connect to server. Errno: 2\nHiLogAdapter_init: Can't connect to server. Errno: 2\nHiLogAdapter_init: Can't connect to server. Errno: 2\nHiLogAdapter_init: Can't connect to server. Errno: 2\nHiLogAdapter_init: Can't connect to server. Errno: 2\nHiLogAdapter_init: Can't connect to server. Errno: 2\nHiLogAdapter_init: Can't connect to server. Errno: 2\nqemu: uncaught target signal 6 (Aborted) - core dumped\n"
+  },
+  "harness_source_sha256": "05e6fa0a9c20b0990d159cae1b8dda26fcf9d6d9c4a19f4ca843ead63d0fb004",
+  "harness": {
+    "compile_exit": 0,
+    "run_exit": 0,
+    "abc_sha256": "83103d134d2171828361d00fee3dd6e92b9129479bf1b8d1a4f1dddc4569c8e9",
+    "stdout_sha256": "7c9b298f96828323ca088f2e41dd6bc41c32d2ebacd1917ef1219723e514a5b9",
+    "stderr_sha256": "f0dd2387e9c96b8d7e04ed94561709eea58e23291b9a13a0a9baef675663de99",
+    "stdout": "success\nexecute pandafile spent time 51.266ms\n",
+    "stderr_tail": "server. Errno: 2\nHiLogAdapter_init: Can't connect to server. Errno: 2\nHiLogAdapter_init: Can't connect to server. Errno: 2\nHiLogAdapter_init: Can't connect to server. Errno: 2\nHiLogAdapter_init: Can't connect to server. Errno: 2\nHiLogAdapter_init: Can't connect to server. Errno: 2\nHiLogAdapter_init: Can't connect to server. Errno: 2\nHiLogAdapter_init: Can't connect to server. Errno: 2\nHiLogAdapter_init: Can't connect to server. Errno: 2\nHiLogAdapter_init: Can't connect to server. Errno: 2\nHiLogAdapter_init: Can't connect to server. Errno: 2\nHiLogAdapter_init: Can't connect to server. Errno: 2\n"
+  }
+}

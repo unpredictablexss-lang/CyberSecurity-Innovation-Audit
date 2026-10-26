@@ -1,0 +1,107 @@
+{
+  "schema": "c-line-historical-partial-diagnosis-v1",
+  "parser_environment": {
+    "tree-sitter": "0.26.0",
+    "tree-sitter-cpp": "0.23.4",
+    "cpp_grammar_abi": "14"
+  },
+  "profiles": [
+    {
+      "profile": "parent",
+      "commit": "830e85b40240677039719fcbf14f721ad3b19050",
+      "file": "type-origin-parent.cpp",
+      "bytes": 150433,
+      "git_blob_oid": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+      "sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422",
+      "translation_unit_parse_status": "partial",
+      "translation_unit_has_error": true,
+      "function_definitions": 53,
+      "resolved_target": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+      "target_source_lines": [
+        1372,
+        1511
+      ],
+      "target_function_has_error": false,
+      "translation_unit_parser_errors": [
+        {
+          "node_type": ";",
+          "missing": true,
+          "source_lines": [
+            3362,
+            3362
+          ],
+          "source_columns": [
+            71,
+            71
+          ],
+          "within_target_function": false,
+          "nearby_source": "= ToIndex(glue, byteOffset);\r\n    BRANCH(HasPendingException(glue), &hasException, &notHasException)\r\n    Bind(&notHasException);\r\n    GateRef offset = DoubleToInt(glue, GetDoubleOfTNumber(index));\r\n    BRANCH(Int32Equal(Int32Mod(offset, elementSize)"
+        },
+        {
+          "node_type": ";",
+          "missing": true,
+          "source_lines": [
+            3675,
+            3675
+          ],
+          "source_columns": [
+            71,
+            71
+          ],
+          "within_target_function": false,
+          "nearby_source": "                \\\r\n        }\r\nBUILTIN_COMPILER_TYPED_ARRAY_TYPES(BUILTIN_COMPILER_TYPED_ARRAY_LABEL)\r\n#undef BUILTIN_COMPILER_TYPED_ARRAY_LABEL\r\n        default:\r\n            LOG_ECMA(FATAL) << \"this branch is unreachable\";\r\n            UNREACHABLE()"
+        }
+      ],
+      "diagnosis": "Both whole-file partial parser nodes are outside the unique Filter definition and occur at macro-sensitive C++ constructs. Function-local syntax is complete; macro expansion, build configuration, and dependency/type semantics remain unverified."
+    },
+    {
+      "profile": "fix",
+      "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+      "file": "type-origin-fix.cpp",
+      "bytes": 150509,
+      "git_blob_oid": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+      "sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "translation_unit_parse_status": "partial",
+      "translation_unit_has_error": true,
+      "function_definitions": 53,
+      "resolved_target": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+      "target_source_lines": [
+        1372,
+        1512
+      ],
+      "target_function_has_error": false,
+      "translation_unit_parser_errors": [
+        {
+          "node_type": ";",
+          "missing": true,
+          "source_lines": [
+            3363,
+            3363
+          ],
+          "source_columns": [
+            71,
+            71
+          ],
+          "within_target_function": false,
+          "nearby_source": "= ToIndex(glue, byteOffset);\r\n    BRANCH(HasPendingException(glue), &hasException, &notHasException)\r\n    Bind(&notHasException);\r\n    GateRef offset = DoubleToInt(glue, GetDoubleOfTNumber(index));\r\n    BRANCH(Int32Equal(Int32Mod(offset, elementSize)"
+        },
+        {
+          "node_type": ";",
+          "missing": true,
+          "source_lines": [
+            3676,
+            3676
+          ],
+          "source_columns": [
+            71,
+            71
+          ],
+          "within_target_function": false,
+          "nearby_source": "                \\\r\n        }\r\nBUILTIN_COMPILER_TYPED_ARRAY_TYPES(BUILTIN_COMPILER_TYPED_ARRAY_LABEL)\r\n#undef BUILTIN_COMPILER_TYPED_ARRAY_LABEL\r\n        default:\r\n            LOG_ECMA(FATAL) << \"this branch is unreachable\";\r\n            UNREACHABLE()"
+        }
+      ],
+      "diagnosis": "Both whole-file partial parser nodes are outside the unique Filter definition and occur at macro-sensitive C++ constructs. Function-local syntax is complete; macro expansion, build configuration, and dependency/type semantics remain unverified."
+    }
+  ],
+  "interpretation_limit": "This narrows the syntactic cause of file-level partial status. It does not upgrade the historical replay, prove preprocessor/build semantics, or admit the public Runner."
+}

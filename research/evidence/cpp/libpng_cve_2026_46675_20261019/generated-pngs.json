@@ -1,0 +1,10 @@
+{
+  "trigger-invalid-zlib-window.png": {
+    "bytes": 4459,
+    "sha256": "a10810e046794cb276b9a9537b75beb8e2be6b6eb5b3f95d2f972e686b16c16a"
+  },
+  "control-valid-zlib-stream.png": {
+    "bytes": 4230,
+    "sha256": "79ddafc75a9d94f34bdd6b0fdc4981bc1aca8e1a01675383e2e33adb8687d12d"
+  }
+}

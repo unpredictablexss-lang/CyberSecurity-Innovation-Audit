@@ -1,0 +1,83 @@
+{
+  "schema": "c-line-blind-review-results-v1",
+  "status": "complete",
+  "detector": "ohscanner.ark.runtime.type_safety",
+  "detector_version": "0.3.10",
+  "algorithm_freeze": "research/deliveries/cpp/ark-runtime-c-line-algorithm-freeze-20261018.json",
+  "algorithm_freeze_sha256": "f9b6da07aa69ea78ffc7ab89272accedec53d8db782a2f206a253cb1563b8bf9",
+  "source": {
+    "repository": "openharmony/arkcompiler_ets_frontend",
+    "commit": "fadba67b0bdf625d30d69e0940e26c52992669df",
+    "tree": "cae995ac693e849ac9d71bb38ec961da58aaeadb"
+  },
+  "reviewer_attestation": {
+    "reviewer_role": "independent subagent blind reviewer",
+    "independent_from_rule_development": true,
+    "saw_detector_output_before_labeling": false,
+    "blind_packet_only_until_labels_completed": true,
+    "labels_completed_utc": "2026-10-18T19:57:23Z"
+  },
+  "coverage": {
+    "labels_completed": 21,
+    "samples_total": 21,
+    "sampled_translation_units": 21,
+    "complete_translation_units_in_frame": 99,
+    "translation_unit_coverage_fraction": 0.212121,
+    "function_definitions_in_complete_files": 2293,
+    "sampled_function_excerpts": 21,
+    "function_coverage_fraction": 0.009158,
+    "partial_translation_units_in_frame": 3
+  },
+  "label_counts": {
+    "candidate": 1,
+    "safe": 17,
+    "unknown": 3
+  },
+  "scope_counts": {
+    "out_of_scope": 20,
+    "uncertain": 1
+  },
+  "unknown": {
+    "count": 3,
+    "reasons": {
+      "Insufficient context to establish pointer invariants or applicable runtime-model relevance": 1,
+      "Insufficient excerpt context to establish API invariants and model applicability": 1,
+      "Insufficient excerpt context to establish block statement non-null invariant and model applicability": 1
+    }
+  },
+  "root_causes_by_label": {
+    "candidate": {
+      "Reinterpret-casts AST member/type pointers to checker::Type pointers": 1
+    },
+    "safe": {
+      "Bounds checks and cursor handling constrain source slicing": 1,
+      "Checks null and node kinds before extracting parameter names": 1,
+      "Checks token and parent kinds before member-expression access": 1,
+      "Checks token pointer and kind before reading range": 1,
+      "Empty-list guard precedes indexing": 1,
+      "Formats an import alias from strings": 1,
+      "Multiple null and identity checks guard identifier selection": 1,
+      "Null and empty-input guards precede construction; no runtime type safety operation": 1,
+      "Null return-type guard precedes type queries": 1,
+      "Path normalization helper only; no runtime type safety operation": 1,
+      "Probe is bounded by source size": 1,
+      "Registers a refactor action kind": 1,
+      "Registers supported diagnostic codes and fix IDs": 2,
+      "Returns a stored lexer token reference": 1,
+      "Returns an empty action vector; no dereferences or unsafe operations": 1,
+      "Serializes block body to source text": 1
+    },
+    "unknown": {
+      "Potential unchecked AST/class identifier dereferences are visible": 1,
+      "Signature info and return type are dereferenced without visible null checks": 1,
+      "Statement pointer is dereferenced without a local null check": 1
+    }
+  },
+  "provenance": {
+    "blind_packet_sha256": "c23406de4796bceeee8c922bae6438267676c4439d498ce4c86479322f9886da",
+    "labels_csv_sha256": "0904b9984480a2327d58196565c02fc0e79cef07465d4ccdc45a60b387f417f5",
+    "census_sha256": "59cbb1cf41e79e466abd71fbf80df2ef8a17fb91017802be186449054522e61a",
+    "census_files": 102
+  },
+  "interpretation_limit": "Applicability/false-match review only; this frame does not test semantic recall or estimate component-wide precision/recall."
+}

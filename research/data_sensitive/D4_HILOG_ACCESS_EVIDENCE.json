@@ -1,0 +1,102 @@
+{
+  "schema": 1,
+  "evidence_id": "d4-hilog-control-socket-acl",
+  "repository": "openharmony/hiviewdfx_hilog",
+  "commit": "45e229a0228a3dc2bb2f01eeb69b2d0ff33c4c31",
+  "commit_date": "2022-03-28T09:34:58Z",
+  "tree_sha": "db71e7f70ead8bc90a5ea157884b154a48b33777",
+  "tree_recursive_entries": 151,
+  "tree_truncated": false,
+  "objects": [
+    {
+      "size": 1529,
+      "blob_sha1": "032464a48a69e144d0e51366c5347f0df13c2e9f",
+      "sha256": "9e3eacea86cf31651e04a92d43193f1ddb1aa9b82b84dfbfdeff5e86b5ad59f1",
+      "path": "services/hilogd/etc/hilogd.cfg"
+    },
+    {
+      "size": 24521,
+      "blob_sha1": "85a6900b0eb73bd188bc5457c963045f9cbbfedf",
+      "sha256": "e8e99a8de03b4807f32cb337875f783a8d8b02c379cfde0c8823b8cb52cc87af",
+      "path": "services/hilogtool/main.cpp"
+    },
+    {
+      "size": 5287,
+      "blob_sha1": "9b9158ed80513b3d39c6afd4e97ffe9e9d9c379b",
+      "sha256": "213de3b616c83004ea8e3ed11fb8f2e75a537c2af949ca29a944bc07f7db09cd",
+      "path": "frameworks/native/include/hilog_common.h"
+    },
+    {
+      "size": 26377,
+      "blob_sha1": "f13be17310b0630d4152fe5a53a25e55ab843ec5",
+      "sha256": "3928033709836128202b507600e5dda409f76b6eb05bf2edab11be1f81ab20e3",
+      "path": "services/hilogd/service_controller.cpp"
+    }
+  ],
+  "tree_path_mappings": [
+    {
+      "size": 1529,
+      "mode": "100644",
+      "type": "blob",
+      "sha": "032464a48a69e144d0e51366c5347f0df13c2e9f",
+      "path": "services/hilogd/etc/hilogd.cfg"
+    },
+    {
+      "size": 24521,
+      "mode": "100644",
+      "type": "blob",
+      "sha": "85a6900b0eb73bd188bc5457c963045f9cbbfedf",
+      "path": "services/hilogtool/main.cpp"
+    },
+    {
+      "size": 5287,
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9b9158ed80513b3d39c6afd4e97ffe9e9d9c379b",
+      "path": "frameworks/native/include/hilog_common.h"
+    },
+    {
+      "size": 26377,
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f13be17310b0630d4152fe5a53a25e55ab843ec5",
+      "path": "services/hilogd/service_controller.cpp"
+    }
+  ],
+  "source_facts": {
+    "service_disabled_flag": 1,
+    "service_start_mode": "boot",
+    "controller_socket": {
+      "name": "hilogControl",
+      "family": "AF_UNIX",
+      "type": "SOCK_SEQPACKET",
+      "permissions": "0600",
+      "uid": "logd",
+      "gid": "logd"
+    },
+    "input_socket": {
+      "name": "hilogInput",
+      "family": "AF_UNIX",
+      "type": "SOCK_DGRAM",
+      "permissions": "0666",
+      "uid": "logd",
+      "gid": "logd"
+    },
+    "client_uses_controller_socket": true,
+    "client_receives_log_query_response": true,
+    "service_queries_hilog_buffer": true
+  },
+  "conclusion": "Conditional source-level DAC evidence only: if hilogd is active, the configured socket is created unchanged, and caller lacks extra privilege, a normal app cannot directly open the 0600 logd:logd control socket. The static config does not prove service activation, product configuration, other read paths, or runtime ACL.",
+  "limitations": [
+    "Adjacent-date HiLog commit, not the same product build snapshot as DSoftBus.",
+    "disabled=1 and start-mode=boot are recorded; service activation remains unknown.",
+    "No device/app UID runtime ACL test was performed.",
+    "GitHub API recursive tree response is recorded evidence, not a signed local Git object database."
+  ],
+  "api_snapshots": {
+    "commit_file": "D4_HILOG_COMMIT_API.json",
+    "commit_response_sha256": "f9a1bc1eb870650a649b2b223436df1684ea4c8ae3d4b346f841894eb84edcf9",
+    "tree_file": "D4_HILOG_TREE_API.json",
+    "tree_response_sha256": "c1d1a2d71274c6db531d9e388d7c4ea41de3a725ae70c9e484d48eb550c994aa"
+  }
+}

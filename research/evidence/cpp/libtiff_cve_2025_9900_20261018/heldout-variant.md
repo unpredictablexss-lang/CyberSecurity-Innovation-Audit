@@ -1,0 +1,50 @@
+# OHScanner M2 reviewed-detector execution
+
+> Detection candidates and coverage limitations, NOT validated vulnerabilities.
+
+- Source repository (declared): `fixture/cpp-pointer-offset-holdout`
+- Pinned commit: `f6a34c25b8265d2af539159897b563d7adf51ae5`
+- Git tree: `9f4d6ae984a9a35178975cd883eae6440f8b148a`
+- Snapshot SHA-256: `f7ab85558e49646dcec269c8b69c6e8558f421c5ebfbbab3a9db7b031602e190`
+- Source files indexed: 2
+- Parsing coverage: `{"complete": 2}`
+- Detector runs: 1
+- Total unverified diagnostics: 1
+- Validated vulnerabilities: **0** (no runtime verification performed)
+
+## Per-detector results
+
+| Detector | Execution | Inspected files | Complete | Partial | Not analyzed | Diagnostics | Coverage |
+|---|---|---:|---:|---:|---:|---:|---|
+| `ohscanner.cpp.integer_bounds` | completed | 2 | 2 | 0 | 0 | 1 | complete |
+
+## Candidate evidence and missing proof
+
+| Detector | Candidate ID | File:line | Rule | Unverified proof obligations |
+|---|---|---|---|---|
+| `ohscanner.cpp.integer_bounds` | `ohscanner.cpp.integer_bounds:45bab32807b2985f` | `src/crop_rows.c:4` | `ohcpp-integer-bounds-pointer-offset-underflow-candidate-004` | integer_range_and_signedness=unknown; overflow_guard_dominance=unknown; allocation_or_memory_consequence=unknown; cross_function_and_macro_context=missing; entry_or_privilege_boundary=missing; attacker_control=missing; cia_impact=missing |
+
+## Coverage gaps
+
+Scope counts source inspection, not complete semantic coverage; partial remains unknown.
+Files without a claiming detector: 0
+- `ohscanner.cpp.integer_bounds`: complete, 2/2 applicable files examined; unexamined=0
+
+## Limitations
+
+- Diagnostics are candidates/evidence only, not proof of security impact.
+- Zero diagnostics does NOT mean the component is free of vulnerabilities.
+- Git origin name is user declared; source is pinned local objects, not an OH product build.
+- No compilation flags/macros, symbolic execution, hard plugin timeout or runtime validation.
+- `ohscanner.cpp.integer_bounds`: A guarded or unknown expression is not a safe verdict; partial/failed source remains unknown.
+- `ohscanner.cpp.integer_bounds`: Candidate only: lexical integer arithmetic does not prove allocation undersizing or product impact.
+- `ohscanner.cpp.integer_bounds`: Signedness, promotions, macro constants, overflow intrinsics, templates and interprocedural range facts remain unknown unless explicitly modeled.
+- `ohscanner.cpp.integer_bounds`: M1 local Git objects pinned by full commit/tree; repository ownership is user-declared.
+- `ohscanner.cpp.integer_bounds`: Execution is synchronous; hard timeout/memory isolation is not yet implemented.
+- `ohscanner.cpp.integer_bounds`: Diagnostic does not establish vulnerability, reachability or security impact.
+
+## Frozen execution plan
+
+- Planner: 0.1.1; mode: explicit
+- Plan SHA-256: `2fd8556fe77c19857211ec453a6aa554583f350cd1bc2a8bff0908a63c25d966`
+- Language matching plans attempts; actual coverage remains in the results above.

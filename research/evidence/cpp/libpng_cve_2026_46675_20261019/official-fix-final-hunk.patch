@@ -1,0 +1,10 @@
+--- pngrutil.c
++++ pngrutil.c
+@@ -4356,6 +4356,2 @@
+-      /* Always do this; the pointers otherwise point into the read buffer. */
+-      png_ptr->zstream.next_in = NULL;
+-      png_ptr->zstream.avail_in = 0;
+-
+-      /* Now we no longer own the zstream. */
++      png_inflate_detach_buffers(png_ptr);
+       png_ptr->zowner = 0;

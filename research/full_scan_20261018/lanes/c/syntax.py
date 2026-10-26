@@ -3,9 +3,22 @@
 No preprocessing, full C++ type resolution, or modification of shared parsing.
 """
 from dataclasses import dataclass
+from importlib.metadata import PackageNotFoundError, version
 import re
 from tree_sitter import Language, Parser
 import tree_sitter_cpp
+
+
+def parser_environment():
+    """Return the parser runtime and C++ grammar identity used for this AST."""
+    try:
+        runtime = version('tree-sitter')
+        grammar = version('tree-sitter-cpp')
+    except PackageNotFoundError:
+        return ()
+    abi = Language(tree_sitter_cpp.language()).abi_version
+    return (('tree-sitter', runtime), ('tree-sitter-cpp', grammar),
+            ('cpp_grammar_abi', str(abi)))
 
 
 def walk(node):

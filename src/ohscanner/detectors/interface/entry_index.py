@@ -274,6 +274,9 @@ class EntryIndex:
         self._enum_members = {}
         self._macros = {}
         self._constants = {}        # name -> [ConstantDefinition, ...]
+        # Source-declared member types, used only for an exact one-hop receiver
+        # resolution. Ambiguous declarations are retained as sets and refused.
+        self._member_types = {}     # (owner terminal, field) -> {(type, file, line)}
         self._map_literals = {}     # map var -> [(code_text, handler, file, line)]
         self._map_assigns = {}      # map var -> same shape
 
@@ -349,6 +352,27 @@ class EntryIndex:
                          tuple(specs))
         self._classes[qualified] = info
         self._classes_by_terminal.setdefault(name, info)
+        body = node.child_by_field_name("body")
+        if body is not None:
+            for member in body.named_children:
+                if member.type != "field_declaration":
+                    continue
+                field_type = member.child_by_field_name("type")
+                declarator = member.child_by_field_name("declarator")
+                field_name = _last_identifier(source, declarator) if declarator is not None else ""
+                if field_type is None or not field_name:
+                    continue
+                receiver_type = (_template_argument(source, field_type)
+                                 or _base_terminal(source, field_type))
+                # Preserve the owning namespace for an unqualified member type.
+                # A same-terminal class in another namespace is not this field's
+                # receiver; if the qualified declaration is not indexed, refuse.
+                if receiver_type and "::" not in receiver_type and "::" in qualified:
+                    receiver_type = qualified.rsplit("::", 1)[0] + "::" + receiver_type
+                if receiver_type and receiver_type not in ("auto", "decltype"):
+                    key = (name, field_name)
+                    self._member_types.setdefault(key, set()).add(
+                        (receiver_type, path, member.start_point[0] + 1))
 
     def _record_enum(self, node, source):
         name = _text(source, node.child_by_field_name("name"))
@@ -396,6 +420,23 @@ class EntryIndex:
         records; deciding between them is the query's job, not the recorder's.
         """
         if not _CONST_QUALIFIER.search(_text(source, node)):
+            return
+        # A class-scoped static const UID is represented by tree-sitter-cpp as
+        # a field_declaration with direct declarator/default_value fields,
+        # unlike a namespace-scope declaration's init_declarator. Account-role
+        # evidence often uses exactly this form.
+        if node.type == "field_declaration":
+            declarator = node.child_by_field_name("declarator")
+            raw = (node.child_by_field_name("default_value")
+                   or node.child_by_field_name("value"))
+            if declarator is not None and raw is not None:
+                name = _last_identifier(source, declarator)
+                value = _literal_value(source, raw)
+                if name and value is not None:
+                    self._constants.setdefault(name, []).append(
+                        ConstantDefinition(name, value, path, node.start_point[0] + 1,
+                                           _scope_prefix(source, node, name),
+                                           _text(source, node).strip()))
             return
         for item in node.named_children:
             if item.type != "init_declarator":
@@ -1086,8 +1127,13 @@ class EntryIndex:
             note += " dispatcher-guard-observed"
         return note
 
-    def resolve_receiver(self, expression):
-        """Map a source-backed receiver to `Type::Method`; never guesses."""
+    def resolve_receiver(self, expression, owner=""):
+        """Map a source-backed receiver to Type::Method; never guesses.
+
+        A receiver can also be resolved from a unique field declaration on the
+        current class. The declaration must be among the indexed units;
+        ambiguous or missing field types remain unknown.
+        """
         expression = expression.strip()
         if "->" not in expression:
             return None
@@ -1096,12 +1142,19 @@ class EntryIndex:
             return None
         if receiver in self.aliases:
             return self.aliases[receiver] + "::" + method
+        owner_terminal = _last_component(owner)
+        field_types = self._member_types.get((owner_terminal, receiver), set())
+        types = {entry[0] for entry in field_types}
+        if len(types) == 1:
+            receiver_type = next(iter(types))
+            if "::" in receiver_type and receiver_type not in self._classes:
+                return None
+            return receiver_type + "::" + method
         match = re.fullmatch(
             r"(?:DelayedSingleton\s*<\s*)?([\w:]+?)\s*>?\s*::\s*GetInstance\s*\(\s*\)", receiver)
         if match:
             return _last_component(match.group(1)) + "::" + method
         return None
-
     def counts(self):
         by_evidence, by_kind = {}, {}
         for entry in self.entries:

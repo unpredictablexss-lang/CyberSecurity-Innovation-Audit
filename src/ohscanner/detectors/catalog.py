@@ -8,11 +8,15 @@ from .example import CppCopyCallExampleDetector
 from .cpp.bounds_detector import CppBoundsDetector
 from .cpp.integer_bounds_detector import CppIntegerBoundsDetector
 from .cpp.m2_adapter import M2LifetimeDetector, M2SharedPtrRaceDetector
+from .ark_runtime.detector import ArkRuntimeTypeSafetyDetector
+from .ark_runtime.model import c_line_static_model
 from .cpp.null_dereference_detector import NullDereferenceDetector
 from .cpp.resource_lifetime_detector import CppResourceLifetimeDetector
 from .cpp.unsafe_memory_call_detector import CppUnsafeMemoryCallDetector
 from .interface.m2_adapter import M2IpcInterfaceDetector
 from .interface.arkts_js import ArkTsJsInterfaceDetector
+from .data.sensitive_exposure import SensitiveExposureDetector
+from .known_cves import KnownDisclosedCveDetector
 
 _APPROVED = {
     "ohscanner.oh.arkts_js": {
@@ -24,6 +28,27 @@ _APPROVED = {
         "factory": M2IpcInterfaceDetector,
         "kind": "research_candidate",
         "summary": "B: bounded IPC trust-boundary candidates; partial syntax is unknown, not safe",
+    },
+    "ohscanner.ark.runtime.type_safety": {
+        "factory": lambda: ArkRuntimeTypeSafetyDetector(model=c_line_static_model()),
+        "kind": "research_candidate",
+        "default_enabled": False,
+        "admission_reason": "explicit_selection_required: exact C1 repository/commit/target/creator blob profile only; partial or unsupported source remains unknown",
+        "summary": "C: source-bound Ark Runtime TypedArray static candidates; product impact is unverified",
+    },
+    "ohscanner.data.sensitive_exposure": {
+        "factory": SensitiveExposureDetector,
+        "kind": "research_candidate",
+        "default_enabled": False,
+        "admission_reason": "explicit_selection_required: reviewed source profiles plus blocked candidate-only fallback for unknown revisions; partial coverage remains unknown",
+        "summary": "D: sensitive-data exposure candidates; unknown revisions remain blocked/partial, not a vulnerability verdict",
+    },
+    "ohscanner.known_disclosed_cves": {
+        "factory": KnownDisclosedCveDetector,
+        "kind": "research_candidate",
+        "default_enabled": False,
+        "admission_reason": "explicit_selection_required: public-CVE rule development corpus is not an independent holdout; product reachability and impact remain unverified",
+        "summary": "Narrow source signatures for selected public CVEs; product reachability remains unverified",
     },
     CppCopyCallExampleDetector.detector_id: {
         "factory": CppCopyCallExampleDetector,

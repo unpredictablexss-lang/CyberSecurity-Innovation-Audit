@@ -1,0 +1,53 @@
+# OHScanner M2 reviewed-detector execution
+
+> Detection candidates and coverage limitations, NOT validated vulnerabilities.
+
+- Source repository (declared): `curl/curl`
+- Pinned commit: `d7546809d5bd548b69ec49fca26565c8f6f0d344`
+- Git tree: `52a8416729366487cdd3b6012071f5f8370e769f`
+- Snapshot SHA-256: `cbc4bf484c7dacefd8869f7917b00983569e8d012470e88f278fc6104744c2f6`
+- Source files indexed: 1
+- Parsing coverage: `{"complete": 1}`
+- Detector runs: 1
+- Total unverified diagnostics: 0
+- Validated vulnerabilities: **0** (no runtime verification performed)
+
+## Per-detector results
+
+| Detector | Execution | Inspected files | Complete | Partial | Not analyzed | Diagnostics | Coverage |
+|---|---|---:|---:|---:|---:|---:|---|
+| `ohscanner.cpp.resource_lifetime` | completed | 1 | 1 | 0 | 0 | 0 | complete |
+
+## Candidate evidence and missing proof
+
+| Detector | Candidate ID | File:line | Rule | Unverified proof obligations |
+|---|---|---|---|---|
+| — | — | — | — | No reported candidate; NOT proof of safety |
+
+## Coverage gaps
+
+Scope counts source inspection, not complete semantic coverage; partial remains unknown.
+Files without a claiming detector: 0
+- `ohscanner.cpp.resource_lifetime`: complete, 1/1 applicable files examined; unexamined=0
+
+## Limitations
+
+- Diagnostics are candidates/evidence only, not proof of security impact.
+- Zero diagnostics does NOT mean the component is free of vulnerabilities.
+- Git origin name is user declared; source is pinned local objects, not an OH product build.
+- No compilation flags/macros, symbolic execution, hard plugin timeout or runtime validation.
+- `ohscanner.cpp.resource_lifetime`: Absence of a finding is not a safe verdict; partial/failed source remains unknown.
+- `ohscanner.cpp.resource_lifetime`: Branch, label, cross-function ownership, containers, callbacks, exceptions, destructor timing and custom allocators remain unknown; transitions between lexical flow segments are not joined.
+- `ohscanner.cpp.resource_lifetime`: Candidate only: local lexical resource state does not prove UAF/double-free exploitability.
+- `ohscanner.cpp.resource_lifetime`: lib/mime.c:cleanup_part_content: unresolved allocation/release alias state remains unknown.
+- `ohscanner.cpp.resource_lifetime`: lib/mime.c:curl_mime_free: unresolved allocation/release alias state remains unknown.
+- `ohscanner.cpp.resource_lifetime`: lib/mime.c:mimesetstate: unresolved allocation/release alias state remains unknown.
+- `ohscanner.cpp.resource_lifetime`: M1 local Git objects pinned by full commit/tree; repository ownership is user-declared.
+- `ohscanner.cpp.resource_lifetime`: Execution is synchronous; hard timeout/memory isolation is not yet implemented.
+- `ohscanner.cpp.resource_lifetime`: Diagnostic does not establish vulnerability, reachability or security impact.
+
+## Frozen execution plan
+
+- Planner: 0.1.1; mode: explicit
+- Plan SHA-256: `dd89ee769dc2a21dd5909a3a4fbfcea2eb4ee216b6fadd8a0979544f567b2c8e`
+- Language matching plans attempts; actual coverage remains in the results above.

@@ -1,0 +1,12 @@
+case=curl-cve-2026-92391
+harness_sha256=2B24BAAE4FBEA845ACFA147120AAADBBD91F7C88403E4EC0C7D0B69C26CE31CE
+vulnerable_executable_sha256=45B4CBC1E12A13399C0879A6299AFDE4CD6FEAFCC715707ACDE9620EF4225DAA
+fixed_executable_sha256=32F218BEE82714DC5014260A8312BE9EAD9F2A0ABC75E330230AFB2626DAE21C
+vulnerable_commit=01346829096c61b372692f6dc43ffa778c6caccd
+fixed_commit=d7546809d5bd548b69ec49fca26565c8f6f0d344
+runtime_controls=depth50 vulnerable PASS; depth10000 stack256 vulnerable SIGSEGV; depth50 fixed PASS; depth10000 stack256 fixed PASS
+verification_replay_2026-10-19=existing saved binaries, independently rerun under WSL with ulimit -s 256 and core dumps disabled
+verify_vulnerable_depth50=exit0 cleanup_completed
+verify_vulnerable_depth10000=exit139 SIGSEGV during cleanup
+verify_fixed_depth50=exit0 cleanup_completed
+verify_fixed_depth10000=exit0 cleanup_completed

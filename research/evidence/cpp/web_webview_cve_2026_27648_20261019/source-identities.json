@@ -1,0 +1,59 @@
+{
+  "6.0": {
+    "vulnerable_parent": {
+      "commit": "5ab1905a8fba8d07e9ab4a9453a7787ec274a1a8",
+      "tree": "4ed3b46721fbfe04059af4ddb18bcd5272ce4762",
+      "path": "arkweb/ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc",
+      "blob": "78e83fea67a2db3297cc59f07566a0c0b6153e7a",
+      "bytes": 185698,
+      "sha256": "aa401c305ed30b70007917d97b726986a26aff2d00fb49649466533f4a48a920"
+    },
+    "fixed_merge": {
+      "commit": "4cf313408de7b6d807465ea2bb22e434269b7c5e",
+      "tree": "a7769bf612be457e6e368f14ee355f3ea8ed2935",
+      "path": "arkweb/ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc",
+      "blob": "27e93e338ced03aeed6e7d892e29d4d0740f3653",
+      "bytes": 185982,
+      "sha256": "332a66637fef9c669fdb85dd74c9be861fb01adb8fa8a95871e1a407e9210483"
+    },
+    "diffstat": "arkweb/ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc | 12 +++++++++---\n 1 file changed, 9 insertions(+), 3 deletions(-)"
+  },
+  "5.1": {
+    "vulnerable_parent": {
+      "commit": "5e47fecda669ff1f8834e11ab9cc9aaa2502355b",
+      "tree": "b7cc3a22ec726ccd9f931ed5cbd790abeb75f509",
+      "path": "ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc",
+      "blob": "3be4407670b14e520ae2639b15fca849d0f162ba",
+      "bytes": 145993,
+      "sha256": "0c21055eaa88a049c21193afb1622596223e6319aee1ab92323055536434b547"
+    },
+    "fixed_merge": {
+      "commit": "9082c13cea0f423b99ba0dc7ca105515e7373d44",
+      "tree": "86768db6cba14e78f35897047d262d8d401433c5",
+      "path": "ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc",
+      "blob": "2963dd2659a59dcea89e84bb5867d49906b83e8c",
+      "bytes": 146277,
+      "sha256": "eb00268d20acc55ed978b22313411782956049b84638dc8d7187fe3837cd8c8b"
+    },
+    "diffstat": "ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc | 12 +++++++++---\n 1 file changed, 9 insertions(+), 3 deletions(-)"
+  },
+  "5.0.3": {
+    "vulnerable_parent": {
+      "commit": "0d1e61c6674498c0af7bd6f683eaa4a0be1a7f2b",
+      "tree": "3253e323c384803419dfd298b84123bcf30b5325",
+      "path": "ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc",
+      "blob": "24b1d57918fdd7ecf0b2cd7941c2c7698439ffe7",
+      "bytes": 143765,
+      "sha256": "aa9faa1d36f6d9149838ef8d3814815a7f3ca17dd2f79b1a144da12ce15b6c30"
+    },
+    "fixed_merge": {
+      "commit": "ffdf319542b161da7211dc33cbf3d4dc565f370f",
+      "tree": "ff5ddb9dba88a4613c6fd8286aef9c752f84b621",
+      "path": "ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc",
+      "blob": "f33db4afde159f271018675e30dbaf43cbc4a9d6",
+      "bytes": 144049,
+      "sha256": "e924c732a45134b14db061a256b0b9ad462b4d0579e80724d58e86c0be64fc72"
+    },
+    "diffstat": "ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc | 12 +++++++++---\n 1 file changed, 9 insertions(+), 3 deletions(-)"
+  }
+}

@@ -7,6 +7,8 @@ trigger logic.
 
 from dataclasses import asdict, dataclass, field
 from typing import Any, Dict, List, Optional
+
+from src.ohscanner.contracts import safe_relative_path
 import re
 
 
@@ -57,6 +59,8 @@ class ToolDiagnostic:
     finding_identity_id: Optional[str] = None
     occurrence_id: Optional[str] = None
     finding_identity: Optional[Dict[str, Any]] = None
+    # Archive members are not Git blobs; bind their virtual paths to the tracked archive.
+    source_archive_binding: Optional[Dict[str, Any]] = None
 
     def __post_init__(self) -> None:
         if not self.diagnostic_id.strip():
@@ -84,6 +88,22 @@ class ToolDiagnostic:
                 raise ValueError(key + " must be non-empty when provided")
         if self.finding_identity is not None and not isinstance(self.finding_identity, dict):
             raise ValueError("finding_identity must be an object when provided")
+        if self.source_archive_binding is not None:
+            binding = self.source_archive_binding
+            if (not isinstance(binding, dict)
+                    or not isinstance(binding.get("archive_path"), str)
+                    or not isinstance(binding.get("member_path"), str)
+                    or not isinstance(binding.get("archive_blob_oid"), str)
+                    or not re.fullmatch(r"(?:[a-f0-9]{40}|[a-f0-9]{64})", binding["archive_blob_oid"])
+                    or any(not isinstance(binding.get(key), str)
+                           or not _SOURCE_HASH.fullmatch(binding[key])
+                           for key in ("archive_sha256", "member_sha256"))):
+                raise ValueError("invalid source archive binding")
+            safe_relative_path(binding["archive_path"])
+            safe_relative_path(binding["member_path"])
+            if (self.file != binding["archive_path"] + ".members/" + binding["member_path"]
+                    or (self.source_sha256 and binding["member_sha256"] != self.source_sha256)):
+                raise ValueError("source archive binding does not match diagnostic source")
 
     @property
     def source_binding(self) -> str:
@@ -98,7 +118,8 @@ class ToolDiagnostic:
         data = asdict(self)
         data["source_binding"] = self.source_binding
         # Keep legacy payload shape byte-compatible when identity is absent.
-        for key in ("finding_identity_id", "occurrence_id", "finding_identity"):
+        for key in ("finding_identity_id", "occurrence_id", "finding_identity",
+                    "source_archive_binding"):
             if data.get(key) is None:
                 data.pop(key, None)
         return data

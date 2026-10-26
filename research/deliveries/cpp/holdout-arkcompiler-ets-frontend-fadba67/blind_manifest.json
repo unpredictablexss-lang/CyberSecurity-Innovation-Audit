@@ -28,217 +28,279 @@
     "detector_invoked": false,
     "selected_after_matcher_freeze": true,
     "matcher_version_at_selection": "0.3.1",
-    "current_binding_version": "0.3.2",
+    "current_binding_version": "0.3.10",
     "matcher_code_changed_after_selection": false,
     "previous_full_scan_c_status": "missing",
     "previous_full_scan_candidate_count": 0,
-    "additional_frame_rule": "from the same pinned production translation unit, select 20 function definitions at evenly spaced interior declaration-order indexes using floor((i+1)*N/21), i=0..19; no detector output consulted",
-    "frame_kind": "clustered_applicability_false_match_only",
+    "additional_frame_rule": "from the pinned ets2panda/lsp/src subtree, select 20 complete source files at evenly spaced interior lexical-path indexes using floor((i+1)*N/21), i=0..19, excluding the F001 file; select the middle function definition in each file; no detector output consulted",
+    "frame_kind": "cross_file_clustered_applicability_false_match_only",
     "translation_unit_function_count": 57,
     "additional_samples": [
       {
         "sample_id": "F002",
-        "function_index_zero_based": 2,
-        "symbol": "ark::es2panda::lsp::ShouldCollectExportInfo",
+        "source_path": "ets2panda/lsp/src/class_hierarchy_info.cpp",
+        "source_blob_oid": "94abaa29253203feecde9f8bed26d83ba71d1c96",
+        "source_sha256": "64e369b7e7aca32061574ef29dc4da19a3497ec8221c13fe6e14a530a7f903a5",
+        "function_index_zero_based": 10,
+        "symbol": "ark::es2panda::lsp::CreateClassPropertyItem",
         "source_lines": [
-          89,
-          93
+          172,
+          185
         ],
-        "excerpt_sha256": "bc26e28a7b5b0fbb6e712f2b4361d0c712bbefed98262c845125a7161659089a"
+        "excerpt_sha256": "2e5c59d72553e43ee783c183afaf2546ee83459faa110098b3130a6d399cb77a"
       },
       {
         "sample_id": "F003",
-        "function_index_zero_based": 5,
-        "symbol": "ark::es2panda::lsp::NormalizeTypeText",
+        "source_path": "ets2panda/lsp/src/create_type_help_items.cpp",
+        "source_blob_oid": "df3b07e7d8859c309ad88801ebccdd1bd3d2742c",
+        "source_sha256": "fea517a7de880d47af5707118bf801f0f41606e4ba14dd72c54d138b9912187d",
+        "function_index_zero_based": 2,
+        "symbol": "ark::es2panda::lsp::GetEffectiveTypeParameterDeclarations",
         "source_lines": [
-          139,
-          156
+          54,
+          81
         ],
-        "excerpt_sha256": "39f3c1ea60bccca6f79f394f6349e842302df123754ee15150ff7b788092a98b"
+        "excerpt_sha256": "099534874bf3d845eff7d95195d242b5f35189d9cc82ab46eeb9d19d8f8de596"
       },
       {
         "sample_id": "F004",
-        "function_index_zero_based": 8,
-        "symbol": "ark::es2panda::lsp::BuildDisplayNameForExport",
+        "source_path": "ets2panda/lsp/src/formatting/formatting_context.cpp",
+        "source_blob_oid": "36016e5360a51122e8593eb1f885b9279dee8486",
+        "source_sha256": "45f4ae1bf739d97996f73f0fbc525c867f37162ac00d1f23037e910f27d1657f",
+        "function_index_zero_based": 9,
+        "symbol": "ark::es2panda::lsp::&FormattingContext::GetNextToken()const",
         "source_lines": [
-          202,
-          212
+          65,
+          68
         ],
-        "excerpt_sha256": "35336d07b32dead23466ab1d2336180f9d3ef9ab115db42415dae8b54d0f02f4"
+        "excerpt_sha256": "d1bc5e556893c20e1f54a53b2ed62d81b12a142687d11c3efe528fc187fe4c59"
       },
       {
         "sample_id": "F005",
-        "function_index_zero_based": 10,
-        "symbol": "ark::es2panda::lsp::IsImportOwnerIdentifier",
+        "source_path": "ets2panda/lsp/src/formatting/smart_indenter.cpp",
+        "source_blob_oid": "86dc3e47a121b857357d765eff80263b1b788eb8",
+        "source_sha256": "e80fc495c8119560f165548583a481b20cc1870c4e059a938aa2bf7559ecf436",
+        "function_index_zero_based": 21,
+        "symbol": "ark::es2panda::lsp::GetActualIndentationForListStartLine",
         "source_lines": [
-          228,
-          243
+          423,
+          430
         ],
-        "excerpt_sha256": "6fe40c1fe8c143078597e13de9250e1d801656c8da759cfd4f5459521023cb78"
+        "excerpt_sha256": "765b8243e64af3869b053549c09c230fccdf6dc60c76c679bc8ed6eeebec471c"
       },
       {
         "sample_id": "F006",
-        "function_index_zero_based": 13,
-        "symbol": "ark::es2panda::lsp::BuildSymbolId",
+        "source_path": "ets2panda/lsp/src/get_definition_at_position.cpp",
+        "source_blob_oid": "5e9e56d4d6837c26407fa621ee241959b187dca1",
+        "source_sha256": "c34bea0c5cbdebf655ec7a30ac1f667d0bc0bde43e3c1adfc96c5eda4b4f1126",
+        "function_index_zero_based": 4,
+        "symbol": "ark::es2panda::lsp::GetInvalidTypeOnlyExportTarget",
         "source_lines": [
-          317,
-          340
+          143,
+          164
         ],
-        "excerpt_sha256": "ac072ca0bacd681750b3e9894b47fe9ace745d39b82ab572a3e72ee45f158b58"
+        "excerpt_sha256": "a05d1ce405e9507eb6d4f03b3517f07bdf31c34097cb3223050a1c8355719945"
       },
       {
         "sample_id": "F007",
-        "function_index_zero_based": 16,
-        "symbol": "ark::es2panda::lsp::HasBuiltinTypeVariable",
+        "source_path": "ets2panda/lsp/src/get_signature.cpp",
+        "source_blob_oid": "f50ca0a225250ccb2b5bc1ac7c7645d063ef135d",
+        "source_sha256": "48cce120dd0b5e4363d8b827e685454e79b6b6169684eff0a66e8bbe1357932a",
+        "function_index_zero_based": 2,
+        "symbol": "ark::es2panda::lsp::ClassPropertyHandler",
         "source_lines": [
-          352,
-          356
+          89,
+          127
         ],
-        "excerpt_sha256": "063a3a354b64261ca770258b640f75a570fe0992650a549824488905ddf6ae5d"
+        "excerpt_sha256": "65888804bf6fd161cd9ed845f21e6bcb49b65e751a7a593a85edf540c6a3e825"
       },
       {
         "sample_id": "F008",
-        "function_index_zero_based": 19,
-        "symbol": "ark::es2panda::lsp::IsDefinitionNode",
+        "source_path": "ets2panda/lsp/src/lsp_utils.cpp",
+        "source_blob_oid": "c35f4e527362b512710596d2436dc71fdff78ce2",
+        "source_sha256": "e40efe8222f9569572f42ed9b0b223f3f7c3479ff08f286c10e1f28ba4f51f20",
+        "function_index_zero_based": 2,
+        "symbol": "ark::es2panda::lsp::ApplyRefactorTextChangesToSource",
         "source_lines": [
-          380,
-          386
+          76,
+          111
         ],
-        "excerpt_sha256": "fa477e150391a258646ba8763e7770c7a5f166041012927fe7c9394507906cb3"
+        "excerpt_sha256": "ddb4f1ed4d2d46431e2b86d292ab607063482eeabc330285c50fc6e29cbf3869"
       },
       {
         "sample_id": "F009",
-        "function_index_zero_based": 21,
-        "symbol": "ark::es2panda::lsp::DeduplicateAndSortReferences",
+        "source_path": "ets2panda/lsp/src/refactors/convert_arrow_braces.cpp",
+        "source_blob_oid": "df2d8486cb7033f329f23e863feefbb1aa636e04",
+        "source_sha256": "f6fdc5d860c137f95e17e7bd3d6928b50538aea4ee28760242053e21add31bd9",
+        "function_index_zero_based": 7,
+        "symbol": "ark::es2panda::lsp::GenerateBlockBody",
         "source_lines": [
-          432,
-          450
+          156,
+          160
         ],
-        "excerpt_sha256": "24e2bea6af6c15b52fd5a304e9258cc03ef3fe9fc5cbd6400e4e01f673928198"
+        "excerpt_sha256": "f9a444aa28ab0009c36ff815c5c9b622f6ff1188a8b9e59258eb5c2a31510a3e"
       },
       {
         "sample_id": "F010",
-        "function_index_zero_based": 24,
-        "symbol": "ark::es2panda::lsp::ResolveSymbolId",
+        "source_path": "ets2panda/lsp/src/refactors/convert_overload_list.cpp",
+        "source_blob_oid": "ec08f8d0f5ce5f41372f862fe6eb666e7f10f661",
+        "source_sha256": "23990849fdcfc2168a5a660e6cce5064ec6920f934d841956a144b8873092fad",
+        "function_index_zero_based": 7,
+        "symbol": "ark::es2panda::lsp::ConvertOverloadListRefactor::ConvertOverloadListRefactor",
         "source_lines": [
-          482,
-          495
+          167,
+          170
         ],
-        "excerpt_sha256": "bc5af3b3fb957ee51a2b10103652f36bd2f899a1544c4e3057a9f985c41a5a15"
+        "excerpt_sha256": "7053f73f01d436b47564d1acde7d28ce56ed8bcccfb719dfd0bd2b99b96b855a"
       },
       {
         "sample_id": "F011",
-        "function_index_zero_based": 27,
-        "symbol": "ark::es2panda::lsp::GetReferenceIdentifierAndOwner",
+        "source_path": "ets2panda/lsp/src/refactors/extract_symbol_impl.cpp",
+        "source_blob_oid": "28a0669166b02da8cec435396fc35e236245df98",
+        "source_sha256": "c9fe96b32127f85f85155687f9e2169f807e569388b668a2358b3a51626fc91f",
+        "function_index_zero_based": 123,
+        "symbol": "ark::es2panda::lsp::FindNextNonIndentAfterOptionalBlankLine",
         "source_lines": [
-          542,
-          555
+          2384,
+          2397
         ],
-        "excerpt_sha256": "5367b5a96697637968a44e2cbc5cb34de1a76c61b5a7ca58c271318d8531ac28"
+        "excerpt_sha256": "bdd427894886c7ca564dce4b1c0e9c499f0d734923bcf7cb8c8d079875d5b906"
       },
       {
         "sample_id": "F012",
-        "function_index_zero_based": 29,
-        "symbol": "ark::es2panda::lsp::AddReferenceFromNode",
+        "source_path": "ets2panda/lsp/src/refactors/generate_override_methods.cpp",
+        "source_blob_oid": "8ff763270da714f7f25d9cb8c02d47d61b550929",
+        "source_sha256": "98b8153e001cf9d1b1cc0cfd528f661fdf30ac1ab64b4d136026884a65063b3d",
+        "function_index_zero_based": 11,
+        "symbol": "ark::es2panda::lsp::ParamNameFor",
         "source_lines": [
-          585,
-          615
+          206,
+          224
         ],
-        "excerpt_sha256": "1e8a687bc0f3a4a45a82341bf5218214c27b2eb35b0a0b84e6780e827beb51e7"
+        "excerpt_sha256": "ae6c1f660621698ac5bc6d4d2280e79ec9aea01a7fe1637db0e5f8c4c0ef3e1f"
       },
       {
         "sample_id": "F013",
-        "function_index_zero_based": 32,
-        "symbol": "ark::es2panda::lsp::BuildImportFileReferencesForProgram",
+        "source_path": "ets2panda/lsp/src/register_code_fix/add_local_variable.cpp",
+        "source_blob_oid": "3f6695d6d739c5e735e44714aaefbeec2ed50f15",
+        "source_sha256": "dd30487d2075d283c900bfbeed70eb509aaeef368213c3066ff6c9fcf052f3d2",
+        "function_index_zero_based": 12,
+        "symbol": "ark::es2panda::lsp::AddLocalVariable::IsNonThisPropertyAccess",
         "source_lines": [
-          679,
-          691
+          298,
+          316
         ],
-        "excerpt_sha256": "422082f905fcaec0c9abe93f59d7038bce86be911334343a8d6d4669ac027e1b"
+        "excerpt_sha256": "0ad5037b4f62fc28cabe903c457d5b6e4ee8af21e7abf6b97957d02f037b1a7d"
       },
       {
         "sample_id": "F014",
-        "function_index_zero_based": 35,
-        "symbol": "ark::es2panda::lsp::AddReExportReference",
+        "source_path": "ets2panda/lsp/src/register_code_fix/constructor_for_derived_need_super_call.cpp",
+        "source_blob_oid": "16af499d9d5d94d161c8e659b9c588a3e53a0a88",
+        "source_sha256": "3f811e64958e4e0262f514ff899877b8c53763535e938d1562d418983b4e4602",
+        "function_index_zero_based": 5,
+        "symbol": "ark::es2panda::lsp::ConstructorDerivedNeedSuper::NeedsSuperCall",
         "source_lines": [
-          745,
-          756
+          76,
+          99
         ],
-        "excerpt_sha256": "68ff16403cc2209f634db3cc167a674991e439a7e4165f9849e76846a3209632"
+        "excerpt_sha256": "c8ec41877d680101270d402c59beb3ced3477ebc72936f2ea5065de6087e4dfe"
       },
       {
         "sample_id": "F015",
-        "function_index_zero_based": 38,
-        "symbol": "ark::es2panda::lsp::BuildReExportReferenceForSpecifier",
+        "source_path": "ets2panda/lsp/src/register_code_fix/fix_class_super_must_precede_this_access.cpp",
+        "source_blob_oid": "87b0eda57ac18e7b7425b5a1cb93c27c3f2874b1",
+        "source_sha256": "252603c249441fce6168e2308ff516f33c2fa4b085db068af7f5b0e0ee278b89",
+        "function_index_zero_based": 3,
+        "symbol": "ark::es2panda::lsp::FixClassSuperMustPrecedeThisAccess::FixClassSuperMustPrecedeThisAccess",
         "source_lines": [
-          789,
-          818
+          107,
+          112
         ],
-        "excerpt_sha256": "6c75e4614ffb44e70fa665d0af5f49f060d1ccf8889e0d7d08932da247e6639c"
+        "excerpt_sha256": "20dc44b508d5a27b10f0d8ccd587af25cfa3d3d82e845c913bc9951dd65ce189"
       },
       {
         "sample_id": "F016",
-        "function_index_zero_based": 40,
-        "symbol": "ark::es2panda::lsp::BuildSymbolReferenceIndexForProgram",
+        "source_path": "ets2panda/lsp/src/register_code_fix/fix_missing_call_parantheses.cpp",
+        "source_blob_oid": "6c414f7f7e86bbdbd5b864d4dafffd1cf14d5f1c",
+        "source_sha256": "c27f2e41ee2faf5cd2c0adeebf671cd881a65eaedb7b8a36c42e59cc14419105",
+        "function_index_zero_based": 1,
+        "symbol": "ark::es2panda::lsp::FixMissingCallParantheses::GetCodeActions",
         "source_lines": [
-          839,
-          872
+          32,
+          38
         ],
-        "excerpt_sha256": "f2becd99ac8802249c537cc363f84d6b8a514308dbf6d3fd4386b361540d459a"
+        "excerpt_sha256": "0eb419cc8e529e48492e31272bf264bc17058bccccf1a38d07051890e4e2aba2"
       },
       {
         "sample_id": "F017",
-        "function_index_zero_based": 43,
-        "symbol": "ark::es2panda::lsp::BuildSymbolReferenceIndexForContext",
+        "source_path": "ets2panda/lsp/src/register_code_fix/fix_remove_illegal_await.cpp",
+        "source_blob_oid": "ccd464cf83efa22347d92bc30e5e05fcee10b294",
+        "source_sha256": "b476ff82c310b429d7f304eb148ff63d793e854a1f8a9d2e5d8e74b597f600bd",
+        "function_index_zero_based": 10,
+        "symbol": "ark::es2panda::lsp::IsPromiseReturnType",
         "source_lines": [
-          889,
-          897
+          228,
+          235
         ],
-        "excerpt_sha256": "2a12e43e3a408bdb806cb89edd8a980c5043f4bb8ca38e7b42be6768b0f8fb99"
+        "excerpt_sha256": "4a35f054326d7993b67b98d5ed86937014a664b00ba666db226fa79d228f5692"
       },
       {
         "sample_id": "F018",
-        "function_index_zero_based": 46,
-        "symbol": "ark::es2panda::lsp::GetReferencesAtPositionFromIndex",
+        "source_path": "ets2panda/lsp/src/register_code_fix/fix_spelling_for_type.cpp",
+        "source_blob_oid": "86e4e120afabf6bc35a60d8a2452590ca5b24a74",
+        "source_sha256": "121ca28d858aa67990ae168d5de7cf29e2fee779a6a77c24f98cd1c1bab17dab",
+        "function_index_zero_based": 4,
+        "symbol": "ark::es2panda::lsp::FixSpellingForType::MakeChangeForFixSpellingForType",
         "source_lines": [
-          940,
-          993
+          89,
+          100
         ],
-        "excerpt_sha256": "435f5964dc30833d1d0e68eea1ea39b3d5b71ae3343441094a3878af747b227e"
+        "excerpt_sha256": "48d2685da5570666e5e1975d674ce8a22489f772662c3981c27aa9a239192947"
       },
       {
         "sample_id": "F019",
-        "function_index_zero_based": 48,
-        "symbol": "ark::es2panda::lsp::GetIndexedFileSource",
+        "source_path": "ets2panda/lsp/src/register_code_fix/remove_catch_type_annotation.cpp",
+        "source_blob_oid": "0a2cc5c68b86e3cf73a2ab041b4ee355486d22a1",
+        "source_sha256": "8b629b25ee40c4892582e0bedc6512b4bb79d19fb232d416eb7675bd86e8738c",
+        "function_index_zero_based": 2,
+        "symbol": "ark::es2panda::lsp::RemoveCatchTypeAnnotation::RemoveCatchTypeAnnotation",
         "source_lines": [
-          1024,
-          1031
+          75,
+          80
         ],
-        "excerpt_sha256": "280c80fbdc261bb63461169eea21a7e9693b81ac3fffe0813c76c6f39bec3afc"
+        "excerpt_sha256": "1dbf1646febffe0e47d7ea4fa5358bff5c8af945f0d769b131d8643443d0e4b0"
       },
       {
         "sample_id": "F020",
-        "function_index_zero_based": 51,
-        "symbol": "ark::es2panda::lsp::LevenshteinDistance",
+        "source_path": "ets2panda/lsp/src/services/import_utils.cpp",
+        "source_blob_oid": "cc4fd8ff8864ae8b4786916911a12ca2fdf46f14",
+        "source_sha256": "5b413869f1ad6d1676a39faaad2313a938c71e6776408c0243ab24b3e496cfd0",
+        "function_index_zero_based": 9,
+        "symbol": "ark::es2panda::lsp::FormatImportSpecifier",
         "source_lines": [
-          1079,
-          1127
+          197,
+          203
         ],
-        "excerpt_sha256": "2fbd2e16a7606462b122954c9a1ca9f1c42dec35bb24e837554ef50e05d9f674"
+        "excerpt_sha256": "3d00f161408c25e2c98bc807fbd4c89a8dd8347b5eebadb663fb6795ce807254"
       },
       {
         "sample_id": "F021",
-        "function_index_zero_based": 54,
-        "symbol": "ark::es2panda::lsp::FindSimilarSymbolNames",
+        "source_path": "ets2panda/lsp/src/signature_help_items.cpp",
+        "source_blob_oid": "ce0ac2b6d0efcdb670070db89697241f5b9bc156",
+        "source_sha256": "caed6e34823a221e462882b7287fe48b4900ac568c30abba71648fd9fde1251c",
+        "function_index_zero_based": 2,
+        "symbol": "ark::es2panda::lsp::CreateSignatureHelpItem",
         "source_lines": [
-          1188,
-          1228
+          82,
+          115
         ],
-        "excerpt_sha256": "65dacf3a36337e01977099645191c8e9805931bb8aa96cbc0488edea927a82ae"
+        "excerpt_sha256": "40314bae4ed78401b60cd0ec5e8a3b64b5e414be9e2ff23bd109c80ad79f0e11"
       }
     ],
     "sample_count_total": 21,
-    "additional_frame_matcher_version": "0.3.2"
+    "additional_frame_matcher_version": "0.3.2",
+    "additional_frame_translation_unit_count": 98,
+    "first_excerpt_sha256": "c7b8abb39250f9b92857bd0b8f9d344b98421e0cfd612c61b8bd7d487955d496"
   },
   "review": {
     "sample_count": 21,
@@ -246,5 +308,47 @@
     "unknown": null,
     "root_cause_results": null,
     "labels_present": false
-  }
+  },
+  "current_binding_version": "0.3.10",
+  "algorithm_freeze_sha256": "f9b6da07aa69ea78ffc7ab89272accedec53d8db782a2f206a253cb1563b8bf9",
+  "component_census": {
+    "artifact": "research/deliveries/cpp/holdout-arkcompiler-ets-frontend-fadba67/component_census.json",
+    "tracked_cpp_files": 102,
+    "complete_files": 99,
+    "partial_files": 3,
+    "failed_files": 0,
+    "function_definitions": 2530,
+    "function_definitions_in_complete_files": 2293,
+    "sampled_translation_units": 21,
+    "sampled_complete_cpp_files": 21,
+    "sampled_function_excerpts": 21,
+    "complete_function_coverage_fraction": 0.009158,
+    "frame_interpretation": "one F001 same-name control plus 20 stratified translation units; no semantic recall claim",
+    "census_sha256": "59cbb1cf41e79e466abd71fbf80df2ef8a17fb91017802be186449054522e61a",
+    "sampled_source_paths": [
+      "ets2panda/lsp/src/symbol_reference_index.cpp",
+      "ets2panda/lsp/src/class_hierarchy_info.cpp",
+      "ets2panda/lsp/src/create_type_help_items.cpp",
+      "ets2panda/lsp/src/formatting/formatting_context.cpp",
+      "ets2panda/lsp/src/formatting/smart_indenter.cpp",
+      "ets2panda/lsp/src/get_definition_at_position.cpp",
+      "ets2panda/lsp/src/get_signature.cpp",
+      "ets2panda/lsp/src/lsp_utils.cpp",
+      "ets2panda/lsp/src/refactors/convert_arrow_braces.cpp",
+      "ets2panda/lsp/src/refactors/convert_overload_list.cpp",
+      "ets2panda/lsp/src/refactors/extract_symbol_impl.cpp",
+      "ets2panda/lsp/src/refactors/generate_override_methods.cpp",
+      "ets2panda/lsp/src/register_code_fix/add_local_variable.cpp",
+      "ets2panda/lsp/src/register_code_fix/constructor_for_derived_need_super_call.cpp",
+      "ets2panda/lsp/src/register_code_fix/fix_class_super_must_precede_this_access.cpp",
+      "ets2panda/lsp/src/register_code_fix/fix_missing_call_parantheses.cpp",
+      "ets2panda/lsp/src/register_code_fix/fix_remove_illegal_await.cpp",
+      "ets2panda/lsp/src/register_code_fix/fix_spelling_for_type.cpp",
+      "ets2panda/lsp/src/register_code_fix/remove_catch_type_annotation.cpp",
+      "ets2panda/lsp/src/services/import_utils.cpp",
+      "ets2panda/lsp/src/signature_help_items.cpp"
+    ],
+    "complete_file_coverage_fraction": 0.212121
+  },
+  "packet_sha256": "c23406de4796bceeee8c922bae6438267676c4439d498ce4c86479322f9886da"
 }

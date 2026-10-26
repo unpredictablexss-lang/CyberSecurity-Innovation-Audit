@@ -1,0 +1,54 @@
+[
+  {
+    "label": "6.0-vulnerable",
+    "commit": "5ab1905a8fba8d07e9ab4a9453a7787ec274a1a8",
+    "path": "arkweb/ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc",
+    "blob": "78e83fea67a2db3297cc59f07566a0c0b6153e7a",
+    "whole_source_sha256": "aa401c305ed30b70007917d97b726986a26aff2d00fb49649466533f4a48a920",
+    "parse_status": "partial",
+    "parse_issue_count": 23,
+    "function_start_line": 4412,
+    "function_end_line": 4424,
+    "function_sha256": "2277a760946c6e7732056040e45b9cae935ddefe27d93ca4f470423d750944a4",
+    "function_bytes": 321
+  },
+  {
+    "label": "6.0-fixed",
+    "commit": "4cf313408de7b6d807465ea2bb22e434269b7c5e",
+    "path": "arkweb/ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc",
+    "blob": "27e93e338ced03aeed6e7d892e29d4d0740f3653",
+    "whole_source_sha256": "332a66637fef9c669fdb85dd74c9be861fb01adb8fa8a95871e1a407e9210483",
+    "parse_status": "partial",
+    "parse_issue_count": 23,
+    "function_start_line": 4412,
+    "function_end_line": 4424,
+    "function_sha256": "2277a760946c6e7732056040e45b9cae935ddefe27d93ca4f470423d750944a4",
+    "function_bytes": 321
+  },
+  {
+    "label": "5.1-vulnerable",
+    "commit": "5e47fecda669ff1f8834e11ab9cc9aaa2502355b",
+    "path": "ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc",
+    "blob": "3be4407670b14e520ae2639b15fca849d0f162ba",
+    "whole_source_sha256": "0c21055eaa88a049c21193afb1622596223e6319aee1ab92323055536434b547",
+    "parse_status": "partial",
+    "parse_issue_count": 1,
+    "function_start_line": 3511,
+    "function_end_line": 3522,
+    "function_sha256": "70444944e20adb9a9b86ccfbd9dcad9d48bbd91736da1f80c04a8352e2fcf1c6",
+    "function_bytes": 312
+  },
+  {
+    "label": "5.1-fixed",
+    "commit": "9082c13cea0f423b99ba0dc7ca105515e7373d44",
+    "path": "ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc",
+    "blob": "2963dd2659a59dcea89e84bb5867d49906b83e8c",
+    "whole_source_sha256": "eb00268d20acc55ed978b22313411782956049b84638dc8d7187fe3837cd8c8b",
+    "parse_status": "partial",
+    "parse_issue_count": 1,
+    "function_start_line": 3511,
+    "function_end_line": 3522,
+    "function_sha256": "70444944e20adb9a9b86ccfbd9dcad9d48bbd91736da1f80c04a8352e2fcf1c6",
+    "function_bytes": 312
+  }
+]

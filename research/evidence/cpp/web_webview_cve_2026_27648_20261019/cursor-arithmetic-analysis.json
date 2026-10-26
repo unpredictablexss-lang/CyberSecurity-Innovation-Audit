@@ -1,0 +1,36 @@
+{
+  "basis": "Source-only bounded arithmetic review of hash-bound 6.0 and 5.1 caller/helper fragments. Does not use CVE labels for detection and does not upgrade product status.",
+  "versions": {
+    "6.0": {
+      "commits": {
+        "vulnerable": "5ab1905a8fba8d07e9ab4a9453a7787ec274a1a8",
+        "fixed": "4cf313408de7b6d807465ea2bb22e434269b7c5e"
+      },
+      "MAX_ENTRIES": 10,
+      "constant_source_line": 184,
+      "source_sha256": "aa401c305ed30b70007917d97b726986a26aff2d00fb49649466533f4a48a920",
+      "GetFlowbufCount_range": "0..10",
+      "source_bound_arithmetic": "argsSize is size_t from args->GetSize(); dataListSize is int(argsSize+flowbufSize); curIndex is int. Fixed branches guard flowbuffer while writes with curIndex < dataListSize; ordinary argument branch writes remain unguarded and are preserved."
+    },
+    "5.1": {
+      "commits": {
+        "vulnerable": "5e47fecda669ff1f8834e11ab9cc9aaa2502355b",
+        "fixed": "9082c13cea0f423b99ba0dc7ca105515e7373d44"
+      },
+      "MAX_ENTRIES": 10,
+      "constant_source_line": 121,
+      "source_sha256": "0c21055eaa88a049c21193afb1622596223e6319aee1ab92323055536434b547",
+      "GetFlowbufCount_range": "0..10",
+      "source_bound_arithmetic": "argsSize is size_t from args->GetSize(); dataListSize is int(argsSize+flowbufSize); curIndex is int. Fixed branches guard flowbuffer while writes with curIndex < dataListSize; ordinary argument branch writes remain unguarded and are preserved."
+    }
+  },
+  "derived_bound": "Let N=argsSize and F=flowbufSize. The exact GetFlowbufCount helper loops i from 0 to MAX_ENTRIES-1 and increments count only for a contiguous nonzero-length prefix, so 0<=F<=10. Each successful flowbuffer insertion increments curIndex once and advances flowbufIndex; each args loop iteration increments curIndex once, including the null-value branch. Subject to no arithmetic wrap and exact one-to-one source/helper semantics, before argument i the mathematical cursor is <= i+F < N+F.",
+  "unresolved_obligations": [
+    "The vector constructor capacity expression is argsSize + static_cast<size_t>(flowbufSize); prove no size_t overflow for N+F.",
+    "The local dataListSize stores argsSize + flowbufSize into int; range and conversion behavior are not proven.",
+    "curIndex is int; prove it cannot overflow during up to N+F increments.",
+    "The pinned target repo tree does not include the referenced CEF public API header path needed to bind CefListValue::GetSize maximum/range; no product build profile was found.",
+    "The source does not provide a product-level bound on N or an attacker-controlled input limit."
+  ],
+  "decision": "Do not suppress six ordinary-argument candidates. Their source sites exist in both vulnerable and fixed versions, outside the three patched flowbuffer while loops. Preserve them as unresolved index/capacity arithmetic candidates; they are not evidence that the disclosed missing while-loop guard persists."
+}

@@ -1,0 +1,101 @@
+{
+  "experiment": "research_only_header_macro_expansion_for_parser_diagnostics",
+  "source": "D:\\openHarmonyScanner\\openharmony\\third_party\\cJSON\\cJSON.c",
+  "source_sha256": "427c72055ae68467b451599f36da074351a5ca53f6e103cd30064e32cf0fffbb",
+  "header": "D:\\openHarmonyScanner\\openharmony\\third_party\\cJSON\\cJSON.h",
+  "header_sha256": "25b0145150d500498e4d209cec69c18c42cf818bffcc54690be3b895a2a16dee",
+  "profile_assumption": "explicit non-Windows CJSON_CDECL empty branch; no product build profile inferred",
+  "transformations": [
+    {
+      "macro": "CJSON_CDECL",
+      "expansion": "",
+      "source_lines": [
+        158,
+        159,
+        160,
+        165,
+        169,
+        173
+      ]
+    },
+    {
+      "macro": "cJSON_ArrayForEach",
+      "expansion_from_bound_header": "for(element = (array != NULL) ? (array)->child : NULL; element != NULL; element = element->next)",
+      "uses": [
+        {
+          "line": 3150,
+          "element": "a_element",
+          "array": "a"
+        },
+        {
+          "line": 3168,
+          "element": "b_element",
+          "array": "b"
+        }
+      ]
+    }
+  ],
+  "transformed_sha256": "d51cd016de813303a872427a58cfd51861cdf417ef977790c6614bf9691eb115",
+  "line_count_preserved": true,
+  "raw_parse": {
+    "status": "partial",
+    "issues": [
+      {
+        "kind": "error",
+        "start_line": 158,
+        "end_line": 158
+      },
+      {
+        "kind": "error",
+        "start_line": 159,
+        "end_line": 159
+      },
+      {
+        "kind": "error",
+        "start_line": 160,
+        "end_line": 160
+      },
+      {
+        "kind": "error",
+        "start_line": 165,
+        "end_line": 165
+      },
+      {
+        "kind": "error",
+        "start_line": 169,
+        "end_line": 169
+      },
+      {
+        "kind": "error",
+        "start_line": 173,
+        "end_line": 173
+      },
+      {
+        "kind": "missing",
+        "start_line": 3152,
+        "end_line": 3152
+      },
+      {
+        "kind": "missing",
+        "start_line": 3169,
+        "end_line": 3169
+      }
+    ]
+  },
+  "transformed_parse": {
+    "status": "complete",
+    "issues": []
+  },
+  "cJSON_Compare_function_ranges": [
+    {
+      "start_line": 3066,
+      "end_line": 3189
+    }
+  ],
+  "recursive_cJSON_Compare_call_lines": [
+    3131,
+    3161,
+    3177
+  ],
+  "coverage_effect": "none; production scan remains partial until an admitted shared parser context is implemented"
+}

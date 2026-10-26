@@ -1,0 +1,6 @@
+Verified fresh-pthread results (source currently hash-bound to this README's runtime-hashes.txt):
+branch depth 400, result depth 802, stack 64 KiB: exit 0, cleanup completed
+branch depth 700, result depth 1402, stack 256 KiB: exit 0, cleanup completed
+branch depth 700, result depth 1402, stack 128 KiB: exit 0, cleanup completed
+branch depth 700, result depth 1402, stack 64 KiB: SIGSEGV/exit 139 repeated 5/5
+branch depth 700, result depth 1402, stack 32 KiB: SIGSEGV/exit 139

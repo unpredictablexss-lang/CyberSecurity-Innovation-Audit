@@ -1,0 +1,21 @@
+Dumping panda::ecmascript::kungfu::NewObjectStubBuilder::NewTypedArray:
+[0;1;32mCXXMethodDecl[0m[0;33m 0x58f797940f18[0m <[0;33m../../arkcompiler/ets_runtime/ecmascript/compiler/new_object_stub_builder.h:151:5[0m, [0;33mcol:95[0m> [0;33mcol:13[0m used[0;1;36m NewTypedArray[0m [0;32m'panda::ecmascript::kungfu::GateRef (panda::ecmascript::kungfu::GateRef, panda::ecmascript::kungfu::GateRef, panda::ecmascript::kungfu::GateRef, panda::ecmascript::kungfu::GateRef)'[0m
+[0;34m|-[0m[0;1;32mParmVarDecl[0m[0;33m 0x58f797940d08[0m <[0;33mcol:27[0m, [0;33mcol:35[0m> [0;33mcol:35[0m[0;1;36m glue[0m [0;32m'panda::ecmascript::kungfu::GateRef':'int'[0m
+[0;34m|-[0m[0;1;32mParmVarDecl[0m[0;33m 0x58f797940d80[0m <[0;33mcol:41[0m, [0;33mcol:49[0m> [0;33mcol:49[0m[0;1;36m srcTypedArray[0m [0;32m'panda::ecmascript::kungfu::GateRef':'int'[0m
+[0;34m|-[0m[0;1;32mParmVarDecl[0m[0;33m 0x58f797940df8[0m <[0;33mcol:64[0m, [0;33mcol:72[0m> [0;33mcol:72[0m[0;1;36m srcType[0m [0;32m'panda::ecmascript::kungfu::GateRef':'int'[0m
+[0;34m`-[0m[0;1;32mParmVarDecl[0m[0;33m 0x58f797940e70[0m <[0;33mcol:81[0m, [0;33mcol:89[0m> [0;33mcol:89[0m[0;1;36m length[0m [0;32m'panda::ecmascript::kungfu::GateRef':'int'[0m
+
+Dumping panda::ecmascript::kungfu::NewObjectStubBuilder::NewTypedArraySameType:
+[0;1;32mCXXMethodDecl[0m[0;33m 0x58f7979411f8[0m <[0;33m../../arkcompiler/ets_runtime/ecmascript/compiler/new_object_stub_builder.h:152:5[0m, [0;33mcol:103[0m> [0;33mcol:13[0m used[0;1;36m NewTypedArraySameType[0m [0;32m'panda::ecmascript::kungfu::GateRef (panda::ecmascript::kungfu::GateRef, panda::ecmascript::kungfu::GateRef, panda::ecmascript::kungfu::GateRef, panda::ecmascript::kungfu::GateRef)'[0m
+[0;34m|-[0m[0;1;32mParmVarDecl[0m[0;33m 0x58f797940fe8[0m <[0;33mcol:35[0m, [0;33mcol:43[0m> [0;33mcol:43[0m[0;1;36m glue[0m [0;32m'panda::ecmascript::kungfu::GateRef':'int'[0m
+[0;34m|-[0m[0;1;32mParmVarDecl[0m[0;33m 0x58f797941060[0m <[0;33mcol:49[0m, [0;33mcol:57[0m> [0;33mcol:57[0m[0;1;36m srcTypedArray[0m [0;32m'panda::ecmascript::kungfu::GateRef':'int'[0m
+[0;34m|-[0m[0;1;32mParmVarDecl[0m[0;33m 0x58f7979410d8[0m <[0;33mcol:72[0m, [0;33mcol:80[0m> [0;33mcol:80[0m[0;1;36m srcType[0m [0;32m'panda::ecmascript::kungfu::GateRef':'int'[0m
+[0;34m`-[0m[0;1;32mParmVarDecl[0m[0;33m 0x58f797941150[0m <[0;33mcol:89[0m, [0;33mcol:97[0m> [0;33mcol:97[0m[0;1;36m length[0m [0;32m'panda::ecmascript::kungfu::GateRef':'int'[0m
+
+Dumping panda::ecmascript::kungfu::NewObjectStubBuilder::NewTypedArrayFromCtor:
+[0;1;32mCXXMethodDecl[0m[0;33m 0x58f797941ae8[0m <[0;33m../../arkcompiler/ets_runtime/ecmascript/compiler/new_object_stub_builder.h:156:5[0m, [0;33mcol:94[0m> [0;33mcol:13[0m used[0;1;36m NewTypedArrayFromCtor[0m [0;32m'panda::ecmascript::kungfu::GateRef (panda::ecmascript::kungfu::GateRef, panda::ecmascript::kungfu::GateRef, panda::ecmascript::kungfu::GateRef, panda::ecmascript::kungfu::Label *)'[0m
+[0;34m|-[0m[0;1;32mParmVarDecl[0m[0;33m 0x58f797941838[0m <[0;33mcol:35[0m, [0;33mcol:43[0m> [0;33mcol:43[0m[0;1;36m glue[0m [0;32m'panda::ecmascript::kungfu::GateRef':'int'[0m
+[0;34m|-[0m[0;1;32mParmVarDecl[0m[0;33m 0x58f7979418b0[0m <[0;33mcol:49[0m, [0;33mcol:57[0m> [0;33mcol:57[0m[0;1;36m ctor[0m [0;32m'panda::ecmascript::kungfu::GateRef':'int'[0m
+[0;34m|-[0m[0;1;32mParmVarDecl[0m[0;33m 0x58f797941928[0m <[0;33mcol:63[0m, [0;33mcol:71[0m> [0;33mcol:71[0m[0;1;36m length[0m [0;32m'panda::ecmascript::kungfu::GateRef':'int'[0m
+[0;34m`-[0m[0;1;32mParmVarDecl[0m[0;33m 0x58f7979419a0[0m <[0;33mcol:79[0m, [0;33mcol:86[0m> [0;33mcol:86[0m[0;1;36m slowPath[0m [0;32m'panda::ecmascript::kungfu::Label *'[0m
+

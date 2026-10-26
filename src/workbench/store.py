@@ -142,7 +142,54 @@ class Store:
                     "Requested revision resolved to immutable commit/tree",
                 ),
             )
+            authorization = spec.get("triage_authorization")
+            if isinstance(authorization, dict) and authorization.get("authorized") is True:
+                digest = authorization.get("consent_sha256")
+                snapshot = authorization.get("snapshot")
+                if (not isinstance(digest, str) or len(digest) != 64
+                        or not isinstance(snapshot, dict)):
+                    raise ValueError("invalid task-level triage authorization snapshot")
+                db.execute(
+                    "INSERT INTO triage_authorizations(audit_id,consent_sha256,snapshot,created_at) VALUES(?,?,?,?)",
+                    (key, digest, json.dumps(snapshot, sort_keys=True), now()),
+                )
         return self.job(key)
+
+    def triage_authorization(self, audit_id):
+        with self.connect() as db:
+            row = db.execute(
+                "SELECT * FROM triage_authorizations WHERE audit_id=?", (audit_id,)
+            ).fetchone()
+        if row is None:
+            return None
+        item = dict(row)
+        item["snapshot"] = json.loads(item["snapshot"])
+        item["revoked"] = bool(item["revoked_at"])
+        return item
+
+    def revoke_triage_authorization(self, audit_id, expected_digest):
+        with self.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute(
+                "SELECT consent_sha256,revoked_at FROM triage_authorizations WHERE audit_id=?",
+                (audit_id,),
+            ).fetchone()
+            if row is None:
+                raise KeyError("triage authorization not found")
+            if row["consent_sha256"] != expected_digest:
+                raise ValueError("triage authorization changed; reload before revoking")
+            if row["revoked_at"] is None:
+                stamp = now()
+                db.execute(
+                    "UPDATE triage_authorizations SET revoked_at=? WHERE audit_id=? AND revoked_at IS NULL",
+                    (stamp, audit_id),
+                )
+                db.execute(
+                    "INSERT INTO events(job_id,created_at,stage,message) VALUES(?,?,?,?)",
+                    (audit_id, stamp, "triage_authorization_revoked",
+                     "Task-level model source egress authorization revoked; pending bound investigations must stop"),
+                )
+        return self.triage_authorization(audit_id)
 
     def job(self, key):
         with self.connect() as db:
@@ -158,6 +205,20 @@ class Store:
                     "SELECT * FROM jobs ORDER BY created_at DESC LIMIT 200"
                 )
             ]
+
+    def authorized_completed_jobs_missing_batch(self):
+        """Return every durable authorized scan that needs idempotent triage recovery."""
+        with self.connect() as db:
+            rows = db.execute(
+                "SELECT j.* FROM jobs j "
+                "JOIN triage_authorizations a ON a.audit_id=j.id "
+                "LEFT JOIN smart_triage_batches b ON b.audit_id=j.id "
+                "AND b.report_sha256=j.report_sha256 AND b.authorization_sha256=a.consent_sha256 "
+                "WHERE j.status IN ('completed','completed_with_limitations') "
+                "AND j.report_sha256 IS NOT NULL AND a.revoked_at IS NULL AND b.id IS NULL "
+                "ORDER BY j.created_at,j.id"
+            ).fetchall()
+        return [self.job_row(row) for row in rows]
 
     def event(self, key, stage, message):
         with self.connect() as db:

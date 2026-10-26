@@ -1,0 +1,139 @@
+{
+  "case_id": "libpng-ghsa-m4pc-p4q3-4c7j",
+  "cve": "CVE-2026-33416",
+  "verified_date": "2026-10-19",
+  "scope": "isolated upstream libpng component API, not OpenHarmony product binary",
+  "upstream": {
+    "vulnerable": {
+      "tag": "v1.6.55",
+      "commit": "c3e304954a9cfd154bc0dfbfea2b01cd61d6546d",
+      "official_archive": "https://downloads.sourceforge.net/project/libpng/libpng16/1.6.55/libpng-1.6.55.tar.xz",
+      "archive_sha256": "d925722864837ad5ae2a82070d4b2e0603dc72af44bd457c3962298258b8e82d",
+      "source_binding": "Runtime build used the OH-pinned 1.6.55 source copy; pngset.c/pngread.c/pngrtran.c/pngrutil.c hashes match official archive and previously recorded upstream source identities."
+    },
+    "fixed": {
+      "tag": "v1.6.56",
+      "commit": "d5515b5b8be3901aac04e5bd8bd5c89f287bcd33",
+      "official_archive": "https://downloads.sourceforge.net/project/libpng/libpng16/1.6.56/libpng-1.6.56.tar.xz",
+      "archive_sha256": "f7d8bf1601b7804f583a254ab343a6549ca6cf27d255c302c47af2d9d36a6f18",
+      "source_sha256": {
+        "pngread.c": "2a2c02673c7dcd6853f3efe8cc16c893df3f7bdffe7b53abde835e7c6e4c6fc3",
+        "pngrtran.c": "6b724ff0047cced71884176296aac10a6fc1d2592477034bbd622222ded3373f",
+        "pngrutil.c": "748f956c603df9bafeaf82ad23f5d9ce57e2d7b0be21a68868eba46615cf8ddc",
+        "pngset.c": "d3a203e40b6a6000a7cb78a61e0fd9664b0c39a65d82260efedb0f0184a8bc19"
+      }
+    }
+  },
+  "build": {
+    "host": "WSL2 Kali GNU/Linux Rolling x86_64",
+    "compiler": "gcc (Debian 16.2.0-1)",
+    "sanitizer": "AddressSanitizer",
+    "flags": "CFLAGS=-g -O1 -fsanitize=address -fno-omit-frame-pointer; LDFLAGS=-fsanitize=address",
+    "configure": "./configure --disable-shared --enable-static --disable-tests --disable-tools",
+    "build": "make -j2",
+    "zlib": "system zlib found by configure",
+    "runtime_command": "ASAN_OPTIONS=detect_leaks=0:abort_on_error=1 ./runtime-{vulnerable,fixed} <trigger>.png [palette|safe]"
+  },
+  "triggers": {
+    "tRNS": {
+      "png": "trigger_trns.png",
+      "sha256": "2b8a56aa619e3034e1ee104a090c2ef6ed97f7db8b0a74605255d23dbba8b5e6",
+      "sequence": "png_read_info; png_free_data(...PNG_FREE_TRNS...); png_set_expand; png_read_update_info",
+      "vulnerable": {
+        "exit_code": 134,
+        "finding": "ASan heap-use-after-free read in png_init_palette_transformations (pngrtran.c:1187)"
+      },
+      "fixed": {
+        "exit_code": 0,
+        "output": "decode completed"
+      },
+      "safe_no_free_control": {
+        "exit_code": 0,
+        "output": "decode completed"
+      }
+    },
+    "PLTE": {
+      "png": "trigger_palette.png",
+      "sha256": "ae0214081f2612f66607d872274e0d64a1c5ae3ae8537dd7afd06063b23817d4",
+      "sequence": "png_read_info; png_free_data(...PNG_FREE_PLTE...); png_set_expand; png_read_update_info; png_read_row",
+      "vulnerable": {
+        "exit_code": 134,
+        "finding": "ASan heap-use-after-free read in png_do_expand_palette (pngrtran.c:4482)"
+      },
+      "fixed": {
+        "exit_code": 0,
+        "output": "decode completed"
+      },
+      "safe_no_free_control": {
+        "exit_code": 0,
+        "output": "decode completed"
+      }
+    }
+  },
+  "artifacts_sha256": {
+    "runtime_trns_uaf.c": "45d5cee0c75fc0f12a01f5dfb2ff14463f20103041bc9e0cc564534a0c08dd4e",
+    "trigger_trns.png": "2b8a56aa619e3034e1ee104a090c2ef6ed97f7db8b0a74605255d23dbba8b5e6",
+    "trigger_palette.png": "ae0214081f2612f66607d872274e0d64a1c5ae3ae8537dd7afd06063b23817d4",
+    "runtime-vulnerable": "b76f96e264b4535dbd8924cbc2b7badda08b18cb9fa01145bf4f694dccc8b744",
+    "runtime-fixed": "dd69ecfec3a5740225660178273b9cc068b00e53d169661b6cc4bdc1a0a1501b",
+    "runtime-vulnerable.log": "755a139618ea9fe427ba8760aa5b7d9512dfc03494d4673f316d61fb6e4c833b",
+    "runtime-vulnerable-palette.log": "5bfcd872e13bfc8fb30d51164e0682c32986ba5742e19430951d77e6e959cfc4",
+    "runtime-fixed-trns.log": "08a7acf437ee8d835e51d7028fadfc31b69a2ebd3b1e16398f7404af7ef42561",
+    "runtime-fixed-palette.log": "08a7acf437ee8d835e51d7028fadfc31b69a2ebd3b1e16398f7404af7ef42561",
+    "runtime-safe-trns.log": "08a7acf437ee8d835e51d7028fadfc31b69a2ebd3b1e16398f7404af7ef42561",
+    "runtime-safe-palette.log": "08a7acf437ee8d835e51d7028fadfc31b69a2ebd3b1e16398f7404af7ef42561",
+    "build-vulnerable.log": "ae7ec7ba5c6b73fc450c8e2bba185f9134913b8ac3aa36ec01ec81c095544ccd",
+    "build-fixed.log": "94147ebf33124314492b4da7f15cfb16a652c969c48ed87fc3f2be568b20a6b4",
+    "openharmony-install-replay.log": "624467789415b9561e8e6b5506d6181c0f1efef5cc447c535cadb9a2af8cffd4",
+    "build-openharmony-install-replay.log": "9da9dac1baf27274ff828fbf281fff0ef1ab5888a1d42a90a4e7e02b97cc45f7",
+    "runtime-openharmony-install-trns.log": "08a7acf437ee8d835e51d7028fadfc31b69a2ebd3b1e16398f7404af7ef42561",
+    "runtime-openharmony-install-palette.log": "08a7acf437ee8d835e51d7028fadfc31b69a2ebd3b1e16398f7404af7ef42561",
+    "runtime-openharmony-install": "4ad445420a3d44c3f0cba53ccc2ef0bdd633eca4c8f497db0c0cd27e54ee1c72",
+    "openharmony-install-source-snapshot.json": "4fdb9d690787da79f0c18efcd79822b544f735e1729640f083d1356a51062332",
+    "openharmony-install-source-production-scan.json": "baabf91ab2b9b85e47bdeed55025d8cc25da36750593905a6f5775a35a6a9b41",
+    "openharmony-install-source-production-scan.md": "34926cfd85ed7f7d651737d393ff808ebe6ac39b232a0088a9cf92f9f4334dcd",
+    "product-build-route-20261019.json": "dd801e95ad2eee89734271e2653e1a6e5231481dbe7dc2d8218b3c116ebebf06"
+  },
+  "limitations": [
+    "Component-level documented API sequences only; no product caller reachability, trust/permissions, or OpenHarmony final linkage established.",
+    "Covers tRNS and PLTE read-after-free paths; not write-after-free/allocator-reuse exploitability, repeated-set paths, or png_set_quantize external buffer alias.",
+    "Static production replay remains partial/blocked on all 4 source files; candidate findings are not product confirmation.",
+    "The full OH install replay is source-generation evidence, not a generated rk3568 product build or final linked binary; GN action input omissions may affect incremental rebuild reproducibility."
+  ],
+  "openharmony_install_replay": {
+    "component_source": "openharmony/third_party/libpng pinned libpng-1.6.55.tar.gz; component directory copied before execution",
+    "procedure": "Ran copied install.py with original gen-dir/source-dir arguments and full ordered patch list. Exit 0; one CVE-2026-33416 pngrutil TODO/comment hunk failed. The pngset tRNS ownership hunk succeeded in this ordered replay, then CVE-2026-33636 and CVE-2026-34757 were also attempted.",
+    "generated_files_sha256": {
+      "pngset.c": "f68c1181a63c81b0e247ce770bf762407b6bce58634fd4a48a37fd68cec03d95",
+      "pngread.c": "cb200ca0dadbf37f8903055ef05e0a52c670cc8a8ff7dcb84140fb19ad1f4dfe",
+      "pngrtran.c": "6334e4ce5043ef6a896d74630222cc54146b618cc010fe8761c4a7c8b5859169",
+      "pngrutil.c": "871e76294344c9f9671ca5a2c86d45e3631b6087b805568e8f7a15864b3fec2c"
+    },
+    "asan_results": {
+      "tRNS": {
+        "exit_code": 0,
+        "output": "decode completed"
+      },
+      "PLTE": {
+        "exit_code": 0,
+        "output": "decode completed"
+      }
+    },
+    "production_m2_scan": {
+      "synthetic_commit": "ef42021d7597d3ca008c08567f0d698df39a4fa3",
+      "tree": "65f42cf3e86c5484802093f86e5f2babd623b573",
+      "diagnostics": 0,
+      "parse_status": "partial 4/4",
+      "decision": "blocked/unknown; not evidence of fixed or safe"
+    },
+    "gn_dependency_issue": "third_party/libpng/BUILD.gn inputs names the 1.6.55 tarball and older patches but omits CVE-2026-33416.patch, CVE-2026-33636.patch and CVE-2026-34757.patch, although install.py consumes them; incremental regeneration may not be invalidated by those omitted patch inputs.",
+    "source_manifest": "openharmony-install-source-snapshot.json",
+    "install_log": "openharmony-install-replay.log",
+    "build_log": "build-openharmony-install-replay.log",
+    "runtime_logs": [
+      "runtime-openharmony-install-trns.log",
+      "runtime-openharmony-install-palette.log"
+    ]
+  },
+  "product_route_manifest": "product-build-route-20261019.json"
+}

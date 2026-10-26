@@ -20,7 +20,6 @@ from .memory_safety import (
     expression_interval,
     function_at,
     function_shapes,
-    guard_constraints,
     guard_shapes,
     line_column,
     mask_comments_and_literals,
@@ -32,7 +31,8 @@ from .memory_safety import (
 RULE_ARITHMETIC = "ohcpp-integer-bounds-arithmetic-candidate-001"
 RULE_TRUNCATION = "ohcpp-integer-bounds-truncation-candidate-002"
 RULE_NARROW_INDEX = "ohcpp-integer-bounds-narrow-index-candidate-003"
-RULE_VERSION = "0.2.3"
+RULE_POINTER_OFFSET = "ohcpp-integer-bounds-pointer-offset-underflow-candidate-004"
+RULE_VERSION = "0.2.1"
 RULE_LINEAGE_ID = "A-INT-01:ohcpp-integer-bounds-candidate"
 
 _OBLIGATIONS = (
@@ -221,61 +221,169 @@ def _macro_only_expression(expression: str) -> bool:
     )
 
 
-def _bounded_addition(
-    guards,
-    functions,
-    position: int,
-    expression: str,
-    integers: Dict[str, Any],
-    constants: Dict[str, int],
-    sizeof_values: Dict[str, int],
-) -> bool:
-    """True when a ``name + constant`` addition is bounded by an upper guard."""
+_UNSIGNED_TYPE = r"(?:unsigned\s+(?:char|short|int|long(?:\s+long)?)|u?int(?:8|16|32|64)_t|size_t|uintptr_t)"
 
-    match = re.fullmatch(
-        r"\s*(?P<name>[A-Za-z_]\w*)\s*\+\s*(?P<value>\d+(?:[uUlL]*)?)\s*",
-        expression,
+
+def _function_parameters(function) -> Tuple[str, ...]:
+    match = re.search(
+        r"\b" + re.escape(function.name) + r"\s*\((?P<params>[^;{}]*)\)",
+        function.text,
     )
-    if not match:
+    return split_call_arguments(match.group("params")) if match else ()
+
+
+def _unsigned_parameter(function, name: str) -> bool:
+    """Recognize a directly declared unsigned function parameter only."""
+    if function is None:
         return False
-    name = match.group("name")
-    shape = integers.get(name)
-    bits = shape.bits if shape is not None else None
-    signed = shape.signed if shape is not None else None
-    if bits is None:
-        function = function_at(functions, position)
-        if function is not None:
-            for item in split_call_arguments(function.params):
-                declaration = item.split("=", 1)[0].strip()
-                identifiers = re.findall(r"[A-Za-z_]\w*", declaration)
-                if identifiers and identifiers[-1] == name:
-                    bits, signed = type_shape(" ".join(identifiers[:-1]))
+    for parameter in _function_parameters(function):
+        declaration = parameter.split("=", 1)[0].strip()
+        identifiers = re.findall(r"[A-Za-z_]\w*", declaration)
+        if identifiers and identifiers[-1] == name:
+            return bool(re.search(r"\b" + _UNSIGNED_TYPE + r"\b", " ".join(identifiers[:-1])))
+    return False
+
+
+def _pointer_parameter_or_local(function, name: str) -> bool:
+    if function is None:
+        return False
+    for parameter in _function_parameters(function):
+        declaration = parameter.split("=", 1)[0].strip()
+        identifiers = re.findall(r"[A-Za-z_]\w*", declaration)
+        if identifiers and identifiers[-1] == name and "*" in declaration:
+            return True
+    return bool(re.search(
+        r"\b[A-Za-z_]\w*(?:\s*::\s*[A-Za-z_]\w*)*\s*\*+\s*"
+        + re.escape(name) + r"\s*(?:=[^;]+)?;",
+        function.text,
+    ))
+
+
+def _unsigned_members(units: Sequence[SourceUnit]) -> Dict[str, Set[str]]:
+    """Collect plainly declared unsigned fields from the selected source units."""
+    structures: Dict[str, Set[str]] = {}
+    aliases: Dict[str, str] = {}
+    for unit in units:
+        masked = mask_comments_and_literals(unit.text)
+        for match in re.finditer(
+            r"\bstruct\s+(?P<tag>[A-Za-z_]\w*)\s*\{(?P<body>[\s\S]*?)\n\s*\};",
+            masked,
+        ):
+            fields = set(re.findall(
+                r"\b" + _UNSIGNED_TYPE + r"\s+(?P<field>[A-Za-z_]\w*)\s*(?:\[[^]]*\])?\s*;",
+                match.group("body"),
+            ))
+            structures[match.group("tag")] = fields
+        for match in re.finditer(
+            r"\btypedef\s+struct\s+(?P<tag>[A-Za-z_]\w*)\s+(?P<alias>[A-Za-z_]\w*)\s*;",
+            masked,
+        ):
+            aliases[match.group("alias")] = match.group("tag")
+    result = dict(structures)
+    result.update({alias: structures.get(tag, set()) for alias, tag in aliases.items()})
+    return result
+
+
+def _has_lower_bound_guard(function_text: str, left: str, right: str, position: int) -> bool:
+    """Recognize a narrow return guard or a positive branch enclosing the use."""
+    before = function_text[:position]
+    left_re, right_re = re.escape(left), re.escape(right)
+    early = re.compile(
+        r"\bif\s*\(\s*" + left_re + r"\s*<\s*" + right_re
+        + r"\s*\)\s*(?:\{\s*return\b[^}]*\}|return\b[^;]*;)", re.S,
+    )
+    if early.search(before):
+        return True
+    for match in re.finditer(
+        r"\bif\s*\(\s*" + left_re + r"\s*(?:>=|>)\s*" + right_re + r"\s*\)\s*\{",
+        before,
+    ):
+        open_brace = before.find("{", match.start())
+        depth = 0
+        for index in range(open_brace, len(function_text)):
+            if function_text[index] == "{":
+                depth += 1
+            elif function_text[index] == "}":
+                depth -= 1
+                if depth == 0:
+                    if match.start() < position < index:
+                        return True
                     break
-    if bits is None:
-        return False
-    constraints = guard_constraints(guards, position, constants, sizeof_values)
-    interval = expression_interval(expression, constants, constraints)
-    _low, high = _range(bits, signed)
-    return interval.maximum is not None and high is not None and interval.maximum <= high
+    return False
 
 
-def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bool]:
+def _detect_unit(
+    unit: SourceUnit,
+    unsigned_members: Optional[Dict[str, Set[str]]] = None,
+) -> Tuple[List[DetectorFinding], List[str], bool]:
     findings: List[DetectorFinding] = []
     limitations: List[str] = []
-    if unit.parse_status != "complete":
+    if unit.parse_status not in ("complete", "partial"):
         return findings, [f"{unit.path}: parse_status={unit.parse_status}; integer coverage remains unknown."], False
     if len(unit.text.encode("utf-8")) > MAX_UNIT_BYTES:
         return findings, [f"{unit.path}: source exceeds the 1MiB per-unit fail-closed budget."], False
     masked = mask_comments_and_literals(unit.text)
     functions = function_shapes(masked)
-    arrays, integers, constants = declarations(masked)
-    sizeof_values = {
-        name: shape.capacity * shape.element_size
-        for name, shape in arrays.items()
-        if shape.capacity is not None and shape.element_size is not None
-    }
+    _arrays, integers, constants = declarations(masked)
     guards = guard_shapes(masked, functions)
     sensitive = _sensitive_names(masked)
+
+    # A plainly unsigned dimension difference may be dangerous when used as a
+    # scaled pointer displacement even if it is never assigned to a size local.
+    # This intentionally needs an observed unsigned field type and pointer base;
+    # aliases, macros, indirect pointer origins and unknown types remain out of
+    # scope. On partial parses this is the only analysis performed and coverage
+    # remains blocked, so a local candidate is preserved without implying a
+    # complete-file result.
+    member_types = unsigned_members if unsigned_members is not None else _unsigned_members((unit,))
+    pointer_offset = re.compile(
+        r"\b(?P<pointer>[A-Za-z_]\w*)\s*(?:\+|\+=)\s*"
+        r"(?:\(\s*(?:size_t|uintptr_t)\s*\)\s*)?\(\s*"
+        r"(?P<left>[A-Za-z_]\w*)\s*-\s*(?P<object>[A-Za-z_]\w*)"
+        r"(?P<member_op>\.|->)\s*(?P<field>[A-Za-z_]\w*)\s*\)\s*\*\s*"
+        r"(?P<scale>[A-Za-z_]\w*|\d+(?:[uUlL]*))"
+    )
+    for match in pointer_offset.finditer(masked):
+        function = function_at(functions, match.start())
+        if function is None or not _pointer_parameter_or_local(function, match.group("pointer")):
+            continue
+        left = match.group("left")
+        left_shape = integers.get(left)
+        left_unsigned = bool(left_shape and left_shape.bits and not left_shape.signed)
+        left_unsigned = left_unsigned or _unsigned_parameter(function, left)
+        if not left_unsigned:
+            continue
+        object_name = match.group("object")
+        object_types = re.findall(
+            r"\b([A-Za-z_]\w*)\s*\*?\s+" + re.escape(object_name) + r"\s*(?:=[^;]+)?;",
+            function.text,
+        )
+        object_type = object_types[-1] if object_types else None
+        if object_type is None:
+            for parameter in _function_parameters(function):
+                ids = re.findall(r"[A-Za-z_]\w*", parameter.split("=", 1)[0])
+                if ids and ids[-1] == object_name and len(ids) > 1:
+                    object_type = ids[-2]
+                    break
+        if object_type is None or match.group("field") not in member_types.get(object_type, set()):
+            continue
+        right_expression = object_name + match.group("member_op") + match.group("field")
+        if _has_lower_bound_guard(function.text, left, right_expression, match.start() - function.start):
+            continue
+        expression = f"{left} - {right_expression}"
+        findings.append(_finding(
+            unit, unit.text, match.start(), RULE_POINTER_OFFSET, expression,
+            f"Candidate only: unsigned difference `{expression}` feeds a scaled pointer offset "
+            "without a modeled lower-bound guard; the result may wrap before pointer arithmetic. "
+            "Object aliasing, allocation extent, path feasibility, input control and product impact remain unknown.",
+            "CWE-191", "CWE-787",
+        ))
+
+    if unit.parse_status == "partial":
+        limitations.append(
+            f"{unit.path}: parser reported partial syntax; only the bounded unsigned pointer-offset shape was inspected."
+        )
+        return findings, limitations, False
 
     assignment_re = re.compile(r"\b(?P<name>[A-Za-z_]\w*)\s*=\s*(?P<expr>[^;]+);")
     for match in assignment_re.finditer(masked):
@@ -292,11 +400,6 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
         if operation == "+" and _guarded_strnlen_symbols(function_text) & set(names):
             checked = True
         if operation == "+" and _promotion_safe_addition(expression, integers, constants):
-            checked = True
-        if operation == "+" and _bounded_addition(
-            guards, functions, match.start(), expression, integers, constants,
-            sizeof_values,
-        ):
             checked = True
         if value is not None and shape.bits is not None:
             low, high = _range(shape.bits, shape.signed)
@@ -373,11 +476,6 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
                 checked = True
             if operation == "+" and _promotion_safe_addition(arg, integers, constants):
                 checked = True
-            if operation == "+" and _bounded_addition(
-                guards, functions, match.start(), arg.strip(), integers, constants,
-                sizeof_values,
-            ):
-                checked = True
             if not checked:
                 findings.append(_finding(
                     unit, unit.text, match.start(), RULE_ARITHMETIC, arg.strip(),
@@ -402,11 +500,6 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
             checked = True
         if operation == "+" and _promotion_safe_addition(expression, integers, constants):
             checked = True
-        if operation == "+" and _bounded_addition(
-            guards, functions, match.start(), expression, integers, constants,
-            sizeof_values,
-        ):
-            checked = True
         if not checked:
             findings.append(_finding(
                 unit, unit.text, match.start(), RULE_ARITHMETIC, expression,
@@ -414,7 +507,6 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
                 "a modeled checked-arithmetic guard; overflow may yield an undersized allocation.",
                 "CWE-190", "CWE-787",
             ))
-
     return findings, limitations, True
 
 
@@ -453,14 +545,23 @@ class CppIntegerBoundsDetector:
         limitations: List[str] = []
         analyzed_files: List[str] = []
         complete = True
+        unsigned_members = _unsigned_members(ordered)
         for unit in ordered:
-            unit_findings, unit_limitations, unit_complete = _detect_unit(unit)
+            unit_findings, unit_limitations, unit_complete = _detect_unit(unit, unsigned_members)
             findings.extend(unit_findings)
             limitations.extend(unit_limitations)
             if unit_complete:
                 analyzed_files.append(unit.path)
             else:
                 complete = False
+                # Partial source receives only the bounded pointer-offset pass.
+                # Record that limited inspection so source-bound candidates pass
+                # the Runner's analyzed-scope invariant while status remains blocked.
+                if unit.parse_status == "partial" and any(
+                    "parser reported partial syntax" in limitation
+                    for limitation in unit_limitations
+                ):
+                    analyzed_files.append(unit.path)
         limitations.extend((
             "Candidate only: lexical integer arithmetic does not prove allocation undersizing or product impact.",
             "Signedness, promotions, macro constants, overflow intrinsics, templates and interprocedural range facts remain unknown unless explicitly modeled.",

@@ -14,7 +14,7 @@
       "target_matches": true,
       "expected_creator_blob": "757b8d050d306d349822600deacb295c7a54245e",
       "creator_matches": true,
-      "model_binding_count": 30,
+      "model_binding_count": 40,
       "all_bindings_match": true,
       "bindings": [
         {
@@ -286,6 +286,96 @@
           "bytes": 8374,
           "sha256": "30803ab68a3089dc502626cfa810193ab76312f328fc551596b5da67b65025cb",
           "matches": true
+        },
+        {
+          "path": "ecmascript/js_typed_array.cpp",
+          "expected_blob": "892e376de57c08c768831936503a8e4dac4b39bb",
+          "resolved_blob": "892e376de57c08c768831936503a8e4dac4b39bb",
+          "recomputed_blob": "892e376de57c08c768831936503a8e4dac4b39bb",
+          "bytes": 43951,
+          "sha256": "e0fa7cb24aae9e3da6ac0bf6ea06972c9419dda83a6647cf3e62d9595997342f",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/builtins/builtins_arraybuffer.cpp",
+          "expected_blob": "44ca29e3d4b3ba83e8b458bf64dc285303dd7da0",
+          "resolved_blob": "44ca29e3d4b3ba83e8b458bf64dc285303dd7da0",
+          "recomputed_blob": "44ca29e3d4b3ba83e8b458bf64dc285303dd7da0",
+          "bytes": 43892,
+          "sha256": "ccf5281e92af41022b25be409f7e69c5bb269a1ad2e32b4d01f9c73c57d42f08",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/stubs/runtime_stubs.cpp",
+          "expected_blob": "c7ce18a76e25289ee7274354fd85950fa9b17af8",
+          "resolved_blob": "c7ce18a76e25289ee7274354fd85950fa9b17af8",
+          "recomputed_blob": "c7ce18a76e25289ee7274354fd85950fa9b17af8",
+          "bytes": 199944,
+          "sha256": "0a11c3832d2d4a0b1adf0879a01e1cbde40a62885f2702dff316985838c135a3",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/stubs/runtime_stub_list.h",
+          "expected_blob": "3a973fac5092e206ea263c84635d8df451981abd",
+          "resolved_blob": "3a973fac5092e206ea263c84635d8df451981abd",
+          "recomputed_blob": "3a973fac5092e206ea263c84635d8df451981abd",
+          "bytes": 25311,
+          "sha256": "f399321005d1a7a27cae0a6efedd73d685aa195c31151dcf4ce91b23f250a606",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/builtins/builtins_arraybuffer.h",
+          "expected_blob": "574e10ee1805466b54889a3befca4846022a4f14",
+          "resolved_blob": "574e10ee1805466b54889a3befca4846022a4f14",
+          "recomputed_blob": "574e10ee1805466b54889a3befca4846022a4f14",
+          "bytes": 9158,
+          "sha256": "60ab09cd00eb52b2d4dc372aafab80158f9ba1246d7554b29119aad1336b8360",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/base/typed_array_helper.cpp",
+          "expected_blob": "17f4b8f50ea126eb646ef011e9b7fa7e461394dc",
+          "resolved_blob": "17f4b8f50ea126eb646ef011e9b7fa7e461394dc",
+          "recomputed_blob": "17f4b8f50ea126eb646ef011e9b7fa7e461394dc",
+          "bytes": 67342,
+          "sha256": "0704698674d39389525de7ccca0941138fc0bb4a84d3acdf0f14544a119558a3",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/builtins/builtins_typedarray.cpp",
+          "expected_blob": "8d8184928db803f3aa26971e5a15c22ce0ade41f",
+          "resolved_blob": "8d8184928db803f3aa26971e5a15c22ce0ade41f",
+          "recomputed_blob": "8d8184928db803f3aa26971e5a15c22ce0ade41f",
+          "bytes": 102865,
+          "sha256": "ed84f450e3f0b825b1bf95309c73753934cd7712289ca65c7f7fea7c4a7231c3",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/builtins/builtins_typedarray.h",
+          "expected_blob": "79b3e415414b53e163f59c443773094292f471df",
+          "resolved_blob": "79b3e415414b53e163f59c443773094292f471df",
+          "recomputed_blob": "79b3e415414b53e163f59c443773094292f471df",
+          "bytes": 15729,
+          "sha256": "db04c2624a241fe9882da8c4da17ed422cf6bdeaa3da99369fe5f4383db8ae9a",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/object_operator.cpp",
+          "expected_blob": "a192003108694900f1c39a4263a77a782f7c67c4",
+          "resolved_blob": "a192003108694900f1c39a4263a77a782f7c67c4",
+          "recomputed_blob": "a192003108694900f1c39a4263a77a782f7c67c4",
+          "bytes": 45512,
+          "sha256": "5f54a6e9a79d89b79ee4a9a025cfaf239187e8f4249a3e73b2c771607f6b04ca",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/global_env.h",
+          "expected_blob": "74dac4fbb5dcb3ce61726948ee6d2e334a1c9167",
+          "resolved_blob": "74dac4fbb5dcb3ce61726948ee6d2e334a1c9167",
+          "recomputed_blob": "74dac4fbb5dcb3ce61726948ee6d2e334a1c9167",
+          "bytes": 11801,
+          "sha256": "5ad4e0b4d3d6ad713a6c9a720e32a8321bb78cbca53084a385d07fad0ac8969a",
+          "matches": true
         }
       ]
     },
@@ -298,7 +388,7 @@
       "target_matches": true,
       "expected_creator_blob": "757b8d050d306d349822600deacb295c7a54245e",
       "creator_matches": true,
-      "model_binding_count": 30,
+      "model_binding_count": 40,
       "all_bindings_match": true,
       "bindings": [
         {
@@ -569,6 +659,96 @@
           "recomputed_blob": "f3c6fcb23559fcb00b0f7954ddba2024e1afc878",
           "bytes": 8374,
           "sha256": "30803ab68a3089dc502626cfa810193ab76312f328fc551596b5da67b65025cb",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/js_typed_array.cpp",
+          "expected_blob": "892e376de57c08c768831936503a8e4dac4b39bb",
+          "resolved_blob": "892e376de57c08c768831936503a8e4dac4b39bb",
+          "recomputed_blob": "892e376de57c08c768831936503a8e4dac4b39bb",
+          "bytes": 43951,
+          "sha256": "e0fa7cb24aae9e3da6ac0bf6ea06972c9419dda83a6647cf3e62d9595997342f",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/builtins/builtins_arraybuffer.cpp",
+          "expected_blob": "44ca29e3d4b3ba83e8b458bf64dc285303dd7da0",
+          "resolved_blob": "44ca29e3d4b3ba83e8b458bf64dc285303dd7da0",
+          "recomputed_blob": "44ca29e3d4b3ba83e8b458bf64dc285303dd7da0",
+          "bytes": 43892,
+          "sha256": "ccf5281e92af41022b25be409f7e69c5bb269a1ad2e32b4d01f9c73c57d42f08",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/stubs/runtime_stubs.cpp",
+          "expected_blob": "c7ce18a76e25289ee7274354fd85950fa9b17af8",
+          "resolved_blob": "c7ce18a76e25289ee7274354fd85950fa9b17af8",
+          "recomputed_blob": "c7ce18a76e25289ee7274354fd85950fa9b17af8",
+          "bytes": 199944,
+          "sha256": "0a11c3832d2d4a0b1adf0879a01e1cbde40a62885f2702dff316985838c135a3",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/stubs/runtime_stub_list.h",
+          "expected_blob": "3a973fac5092e206ea263c84635d8df451981abd",
+          "resolved_blob": "3a973fac5092e206ea263c84635d8df451981abd",
+          "recomputed_blob": "3a973fac5092e206ea263c84635d8df451981abd",
+          "bytes": 25311,
+          "sha256": "f399321005d1a7a27cae0a6efedd73d685aa195c31151dcf4ce91b23f250a606",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/builtins/builtins_arraybuffer.h",
+          "expected_blob": "574e10ee1805466b54889a3befca4846022a4f14",
+          "resolved_blob": "574e10ee1805466b54889a3befca4846022a4f14",
+          "recomputed_blob": "574e10ee1805466b54889a3befca4846022a4f14",
+          "bytes": 9158,
+          "sha256": "60ab09cd00eb52b2d4dc372aafab80158f9ba1246d7554b29119aad1336b8360",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/base/typed_array_helper.cpp",
+          "expected_blob": "17f4b8f50ea126eb646ef011e9b7fa7e461394dc",
+          "resolved_blob": "17f4b8f50ea126eb646ef011e9b7fa7e461394dc",
+          "recomputed_blob": "17f4b8f50ea126eb646ef011e9b7fa7e461394dc",
+          "bytes": 67342,
+          "sha256": "0704698674d39389525de7ccca0941138fc0bb4a84d3acdf0f14544a119558a3",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/builtins/builtins_typedarray.cpp",
+          "expected_blob": "8d8184928db803f3aa26971e5a15c22ce0ade41f",
+          "resolved_blob": "8d8184928db803f3aa26971e5a15c22ce0ade41f",
+          "recomputed_blob": "8d8184928db803f3aa26971e5a15c22ce0ade41f",
+          "bytes": 102865,
+          "sha256": "ed84f450e3f0b825b1bf95309c73753934cd7712289ca65c7f7fea7c4a7231c3",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/builtins/builtins_typedarray.h",
+          "expected_blob": "79b3e415414b53e163f59c443773094292f471df",
+          "resolved_blob": "79b3e415414b53e163f59c443773094292f471df",
+          "recomputed_blob": "79b3e415414b53e163f59c443773094292f471df",
+          "bytes": 15729,
+          "sha256": "db04c2624a241fe9882da8c4da17ed422cf6bdeaa3da99369fe5f4383db8ae9a",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/object_operator.cpp",
+          "expected_blob": "a192003108694900f1c39a4263a77a782f7c67c4",
+          "resolved_blob": "a192003108694900f1c39a4263a77a782f7c67c4",
+          "recomputed_blob": "a192003108694900f1c39a4263a77a782f7c67c4",
+          "bytes": 45512,
+          "sha256": "5f54a6e9a79d89b79ee4a9a025cfaf239187e8f4249a3e73b2c771607f6b04ca",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/global_env.h",
+          "expected_blob": "74dac4fbb5dcb3ce61726948ee6d2e334a1c9167",
+          "resolved_blob": "74dac4fbb5dcb3ce61726948ee6d2e334a1c9167",
+          "recomputed_blob": "74dac4fbb5dcb3ce61726948ee6d2e334a1c9167",
+          "bytes": 11801,
+          "sha256": "5ad4e0b4d3d6ad713a6c9a720e32a8321bb78cbca53084a385d07fad0ac8969a",
           "matches": true
         }
       ]

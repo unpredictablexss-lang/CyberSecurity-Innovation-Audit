@@ -1,0 +1,271 @@
+{
+  "schema": "c-line-historical-gn-build-profile-audit-v1",
+  "repository": "openharmony/arkcompiler_ets_runtime",
+  "profiles": [
+    {
+      "role": "parent",
+      "commit": "830e85b40240677039719fcbf14f721ad3b19050",
+      "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+      "files": [
+        {
+          "path": "ecmascript/compiler/BUILD.gn",
+          "git_blob_oid": "bff0145a50065bad462beb5a1feb567ae1aea517",
+          "sha256": "45f89ba6ad648be7b5f002f754d8ff6729f103e45a1aff6f517b87eb7737fe28",
+          "bytes": 16890,
+          "model_dependency_binding": true
+        },
+        {
+          "path": "BUILD.gn",
+          "git_blob_oid": "83207ac7903f020ffac2b57b9b184dbd00ce722c",
+          "sha256": "6627aacd055655cb006945f7cad556046abaf25733c54d6e0a86a79194008552",
+          "bytes": 61323,
+          "model_dependency_binding": false
+        }
+      ],
+      "config_references": [
+        {
+          "line": 224,
+          "text": "\"$js_root:ark_jsruntime_compiler_config\","
+        },
+        {
+          "line": 225,
+          "text": "\"$js_root:ark_jsruntime_public_config\","
+        },
+        {
+          "line": 280,
+          "text": "\"$js_root:ark_jsruntime_compiler_config\","
+        },
+        {
+          "line": 281,
+          "text": "\"$js_root:ark_jsruntime_public_config\","
+        },
+        {
+          "line": 333,
+          "text": "\"$js_root:ark_jsruntime_public_config\","
+        },
+        {
+          "line": 346,
+          "text": "\"$js_root:ark_jsruntime_public_config\","
+        },
+        {
+          "line": 401,
+          "text": "\"$js_root:ark_jsruntime_compiler_config\","
+        },
+        {
+          "line": 402,
+          "text": "\"$js_root:ark_jsruntime_public_config\","
+        },
+        {
+          "line": 453,
+          "text": "\"$js_root:ark_jsruntime_compiler_config\","
+        },
+        {
+          "line": 454,
+          "text": "\"$js_root:ark_jsruntime_public_config\","
+        }
+      ],
+      "root_config_conditions": [
+        {
+          "line": 238,
+          "text": "config(\"ark_jsruntime_public_config\") {"
+        },
+        {
+          "line": 286,
+          "text": "config(\"ark_jsruntime_compiler_config\") {"
+        },
+        {
+          "line": 318,
+          "text": "config(\"ark_jsruntime_common_config\") {"
+        },
+        {
+          "line": 488,
+          "text": "} else if (is_debug) {"
+        },
+        {
+          "line": 497,
+          "text": "if (enable_asm_assert) {"
+        },
+        {
+          "line": 501,
+          "text": "if (run_with_asan) {"
+        }
+      ]
+    },
+    {
+      "role": "fix",
+      "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+      "tree": "82af11ced4297818410ccf61906b703d25b69165",
+      "files": [
+        {
+          "path": "ecmascript/compiler/BUILD.gn",
+          "git_blob_oid": "bff0145a50065bad462beb5a1feb567ae1aea517",
+          "sha256": "45f89ba6ad648be7b5f002f754d8ff6729f103e45a1aff6f517b87eb7737fe28",
+          "bytes": 16890,
+          "model_dependency_binding": true
+        },
+        {
+          "path": "BUILD.gn",
+          "git_blob_oid": "83207ac7903f020ffac2b57b9b184dbd00ce722c",
+          "sha256": "6627aacd055655cb006945f7cad556046abaf25733c54d6e0a86a79194008552",
+          "bytes": 61323,
+          "model_dependency_binding": false
+        }
+      ],
+      "config_references": [
+        {
+          "line": 224,
+          "text": "\"$js_root:ark_jsruntime_compiler_config\","
+        },
+        {
+          "line": 225,
+          "text": "\"$js_root:ark_jsruntime_public_config\","
+        },
+        {
+          "line": 280,
+          "text": "\"$js_root:ark_jsruntime_compiler_config\","
+        },
+        {
+          "line": 281,
+          "text": "\"$js_root:ark_jsruntime_public_config\","
+        },
+        {
+          "line": 333,
+          "text": "\"$js_root:ark_jsruntime_public_config\","
+        },
+        {
+          "line": 346,
+          "text": "\"$js_root:ark_jsruntime_public_config\","
+        },
+        {
+          "line": 401,
+          "text": "\"$js_root:ark_jsruntime_compiler_config\","
+        },
+        {
+          "line": 402,
+          "text": "\"$js_root:ark_jsruntime_public_config\","
+        },
+        {
+          "line": 453,
+          "text": "\"$js_root:ark_jsruntime_compiler_config\","
+        },
+        {
+          "line": 454,
+          "text": "\"$js_root:ark_jsruntime_public_config\","
+        }
+      ],
+      "root_config_conditions": [
+        {
+          "line": 238,
+          "text": "config(\"ark_jsruntime_public_config\") {"
+        },
+        {
+          "line": 286,
+          "text": "config(\"ark_jsruntime_compiler_config\") {"
+        },
+        {
+          "line": 318,
+          "text": "config(\"ark_jsruntime_common_config\") {"
+        },
+        {
+          "line": 488,
+          "text": "} else if (is_debug) {"
+        },
+        {
+          "line": 497,
+          "text": "if (enable_asm_assert) {"
+        },
+        {
+          "line": 501,
+          "text": "if (run_with_asan) {"
+        }
+      ]
+    }
+  ],
+  "discovered_nonmatching_local_profile": {
+    "path": "outputs/ark-runtime-isolated-validation-20261018/openharmony-5.0.2/out/rk3568/args.gn",
+    "args_sha256": "84fac8ced2c9ed71285eb04dad37d05acd65d4273bd32254d061f1979f50c262",
+    "runtime_commit": "1b23531531e768398682582969c2a9f17e72cafe",
+    "runtime_tree": "52f27683e2f6e1ba8272aee7d5202c73059e10b4",
+    "target_blob_at_modeled_path": "8e46ee42c2b40b645e66a7cba9c585edc9044a39",
+    "creator_blob_at_modeled_path": "bd0a5f7d0c111c36814f4ab402ce2353325b4868",
+    "selected_args": {
+      "product_name": "\"rk3568\"",
+      "target_cpu": "\"arm\"",
+      "build_variant": "\"root\"",
+      "is_debug": "true",
+      "is_asan": "true",
+      "runtime_mode": "\"release\""
+    },
+    "matches_parent_or_fix_commit": false,
+    "usable_for_parent_fix_profile": false,
+    "reason": "Generated args.gn belongs to a different runtime commit and source blobs; it cannot resolve the pinned parent/fix build profiles."
+  },
+  "local_build_artifact_search": {
+    "workspace_root": "D:/openHarmonyScanner",
+    "args_gn_matches": [
+      "outputs/ark-runtime-isolated-validation-20261018/openharmony-5.0.2/out/rk3568/args.gn"
+    ],
+    "compile_commands_json_matches": [],
+    "manifest_snapshots": [
+      {
+        "path": "openharmony-manifest-20261018.xml",
+        "sha256": "52f528dada321a140a29be2d55ef9053fda818cbdca93758425f1a25f6286d55",
+        "runtime_project_revisions": [
+          "a65a2853ccae13da167d9aa4720ab8b11ec16656"
+        ],
+        "matches_parent_or_fix": false
+      },
+      {
+        "path": "openharmony-manifest-fixed.xml",
+        "sha256": "701683246a8b4393e61cdb75132d76aacc9e53f6f663d37e386bbd535511fbee",
+        "runtime_project_revisions": [
+          "5d253ed7e3464ac71f7fe3fd7fc466297ab95dbc"
+        ],
+        "matches_parent_or_fix": false
+      }
+    ],
+    "manifest_history_search": [
+      {
+        "workspace_profile": "openharmony",
+        "manifest_git_dir": "/mnt/d/openHarmonyScanner/openharmony/.repo/manifests.git",
+        "reachable_manifest_commit_count": 6546,
+        "search": "git log --all -S<runtime_commit> --format=%H -- '*.xml'",
+        "runtime_commit_searches": [
+          {
+            "runtime_commit": "830e85b40240677039719fcbf14f721ad3b19050",
+            "manifest_change_commits": []
+          },
+          {
+            "runtime_commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+            "manifest_change_commits": []
+          }
+        ]
+      },
+      {
+        "workspace_profile": "openharmony-5.0.2",
+        "manifest_git_dir": "/mnt/d/openHarmonyScanner/outputs/ark-runtime-isolated-validation-20261018/openharmony-5.0.2/.repo/manifests.git",
+        "reachable_manifest_commit_count": 2782,
+        "search": "git log --all -S<runtime_commit> --format=%H -- '*.xml'",
+        "runtime_commit_searches": [
+          {
+            "runtime_commit": "830e85b40240677039719fcbf14f721ad3b19050",
+            "manifest_change_commits": []
+          },
+          {
+            "runtime_commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+            "manifest_change_commits": []
+          }
+        ]
+      }
+    ],
+    "interpretation": "The only discovered args.gn belongs to a different runtime commit. No compile_commands.json was found in the workspace search; this does not establish the parent/fix compile commands."
+  },
+  "model_assumption": "assumed:NDEBUG=1;ENABLE_ASM_ASSERT=0;not_product_build_verified",
+  "finding": "Both exact source profiles bind the compiler BUILD.gn blob, which references compiler/public configs defined in the root BUILD.gn. The root BUILD.gn blob is identical in parent and fix but is not a declared RuntimeTypeModel source dependency. It selects NDEBUG and compiler flags based on build_variant/is_debug and gates ENABLE_ASM_ASSERT/RUN_WITH_ASAN on GN args. The only discovered local args.gn belongs to a different runtime commit and different target/creator blobs; historical parent/fix GN args, target toolchain, and resolved compile commands remain unavailable. The model's build_profile is therefore an assumption, not a verified historical product profile.",
+  "required_follow_up": [
+    "Bind root BUILD.gn and any product/board GN inputs that affect the target compile edge.",
+    "Obtain parent and fix generated args.gn and resolved compile commands independently; do not copy current-a65 or the discovered nonmatching local profile.",
+    "Keep historical replay and public Runner admission partial/blocked until those values are resolved."
+  ],
+  "interpretation_limit": "Exact BUILD.gn source pins do not resolve the GN args or prove a product compile profile."
+}
