@@ -484,6 +484,18 @@
     "variant": "positive"
   },
   {
+    "sample_id": "relay_inner_wrong_then_correct_fixed",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": null,
+    "file": "relay_inner_wrong_then_correct_fixed.cpp",
+    "split": "design",
+    "variant": "fixed",
+    "control_rules": [
+      "ipc.relay.descriptor-boundary"
+    ]
+  },
+  {
     "sample_id": "helper_preproc_guard_fixed",
     "data_origin": "synthetic",
     "family": "AUTH-02",

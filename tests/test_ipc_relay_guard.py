@@ -57,6 +57,9 @@ class RelayGuardTests(unittest.TestCase):
     def test_the_token_may_be_held_in_a_local_first(self):
         self.assertEqual(self.auth01("relay_inner_local_guard_fixed.cpp"), [])
 
+    def test_an_earlier_wrong_interface_comparison_does_not_hide_the_guard(self):
+        self.assertEqual(self.auth01("relay_inner_wrong_then_correct_fixed.cpp"), [])
+
     # --- the callee is not the guard: the call site stays a candidate ----------
 
     def test_a_callee_that_never_compares_the_token_leaves_the_relay_unguarded(self):
@@ -94,7 +97,7 @@ class ManifestCoverageTests(unittest.TestCase):
         declared = {item["file"] for item in json.loads((BASE / "manifest.json").read_text())}
         on_disk = {path.name for path in BASE.glob("relay_inner_*.cpp")}
         self.assertEqual(on_disk, declared & on_disk)
-        self.assertEqual(len(on_disk), 8)
+        self.assertEqual(len(on_disk), 9)
 
     def test_the_expected_rule_matches_the_fixture_name(self):
         for item in json.loads((BASE / "manifest.json").read_text()):

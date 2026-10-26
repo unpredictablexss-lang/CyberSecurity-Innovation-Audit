@@ -1792,7 +1792,7 @@ class Interpreter:
         statements = list(helper.body.named_children)
         probe = state.fork()
         probe.env.update(dict(zip(helper.params, args)))
-        check = index = comparison = None
+        rejected = None
         for position, item in enumerate(statements):
             # Locals hold the token as often as the call site does, so bind the
             # declarations met on the way to the check the way the body walk binds
@@ -1808,30 +1808,37 @@ class Interpreter:
                 continue
             read = self.value(helper, item.child_by_field_name("condition"), probe, depth)
             if read.kind == "predicate" and read.predicate[:1] == ("descriptor",):
-                check, index, comparison = item, position, read
-                break
-        if check is None:
-            return None
-        expected = comparison.predicate[3]
-        line_map = self.line_maps.get(helper.file) or {}
-        line = check.start_point[0] + 1
-        where = helper.qualified + " at " + helper.file + ":" + str(line_map.get(line, line))
-        if expected.subject not in _DESCRIPTOR_ACCEPTED:
-            return ("seen", (expected.subject, expected.key) + tuple(expected.terms))
-        # The predicate is true when the operands are equal, so on an equality
-        # test it is the `else` branch that sees the mismatch, and on `!=` the
-        # consequence. That branch has to leave for the check to be a guard.
-        mismatch = (check.child_by_field_name("alternative") if comparison.predicate[2]
-                    else check.child_by_field_name("consequence"))
-        if mismatch is not None and mismatch.type == "else_clause":
-            mismatch = mismatch.named_children[-1] if mismatch.named_children else None
-        block = mismatch if mismatch is not None and mismatch.type == "compound_statement" else None
-        leaving = block.named_children if block is not None else ([mismatch] if mismatch is not None else [])
-        if not any(item.type in _RELAY_LEAVES for item in leaving):
-            return None
-        if not any(item.type == "switch_statement" for item in statements[index + 1:]):
-            return None
-        return ("guarded", where)
+                comparison = read
+                expected = comparison.predicate[3]
+                if expected.subject not in _DESCRIPTOR_ACCEPTED:
+                    # Remember a concrete mismatch, but do not let an earlier
+                    # comparison against another interface hide a later guard
+                    # for this transaction.
+                    rejected = rejected or ((expected.subject, expected.key)
+                                             + tuple(expected.terms))
+                    continue
+                # The predicate is true when the operands are equal, so on an
+                # equality test it is the `else` branch that sees mismatch, and
+                # on `!=` the consequence. That branch must exit directly.
+                mismatch = (item.child_by_field_name("alternative")
+                            if comparison.predicate[2]
+                            else item.child_by_field_name("consequence"))
+                if mismatch is not None and mismatch.type == "else_clause":
+                    mismatch = mismatch.named_children[-1] if mismatch.named_children else None
+                block = mismatch if mismatch is not None and mismatch.type == "compound_statement" else None
+                leaving = (block.named_children if block is not None
+                           else ([mismatch] if mismatch is not None else []))
+                if not any(part.type in _RELAY_LEAVES for part in leaving):
+                    continue
+                if not any(part.type == "switch_statement" for part in statements[position + 1:]):
+                    continue
+                line_map = self.line_maps.get(helper.file) or {}
+                line = item.start_point[0] + 1
+                where = helper.qualified + " at " + helper.file + ":" + str(line_map.get(line, line))
+                return ("guarded", where)
+        if rejected is not None:
+            return ("seen", rejected)
+        return None
 
     def value(self, fn, node, state, depth):
         if node is None:
