@@ -1,0 +1,91 @@
+test_allocator_import_from_custom_namespace_cannot_gain_proof (tests.detectors.data.test_t89_cleanup_binding.T89CleanupBindingTests.test_allocator_import_from_custom_namespace_cannot_gain_proof) ... ok
+test_changed_cffree_macro_cannot_gain_cleanup_proof (tests.detectors.data.test_t89_cleanup_binding.T89CleanupBindingTests.test_changed_cffree_macro_cannot_gain_cleanup_proof) ... ok
+test_changed_free_macro_cannot_gain_cleanup_proof (tests.detectors.data.test_t89_cleanup_binding.T89CleanupBindingTests.test_changed_free_macro_cannot_gain_cleanup_proof) ... ok
+test_changed_null_macro_cannot_gain_cleanup_proof (tests.detectors.data.test_t89_cleanup_binding.T89CleanupBindingTests.test_changed_null_macro_cannot_gain_cleanup_proof) ... ok
+test_cleanup_and_wipe_do_not_remove_later_material_flow (tests.detectors.data.test_t89_cleanup_binding.T89CleanupBindingTests.test_cleanup_and_wipe_do_not_remove_later_material_flow) ... ok
+test_cleanup_spelling_without_definition_is_not_a_proof (tests.detectors.data.test_t89_cleanup_binding.T89CleanupBindingTests.test_cleanup_spelling_without_definition_is_not_a_proof) ... ok
+test_cross_file_same_name_leaking_definition_is_not_cleanup (tests.detectors.data.test_t89_cleanup_binding.T89CleanupBindingTests.test_cross_file_same_name_leaking_definition_is_not_cleanup) ... ok
+test_exact_same_file_null_guard_free_wrapper_has_no_exposure (tests.detectors.data.test_t89_cleanup_binding.T89CleanupBindingTests.test_exact_same_file_null_guard_free_wrapper_has_no_exposure) ... 
+  test_exact_same_file_null_guard_free_wrapper_has_no_exposure (tests.detectors.data.test_t89_cleanup_binding.T89CleanupBindingTests.test_exact_same_file_null_guard_free_wrapper_has_no_exposure) (runner=False) ... FAIL
+  test_exact_same_file_null_guard_free_wrapper_has_no_exposure (tests.detectors.data.test_t89_cleanup_binding.T89CleanupBindingTests.test_exact_same_file_null_guard_free_wrapper_has_no_exposure) (runner=True) ... FAIL
+test_exact_wrapper_does_not_erase_later_actual_log (tests.detectors.data.test_t89_cleanup_binding.T89CleanupBindingTests.test_exact_wrapper_does_not_erase_later_actual_log) ... ok
+test_function_pointer_local_alias_remains_unresolved (tests.detectors.data.test_t89_cleanup_binding.T89CleanupBindingTests.test_function_pointer_local_alias_remains_unresolved) ... 
+  test_function_pointer_local_alias_remains_unresolved (tests.detectors.data.test_t89_cleanup_binding.T89CleanupBindingTests.test_function_pointer_local_alias_remains_unresolved) (runner=False) ... FAIL
+  test_function_pointer_local_alias_remains_unresolved (tests.detectors.data.test_t89_cleanup_binding.T89CleanupBindingTests.test_function_pointer_local_alias_remains_unresolved) (runner=True) ... FAIL
+test_function_pointer_parameter_named_cffree_remains_unresolved (tests.detectors.data.test_t89_cleanup_binding.T89CleanupBindingTests.test_function_pointer_parameter_named_cffree_remains_unresolved) ... 
+  test_function_pointer_parameter_named_cffree_remains_unresolved (tests.detectors.data.test_t89_cleanup_binding.T89CleanupBindingTests.test_function_pointer_parameter_named_cffree_remains_unresolved) (runner=False) ... FAIL
+  test_function_pointer_parameter_named_cffree_remains_unresolved (tests.detectors.data.test_t89_cleanup_binding.T89CleanupBindingTests.test_function_pointer_parameter_named_cffree_remains_unresolved) (runner=True) ... FAIL
+test_missing_or_partial_header_does_not_prove_cleanup (tests.detectors.data.test_t89_cleanup_binding.T89CleanupBindingTests.test_missing_or_partial_header_does_not_prove_cleanup) ... ok
+test_same_name_local_definition_that_logs_is_analyzed (tests.detectors.data.test_t89_cleanup_binding.T89CleanupBindingTests.test_same_name_local_definition_that_logs_is_analyzed) ... ok
+test_same_name_unknown_namespace_remains_unresolved (tests.detectors.data.test_t89_cleanup_binding.T89CleanupBindingTests.test_same_name_unknown_namespace_remains_unresolved) ... ok
+
+======================================================================
+FAIL: test_exact_same_file_null_guard_free_wrapper_has_no_exposure (tests.detectors.data.test_t89_cleanup_binding.T89CleanupBindingTests.test_exact_same_file_null_guard_free_wrapper_has_no_exposure) (runner=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t89_cleanup_binding.py", line 65, in test_exact_same_file_null_guard_free_wrapper_has_no_exposure
+    self.assertEqual((), tuple(self.scan(source, runner=runner)))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Tuples differ: () != (DetectorFinding(file='service.cpp', line=[1227 chars]n'),)
+
+Second tuple contains 1 additional elements.
+First extra element 0:
+DetectorFinding(file='service.cpp', line=3, rule_id='data.sensitive.unresolved-escape', message='Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=service.cpp:5 source Callback parameter 0 -> 5 call CfFree argument 0 -> 3 unresolved call free', evidence_type='syntax', column=None, candidate_cwe=None, symbol='CfFree', evidence_obligations=(EvidenceObligation(kind='callee_binding', description='Resolve the exact overload, receiver, and implementation for free.', status='unknown'), EvidenceObligation(kind='sink_behavior', description='Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.', status='unknown'), EvidenceObligation(kind='runtime_log_visibility', description='No log exposure or reader reachability is established by this call alone.', status='unknown'), EvidenceObligation(kind='security_impact', description='Establish recoverable sensitive material and concrete impact independently.', status='unknown')), consequence_impact=None, consequence_cwe=None, source_sha256='22ceec2db633c10ccc22a604bdc9695eaf77514df07fe65c65f7f0864b120868', rule_version=None, rule_lineage_id=None, symbol_identity=None, ast_fingerprint=None, identity_quality='unknown')
+
+Diff is 5009 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_exact_same_file_null_guard_free_wrapper_has_no_exposure (tests.detectors.data.test_t89_cleanup_binding.T89CleanupBindingTests.test_exact_same_file_null_guard_free_wrapper_has_no_exposure) (runner=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t89_cleanup_binding.py", line 65, in test_exact_same_file_null_guard_free_wrapper_has_no_exposure
+    self.assertEqual((), tuple(self.scan(source, runner=runner)))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Tuples differ: () != (ToolDiagnostic(diagnostic_id='ohscanner.d[2714 chars]ne),)
+
+Second tuple contains 1 additional elements.
+First extra element 0:
+ToolDiagnostic(diagnostic_id='ohscanner.data.sensitive_exposure:a0bda2d7b23f255b', provider='ohscanner.data.sensitive_exposure', evidence_type='syntax', file='service.cpp', line=3, column=None, rule_id='data.sensitive.unresolved-escape', severity='unassessed', message='Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=service.cpp:5 source Callback parameter 0 -> 5 call CfFree argument 0 -> 3 unresolved call free', candidate_cwe=None, confidence='unassessed', symbol='CfFree', source_sha256='22ceec2db633c10ccc22a604bdc9695eaf77514df07fe65c65f7f0864b120868', consequence_impact=None, consequence_cwe=None, finding_identity_id=None, occurrence_id=None, finding_identity={'schema_version': 'ohscanner.finding-identity-record.v1', 'stable': {'id': None, 'status': 'unknown', 'basis': None, 'unknown_reasons': ['identity_quality:unknown', 'missing:ast_fingerprint', 'missing:rule_lineage_id', 'missing:symbol_identity']}, 'occurrence': {'id': None, 'status': 'unknown', 'basis': None, 'unknown_reasons': ['missing:rule_version', 'missing:source_blob_oid']}, 'observation': {'legacy_diagnostic_id': 'ohscanner.data.sensitive_exposure:a0bda2d7b23f255b', 'detector_id': 'ohscanner.data.sensitive_exposure', 'detector_version': '0.21.6', 'rule_id': 'data.sensitive.unresolved-escape', 'rule_version': None, 'file': 'service.cpp', 'line': 3, 'message': 'Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=service.cpp:5 source Callback parameter 0 -> 5 call CfFree argument 0 -> 3 unresolved call free', 'source_blob_oid': None, 'source_sha256': '22ceec2db633c10ccc22a604bdc9695eaf77514df07fe65c65f7f0864b120868', 'byte_start': 45, 'byte_end': 73, 'identity_quality': 'unknown', 'rule_lineage_id': None, 'symbol_identity': None, 'ast_fingerprint': None}, 'source_binding': {'repository': 'fixture/t89', 'commit': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', 'snapshot_sha256': '9fa236756e854372cb7b95709295a36aede5ef972a41ecb27a865859cec758a1', 'profile_id': 'm0-synthetic', 'detector_id': 'ohscanner.data.sensitive_exposure', 'detector_version': '0.21.6', 'rule_id': 'data.sensitive.unresolved-escape', 'rule_version': None, 'file': 'service.cpp', 'source_blob_oid': None, 'source_sha256': '22ceec2db633c10ccc22a604bdc9695eaf77514df07fe65c65f7f0864b120868', 'byte_start': 45, 'byte_end': 73, 'status': 'unbound', 'verification': 'not_performed_by_identity_layer'}, 'historical_ids': ['ohscanner.data.sensitive_exposure:a0bda2d7b23f255b'], 'backfilled': False, 'interpretation': 'Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance.'}, source_archive_binding=None)
+
+Diff is 6814 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_function_pointer_local_alias_remains_unresolved (tests.detectors.data.test_t89_cleanup_binding.T89CleanupBindingTests.test_function_pointer_local_alias_remains_unresolved) (runner=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t89_cleanup_binding.py", line 50, in assert_candidate
+    self.assertTrue(findings, 'unresolved or leaking binding lost its source')
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: () is not true : unresolved or leaking binding lost its source
+
+======================================================================
+FAIL: test_function_pointer_local_alias_remains_unresolved (tests.detectors.data.test_t89_cleanup_binding.T89CleanupBindingTests.test_function_pointer_local_alias_remains_unresolved) (runner=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t89_cleanup_binding.py", line 50, in assert_candidate
+    self.assertTrue(findings, 'unresolved or leaking binding lost its source')
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: [] is not true : unresolved or leaking binding lost its source
+
+======================================================================
+FAIL: test_function_pointer_parameter_named_cffree_remains_unresolved (tests.detectors.data.test_t89_cleanup_binding.T89CleanupBindingTests.test_function_pointer_parameter_named_cffree_remains_unresolved) (runner=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t89_cleanup_binding.py", line 50, in assert_candidate
+    self.assertTrue(findings, 'unresolved or leaking binding lost its source')
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: () is not true : unresolved or leaking binding lost its source
+
+======================================================================
+FAIL: test_function_pointer_parameter_named_cffree_remains_unresolved (tests.detectors.data.test_t89_cleanup_binding.T89CleanupBindingTests.test_function_pointer_parameter_named_cffree_remains_unresolved) (runner=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t89_cleanup_binding.py", line 50, in assert_candidate
+    self.assertTrue(findings, 'unresolved or leaking binding lost its source')
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: [] is not true : unresolved or leaking binding lost its source
+
+----------------------------------------------------------------------
+Ran 14 tests in 0.023s
+
+FAILED (failures=6)

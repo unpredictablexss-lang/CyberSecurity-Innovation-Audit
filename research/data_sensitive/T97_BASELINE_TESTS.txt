@@ -1,0 +1,40 @@
+======================================================================
+FAIL: test_all_return (tests.detectors.data.test_t97_switch_return_termination.T97SwitchReturnTests.test_all_return) (case='all-return')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t97_switch_return_termination.py", line 64, in check
+    with self.subTest(case=name): t94.T94PointerBranchTests().assert_log(s,statement,contract=='log')
+                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t94_pointer_branch_targets.py", line 32, in assert_log
+    self.assertEqual(expected, actual)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+AssertionError: False != True
+
+======================================================================
+FAIL: test_header_return (tests.detectors.data.test_t97_switch_return_termination.T97SwitchReturnTests.test_header_return) (case='header-return')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t97_switch_return_termination.py", line 64, in check
+    with self.subTest(case=name): t94.T94PointerBranchTests().assert_log(s,statement,contract=='log')
+                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t94_pointer_branch_targets.py", line 32, in assert_log
+    self.assertEqual(expected, actual)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+AssertionError: False != True
+
+======================================================================
+FAIL: test_three_return_default_first (tests.detectors.data.test_t97_switch_return_termination.T97SwitchReturnTests.test_three_return_default_first) (case='three-return-default-first')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t97_switch_return_termination.py", line 64, in check
+    with self.subTest(case=name): t94.T94PointerBranchTests().assert_log(s,statement,contract=='log')
+                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t94_pointer_branch_targets.py", line 32, in assert_log
+    self.assertEqual(expected, actual)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+AssertionError: False != True
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.042s
+
+FAILED (failures=3)

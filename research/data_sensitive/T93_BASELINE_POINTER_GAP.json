@@ -1,0 +1,106 @@
+{
+  "baseline_owner": "fd36dc2e61abfe01c1a2e244b97d75254ffd5f82",
+  "source": "using size_t=decltype(sizeof(0)); using napi_env=void*; using napi_value=const char*; using napi_status=int; const int napi_ok=0; void HILOG_INFO(int,const char*,...);\nnapi_status napi_get_value_string_utf8(napi_env env,napi_value value,char *buffer,size_t size,size_t *length){*length=(unsigned char)value[0];return napi_ok;}\nvoid Callback(const char *key){size_t length=0;napi_get_value_string_utf8(nullptr,key,nullptr,0,&length);HILOG_INFO(1,\"%{public}u\",(unsigned)length);}",
+  "direct": {
+    "detector_id": "ohscanner.data.sensitive_exposure",
+    "version": "0.21.8",
+    "status": "blocked",
+    "analyzed_files": [
+      "service.cpp"
+    ],
+    "findings": [],
+    "limitations": [
+      "Candidate only: runtime log readers, production enablement and impact require independent review.",
+      "Detailed private Tree-sitter statements pending owner-approved shared expression facts; no new global frontend.",
+      "Function-local syntax dependencies, not CFG/alias/full-program proof; no secret values recorded.",
+      "Model scope is exact repository/commit; receiver/typedef identity and include binding remain obligations.",
+      "Private/default-private sensitive operands retained as conditional candidates; runtime privacy configuration and reader exposure remain obligations.",
+      "Unsupported control-flow subtrees are scanned for may-flow call effects; branch feasibility remains unresolved.",
+      "service.cpp: bounded same-file helper expansion; compiler type identity remains unknown",
+      "service.cpp: pointer/member assignment requires alias proof"
+    ],
+    "file_outcomes": [
+      [
+        "service.cpp",
+        "partial"
+      ]
+    ]
+  },
+  "runner": {
+    "schema_version": 2,
+    "run_id": "t89-binding:ohscanner.data.sensitive_exposure",
+    "tool": "ohscanner.data.sensitive_exposure",
+    "tool_version": "0.21.8",
+    "target_id": "current-component:fixture/t89",
+    "commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "scope_files": 1,
+    "scope_loc": 3,
+    "status": "blocked",
+    "elapsed_seconds": 0.0004819999958272092,
+    "peak_memory_mb": null,
+    "diagnostic_count": 0,
+    "diagnostics": [],
+    "limitations": [
+      "Candidate only: runtime log readers, production enablement and impact require independent review.",
+      "Detailed private Tree-sitter statements pending owner-approved shared expression facts; no new global frontend.",
+      "Function-local syntax dependencies, not CFG/alias/full-program proof; no secret values recorded.",
+      "Model scope is exact repository/commit; receiver/typedef identity and include binding remain obligations.",
+      "Private/default-private sensitive operands retained as conditional candidates; runtime privacy configuration and reader exposure remain obligations.",
+      "Unsupported control-flow subtrees are scanned for may-flow call effects; branch feasibility remains unresolved.",
+      "service.cpp: bounded same-file helper expansion; compiler type identity remains unknown",
+      "service.cpp: pointer/member assignment requires alias proof",
+      "M0 synthetic fixture only; no real Git provenance verified.",
+      "Execution is synchronous; hard timeout/memory isolation is not yet implemented.",
+      "Diagnostic does not establish vulnerability, reachability or security impact.",
+      "INCOMPLETE COVERAGE: detector-internal file outcome is unknown/partial; see coverage sidecar.",
+      "Coverage incomplete or unsupported; do not infer safety."
+    ],
+    "parsing": [
+      {
+        "file": "service.cpp",
+        "status": "complete",
+        "issues": [],
+        "analysis_status": "partial",
+        "analysis_reason": "detector_model_incomplete"
+      }
+    ],
+    "interpretation": "Descriptive scanner evidence only. Diagnostics are candidates/evidence, not validated vulnerabilities; an empty diagnostic list is not proof of safety."
+  },
+  "coverage": {
+    "schema_version": 1,
+    "detectors": {
+      "ohscanner.data.sensitive_exposure": {
+        "scope_mode": "per_file",
+        "status": "partial",
+        "applicable_files": 1,
+        "analyzed_files": [],
+        "partially_inspected_files": [
+          "service.cpp"
+        ],
+        "source_sha256": {
+          "service.cpp": "6418a2ed4490a1416a566ce2ad68fec5503f93b56e608884ff2a89ae1d1a006c"
+        },
+        "unexamined": [
+          {
+            "file": "service.cpp",
+            "parse_status": "complete",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          }
+        ],
+        "inspected_files": [
+          "service.cpp"
+        ],
+        "not_analyzed_files": [],
+        "coverage_counts": {
+          "complete": 0,
+          "partial": 1,
+          "not_analyzed": 0,
+          "failed": 0
+        },
+        "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+        "evidence_obligations": []
+      }
+    }
+  }
+}

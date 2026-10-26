@@ -1,0 +1,99 @@
+test_bound_key_is_excluded_only_through_exact_visible_wrapper (tests.detectors.data.test_t88_macro_roles.T88MacroRoleTests.test_bound_key_is_excluded_only_through_exact_visible_wrapper) ... 
+  test_bound_key_is_excluded_only_through_exact_visible_wrapper (tests.detectors.data.test_t88_macro_roles.T88MacroRoleTests.test_bound_key_is_excluded_only_through_exact_visible_wrapper) (runner=False) ... FAIL
+  test_bound_key_is_excluded_only_through_exact_visible_wrapper (tests.detectors.data.test_t88_macro_roles.T88MacroRoleTests.test_bound_key_is_excluded_only_through_exact_visible_wrapper) (runner=True) ... FAIL
+test_format_percent_escapes_and_star_operands_bind_correctly (tests.detectors.data.test_t88_macro_roles.T88MacroRoleTests.test_format_percent_escapes_and_star_operands_bind_correctly) ... 
+  test_format_percent_escapes_and_star_operands_bind_correctly (tests.detectors.data.test_t88_macro_roles.T88MacroRoleTests.test_format_percent_escapes_and_star_operands_bind_correctly) (statement='LOGE("%% %{public}*.*s",4,3,CERT_PASSWORD.c_str());') ... FAIL
+  test_format_percent_escapes_and_star_operands_bind_correctly (tests.detectors.data.test_t88_macro_roles.T88MacroRoleTests.test_format_percent_escapes_and_star_operands_bind_correctly) (statement='LOGE("%{public}d %{public}s",7,CERT_PASSWORD.c_str());') ... FAIL
+test_local_value_shadow_after_prior_read_does_not_use_global_proof (tests.detectors.data.test_t88_macro_roles.T88MacroRoleTests.test_local_value_shadow_after_prior_read_does_not_use_global_proof) ... ok
+test_macro_changes_redefinition_and_unproved_alternate_are_not_trusted (tests.detectors.data.test_t88_macro_roles.T88MacroRoleTests.test_macro_changes_redefinition_and_unproved_alternate_are_not_trusted) ... ok
+test_mixed_key_and_actual_password_filters_only_the_key_operand (tests.detectors.data.test_t88_macro_roles.T88MacroRoleTests.test_mixed_key_and_actual_password_filters_only_the_key_operand) ... 
+  test_mixed_key_and_actual_password_filters_only_the_key_operand (tests.detectors.data.test_t88_macro_roles.T88MacroRoleTests.test_mixed_key_and_actual_password_filters_only_the_key_operand) (runner=False) ... FAIL
+  test_mixed_key_and_actual_password_filters_only_the_key_operand (tests.detectors.data.test_t88_macro_roles.T88MacroRoleTests.test_mixed_key_and_actual_password_filters_only_the_key_operand) (runner=True) ... FAIL
+test_prior_read_proof_is_local_to_the_actual_function (tests.detectors.data.test_t88_macro_roles.T88MacroRoleTests.test_prior_read_proof_is_local_to_the_actual_function) ... ok
+test_real_password_values_and_secret_format_remain_candidates (tests.detectors.data.test_t88_macro_roles.T88MacroRoleTests.test_real_password_values_and_secret_format_remain_candidates) ... ok
+test_same_name_local_log_body_is_analyzed (tests.detectors.data.test_t88_macro_roles.T88MacroRoleTests.test_same_name_local_log_body_is_analyzed) ... ok
+test_unknown_helper_missing_and_partial_headers_keep_candidate (tests.detectors.data.test_t88_macro_roles.T88MacroRoleTests.test_unknown_helper_missing_and_partial_headers_keep_candidate) ... ok
+test_unknown_or_mismatched_format_does_not_gain_key_proof (tests.detectors.data.test_t88_macro_roles.T88MacroRoleTests.test_unknown_or_mismatched_format_does_not_gain_key_proof) ... ok
+
+======================================================================
+FAIL: test_bound_key_is_excluded_only_through_exact_visible_wrapper (tests.detectors.data.test_t88_macro_roles.T88MacroRoleTests.test_bound_key_is_excluded_only_through_exact_visible_wrapper) (runner=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t88_macro_roles.py", line 65, in test_bound_key_is_excluded_only_through_exact_visible_wrapper
+    self.assertEqual((), self.at_statement(source, statement, runner=runner))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Tuples differ: () != (DetectorFinding(file='sample.cpp', line=5[1237 chars]n'),)
+
+Second tuple contains 1 additional elements.
+First extra element 0:
+DetectorFinding(file='sample.cpp', line=5, rule_id='data.sensitive.unresolved-escape', message='Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=sample.cpp:5 source heuristic suspected sensitive-return API CERT_PASSWORD.c_str -> 5 unresolved call LOGE', evidence_type='syntax', column=None, candidate_cwe=None, symbol='sample', evidence_obligations=(EvidenceObligation(kind='callee_binding', description='Resolve the exact overload, receiver, and implementation for LOGE.', status='unknown'), EvidenceObligation(kind='sink_behavior', description='Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.', status='unknown'), EvidenceObligation(kind='runtime_log_visibility', description='No log exposure or reader reachability is established by this call alone.', status='unknown'), EvidenceObligation(kind='security_impact', description='Establish recoverable sensitive material and concrete impact independently.', status='unknown')), consequence_impact=None, consequence_cwe=None, source_sha256='f3960a3707f31e030e4df9472732d5899eb855149aaa6a40d18ef92e13d925e2', rule_version=None, rule_lineage_id=None, symbol_identity=None, ast_fingerprint=None, identity_quality='unknown')
+
+Diff is 5019 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_bound_key_is_excluded_only_through_exact_visible_wrapper (tests.detectors.data.test_t88_macro_roles.T88MacroRoleTests.test_bound_key_is_excluded_only_through_exact_visible_wrapper) (runner=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t88_macro_roles.py", line 65, in test_bound_key_is_excluded_only_through_exact_visible_wrapper
+    self.assertEqual((), self.at_statement(source, statement, runner=runner))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Tuples differ: () != (ToolDiagnostic(diagnostic_id='ohscanner.d[2737 chars]ne),)
+
+Second tuple contains 1 additional elements.
+First extra element 0:
+ToolDiagnostic(diagnostic_id='ohscanner.data.sensitive_exposure:92907282a6270858', provider='ohscanner.data.sensitive_exposure', evidence_type='syntax', file='sample.cpp', line=5, column=None, rule_id='data.sensitive.unresolved-escape', severity='unassessed', message='Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=sample.cpp:5 source heuristic suspected sensitive-return API CERT_PASSWORD.c_str -> 5 unresolved call LOGE', candidate_cwe=None, confidence='unassessed', symbol='sample', source_sha256='f3960a3707f31e030e4df9472732d5899eb855149aaa6a40d18ef92e13d925e2', consequence_impact=None, consequence_cwe=None, finding_identity_id=None, occurrence_id=None, finding_identity={'schema_version': 'ohscanner.finding-identity-record.v1', 'stable': {'id': None, 'status': 'unknown', 'basis': None, 'unknown_reasons': ['identity_quality:unknown', 'missing:ast_fingerprint', 'missing:rule_lineage_id', 'missing:symbol_identity']}, 'occurrence': {'id': None, 'status': 'unknown', 'basis': None, 'unknown_reasons': ['missing:rule_version', 'missing:source_blob_oid']}, 'observation': {'legacy_diagnostic_id': 'ohscanner.data.sensitive_exposure:92907282a6270858', 'detector_id': 'ohscanner.data.sensitive_exposure', 'detector_version': '0.21.5', 'rule_id': 'data.sensitive.unresolved-escape', 'rule_version': None, 'file': 'sample.cpp', 'line': 5, 'message': 'Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=sample.cpp:5 source heuristic suspected sensitive-return API CERT_PASSWORD.c_str -> 5 unresolved call LOGE', 'source_blob_oid': None, 'source_sha256': 'f3960a3707f31e030e4df9472732d5899eb855149aaa6a40d18ef92e13d925e2', 'byte_start': 212, 'byte_end': 275, 'identity_quality': 'unknown', 'rule_lineage_id': None, 'symbol_identity': None, 'ast_fingerprint': None}, 'source_binding': {'repository': 'fixture/t88', 'commit': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'snapshot_sha256': 'c2e33d3937ef3fe99911fe34e3c0f2ee527729d2b18c90b4b876a76bbaa30582', 'profile_id': 'm0-synthetic', 'detector_id': 'ohscanner.data.sensitive_exposure', 'detector_version': '0.21.5', 'rule_id': 'data.sensitive.unresolved-escape', 'rule_version': None, 'file': 'sample.cpp', 'source_blob_oid': None, 'source_sha256': 'f3960a3707f31e030e4df9472732d5899eb855149aaa6a40d18ef92e13d925e2', 'byte_start': 212, 'byte_end': 275, 'status': 'unbound', 'verification': 'not_performed_by_identity_layer'}, 'historical_ids': ['ohscanner.data.sensitive_exposure:92907282a6270858'], 'backfilled': False, 'interpretation': 'Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance.'}, source_archive_binding=None)
+
+Diff is 6932 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_format_percent_escapes_and_star_operands_bind_correctly (tests.detectors.data.test_t88_macro_roles.T88MacroRoleTests.test_format_percent_escapes_and_star_operands_bind_correctly) (statement='LOGE("%% %{public}*.*s",4,3,CERT_PASSWORD.c_str());')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t88_macro_roles.py", line 94, in test_format_percent_escapes_and_star_operands_bind_correctly
+    self.assertEqual((), self.at_statement(self.source(statement), statement))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Tuples differ: () != (DetectorFinding(file='sample.cpp', line=5[1237 chars]n'),)
+
+Second tuple contains 1 additional elements.
+First extra element 0:
+DetectorFinding(file='sample.cpp', line=5, rule_id='data.sensitive.unresolved-escape', message='Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=sample.cpp:5 source heuristic suspected sensitive-return API CERT_PASSWORD.c_str -> 5 unresolved call LOGE', evidence_type='syntax', column=None, candidate_cwe=None, symbol='sample', evidence_obligations=(EvidenceObligation(kind='callee_binding', description='Resolve the exact overload, receiver, and implementation for LOGE.', status='unknown'), EvidenceObligation(kind='sink_behavior', description='Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.', status='unknown'), EvidenceObligation(kind='runtime_log_visibility', description='No log exposure or reader reachability is established by this call alone.', status='unknown'), EvidenceObligation(kind='security_impact', description='Establish recoverable sensitive material and concrete impact independently.', status='unknown')), consequence_impact=None, consequence_cwe=None, source_sha256='3b5f653822f6cf4cd22abf285390f0942215fb41bd5be14da35f3a73029575aa', rule_version=None, rule_lineage_id=None, symbol_identity=None, ast_fingerprint=None, identity_quality='unknown')
+
+Diff is 5019 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_format_percent_escapes_and_star_operands_bind_correctly (tests.detectors.data.test_t88_macro_roles.T88MacroRoleTests.test_format_percent_escapes_and_star_operands_bind_correctly) (statement='LOGE("%{public}d %{public}s",7,CERT_PASSWORD.c_str());')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t88_macro_roles.py", line 94, in test_format_percent_escapes_and_star_operands_bind_correctly
+    self.assertEqual((), self.at_statement(self.source(statement), statement))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Tuples differ: () != (DetectorFinding(file='sample.cpp', line=5[1237 chars]n'),)
+
+Second tuple contains 1 additional elements.
+First extra element 0:
+DetectorFinding(file='sample.cpp', line=5, rule_id='data.sensitive.unresolved-escape', message='Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=sample.cpp:5 source heuristic suspected sensitive-return API CERT_PASSWORD.c_str -> 5 unresolved call LOGE', evidence_type='syntax', column=None, candidate_cwe=None, symbol='sample', evidence_obligations=(EvidenceObligation(kind='callee_binding', description='Resolve the exact overload, receiver, and implementation for LOGE.', status='unknown'), EvidenceObligation(kind='sink_behavior', description='Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.', status='unknown'), EvidenceObligation(kind='runtime_log_visibility', description='No log exposure or reader reachability is established by this call alone.', status='unknown'), EvidenceObligation(kind='security_impact', description='Establish recoverable sensitive material and concrete impact independently.', status='unknown')), consequence_impact=None, consequence_cwe=None, source_sha256='c12cec6177a5a97ad91cb9ebcc8accb74ea035e9340ac24172752061339ec1fa', rule_version=None, rule_lineage_id=None, symbol_identity=None, ast_fingerprint=None, identity_quality='unknown')
+
+Diff is 5019 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_mixed_key_and_actual_password_filters_only_the_key_operand (tests.detectors.data.test_t88_macro_roles.T88MacroRoleTests.test_mixed_key_and_actual_password_filters_only_the_key_operand) (runner=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t88_macro_roles.py", line 86, in test_mixed_key_and_actual_password_filters_only_the_key_operand
+    self.assertTrue(all('CERT_PASSWORD.c_str' not in finding.message for finding in findings))
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_mixed_key_and_actual_password_filters_only_the_key_operand (tests.detectors.data.test_t88_macro_roles.T88MacroRoleTests.test_mixed_key_and_actual_password_filters_only_the_key_operand) (runner=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t88_macro_roles.py", line 86, in test_mixed_key_and_actual_password_filters_only_the_key_operand
+    self.assertTrue(all('CERT_PASSWORD.c_str' not in finding.message for finding in findings))
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.028s
+
+FAILED (failures=6)

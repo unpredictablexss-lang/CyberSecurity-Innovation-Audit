@@ -1,0 +1,60 @@
+test_c_frontend_does_not_receive_cpp_projection (tests.test_t87_cpp_linkage_guards.T87CppLinkageTests.test_c_frontend_does_not_receive_cpp_projection) ... ok
+test_comment_raw_string_and_macro_lookalikes_are_unchanged (tests.test_t87_cpp_linkage_guards.T87CppLinkageTests.test_comment_raw_string_and_macro_lookalikes_are_unchanged) ... ok
+test_different_preprocessor_contexts_are_not_paired (tests.test_t87_cpp_linkage_guards.T87CppLinkageTests.test_different_preprocessor_contexts_are_not_paired) ... ok
+test_exact_empty_pair_and_same_outer_context_recover (tests.test_t87_cpp_linkage_guards.T87CppLinkageTests.test_exact_empty_pair_and_same_outer_context_recover) ... 
+  test_exact_empty_pair_and_same_outer_context_recover (tests.test_t87_cpp_linkage_guards.T87CppLinkageTests.test_exact_empty_pair_and_same_outer_context_recover) (code='#ifdef __cplusplus\nextern "C" {\n#endif\n#ifdef __cplusplus\n}\n#endif\nint probe(){ return Sentinel(7); }\n') ... FAIL
+  test_exact_empty_pair_and_same_outer_context_recover (tests.test_t87_cpp_linkage_guards.T87CppLinkageTests.test_exact_empty_pair_and_same_outer_context_recover) (code='#ifdef FEATURE\n#ifdef __cplusplus\nextern "C" {\n#endif\n\n#ifdef __cplusplus\n}\n#endif\n#endif\nint probe(){ return Sentinel(7); }\n') ... FAIL
+test_extra_closing_marker_never_becomes_complete (tests.test_t87_cpp_linkage_guards.T87CppLinkageTests.test_extra_closing_marker_never_becomes_complete) ... ok
+test_function_class_and_namespace_embedded_pairs_are_unchanged (tests.test_t87_cpp_linkage_guards.T87CppLinkageTests.test_function_class_and_namespace_embedded_pairs_are_unchanged) ... ok
+test_plain_extern_is_already_complete_and_unchanged (tests.test_t87_cpp_linkage_guards.T87CppLinkageTests.test_plain_extern_is_already_complete_and_unchanged) ... ok
+test_real_declarations_and_alternate_branch_are_not_discarded (tests.test_t87_cpp_linkage_guards.T87CppLinkageTests.test_real_declarations_and_alternate_branch_are_not_discarded) ... ok
+test_shared_and_sensitive_private_ast_agree_on_recovery (tests.test_t87_cpp_linkage_guards.T87CppLinkageTests.test_shared_and_sensitive_private_ast_agree_on_recovery) ... FAIL
+test_unpaired_wrong_order_and_repeated_openings_remain_partial (tests.test_t87_cpp_linkage_guards.T87CppLinkageTests.test_unpaired_wrong_order_and_repeated_openings_remain_partial) ... ok
+test_utf8_crlf_bytes_lines_and_original_source_are_preserved (tests.test_t87_cpp_linkage_guards.T87CppLinkageTests.test_utf8_crlf_bytes_lines_and_original_source_are_preserved) ... FAIL
+
+======================================================================
+FAIL: test_exact_empty_pair_and_same_outer_context_recover (tests.test_t87_cpp_linkage_guards.T87CppLinkageTests.test_exact_empty_pair_and_same_outer_context_recover) (code='#ifdef __cplusplus\nextern "C" {\n#endif\n#ifdef __cplusplus\n}\n#endif\nint probe(){ return Sentinel(7); }\n')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\test_t87_cpp_linkage_guards.py", line 43, in test_exact_empty_pair_and_same_outer_context_recover
+    self.assertNotEqual(code.encode(), projected)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: b'#ifdef __cplusplus\nextern "C" {\n#endif\n#ifdef __cplusplus\n}\n#endif\nint probe(){ return Sentinel(7); }\n' == b'#ifdef __cplusplus\nextern "C" {\n#endif\n#ifdef __cplusplus\n}\n#endif\nint probe(){ return Sentinel(7); }\n'
+
+======================================================================
+FAIL: test_exact_empty_pair_and_same_outer_context_recover (tests.test_t87_cpp_linkage_guards.T87CppLinkageTests.test_exact_empty_pair_and_same_outer_context_recover) (code='#ifdef FEATURE\n#ifdef __cplusplus\nextern "C" {\n#endif\n\n#ifdef __cplusplus\n}\n#endif\n#endif\nint probe(){ return Sentinel(7); }\n')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\test_t87_cpp_linkage_guards.py", line 43, in test_exact_empty_pair_and_same_outer_context_recover
+    self.assertNotEqual(code.encode(), projected)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: b'#ifdef FEATURE\n#ifdef __cplusplus\nextern "C" {\n#endif\n\n#ifdef __cplusplus\n}\n#endif\n#endif\nint probe(){ return Sentinel(7); }\n' == b'#ifdef FEATURE\n#ifdef __cplusplus\nextern "C" {\n#endif\n\n#ifdef __cplusplus\n}\n#endif\n#endif\nint probe(){ return Sentinel(7); }\n'
+
+======================================================================
+FAIL: test_shared_and_sensitive_private_ast_agree_on_recovery (tests.test_t87_cpp_linkage_guards.T87CppLinkageTests.test_shared_and_sensitive_private_ast_agree_on_recovery)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\test_t87_cpp_linkage_guards.py", line 68, in test_shared_and_sensitive_private_ast_agree_on_recovery
+    self.assertFalse(flow.tree.root_node.has_error)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_utf8_crlf_bytes_lines_and_original_source_are_preserved (tests.test_t87_cpp_linkage_guards.T87CppLinkageTests.test_utf8_crlf_bytes_lines_and_original_source_are_preserved)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\test_t87_cpp_linkage_guards.py", line 54, in test_utf8_crlf_bytes_lines_and_original_source_are_preserved
+    self.check_call_positions(code, 'complete')
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\test_t87_cpp_linkage_guards.py", line 28, in check_call_positions
+    self.assertEqual(expected_status, index.parse_status)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'complete' != 'partial'
+- complete
++ partial
+
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.016s
+
+FAILED (failures=4)

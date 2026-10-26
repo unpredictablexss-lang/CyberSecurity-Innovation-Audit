@@ -1,0 +1,193 @@
+======================================================================
+FAIL: test_assignment_comma_precedence_in_ast (tests.detectors.data.test_t101_assignment_comma_parser.T101CommaParserTests.test_assignment_comma_precedence_in_ast)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t101_assignment_comma_parser.py", line 127, in test_assignment_comma_precedence_in_ast
+    self.assertEqual(1,len(paren.named_children))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 2
+
+======================================================================
+FAIL: test_call_argument (tests.detectors.data.test_t101_assignment_comma_parser.T101CommaParserTests.test_call_argument)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t101_assignment_comma_parser.py", line 97, in test_call_argument
+    self.check('call-argument')
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t101_assignment_comma_parser.py", line 83, in check
+    self.assertEqual('complete',unit.parse_status)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'complete' != 'partial'
+- complete
++ partial
+
+
+======================================================================
+FAIL: test_conditional_assignment_rhs (tests.detectors.data.test_t101_assignment_comma_parser.T101CommaParserTests.test_conditional_assignment_rhs)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t101_assignment_comma_parser.py", line 101, in test_conditional_assignment_rhs
+    def test_conditional_assignment_rhs(self):self.check('conditional-assignment-rhs')
+                                              ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t101_assignment_comma_parser.py", line 83, in check
+    self.assertEqual('complete',unit.parse_status)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'complete' != 'partial'
+- complete
++ partial
+
+
+======================================================================
+FAIL: test_conditional_branch_comma (tests.detectors.data.test_t101_assignment_comma_parser.T101CommaParserTests.test_conditional_branch_comma)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t101_assignment_comma_parser.py", line 102, in test_conditional_branch_comma
+    def test_conditional_branch_comma(self):self.check('conditional-branch-comma')
+                                            ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t101_assignment_comma_parser.py", line 83, in check
+    self.assertEqual('complete',unit.parse_status)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'complete' != 'partial'
+- complete
++ partial
+
+
+======================================================================
+FAIL: test_cpp_surroundings (tests.detectors.data.test_t101_assignment_comma_parser.T101CommaParserTests.test_cpp_surroundings)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t101_assignment_comma_parser.py", line 109, in test_cpp_surroundings
+    self.check('cpp-surrounding-syntax')
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t101_assignment_comma_parser.py", line 83, in check
+    self.assertEqual('complete',unit.parse_status)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'complete' != 'partial'
+- complete
++ partial
+
+
+======================================================================
+FAIL: test_expression_statement (tests.detectors.data.test_t101_assignment_comma_parser.T101CommaParserTests.test_expression_statement)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t101_assignment_comma_parser.py", line 93, in test_expression_statement
+    def test_expression_statement(self):self.check('expression-statement')
+                                        ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t101_assignment_comma_parser.py", line 83, in check
+    self.assertEqual('complete',unit.parse_status)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'complete' != 'partial'
+- complete
++ partial
+
+
+======================================================================
+FAIL: test_initializer (tests.detectors.data.test_t101_assignment_comma_parser.T101CommaParserTests.test_initializer)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t101_assignment_comma_parser.py", line 92, in test_initializer
+    def test_initializer(self):self.check('initializer')
+                               ~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t101_assignment_comma_parser.py", line 83, in check
+    self.assertEqual('complete',unit.parse_status)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'complete' != 'partial'
+- complete
++ partial
+
+
+======================================================================
+FAIL: test_multiple_comma (tests.detectors.data.test_t101_assignment_comma_parser.T101CommaParserTests.test_multiple_comma)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t101_assignment_comma_parser.py", line 94, in test_multiple_comma
+    def test_multiple_comma(self):self.check('multiple-comma')
+                                  ~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t101_assignment_comma_parser.py", line 83, in check
+    self.assertEqual('complete',unit.parse_status)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'complete' != 'partial'
+- complete
++ partial
+
+
+======================================================================
+FAIL: test_nested_comma (tests.detectors.data.test_t101_assignment_comma_parser.T101CommaParserTests.test_nested_comma)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t101_assignment_comma_parser.py", line 95, in test_nested_comma
+    def test_nested_comma(self):self.check('nested-comma')
+                                ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t101_assignment_comma_parser.py", line 83, in check
+    self.assertEqual('complete',unit.parse_status)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'complete' != 'partial'
+- complete
++ partial
+
+
+======================================================================
+FAIL: test_original_utf8_crlf_positions (tests.detectors.data.test_t101_assignment_comma_parser.T101CommaParserTests.test_original_utf8_crlf_positions)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t101_assignment_comma_parser.py", line 115, in test_original_utf8_crlf_positions
+    self.check('utf8-crlf-offsets')
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t101_assignment_comma_parser.py", line 83, in check
+    self.assertEqual('complete',unit.parse_status)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'complete' != 'partial'
+- complete
++ partial
+
+
+======================================================================
+FAIL: test_return_effect (tests.detectors.data.test_t101_assignment_comma_parser.T101CommaParserTests.test_return_effect)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t101_assignment_comma_parser.py", line 105, in test_return_effect
+    def test_return_effect(self):self.check('return-comma-effect')
+                                 ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t101_assignment_comma_parser.py", line 83, in check
+    self.assertEqual('complete',unit.parse_status)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'complete' != 'partial'
+- complete
++ partial
+
+
+======================================================================
+FAIL: test_return_pointer_output (tests.detectors.data.test_t101_assignment_comma_parser.T101CommaParserTests.test_return_pointer_output)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t101_assignment_comma_parser.py", line 106, in test_return_pointer_output
+    def test_return_pointer_output(self):self.check('return-pointer-output')
+                                         ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t101_assignment_comma_parser.py", line 83, in check
+    self.assertEqual('complete',unit.parse_status)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'complete' != 'partial'
+- complete
++ partial
+
+
+======================================================================
+FAIL: test_scalar_assignment (tests.detectors.data.test_t101_assignment_comma_parser.T101CommaParserTests.test_scalar_assignment)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t101_assignment_comma_parser.py", line 107, in test_scalar_assignment
+    def test_scalar_assignment(self):self.check('scalar-assignment')
+                                     ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t101_assignment_comma_parser.py", line 83, in check
+    self.assertEqual('complete',unit.parse_status)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'complete' != 'partial'
+- complete
++ partial
+
+
+----------------------------------------------------------------------
+Ran 18 tests in 0.021s
+
+FAILED (failures=13)

@@ -1,0 +1,40 @@
+======================================================================
+FAIL: test_complete_same_target (tests.detectors.data.test_t96_switch_target_joins.T96SwitchTargetTests.test_complete_same_target) (case='same-full')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t96_switch_target_joins.py", line 48, in check
+    if contract in ('log','no-log'): t94.T94PointerBranchTests().assert_log(s,statement,contract=='log')
+                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t94_pointer_branch_targets.py", line 32, in assert_log
+    self.assertEqual(expected, actual)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+AssertionError: True != False
+
+======================================================================
+FAIL: test_complete_three_arms (tests.detectors.data.test_t96_switch_target_joins.T96SwitchTargetTests.test_complete_three_arms) (case='same-three-arms')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t96_switch_target_joins.py", line 48, in check
+    if contract in ('log','no-log'): t94.T94PointerBranchTests().assert_log(s,statement,contract=='log')
+                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t94_pointer_branch_targets.py", line 32, in assert_log
+    self.assertEqual(expected, actual)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+AssertionError: True != False
+
+======================================================================
+FAIL: test_header_scope (tests.detectors.data.test_t96_switch_target_joins.T96SwitchTargetTests.test_header_scope) (case='same-header-scope')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t96_switch_target_joins.py", line 48, in check
+    if contract in ('log','no-log'): t94.T94PointerBranchTests().assert_log(s,statement,contract=='log')
+                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t94_pointer_branch_targets.py", line 32, in assert_log
+    self.assertEqual(expected, actual)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+AssertionError: True != False
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.061s
+
+FAILED (failures=3)

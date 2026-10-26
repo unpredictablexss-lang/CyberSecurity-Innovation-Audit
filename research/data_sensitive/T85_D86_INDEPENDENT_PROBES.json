@@ -1,0 +1,66 @@
+{
+  "after_version": "0.21.3",
+  "after_file_sha256": "1a67e769be83884713f76539957dee37cc76716bb95db0ebbc79ac44601e8605",
+  "cases": [
+    {
+      "case": "alignof_type",
+      "source": "void f(const char *password){ HILOG_INFO(1,\"%{public}zu\",alignof(decltype(password)));}",
+      "counts": {
+        "before": 1,
+        "after": 0
+      },
+      "expected_after": 0,
+      "passed": true
+    },
+    {
+      "case": "alignof_unevaluated_call",
+      "source": "int UsePassword(const char *); void f(const char *password){ HILOG_INFO(1,\"%{public}zu\",alignof(decltype(UsePassword(password))));}",
+      "counts": {
+        "before": 1,
+        "after": 0
+      },
+      "expected_after": 0,
+      "passed": true
+    },
+    {
+      "case": "sizeof_control",
+      "source": "void f(const char *password){ HILOG_INFO(1,\"%{public}zu\",sizeof(password));}",
+      "counts": {
+        "before": 0,
+        "after": 0
+      },
+      "expected_after": 0,
+      "passed": true
+    },
+    {
+      "case": "adjacent_secret_log",
+      "source": "void f(const char *password){ auto n=alignof(decltype(password));HILOG_INFO(1,\"%{public}s\",password);}",
+      "counts": {
+        "before": 1,
+        "after": 1
+      },
+      "expected_after": 1,
+      "passed": true
+    },
+    {
+      "case": "hardcoded_password",
+      "source": "void f(){ const char *password=\"password\";HILOG_INFO(1,\"%{public}s\",password);}",
+      "counts": {
+        "before": 1,
+        "after": 1
+      },
+      "expected_after": 1,
+      "passed": true
+    },
+    {
+      "case": "actual_call_not_unevaluated",
+      "source": "int UsePassword(const char *);void f(const char *password){ auto n=alignof(decltype(password));UsePassword(password);}",
+      "counts": {
+        "before": 1,
+        "after": 1
+      },
+      "expected_after": 1,
+      "passed": true
+    }
+  ]
+}

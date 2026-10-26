@@ -1,0 +1,56 @@
+test_block_pointer_shadow_and_exit_restore_outer_target (tests.detectors.data.test_t94_pointer_branch_targets.T94PointerBranchTests.test_block_pointer_shadow_and_exit_restore_outer_target) ... ok
+test_copy_output_and_unknown_write_controls_remain (tests.detectors.data.test_t94_pointer_branch_targets.T94PointerBranchTests.test_copy_output_and_unknown_write_controls_remain) ... ok
+test_explicit_rebind_after_divergence_restores_known_target (tests.detectors.data.test_t94_pointer_branch_targets.T94PointerBranchTests.test_explicit_rebind_after_divergence_restores_known_target) ... ok
+test_for_initializer_shadow_is_removed_after_loop (tests.detectors.data.test_t94_pointer_branch_targets.T94PointerBranchTests.test_for_initializer_shadow_is_removed_after_loop) ... 
+  test_for_initializer_shadow_is_removed_after_loop (tests.detectors.data.test_t94_pointer_branch_targets.T94PointerBranchTests.test_for_initializer_shadow_is_removed_after_loop) (runner=False, statement='HILOG_INFO(1,"%{public}u",first);') ... FAIL
+  test_for_initializer_shadow_is_removed_after_loop (tests.detectors.data.test_t94_pointer_branch_targets.T94PointerBranchTests.test_for_initializer_shadow_is_removed_after_loop) (runner=True, statement='HILOG_INFO(1,"%{public}u",first);') ... FAIL
+  test_for_initializer_shadow_is_removed_after_loop (tests.detectors.data.test_t94_pointer_branch_targets.T94PointerBranchTests.test_for_initializer_shadow_is_removed_after_loop) (runner=False, statement='HILOG_INFO(1,"%{public}u",second);') ... FAIL
+  test_for_initializer_shadow_is_removed_after_loop (tests.detectors.data.test_t94_pointer_branch_targets.T94PointerBranchTests.test_for_initializer_shadow_is_removed_after_loop) (runner=True, statement='HILOG_INFO(1,"%{public}u",second);') ... FAIL
+test_if_else_different_targets_retains_unresolved_not_known_sinks (tests.detectors.data.test_t94_pointer_branch_targets.T94PointerBranchTests.test_if_else_different_targets_retains_unresolved_not_known_sinks) ... ok
+test_if_else_same_target_retains_actual_log (tests.detectors.data.test_t94_pointer_branch_targets.T94PointerBranchTests.test_if_else_same_target_retains_actual_log) ... ok
+test_literal_write_under_divergence_does_not_create_material (tests.detectors.data.test_t94_pointer_branch_targets.T94PointerBranchTests.test_literal_write_under_divergence_does_not_create_material) ... ok
+test_loop_may_rebind_keeps_unknown_and_no_exact_sink (tests.detectors.data.test_t94_pointer_branch_targets.T94PointerBranchTests.test_loop_may_rebind_keeps_unknown_and_no_exact_sink) ... ok
+test_null_cast_sensitive_type_does_not_become_source (tests.detectors.data.test_t94_pointer_branch_targets.T94PointerBranchTests.test_null_cast_sensitive_type_does_not_become_source) ... ok
+test_one_branch_null_or_unknown_invalidates_known_destination (tests.detectors.data.test_t94_pointer_branch_targets.T94PointerBranchTests.test_one_branch_null_or_unknown_invalidates_known_destination) ... ok
+test_only_live_branch_controls_target_after_return (tests.detectors.data.test_t94_pointer_branch_targets.T94PointerBranchTests.test_only_live_branch_controls_target_after_return) ... ok
+
+======================================================================
+FAIL: test_for_initializer_shadow_is_removed_after_loop (tests.detectors.data.test_t94_pointer_branch_targets.T94PointerBranchTests.test_for_initializer_shadow_is_removed_after_loop) (runner=False, statement='HILOG_INFO(1,"%{public}u",first);')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t94_pointer_branch_targets.py", line 29, in assert_log
+    self.assertEqual(expected, actual)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+AssertionError: True != False
+
+======================================================================
+FAIL: test_for_initializer_shadow_is_removed_after_loop (tests.detectors.data.test_t94_pointer_branch_targets.T94PointerBranchTests.test_for_initializer_shadow_is_removed_after_loop) (runner=True, statement='HILOG_INFO(1,"%{public}u",first);')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t94_pointer_branch_targets.py", line 29, in assert_log
+    self.assertEqual(expected, actual)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+AssertionError: True != False
+
+======================================================================
+FAIL: test_for_initializer_shadow_is_removed_after_loop (tests.detectors.data.test_t94_pointer_branch_targets.T94PointerBranchTests.test_for_initializer_shadow_is_removed_after_loop) (runner=False, statement='HILOG_INFO(1,"%{public}u",second);')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t94_pointer_branch_targets.py", line 29, in assert_log
+    self.assertEqual(expected, actual)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+AssertionError: False != True
+
+======================================================================
+FAIL: test_for_initializer_shadow_is_removed_after_loop (tests.detectors.data.test_t94_pointer_branch_targets.T94PointerBranchTests.test_for_initializer_shadow_is_removed_after_loop) (runner=True, statement='HILOG_INFO(1,"%{public}u",second);')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t94_pointer_branch_targets.py", line 29, in assert_log
+    self.assertEqual(expected, actual)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+AssertionError: False != True
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.036s
+
+FAILED (failures=4)

@@ -1,0 +1,138 @@
+======================================================================
+FAIL: test_if_condition_declaration (tests.detectors.data.test_t95_control_header_scope.T95ControlHeaderTests.test_if_condition_declaration) (case='if-condition')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t95_control_header_scope.py", line 41, in check_cases
+    t94.T94PointerBranchTests().assert_log(source,statement,contract=='log')
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t94_pointer_branch_targets.py", line 32, in assert_log
+    self.assertEqual(expected, actual)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+AssertionError: True != False
+
+======================================================================
+FAIL: test_if_condition_declaration (tests.detectors.data.test_t95_control_header_scope.T95ControlHeaderTests.test_if_condition_declaration) (case='if-condition-outer-not-written')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t95_control_header_scope.py", line 41, in check_cases
+    t94.T94PointerBranchTests().assert_log(source,statement,contract=='log')
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t94_pointer_branch_targets.py", line 32, in assert_log
+    self.assertEqual(expected, actual)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+AssertionError: False != True
+
+======================================================================
+FAIL: test_if_initializer (tests.detectors.data.test_t95_control_header_scope.T95ControlHeaderTests.test_if_initializer) (case='if-init')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t95_control_header_scope.py", line 41, in check_cases
+    t94.T94PointerBranchTests().assert_log(source,statement,contract=='log')
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t94_pointer_branch_targets.py", line 32, in assert_log
+    self.assertEqual(expected, actual)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+AssertionError: True != False
+
+======================================================================
+FAIL: test_if_initializer (tests.detectors.data.test_t95_control_header_scope.T95ControlHeaderTests.test_if_initializer) (case='if-init-outer-not-written')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t95_control_header_scope.py", line 41, in check_cases
+    t94.T94PointerBranchTests().assert_log(source,statement,contract=='log')
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t94_pointer_branch_targets.py", line 32, in assert_log
+    self.assertEqual(expected, actual)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+AssertionError: False != True
+
+======================================================================
+FAIL: test_nested_block_shadow_with_header (tests.detectors.data.test_t95_control_header_scope.T95ControlHeaderTests.test_nested_block_shadow_with_header)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t95_control_header_scope.py", line 58, in test_nested_block_shadow_with_header
+    t94.T94PointerBranchTests().assert_log(s,FIRST_LOG,False)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t94_pointer_branch_targets.py", line 32, in assert_log
+    self.assertEqual(expected, actual)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+AssertionError: False != True
+
+======================================================================
+FAIL: test_switch_initializer (tests.detectors.data.test_t95_control_header_scope.T95ControlHeaderTests.test_switch_initializer) (case='switch-init')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t95_control_header_scope.py", line 41, in check_cases
+    t94.T94PointerBranchTests().assert_log(source,statement,contract=='log')
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t94_pointer_branch_targets.py", line 32, in assert_log
+    self.assertEqual(expected, actual)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+AssertionError: True != False
+
+======================================================================
+FAIL: test_switch_initializer (tests.detectors.data.test_t95_control_header_scope.T95ControlHeaderTests.test_switch_initializer) (case='switch-init-outer-not-written')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t95_control_header_scope.py", line 41, in check_cases
+    t94.T94PointerBranchTests().assert_log(source,statement,contract=='log')
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t94_pointer_branch_targets.py", line 32, in assert_log
+    self.assertEqual(expected, actual)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+AssertionError: False != True
+
+======================================================================
+FAIL: test_unknown_header_never_reuses_outer_target (tests.detectors.data.test_t95_control_header_scope.T95ControlHeaderTests.test_unknown_header_never_reuses_outer_target) (case='unknown-header-material')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t95_control_header_scope.py", line 42, in check_cases
+    elif contract=='material': t94.T94PointerBranchTests().assert_unresolved_write(source)
+                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t94_pointer_branch_targets.py", line 38, in assert_unresolved_write
+    self.assertTrue(any('unresolved material write' in row['message']
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        and 'Callback parameter 0' in row['message'] for row in rows), rows)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : [{'file': 'service.cpp', 'line': 5, 'rule_id': 'data.log.sensitive-value', 'message': 'Candidate local sensitive-material dependency: service.cpp:3 source Callback parameter 0 -> 4 assign first -> 5 HILOG_INFO public operand 0', 'evidence_type': 'syntax', 'column': None, 'candidate_cwe': 'CWE-532', 'symbol': 'Callback', 'evidence_obligations': ({'kind': 'local_flow', 'description': 'service.cpp:3 source Callback parameter 0 -> 4 assign first -> 5 HILOG_INFO public operand 0', 'status': 'unknown'}, {'kind': 'source_semantics', 'description': 'Synthetic explicit Callback argument source for binding regression; no product claim', 'status': 'unknown'}, {'kind': 'type_identity', 'description': 'Resolve the compiler-bound identity of the modeled sensitive record and field; same-name declarations remain candidate-only.', 'status': 'unknown'}, {'kind': 'runtime_log_visibility', 'description': 'Verify production level, privacy switches, build branch and unauthorized readers.', 'status': 'unknown'}, {'kind': 'execution_and_identity', 'description': 'Verify initialization, API binding, return status, branch feasibility and pointer aliases.', 'status': 'unknown'}, {'kind': 'security_impact', 'description': 'Prove recoverable secret material and concrete impact; no automatic confirmation.', 'status': 'unknown'}), 'consequence_impact': None, 'consequence_cwe': None, 'source_sha256': '6fb5308c7e181d2754481ede38b570324b9c8d20374bf39ddf4171efca36cff8', 'rule_version': None, 'rule_lineage_id': None, 'symbol_identity': None, 'ast_fingerprint': None, 'identity_quality': 'unknown'}]
+
+======================================================================
+FAIL: test_unknown_header_never_reuses_outer_target (tests.detectors.data.test_t95_control_header_scope.T95ControlHeaderTests.test_unknown_header_never_reuses_outer_target) (case='unknown-header-no-outer')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t95_control_header_scope.py", line 41, in check_cases
+    t94.T94PointerBranchTests().assert_log(source,statement,contract=='log')
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t94_pointer_branch_targets.py", line 32, in assert_log
+    self.assertEqual(expected, actual)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+AssertionError: False != True
+
+======================================================================
+FAIL: test_while_condition_declaration (tests.detectors.data.test_t95_control_header_scope.T95ControlHeaderTests.test_while_condition_declaration) (case='while-condition')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t95_control_header_scope.py", line 41, in check_cases
+    t94.T94PointerBranchTests().assert_log(source,statement,contract=='log')
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t94_pointer_branch_targets.py", line 32, in assert_log
+    self.assertEqual(expected, actual)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+AssertionError: True != False
+
+======================================================================
+FAIL: test_while_condition_declaration (tests.detectors.data.test_t95_control_header_scope.T95ControlHeaderTests.test_while_condition_declaration) (case='while-condition-outer-not-written')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t95_control_header_scope.py", line 41, in check_cases
+    t94.T94PointerBranchTests().assert_log(source,statement,contract=='log')
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t94_pointer_branch_targets.py", line 32, in assert_log
+    self.assertEqual(expected, actual)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+AssertionError: False != True
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.047s
+
+FAILED (failures=11)

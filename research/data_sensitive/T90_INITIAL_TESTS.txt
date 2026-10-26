@@ -1,0 +1,15 @@
+test_complete_declaration_alone_does_not_establish_implementation (tests.detectors.data.test_t90_napi_metadata_roles.T90NapiMetadataTests.test_complete_declaration_alone_does_not_establish_implementation) ... ok
+test_external_name_without_binding_keeps_sink_and_status_dependency (tests.detectors.data.test_t90_napi_metadata_roles.T90NapiMetadataTests.test_external_name_without_binding_keeps_sink_and_status_dependency) ... ok
+test_macro_override_and_unknown_wrapper_keep_candidate (tests.detectors.data.test_t90_napi_metadata_roles.T90NapiMetadataTests.test_macro_override_and_unknown_wrapper_keep_candidate) ... ok
+test_missing_declaration_or_partial_header_does_not_prove_metadata (tests.detectors.data.test_t90_napi_metadata_roles.T90NapiMetadataTests.test_missing_declaration_or_partial_header_does_not_prove_metadata) ... ok
+test_named_function_pointer_cannot_gain_api_proof (tests.detectors.data.test_t90_napi_metadata_roles.T90NapiMetadataTests.test_named_function_pointer_cannot_gain_api_proof) ... ok
+test_real_material_getter_call_remains_unresolved (tests.detectors.data.test_t90_napi_metadata_roles.T90NapiMetadataTests.test_real_material_getter_call_remains_unresolved) ... ok
+test_same_name_custom_body_logs_actual_bytes (tests.detectors.data.test_t90_napi_metadata_roles.T90NapiMetadataTests.test_same_name_custom_body_logs_actual_bytes) ... ok
+test_same_name_custom_return_is_not_globally_classified_as_status (tests.detectors.data.test_t90_napi_metadata_roles.T90NapiMetadataTests.test_same_name_custom_return_is_not_globally_classified_as_status) ... ok
+test_visible_material_extraction_keeps_buffer_log (tests.detectors.data.test_t90_napi_metadata_roles.T90NapiMetadataTests.test_visible_material_extraction_keeps_buffer_log) ... ok
+test_visible_pure_metadata_body_has_no_material_log (tests.detectors.data.test_t90_napi_metadata_roles.T90NapiMetadataTests.test_visible_pure_metadata_body_has_no_material_log) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.015s
+
+OK

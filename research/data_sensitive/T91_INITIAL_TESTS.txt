@@ -1,0 +1,121 @@
+test_actual_string_byte_getter_still_consumes_key_output (tests.detectors.data.test_t91_private_key_roles.T91PrivateKeyRoleTests.test_actual_string_byte_getter_still_consumes_key_output) ... 
+  test_actual_string_byte_getter_still_consumes_key_output (tests.detectors.data.test_t91_private_key_roles.T91PrivateKeyRoleTests.test_actual_string_byte_getter_still_consumes_key_output) (runner=False) ... FAIL
+  test_actual_string_byte_getter_still_consumes_key_output (tests.detectors.data.test_t91_private_key_roles.T91PrivateKeyRoleTests.test_actual_string_byte_getter_still_consumes_key_output) (runner=True) ... FAIL
+test_api_or_symbol_macro_override_cannot_gain_schema_proof (tests.detectors.data.test_t91_private_key_roles.T91PrivateKeyRoleTests.test_api_or_symbol_macro_override_cannot_gain_schema_proof) ... ok
+test_get_output_with_neutral_name_becomes_material (tests.detectors.data.test_t91_private_key_roles.T91PrivateKeyRoleTests.test_get_output_with_neutral_name_becomes_material) ... 
+  test_get_output_with_neutral_name_becomes_material (tests.detectors.data.test_t91_private_key_roles.T91PrivateKeyRoleTests.test_get_output_with_neutral_name_becomes_material) (runner=False) ... FAIL
+  test_get_output_with_neutral_name_becomes_material (tests.detectors.data.test_t91_private_key_roles.T91PrivateKeyRoleTests.test_get_output_with_neutral_name_becomes_material) (runner=True) ... FAIL
+test_has_key_does_not_generate_material_in_boolean_flag (tests.detectors.data.test_t91_private_key_roles.T91PrivateKeyRoleTests.test_has_key_does_not_generate_material_in_boolean_flag) ... 
+  test_has_key_does_not_generate_material_in_boolean_flag (tests.detectors.data.test_t91_private_key_roles.T91PrivateKeyRoleTests.test_has_key_does_not_generate_material_in_boolean_flag) (runner=False) ... FAIL
+  test_has_key_does_not_generate_material_in_boolean_flag (tests.detectors.data.test_t91_private_key_roles.T91PrivateKeyRoleTests.test_has_key_does_not_generate_material_in_boolean_flag) (runner=True) ... FAIL
+test_missing_partial_or_ambiguous_header_does_not_prove_schema (tests.detectors.data.test_t91_private_key_roles.T91PrivateKeyRoleTests.test_missing_partial_or_ambiguous_header_does_not_prove_schema) ... ok
+test_mutable_dynamic_wrong_literal_or_wrong_name_are_not_approved (tests.detectors.data.test_t91_private_key_roles.T91PrivateKeyRoleTests.test_mutable_dynamic_wrong_literal_or_wrong_name_are_not_approved) ... ok
+test_new_key_role_does_not_automatically_enable_log_exclusion (tests.detectors.data.test_t91_private_key_roles.T91PrivateKeyRoleTests.test_new_key_role_does_not_automatically_enable_log_exclusion) ... ok
+test_only_exact_schema_get_operand_is_excluded (tests.detectors.data.test_t91_private_key_roles.T91PrivateKeyRoleTests.test_only_exact_schema_get_operand_is_excluded) ... 
+  test_only_exact_schema_get_operand_is_excluded (tests.detectors.data.test_t91_private_key_roles.T91PrivateKeyRoleTests.test_only_exact_schema_get_operand_is_excluded) (runner=False) ... FAIL
+  test_only_exact_schema_get_operand_is_excluded (tests.detectors.data.test_t91_private_key_roles.T91PrivateKeyRoleTests.test_only_exact_schema_get_operand_is_excluded) (runner=True) ... FAIL
+test_parameters_references_and_local_values_shadow_global (tests.detectors.data.test_t91_private_key_roles.T91PrivateKeyRoleTests.test_parameters_references_and_local_values_shadow_global) ... ok
+test_same_name_custom_body_or_callback_is_not_reviewed_api (tests.detectors.data.test_t91_private_key_roles.T91PrivateKeyRoleTests.test_same_name_custom_body_or_callback_is_not_reviewed_api) ... ok
+test_unresolved_destination_is_not_silently_dropped (tests.detectors.data.test_t91_private_key_roles.T91PrivateKeyRoleTests.test_unresolved_destination_is_not_silently_dropped) ... ok
+test_wrong_operand_and_unknown_wrapper_keep_candidates (tests.detectors.data.test_t91_private_key_roles.T91PrivateKeyRoleTests.test_wrong_operand_and_unknown_wrapper_keep_candidates) ... ok
+
+======================================================================
+FAIL: test_actual_string_byte_getter_still_consumes_key_output (tests.detectors.data.test_t91_private_key_roles.T91PrivateKeyRoleTests.test_actual_string_byte_getter_still_consumes_key_output) (runner=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t91_private_key_roles.py", line 49, in test_actual_string_byte_getter_still_consumes_key_output
+    self.assertTrue(self.at(source, getter, runner=runner))
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: () is not true
+
+======================================================================
+FAIL: test_actual_string_byte_getter_still_consumes_key_output (tests.detectors.data.test_t91_private_key_roles.T91PrivateKeyRoleTests.test_actual_string_byte_getter_still_consumes_key_output) (runner=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t91_private_key_roles.py", line 49, in test_actual_string_byte_getter_still_consumes_key_output
+    self.assertTrue(self.at(source, getter, runner=runner))
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: () is not true
+
+======================================================================
+FAIL: test_get_output_with_neutral_name_becomes_material (tests.detectors.data.test_t91_private_key_roles.T91PrivateKeyRoleTests.test_get_output_with_neutral_name_becomes_material) (runner=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t91_private_key_roles.py", line 40, in test_get_output_with_neutral_name_becomes_material
+    self.assertTrue(items)
+    ~~~~~~~~~~~~~~~^^^^^^^
+AssertionError: () is not true
+
+======================================================================
+FAIL: test_get_output_with_neutral_name_becomes_material (tests.detectors.data.test_t91_private_key_roles.T91PrivateKeyRoleTests.test_get_output_with_neutral_name_becomes_material) (runner=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t91_private_key_roles.py", line 40, in test_get_output_with_neutral_name_becomes_material
+    self.assertTrue(items)
+    ~~~~~~~~~~~~~~~^^^^^^^
+AssertionError: () is not true
+
+======================================================================
+FAIL: test_has_key_does_not_generate_material_in_boolean_flag (tests.detectors.data.test_t91_private_key_roles.T91PrivateKeyRoleTests.test_has_key_does_not_generate_material_in_boolean_flag) (runner=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t91_private_key_roles.py", line 32, in test_has_key_does_not_generate_material_in_boolean_flag
+    self.assertEqual((), tuple(self.scan(source, runner=runner)))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Tuples differ: () != (DetectorFinding(file='sample.cpp', line=4[1278 chars]n'),)
+
+Second tuple contains 1 additional elements.
+First extra element 0:
+DetectorFinding(file='sample.cpp', line=4, rule_id='data.sensitive.unresolved-escape', message='Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=sample.cpp:4 source heuristic suspected sensitive-return API CERT_PRIVATE_KEY.c_str -> 4 unresolved call napi_has_named_property', evidence_type='syntax', column=None, candidate_cwe=None, symbol='sample', evidence_obligations=(EvidenceObligation(kind='callee_binding', description='Resolve the exact overload, receiver, and implementation for napi_has_named_property.', status='unknown'), EvidenceObligation(kind='sink_behavior', description='Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.', status='unknown'), EvidenceObligation(kind='runtime_log_visibility', description='No log exposure or reader reachability is established by this call alone.', status='unknown'), EvidenceObligation(kind='security_impact', description='Establish recoverable sensitive material and concrete impact independently.', status='unknown')), consequence_impact=None, consequence_cwe=None, source_sha256='15cc8092fcd2a1dd74c6828ecf271e4ae9a79fbbf5aa519f7908b03867300800', rule_version=None, rule_lineage_id=None, symbol_identity=None, ast_fingerprint=None, identity_quality='unknown')
+
+Diff is 5060 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_has_key_does_not_generate_material_in_boolean_flag (tests.detectors.data.test_t91_private_key_roles.T91PrivateKeyRoleTests.test_has_key_does_not_generate_material_in_boolean_flag) (runner=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t91_private_key_roles.py", line 32, in test_has_key_does_not_generate_material_in_boolean_flag
+    self.assertEqual((), tuple(self.scan(source, runner=runner)))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Tuples differ: () != (ToolDiagnostic(diagnostic_id='ohscanner.d[2779 chars]ne),)
+
+Second tuple contains 1 additional elements.
+First extra element 0:
+ToolDiagnostic(diagnostic_id='ohscanner.data.sensitive_exposure:4f6e67bcf86ef645', provider='ohscanner.data.sensitive_exposure', evidence_type='syntax', file='sample.cpp', line=4, column=None, rule_id='data.sensitive.unresolved-escape', severity='unassessed', message='Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=sample.cpp:4 source heuristic suspected sensitive-return API CERT_PRIVATE_KEY.c_str -> 4 unresolved call napi_has_named_property', candidate_cwe=None, confidence='unassessed', symbol='sample', source_sha256='15cc8092fcd2a1dd74c6828ecf271e4ae9a79fbbf5aa519f7908b03867300800', consequence_impact=None, consequence_cwe=None, finding_identity_id=None, occurrence_id=None, finding_identity={'schema_version': 'ohscanner.finding-identity-record.v1', 'stable': {'id': None, 'status': 'unknown', 'basis': None, 'unknown_reasons': ['identity_quality:unknown', 'missing:ast_fingerprint', 'missing:rule_lineage_id', 'missing:symbol_identity']}, 'occurrence': {'id': None, 'status': 'unknown', 'basis': None, 'unknown_reasons': ['missing:rule_version', 'missing:source_blob_oid']}, 'observation': {'legacy_diagnostic_id': 'ohscanner.data.sensitive_exposure:4f6e67bcf86ef645', 'detector_id': 'ohscanner.data.sensitive_exposure', 'detector_version': '0.21.7', 'rule_id': 'data.sensitive.unresolved-escape', 'rule_version': None, 'file': 'sample.cpp', 'line': 4, 'message': 'Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=sample.cpp:4 source heuristic suspected sensitive-return API CERT_PRIVATE_KEY.c_str -> 4 unresolved call napi_has_named_property', 'source_blob_oid': None, 'source_sha256': '15cc8092fcd2a1dd74c6828ecf271e4ae9a79fbbf5aa519f7908b03867300800', 'byte_start': 82, 'byte_end': 150, 'identity_quality': 'unknown', 'rule_lineage_id': None, 'symbol_identity': None, 'ast_fingerprint': None}, 'source_binding': {'repository': 'fixture/t88', 'commit': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'snapshot_sha256': 'ac22ee992712625c4c6491b09c73499a9d01ecdbd47c9cd6f1833b5f93cfd795', 'profile_id': 'm0-synthetic', 'detector_id': 'ohscanner.data.sensitive_exposure', 'detector_version': '0.21.7', 'rule_id': 'data.sensitive.unresolved-escape', 'rule_version': None, 'file': 'sample.cpp', 'source_blob_oid': None, 'source_sha256': '15cc8092fcd2a1dd74c6828ecf271e4ae9a79fbbf5aa519f7908b03867300800', 'byte_start': 82, 'byte_end': 150, 'status': 'unbound', 'verification': 'not_performed_by_identity_layer'}, 'historical_ids': ['ohscanner.data.sensitive_exposure:4f6e67bcf86ef645'], 'backfilled': False, 'interpretation': 'Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance.'}, source_archive_binding=None)
+
+Diff is 7040 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_only_exact_schema_get_operand_is_excluded (tests.detectors.data.test_t91_private_key_roles.T91PrivateKeyRoleTests.test_only_exact_schema_get_operand_is_excluded) (runner=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t91_private_key_roles.py", line 26, in test_only_exact_schema_get_operand_is_excluded
+    self.assertEqual((), self.at(source, GET, runner=runner))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Tuples differ: () != (DetectorFinding(file='sample.cpp', line=4[1278 chars]n'),)
+
+Second tuple contains 1 additional elements.
+First extra element 0:
+DetectorFinding(file='sample.cpp', line=4, rule_id='data.sensitive.unresolved-escape', message='Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=sample.cpp:4 source heuristic suspected sensitive-return API CERT_PRIVATE_KEY.c_str -> 4 unresolved call napi_get_named_property', evidence_type='syntax', column=None, candidate_cwe=None, symbol='sample', evidence_obligations=(EvidenceObligation(kind='callee_binding', description='Resolve the exact overload, receiver, and implementation for napi_get_named_property.', status='unknown'), EvidenceObligation(kind='sink_behavior', description='Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.', status='unknown'), EvidenceObligation(kind='runtime_log_visibility', description='No log exposure or reader reachability is established by this call alone.', status='unknown'), EvidenceObligation(kind='security_impact', description='Establish recoverable sensitive material and concrete impact independently.', status='unknown')), consequence_impact=None, consequence_cwe=None, source_sha256='02fd7ab3b88d28e293d12bdd3ac3099f4b51fe1c07ef4673f90bcad7d6289319', rule_version=None, rule_lineage_id=None, symbol_identity=None, ast_fingerprint=None, identity_quality='unknown')
+
+Diff is 5060 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_only_exact_schema_get_operand_is_excluded (tests.detectors.data.test_t91_private_key_roles.T91PrivateKeyRoleTests.test_only_exact_schema_get_operand_is_excluded) (runner=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\openHarmonyScanner\worktrees\t83-d-static-feedback-20261020\tests\detectors\data\test_t91_private_key_roles.py", line 26, in test_only_exact_schema_get_operand_is_excluded
+    self.assertEqual((), self.at(source, GET, runner=runner))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Tuples differ: () != (ToolDiagnostic(diagnostic_id='ohscanner.d[2779 chars]ne),)
+
+Second tuple contains 1 additional elements.
+First extra element 0:
+ToolDiagnostic(diagnostic_id='ohscanner.data.sensitive_exposure:fbbbb9d95fc39e02', provider='ohscanner.data.sensitive_exposure', evidence_type='syntax', file='sample.cpp', line=4, column=None, rule_id='data.sensitive.unresolved-escape', severity='unassessed', message='Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=sample.cpp:4 source heuristic suspected sensitive-return API CERT_PRIVATE_KEY.c_str -> 4 unresolved call napi_get_named_property', candidate_cwe=None, confidence='unassessed', symbol='sample', source_sha256='02fd7ab3b88d28e293d12bdd3ac3099f4b51fe1c07ef4673f90bcad7d6289319', consequence_impact=None, consequence_cwe=None, finding_identity_id=None, occurrence_id=None, finding_identity={'schema_version': 'ohscanner.finding-identity-record.v1', 'stable': {'id': None, 'status': 'unknown', 'basis': None, 'unknown_reasons': ['identity_quality:unknown', 'missing:ast_fingerprint', 'missing:rule_lineage_id', 'missing:symbol_identity']}, 'occurrence': {'id': None, 'status': 'unknown', 'basis': None, 'unknown_reasons': ['missing:rule_version', 'missing:source_blob_oid']}, 'observation': {'legacy_diagnostic_id': 'ohscanner.data.sensitive_exposure:fbbbb9d95fc39e02', 'detector_id': 'ohscanner.data.sensitive_exposure', 'detector_version': '0.21.7', 'rule_id': 'data.sensitive.unresolved-escape', 'rule_version': None, 'file': 'sample.cpp', 'line': 4, 'message': 'Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=sample.cpp:4 source heuristic suspected sensitive-return API CERT_PRIVATE_KEY.c_str -> 4 unresolved call napi_get_named_property', 'source_blob_oid': None, 'source_sha256': '02fd7ab3b88d28e293d12bdd3ac3099f4b51fe1c07ef4673f90bcad7d6289319', 'byte_start': 89, 'byte_end': 156, 'identity_quality': 'unknown', 'rule_lineage_id': None, 'symbol_identity': None, 'ast_fingerprint': None}, 'source_binding': {'repository': 'fixture/t88', 'commit': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'snapshot_sha256': '0d4b1f62db440a92ec41051d9f90b5b7a40c965301c3ba1935e3d20c0ee3c9f0', 'profile_id': 'm0-synthetic', 'detector_id': 'ohscanner.data.sensitive_exposure', 'detector_version': '0.21.7', 'rule_id': 'data.sensitive.unresolved-escape', 'rule_version': None, 'file': 'sample.cpp', 'source_blob_oid': None, 'source_sha256': '02fd7ab3b88d28e293d12bdd3ac3099f4b51fe1c07ef4673f90bcad7d6289319', 'byte_start': 89, 'byte_end': 156, 'status': 'unbound', 'verification': 'not_performed_by_identity_layer'}, 'historical_ids': ['ohscanner.data.sensitive_exposure:fbbbb9d95fc39e02'], 'backfilled': False, 'interpretation': 'Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance.'}, source_archive_binding=None)
+
+Diff is 7040 characters long. Set self.maxDiff to None to see it.
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.037s
+
+FAILED (failures=8)
