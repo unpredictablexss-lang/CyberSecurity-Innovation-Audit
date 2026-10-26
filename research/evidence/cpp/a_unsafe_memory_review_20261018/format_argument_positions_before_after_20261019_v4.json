@@ -1,0 +1,890 @@
+{
+  "schema_version": "ohscanner.a-unsafe-format-argument-index-replay-v1",
+  "source_run_signature": "1696df82f39e2564e0821c0ad2e837a00c6d83f9276bf5e0c38a3bd1f511700b",
+  "scanner_commit": "0d9357ea22224b72c9756864dbd14b71a4723924",
+  "candidate_results_sha256": "e6473b915a82f751e517c1953014f19a1963ad5b8891d7aaee6923b715756f25",
+  "base_commit": "4593a7c9b6977eb81172d01b46cc59daf46f5d45",
+  "comparison_scope": "All pinned format-string observations whose callee is fprintf or vfprintf, replayed on source-hash-matched files from the original 2026-10-18 final scan. Other detector families and source files without these prior observations are outside this subset.",
+  "detector": {
+    "id": "ohscanner.cpp.unsafe_memory_call",
+    "before_version": "0.1.0",
+    "after_version": "0.4.0",
+    "before_source_sha256": "cd4825a5387c5fd2415a7b5ac8d6fc7989a2222bd7f699507e63ad4c4b443e52",
+    "after_source_sha256": "6f10d180d008d48479760ebfd714a05ed979ce86944ba75d9255e5aaf4521a00"
+  },
+  "source_identity": {
+    "candidate_rows": 8504,
+    "unique_source_files": 829,
+    "source_hashes_matched": 829
+  },
+  "before": {
+    "candidate_rows_reproduced": 8504,
+    "by_callee": {
+      "fprintf": 8452,
+      "vfprintf": 52
+    }
+  },
+  "after": {
+    "format_candidate_rows": 1438,
+    "by_callee": {
+      "fprintf": 1387,
+      "vfprintf": 51
+    }
+  },
+  "legacy_literal_prefix_boundary": {
+    "description": "The 0.3.0 literal check ignored any expression beginning with a quote; 0.4.0 accepts only a complete literal sequence or literal-only conditional arms.",
+    "current_candidates_with_quote_prefixed_expression": 1221,
+    "by_callee": {
+      "fprintf": 1221
+    },
+    "current_candidates_that_0_3_0_prefix_check_would_keep": 217,
+    "by_callee_kept": {
+      "fprintf": 166,
+      "vfprintf": 51
+    },
+    "examples": [
+      {
+        "repository": "openharmony/developtools_hdc",
+        "file": "credential/main.cpp",
+        "source_sha256": "42040fd80ea46e3e7c19d2b926a79770af395df334ee7d0a084f28b8d24014ff",
+        "line": 415,
+        "column": 9,
+        "callee": "fprintf",
+        "expression": "\"Invalid input parameters"
+      },
+      {
+        "repository": "openharmony/developtools_hiperf",
+        "file": "include/report_json_file.h",
+        "source_sha256": "b8b7ab4e4d8caacaec1d105c3205f70bbe828af32b80dfc1d9c1ae93588c4f40",
+        "line": 66,
+        "column": 9,
+        "callee": "fprintf",
+        "expression": "\""
+      },
+      {
+        "repository": "openharmony/developtools_hiperf",
+        "file": "include/report_json_file.h",
+        "source_sha256": "b8b7ab4e4d8caacaec1d105c3205f70bbe828af32b80dfc1d9c1ae93588c4f40",
+        "line": 95,
+        "column": 13,
+        "callee": "fprintf",
+        "expression": "\""
+      },
+      {
+        "repository": "openharmony/developtools_hiperf",
+        "file": "include/report_json_file.h",
+        "source_sha256": "b8b7ab4e4d8caacaec1d105c3205f70bbe828af32b80dfc1d9c1ae93588c4f40",
+        "line": 113,
+        "column": 13,
+        "callee": "fprintf",
+        "expression": "\""
+      },
+      {
+        "repository": "openharmony/developtools_hiperf",
+        "file": "include/report_json_file.h",
+        "source_sha256": "b8b7ab4e4d8caacaec1d105c3205f70bbe828af32b80dfc1d9c1ae93588c4f40",
+        "line": 117,
+        "column": 9,
+        "callee": "fprintf",
+        "expression": "\"\\\"%s\\\":[\", key.c_str()"
+      },
+      {
+        "repository": "openharmony/developtools_hiperf",
+        "file": "include/report_json_file.h",
+        "source_sha256": "b8b7ab4e4d8caacaec1d105c3205f70bbe828af32b80dfc1d9c1ae93588c4f40",
+        "line": 137,
+        "column": 13,
+        "callee": "fprintf",
+        "expression": "\""
+      },
+      {
+        "repository": "openharmony/developtools_hiperf",
+        "file": "include/report_json_file.h",
+        "source_sha256": "b8b7ab4e4d8caacaec1d105c3205f70bbe828af32b80dfc1d9c1ae93588c4f40",
+        "line": 141,
+        "column": 9,
+        "callee": "fprintf",
+        "expression": "\"\\\"%s\\\":[\", key.c_str()"
+      },
+      {
+        "repository": "openharmony/developtools_hiperf",
+        "file": "include/report_json_file.h",
+        "source_sha256": "b8b7ab4e4d8caacaec1d105c3205f70bbe828af32b80dfc1d9c1ae93588c4f40",
+        "line": 161,
+        "column": 13,
+        "callee": "fprintf",
+        "expression": "\""
+      },
+      {
+        "repository": "openharmony/developtools_hiperf",
+        "file": "include/report_json_file.h",
+        "source_sha256": "b8b7ab4e4d8caacaec1d105c3205f70bbe828af32b80dfc1d9c1ae93588c4f40",
+        "line": 165,
+        "column": 9,
+        "callee": "fprintf",
+        "expression": "\"\\\"%s\\\":{\", key.c_str()"
+      },
+      {
+        "repository": "openharmony/developtools_hiperf",
+        "file": "include/utilities.h",
+        "source_sha256": "274ef24c348989cb64cf85898acd798a67e15ec39e74fc7963aa8eef083965e2",
+        "line": 362,
+        "column": 13,
+        "callee": "fprintf",
+        "expression": "\"%*s\" format"
+      },
+      {
+        "repository": "openharmony/drivers_interface",
+        "file": "tools/hc-gen/src/bytecode_gen.cpp",
+        "source_sha256": "e37d4bb925e8a226c5392c1938770169a49f15e664687b34e482a34a80e81aed",
+        "line": 308,
+        "column": 9,
+        "callee": "fprintf",
+        "expression": "\"static const unsigned char g_%s%s[] = {\\n\", prefix.data(), HCS_HEXDUMP_ENTRY_SYMBOL"
+      },
+      {
+        "repository": "openharmony/filemanagement_app_file_service",
+        "file": "tools/backup_tool/src/main.cpp",
+        "source_sha256": "40a44ce315f1a84103a05a5f1be32be9fa1a1bdf9e9d905e6171ffc714b996de",
+        "line": 73,
+        "column": 13,
+        "callee": "fprintf",
+        "expression": "\"%s can only be entered once"
+      },
+      {
+        "repository": "openharmony/hiviewdfx_hidumper",
+        "file": "frameworks/native/common.h",
+        "source_sha256": "eea8b17b29be517a77ff7b4a47f9f47c314f4eb94c1bf1581c9d6714108e8646",
+        "line": 47,
+        "column": 9,
+        "callee": "fprintf",
+        "expression": "\"Error:\" format \"\""
+      },
+      {
+        "repository": "openharmony/hiviewdfx_hidumper",
+        "file": "frameworks/native/common.h",
+        "source_sha256": "eea8b17b29be517a77ff7b4a47f9f47c314f4eb94c1bf1581c9d6714108e8646",
+        "line": 55,
+        "column": 9,
+        "callee": "fprintf",
+        "expression": "\"Debug:\" format \"(%s %d)\\n\""
+      },
+      {
+        "repository": "openharmony/hiviewdfx_hidumper",
+        "file": "frameworks/native/include/executor/fd_output.h",
+        "source_sha256": "f8e7c9fbca0d396d92e7461aed2c07cce0ea92e4ad13784fe8d3b6d4859ce019",
+        "line": 31,
+        "column": 9,
+        "callee": "fprintf",
+        "expression": "\"Debug:\" format \"\\n\""
+      },
+      {
+        "repository": "openharmony/resourceschedule_device_usage_statistics",
+        "file": "tools/ohos-usageStatsQuery/src/main.cpp",
+        "source_sha256": "56fefff614b9161cea8bfd9fbb5ecde3c86161d450f942b256b969798ca37177",
+        "line": 43,
+        "column": 27,
+        "callee": "fprintf",
+        "expression": "\"[LOG] \" fmt \"\\n\""
+      },
+      {
+        "repository": "openharmony/resourceschedule_device_usage_statistics",
+        "file": "tools/ohos-usageStatsQuery/src/main.cpp",
+        "source_sha256": "56fefff614b9161cea8bfd9fbb5ecde3c86161d450f942b256b969798ca37177",
+        "line": 44,
+        "column": 29,
+        "callee": "fprintf",
+        "expression": "\"[ERROR] \" fmt \"\\n\""
+      },
+      {
+        "repository": "openharmony/startup_init",
+        "file": "tools/ohos-deviceInfo/src/output_formatter.h",
+        "source_sha256": "5aec0c94520c43306ba69021d42d4468104f89d97c2e3109d405fb4699ce4ff3",
+        "line": 26,
+        "column": 5,
+        "callee": "fprintf",
+        "expression": "\"[INFO] \" fmt \"\\n\""
+      },
+      {
+        "repository": "openharmony/startup_init",
+        "file": "tools/ohos-deviceInfo/src/output_formatter.h",
+        "source_sha256": "5aec0c94520c43306ba69021d42d4468104f89d97c2e3109d405fb4699ce4ff3",
+        "line": 32,
+        "column": 5,
+        "callee": "fprintf",
+        "expression": "\"[ERROR] \" fmt \"\\n\""
+      },
+      {
+        "repository": "openharmony/tee_tee_os_framework",
+        "file": "test/xts/utils/include/test_log.h",
+        "source_sha256": "25d478420419b5a07ab2ec92b46454bff2ff24fcd3bfcbd8998a8062ca75898b",
+        "line": 20,
+        "column": 9,
+        "callee": "fprintf",
+        "expression": "\"[Info] [%s, %d] \" fmt \"\\n\""
+      }
+    ]
+  },
+  "after_file_outcomes": {
+    "complete": 825,
+    "partial": 4
+  },
+  "after_signature_unknown_files": [
+    {
+      "repository": "openharmony/third_party_lame",
+      "file": "frontend/console.c",
+      "source_sha256": "c9812de3985cdd40ea9ae4a5a75d8463005b2d27d9c86b11296e327040d92598"
+    },
+    {
+      "repository": "openharmony/third_party_ntfs-3g",
+      "file": "ntfsprogs/ntfsrecover.c",
+      "source_sha256": "fe94b6de958989cbdc72c07c6d4d382d827f83865e2722907d2ea4a00350ec1e"
+    },
+    {
+      "repository": "openharmony/third_party_toybox",
+      "file": "porting/liteos_a/scripts/mkflags.c",
+      "source_sha256": "9040296d7f973b3a0f3acc21624e1de3fd00f9643de8f88d4bf4a50365e3a6bf"
+    },
+    {
+      "repository": "openharmony/third_party_toybox",
+      "file": "scripts/mkflags.c",
+      "source_sha256": "2cffd7fd4ac90b96a1846c8be6c99674d4475250e8878bf138a629e868d0e8b4"
+    }
+  ],
+  "changes": {
+    "corrected_argument_expression": 1438,
+    "removed": 7066
+  },
+  "examples": {
+    "removed": [
+      {
+        "repository": "openharmony/ability_idl_tool",
+        "file": "idl_tool_2/util/logger.cpp",
+        "source_sha256": "20a7bb8cb5e9cec9e2a0f9d8481f6600d4c0102d351ea34469f0eafa60e432a0",
+        "before": {
+          "line": 70,
+          "column": 11,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "stderr",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `stderr`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      },
+      {
+        "repository": "openharmony/ability_idl_tool",
+        "file": "idl_tool_2/util/logger.cpp",
+        "source_sha256": "20a7bb8cb5e9cec9e2a0f9d8481f6600d4c0102d351ea34469f0eafa60e432a0",
+        "before": {
+          "line": 68,
+          "column": 11,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "stderr",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `stderr`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      },
+      {
+        "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+        "file": "runtime/include/taihe/common.hpp",
+        "source_sha256": "c733aaad42a0c5c78a4d58d818a5a7b56586185cb883ff1d6cb7212d62d2f56f",
+        "before": {
+          "line": 30,
+          "column": 9,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "stderr",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `stderr`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      },
+      {
+        "repository": "openharmony/castengine_wifi_display",
+        "file": "tests/demo/network/udp_server_demo.cpp",
+        "source_sha256": "9b0ef527fb1e029720608b50adcbd4ae0f4e97a86e8428cc33ef0a2baf49bcd9",
+        "before": {
+          "line": 122,
+          "column": 9,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "stderr",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `stderr`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      },
+      {
+        "repository": "openharmony/communication_dhcp",
+        "file": "services/dhcp_server/src/dhcp_address_pool.cpp",
+        "source_sha256": "23cff89446ada64abb0a4f6c363b23c0c46653dcccdfef1bc7c49026a752e681",
+        "before": {
+          "line": 551,
+          "column": 17,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "fp",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `fp`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      },
+      {
+        "repository": "openharmony/communication_wifi",
+        "file": "wifi/relation_services/wifi_hal_service/wifi_hal_module/hostapd_hal/wifi_hostapd_hal.c",
+        "source_sha256": "28878e543619bcab90842ed5eb6fb378220c03a083f8632f0ff3d0ae4ee06076",
+        "before": {
+          "line": 840,
+          "column": 9,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "fp",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `fp`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      },
+      {
+        "repository": "openharmony/developtools_hdc",
+        "file": "credential/main.cpp",
+        "source_sha256": "42040fd80ea46e3e7c19d2b926a79770af395df334ee7d0a084f28b8d24014ff",
+        "before": {
+          "line": 410,
+          "column": 13,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "stderr",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `stderr`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      },
+      {
+        "repository": "openharmony/developtools_hdc",
+        "file": "credential/main.cpp",
+        "source_sha256": "42040fd80ea46e3e7c19d2b926a79770af395df334ee7d0a084f28b8d24014ff",
+        "before": {
+          "line": 406,
+          "column": 13,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "stderr",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `stderr`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      },
+      {
+        "repository": "openharmony/developtools_hdc",
+        "file": "credential/main.cpp",
+        "source_sha256": "42040fd80ea46e3e7c19d2b926a79770af395df334ee7d0a084f28b8d24014ff",
+        "before": {
+          "line": 417,
+          "column": 9,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "stderr",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `stderr`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      },
+      {
+        "repository": "openharmony/developtools_hdc",
+        "file": "src/common/task.cpp",
+        "source_sha256": "90d16ce93f91ef7215ea6377dfdc81d2cd8b4267471735b4d8661b45d7c82c84",
+        "before": {
+          "line": 103,
+          "column": 9,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "stdout",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `stdout`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      },
+      {
+        "repository": "openharmony/developtools_hdc",
+        "file": "src/test/jdwp/main.cpp",
+        "source_sha256": "131281ce452852440e998cb07fae2e0bd2322701a796b6c1f01f1b3e0c255cdf",
+        "before": {
+          "line": 31,
+          "column": 11,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "stdout",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `stdout`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      },
+      {
+        "repository": "openharmony/developtools_hiperf",
+        "file": "include/report_json_file.h",
+        "source_sha256": "b8b7ab4e4d8caacaec1d105c3205f70bbe828af32b80dfc1d9c1ae93588c4f40",
+        "before": {
+          "line": 351,
+          "column": 13,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "output",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `output`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      },
+      {
+        "repository": "openharmony/developtools_hiperf",
+        "file": "include/report_json_file.h",
+        "source_sha256": "b8b7ab4e4d8caacaec1d105c3205f70bbe828af32b80dfc1d9c1ae93588c4f40",
+        "before": {
+          "line": 331,
+          "column": 13,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "output",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `output`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      },
+      {
+        "repository": "openharmony/developtools_hiperf",
+        "file": "include/report_json_file.h",
+        "source_sha256": "b8b7ab4e4d8caacaec1d105c3205f70bbe828af32b80dfc1d9c1ae93588c4f40",
+        "before": {
+          "line": 59,
+          "column": 9,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "output",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `output`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      },
+      {
+        "repository": "openharmony/developtools_hiperf",
+        "file": "include/report_json_file.h",
+        "source_sha256": "b8b7ab4e4d8caacaec1d105c3205f70bbe828af32b80dfc1d9c1ae93588c4f40",
+        "before": {
+          "line": 199,
+          "column": 13,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "output",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `output`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      },
+      {
+        "repository": "openharmony/developtools_hiperf",
+        "file": "include/report_json_file.h",
+        "source_sha256": "b8b7ab4e4d8caacaec1d105c3205f70bbe828af32b80dfc1d9c1ae93588c4f40",
+        "before": {
+          "line": 216,
+          "column": 13,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "output",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `output`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      },
+      {
+        "repository": "openharmony/developtools_hiperf",
+        "file": "include/report_json_file.h",
+        "source_sha256": "b8b7ab4e4d8caacaec1d105c3205f70bbe828af32b80dfc1d9c1ae93588c4f40",
+        "before": {
+          "line": 282,
+          "column": 13,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "output",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `output`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      },
+      {
+        "repository": "openharmony/developtools_hiperf",
+        "file": "include/report_json_file.h",
+        "source_sha256": "b8b7ab4e4d8caacaec1d105c3205f70bbe828af32b80dfc1d9c1ae93588c4f40",
+        "before": {
+          "line": 45,
+          "column": 9,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "output",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `output`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      },
+      {
+        "repository": "openharmony/developtools_hiperf",
+        "file": "include/report_json_file.h",
+        "source_sha256": "b8b7ab4e4d8caacaec1d105c3205f70bbe828af32b80dfc1d9c1ae93588c4f40",
+        "before": {
+          "line": 240,
+          "column": 13,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "output",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `output`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      },
+      {
+        "repository": "openharmony/developtools_hiperf",
+        "file": "include/report_json_file.h",
+        "source_sha256": "b8b7ab4e4d8caacaec1d105c3205f70bbe828af32b80dfc1d9c1ae93588c4f40",
+        "before": {
+          "line": 69,
+          "column": 9,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "output",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `output`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      }
+    ],
+    "changed": [
+      {
+        "repository": "openharmony/ability_idl_tool",
+        "file": "idl_tool_2/util/logger.cpp",
+        "source_sha256": "20a7bb8cb5e9cec9e2a0f9d8481f6600d4c0102d351ea34469f0eafa60e432a0",
+        "before": {
+          "line": 69,
+          "column": 11,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "stderr",
+          "message": "Candidate only: `vfprintf` receives a non-literal format expression `stderr`. Control, intended format ownership and concrete impact remain unknown."
+        },
+        "after": {
+          "line": 69,
+          "column": 11,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "format",
+          "message": "Candidate only: `vfprintf` receives a non-literal format expression `format`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      },
+      {
+        "repository": "openharmony/ai_neural_network_runtime",
+        "file": "example/deep_learning_framework/tflite/nnrt/nnrt_implementation.h",
+        "source_sha256": "233412789f82f557ca8e758b7f95acee7f950658c147ea7f3b7dfa25c845848f",
+        "before": {
+          "line": 29,
+          "column": 31,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "stderr",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `stderr`. Control, intended format ownership and concrete impact remain unknown."
+        },
+        "after": {
+          "line": 29,
+          "column": 31,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "format \"\\n\"",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `format \"\\n\"`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      },
+      {
+        "repository": "openharmony/arkcompiler_jsvm",
+        "file": "src/platform/platform.cpp",
+        "source_sha256": "6ac58645c2ef41811d55edf80156e2838efb7cf2cd1bab02a1f176ae7fa80281",
+        "before": {
+          "line": 56,
+          "column": 11,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "stderr",
+          "message": "Candidate only: `vfprintf` receives a non-literal format expression `stderr`. Control, intended format ownership and concrete impact remain unknown."
+        },
+        "after": {
+          "line": 56,
+          "column": 11,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "format",
+          "message": "Candidate only: `vfprintf` receives a non-literal format expression `format`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      },
+      {
+        "repository": "openharmony/developtools_hdc",
+        "file": "credential/main.cpp",
+        "source_sha256": "42040fd80ea46e3e7c19d2b926a79770af395df334ee7d0a084f28b8d24014ff",
+        "before": {
+          "line": 415,
+          "column": 9,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "stderr",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `stderr`. Control, intended format ownership and concrete impact remain unknown."
+        },
+        "after": {
+          "line": 415,
+          "column": 9,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "\"Invalid input parameters",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `\"Invalid input parameters`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      },
+      {
+        "repository": "openharmony/developtools_hdc",
+        "file": "src/test/jdwp/main.cpp",
+        "source_sha256": "131281ce452852440e998cb07fae2e0bd2322701a796b6c1f01f1b3e0c255cdf",
+        "before": {
+          "line": 30,
+          "column": 5,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "stdout",
+          "message": "Candidate only: `vfprintf` receives a non-literal format expression `stdout`. Control, intended format ownership and concrete impact remain unknown."
+        },
+        "after": {
+          "line": 30,
+          "column": 5,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "fmt",
+          "message": "Candidate only: `vfprintf` receives a non-literal format expression `fmt`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      },
+      {
+        "repository": "openharmony/developtools_hiperf",
+        "file": "include/report_json_file.h",
+        "source_sha256": "b8b7ab4e4d8caacaec1d105c3205f70bbe828af32b80dfc1d9c1ae93588c4f40",
+        "before": {
+          "line": 137,
+          "column": 13,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "output",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `output`. Control, intended format ownership and concrete impact remain unknown."
+        },
+        "after": {
+          "line": 137,
+          "column": 13,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "\"",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `\"`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      },
+      {
+        "repository": "openharmony/developtools_hiperf",
+        "file": "include/report_json_file.h",
+        "source_sha256": "b8b7ab4e4d8caacaec1d105c3205f70bbe828af32b80dfc1d9c1ae93588c4f40",
+        "before": {
+          "line": 95,
+          "column": 13,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "output",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `output`. Control, intended format ownership and concrete impact remain unknown."
+        },
+        "after": {
+          "line": 95,
+          "column": 13,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "\"",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `\"`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      },
+      {
+        "repository": "openharmony/developtools_hiperf",
+        "file": "include/report_json_file.h",
+        "source_sha256": "b8b7ab4e4d8caacaec1d105c3205f70bbe828af32b80dfc1d9c1ae93588c4f40",
+        "before": {
+          "line": 161,
+          "column": 13,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "output",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `output`. Control, intended format ownership and concrete impact remain unknown."
+        },
+        "after": {
+          "line": 161,
+          "column": 13,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "\"",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `\"`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      },
+      {
+        "repository": "openharmony/developtools_hiperf",
+        "file": "include/report_json_file.h",
+        "source_sha256": "b8b7ab4e4d8caacaec1d105c3205f70bbe828af32b80dfc1d9c1ae93588c4f40",
+        "before": {
+          "line": 66,
+          "column": 9,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "output",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `output`. Control, intended format ownership and concrete impact remain unknown."
+        },
+        "after": {
+          "line": 66,
+          "column": 9,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "\"",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `\"`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      },
+      {
+        "repository": "openharmony/developtools_hiperf",
+        "file": "include/report_json_file.h",
+        "source_sha256": "b8b7ab4e4d8caacaec1d105c3205f70bbe828af32b80dfc1d9c1ae93588c4f40",
+        "before": {
+          "line": 165,
+          "column": 9,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "output",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `output`. Control, intended format ownership and concrete impact remain unknown."
+        },
+        "after": {
+          "line": 165,
+          "column": 9,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "\"\\\"%s\\\":{\", key.c_str()",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `\"\\\"%s\\\":{\", key.c_str()`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      },
+      {
+        "repository": "openharmony/developtools_hiperf",
+        "file": "include/report_json_file.h",
+        "source_sha256": "b8b7ab4e4d8caacaec1d105c3205f70bbe828af32b80dfc1d9c1ae93588c4f40",
+        "before": {
+          "line": 117,
+          "column": 9,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "output",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `output`. Control, intended format ownership and concrete impact remain unknown."
+        },
+        "after": {
+          "line": 117,
+          "column": 9,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "\"\\\"%s\\\":[\", key.c_str()",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `\"\\\"%s\\\":[\", key.c_str()`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      },
+      {
+        "repository": "openharmony/developtools_hiperf",
+        "file": "include/report_json_file.h",
+        "source_sha256": "b8b7ab4e4d8caacaec1d105c3205f70bbe828af32b80dfc1d9c1ae93588c4f40",
+        "before": {
+          "line": 141,
+          "column": 9,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "output",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `output`. Control, intended format ownership and concrete impact remain unknown."
+        },
+        "after": {
+          "line": 141,
+          "column": 9,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "\"\\\"%s\\\":[\", key.c_str()",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `\"\\\"%s\\\":[\", key.c_str()`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      },
+      {
+        "repository": "openharmony/developtools_hiperf",
+        "file": "include/report_json_file.h",
+        "source_sha256": "b8b7ab4e4d8caacaec1d105c3205f70bbe828af32b80dfc1d9c1ae93588c4f40",
+        "before": {
+          "line": 113,
+          "column": 13,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "output",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `output`. Control, intended format ownership and concrete impact remain unknown."
+        },
+        "after": {
+          "line": 113,
+          "column": 13,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "\"",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `\"`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      },
+      {
+        "repository": "openharmony/developtools_hiperf",
+        "file": "include/utilities.h",
+        "source_sha256": "274ef24c348989cb64cf85898acd798a67e15ec39e74fc7963aa8eef083965e2",
+        "before": {
+          "line": 362,
+          "column": 13,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "g_outputDump",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `g_outputDump`. Control, intended format ownership and concrete impact remain unknown."
+        },
+        "after": {
+          "line": 362,
+          "column": 13,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "\"%*s\" format",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `\"%*s\" format`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      },
+      {
+        "repository": "openharmony/developtools_profiler",
+        "file": "device/base/include/logging.h",
+        "source_sha256": "8942fd5de6dc8718e84eaa5daca2de98aa4e991180ae8cbeff0497b5604fd5c6",
+        "before": {
+          "line": 96,
+          "column": 21,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "stderr",
+          "message": "Candidate only: `vfprintf` receives a non-literal format expression `stderr`. Control, intended format ownership and concrete impact remain unknown."
+        },
+        "after": {
+          "line": 96,
+          "column": 21,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "fmt",
+          "message": "Candidate only: `vfprintf` receives a non-literal format expression `fmt`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      },
+      {
+        "repository": "openharmony/developtools_profiler",
+        "file": "device/plugins/native_hook/test/perf_test_data.cpp",
+        "source_sha256": "6e734832dba982e767d5e25a6966539cb8ee474ed9b4e548643441b39e1fd121",
+        "before": {
+          "line": 92,
+          "column": 9,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "stderr",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `stderr`. Control, intended format ownership and concrete impact remain unknown."
+        },
+        "after": {
+          "line": 92,
+          "column": 9,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "fmt",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `fmt`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      },
+      {
+        "repository": "openharmony/developtools_profiler",
+        "file": "device/plugins/native_hook/test/perf_test_data.cpp",
+        "source_sha256": "6e734832dba982e767d5e25a6966539cb8ee474ed9b4e548643441b39e1fd121",
+        "before": {
+          "line": 93,
+          "column": 9,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "fileptr",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `fileptr`. Control, intended format ownership and concrete impact remain unknown."
+        },
+        "after": {
+          "line": 93,
+          "column": 9,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "fmt",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `fmt`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      },
+      {
+        "repository": "openharmony/drivers_interface",
+        "file": "tools/hc-gen/src/bytecode_gen.cpp",
+        "source_sha256": "e37d4bb925e8a226c5392c1938770169a49f15e664687b34e482a34a80e81aed",
+        "before": {
+          "line": 308,
+          "column": 9,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "out",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `out`. Control, intended format ownership and concrete impact remain unknown."
+        },
+        "after": {
+          "line": 308,
+          "column": 9,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "\"static const unsigned char g_%s%s[] = {\\n\", prefix.data(), HCS_HEXDUMP_ENTRY_SYMBOL",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `\"static const unsigned char g_%s%s[] = {\\n\", prefix.data(), HCS_HEXDUMP_ENTRY_SYMBOL`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      },
+      {
+        "repository": "openharmony/filemanagement_app_file_service",
+        "file": "tools/backup_tool/src/main.cpp",
+        "source_sha256": "40a44ce315f1a84103a05a5f1be32be9fa1a1bdf9e9d905e6171ffc714b996de",
+        "before": {
+          "line": 73,
+          "column": 13,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "stderr",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `stderr`. Control, intended format ownership and concrete impact remain unknown."
+        },
+        "after": {
+          "line": 73,
+          "column": 13,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "\"%s can only be entered once",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `\"%s can only be entered once`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      },
+      {
+        "repository": "openharmony/hiviewdfx_hidumper",
+        "file": "frameworks/native/common.h",
+        "source_sha256": "eea8b17b29be517a77ff7b4a47f9f47c314f4eb94c1bf1581c9d6714108e8646",
+        "before": {
+          "line": 55,
+          "column": 9,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "stdout",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `stdout`. Control, intended format ownership and concrete impact remain unknown."
+        },
+        "after": {
+          "line": 55,
+          "column": 9,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "symbol": "\"Debug:\" format \"(%s %d)\\n\"",
+          "message": "Candidate only: `fprintf` receives a non-literal format expression `\"Debug:\" format \"(%s %d)\\n\"`. Control, intended format ownership and concrete impact remain unknown."
+        }
+      }
+    ],
+    "added": []
+  },
+  "tooling": {
+    "python": "3.13.9",
+    "mode": "in-process detector replay; no CFG or product-build claim"
+  },
+  "interpretation": "This replay measures API-argument-position correction and the 0.4.0 expression-classification boundary on the exact source files that previously produced fprintf/vfprintf findings. Compared with 0.3.0, expressions that merely begin with a literal prefix but contain trailing tokens are now surfaced; this is a behavior expansion, not an accuracy result. Remaining format expressions still need independent source/control review."
+}

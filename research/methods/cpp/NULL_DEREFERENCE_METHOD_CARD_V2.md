@@ -1,12 +1,12 @@
 # A-NULL-01 C/C++ NULL dereference method card v2
 
-更新：2026-10-16。本文是 `ohscanner.cpp.null_dereference` 0.2.0 的当前方法卡；
+更新：2026-10-19。本文是 `ohscanner.cpp.null_dereference` 0.6.0 的当前方法卡；
 `NULL_DEREFERENCE_METHOD_CARD.md` 的 v1 设计记录保留为历史研究资产。
 
 ## 身份和输出边界
 
-- Detector：`ohscanner.cpp.null_dereference`，版本 `0.2.0`。
-- Rule：`ohcpp-null-dereference-candidate-001`，rule version `1.2.0`，
+- Detector：`ohscanner.cpp.null_dereference`，版本 `0.6.0`。
+- Rule：`ohcpp-null-dereference-candidate-001`，rule version `1.4.0`，
   lineage `A-NULL-01:ohcpp-null-dereference-candidate`。
 - 语言和范围：显式 C/C++ source unit，`per_file` bounded lexical slice；
   固定 Git 重跑使用 `light-ast` profile。
@@ -18,12 +18,24 @@ bounded AST fingerprint。Runner 的 schema v2 identity/source-binding 层继续
 repository、full commit、snapshot、profile、source blob OID 和 byte range；
 缺任一来源字段时 identity 保持 unknown/unbound，不回填历史报告。
 
+当前没有 compile database 时，词法上识别的早返回、else 分支、非空分支或错误分支只作为控制流形状提示，
+guard relation 保持 `unknown`，不得据此写成 `dominating` 或 `not_dominating`。可能受保护的 sink 保持零 finding
+但将文件标成 partial；可能不受保护的 sink 仍报告候选并标为 partial。两者都记录
+`guard_dominance_unknown_without_compile_context`，这不是 safe 结论。
+只有未来绑定到与源码哈希、编译器、defines、includes 和语言模式一致的 Clang CFG，才可报告 CFG 支配关系。
+
 ## 有界 source、sink、alias 模型
 
-Source 角色包括参数指针、局部指针显式空值/重绑定、成员显式初始化或赋值、
-`new (std::nothrow)` 分配结果可能为空，以及函数返回值未知 nullability。Sink 包括
+Source 角色包括可能为空参数、显式 nullable 参数、局部指针显式空值/重绑定、成员显式初始化或赋值、
+`new (std::nothrow)` 分配结果可能为空，以及独立弱观察中的函数返回值未知 nullability。Sink 包括
 `*p`、`p->field`、`p->method()`、`p[i]`、宏展开边界、间接调用参数和简单同函数
 pointer/reference alias。
+
+unknown return nullability 现在使用单独的 `ohcpp-null-dereference-unknown-return-observation-001`
+规则身份，消息标为 `Weak observation/needs review`，不再混入 A-NULL-01 的强候选 lineage；
+缺少 nullable 标注的返回来源只表示观察，不足以证明来源可空。显式 `_Nullable`、
+`__nullable`、`nullable` 和 `annotate("nullable")` 参数保留为可解释的来源角色。
+同翻译单元中可唯一匹配且明确标注 nullable 的返回声明继续使用强候选身份；同名重载或无法绑定声明时仍降为未知返回观察。
 
 本轮补强了：
 
@@ -39,6 +51,10 @@ pointer/reference alias。
 - 空值后可见的非空重绑定（例如 `p = &local`）不再把旧 source 带到 sink。
 
 这些是有界 lexical/dataflow facts，不是完整 CFG、类型系统或 alias proof。
+
+2026-10-19 边界回归补充：函数式、对象式和反斜杠续行宏定义若包含 `*`、`->`、下标表达式或明确的 `DEREF`/`DEREFERENCE` 标记，调用点可作为潜在 sink 保留；建立函数区域时跳过完整的预处理续行，避免将宏定义并入后续函数头。宏未展开时文件仍为 `partial`，不能将宏调用归约成已验证解引用。新增模板与跨函数样例继续保留候选/unknown obligations。
+
+固定 main 基线 `4593a7c9b6977eb81172d01b46cc59daf46f5d45` 与当前 detector 的 19 个 A-NULL-02 controls 加 6 个边界 controls 的对照见 `research/evidence/cpp/a_null_03_unknown_return_20261018/macro_object_continuation_before_after_20261019.json`，可用 `replay_macro_controls_from_main.py` 重放。25 项对照中，限定名同名控制由基线强候选变为弱观察；对象式宏与续行宏各从 `complete/0` 变为 `partial/1`。这是合成控制证据，不代表产品 CFG 或真实漏洞准确率。当前 detector 为 0.6.0，强候选 rule 为 1.4.0；限定名或多重同名声明无法可靠绑定时，返回值来源保持 unknown 并走独立弱观察身份。
 
 ## 固定组件重跑和根因聚合
 
@@ -122,18 +138,15 @@ SourceUnit、context 和 detector 版本重复运行产生相同 DetectorRun、d
 identity 和 source binding。固定组件 Harness 的 `--check` 对完整 replay JSON 做
 确定性比较。性能测试只限制 wall time，不宣称产品吞吐量。
 
-## Catalog 注册建议（未实施）
+## Catalog 注册状态（2026-10-18）
 
 可审计建议保存在
 `research/evidence/cpp/a_null_02_fixed_component_review_20261016/catalog_metadata_suggestion.json`。
-公共 Catalog 负责人可另行审查并注册：
+当前 Catalog 已注册 `ohscanner.cpp.null_dereference` 0.6.0，类型为 `research_candidate`，普通默认关闭；用户显式选择全规则研究时才纳入。准入原因说明 unknown-return 是可能很宽的弱观察，建议限定研究范围。检测器支持 C/C++，仍为 per-file light-ast 有界分析；Runner 输出候选默认 `unassessed`。
 
-- `detector_id=ohscanner.cpp.null_dereference`，`version=0.2.0`；
-- rule ID/version 如上，`candidate_cwe=CWE-476`，`kind=research_candidate`；
-- `supported_languages=(c, cpp)`、`ast_scope=per_file`、`profile=light-ast`；
-- `root_cause_group=A-NULL-02-RC-NOTHROW-CLIENTPROXY-ALLOC`，按根因组计数；
-- 默认 severity/confidence `unassessed`，保留 complete/partial/failed/not_analyzed；
-- 与 0.1.0 历史结果保持隔离，不重写旧 report、diagnostic ID、review 或 EvidenceObligation。
+unknown-return 使用 `ohcpp-null-dereference-unknown-return-observation-001` 与独立 lineage/version。历史报告、diagnostic ID、人工 review 和 EvidenceObligation 均不改写。根因组计数仅存在于 A-NULL-02 固定组件研究交付，不是 Catalog 已验证的漏洞标签。
+
+由于旧建议文件形成于注册前，仍保留其历史提案状态；当前 `src/ohscanner/detectors/catalog.py` 是实际准入权威。
 
 本变更不修改 `src/ohscanner/detectors/catalog.py`、公共 contracts、runner 或
 catalog 注册。历史 CVE/advisory、fixed commit、AST/pattern 关系都不能替代真实

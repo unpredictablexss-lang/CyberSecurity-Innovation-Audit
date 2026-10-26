@@ -1,0 +1,1313 @@
+{
+  "schema_version": "ohscanner.a-null-boundary-controls-before-after-v1",
+  "base_commit": "4593a7c9b6977eb81172d01b46cc59daf46f5d45",
+  "comparison_scope": "same 19 A-NULL-02 controls plus every tracked cpp_null_boundary fixture; detector-only change reconstructed from immediate pre-change source and current source",
+  "detector": {
+    "id": "ohscanner.cpp.null_dereference",
+    "version": "0.4.0",
+    "before_source_sha256": "1caef00fcf159e66caf3e6a2ce0fb682f30cb68da7ac140f8fb0b0186e407d1f",
+    "after_source_sha256": "8976cdabe7f54ca3ba63277eb140dcc6da873e63365aa368ccc1339a9e5796be"
+  },
+  "tooling": {
+    "python": "3.13.9",
+    "mode": "in-process detector comparison; no external analyzer or product build context",
+    "replay_command": "python research/evidence/cpp/a_null_03_unknown_return_20261018/replay_macro_boundary_controls.py"
+  },
+  "summary": {
+    "before": {
+      "controls": 22,
+      "finding_rows": 8,
+      "partial_files": 8,
+      "complete_zero_finding_files": 10
+    },
+    "after": {
+      "controls": 22,
+      "finding_rows": 9,
+      "partial_files": 9,
+      "complete_zero_finding_files": 9
+    }
+  },
+  "interpretation": "Synthetic controls only. They validate conservative macro/template/cross-function coverage behavior and do not establish product CFG, vulnerability truth, attacker control, or accuracy.",
+  "cases": [
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/positive_parameter_unguarded.cpp",
+      "source_sha256": "272c119cd5f831e0d28423d9d8db0561ccc1bd973a4ac6cc97ecab76ff847502",
+      "control_origin": "existing-A-NULL-02-control",
+      "before": {
+        "coverage": "complete",
+        "run_status": "completed",
+        "findings": [
+          {
+            "line": 6,
+            "rule_id": "ohcpp-null-dereference-candidate-001",
+            "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=parameter_may_be_null; sink=member_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+            "obligations": [
+              {
+                "kind": "guard_dominance",
+                "status": "unknown"
+              },
+              {
+                "kind": "cross_function_alias",
+                "status": "unknown"
+              },
+              {
+                "kind": "compile_context",
+                "status": "missing"
+              },
+              {
+                "kind": "entry_or_privilege_boundary",
+                "status": "missing"
+              },
+              {
+                "kind": "attacker_control",
+                "status": "missing"
+              },
+              {
+                "kind": "sensitive_operation_reachability",
+                "status": "missing"
+              },
+              {
+                "kind": "trigger_conditions",
+                "status": "missing"
+              },
+              {
+                "kind": "cia_impact",
+                "status": "missing"
+              }
+            ]
+          }
+        ],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      },
+      "after": {
+        "coverage": "complete",
+        "run_status": "completed",
+        "findings": [
+          {
+            "line": 6,
+            "rule_id": "ohcpp-null-dereference-candidate-001",
+            "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=parameter_may_be_null; sink=member_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+            "obligations": [
+              {
+                "kind": "guard_dominance",
+                "status": "unknown"
+              },
+              {
+                "kind": "cross_function_alias",
+                "status": "unknown"
+              },
+              {
+                "kind": "compile_context",
+                "status": "missing"
+              },
+              {
+                "kind": "entry_or_privilege_boundary",
+                "status": "missing"
+              },
+              {
+                "kind": "attacker_control",
+                "status": "missing"
+              },
+              {
+                "kind": "sensitive_operation_reachability",
+                "status": "missing"
+              },
+              {
+                "kind": "trigger_conditions",
+                "status": "missing"
+              },
+              {
+                "kind": "cia_impact",
+                "status": "missing"
+              }
+            ]
+          }
+        ],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      }
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/positive_local_null_read.cpp",
+      "source_sha256": "99fc0c7b90413e0a40d6e6057d54bfde736c8e944d6be2088841c4e21b5a9aa1",
+      "control_origin": "existing-A-NULL-02-control",
+      "before": {
+        "coverage": "complete",
+        "run_status": "completed",
+        "findings": [
+          {
+            "line": 3,
+            "rule_id": "ohcpp-null-dereference-candidate-001",
+            "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=local_pointer_explicit_null; sink=unary_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+            "obligations": [
+              {
+                "kind": "guard_dominance",
+                "status": "unknown"
+              },
+              {
+                "kind": "cross_function_alias",
+                "status": "unknown"
+              },
+              {
+                "kind": "compile_context",
+                "status": "missing"
+              },
+              {
+                "kind": "entry_or_privilege_boundary",
+                "status": "missing"
+              },
+              {
+                "kind": "attacker_control",
+                "status": "missing"
+              },
+              {
+                "kind": "sensitive_operation_reachability",
+                "status": "missing"
+              },
+              {
+                "kind": "trigger_conditions",
+                "status": "missing"
+              },
+              {
+                "kind": "cia_impact",
+                "status": "missing"
+              }
+            ]
+          }
+        ],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      },
+      "after": {
+        "coverage": "complete",
+        "run_status": "completed",
+        "findings": [
+          {
+            "line": 3,
+            "rule_id": "ohcpp-null-dereference-candidate-001",
+            "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=local_pointer_explicit_null; sink=unary_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+            "obligations": [
+              {
+                "kind": "guard_dominance",
+                "status": "unknown"
+              },
+              {
+                "kind": "cross_function_alias",
+                "status": "unknown"
+              },
+              {
+                "kind": "compile_context",
+                "status": "missing"
+              },
+              {
+                "kind": "entry_or_privilege_boundary",
+                "status": "missing"
+              },
+              {
+                "kind": "attacker_control",
+                "status": "missing"
+              },
+              {
+                "kind": "sensitive_operation_reachability",
+                "status": "missing"
+              },
+              {
+                "kind": "trigger_conditions",
+                "status": "missing"
+              },
+              {
+                "kind": "cia_impact",
+                "status": "missing"
+              }
+            ]
+          }
+        ],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      }
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/positive_member_default_initializer.cpp",
+      "source_sha256": "e68bb3a881d5907904b5bae504465f8b5e4b00a71d8abea32a4251cd4760aeb6",
+      "control_origin": "existing-A-NULL-02-control",
+      "before": {
+        "coverage": "complete",
+        "run_status": "completed",
+        "findings": [
+          {
+            "line": 8,
+            "rule_id": "ohcpp-null-dereference-candidate-001",
+            "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=member_pointer_explicit_null; sink=member_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+            "obligations": [
+              {
+                "kind": "guard_dominance",
+                "status": "unknown"
+              },
+              {
+                "kind": "cross_function_alias",
+                "status": "unknown"
+              },
+              {
+                "kind": "compile_context",
+                "status": "missing"
+              },
+              {
+                "kind": "entry_or_privilege_boundary",
+                "status": "missing"
+              },
+              {
+                "kind": "attacker_control",
+                "status": "missing"
+              },
+              {
+                "kind": "sensitive_operation_reachability",
+                "status": "missing"
+              },
+              {
+                "kind": "trigger_conditions",
+                "status": "missing"
+              },
+              {
+                "kind": "cia_impact",
+                "status": "missing"
+              }
+            ]
+          }
+        ],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      },
+      "after": {
+        "coverage": "complete",
+        "run_status": "completed",
+        "findings": [
+          {
+            "line": 8,
+            "rule_id": "ohcpp-null-dereference-candidate-001",
+            "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=member_pointer_explicit_null; sink=member_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+            "obligations": [
+              {
+                "kind": "guard_dominance",
+                "status": "unknown"
+              },
+              {
+                "kind": "cross_function_alias",
+                "status": "unknown"
+              },
+              {
+                "kind": "compile_context",
+                "status": "missing"
+              },
+              {
+                "kind": "entry_or_privilege_boundary",
+                "status": "missing"
+              },
+              {
+                "kind": "attacker_control",
+                "status": "missing"
+              },
+              {
+                "kind": "sensitive_operation_reachability",
+                "status": "missing"
+              },
+              {
+                "kind": "trigger_conditions",
+                "status": "missing"
+              },
+              {
+                "kind": "cia_impact",
+                "status": "missing"
+              }
+            ]
+          }
+        ],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      }
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/positive_reference_alias.cpp",
+      "source_sha256": "b6c471fd21b9219438e24a571bcceddef6fdd0239fc27fd3c98c2512c8e8680d",
+      "control_origin": "existing-A-NULL-02-control",
+      "before": {
+        "coverage": "complete",
+        "run_status": "completed",
+        "findings": [
+          {
+            "line": 7,
+            "rule_id": "ohcpp-null-dereference-candidate-001",
+            "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=parameter_may_be_null; sink=member_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+            "obligations": [
+              {
+                "kind": "guard_dominance",
+                "status": "unknown"
+              },
+              {
+                "kind": "cross_function_alias",
+                "status": "unknown"
+              },
+              {
+                "kind": "compile_context",
+                "status": "missing"
+              },
+              {
+                "kind": "entry_or_privilege_boundary",
+                "status": "missing"
+              },
+              {
+                "kind": "attacker_control",
+                "status": "missing"
+              },
+              {
+                "kind": "sensitive_operation_reachability",
+                "status": "missing"
+              },
+              {
+                "kind": "trigger_conditions",
+                "status": "missing"
+              },
+              {
+                "kind": "cia_impact",
+                "status": "missing"
+              }
+            ]
+          }
+        ],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      },
+      "after": {
+        "coverage": "complete",
+        "run_status": "completed",
+        "findings": [
+          {
+            "line": 7,
+            "rule_id": "ohcpp-null-dereference-candidate-001",
+            "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=parameter_may_be_null; sink=member_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+            "obligations": [
+              {
+                "kind": "guard_dominance",
+                "status": "unknown"
+              },
+              {
+                "kind": "cross_function_alias",
+                "status": "unknown"
+              },
+              {
+                "kind": "compile_context",
+                "status": "missing"
+              },
+              {
+                "kind": "entry_or_privilege_boundary",
+                "status": "missing"
+              },
+              {
+                "kind": "attacker_control",
+                "status": "missing"
+              },
+              {
+                "kind": "sensitive_operation_reachability",
+                "status": "missing"
+              },
+              {
+                "kind": "trigger_conditions",
+                "status": "missing"
+              },
+              {
+                "kind": "cia_impact",
+                "status": "missing"
+              }
+            ]
+          }
+        ],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      }
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/positive_error_path_falls_through.cpp",
+      "source_sha256": "b71af37a8b50b0b1e7440be4f60339a48dd2decb13e5267556fa398a98dad6bc",
+      "control_origin": "existing-A-NULL-02-control",
+      "before": {
+        "coverage": "partial",
+        "run_status": "blocked",
+        "findings": [
+          {
+            "line": 10,
+            "rule_id": "ohcpp-null-dereference-candidate-001",
+            "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=parameter_may_be_null; sink=member_dereference; guard_relation=unknown; error_path=lexical_error_branch_falls_through; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+            "obligations": [
+              {
+                "kind": "guard_dominance",
+                "status": "unknown"
+              },
+              {
+                "kind": "cross_function_alias",
+                "status": "unknown"
+              },
+              {
+                "kind": "compile_context",
+                "status": "missing"
+              },
+              {
+                "kind": "entry_or_privilege_boundary",
+                "status": "missing"
+              },
+              {
+                "kind": "attacker_control",
+                "status": "missing"
+              },
+              {
+                "kind": "sensitive_operation_reachability",
+                "status": "missing"
+              },
+              {
+                "kind": "trigger_conditions",
+                "status": "missing"
+              },
+              {
+                "kind": "cia_impact",
+                "status": "missing"
+              }
+            ]
+          }
+        ],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "unknown_reason: guard_dominance_unknown_without_compile_context",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      },
+      "after": {
+        "coverage": "partial",
+        "run_status": "blocked",
+        "findings": [
+          {
+            "line": 10,
+            "rule_id": "ohcpp-null-dereference-candidate-001",
+            "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=parameter_may_be_null; sink=member_dereference; guard_relation=unknown; error_path=lexical_error_branch_falls_through; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+            "obligations": [
+              {
+                "kind": "guard_dominance",
+                "status": "unknown"
+              },
+              {
+                "kind": "cross_function_alias",
+                "status": "unknown"
+              },
+              {
+                "kind": "compile_context",
+                "status": "missing"
+              },
+              {
+                "kind": "entry_or_privilege_boundary",
+                "status": "missing"
+              },
+              {
+                "kind": "attacker_control",
+                "status": "missing"
+              },
+              {
+                "kind": "sensitive_operation_reachability",
+                "status": "missing"
+              },
+              {
+                "kind": "trigger_conditions",
+                "status": "missing"
+              },
+              {
+                "kind": "cia_impact",
+                "status": "missing"
+              }
+            ]
+          }
+        ],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "unknown_reason: guard_dominance_unknown_without_compile_context",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      }
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/positive_return_value_unknown.cpp",
+      "source_sha256": "b3a7051b771a03677f1eee497ef7af174339c3a92e5921469d30122ba810be4b",
+      "control_origin": "existing-A-NULL-02-control",
+      "before": {
+        "coverage": "partial",
+        "run_status": "blocked",
+        "findings": [
+          {
+            "line": 9,
+            "rule_id": "ohcpp-null-dereference-unknown-return-observation-001",
+            "message": "Weak observation/needs review; unknown return nullability is not a strong source: null_source=function_return_value_unknown_nullability; sink=member_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+            "obligations": [
+              {
+                "kind": "guard_dominance",
+                "status": "unknown"
+              },
+              {
+                "kind": "cross_function_alias",
+                "status": "unknown"
+              },
+              {
+                "kind": "compile_context",
+                "status": "missing"
+              },
+              {
+                "kind": "entry_or_privilege_boundary",
+                "status": "missing"
+              },
+              {
+                "kind": "attacker_control",
+                "status": "missing"
+              },
+              {
+                "kind": "sensitive_operation_reachability",
+                "status": "missing"
+              },
+              {
+                "kind": "trigger_conditions",
+                "status": "missing"
+              },
+              {
+                "kind": "cia_impact",
+                "status": "missing"
+              }
+            ]
+          }
+        ],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "unknown_reason: cross_function_alias",
+          "unknown_reason: unresolved_function_return_nullability",
+          "unknown_reason: function_return_nullability_unknown",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      },
+      "after": {
+        "coverage": "partial",
+        "run_status": "blocked",
+        "findings": [
+          {
+            "line": 9,
+            "rule_id": "ohcpp-null-dereference-unknown-return-observation-001",
+            "message": "Weak observation/needs review; unknown return nullability is not a strong source: null_source=function_return_value_unknown_nullability; sink=member_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+            "obligations": [
+              {
+                "kind": "guard_dominance",
+                "status": "unknown"
+              },
+              {
+                "kind": "cross_function_alias",
+                "status": "unknown"
+              },
+              {
+                "kind": "compile_context",
+                "status": "missing"
+              },
+              {
+                "kind": "entry_or_privilege_boundary",
+                "status": "missing"
+              },
+              {
+                "kind": "attacker_control",
+                "status": "missing"
+              },
+              {
+                "kind": "sensitive_operation_reachability",
+                "status": "missing"
+              },
+              {
+                "kind": "trigger_conditions",
+                "status": "missing"
+              },
+              {
+                "kind": "cia_impact",
+                "status": "missing"
+              }
+            ]
+          }
+        ],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "unknown_reason: cross_function_alias",
+          "unknown_reason: unresolved_function_return_nullability",
+          "unknown_reason: function_return_nullability_unknown",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      }
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/fixed_error_path_multistatement.cpp",
+      "source_sha256": "849a777e54aa8a6e0f6c869e2cf598e8c804d6aea46dc67a17c1c78a1a2bd20c",
+      "control_origin": "existing-A-NULL-02-control",
+      "before": {
+        "coverage": "partial",
+        "run_status": "blocked",
+        "findings": [],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "unknown_reason: guard_dominance_unknown_without_compile_context",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      },
+      "after": {
+        "coverage": "partial",
+        "run_status": "blocked",
+        "findings": [],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "unknown_reason: guard_dominance_unknown_without_compile_context",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      }
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/fixed_else_branch.cpp",
+      "source_sha256": "2d6c766ff519cb30a63325fac9202e2f0372cb27d212d14cd68d14848ab6b303",
+      "control_origin": "existing-A-NULL-02-control",
+      "before": {
+        "coverage": "partial",
+        "run_status": "blocked",
+        "findings": [],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "unknown_reason: guard_dominance_unknown_without_compile_context",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      },
+      "after": {
+        "coverage": "partial",
+        "run_status": "blocked",
+        "findings": [],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "unknown_reason: guard_dominance_unknown_without_compile_context",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      }
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/fixed_alias_early_return.cpp",
+      "source_sha256": "97d9f6d7c6343f221dd5046b6838da77456475267e4c7f667c6a5341fff3530a",
+      "control_origin": "existing-A-NULL-02-control",
+      "before": {
+        "coverage": "partial",
+        "run_status": "blocked",
+        "findings": [],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "unknown_reason: guard_dominance_unknown_without_compile_context",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      },
+      "after": {
+        "coverage": "partial",
+        "run_status": "blocked",
+        "findings": [],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "unknown_reason: guard_dominance_unknown_without_compile_context",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      }
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/fixed_local_rebind_nonnull.cpp",
+      "source_sha256": "7b8e30f337e78b64ec982788860cd26e07f000597dfbee88874f57999a478246",
+      "control_origin": "existing-A-NULL-02-control",
+      "before": {
+        "coverage": "complete",
+        "run_status": "completed",
+        "findings": [],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "narrow negative only: no bounded source/sink candidate matched; compile_context and product evidence remain missing; not a safe verdict.",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      },
+      "after": {
+        "coverage": "complete",
+        "run_status": "completed",
+        "findings": [],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "narrow negative only: no bounded source/sink candidate matched; compile_context and product evidence remain missing; not a safe verdict.",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      }
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/fixed_short_circuit.cpp",
+      "source_sha256": "76c5c52f25f2830cf66db94dd705fcf9a460615e360b77f508cc696452d7578f",
+      "control_origin": "existing-A-NULL-02-control",
+      "before": {
+        "coverage": "complete",
+        "run_status": "completed",
+        "findings": [],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "narrow negative only: no bounded source/sink candidate matched; compile_context and product evidence remain missing; not a safe verdict.",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      },
+      "after": {
+        "coverage": "complete",
+        "run_status": "completed",
+        "findings": [],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "narrow negative only: no bounded source/sink candidate matched; compile_context and product evidence remain missing; not a safe verdict.",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      }
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/safe_address_of_local.cpp",
+      "source_sha256": "87e74b4be4d8172a9364943ca6164acc88d301afe8d214e4413be15760ec7667",
+      "control_origin": "existing-A-NULL-02-control",
+      "before": {
+        "coverage": "complete",
+        "run_status": "completed",
+        "findings": [],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "narrow negative only: no bounded source/sink candidate matched; compile_context and product evidence remain missing; not a safe verdict.",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      },
+      "after": {
+        "coverage": "complete",
+        "run_status": "completed",
+        "findings": [],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "narrow negative only: no bounded source/sink candidate matched; compile_context and product evidence remain missing; not a safe verdict.",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      }
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/safe_guarded_alias.cpp",
+      "source_sha256": "bf37145f23c3959774492734d533847265123aca7eb5b75ea50f4980dc9c9d04",
+      "control_origin": "existing-A-NULL-02-control",
+      "before": {
+        "coverage": "partial",
+        "run_status": "blocked",
+        "findings": [],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "unknown_reason: guard_dominance_unknown_without_compile_context",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      },
+      "after": {
+        "coverage": "partial",
+        "run_status": "blocked",
+        "findings": [],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "unknown_reason: guard_dominance_unknown_without_compile_context",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      }
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/safe_reference_to_local.cpp",
+      "source_sha256": "9ec218bd094e4bf3ed7e2a5fe731d3bb2e19627bc9c96b402bd6bc7780278f60",
+      "control_origin": "existing-A-NULL-02-control",
+      "before": {
+        "coverage": "complete",
+        "run_status": "completed",
+        "findings": [],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "narrow negative only: no bounded source/sink candidate matched; compile_context and product evidence remain missing; not a safe verdict.",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      },
+      "after": {
+        "coverage": "complete",
+        "run_status": "completed",
+        "findings": [],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "narrow negative only: no bounded source/sink candidate matched; compile_context and product evidence remain missing; not a safe verdict.",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      }
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/safe_nonpointer_member.cpp",
+      "source_sha256": "eea993f367e5de5cf267d15970b50b1caa19638c6f5240d963cc2b92ce2c46fc",
+      "control_origin": "existing-A-NULL-02-control",
+      "before": {
+        "coverage": "complete",
+        "run_status": "completed",
+        "findings": [],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "narrow negative only: no bounded source/sink candidate matched; compile_context and product evidence remain missing; not a safe verdict.",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      },
+      "after": {
+        "coverage": "complete",
+        "run_status": "completed",
+        "findings": [],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "narrow negative only: no bounded source/sink candidate matched; compile_context and product evidence remain missing; not a safe verdict.",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      }
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/unrelated_null_check_without_sink.cpp",
+      "source_sha256": "9e514877c6b27648a9f779276fdc04246da0c51d2d1070345f6166eafa8c1020",
+      "control_origin": "existing-A-NULL-02-control",
+      "before": {
+        "coverage": "complete",
+        "run_status": "completed",
+        "findings": [],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "narrow negative only: no bounded source/sink candidate matched; compile_context and product evidence remain missing; not a safe verdict.",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      },
+      "after": {
+        "coverage": "complete",
+        "run_status": "completed",
+        "findings": [],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "narrow negative only: no bounded source/sink candidate matched; compile_context and product evidence remain missing; not a safe verdict.",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      }
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/unrelated_null_words.cpp",
+      "source_sha256": "8334e1a8968ad453351995209f95f554da305e3fca2dc5c41580b4172e4fd3a3",
+      "control_origin": "existing-A-NULL-02-control",
+      "before": {
+        "coverage": "complete",
+        "run_status": "completed",
+        "findings": [],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "narrow negative only: no bounded source/sink candidate matched; compile_context and product evidence remain missing; not a safe verdict.",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      },
+      "after": {
+        "coverage": "complete",
+        "run_status": "completed",
+        "findings": [],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "narrow negative only: no bounded source/sink candidate matched; compile_context and product evidence remain missing; not a safe verdict.",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      }
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/unrelated_integer_branch.cpp",
+      "source_sha256": "98897eda1ff386ec105245e5bd48684d9636242618e5bba6e3aed0a3d54ffae0",
+      "control_origin": "existing-A-NULL-02-control",
+      "before": {
+        "coverage": "complete",
+        "run_status": "completed",
+        "findings": [],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "narrow negative only: no bounded source/sink candidate matched; compile_context and product evidence remain missing; not a safe verdict.",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      },
+      "after": {
+        "coverage": "complete",
+        "run_status": "completed",
+        "findings": [],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "narrow negative only: no bounded source/sink candidate matched; compile_context and product evidence remain missing; not a safe verdict.",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      }
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/unrelated_pointer_without_deref.cpp",
+      "source_sha256": "208ccba4569dafc37809c9dcb67b2ec4cd38f05ebbe9ea7de6cb9f55df95e20e",
+      "control_origin": "existing-A-NULL-02-control",
+      "before": {
+        "coverage": "complete",
+        "run_status": "completed",
+        "findings": [],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "narrow negative only: no bounded source/sink candidate matched; compile_context and product evidence remain missing; not a safe verdict.",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      },
+      "after": {
+        "coverage": "complete",
+        "run_status": "completed",
+        "findings": [],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "narrow negative only: no bounded source/sink candidate matched; compile_context and product evidence remain missing; not a safe verdict.",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      }
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_null_boundary/cross_function_unknown_source.cpp",
+      "source_sha256": "28a9a553b761444596e4d3e789e5894ed66a63b9ea44631792d4979653dee25b",
+      "control_origin": "new-boundary-control",
+      "before": {
+        "coverage": "partial",
+        "run_status": "blocked",
+        "findings": [
+          {
+            "line": 3,
+            "rule_id": "ohcpp-null-dereference-candidate-001",
+            "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=parameter_may_be_null; sink=member_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+            "obligations": [
+              {
+                "kind": "guard_dominance",
+                "status": "unknown"
+              },
+              {
+                "kind": "cross_function_alias",
+                "status": "unknown"
+              },
+              {
+                "kind": "compile_context",
+                "status": "missing"
+              },
+              {
+                "kind": "entry_or_privilege_boundary",
+                "status": "missing"
+              },
+              {
+                "kind": "attacker_control",
+                "status": "missing"
+              },
+              {
+                "kind": "sensitive_operation_reachability",
+                "status": "missing"
+              },
+              {
+                "kind": "trigger_conditions",
+                "status": "missing"
+              },
+              {
+                "kind": "cia_impact",
+                "status": "missing"
+              }
+            ]
+          }
+        ],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "unknown_reason: cross_function_alias",
+          "unknown_reason: unresolved_function_return_nullability",
+          "unknown_reason: function_return_nullability_unknown",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      },
+      "after": {
+        "coverage": "partial",
+        "run_status": "blocked",
+        "findings": [
+          {
+            "line": 3,
+            "rule_id": "ohcpp-null-dereference-candidate-001",
+            "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=parameter_may_be_null; sink=member_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+            "obligations": [
+              {
+                "kind": "guard_dominance",
+                "status": "unknown"
+              },
+              {
+                "kind": "cross_function_alias",
+                "status": "unknown"
+              },
+              {
+                "kind": "compile_context",
+                "status": "missing"
+              },
+              {
+                "kind": "entry_or_privilege_boundary",
+                "status": "missing"
+              },
+              {
+                "kind": "attacker_control",
+                "status": "missing"
+              },
+              {
+                "kind": "sensitive_operation_reachability",
+                "status": "missing"
+              },
+              {
+                "kind": "trigger_conditions",
+                "status": "missing"
+              },
+              {
+                "kind": "cia_impact",
+                "status": "missing"
+              }
+            ]
+          }
+        ],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "unknown_reason: cross_function_alias",
+          "unknown_reason: unresolved_function_return_nullability",
+          "unknown_reason: function_return_nullability_unknown",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      }
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_null_boundary/macro_member_dereference.cpp",
+      "source_sha256": "136f74ef8d25c81789ed74c60450587c0d5635e50b815f795ff57b56b837e255",
+      "control_origin": "new-boundary-control",
+      "before": {
+        "coverage": "complete",
+        "run_status": "completed",
+        "findings": [],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "narrow negative only: no bounded source/sink candidate matched; compile_context and product evidence remain missing; not a safe verdict.",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      },
+      "after": {
+        "coverage": "partial",
+        "run_status": "blocked",
+        "findings": [
+          {
+            "line": 3,
+            "rule_id": "ohcpp-null-dereference-candidate-001",
+            "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=parameter_may_be_null; sink=macro_expanded_unary_dereference; guard_relation=unknown; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+            "obligations": [
+              {
+                "kind": "guard_dominance",
+                "status": "unknown"
+              },
+              {
+                "kind": "cross_function_alias",
+                "status": "unknown"
+              },
+              {
+                "kind": "compile_context",
+                "status": "missing"
+              },
+              {
+                "kind": "entry_or_privilege_boundary",
+                "status": "missing"
+              },
+              {
+                "kind": "attacker_control",
+                "status": "missing"
+              },
+              {
+                "kind": "sensitive_operation_reachability",
+                "status": "missing"
+              },
+              {
+                "kind": "trigger_conditions",
+                "status": "missing"
+              },
+              {
+                "kind": "cia_impact",
+                "status": "missing"
+              }
+            ]
+          }
+        ],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "unknown_reason: macro_not_expanded",
+          "unknown_reason: compile_context_missing",
+          "unknown_reason: guard_dominance_unknown_without_compile_context",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      }
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_null_boundary/template_member_dereference.cpp",
+      "source_sha256": "b0eb775c757e5f1bd1755533c396753b0519eff4fb7ac2695b67f67a188293a4",
+      "control_origin": "new-boundary-control",
+      "before": {
+        "coverage": "partial",
+        "run_status": "blocked",
+        "findings": [
+          {
+            "line": 1,
+            "rule_id": "ohcpp-null-dereference-candidate-001",
+            "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=parameter_may_be_null; sink=member_dereference; guard_relation=unknown; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+            "obligations": [
+              {
+                "kind": "guard_dominance",
+                "status": "unknown"
+              },
+              {
+                "kind": "cross_function_alias",
+                "status": "unknown"
+              },
+              {
+                "kind": "compile_context",
+                "status": "missing"
+              },
+              {
+                "kind": "entry_or_privilege_boundary",
+                "status": "missing"
+              },
+              {
+                "kind": "attacker_control",
+                "status": "missing"
+              },
+              {
+                "kind": "sensitive_operation_reachability",
+                "status": "missing"
+              },
+              {
+                "kind": "trigger_conditions",
+                "status": "missing"
+              },
+              {
+                "kind": "cia_impact",
+                "status": "missing"
+              }
+            ]
+          }
+        ],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "unknown_reason: template_instantiation_unknown",
+          "unknown_reason: type_system_unknown",
+          "unknown_reason: guard_dominance_unknown_without_compile_context",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      },
+      "after": {
+        "coverage": "partial",
+        "run_status": "blocked",
+        "findings": [
+          {
+            "line": 1,
+            "rule_id": "ohcpp-null-dereference-candidate-001",
+            "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=parameter_may_be_null; sink=member_dereference; guard_relation=unknown; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+            "obligations": [
+              {
+                "kind": "guard_dominance",
+                "status": "unknown"
+              },
+              {
+                "kind": "cross_function_alias",
+                "status": "unknown"
+              },
+              {
+                "kind": "compile_context",
+                "status": "missing"
+              },
+              {
+                "kind": "entry_or_privilege_boundary",
+                "status": "missing"
+              },
+              {
+                "kind": "attacker_control",
+                "status": "missing"
+              },
+              {
+                "kind": "sensitive_operation_reachability",
+                "status": "missing"
+              },
+              {
+                "kind": "trigger_conditions",
+                "status": "missing"
+              },
+              {
+                "kind": "cia_impact",
+                "status": "missing"
+              }
+            ]
+          }
+        ],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "unknown_reason: template_instantiation_unknown",
+          "unknown_reason: type_system_unknown",
+          "unknown_reason: guard_dominance_unknown_without_compile_context",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ]
+      }
+    }
+  ]
+}

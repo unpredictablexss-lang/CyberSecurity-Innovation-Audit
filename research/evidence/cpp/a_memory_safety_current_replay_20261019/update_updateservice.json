@@ -1,0 +1,2492 @@
+{
+  "schema_version": 1,
+  "experiment_kind": "a_memory_safety_pinned_component_scan",
+  "status": "completed_with_limitations",
+  "component": "update_updateservice",
+  "repository": "openharmony/update_updateservice",
+  "source_repo_path": "D:\\openHarmonyScanner\\tmp\\a-null-pinned-component-sources\\update_updateservice.git",
+  "commit": "e4942a33cc5ed29040e5c720bea3b2a8e4a79221",
+  "git_tree": "b367991eed0272f54fe5ae712d18e24377d57949",
+  "snapshot_sha256": "3eac699e183d0c08368ce18374ba039fbf4a165cb6f9ac56e43f65a9a774c6c3",
+  "profile_id": "light-ast",
+  "provenance": "local_pinned_git_objects",
+  "source_acquisition": {
+    "remote_url": "https://github.com/openharmony/update_updateservice.git",
+    "fetch_ref": "HEAD",
+    "verified_commit": "e4942a33cc5ed29040e5c720bea3b2a8e4a79221",
+    "verified_tree": "b367991eed0272f54fe5ae712d18e24377d57949",
+    "storage": "temporary bare Git repository"
+  },
+  "original_manifest_source_repo_path": "E:\\网安\\audit-sources-20261014\\home\\audit\\openharmony-audit\\perf-corpus\\update_updateservice",
+  "scope_manifest_sha256": "97ae10ebf0c3727c9fb3e3ee1d4431c551713f70bed4740c8280202c179cad38",
+  "scope": {
+    "tracked_entries": 289,
+    "out_of_scope": 70,
+    "non_source": 0,
+    "symlinks": 0,
+    "submodules": 0,
+    "oversize": 0,
+    "binary_or_non_utf8": 0,
+    "selected_source_files": 219,
+    "selected_source_bytes": 851345,
+    "skipped": [],
+    "git_tree": "b367991eed0272f54fe5ae712d18e24377d57949",
+    "declared_scope": [
+      "frameworks/js/napi/base/include/client_define.h",
+      "frameworks/js/napi/base/include/client_helper.h",
+      "frameworks/js/napi/base/include/define_property.h",
+      "frameworks/js/napi/base/include/iupdater.h",
+      "frameworks/js/napi/base/include/napi_util.h",
+      "frameworks/js/napi/base/include/session_manager.h",
+      "frameworks/js/napi/base/src/client_helper.cpp",
+      "frameworks/js/napi/base/src/define_property.cpp",
+      "frameworks/js/napi/base/src/iupdater.cpp",
+      "frameworks/js/napi/base/src/napi_util.cpp",
+      "frameworks/js/napi/base/src/session_manager.cpp",
+      "frameworks/js/napi/client/iupdate_session.h",
+      "frameworks/js/napi/client/local_updater.cpp",
+      "frameworks/js/napi/client/local_updater.h",
+      "frameworks/js/napi/client/restorer.cpp",
+      "frameworks/js/napi/client/restorer.h",
+      "frameworks/js/napi/client/update_client.cpp",
+      "frameworks/js/napi/client/update_client.h",
+      "frameworks/js/napi/client/update_module.cpp",
+      "frameworks/js/napi/client/update_session.cpp",
+      "frameworks/js/napi/client/update_session.h",
+      "interfaces/inner_api/engine/update_service_kits_impl.cpp",
+      "interfaces/inner_api/engine/update_service_ondemand.cpp",
+      "interfaces/inner_api/engine/update_service_proxy.cpp",
+      "interfaces/inner_api/include/iservice_local_updater.h",
+      "interfaces/inner_api/include/iservice_online_updater.h",
+      "interfaces/inner_api/include/iservice_restorer.h",
+      "interfaces/inner_api/include/iupdate_callback.h",
+      "interfaces/inner_api/include/iupdate_service.h",
+      "interfaces/inner_api/include/json_builder.h",
+      "interfaces/inner_api/include/message_parcel_helper.h",
+      "interfaces/inner_api/include/update_constant.h",
+      "interfaces/inner_api/include/update_helper.h",
+      "interfaces/inner_api/include/update_service_kits.h",
+      "interfaces/inner_api/include/update_service_kits_impl.h",
+      "interfaces/inner_api/include/update_service_ondemand.h",
+      "interfaces/inner_api/include/update_system_event.h",
+      "interfaces/inner_api/include/updater_sa_ipc_interface_code.h",
+      "interfaces/kits/js/declaration/@ohos.update.d.ts",
+      "services/callback/include/update_callback.h",
+      "services/callback/include/update_callback_proxy.h",
+      "services/callback/include/update_callback_stub.h",
+      "services/callback/src/update_callback.cpp",
+      "services/callback/src/update_callback_proxy.cpp",
+      "services/callback/src/update_callback_stub.cpp",
+      "services/core/ability/adapter/include/config_parse.h",
+      "services/core/ability/adapter/include/device_adapter.h",
+      "services/core/ability/adapter/src/config_parse.cpp",
+      "services/core/ability/adapter/src/device_adapter.cpp",
+      "services/core/ability/alarm/include/alarm_helper.h",
+      "services/core/ability/alarm/include/alarm_manager.h",
+      "services/core/ability/alarm/include/timer_manager.h",
+      "services/core/ability/alarm/src/alarm_manager.cpp",
+      "services/core/ability/alarm/src/timer_manager.cpp",
+      "services/core/ability/callback/include/base_callback_utils.h",
+      "services/core/ability/callback/src/base_callback_utils.cpp",
+      "services/core/ability/callback/src/base_callback_utils_empty.cpp",
+      "services/core/ability/common/include/constant.h",
+      "services/core/ability/define/include/update_define.h",
+      "services/core/ability/download/data/include/download_info.h",
+      "services/core/ability/log/include/update_log.h",
+      "services/core/ability/log/src/update_log.cpp",
+      "services/core/ability/model/include/device_info.h",
+      "services/core/ability/net/include/network_response.h",
+      "services/core/ability/preference/include/preferences_utils.h",
+      "services/core/ability/preference/src/preference_utils.cpp",
+      "services/core/ability/preference/src/preference_utils_empty.cpp",
+      "services/core/ability/sqlite/core/include/idatabase.h",
+      "services/core/ability/sqlite/core/include/itable.h",
+      "services/core/ability/sqlite/core/include/itable_operator.h",
+      "services/core/ability/sqlite/core/include/sqlite_db.h",
+      "services/core/ability/sqlite/core/include/table_base_operator.h",
+      "services/core/ability/sqlite/core/src/sqlite_db.cpp",
+      "services/core/ability/status_cache/include/status_cache.h",
+      "services/core/ability/status_cache/src/status_cache.cpp",
+      "services/core/ability/utils/include/encrypt_utils.h",
+      "services/core/ability/utils/include/file_utils.h",
+      "services/core/ability/utils/include/json_utils.h",
+      "services/core/ability/utils/include/sha256_utils.h",
+      "services/core/ability/utils/include/string_utils.h",
+      "services/core/ability/utils/include/time_utils.h",
+      "services/core/ability/utils/include/time_utils_proxy.h",
+      "services/core/ability/utils/src/file_utils.cpp",
+      "services/core/ability/utils/src/sha256_utils.cpp",
+      "services/core/ability/utils/src/time_utils_proxy.cpp",
+      "services/engine/include/progress_thread.h",
+      "services/engine/include/update_no_constructor.h",
+      "services/engine/include/update_notify.h",
+      "services/engine/include/update_service.h",
+      "services/engine/include/update_service_cache.h",
+      "services/engine/include/update_service_impl_firmware.h",
+      "services/engine/include/update_service_impl_manager.h",
+      "services/engine/include/update_service_local_updater.h",
+      "services/engine/include/update_service_proxy.h",
+      "services/engine/include/update_service_restorer.h",
+      "services/engine/include/update_service_stub.h",
+      "services/engine/include/update_service_util.h",
+      "services/engine/src/message_parcel_helper.cpp",
+      "services/engine/src/progress_thread.cpp",
+      "services/engine/src/update_helper.cpp",
+      "services/engine/src/update_notify.cpp",
+      "services/engine/src/update_service.cpp",
+      "services/engine/src/update_service_cache.cpp",
+      "services/engine/src/update_service_impl_firmware.cpp",
+      "services/engine/src/update_service_impl_manager.cpp",
+      "services/engine/src/update_service_local_updater.cpp",
+      "services/engine/src/update_service_restorer.cpp",
+      "services/engine/src/update_service_stub.cpp",
+      "services/engine/src/update_service_util_hmos.cpp",
+      "services/firmware/callback/include/firmware_callback_utils.h",
+      "services/firmware/callback/src/firmware_callback_utils.cpp",
+      "services/firmware/check/include/firmware_icheck.h",
+      "services/firmware/common/include/firmware_common.h",
+      "services/firmware/common/include/firmware_constant.h",
+      "services/firmware/common/include/firmware_update_adapter.h",
+      "services/firmware/common/include/firmware_update_helper.h",
+      "services/firmware/common/src/firmware_update_adapter.cpp",
+      "services/firmware/common/src/firmware_update_helper.cpp",
+      "services/firmware/data/db/include/firmware_component.h",
+      "services/firmware/data/db/include/firmware_component_operator.h",
+      "services/firmware/data/db/include/firmware_component_table.h",
+      "services/firmware/data/db/include/firmware_database.h",
+      "services/firmware/data/db/include/firmware_database_callback.h",
+      "services/firmware/data/db/include/firmware_task.h",
+      "services/firmware/data/db/include/firmware_task_operator.h",
+      "services/firmware/data/db/include/firmware_task_table.h",
+      "services/firmware/data/db/src/firmware_component_operator.cpp",
+      "services/firmware/data/db/src/firmware_component_operator_empty.cpp",
+      "services/firmware/data/db/src/firmware_component_table.cpp",
+      "services/firmware/data/db/src/firmware_component_table_empty.cpp",
+      "services/firmware/data/db/src/firmware_database.cpp",
+      "services/firmware/data/db/src/firmware_database_callback.cpp",
+      "services/firmware/data/db/src/firmware_database_empty.cpp",
+      "services/firmware/data/db/src/firmware_task_operator.cpp",
+      "services/firmware/data/db/src/firmware_task_operator_empty.cpp",
+      "services/firmware/data/db/src/firmware_task_table.cpp",
+      "services/firmware/data/db/src/firmware_task_table_empty.cpp",
+      "services/firmware/data/manager/include/firmware_preferences_utils.h",
+      "services/firmware/data/manager/src/firmware_preferences_utils.cpp",
+      "services/firmware/event/include/firmware_event_listener.h",
+      "services/firmware/event/src/firmware_event_listener.cpp",
+      "services/firmware/upgrade/data_processor/include/firmware_check_data_processor.h",
+      "services/firmware/upgrade/data_processor/include/firmware_download_data_processor.h",
+      "services/firmware/upgrade/data_processor/include/firmware_install_data_processor.h",
+      "services/firmware/upgrade/data_processor/src/firmware_check_data_processor.cpp",
+      "services/firmware/upgrade/data_processor/src/firmware_download_data_processor.cpp",
+      "services/firmware/upgrade/data_processor/src/firmware_install_data_processor.cpp",
+      "services/firmware/upgrade/executor/include/firmware_apply_executor.h",
+      "services/firmware/upgrade/executor/include/firmware_check_executor.h",
+      "services/firmware/upgrade/executor/include/firmware_download_executor.h",
+      "services/firmware/upgrade/executor/include/firmware_iexecutor.h",
+      "services/firmware/upgrade/executor/include/firmware_install_executor.h",
+      "services/firmware/upgrade/executor/src/firmware_apply_executor.cpp",
+      "services/firmware/upgrade/executor/src/firmware_check_executor.cpp",
+      "services/firmware/upgrade/executor/src/firmware_download_executor.cpp",
+      "services/firmware/upgrade/executor/src/firmware_install_executor.cpp",
+      "services/firmware/upgrade/flow/include/firmware_flow_manager.h",
+      "services/firmware/upgrade/flow/include/firmware_manager.h",
+      "services/firmware/upgrade/flow/src/firmware_flow_manager.cpp",
+      "services/firmware/upgrade/flow/src/firmware_manager.cpp",
+      "services/firmware/upgrade/install/include/firmware_install.h",
+      "services/firmware/upgrade/install/include/firmware_install_factory.h",
+      "services/firmware/upgrade/install/include/firmware_sys_installer_callback.h",
+      "services/firmware/upgrade/install/include/firmware_sys_installer_install.h",
+      "services/firmware/upgrade/install/include/firmware_updater_install.h",
+      "services/firmware/upgrade/install/src/firmware_install.cpp",
+      "services/firmware/upgrade/install/src/firmware_install_factory.cpp",
+      "services/firmware/upgrade/install/src/firmware_sys_installer_callback.cpp",
+      "services/firmware/upgrade/install/src/firmware_sys_installer_install.cpp",
+      "services/firmware/upgrade/install/src/firmware_updater_install.cpp",
+      "services/firmware/upgrade/mode/include/firmware_download_mode.h",
+      "services/firmware/upgrade/mode/include/firmware_iexecute_mode.h",
+      "services/firmware/upgrade/mode/include/firmware_install_apply_mode.h",
+      "services/firmware/upgrade/mode/include/firmware_manual_check_mode.h",
+      "services/firmware/upgrade/mode/src/firmware_download_mode.cpp",
+      "services/firmware/upgrade/mode/src/firmware_install_apply_mode.cpp",
+      "services/firmware/upgrade/mode/src/firmware_manual_check_mode.cpp",
+      "services/firmware/upgrade/status/include/firmware_result_process.h",
+      "services/firmware/upgrade/status/include/firmware_status_cache.h",
+      "services/firmware/upgrade/status/src/firmware_result_process.cpp",
+      "services/firmware/upgrade/status/src/firmware_status_cache.cpp",
+      "services/firmware/utils/include/firmware_changelog_utils.h",
+      "services/firmware/utils/include/firmware_check_analyze_utils.h",
+      "services/firmware/utils/include/firmware_combine_version_utils.h",
+      "services/firmware/utils/include/firmware_file_utils.h",
+      "services/firmware/utils/include/firmware_log.h",
+      "services/firmware/utils/src/firmware_changelog_utils.cpp",
+      "services/firmware/utils/src/firmware_check_analyze_utils.cpp",
+      "services/firmware/utils/src/firmware_combine_version_utils.cpp",
+      "services/service/include/dupdate_errno.h",
+      "services/service/include/dupdate_log.h",
+      "services/service/include/dupdate_upgrade_helper.h",
+      "services/startup/access/include/access_factory.h",
+      "services/startup/access/include/access_manager.h",
+      "services/startup/access/include/default_access.h",
+      "services/startup/access/include/firmware_access.h",
+      "services/startup/access/include/i_access.h",
+      "services/startup/access/src/access_factory.cpp",
+      "services/startup/access/src/access_manager.cpp",
+      "services/startup/access/src/default_access.cpp",
+      "services/startup/access/src/firmware_access.cpp",
+      "services/startup/manage/include/schedule_config.h",
+      "services/startup/manage/include/schedule_manager.h",
+      "services/startup/manage/include/startup_manager.h",
+      "services/startup/manage/include/startup_schedule.h",
+      "services/startup/manage/src/schedule_config.cpp",
+      "services/startup/manage/src/schedule_manager.cpp",
+      "services/startup/manage/src/startup_manager.cpp",
+      "services/startup/manage/src/startup_schedule.cpp",
+      "services/startup/model/include/schedule_task.h",
+      "services/startup/model/include/startup_constant.h",
+      "services/utils/include/dupdate_inet_observer.h",
+      "services/utils/include/dupdate_net_manager.h",
+      "services/utils/include/dupdate_net_observer.h",
+      "services/utils/include/dupdate_timer.h",
+      "services/utils/src/dupdate_net_manager.cpp",
+      "services/utils/src/dupdate_net_manager_empty.cpp",
+      "services/utils/src/dupdate_net_observer.cpp",
+      "services/utils/src/dupdate_timer.c"
+    ]
+  },
+  "coverage": {
+    "parsing_status": {
+      "complete": 187,
+      "not_run": 1,
+      "partial": 31
+    },
+    "languages": {
+      "c": 1,
+      "cpp": 217,
+      "ts": 1
+    }
+  },
+  "detector_runs": [
+    {
+      "detector_id": "ohscanner.cpp.bounds",
+      "version": "0.2.0",
+      "status": "blocked",
+      "analyzed_files": [
+        "frameworks/js/napi/base/include/client_define.h",
+        "frameworks/js/napi/base/include/client_helper.h",
+        "frameworks/js/napi/base/include/define_property.h",
+        "frameworks/js/napi/base/include/iupdater.h",
+        "frameworks/js/napi/base/include/napi_util.h",
+        "frameworks/js/napi/base/include/session_manager.h",
+        "frameworks/js/napi/base/src/define_property.cpp",
+        "frameworks/js/napi/client/iupdate_session.h",
+        "frameworks/js/napi/client/local_updater.h",
+        "frameworks/js/napi/client/restorer.h",
+        "frameworks/js/napi/client/update_client.h",
+        "frameworks/js/napi/client/update_session.h",
+        "interfaces/inner_api/engine/update_service_ondemand.cpp",
+        "interfaces/inner_api/include/iservice_local_updater.h",
+        "interfaces/inner_api/include/iservice_online_updater.h",
+        "interfaces/inner_api/include/iservice_restorer.h",
+        "interfaces/inner_api/include/json_builder.h",
+        "interfaces/inner_api/include/message_parcel_helper.h",
+        "interfaces/inner_api/include/update_constant.h",
+        "interfaces/inner_api/include/update_helper.h",
+        "interfaces/inner_api/include/update_service_kits.h",
+        "interfaces/inner_api/include/update_service_kits_impl.h",
+        "interfaces/inner_api/include/update_service_ondemand.h",
+        "interfaces/inner_api/include/update_system_event.h",
+        "interfaces/inner_api/include/updater_sa_ipc_interface_code.h",
+        "services/callback/include/update_callback.h",
+        "services/callback/include/update_callback_proxy.h",
+        "services/callback/include/update_callback_stub.h",
+        "services/callback/src/update_callback.cpp",
+        "services/callback/src/update_callback_proxy.cpp",
+        "services/callback/src/update_callback_stub.cpp",
+        "services/core/ability/adapter/include/config_parse.h",
+        "services/core/ability/adapter/include/device_adapter.h",
+        "services/core/ability/adapter/src/config_parse.cpp",
+        "services/core/ability/adapter/src/device_adapter.cpp",
+        "services/core/ability/alarm/include/alarm_helper.h",
+        "services/core/ability/alarm/include/alarm_manager.h",
+        "services/core/ability/alarm/include/timer_manager.h",
+        "services/core/ability/alarm/src/alarm_manager.cpp",
+        "services/core/ability/alarm/src/timer_manager.cpp",
+        "services/core/ability/callback/src/base_callback_utils.cpp",
+        "services/core/ability/callback/src/base_callback_utils_empty.cpp",
+        "services/core/ability/common/include/constant.h",
+        "services/core/ability/define/include/update_define.h",
+        "services/core/ability/download/data/include/download_info.h",
+        "services/core/ability/log/include/update_log.h",
+        "services/core/ability/log/src/update_log.cpp",
+        "services/core/ability/model/include/device_info.h",
+        "services/core/ability/net/include/network_response.h",
+        "services/core/ability/preference/include/preferences_utils.h",
+        "services/core/ability/preference/src/preference_utils.cpp",
+        "services/core/ability/preference/src/preference_utils_empty.cpp",
+        "services/core/ability/sqlite/core/include/idatabase.h",
+        "services/core/ability/sqlite/core/include/itable.h",
+        "services/core/ability/sqlite/core/include/itable_operator.h",
+        "services/core/ability/sqlite/core/include/sqlite_db.h",
+        "services/core/ability/status_cache/include/status_cache.h",
+        "services/core/ability/status_cache/src/status_cache.cpp",
+        "services/core/ability/utils/include/encrypt_utils.h",
+        "services/core/ability/utils/include/file_utils.h",
+        "services/core/ability/utils/include/json_utils.h",
+        "services/core/ability/utils/include/sha256_utils.h",
+        "services/core/ability/utils/include/string_utils.h",
+        "services/core/ability/utils/include/time_utils.h",
+        "services/core/ability/utils/include/time_utils_proxy.h",
+        "services/core/ability/utils/src/sha256_utils.cpp",
+        "services/core/ability/utils/src/time_utils_proxy.cpp",
+        "services/engine/include/progress_thread.h",
+        "services/engine/include/update_no_constructor.h",
+        "services/engine/include/update_service.h",
+        "services/engine/include/update_service_cache.h",
+        "services/engine/include/update_service_impl_firmware.h",
+        "services/engine/include/update_service_impl_manager.h",
+        "services/engine/include/update_service_local_updater.h",
+        "services/engine/include/update_service_proxy.h",
+        "services/engine/include/update_service_restorer.h",
+        "services/engine/include/update_service_util.h",
+        "services/engine/src/message_parcel_helper.cpp",
+        "services/engine/src/update_helper.cpp",
+        "services/engine/src/update_notify.cpp",
+        "services/engine/src/update_service_cache.cpp",
+        "services/engine/src/update_service_impl_firmware.cpp",
+        "services/engine/src/update_service_impl_manager.cpp",
+        "services/engine/src/update_service_local_updater.cpp",
+        "services/engine/src/update_service_restorer.cpp",
+        "services/engine/src/update_service_util_hmos.cpp",
+        "services/firmware/callback/include/firmware_callback_utils.h",
+        "services/firmware/callback/src/firmware_callback_utils.cpp",
+        "services/firmware/common/include/firmware_common.h",
+        "services/firmware/common/include/firmware_constant.h",
+        "services/firmware/common/include/firmware_update_adapter.h",
+        "services/firmware/common/include/firmware_update_helper.h",
+        "services/firmware/common/src/firmware_update_adapter.cpp",
+        "services/firmware/common/src/firmware_update_helper.cpp",
+        "services/firmware/data/db/include/firmware_component.h",
+        "services/firmware/data/db/include/firmware_task.h",
+        "services/firmware/data/db/src/firmware_component_operator.cpp",
+        "services/firmware/data/db/src/firmware_component_operator_empty.cpp",
+        "services/firmware/data/db/src/firmware_component_table.cpp",
+        "services/firmware/data/db/src/firmware_component_table_empty.cpp",
+        "services/firmware/data/db/src/firmware_database.cpp",
+        "services/firmware/data/db/src/firmware_database_callback.cpp",
+        "services/firmware/data/db/src/firmware_database_empty.cpp",
+        "services/firmware/data/db/src/firmware_task_operator.cpp",
+        "services/firmware/data/db/src/firmware_task_operator_empty.cpp",
+        "services/firmware/data/db/src/firmware_task_table.cpp",
+        "services/firmware/data/db/src/firmware_task_table_empty.cpp",
+        "services/firmware/data/manager/include/firmware_preferences_utils.h",
+        "services/firmware/data/manager/src/firmware_preferences_utils.cpp",
+        "services/firmware/event/include/firmware_event_listener.h",
+        "services/firmware/event/src/firmware_event_listener.cpp",
+        "services/firmware/upgrade/data_processor/include/firmware_check_data_processor.h",
+        "services/firmware/upgrade/data_processor/include/firmware_download_data_processor.h",
+        "services/firmware/upgrade/data_processor/include/firmware_install_data_processor.h",
+        "services/firmware/upgrade/data_processor/src/firmware_check_data_processor.cpp",
+        "services/firmware/upgrade/data_processor/src/firmware_download_data_processor.cpp",
+        "services/firmware/upgrade/data_processor/src/firmware_install_data_processor.cpp",
+        "services/firmware/upgrade/executor/include/firmware_apply_executor.h",
+        "services/firmware/upgrade/executor/include/firmware_check_executor.h",
+        "services/firmware/upgrade/executor/include/firmware_download_executor.h",
+        "services/firmware/upgrade/executor/include/firmware_iexecutor.h",
+        "services/firmware/upgrade/executor/include/firmware_install_executor.h",
+        "services/firmware/upgrade/executor/src/firmware_apply_executor.cpp",
+        "services/firmware/upgrade/executor/src/firmware_check_executor.cpp",
+        "services/firmware/upgrade/executor/src/firmware_download_executor.cpp",
+        "services/firmware/upgrade/executor/src/firmware_install_executor.cpp",
+        "services/firmware/upgrade/flow/include/firmware_flow_manager.h",
+        "services/firmware/upgrade/flow/include/firmware_manager.h",
+        "services/firmware/upgrade/flow/src/firmware_flow_manager.cpp",
+        "services/firmware/upgrade/flow/src/firmware_manager.cpp",
+        "services/firmware/upgrade/install/include/firmware_install.h",
+        "services/firmware/upgrade/install/include/firmware_install_factory.h",
+        "services/firmware/upgrade/install/include/firmware_sys_installer_callback.h",
+        "services/firmware/upgrade/install/include/firmware_sys_installer_install.h",
+        "services/firmware/upgrade/install/include/firmware_updater_install.h",
+        "services/firmware/upgrade/install/src/firmware_install.cpp",
+        "services/firmware/upgrade/install/src/firmware_install_factory.cpp",
+        "services/firmware/upgrade/install/src/firmware_sys_installer_callback.cpp",
+        "services/firmware/upgrade/install/src/firmware_sys_installer_install.cpp",
+        "services/firmware/upgrade/install/src/firmware_updater_install.cpp",
+        "services/firmware/upgrade/mode/include/firmware_download_mode.h",
+        "services/firmware/upgrade/mode/include/firmware_iexecute_mode.h",
+        "services/firmware/upgrade/mode/include/firmware_install_apply_mode.h",
+        "services/firmware/upgrade/mode/include/firmware_manual_check_mode.h",
+        "services/firmware/upgrade/mode/src/firmware_download_mode.cpp",
+        "services/firmware/upgrade/mode/src/firmware_install_apply_mode.cpp",
+        "services/firmware/upgrade/mode/src/firmware_manual_check_mode.cpp",
+        "services/firmware/upgrade/status/include/firmware_result_process.h",
+        "services/firmware/upgrade/status/include/firmware_status_cache.h",
+        "services/firmware/upgrade/status/src/firmware_result_process.cpp",
+        "services/firmware/upgrade/status/src/firmware_status_cache.cpp",
+        "services/firmware/utils/include/firmware_changelog_utils.h",
+        "services/firmware/utils/include/firmware_check_analyze_utils.h",
+        "services/firmware/utils/include/firmware_combine_version_utils.h",
+        "services/firmware/utils/include/firmware_file_utils.h",
+        "services/firmware/utils/include/firmware_log.h",
+        "services/firmware/utils/src/firmware_changelog_utils.cpp",
+        "services/firmware/utils/src/firmware_check_analyze_utils.cpp",
+        "services/firmware/utils/src/firmware_combine_version_utils.cpp",
+        "services/service/include/dupdate_log.h",
+        "services/service/include/dupdate_upgrade_helper.h",
+        "services/startup/access/include/access_factory.h",
+        "services/startup/access/include/access_manager.h",
+        "services/startup/access/include/default_access.h",
+        "services/startup/access/include/firmware_access.h",
+        "services/startup/access/include/i_access.h",
+        "services/startup/access/src/access_factory.cpp",
+        "services/startup/access/src/access_manager.cpp",
+        "services/startup/access/src/default_access.cpp",
+        "services/startup/access/src/firmware_access.cpp",
+        "services/startup/manage/include/schedule_config.h",
+        "services/startup/manage/include/schedule_manager.h",
+        "services/startup/manage/include/startup_manager.h",
+        "services/startup/manage/include/startup_schedule.h",
+        "services/startup/manage/src/schedule_config.cpp",
+        "services/startup/manage/src/schedule_manager.cpp",
+        "services/startup/manage/src/startup_manager.cpp",
+        "services/startup/manage/src/startup_schedule.cpp",
+        "services/startup/model/include/schedule_task.h",
+        "services/startup/model/include/startup_constant.h",
+        "services/utils/include/dupdate_inet_observer.h",
+        "services/utils/include/dupdate_net_manager.h",
+        "services/utils/include/dupdate_net_observer.h",
+        "services/utils/src/dupdate_net_manager.cpp",
+        "services/utils/src/dupdate_net_manager_empty.cpp",
+        "services/utils/src/dupdate_net_observer.cpp",
+        "services/utils/src/dupdate_timer.c"
+      ],
+      "findings": [],
+      "limitations": [
+        "Absence of a finding is not a safe verdict; partial/failed source is unknown, not a miss.",
+        "Candidate only: lexical array/copy facts do not prove exploitability or a product vulnerability.",
+        "Pointer capacities, aliases, wrappers, interprocedural lengths, macros, template instantiation and full C++ CFG semantics remain unknown unless explicitly modeled.",
+        "frameworks/js/napi/base/src/client_helper.cpp: parse_status=partial; bounds coverage remains unknown.",
+        "frameworks/js/napi/base/src/iupdater.cpp: parse_status=partial; bounds coverage remains unknown.",
+        "frameworks/js/napi/base/src/napi_util.cpp: parse_status=partial; bounds coverage remains unknown.",
+        "frameworks/js/napi/base/src/session_manager.cpp: parse_status=partial; bounds coverage remains unknown.",
+        "frameworks/js/napi/client/local_updater.cpp: parse_status=partial; bounds coverage remains unknown.",
+        "frameworks/js/napi/client/restorer.cpp: parse_status=partial; bounds coverage remains unknown.",
+        "frameworks/js/napi/client/update_client.cpp: parse_status=partial; bounds coverage remains unknown.",
+        "frameworks/js/napi/client/update_module.cpp: parse_status=partial; bounds coverage remains unknown.",
+        "frameworks/js/napi/client/update_session.cpp: parse_status=partial; bounds coverage remains unknown.",
+        "interfaces/inner_api/engine/update_service_kits_impl.cpp: parse_status=partial; bounds coverage remains unknown.",
+        "interfaces/inner_api/engine/update_service_proxy.cpp: parse_status=partial; bounds coverage remains unknown.",
+        "interfaces/inner_api/include/iupdate_callback.h: parse_status=partial; bounds coverage remains unknown.",
+        "interfaces/inner_api/include/iupdate_service.h: parse_status=partial; bounds coverage remains unknown.",
+        "services/core/ability/callback/include/base_callback_utils.h: parse_status=partial; bounds coverage remains unknown.",
+        "services/core/ability/sqlite/core/include/table_base_operator.h: parse_status=partial; bounds coverage remains unknown.",
+        "services/core/ability/sqlite/core/src/sqlite_db.cpp: parse_status=partial; bounds coverage remains unknown.",
+        "services/core/ability/utils/src/file_utils.cpp: parse_status=partial; bounds coverage remains unknown.",
+        "services/engine/include/update_notify.h: parse_status=partial; bounds coverage remains unknown.",
+        "services/engine/include/update_service_stub.h: parse_status=partial; bounds coverage remains unknown.",
+        "services/engine/src/progress_thread.cpp: parse_status=partial; bounds coverage remains unknown.",
+        "services/engine/src/update_service.cpp: parse_status=partial; bounds coverage remains unknown.",
+        "services/engine/src/update_service_stub.cpp: parse_status=partial; bounds coverage remains unknown.",
+        "services/firmware/check/include/firmware_icheck.h: parse_status=partial; bounds coverage remains unknown.",
+        "services/firmware/data/db/include/firmware_component_operator.h: parse_status=partial; bounds coverage remains unknown.",
+        "services/firmware/data/db/include/firmware_component_table.h: parse_status=partial; bounds coverage remains unknown.",
+        "services/firmware/data/db/include/firmware_database.h: parse_status=partial; bounds coverage remains unknown.",
+        "services/firmware/data/db/include/firmware_database_callback.h: parse_status=partial; bounds coverage remains unknown.",
+        "services/firmware/data/db/include/firmware_task_operator.h: parse_status=partial; bounds coverage remains unknown.",
+        "services/firmware/data/db/include/firmware_task_table.h: parse_status=partial; bounds coverage remains unknown.",
+        "services/service/include/dupdate_errno.h: parse_status=partial; bounds coverage remains unknown.",
+        "services/utils/include/dupdate_timer.h: parse_status=partial; bounds coverage remains unknown."
+      ],
+      "file_outcomes": []
+    },
+    {
+      "detector_id": "ohscanner.cpp.integer_bounds",
+      "version": "0.2.0",
+      "status": "blocked",
+      "analyzed_files": [
+        "frameworks/js/napi/base/include/client_define.h",
+        "frameworks/js/napi/base/include/client_helper.h",
+        "frameworks/js/napi/base/include/define_property.h",
+        "frameworks/js/napi/base/include/iupdater.h",
+        "frameworks/js/napi/base/include/napi_util.h",
+        "frameworks/js/napi/base/include/session_manager.h",
+        "frameworks/js/napi/base/src/define_property.cpp",
+        "frameworks/js/napi/client/iupdate_session.h",
+        "frameworks/js/napi/client/local_updater.h",
+        "frameworks/js/napi/client/restorer.h",
+        "frameworks/js/napi/client/update_client.h",
+        "frameworks/js/napi/client/update_session.h",
+        "interfaces/inner_api/engine/update_service_ondemand.cpp",
+        "interfaces/inner_api/include/iservice_local_updater.h",
+        "interfaces/inner_api/include/iservice_online_updater.h",
+        "interfaces/inner_api/include/iservice_restorer.h",
+        "interfaces/inner_api/include/json_builder.h",
+        "interfaces/inner_api/include/message_parcel_helper.h",
+        "interfaces/inner_api/include/update_constant.h",
+        "interfaces/inner_api/include/update_helper.h",
+        "interfaces/inner_api/include/update_service_kits.h",
+        "interfaces/inner_api/include/update_service_kits_impl.h",
+        "interfaces/inner_api/include/update_service_ondemand.h",
+        "interfaces/inner_api/include/update_system_event.h",
+        "interfaces/inner_api/include/updater_sa_ipc_interface_code.h",
+        "services/callback/include/update_callback.h",
+        "services/callback/include/update_callback_proxy.h",
+        "services/callback/include/update_callback_stub.h",
+        "services/callback/src/update_callback.cpp",
+        "services/callback/src/update_callback_proxy.cpp",
+        "services/callback/src/update_callback_stub.cpp",
+        "services/core/ability/adapter/include/config_parse.h",
+        "services/core/ability/adapter/include/device_adapter.h",
+        "services/core/ability/adapter/src/config_parse.cpp",
+        "services/core/ability/adapter/src/device_adapter.cpp",
+        "services/core/ability/alarm/include/alarm_helper.h",
+        "services/core/ability/alarm/include/alarm_manager.h",
+        "services/core/ability/alarm/include/timer_manager.h",
+        "services/core/ability/alarm/src/alarm_manager.cpp",
+        "services/core/ability/alarm/src/timer_manager.cpp",
+        "services/core/ability/callback/src/base_callback_utils.cpp",
+        "services/core/ability/callback/src/base_callback_utils_empty.cpp",
+        "services/core/ability/common/include/constant.h",
+        "services/core/ability/define/include/update_define.h",
+        "services/core/ability/download/data/include/download_info.h",
+        "services/core/ability/log/include/update_log.h",
+        "services/core/ability/log/src/update_log.cpp",
+        "services/core/ability/model/include/device_info.h",
+        "services/core/ability/net/include/network_response.h",
+        "services/core/ability/preference/include/preferences_utils.h",
+        "services/core/ability/preference/src/preference_utils.cpp",
+        "services/core/ability/preference/src/preference_utils_empty.cpp",
+        "services/core/ability/sqlite/core/include/idatabase.h",
+        "services/core/ability/sqlite/core/include/itable.h",
+        "services/core/ability/sqlite/core/include/itable_operator.h",
+        "services/core/ability/sqlite/core/include/sqlite_db.h",
+        "services/core/ability/status_cache/include/status_cache.h",
+        "services/core/ability/status_cache/src/status_cache.cpp",
+        "services/core/ability/utils/include/encrypt_utils.h",
+        "services/core/ability/utils/include/file_utils.h",
+        "services/core/ability/utils/include/json_utils.h",
+        "services/core/ability/utils/include/sha256_utils.h",
+        "services/core/ability/utils/include/string_utils.h",
+        "services/core/ability/utils/include/time_utils.h",
+        "services/core/ability/utils/include/time_utils_proxy.h",
+        "services/core/ability/utils/src/sha256_utils.cpp",
+        "services/core/ability/utils/src/time_utils_proxy.cpp",
+        "services/engine/include/progress_thread.h",
+        "services/engine/include/update_no_constructor.h",
+        "services/engine/include/update_service.h",
+        "services/engine/include/update_service_cache.h",
+        "services/engine/include/update_service_impl_firmware.h",
+        "services/engine/include/update_service_impl_manager.h",
+        "services/engine/include/update_service_local_updater.h",
+        "services/engine/include/update_service_proxy.h",
+        "services/engine/include/update_service_restorer.h",
+        "services/engine/include/update_service_util.h",
+        "services/engine/src/message_parcel_helper.cpp",
+        "services/engine/src/update_helper.cpp",
+        "services/engine/src/update_notify.cpp",
+        "services/engine/src/update_service_cache.cpp",
+        "services/engine/src/update_service_impl_firmware.cpp",
+        "services/engine/src/update_service_impl_manager.cpp",
+        "services/engine/src/update_service_local_updater.cpp",
+        "services/engine/src/update_service_restorer.cpp",
+        "services/engine/src/update_service_util_hmos.cpp",
+        "services/firmware/callback/include/firmware_callback_utils.h",
+        "services/firmware/callback/src/firmware_callback_utils.cpp",
+        "services/firmware/common/include/firmware_common.h",
+        "services/firmware/common/include/firmware_constant.h",
+        "services/firmware/common/include/firmware_update_adapter.h",
+        "services/firmware/common/include/firmware_update_helper.h",
+        "services/firmware/common/src/firmware_update_adapter.cpp",
+        "services/firmware/common/src/firmware_update_helper.cpp",
+        "services/firmware/data/db/include/firmware_component.h",
+        "services/firmware/data/db/include/firmware_task.h",
+        "services/firmware/data/db/src/firmware_component_operator.cpp",
+        "services/firmware/data/db/src/firmware_component_operator_empty.cpp",
+        "services/firmware/data/db/src/firmware_component_table.cpp",
+        "services/firmware/data/db/src/firmware_component_table_empty.cpp",
+        "services/firmware/data/db/src/firmware_database.cpp",
+        "services/firmware/data/db/src/firmware_database_callback.cpp",
+        "services/firmware/data/db/src/firmware_database_empty.cpp",
+        "services/firmware/data/db/src/firmware_task_operator.cpp",
+        "services/firmware/data/db/src/firmware_task_operator_empty.cpp",
+        "services/firmware/data/db/src/firmware_task_table.cpp",
+        "services/firmware/data/db/src/firmware_task_table_empty.cpp",
+        "services/firmware/data/manager/include/firmware_preferences_utils.h",
+        "services/firmware/data/manager/src/firmware_preferences_utils.cpp",
+        "services/firmware/event/include/firmware_event_listener.h",
+        "services/firmware/event/src/firmware_event_listener.cpp",
+        "services/firmware/upgrade/data_processor/include/firmware_check_data_processor.h",
+        "services/firmware/upgrade/data_processor/include/firmware_download_data_processor.h",
+        "services/firmware/upgrade/data_processor/include/firmware_install_data_processor.h",
+        "services/firmware/upgrade/data_processor/src/firmware_check_data_processor.cpp",
+        "services/firmware/upgrade/data_processor/src/firmware_download_data_processor.cpp",
+        "services/firmware/upgrade/data_processor/src/firmware_install_data_processor.cpp",
+        "services/firmware/upgrade/executor/include/firmware_apply_executor.h",
+        "services/firmware/upgrade/executor/include/firmware_check_executor.h",
+        "services/firmware/upgrade/executor/include/firmware_download_executor.h",
+        "services/firmware/upgrade/executor/include/firmware_iexecutor.h",
+        "services/firmware/upgrade/executor/include/firmware_install_executor.h",
+        "services/firmware/upgrade/executor/src/firmware_apply_executor.cpp",
+        "services/firmware/upgrade/executor/src/firmware_check_executor.cpp",
+        "services/firmware/upgrade/executor/src/firmware_download_executor.cpp",
+        "services/firmware/upgrade/executor/src/firmware_install_executor.cpp",
+        "services/firmware/upgrade/flow/include/firmware_flow_manager.h",
+        "services/firmware/upgrade/flow/include/firmware_manager.h",
+        "services/firmware/upgrade/flow/src/firmware_flow_manager.cpp",
+        "services/firmware/upgrade/flow/src/firmware_manager.cpp",
+        "services/firmware/upgrade/install/include/firmware_install.h",
+        "services/firmware/upgrade/install/include/firmware_install_factory.h",
+        "services/firmware/upgrade/install/include/firmware_sys_installer_callback.h",
+        "services/firmware/upgrade/install/include/firmware_sys_installer_install.h",
+        "services/firmware/upgrade/install/include/firmware_updater_install.h",
+        "services/firmware/upgrade/install/src/firmware_install.cpp",
+        "services/firmware/upgrade/install/src/firmware_install_factory.cpp",
+        "services/firmware/upgrade/install/src/firmware_sys_installer_callback.cpp",
+        "services/firmware/upgrade/install/src/firmware_sys_installer_install.cpp",
+        "services/firmware/upgrade/install/src/firmware_updater_install.cpp",
+        "services/firmware/upgrade/mode/include/firmware_download_mode.h",
+        "services/firmware/upgrade/mode/include/firmware_iexecute_mode.h",
+        "services/firmware/upgrade/mode/include/firmware_install_apply_mode.h",
+        "services/firmware/upgrade/mode/include/firmware_manual_check_mode.h",
+        "services/firmware/upgrade/mode/src/firmware_download_mode.cpp",
+        "services/firmware/upgrade/mode/src/firmware_install_apply_mode.cpp",
+        "services/firmware/upgrade/mode/src/firmware_manual_check_mode.cpp",
+        "services/firmware/upgrade/status/include/firmware_result_process.h",
+        "services/firmware/upgrade/status/include/firmware_status_cache.h",
+        "services/firmware/upgrade/status/src/firmware_result_process.cpp",
+        "services/firmware/upgrade/status/src/firmware_status_cache.cpp",
+        "services/firmware/utils/include/firmware_changelog_utils.h",
+        "services/firmware/utils/include/firmware_check_analyze_utils.h",
+        "services/firmware/utils/include/firmware_combine_version_utils.h",
+        "services/firmware/utils/include/firmware_file_utils.h",
+        "services/firmware/utils/include/firmware_log.h",
+        "services/firmware/utils/src/firmware_changelog_utils.cpp",
+        "services/firmware/utils/src/firmware_check_analyze_utils.cpp",
+        "services/firmware/utils/src/firmware_combine_version_utils.cpp",
+        "services/service/include/dupdate_log.h",
+        "services/service/include/dupdate_upgrade_helper.h",
+        "services/startup/access/include/access_factory.h",
+        "services/startup/access/include/access_manager.h",
+        "services/startup/access/include/default_access.h",
+        "services/startup/access/include/firmware_access.h",
+        "services/startup/access/include/i_access.h",
+        "services/startup/access/src/access_factory.cpp",
+        "services/startup/access/src/access_manager.cpp",
+        "services/startup/access/src/default_access.cpp",
+        "services/startup/access/src/firmware_access.cpp",
+        "services/startup/manage/include/schedule_config.h",
+        "services/startup/manage/include/schedule_manager.h",
+        "services/startup/manage/include/startup_manager.h",
+        "services/startup/manage/include/startup_schedule.h",
+        "services/startup/manage/src/schedule_config.cpp",
+        "services/startup/manage/src/schedule_manager.cpp",
+        "services/startup/manage/src/startup_manager.cpp",
+        "services/startup/manage/src/startup_schedule.cpp",
+        "services/startup/model/include/schedule_task.h",
+        "services/startup/model/include/startup_constant.h",
+        "services/utils/include/dupdate_inet_observer.h",
+        "services/utils/include/dupdate_net_manager.h",
+        "services/utils/include/dupdate_net_observer.h",
+        "services/utils/src/dupdate_net_manager.cpp",
+        "services/utils/src/dupdate_net_manager_empty.cpp",
+        "services/utils/src/dupdate_net_observer.cpp",
+        "services/utils/src/dupdate_timer.c"
+      ],
+      "findings": [],
+      "limitations": [
+        "A guarded or unknown expression is not a safe verdict; partial/failed source remains unknown.",
+        "Candidate only: lexical integer arithmetic does not prove allocation undersizing or product impact.",
+        "Signedness, promotions, macro constants, overflow intrinsics, templates and interprocedural range facts remain unknown unless explicitly modeled.",
+        "frameworks/js/napi/base/src/client_helper.cpp: parse_status=partial; integer coverage remains unknown.",
+        "frameworks/js/napi/base/src/iupdater.cpp: parse_status=partial; integer coverage remains unknown.",
+        "frameworks/js/napi/base/src/napi_util.cpp: parse_status=partial; integer coverage remains unknown.",
+        "frameworks/js/napi/base/src/session_manager.cpp: parse_status=partial; integer coverage remains unknown.",
+        "frameworks/js/napi/client/local_updater.cpp: parse_status=partial; integer coverage remains unknown.",
+        "frameworks/js/napi/client/restorer.cpp: parse_status=partial; integer coverage remains unknown.",
+        "frameworks/js/napi/client/update_client.cpp: parse_status=partial; integer coverage remains unknown.",
+        "frameworks/js/napi/client/update_module.cpp: parse_status=partial; integer coverage remains unknown.",
+        "frameworks/js/napi/client/update_session.cpp: parse_status=partial; integer coverage remains unknown.",
+        "interfaces/inner_api/engine/update_service_kits_impl.cpp: parse_status=partial; integer coverage remains unknown.",
+        "interfaces/inner_api/engine/update_service_proxy.cpp: parse_status=partial; integer coverage remains unknown.",
+        "interfaces/inner_api/include/iupdate_callback.h: parse_status=partial; integer coverage remains unknown.",
+        "interfaces/inner_api/include/iupdate_service.h: parse_status=partial; integer coverage remains unknown.",
+        "services/core/ability/callback/include/base_callback_utils.h: parse_status=partial; integer coverage remains unknown.",
+        "services/core/ability/sqlite/core/include/table_base_operator.h: parse_status=partial; integer coverage remains unknown.",
+        "services/core/ability/sqlite/core/src/sqlite_db.cpp: parse_status=partial; integer coverage remains unknown.",
+        "services/core/ability/utils/src/file_utils.cpp: parse_status=partial; integer coverage remains unknown.",
+        "services/engine/include/update_notify.h: parse_status=partial; integer coverage remains unknown.",
+        "services/engine/include/update_service_stub.h: parse_status=partial; integer coverage remains unknown.",
+        "services/engine/src/progress_thread.cpp: parse_status=partial; integer coverage remains unknown.",
+        "services/engine/src/update_service.cpp: parse_status=partial; integer coverage remains unknown.",
+        "services/engine/src/update_service_stub.cpp: parse_status=partial; integer coverage remains unknown.",
+        "services/firmware/check/include/firmware_icheck.h: parse_status=partial; integer coverage remains unknown.",
+        "services/firmware/data/db/include/firmware_component_operator.h: parse_status=partial; integer coverage remains unknown.",
+        "services/firmware/data/db/include/firmware_component_table.h: parse_status=partial; integer coverage remains unknown.",
+        "services/firmware/data/db/include/firmware_database.h: parse_status=partial; integer coverage remains unknown.",
+        "services/firmware/data/db/include/firmware_database_callback.h: parse_status=partial; integer coverage remains unknown.",
+        "services/firmware/data/db/include/firmware_task_operator.h: parse_status=partial; integer coverage remains unknown.",
+        "services/firmware/data/db/include/firmware_task_table.h: parse_status=partial; integer coverage remains unknown.",
+        "services/service/include/dupdate_errno.h: parse_status=partial; integer coverage remains unknown.",
+        "services/utils/include/dupdate_timer.h: parse_status=partial; integer coverage remains unknown."
+      ],
+      "file_outcomes": []
+    },
+    {
+      "detector_id": "ohscanner.cpp.resource_lifetime",
+      "version": "0.1.0",
+      "status": "blocked",
+      "analyzed_files": [
+        "frameworks/js/napi/base/include/client_define.h",
+        "frameworks/js/napi/base/include/client_helper.h",
+        "frameworks/js/napi/base/include/define_property.h",
+        "frameworks/js/napi/base/include/iupdater.h",
+        "frameworks/js/napi/base/include/napi_util.h",
+        "frameworks/js/napi/base/include/session_manager.h",
+        "frameworks/js/napi/base/src/define_property.cpp",
+        "frameworks/js/napi/client/iupdate_session.h",
+        "frameworks/js/napi/client/local_updater.h",
+        "frameworks/js/napi/client/restorer.h",
+        "frameworks/js/napi/client/update_client.h",
+        "frameworks/js/napi/client/update_session.h",
+        "interfaces/inner_api/engine/update_service_ondemand.cpp",
+        "interfaces/inner_api/include/iservice_local_updater.h",
+        "interfaces/inner_api/include/iservice_online_updater.h",
+        "interfaces/inner_api/include/iservice_restorer.h",
+        "interfaces/inner_api/include/json_builder.h",
+        "interfaces/inner_api/include/message_parcel_helper.h",
+        "interfaces/inner_api/include/update_constant.h",
+        "interfaces/inner_api/include/update_helper.h",
+        "interfaces/inner_api/include/update_service_kits.h",
+        "interfaces/inner_api/include/update_service_kits_impl.h",
+        "interfaces/inner_api/include/update_service_ondemand.h",
+        "interfaces/inner_api/include/update_system_event.h",
+        "interfaces/inner_api/include/updater_sa_ipc_interface_code.h",
+        "services/callback/include/update_callback.h",
+        "services/callback/include/update_callback_proxy.h",
+        "services/callback/include/update_callback_stub.h",
+        "services/callback/src/update_callback.cpp",
+        "services/callback/src/update_callback_proxy.cpp",
+        "services/callback/src/update_callback_stub.cpp",
+        "services/core/ability/adapter/include/config_parse.h",
+        "services/core/ability/adapter/include/device_adapter.h",
+        "services/core/ability/adapter/src/config_parse.cpp",
+        "services/core/ability/adapter/src/device_adapter.cpp",
+        "services/core/ability/alarm/include/alarm_helper.h",
+        "services/core/ability/alarm/include/alarm_manager.h",
+        "services/core/ability/alarm/include/timer_manager.h",
+        "services/core/ability/alarm/src/alarm_manager.cpp",
+        "services/core/ability/alarm/src/timer_manager.cpp",
+        "services/core/ability/callback/src/base_callback_utils.cpp",
+        "services/core/ability/callback/src/base_callback_utils_empty.cpp",
+        "services/core/ability/common/include/constant.h",
+        "services/core/ability/define/include/update_define.h",
+        "services/core/ability/download/data/include/download_info.h",
+        "services/core/ability/log/include/update_log.h",
+        "services/core/ability/log/src/update_log.cpp",
+        "services/core/ability/model/include/device_info.h",
+        "services/core/ability/net/include/network_response.h",
+        "services/core/ability/preference/include/preferences_utils.h",
+        "services/core/ability/preference/src/preference_utils.cpp",
+        "services/core/ability/preference/src/preference_utils_empty.cpp",
+        "services/core/ability/sqlite/core/include/idatabase.h",
+        "services/core/ability/sqlite/core/include/itable.h",
+        "services/core/ability/sqlite/core/include/itable_operator.h",
+        "services/core/ability/sqlite/core/include/sqlite_db.h",
+        "services/core/ability/status_cache/include/status_cache.h",
+        "services/core/ability/status_cache/src/status_cache.cpp",
+        "services/core/ability/utils/include/encrypt_utils.h",
+        "services/core/ability/utils/include/file_utils.h",
+        "services/core/ability/utils/include/json_utils.h",
+        "services/core/ability/utils/include/sha256_utils.h",
+        "services/core/ability/utils/include/string_utils.h",
+        "services/core/ability/utils/include/time_utils.h",
+        "services/core/ability/utils/include/time_utils_proxy.h",
+        "services/core/ability/utils/src/sha256_utils.cpp",
+        "services/core/ability/utils/src/time_utils_proxy.cpp",
+        "services/engine/include/progress_thread.h",
+        "services/engine/include/update_no_constructor.h",
+        "services/engine/include/update_service.h",
+        "services/engine/include/update_service_cache.h",
+        "services/engine/include/update_service_impl_firmware.h",
+        "services/engine/include/update_service_impl_manager.h",
+        "services/engine/include/update_service_local_updater.h",
+        "services/engine/include/update_service_proxy.h",
+        "services/engine/include/update_service_restorer.h",
+        "services/engine/include/update_service_util.h",
+        "services/engine/src/message_parcel_helper.cpp",
+        "services/engine/src/update_helper.cpp",
+        "services/engine/src/update_notify.cpp",
+        "services/engine/src/update_service_cache.cpp",
+        "services/engine/src/update_service_impl_firmware.cpp",
+        "services/engine/src/update_service_impl_manager.cpp",
+        "services/engine/src/update_service_local_updater.cpp",
+        "services/engine/src/update_service_restorer.cpp",
+        "services/engine/src/update_service_util_hmos.cpp",
+        "services/firmware/callback/include/firmware_callback_utils.h",
+        "services/firmware/callback/src/firmware_callback_utils.cpp",
+        "services/firmware/common/include/firmware_common.h",
+        "services/firmware/common/include/firmware_constant.h",
+        "services/firmware/common/include/firmware_update_adapter.h",
+        "services/firmware/common/include/firmware_update_helper.h",
+        "services/firmware/common/src/firmware_update_adapter.cpp",
+        "services/firmware/common/src/firmware_update_helper.cpp",
+        "services/firmware/data/db/include/firmware_component.h",
+        "services/firmware/data/db/include/firmware_task.h",
+        "services/firmware/data/db/src/firmware_component_operator.cpp",
+        "services/firmware/data/db/src/firmware_component_operator_empty.cpp",
+        "services/firmware/data/db/src/firmware_component_table.cpp",
+        "services/firmware/data/db/src/firmware_component_table_empty.cpp",
+        "services/firmware/data/db/src/firmware_database.cpp",
+        "services/firmware/data/db/src/firmware_database_callback.cpp",
+        "services/firmware/data/db/src/firmware_database_empty.cpp",
+        "services/firmware/data/db/src/firmware_task_operator.cpp",
+        "services/firmware/data/db/src/firmware_task_operator_empty.cpp",
+        "services/firmware/data/db/src/firmware_task_table.cpp",
+        "services/firmware/data/db/src/firmware_task_table_empty.cpp",
+        "services/firmware/data/manager/include/firmware_preferences_utils.h",
+        "services/firmware/data/manager/src/firmware_preferences_utils.cpp",
+        "services/firmware/event/include/firmware_event_listener.h",
+        "services/firmware/event/src/firmware_event_listener.cpp",
+        "services/firmware/upgrade/data_processor/include/firmware_check_data_processor.h",
+        "services/firmware/upgrade/data_processor/include/firmware_download_data_processor.h",
+        "services/firmware/upgrade/data_processor/include/firmware_install_data_processor.h",
+        "services/firmware/upgrade/data_processor/src/firmware_check_data_processor.cpp",
+        "services/firmware/upgrade/data_processor/src/firmware_download_data_processor.cpp",
+        "services/firmware/upgrade/data_processor/src/firmware_install_data_processor.cpp",
+        "services/firmware/upgrade/executor/include/firmware_apply_executor.h",
+        "services/firmware/upgrade/executor/include/firmware_check_executor.h",
+        "services/firmware/upgrade/executor/include/firmware_download_executor.h",
+        "services/firmware/upgrade/executor/include/firmware_iexecutor.h",
+        "services/firmware/upgrade/executor/include/firmware_install_executor.h",
+        "services/firmware/upgrade/executor/src/firmware_apply_executor.cpp",
+        "services/firmware/upgrade/executor/src/firmware_check_executor.cpp",
+        "services/firmware/upgrade/executor/src/firmware_download_executor.cpp",
+        "services/firmware/upgrade/executor/src/firmware_install_executor.cpp",
+        "services/firmware/upgrade/flow/include/firmware_flow_manager.h",
+        "services/firmware/upgrade/flow/include/firmware_manager.h",
+        "services/firmware/upgrade/flow/src/firmware_flow_manager.cpp",
+        "services/firmware/upgrade/flow/src/firmware_manager.cpp",
+        "services/firmware/upgrade/install/include/firmware_install.h",
+        "services/firmware/upgrade/install/include/firmware_install_factory.h",
+        "services/firmware/upgrade/install/include/firmware_sys_installer_callback.h",
+        "services/firmware/upgrade/install/include/firmware_sys_installer_install.h",
+        "services/firmware/upgrade/install/include/firmware_updater_install.h",
+        "services/firmware/upgrade/install/src/firmware_install.cpp",
+        "services/firmware/upgrade/install/src/firmware_install_factory.cpp",
+        "services/firmware/upgrade/install/src/firmware_sys_installer_callback.cpp",
+        "services/firmware/upgrade/install/src/firmware_sys_installer_install.cpp",
+        "services/firmware/upgrade/install/src/firmware_updater_install.cpp",
+        "services/firmware/upgrade/mode/include/firmware_download_mode.h",
+        "services/firmware/upgrade/mode/include/firmware_iexecute_mode.h",
+        "services/firmware/upgrade/mode/include/firmware_install_apply_mode.h",
+        "services/firmware/upgrade/mode/include/firmware_manual_check_mode.h",
+        "services/firmware/upgrade/mode/src/firmware_download_mode.cpp",
+        "services/firmware/upgrade/mode/src/firmware_install_apply_mode.cpp",
+        "services/firmware/upgrade/mode/src/firmware_manual_check_mode.cpp",
+        "services/firmware/upgrade/status/include/firmware_result_process.h",
+        "services/firmware/upgrade/status/include/firmware_status_cache.h",
+        "services/firmware/upgrade/status/src/firmware_result_process.cpp",
+        "services/firmware/upgrade/status/src/firmware_status_cache.cpp",
+        "services/firmware/utils/include/firmware_changelog_utils.h",
+        "services/firmware/utils/include/firmware_check_analyze_utils.h",
+        "services/firmware/utils/include/firmware_combine_version_utils.h",
+        "services/firmware/utils/include/firmware_file_utils.h",
+        "services/firmware/utils/include/firmware_log.h",
+        "services/firmware/utils/src/firmware_changelog_utils.cpp",
+        "services/firmware/utils/src/firmware_check_analyze_utils.cpp",
+        "services/firmware/utils/src/firmware_combine_version_utils.cpp",
+        "services/service/include/dupdate_log.h",
+        "services/service/include/dupdate_upgrade_helper.h",
+        "services/startup/access/include/access_factory.h",
+        "services/startup/access/include/access_manager.h",
+        "services/startup/access/include/default_access.h",
+        "services/startup/access/include/firmware_access.h",
+        "services/startup/access/include/i_access.h",
+        "services/startup/access/src/access_factory.cpp",
+        "services/startup/access/src/access_manager.cpp",
+        "services/startup/access/src/default_access.cpp",
+        "services/startup/access/src/firmware_access.cpp",
+        "services/startup/manage/include/schedule_config.h",
+        "services/startup/manage/include/schedule_manager.h",
+        "services/startup/manage/include/startup_manager.h",
+        "services/startup/manage/include/startup_schedule.h",
+        "services/startup/manage/src/schedule_config.cpp",
+        "services/startup/manage/src/schedule_manager.cpp",
+        "services/startup/manage/src/startup_manager.cpp",
+        "services/startup/manage/src/startup_schedule.cpp",
+        "services/startup/model/include/schedule_task.h",
+        "services/startup/model/include/startup_constant.h",
+        "services/utils/include/dupdate_inet_observer.h",
+        "services/utils/include/dupdate_net_manager.h",
+        "services/utils/include/dupdate_net_observer.h",
+        "services/utils/src/dupdate_net_manager.cpp",
+        "services/utils/src/dupdate_net_manager_empty.cpp",
+        "services/utils/src/dupdate_net_observer.cpp",
+        "services/utils/src/dupdate_timer.c"
+      ],
+      "findings": [
+        {
+          "file": "frameworks/js/napi/base/include/client_helper.h",
+          "line": 100,
+          "column": 13,
+          "rule_id": "ohcpp-resource-lifetime-double-free-candidate-001",
+          "message": "Candidate only: `delete result` releases `result` again after a modeled release. Aliases, ownership transfer and conditional paths remain unknown.",
+          "evidence_type": "syntax",
+          "candidate_cwe": "CWE-415",
+          "symbol": "result",
+          "consequence_impact": "memory_safety",
+          "consequence_cwe": "CWE-415",
+          "source_sha256": "4eb37a173690d09c1f97f891e29b3b3a0691eb11dfa5a10d79c3bcb22c945e11",
+          "rule_version": "0.1.0",
+          "rule_lineage_id": "A-RES-01:ohcpp-resource-lifetime-candidate",
+          "identity_quality": "partial",
+          "evidence_obligations": [
+            {
+              "kind": "allocation_release_alias_state",
+              "description": "Prove the exact allocation, alias, transfer and release state on every path.",
+              "status": "unknown"
+            },
+            {
+              "kind": "control_flow_dominance",
+              "description": "Prove the use or second release is reachable after the first release.",
+              "status": "unknown"
+            },
+            {
+              "kind": "cross_function_and_container_transfer",
+              "description": "Resolve calls, containers, fields, callbacks, move and ownership transfer.",
+              "status": "missing"
+            },
+            {
+              "kind": "entry_or_privilege_boundary",
+              "description": "Establish a realistic reachable entry and privilege boundary.",
+              "status": "missing"
+            },
+            {
+              "kind": "attacker_control",
+              "description": "Show attacker influence over the trigger or lifetime transition.",
+              "status": "missing"
+            },
+            {
+              "kind": "trigger_conditions",
+              "description": "Reproduce the exact lifetime failure in an isolated target.",
+              "status": "missing"
+            },
+            {
+              "kind": "cia_impact",
+              "description": "Establish concrete confidentiality, integrity or availability impact.",
+              "status": "missing"
+            }
+          ]
+        },
+        {
+          "file": "services/firmware/upgrade/flow/src/firmware_manager.cpp",
+          "line": 196,
+          "column": 5,
+          "rule_id": "ohcpp-resource-lifetime-use-after-free-candidate-002",
+          "message": "Candidate only: `flowManager->` uses `flowManager` after a modeled release. Reallocation, alias recovery, destructor timing and path feasibility remain unknown.",
+          "evidence_type": "syntax",
+          "candidate_cwe": "CWE-416",
+          "symbol": "flowManager",
+          "consequence_impact": "memory_safety",
+          "consequence_cwe": "CWE-416",
+          "source_sha256": "b76207346f97230cd509bca1a3de500c726fc01463b3004c388c50d4cc76414d",
+          "rule_version": "0.1.0",
+          "rule_lineage_id": "A-RES-01:ohcpp-resource-lifetime-candidate",
+          "identity_quality": "partial",
+          "evidence_obligations": [
+            {
+              "kind": "allocation_release_alias_state",
+              "description": "Prove the exact allocation, alias, transfer and release state on every path.",
+              "status": "unknown"
+            },
+            {
+              "kind": "control_flow_dominance",
+              "description": "Prove the use or second release is reachable after the first release.",
+              "status": "unknown"
+            },
+            {
+              "kind": "cross_function_and_container_transfer",
+              "description": "Resolve calls, containers, fields, callbacks, move and ownership transfer.",
+              "status": "missing"
+            },
+            {
+              "kind": "entry_or_privilege_boundary",
+              "description": "Establish a realistic reachable entry and privilege boundary.",
+              "status": "missing"
+            },
+            {
+              "kind": "attacker_control",
+              "description": "Show attacker influence over the trigger or lifetime transition.",
+              "status": "missing"
+            },
+            {
+              "kind": "trigger_conditions",
+              "description": "Reproduce the exact lifetime failure in an isolated target.",
+              "status": "missing"
+            },
+            {
+              "kind": "cia_impact",
+              "description": "Establish concrete confidentiality, integrity or availability impact.",
+              "status": "missing"
+            }
+          ]
+        },
+        {
+          "file": "services/firmware/upgrade/flow/src/firmware_manager.cpp",
+          "line": 208,
+          "column": 5,
+          "rule_id": "ohcpp-resource-lifetime-use-after-free-candidate-002",
+          "message": "Candidate only: `flowManager->` uses `flowManager` after a modeled release. Reallocation, alias recovery, destructor timing and path feasibility remain unknown.",
+          "evidence_type": "syntax",
+          "candidate_cwe": "CWE-416",
+          "symbol": "flowManager",
+          "consequence_impact": "memory_safety",
+          "consequence_cwe": "CWE-416",
+          "source_sha256": "b76207346f97230cd509bca1a3de500c726fc01463b3004c388c50d4cc76414d",
+          "rule_version": "0.1.0",
+          "rule_lineage_id": "A-RES-01:ohcpp-resource-lifetime-candidate",
+          "identity_quality": "partial",
+          "evidence_obligations": [
+            {
+              "kind": "allocation_release_alias_state",
+              "description": "Prove the exact allocation, alias, transfer and release state on every path.",
+              "status": "unknown"
+            },
+            {
+              "kind": "control_flow_dominance",
+              "description": "Prove the use or second release is reachable after the first release.",
+              "status": "unknown"
+            },
+            {
+              "kind": "cross_function_and_container_transfer",
+              "description": "Resolve calls, containers, fields, callbacks, move and ownership transfer.",
+              "status": "missing"
+            },
+            {
+              "kind": "entry_or_privilege_boundary",
+              "description": "Establish a realistic reachable entry and privilege boundary.",
+              "status": "missing"
+            },
+            {
+              "kind": "attacker_control",
+              "description": "Show attacker influence over the trigger or lifetime transition.",
+              "status": "missing"
+            },
+            {
+              "kind": "trigger_conditions",
+              "description": "Reproduce the exact lifetime failure in an isolated target.",
+              "status": "missing"
+            },
+            {
+              "kind": "cia_impact",
+              "description": "Establish concrete confidentiality, integrity or availability impact.",
+              "status": "missing"
+            }
+          ]
+        }
+      ],
+      "limitations": [
+        "Absence of a finding is not a safe verdict; partial/failed source remains unknown.",
+        "Branch, label, cross-function ownership, containers, callbacks, exceptions, destructor timing and custom allocators remain unknown; transitions between lexical flow segments are not joined.",
+        "Candidate only: local lexical resource state does not prove UAF/double-free exploitability.",
+        "frameworks/js/napi/base/src/client_helper.cpp: parse_status=partial; resource lifetime remains unknown.",
+        "frameworks/js/napi/base/src/iupdater.cpp: parse_status=partial; resource lifetime remains unknown.",
+        "frameworks/js/napi/base/src/napi_util.cpp: parse_status=partial; resource lifetime remains unknown.",
+        "frameworks/js/napi/base/src/session_manager.cpp: parse_status=partial; resource lifetime remains unknown.",
+        "frameworks/js/napi/client/local_updater.cpp: parse_status=partial; resource lifetime remains unknown.",
+        "frameworks/js/napi/client/restorer.cpp: parse_status=partial; resource lifetime remains unknown.",
+        "frameworks/js/napi/client/update_client.cpp: parse_status=partial; resource lifetime remains unknown.",
+        "frameworks/js/napi/client/update_module.cpp: parse_status=partial; resource lifetime remains unknown.",
+        "frameworks/js/napi/client/update_session.cpp: parse_status=partial; resource lifetime remains unknown.",
+        "frameworks/js/napi/client/update_session.h:GetUpdateResult: unresolved allocation/release alias state remains unknown.",
+        "interfaces/inner_api/engine/update_service_kits_impl.cpp: parse_status=partial; resource lifetime remains unknown.",
+        "interfaces/inner_api/engine/update_service_proxy.cpp: parse_status=partial; resource lifetime remains unknown.",
+        "interfaces/inner_api/include/iupdate_callback.h: parse_status=partial; resource lifetime remains unknown.",
+        "interfaces/inner_api/include/iupdate_service.h: parse_status=partial; resource lifetime remains unknown.",
+        "interfaces/inner_api/include/json_builder.h:AppendComma: unresolved allocation/release alias state remains unknown.",
+        "services/core/ability/alarm/src/alarm_manager.cpp:AlarmManager: unresolved allocation/release alias state remains unknown.",
+        "services/core/ability/alarm/src/timer_manager.cpp:UnregisterRepeatingAlarm: unresolved allocation/release alias state remains unknown.",
+        "services/core/ability/callback/include/base_callback_utils.h: parse_status=partial; resource lifetime remains unknown.",
+        "services/core/ability/callback/src/base_callback_utils.cpp:NotifyEvent: unresolved allocation/release alias state remains unknown.",
+        "services/core/ability/callback/src/base_callback_utils.cpp:ProgressCallback: unresolved allocation/release alias state remains unknown.",
+        "services/core/ability/log/src/update_log.cpp:SetLogLevel: unresolved allocation/release alias state remains unknown.",
+        "services/core/ability/sqlite/core/include/table_base_operator.h: parse_status=partial; resource lifetime remains unknown.",
+        "services/core/ability/sqlite/core/src/sqlite_db.cpp: parse_status=partial; resource lifetime remains unknown.",
+        "services/core/ability/utils/include/string_utils.h:ReplaceStringAll: unresolved allocation/release alias state remains unknown.",
+        "services/core/ability/utils/src/file_utils.cpp: parse_status=partial; resource lifetime remains unknown.",
+        "services/engine/include/update_notify.h: parse_status=partial; resource lifetime remains unknown.",
+        "services/engine/include/update_service_stub.h: parse_status=partial; resource lifetime remains unknown.",
+        "services/engine/src/progress_thread.cpp: parse_status=partial; resource lifetime remains unknown.",
+        "services/engine/src/update_service.cpp: parse_status=partial; resource lifetime remains unknown.",
+        "services/engine/src/update_service_cache.cpp:SetCheckInterval: unresolved allocation/release alias state remains unknown.",
+        "services/engine/src/update_service_cache.cpp:SetDownloadInterval: unresolved allocation/release alias state remains unknown.",
+        "services/engine/src/update_service_cache.cpp:SetUpgradeEndTime: unresolved allocation/release alias state remains unknown.",
+        "services/engine/src/update_service_cache.cpp:SetUpgradeInfo: unresolved allocation/release alias state remains unknown.",
+        "services/engine/src/update_service_cache.cpp:SetUpgradeStartTime: unresolved allocation/release alias state remains unknown.",
+        "services/engine/src/update_service_stub.cpp: parse_status=partial; resource lifetime remains unknown.",
+        "services/firmware/check/include/firmware_icheck.h: parse_status=partial; resource lifetime remains unknown.",
+        "services/firmware/data/db/include/firmware_component_operator.h: parse_status=partial; resource lifetime remains unknown.",
+        "services/firmware/data/db/include/firmware_component_table.h: parse_status=partial; resource lifetime remains unknown.",
+        "services/firmware/data/db/include/firmware_database.h: parse_status=partial; resource lifetime remains unknown.",
+        "services/firmware/data/db/include/firmware_database_callback.h: parse_status=partial; resource lifetime remains unknown.",
+        "services/firmware/data/db/include/firmware_task_operator.h: parse_status=partial; resource lifetime remains unknown.",
+        "services/firmware/data/db/include/firmware_task_table.h: parse_status=partial; resource lifetime remains unknown.",
+        "services/firmware/data/db/src/firmware_task_operator.cpp:QueryTask: unresolved allocation/release alias state remains unknown.",
+        "services/firmware/upgrade/data_processor/src/firmware_check_data_processor.cpp:SetCheckResult: unresolved allocation/release alias state remains unknown.",
+        "services/firmware/upgrade/data_processor/src/firmware_download_data_processor.cpp:SetDownloadProgress: unresolved allocation/release alias state remains unknown.",
+        "services/firmware/upgrade/executor/src/firmware_install_executor.cpp:HandleInstallProgress: unresolved allocation/release alias state remains unknown.",
+        "services/firmware/upgrade/executor/src/firmware_install_executor.cpp:HandleInstallResult: unresolved allocation/release alias state remains unknown.",
+        "services/firmware/upgrade/flow/src/firmware_flow_manager.cpp:SetExecuteMode: unresolved allocation/release alias state remains unknown.",
+        "services/firmware/upgrade/install/src/firmware_install.cpp:SetIsInstalling: unresolved allocation/release alias state remains unknown.",
+        "services/firmware/upgrade/install/src/firmware_install.cpp:StartInstall: unresolved allocation/release alias state remains unknown.",
+        "services/firmware/upgrade/install/src/firmware_sys_installer_callback.cpp:SysInstallerCallback: unresolved allocation/release alias state remains unknown.",
+        "services/firmware/upgrade/status/src/firmware_result_process.cpp:ParseUpdaterResultRecord: unresolved allocation/release alias state remains unknown.",
+        "services/firmware/utils/src/firmware_check_analyze_utils.cpp:DoAnalyze: unresolved allocation/release alias state remains unknown.",
+        "services/service/include/dupdate_errno.h: parse_status=partial; resource lifetime remains unknown.",
+        "services/startup/access/src/access_manager.cpp:SetRemoteIdle: unresolved allocation/release alias state remains unknown.",
+        "services/startup/manage/src/schedule_manager.cpp:ScheduleManager: unresolved allocation/release alias state remains unknown.",
+        "services/utils/include/dupdate_timer.h: parse_status=partial; resource lifetime remains unknown.",
+        "services/utils/src/dupdate_net_observer.cpp:SetCallback: unresolved allocation/release alias state remains unknown."
+      ],
+      "file_outcomes": []
+    },
+    {
+      "detector_id": "ohscanner.cpp.unsafe_memory_call",
+      "version": "0.5.0",
+      "status": "blocked",
+      "analyzed_files": [
+        "frameworks/js/napi/base/include/client_define.h",
+        "frameworks/js/napi/base/include/client_helper.h",
+        "frameworks/js/napi/base/include/define_property.h",
+        "frameworks/js/napi/base/include/iupdater.h",
+        "frameworks/js/napi/base/include/napi_util.h",
+        "frameworks/js/napi/base/include/session_manager.h",
+        "frameworks/js/napi/base/src/define_property.cpp",
+        "frameworks/js/napi/client/iupdate_session.h",
+        "frameworks/js/napi/client/local_updater.h",
+        "frameworks/js/napi/client/restorer.h",
+        "frameworks/js/napi/client/update_client.h",
+        "frameworks/js/napi/client/update_session.h",
+        "interfaces/inner_api/engine/update_service_ondemand.cpp",
+        "interfaces/inner_api/include/iservice_local_updater.h",
+        "interfaces/inner_api/include/iservice_online_updater.h",
+        "interfaces/inner_api/include/iservice_restorer.h",
+        "interfaces/inner_api/include/json_builder.h",
+        "interfaces/inner_api/include/message_parcel_helper.h",
+        "interfaces/inner_api/include/update_constant.h",
+        "interfaces/inner_api/include/update_helper.h",
+        "interfaces/inner_api/include/update_service_kits.h",
+        "interfaces/inner_api/include/update_service_kits_impl.h",
+        "interfaces/inner_api/include/update_service_ondemand.h",
+        "interfaces/inner_api/include/update_system_event.h",
+        "interfaces/inner_api/include/updater_sa_ipc_interface_code.h",
+        "services/callback/include/update_callback.h",
+        "services/callback/include/update_callback_proxy.h",
+        "services/callback/include/update_callback_stub.h",
+        "services/callback/src/update_callback.cpp",
+        "services/callback/src/update_callback_proxy.cpp",
+        "services/callback/src/update_callback_stub.cpp",
+        "services/core/ability/adapter/include/config_parse.h",
+        "services/core/ability/adapter/include/device_adapter.h",
+        "services/core/ability/adapter/src/config_parse.cpp",
+        "services/core/ability/adapter/src/device_adapter.cpp",
+        "services/core/ability/alarm/include/alarm_helper.h",
+        "services/core/ability/alarm/include/alarm_manager.h",
+        "services/core/ability/alarm/include/timer_manager.h",
+        "services/core/ability/alarm/src/alarm_manager.cpp",
+        "services/core/ability/alarm/src/timer_manager.cpp",
+        "services/core/ability/callback/src/base_callback_utils.cpp",
+        "services/core/ability/callback/src/base_callback_utils_empty.cpp",
+        "services/core/ability/common/include/constant.h",
+        "services/core/ability/define/include/update_define.h",
+        "services/core/ability/download/data/include/download_info.h",
+        "services/core/ability/log/include/update_log.h",
+        "services/core/ability/log/src/update_log.cpp",
+        "services/core/ability/model/include/device_info.h",
+        "services/core/ability/net/include/network_response.h",
+        "services/core/ability/preference/include/preferences_utils.h",
+        "services/core/ability/preference/src/preference_utils.cpp",
+        "services/core/ability/preference/src/preference_utils_empty.cpp",
+        "services/core/ability/sqlite/core/include/idatabase.h",
+        "services/core/ability/sqlite/core/include/itable.h",
+        "services/core/ability/sqlite/core/include/itable_operator.h",
+        "services/core/ability/sqlite/core/include/sqlite_db.h",
+        "services/core/ability/status_cache/include/status_cache.h",
+        "services/core/ability/status_cache/src/status_cache.cpp",
+        "services/core/ability/utils/include/encrypt_utils.h",
+        "services/core/ability/utils/include/file_utils.h",
+        "services/core/ability/utils/include/json_utils.h",
+        "services/core/ability/utils/include/sha256_utils.h",
+        "services/core/ability/utils/include/string_utils.h",
+        "services/core/ability/utils/include/time_utils.h",
+        "services/core/ability/utils/include/time_utils_proxy.h",
+        "services/core/ability/utils/src/sha256_utils.cpp",
+        "services/core/ability/utils/src/time_utils_proxy.cpp",
+        "services/engine/include/progress_thread.h",
+        "services/engine/include/update_no_constructor.h",
+        "services/engine/include/update_service.h",
+        "services/engine/include/update_service_cache.h",
+        "services/engine/include/update_service_impl_firmware.h",
+        "services/engine/include/update_service_impl_manager.h",
+        "services/engine/include/update_service_local_updater.h",
+        "services/engine/include/update_service_proxy.h",
+        "services/engine/include/update_service_restorer.h",
+        "services/engine/include/update_service_util.h",
+        "services/engine/src/message_parcel_helper.cpp",
+        "services/engine/src/update_helper.cpp",
+        "services/engine/src/update_notify.cpp",
+        "services/engine/src/update_service_cache.cpp",
+        "services/engine/src/update_service_impl_firmware.cpp",
+        "services/engine/src/update_service_impl_manager.cpp",
+        "services/engine/src/update_service_local_updater.cpp",
+        "services/engine/src/update_service_restorer.cpp",
+        "services/engine/src/update_service_util_hmos.cpp",
+        "services/firmware/callback/include/firmware_callback_utils.h",
+        "services/firmware/callback/src/firmware_callback_utils.cpp",
+        "services/firmware/common/include/firmware_common.h",
+        "services/firmware/common/include/firmware_constant.h",
+        "services/firmware/common/include/firmware_update_adapter.h",
+        "services/firmware/common/include/firmware_update_helper.h",
+        "services/firmware/common/src/firmware_update_adapter.cpp",
+        "services/firmware/common/src/firmware_update_helper.cpp",
+        "services/firmware/data/db/include/firmware_component.h",
+        "services/firmware/data/db/include/firmware_task.h",
+        "services/firmware/data/db/src/firmware_component_operator.cpp",
+        "services/firmware/data/db/src/firmware_component_operator_empty.cpp",
+        "services/firmware/data/db/src/firmware_component_table.cpp",
+        "services/firmware/data/db/src/firmware_component_table_empty.cpp",
+        "services/firmware/data/db/src/firmware_database.cpp",
+        "services/firmware/data/db/src/firmware_database_callback.cpp",
+        "services/firmware/data/db/src/firmware_database_empty.cpp",
+        "services/firmware/data/db/src/firmware_task_operator.cpp",
+        "services/firmware/data/db/src/firmware_task_operator_empty.cpp",
+        "services/firmware/data/db/src/firmware_task_table.cpp",
+        "services/firmware/data/db/src/firmware_task_table_empty.cpp",
+        "services/firmware/data/manager/include/firmware_preferences_utils.h",
+        "services/firmware/data/manager/src/firmware_preferences_utils.cpp",
+        "services/firmware/event/include/firmware_event_listener.h",
+        "services/firmware/event/src/firmware_event_listener.cpp",
+        "services/firmware/upgrade/data_processor/include/firmware_check_data_processor.h",
+        "services/firmware/upgrade/data_processor/include/firmware_download_data_processor.h",
+        "services/firmware/upgrade/data_processor/include/firmware_install_data_processor.h",
+        "services/firmware/upgrade/data_processor/src/firmware_check_data_processor.cpp",
+        "services/firmware/upgrade/data_processor/src/firmware_download_data_processor.cpp",
+        "services/firmware/upgrade/data_processor/src/firmware_install_data_processor.cpp",
+        "services/firmware/upgrade/executor/include/firmware_apply_executor.h",
+        "services/firmware/upgrade/executor/include/firmware_check_executor.h",
+        "services/firmware/upgrade/executor/include/firmware_download_executor.h",
+        "services/firmware/upgrade/executor/include/firmware_iexecutor.h",
+        "services/firmware/upgrade/executor/include/firmware_install_executor.h",
+        "services/firmware/upgrade/executor/src/firmware_apply_executor.cpp",
+        "services/firmware/upgrade/executor/src/firmware_check_executor.cpp",
+        "services/firmware/upgrade/executor/src/firmware_download_executor.cpp",
+        "services/firmware/upgrade/executor/src/firmware_install_executor.cpp",
+        "services/firmware/upgrade/flow/include/firmware_flow_manager.h",
+        "services/firmware/upgrade/flow/include/firmware_manager.h",
+        "services/firmware/upgrade/flow/src/firmware_flow_manager.cpp",
+        "services/firmware/upgrade/flow/src/firmware_manager.cpp",
+        "services/firmware/upgrade/install/include/firmware_install.h",
+        "services/firmware/upgrade/install/include/firmware_install_factory.h",
+        "services/firmware/upgrade/install/include/firmware_sys_installer_callback.h",
+        "services/firmware/upgrade/install/include/firmware_sys_installer_install.h",
+        "services/firmware/upgrade/install/include/firmware_updater_install.h",
+        "services/firmware/upgrade/install/src/firmware_install.cpp",
+        "services/firmware/upgrade/install/src/firmware_install_factory.cpp",
+        "services/firmware/upgrade/install/src/firmware_sys_installer_callback.cpp",
+        "services/firmware/upgrade/install/src/firmware_sys_installer_install.cpp",
+        "services/firmware/upgrade/install/src/firmware_updater_install.cpp",
+        "services/firmware/upgrade/mode/include/firmware_download_mode.h",
+        "services/firmware/upgrade/mode/include/firmware_iexecute_mode.h",
+        "services/firmware/upgrade/mode/include/firmware_install_apply_mode.h",
+        "services/firmware/upgrade/mode/include/firmware_manual_check_mode.h",
+        "services/firmware/upgrade/mode/src/firmware_download_mode.cpp",
+        "services/firmware/upgrade/mode/src/firmware_install_apply_mode.cpp",
+        "services/firmware/upgrade/mode/src/firmware_manual_check_mode.cpp",
+        "services/firmware/upgrade/status/include/firmware_result_process.h",
+        "services/firmware/upgrade/status/include/firmware_status_cache.h",
+        "services/firmware/upgrade/status/src/firmware_result_process.cpp",
+        "services/firmware/upgrade/status/src/firmware_status_cache.cpp",
+        "services/firmware/utils/include/firmware_changelog_utils.h",
+        "services/firmware/utils/include/firmware_check_analyze_utils.h",
+        "services/firmware/utils/include/firmware_combine_version_utils.h",
+        "services/firmware/utils/include/firmware_file_utils.h",
+        "services/firmware/utils/include/firmware_log.h",
+        "services/firmware/utils/src/firmware_changelog_utils.cpp",
+        "services/firmware/utils/src/firmware_check_analyze_utils.cpp",
+        "services/firmware/utils/src/firmware_combine_version_utils.cpp",
+        "services/service/include/dupdate_log.h",
+        "services/service/include/dupdate_upgrade_helper.h",
+        "services/startup/access/include/access_factory.h",
+        "services/startup/access/include/access_manager.h",
+        "services/startup/access/include/default_access.h",
+        "services/startup/access/include/firmware_access.h",
+        "services/startup/access/include/i_access.h",
+        "services/startup/access/src/access_factory.cpp",
+        "services/startup/access/src/access_manager.cpp",
+        "services/startup/access/src/default_access.cpp",
+        "services/startup/access/src/firmware_access.cpp",
+        "services/startup/manage/include/schedule_config.h",
+        "services/startup/manage/include/schedule_manager.h",
+        "services/startup/manage/include/startup_manager.h",
+        "services/startup/manage/include/startup_schedule.h",
+        "services/startup/manage/src/schedule_config.cpp",
+        "services/startup/manage/src/schedule_manager.cpp",
+        "services/startup/manage/src/startup_manager.cpp",
+        "services/startup/manage/src/startup_schedule.cpp",
+        "services/startup/model/include/schedule_task.h",
+        "services/startup/model/include/startup_constant.h",
+        "services/utils/include/dupdate_inet_observer.h",
+        "services/utils/include/dupdate_net_manager.h",
+        "services/utils/include/dupdate_net_observer.h",
+        "services/utils/src/dupdate_net_manager.cpp",
+        "services/utils/src/dupdate_net_manager_empty.cpp",
+        "services/utils/src/dupdate_net_observer.cpp",
+        "services/utils/src/dupdate_timer.c"
+      ],
+      "findings": [
+        {
+          "file": "services/service/include/dupdate_log.h",
+          "line": 68,
+          "column": 26,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "message": "Candidate only: `printf` receives a non-literal format expression `LOG_TAG \": \" \"<DEBUG>[%{public}s:%{public}d]: \" fmt \"\\n\"`. Control, intended format ownership and concrete impact remain unknown.",
+          "evidence_type": "syntax",
+          "candidate_cwe": "CWE-134",
+          "symbol": "LOG_TAG \": \" \"<DEBUG>[%{public}s:%{public}d]: \" fmt \"\\n\"",
+          "consequence_impact": "format_string_or_info_leak",
+          "consequence_cwe": "CWE-134",
+          "source_sha256": "d9b68e1124f91d5fb09f209c9841d7a40bad1fb0c0d414c4383acc54cf40d2d2",
+          "rule_version": "0.5.0",
+          "rule_lineage_id": "A-UNSAFE-01:ohcpp-unsafe-call-candidate",
+          "identity_quality": "partial",
+          "evidence_obligations": [
+            {
+              "kind": "source_control_and_format_identity",
+              "description": "Resolve attacker-controlled input and whether the format string is literal/trusted.",
+              "status": "unknown"
+            },
+            {
+              "kind": "destination_capacity",
+              "description": "Bind the destination buffer to its exact capacity and alias identity.",
+              "status": "unknown"
+            },
+            {
+              "kind": "cross_function_and_macro_context",
+              "description": "Resolve wrappers, macros, varargs, templates and compile configuration.",
+              "status": "missing"
+            },
+            {
+              "kind": "entry_or_privilege_boundary",
+              "description": "Establish a realistic reachable entry and privilege boundary.",
+              "status": "missing"
+            },
+            {
+              "kind": "trigger_conditions",
+              "description": "Reproduce the unsafe call in an isolated target.",
+              "status": "missing"
+            },
+            {
+              "kind": "cia_impact",
+              "description": "Establish concrete confidentiality, integrity or availability impact.",
+              "status": "missing"
+            }
+          ]
+        },
+        {
+          "file": "services/service/include/dupdate_log.h",
+          "line": 75,
+          "column": 26,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "message": "Candidate only: `printf` receives a non-literal format expression `LOG_TAG \": \" \"<INFO>[%{public}s:%{public}d]: \" fmt \"\\n\"`. Control, intended format ownership and concrete impact remain unknown.",
+          "evidence_type": "syntax",
+          "candidate_cwe": "CWE-134",
+          "symbol": "LOG_TAG \": \" \"<INFO>[%{public}s:%{public}d]: \" fmt \"\\n\"",
+          "consequence_impact": "format_string_or_info_leak",
+          "consequence_cwe": "CWE-134",
+          "source_sha256": "d9b68e1124f91d5fb09f209c9841d7a40bad1fb0c0d414c4383acc54cf40d2d2",
+          "rule_version": "0.5.0",
+          "rule_lineage_id": "A-UNSAFE-01:ohcpp-unsafe-call-candidate",
+          "identity_quality": "partial",
+          "evidence_obligations": [
+            {
+              "kind": "source_control_and_format_identity",
+              "description": "Resolve attacker-controlled input and whether the format string is literal/trusted.",
+              "status": "unknown"
+            },
+            {
+              "kind": "destination_capacity",
+              "description": "Bind the destination buffer to its exact capacity and alias identity.",
+              "status": "unknown"
+            },
+            {
+              "kind": "cross_function_and_macro_context",
+              "description": "Resolve wrappers, macros, varargs, templates and compile configuration.",
+              "status": "missing"
+            },
+            {
+              "kind": "entry_or_privilege_boundary",
+              "description": "Establish a realistic reachable entry and privilege boundary.",
+              "status": "missing"
+            },
+            {
+              "kind": "trigger_conditions",
+              "description": "Reproduce the unsafe call in an isolated target.",
+              "status": "missing"
+            },
+            {
+              "kind": "cia_impact",
+              "description": "Establish concrete confidentiality, integrity or availability impact.",
+              "status": "missing"
+            }
+          ]
+        },
+        {
+          "file": "services/service/include/dupdate_log.h",
+          "line": 82,
+          "column": 26,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "message": "Candidate only: `printf` receives a non-literal format expression `LOG_TAG \": \" \"<WARN>[%{public}s:%{public}d]: \" fmt \"\\n\"`. Control, intended format ownership and concrete impact remain unknown.",
+          "evidence_type": "syntax",
+          "candidate_cwe": "CWE-134",
+          "symbol": "LOG_TAG \": \" \"<WARN>[%{public}s:%{public}d]: \" fmt \"\\n\"",
+          "consequence_impact": "format_string_or_info_leak",
+          "consequence_cwe": "CWE-134",
+          "source_sha256": "d9b68e1124f91d5fb09f209c9841d7a40bad1fb0c0d414c4383acc54cf40d2d2",
+          "rule_version": "0.5.0",
+          "rule_lineage_id": "A-UNSAFE-01:ohcpp-unsafe-call-candidate",
+          "identity_quality": "partial",
+          "evidence_obligations": [
+            {
+              "kind": "source_control_and_format_identity",
+              "description": "Resolve attacker-controlled input and whether the format string is literal/trusted.",
+              "status": "unknown"
+            },
+            {
+              "kind": "destination_capacity",
+              "description": "Bind the destination buffer to its exact capacity and alias identity.",
+              "status": "unknown"
+            },
+            {
+              "kind": "cross_function_and_macro_context",
+              "description": "Resolve wrappers, macros, varargs, templates and compile configuration.",
+              "status": "missing"
+            },
+            {
+              "kind": "entry_or_privilege_boundary",
+              "description": "Establish a realistic reachable entry and privilege boundary.",
+              "status": "missing"
+            },
+            {
+              "kind": "trigger_conditions",
+              "description": "Reproduce the unsafe call in an isolated target.",
+              "status": "missing"
+            },
+            {
+              "kind": "cia_impact",
+              "description": "Establish concrete confidentiality, integrity or availability impact.",
+              "status": "missing"
+            }
+          ]
+        },
+        {
+          "file": "services/service/include/dupdate_log.h",
+          "line": 89,
+          "column": 26,
+          "rule_id": "ohcpp-format-string-candidate-002",
+          "message": "Candidate only: `printf` receives a non-literal format expression `LOG_TAG \": \" \"<ERROR>[%{public}s:%{public}d]: \" fmt \"\\n\"`. Control, intended format ownership and concrete impact remain unknown.",
+          "evidence_type": "syntax",
+          "candidate_cwe": "CWE-134",
+          "symbol": "LOG_TAG \": \" \"<ERROR>[%{public}s:%{public}d]: \" fmt \"\\n\"",
+          "consequence_impact": "format_string_or_info_leak",
+          "consequence_cwe": "CWE-134",
+          "source_sha256": "d9b68e1124f91d5fb09f209c9841d7a40bad1fb0c0d414c4383acc54cf40d2d2",
+          "rule_version": "0.5.0",
+          "rule_lineage_id": "A-UNSAFE-01:ohcpp-unsafe-call-candidate",
+          "identity_quality": "partial",
+          "evidence_obligations": [
+            {
+              "kind": "source_control_and_format_identity",
+              "description": "Resolve attacker-controlled input and whether the format string is literal/trusted.",
+              "status": "unknown"
+            },
+            {
+              "kind": "destination_capacity",
+              "description": "Bind the destination buffer to its exact capacity and alias identity.",
+              "status": "unknown"
+            },
+            {
+              "kind": "cross_function_and_macro_context",
+              "description": "Resolve wrappers, macros, varargs, templates and compile configuration.",
+              "status": "missing"
+            },
+            {
+              "kind": "entry_or_privilege_boundary",
+              "description": "Establish a realistic reachable entry and privilege boundary.",
+              "status": "missing"
+            },
+            {
+              "kind": "trigger_conditions",
+              "description": "Reproduce the unsafe call in an isolated target.",
+              "status": "missing"
+            },
+            {
+              "kind": "cia_impact",
+              "description": "Establish concrete confidentiality, integrity or availability impact.",
+              "status": "missing"
+            }
+          ]
+        }
+      ],
+      "limitations": [
+        "Absence of a finding is not a safe verdict.",
+        "Candidate only: lexical unsafe-call recognition does not prove exploitability.",
+        "Wrappers, macros, varargs, destination aliases, compile context and attacker control remain unknown.",
+        "frameworks/js/napi/base/src/client_helper.cpp: parse_status=partial; unsafe-call coverage remains unknown.",
+        "frameworks/js/napi/base/src/iupdater.cpp: parse_status=partial; unsafe-call coverage remains unknown.",
+        "frameworks/js/napi/base/src/napi_util.cpp: parse_status=partial; unsafe-call coverage remains unknown.",
+        "frameworks/js/napi/base/src/session_manager.cpp: parse_status=partial; unsafe-call coverage remains unknown.",
+        "frameworks/js/napi/client/local_updater.cpp: parse_status=partial; unsafe-call coverage remains unknown.",
+        "frameworks/js/napi/client/restorer.cpp: parse_status=partial; unsafe-call coverage remains unknown.",
+        "frameworks/js/napi/client/update_client.cpp: parse_status=partial; unsafe-call coverage remains unknown.",
+        "frameworks/js/napi/client/update_module.cpp: parse_status=partial; unsafe-call coverage remains unknown.",
+        "frameworks/js/napi/client/update_session.cpp: parse_status=partial; unsafe-call coverage remains unknown.",
+        "interfaces/inner_api/engine/update_service_kits_impl.cpp: parse_status=partial; unsafe-call coverage remains unknown.",
+        "interfaces/inner_api/engine/update_service_proxy.cpp: parse_status=partial; unsafe-call coverage remains unknown.",
+        "interfaces/inner_api/include/iupdate_callback.h: parse_status=partial; unsafe-call coverage remains unknown.",
+        "interfaces/inner_api/include/iupdate_service.h: parse_status=partial; unsafe-call coverage remains unknown.",
+        "services/core/ability/callback/include/base_callback_utils.h: parse_status=partial; unsafe-call coverage remains unknown.",
+        "services/core/ability/sqlite/core/include/table_base_operator.h: parse_status=partial; unsafe-call coverage remains unknown.",
+        "services/core/ability/sqlite/core/src/sqlite_db.cpp: parse_status=partial; unsafe-call coverage remains unknown.",
+        "services/core/ability/utils/src/file_utils.cpp: parse_status=partial; unsafe-call coverage remains unknown.",
+        "services/engine/include/update_notify.h: parse_status=partial; unsafe-call coverage remains unknown.",
+        "services/engine/include/update_service_stub.h: parse_status=partial; unsafe-call coverage remains unknown.",
+        "services/engine/src/progress_thread.cpp: parse_status=partial; unsafe-call coverage remains unknown.",
+        "services/engine/src/update_service.cpp: parse_status=partial; unsafe-call coverage remains unknown.",
+        "services/engine/src/update_service_stub.cpp: parse_status=partial; unsafe-call coverage remains unknown.",
+        "services/firmware/check/include/firmware_icheck.h: parse_status=partial; unsafe-call coverage remains unknown.",
+        "services/firmware/data/db/include/firmware_component_operator.h: parse_status=partial; unsafe-call coverage remains unknown.",
+        "services/firmware/data/db/include/firmware_component_table.h: parse_status=partial; unsafe-call coverage remains unknown.",
+        "services/firmware/data/db/include/firmware_database.h: parse_status=partial; unsafe-call coverage remains unknown.",
+        "services/firmware/data/db/include/firmware_database_callback.h: parse_status=partial; unsafe-call coverage remains unknown.",
+        "services/firmware/data/db/include/firmware_task_operator.h: parse_status=partial; unsafe-call coverage remains unknown.",
+        "services/firmware/data/db/include/firmware_task_table.h: parse_status=partial; unsafe-call coverage remains unknown.",
+        "services/service/include/dupdate_errno.h: parse_status=partial; unsafe-call coverage remains unknown.",
+        "services/utils/include/dupdate_timer.h: parse_status=partial; unsafe-call coverage remains unknown."
+      ],
+      "file_outcomes": [
+        [
+          "frameworks/js/napi/base/include/client_define.h",
+          "complete"
+        ],
+        [
+          "frameworks/js/napi/base/include/client_helper.h",
+          "complete"
+        ],
+        [
+          "frameworks/js/napi/base/include/define_property.h",
+          "complete"
+        ],
+        [
+          "frameworks/js/napi/base/include/iupdater.h",
+          "complete"
+        ],
+        [
+          "frameworks/js/napi/base/include/napi_util.h",
+          "complete"
+        ],
+        [
+          "frameworks/js/napi/base/include/session_manager.h",
+          "complete"
+        ],
+        [
+          "frameworks/js/napi/base/src/client_helper.cpp",
+          "partial"
+        ],
+        [
+          "frameworks/js/napi/base/src/define_property.cpp",
+          "complete"
+        ],
+        [
+          "frameworks/js/napi/base/src/iupdater.cpp",
+          "partial"
+        ],
+        [
+          "frameworks/js/napi/base/src/napi_util.cpp",
+          "partial"
+        ],
+        [
+          "frameworks/js/napi/base/src/session_manager.cpp",
+          "partial"
+        ],
+        [
+          "frameworks/js/napi/client/iupdate_session.h",
+          "complete"
+        ],
+        [
+          "frameworks/js/napi/client/local_updater.cpp",
+          "partial"
+        ],
+        [
+          "frameworks/js/napi/client/local_updater.h",
+          "complete"
+        ],
+        [
+          "frameworks/js/napi/client/restorer.cpp",
+          "partial"
+        ],
+        [
+          "frameworks/js/napi/client/restorer.h",
+          "complete"
+        ],
+        [
+          "frameworks/js/napi/client/update_client.cpp",
+          "partial"
+        ],
+        [
+          "frameworks/js/napi/client/update_client.h",
+          "complete"
+        ],
+        [
+          "frameworks/js/napi/client/update_module.cpp",
+          "partial"
+        ],
+        [
+          "frameworks/js/napi/client/update_session.cpp",
+          "partial"
+        ],
+        [
+          "frameworks/js/napi/client/update_session.h",
+          "complete"
+        ],
+        [
+          "interfaces/inner_api/engine/update_service_kits_impl.cpp",
+          "partial"
+        ],
+        [
+          "interfaces/inner_api/engine/update_service_ondemand.cpp",
+          "complete"
+        ],
+        [
+          "interfaces/inner_api/engine/update_service_proxy.cpp",
+          "partial"
+        ],
+        [
+          "interfaces/inner_api/include/iservice_local_updater.h",
+          "complete"
+        ],
+        [
+          "interfaces/inner_api/include/iservice_online_updater.h",
+          "complete"
+        ],
+        [
+          "interfaces/inner_api/include/iservice_restorer.h",
+          "complete"
+        ],
+        [
+          "interfaces/inner_api/include/iupdate_callback.h",
+          "partial"
+        ],
+        [
+          "interfaces/inner_api/include/iupdate_service.h",
+          "partial"
+        ],
+        [
+          "interfaces/inner_api/include/json_builder.h",
+          "complete"
+        ],
+        [
+          "interfaces/inner_api/include/message_parcel_helper.h",
+          "complete"
+        ],
+        [
+          "interfaces/inner_api/include/update_constant.h",
+          "complete"
+        ],
+        [
+          "interfaces/inner_api/include/update_helper.h",
+          "complete"
+        ],
+        [
+          "interfaces/inner_api/include/update_service_kits.h",
+          "complete"
+        ],
+        [
+          "interfaces/inner_api/include/update_service_kits_impl.h",
+          "complete"
+        ],
+        [
+          "interfaces/inner_api/include/update_service_ondemand.h",
+          "complete"
+        ],
+        [
+          "interfaces/inner_api/include/update_system_event.h",
+          "complete"
+        ],
+        [
+          "interfaces/inner_api/include/updater_sa_ipc_interface_code.h",
+          "complete"
+        ],
+        [
+          "services/callback/include/update_callback.h",
+          "complete"
+        ],
+        [
+          "services/callback/include/update_callback_proxy.h",
+          "complete"
+        ],
+        [
+          "services/callback/include/update_callback_stub.h",
+          "complete"
+        ],
+        [
+          "services/callback/src/update_callback.cpp",
+          "complete"
+        ],
+        [
+          "services/callback/src/update_callback_proxy.cpp",
+          "complete"
+        ],
+        [
+          "services/callback/src/update_callback_stub.cpp",
+          "complete"
+        ],
+        [
+          "services/core/ability/adapter/include/config_parse.h",
+          "complete"
+        ],
+        [
+          "services/core/ability/adapter/include/device_adapter.h",
+          "complete"
+        ],
+        [
+          "services/core/ability/adapter/src/config_parse.cpp",
+          "complete"
+        ],
+        [
+          "services/core/ability/adapter/src/device_adapter.cpp",
+          "complete"
+        ],
+        [
+          "services/core/ability/alarm/include/alarm_helper.h",
+          "complete"
+        ],
+        [
+          "services/core/ability/alarm/include/alarm_manager.h",
+          "complete"
+        ],
+        [
+          "services/core/ability/alarm/include/timer_manager.h",
+          "complete"
+        ],
+        [
+          "services/core/ability/alarm/src/alarm_manager.cpp",
+          "complete"
+        ],
+        [
+          "services/core/ability/alarm/src/timer_manager.cpp",
+          "complete"
+        ],
+        [
+          "services/core/ability/callback/include/base_callback_utils.h",
+          "partial"
+        ],
+        [
+          "services/core/ability/callback/src/base_callback_utils.cpp",
+          "complete"
+        ],
+        [
+          "services/core/ability/callback/src/base_callback_utils_empty.cpp",
+          "complete"
+        ],
+        [
+          "services/core/ability/common/include/constant.h",
+          "complete"
+        ],
+        [
+          "services/core/ability/define/include/update_define.h",
+          "complete"
+        ],
+        [
+          "services/core/ability/download/data/include/download_info.h",
+          "complete"
+        ],
+        [
+          "services/core/ability/log/include/update_log.h",
+          "complete"
+        ],
+        [
+          "services/core/ability/log/src/update_log.cpp",
+          "complete"
+        ],
+        [
+          "services/core/ability/model/include/device_info.h",
+          "complete"
+        ],
+        [
+          "services/core/ability/net/include/network_response.h",
+          "complete"
+        ],
+        [
+          "services/core/ability/preference/include/preferences_utils.h",
+          "complete"
+        ],
+        [
+          "services/core/ability/preference/src/preference_utils.cpp",
+          "complete"
+        ],
+        [
+          "services/core/ability/preference/src/preference_utils_empty.cpp",
+          "complete"
+        ],
+        [
+          "services/core/ability/sqlite/core/include/idatabase.h",
+          "complete"
+        ],
+        [
+          "services/core/ability/sqlite/core/include/itable.h",
+          "complete"
+        ],
+        [
+          "services/core/ability/sqlite/core/include/itable_operator.h",
+          "complete"
+        ],
+        [
+          "services/core/ability/sqlite/core/include/sqlite_db.h",
+          "complete"
+        ],
+        [
+          "services/core/ability/sqlite/core/include/table_base_operator.h",
+          "partial"
+        ],
+        [
+          "services/core/ability/sqlite/core/src/sqlite_db.cpp",
+          "partial"
+        ],
+        [
+          "services/core/ability/status_cache/include/status_cache.h",
+          "complete"
+        ],
+        [
+          "services/core/ability/status_cache/src/status_cache.cpp",
+          "complete"
+        ],
+        [
+          "services/core/ability/utils/include/encrypt_utils.h",
+          "complete"
+        ],
+        [
+          "services/core/ability/utils/include/file_utils.h",
+          "complete"
+        ],
+        [
+          "services/core/ability/utils/include/json_utils.h",
+          "complete"
+        ],
+        [
+          "services/core/ability/utils/include/sha256_utils.h",
+          "complete"
+        ],
+        [
+          "services/core/ability/utils/include/string_utils.h",
+          "complete"
+        ],
+        [
+          "services/core/ability/utils/include/time_utils.h",
+          "complete"
+        ],
+        [
+          "services/core/ability/utils/include/time_utils_proxy.h",
+          "complete"
+        ],
+        [
+          "services/core/ability/utils/src/file_utils.cpp",
+          "partial"
+        ],
+        [
+          "services/core/ability/utils/src/sha256_utils.cpp",
+          "complete"
+        ],
+        [
+          "services/core/ability/utils/src/time_utils_proxy.cpp",
+          "complete"
+        ],
+        [
+          "services/engine/include/progress_thread.h",
+          "complete"
+        ],
+        [
+          "services/engine/include/update_no_constructor.h",
+          "complete"
+        ],
+        [
+          "services/engine/include/update_notify.h",
+          "partial"
+        ],
+        [
+          "services/engine/include/update_service.h",
+          "complete"
+        ],
+        [
+          "services/engine/include/update_service_cache.h",
+          "complete"
+        ],
+        [
+          "services/engine/include/update_service_impl_firmware.h",
+          "complete"
+        ],
+        [
+          "services/engine/include/update_service_impl_manager.h",
+          "complete"
+        ],
+        [
+          "services/engine/include/update_service_local_updater.h",
+          "complete"
+        ],
+        [
+          "services/engine/include/update_service_proxy.h",
+          "complete"
+        ],
+        [
+          "services/engine/include/update_service_restorer.h",
+          "complete"
+        ],
+        [
+          "services/engine/include/update_service_stub.h",
+          "partial"
+        ],
+        [
+          "services/engine/include/update_service_util.h",
+          "complete"
+        ],
+        [
+          "services/engine/src/message_parcel_helper.cpp",
+          "complete"
+        ],
+        [
+          "services/engine/src/progress_thread.cpp",
+          "partial"
+        ],
+        [
+          "services/engine/src/update_helper.cpp",
+          "complete"
+        ],
+        [
+          "services/engine/src/update_notify.cpp",
+          "complete"
+        ],
+        [
+          "services/engine/src/update_service.cpp",
+          "partial"
+        ],
+        [
+          "services/engine/src/update_service_cache.cpp",
+          "complete"
+        ],
+        [
+          "services/engine/src/update_service_impl_firmware.cpp",
+          "complete"
+        ],
+        [
+          "services/engine/src/update_service_impl_manager.cpp",
+          "complete"
+        ],
+        [
+          "services/engine/src/update_service_local_updater.cpp",
+          "complete"
+        ],
+        [
+          "services/engine/src/update_service_restorer.cpp",
+          "complete"
+        ],
+        [
+          "services/engine/src/update_service_stub.cpp",
+          "partial"
+        ],
+        [
+          "services/engine/src/update_service_util_hmos.cpp",
+          "complete"
+        ],
+        [
+          "services/firmware/callback/include/firmware_callback_utils.h",
+          "complete"
+        ],
+        [
+          "services/firmware/callback/src/firmware_callback_utils.cpp",
+          "complete"
+        ],
+        [
+          "services/firmware/check/include/firmware_icheck.h",
+          "partial"
+        ],
+        [
+          "services/firmware/common/include/firmware_common.h",
+          "complete"
+        ],
+        [
+          "services/firmware/common/include/firmware_constant.h",
+          "complete"
+        ],
+        [
+          "services/firmware/common/include/firmware_update_adapter.h",
+          "complete"
+        ],
+        [
+          "services/firmware/common/include/firmware_update_helper.h",
+          "complete"
+        ],
+        [
+          "services/firmware/common/src/firmware_update_adapter.cpp",
+          "complete"
+        ],
+        [
+          "services/firmware/common/src/firmware_update_helper.cpp",
+          "complete"
+        ],
+        [
+          "services/firmware/data/db/include/firmware_component.h",
+          "complete"
+        ],
+        [
+          "services/firmware/data/db/include/firmware_component_operator.h",
+          "partial"
+        ],
+        [
+          "services/firmware/data/db/include/firmware_component_table.h",
+          "partial"
+        ],
+        [
+          "services/firmware/data/db/include/firmware_database.h",
+          "partial"
+        ],
+        [
+          "services/firmware/data/db/include/firmware_database_callback.h",
+          "partial"
+        ],
+        [
+          "services/firmware/data/db/include/firmware_task.h",
+          "complete"
+        ],
+        [
+          "services/firmware/data/db/include/firmware_task_operator.h",
+          "partial"
+        ],
+        [
+          "services/firmware/data/db/include/firmware_task_table.h",
+          "partial"
+        ],
+        [
+          "services/firmware/data/db/src/firmware_component_operator.cpp",
+          "complete"
+        ],
+        [
+          "services/firmware/data/db/src/firmware_component_operator_empty.cpp",
+          "complete"
+        ],
+        [
+          "services/firmware/data/db/src/firmware_component_table.cpp",
+          "complete"
+        ],
+        [
+          "services/firmware/data/db/src/firmware_component_table_empty.cpp",
+          "complete"
+        ],
+        [
+          "services/firmware/data/db/src/firmware_database.cpp",
+          "complete"
+        ],
+        [
+          "services/firmware/data/db/src/firmware_database_callback.cpp",
+          "complete"
+        ],
+        [
+          "services/firmware/data/db/src/firmware_database_empty.cpp",
+          "complete"
+        ],
+        [
+          "services/firmware/data/db/src/firmware_task_operator.cpp",
+          "complete"
+        ],
+        [
+          "services/firmware/data/db/src/firmware_task_operator_empty.cpp",
+          "complete"
+        ],
+        [
+          "services/firmware/data/db/src/firmware_task_table.cpp",
+          "complete"
+        ],
+        [
+          "services/firmware/data/db/src/firmware_task_table_empty.cpp",
+          "complete"
+        ],
+        [
+          "services/firmware/data/manager/include/firmware_preferences_utils.h",
+          "complete"
+        ],
+        [
+          "services/firmware/data/manager/src/firmware_preferences_utils.cpp",
+          "complete"
+        ],
+        [
+          "services/firmware/event/include/firmware_event_listener.h",
+          "complete"
+        ],
+        [
+          "services/firmware/event/src/firmware_event_listener.cpp",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/data_processor/include/firmware_check_data_processor.h",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/data_processor/include/firmware_download_data_processor.h",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/data_processor/include/firmware_install_data_processor.h",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/data_processor/src/firmware_check_data_processor.cpp",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/data_processor/src/firmware_download_data_processor.cpp",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/data_processor/src/firmware_install_data_processor.cpp",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/executor/include/firmware_apply_executor.h",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/executor/include/firmware_check_executor.h",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/executor/include/firmware_download_executor.h",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/executor/include/firmware_iexecutor.h",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/executor/include/firmware_install_executor.h",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/executor/src/firmware_apply_executor.cpp",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/executor/src/firmware_check_executor.cpp",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/executor/src/firmware_download_executor.cpp",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/executor/src/firmware_install_executor.cpp",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/flow/include/firmware_flow_manager.h",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/flow/include/firmware_manager.h",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/flow/src/firmware_flow_manager.cpp",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/flow/src/firmware_manager.cpp",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/install/include/firmware_install.h",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/install/include/firmware_install_factory.h",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/install/include/firmware_sys_installer_callback.h",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/install/include/firmware_sys_installer_install.h",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/install/include/firmware_updater_install.h",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/install/src/firmware_install.cpp",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/install/src/firmware_install_factory.cpp",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/install/src/firmware_sys_installer_callback.cpp",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/install/src/firmware_sys_installer_install.cpp",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/install/src/firmware_updater_install.cpp",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/mode/include/firmware_download_mode.h",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/mode/include/firmware_iexecute_mode.h",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/mode/include/firmware_install_apply_mode.h",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/mode/include/firmware_manual_check_mode.h",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/mode/src/firmware_download_mode.cpp",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/mode/src/firmware_install_apply_mode.cpp",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/mode/src/firmware_manual_check_mode.cpp",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/status/include/firmware_result_process.h",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/status/include/firmware_status_cache.h",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/status/src/firmware_result_process.cpp",
+          "complete"
+        ],
+        [
+          "services/firmware/upgrade/status/src/firmware_status_cache.cpp",
+          "complete"
+        ],
+        [
+          "services/firmware/utils/include/firmware_changelog_utils.h",
+          "complete"
+        ],
+        [
+          "services/firmware/utils/include/firmware_check_analyze_utils.h",
+          "complete"
+        ],
+        [
+          "services/firmware/utils/include/firmware_combine_version_utils.h",
+          "complete"
+        ],
+        [
+          "services/firmware/utils/include/firmware_file_utils.h",
+          "complete"
+        ],
+        [
+          "services/firmware/utils/include/firmware_log.h",
+          "complete"
+        ],
+        [
+          "services/firmware/utils/src/firmware_changelog_utils.cpp",
+          "complete"
+        ],
+        [
+          "services/firmware/utils/src/firmware_check_analyze_utils.cpp",
+          "complete"
+        ],
+        [
+          "services/firmware/utils/src/firmware_combine_version_utils.cpp",
+          "complete"
+        ],
+        [
+          "services/service/include/dupdate_errno.h",
+          "partial"
+        ],
+        [
+          "services/service/include/dupdate_log.h",
+          "complete"
+        ],
+        [
+          "services/service/include/dupdate_upgrade_helper.h",
+          "complete"
+        ],
+        [
+          "services/startup/access/include/access_factory.h",
+          "complete"
+        ],
+        [
+          "services/startup/access/include/access_manager.h",
+          "complete"
+        ],
+        [
+          "services/startup/access/include/default_access.h",
+          "complete"
+        ],
+        [
+          "services/startup/access/include/firmware_access.h",
+          "complete"
+        ],
+        [
+          "services/startup/access/include/i_access.h",
+          "complete"
+        ],
+        [
+          "services/startup/access/src/access_factory.cpp",
+          "complete"
+        ],
+        [
+          "services/startup/access/src/access_manager.cpp",
+          "complete"
+        ],
+        [
+          "services/startup/access/src/default_access.cpp",
+          "complete"
+        ],
+        [
+          "services/startup/access/src/firmware_access.cpp",
+          "complete"
+        ],
+        [
+          "services/startup/manage/include/schedule_config.h",
+          "complete"
+        ],
+        [
+          "services/startup/manage/include/schedule_manager.h",
+          "complete"
+        ],
+        [
+          "services/startup/manage/include/startup_manager.h",
+          "complete"
+        ],
+        [
+          "services/startup/manage/include/startup_schedule.h",
+          "complete"
+        ],
+        [
+          "services/startup/manage/src/schedule_config.cpp",
+          "complete"
+        ],
+        [
+          "services/startup/manage/src/schedule_manager.cpp",
+          "complete"
+        ],
+        [
+          "services/startup/manage/src/startup_manager.cpp",
+          "complete"
+        ],
+        [
+          "services/startup/manage/src/startup_schedule.cpp",
+          "complete"
+        ],
+        [
+          "services/startup/model/include/schedule_task.h",
+          "complete"
+        ],
+        [
+          "services/startup/model/include/startup_constant.h",
+          "complete"
+        ],
+        [
+          "services/utils/include/dupdate_inet_observer.h",
+          "complete"
+        ],
+        [
+          "services/utils/include/dupdate_net_manager.h",
+          "complete"
+        ],
+        [
+          "services/utils/include/dupdate_net_observer.h",
+          "complete"
+        ],
+        [
+          "services/utils/include/dupdate_timer.h",
+          "partial"
+        ],
+        [
+          "services/utils/src/dupdate_net_manager.cpp",
+          "complete"
+        ],
+        [
+          "services/utils/src/dupdate_net_manager_empty.cpp",
+          "complete"
+        ],
+        [
+          "services/utils/src/dupdate_net_observer.cpp",
+          "complete"
+        ],
+        [
+          "services/utils/src/dupdate_timer.c",
+          "complete"
+        ]
+      ]
+    }
+  ],
+  "candidate_count": 7,
+  "candidate_groups": 6,
+  "validated_vulnerability": 0,
+  "eligible_for_metrics": false,
+  "precision_recall": null,
+  "performance": {
+    "wall_seconds": 1.3209253999957582,
+    "selected_source_files": 219,
+    "selected_source_bytes": 851345,
+    "process_peak_rss_kib": null
+  },
+  "environment": {
+    "python": "3.13.9",
+    "git": "git version 2.46.2.windows.1",
+    "parsers": {
+      "tree-sitter": "0.26.0",
+      "tree-sitter-c": "0.24.2",
+      "tree-sitter-cpp": "0.23.4",
+      "tree-sitter-javascript": "unavailable",
+      "tree-sitter-typescript": "unavailable"
+    },
+    "parse_profile": "light-ast",
+    "build_profile": "none",
+    "macro_expansion": false,
+    "product_manifest_locked": false
+  },
+  "exact_argv": [
+    "research/tests/a_null_03_unsafe_memory_review/run_pinned_component_replay_current.py",
+    "--manifest-dir",
+    "research/evidence/cpp/component_scans",
+    "--out-dir",
+    "research/evidence/cpp/a_memory_safety_current_replay_20261019",
+    "--source-roots-json",
+    "research/evidence/cpp/a_memory_safety_current_replay_20261019/source_roots.json"
+  ],
+  "limitations": [
+    "Candidate-only lexical analysis; no confirmed/reportable vulnerability is claimed.",
+    "No product build, permission boundary, attacker control, trigger trace or CIA impact is established.",
+    "Pointer aliases, wrappers, macro expansion, templates, interprocedural range facts and complete CFG dominance remain unknown.",
+    "Source objects were acquired before analysis and their remote/ref are recorded separately; analysis reads only the verified local pinned Git objects, performs no checkout, and invokes no external scanner."
+  ]
+}

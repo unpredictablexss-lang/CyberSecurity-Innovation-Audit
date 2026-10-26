@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ohscanner.local/schemas/a-unsafe-memory-review-manifest-v1.schema.json",
+  "title": "A-UNSAFE stratified review manifest",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "expected_population",
+    "observed_population",
+    "population_mismatch",
+    "provisional_frame",
+    "raw_observation_rows",
+    "sample_size",
+    "observation_identity_audit",
+    "report_count_dimensions"
+  ],
+  "properties": {
+    "schema_version": { "const": "ohscanner.a-unsafe-memory-stratified-review-v1" },
+    "expected_population": { "type": "integer", "minimum": 0 },
+    "observed_population": { "type": "integer", "minimum": 0 },
+    "population_mismatch": { "type": "boolean" },
+    "provisional_frame": { "type": "boolean" },
+    "raw_observation_rows": { "type": "integer", "minimum": 0 },
+    "sample_size": { "type": "integer", "minimum": 0 },
+    "observation_identity_audit": {
+      "type": "object",
+      "required": ["rows", "unique_diagnostic_ids", "duplicate_diagnostic_id_rows"],
+      "properties": {
+        "rows": { "type": "integer", "minimum": 0 },
+        "unique_diagnostic_ids": { "type": "integer", "minimum": 0 },
+        "duplicate_diagnostic_id_rows": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "report_count_dimensions": {
+      "type": "object",
+      "required": [
+        "raw_observation_rows",
+        "within_repository_root_cause_clusters",
+        "cross_repository_identical_source_clusters",
+        "human_review_outcomes"
+      ],
+      "properties": {
+        "raw_observation_rows": {
+          "type": "object",
+          "required": ["count", "status"],
+          "properties": {
+            "count": { "type": "integer", "minimum": 0 },
+            "status": { "const": "counted" }
+          },
+          "additionalProperties": true
+        },
+        "within_repository_root_cause_clusters": {
+          "type": "object",
+          "required": ["count", "status"],
+          "properties": {
+            "count": { "type": ["integer", "null"], "minimum": 0 },
+            "status": { "enum": ["counted", "not_established"] },
+            "reason": { "type": "string", "minLength": 1 }
+          },
+          "additionalProperties": true
+        },
+        "cross_repository_identical_source_clusters": {
+          "type": "object",
+          "required": ["count", "rows_in_those_clusters", "key", "status"],
+          "properties": {
+            "count": { "type": "integer", "minimum": 0 },
+            "rows_in_those_clusters": { "type": "integer", "minimum": 0 },
+            "key": { "type": "string", "minLength": 1 },
+            "status": { "const": "counted_from_source_bound_diagnostics" }
+          },
+          "additionalProperties": true
+        },
+        "human_review_outcomes": {
+          "type": "object",
+          "required": ["reviewed", "pending", "disposition_counts", "status"],
+          "properties": {
+            "reviewed": { "type": "integer", "minimum": 0 },
+            "pending": { "type": "integer", "minimum": 0 },
+            "disposition_counts": {
+              "type": "object",
+              "propertyNames": {
+                "enum": ["confirmed", "not_reproduced", "not_testable", "safe_or_fixed", "known_false_positive", "unknown"]
+              },
+              "additionalProperties": { "type": "integer", "minimum": 0 }
+            },
+            "status": { "enum": ["pending_independent_review", "partially_reviewed", "reviewed"] }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": true
+}

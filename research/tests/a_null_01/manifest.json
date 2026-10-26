@@ -7,7 +7,7 @@
     "snapshot_sha256": "8f881c60dc49784191bef602bd1574dec02f5bf78adf6515a3bd0be9d6c1f81c",
     "profile_id": "fixture-no-build",
     "build_context_id": null,
-    "regression_matrix_sha256": "9bd5f8db1a712dbd048d3713dd8fee6cd9e13c0b91f5024c34ff15db4596d55a",
+    "regression_matrix_sha256": "0c5f3c64159b40e23286c48c037e97344d5aea363283a40eb2e5391f3ac8ec38",
     "note": "Fixture metadata only; no product provenance, build context or vulnerability claim."
   },
   "units": [

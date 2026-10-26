@@ -1,0 +1,1218 @@
+{
+  "schema_version": "ohscanner.a-unsafe-gettext-format-source-audit-v1",
+  "census_sha256": "4055198b7fb5667505651b40efa40bce329cc2be9a0af907f59eb93026aa31cb",
+  "source_run_signature": "1696df82f39e2564e0821c0ad2e837a00c6d83f9276bf5e0c38a3bd1f511700b",
+  "candidate_subset": "0.4.0 fprintf/vfprintf observations from the pinned 829-file replay whose expression shape is an outer _() wrapper",
+  "counts": {
+    "rows": 120,
+    "direct_gettext_header": 110,
+    "literal_wrapper_argument": 118,
+    "no_direct_gettext_header": 10,
+    "no_same_file_underscore_define": 120,
+    "nonliteral_wrapper_argument": 2,
+    "source_hash_matched": 120
+  },
+  "interpretation": "This audit verifies source identity, literal syntax inside the wrapper, and only same-file definitions/direct gettext includes. It does not resolve transitive headers, catalog contents, active preprocessor branches, runtime control, or vulnerability truth.",
+  "items": [
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "alsamixer/cli.c",
+      "source_sha256": "f53d77f3ebed3a91b8587b1b307151e9e7ad06a341ee7b18d5b24b9b29df0d89",
+      "line": 92,
+      "expression": "_(\"invalid card index: %s\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": false
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "alsamixer/cli.c",
+      "source_sha256": "f53d77f3ebed3a91b8587b1b307151e9e7ad06a341ee7b18d5b24b9b29df0d89",
+      "line": 137,
+      "expression": "_(\"unknown abstraction level: %s\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": false
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "alsamixer/cli.c",
+      "source_sha256": "f53d77f3ebed3a91b8587b1b307151e9e7ad06a341ee7b18d5b24b9b29df0d89",
+      "line": 142,
+      "expression": "_(\"unknown option: %c\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": false
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "alsamixer/die.c",
+      "source_sha256": "82f1e53758be4e964d298be7c2c96341a446ded3fdd3acad9307395cda642ac3",
+      "line": 37,
+      "expression": "_(\"%s: %s\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": false
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 70,
+      "expression": "_(\"Invalid format!\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 97,
+      "expression": "_(\"Set parameter to device error: \")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 98,
+      "expression": "_(\"default params: %s: %s(%d)\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 107,
+      "expression": "_(\"Set parameter to device error: \")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 108,
+      "expression": "_(\"access type: %s: %s(%d)\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 116,
+      "expression": "_(\"Set parameter to device error: \")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 117,
+      "expression": "_(\"PCM format: %d %s: %s(%d)\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 126,
+      "expression": "_(\"Set parameter to device error: \")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 127,
+      "expression": "_(\"channel number: %d %s: %s(%d)\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 139,
+      "expression": "_(\"Set parameter to device error: \")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 140,
+      "expression": "_(\"sample rate: %d %s: %s(%d)\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 147,
+      "expression": "_(\"Invalid parameters: sample rate: \")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 148,
+      "expression": "_(\"requested %dHz, got %dHz\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 161,
+      "expression": "_(\"Get parameter from device error: \")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 163,
+      "expression": "_(\"buffer size min: %d %s: %s(%d)\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 171,
+      "expression": "_(\"Get parameter from device error: \")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 173,
+      "expression": "_(\"period size min: %d %s: %s(%d)\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 186,
+      "expression": "_(\"Set period size: %d  buffer size: %d\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 192,
+      "expression": "_(\"Set parameter to device error: \")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 193,
+      "expression": "_(\"buffer size: %d %s: %s(%d)\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 202,
+      "expression": "_(\"Set parameter to device error: \")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 203,
+      "expression": "_(\"period size: %d %s: %s(%d)\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 211,
+      "expression": "_(\"Get parameter from device error: \")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 213,
+      "expression": "_(\"buffer time: %d %s: %s(%d)\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 228,
+      "expression": "_(\"Set parameter to device error: \")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 229,
+      "expression": "_(\"period time: %d %s: %s(%d)\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 238,
+      "expression": "_(\"Set parameter to device error: \")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 239,
+      "expression": "_(\"buffer time: %d %s: %s(%d)\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 248,
+      "expression": "_(\"Set parameter to device error: \")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 249,
+      "expression": "_(\"hw params: %s: %s(%d)\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 257,
+      "expression": "_(\"Get parameter from device error: \")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 258,
+      "expression": "_(\"period size: %zd %s: %s(%d)\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 266,
+      "expression": "_(\"Get parameter from device error: \")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 267,
+      "expression": "_(\"buffer size: %zd %s: %s(%d)\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 274,
+      "expression": "_(\"Invalid parameters: can't use period \")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 275,
+      "expression": "_(\"equal to buffer size (%zd)\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 280,
+      "expression": "_(\"Get period size: %d  buffer size: %d\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 285,
+      "expression": "_(\"Invalid parameters: \")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 286,
+      "expression": "_(\"snd_pcm_format_physical_width: %d\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 298,
+      "expression": "_(\"Not enough memory: size=%zd\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 319,
+      "expression": "_(\"Underrun: %s(%d)\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 330,
+      "expression": "_(\"Write PCM device error: %s(%d)\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 393,
+      "expression": "_(\"Cannot open file: %s %d\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 446,
+      "expression": "_(\"Entering playback thread (ALSA).\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 454,
+      "expression": "_(\"Cannot open PCM playback device: \")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 455,
+      "expression": "_(\"%s(%d)\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 467,
+      "expression": "_(\"Playing generated audio sine wave\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 469,
+      "expression": "_(\" endlessly\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 470,
+      "expression": "_(\"\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 472,
+      "expression": "_(\"Playing input audio file: %s\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 477,
+      "expression": "_(\"Cannot open file: %s %d\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 524,
+      "expression": "_(\"Overrun: %s(%d)\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 534,
+      "expression": "_(\"Read PCM device error: %s(%d)\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 561,
+      "expression": "_(\"Cannot open file: %s %d\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 620,
+      "expression": "_(\"Cannot open file: %s %d\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 682,
+      "expression": "_(\"Entering capture thread (ALSA).\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 690,
+      "expression": "_(\"Cannot open PCM capture device: \")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 691,
+      "expression": "_(\"%s(%d)\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/alsa.c",
+      "source_sha256": "c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b",
+      "line": 707,
+      "expression": "_(\"Recording ...\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/analyze.c",
+      "source_sha256": "e5db7c203507e68226696857794c135a078b0788ed8c7a427b3b43afef0ee83b",
+      "line": 50,
+      "expression": "_(\"Amplitude: %.1f; Percentage: [%d]\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/analyze.c",
+      "source_sha256": "e5db7c203507e68226696857794c135a078b0788ed8c7a427b3b43afef0ee83b",
+      "line": 53,
+      "expression": "_(\"ERROR: Amplitude can't be negative!\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/analyze.c",
+      "source_sha256": "e5db7c203507e68226696857794c135a078b0788ed8c7a427b3b43afef0ee83b",
+      "line": 55,
+      "expression": "_(\"WARNING: Signal too weak!\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/analyze.c",
+      "source_sha256": "e5db7c203507e68226696857794c135a078b0788ed8c7a427b3b43afef0ee83b",
+      "line": 57,
+      "expression": "_(\"WARNING: Signal overflow!\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/analyze.c",
+      "source_sha256": "e5db7c203507e68226696857794c135a078b0788ed8c7a427b3b43afef0ee83b",
+      "line": 75,
+      "expression": "_(\"Detected peak at %2.2f Hz of %2.2f dB\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/analyze.c",
+      "source_sha256": "e5db7c203507e68226696857794c135a078b0788ed8c7a427b3b43afef0ee83b",
+      "line": 77,
+      "expression": "_(\" Total %3.1f dB from %2.2f to %2.2f Hz\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/analyze.c",
+      "source_sha256": "e5db7c203507e68226696857794c135a078b0788ed8c7a427b3b43afef0ee83b",
+      "line": 81,
+      "expression": "_(\" WARNING: Found low peak %2.2f Hz,\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/analyze.c",
+      "source_sha256": "e5db7c203507e68226696857794c135a078b0788ed8c7a427b3b43afef0ee83b",
+      "line": 83,
+      "expression": "_(\" very close to DC\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/analyze.c",
+      "source_sha256": "e5db7c203507e68226696857794c135a078b0788ed8c7a427b3b43afef0ee83b",
+      "line": 86,
+      "expression": "_(\" FAIL: Peak freq too low %2.2f Hz\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/analyze.c",
+      "source_sha256": "e5db7c203507e68226696857794c135a078b0788ed8c7a427b3b43afef0ee83b",
+      "line": 90,
+      "expression": "_(\" FAIL: Peak freq too high %2.2f Hz\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/analyze.c",
+      "source_sha256": "e5db7c203507e68226696857794c135a078b0788ed8c7a427b3b43afef0ee83b",
+      "line": 94,
+      "expression": "_(\" PASS: Peak detected\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/analyze.c",
+      "source_sha256": "e5db7c203507e68226696857794c135a078b0788ed8c7a427b3b43afef0ee83b",
+      "line": 95,
+      "expression": "_(\" at target frequency\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/analyze.c",
+      "source_sha256": "e5db7c203507e68226696857794c135a078b0788ed8c7a427b3b43afef0ee83b",
+      "line": 158,
+      "expression": "_(\"Detected at least %d signal(s) in total\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/analyze.c",
+      "source_sha256": "e5db7c203507e68226696857794c135a078b0788ed8c7a427b3b43afef0ee83b",
+      "line": 305,
+      "expression": "_(\"samples per period: %d\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/analyze.c",
+      "source_sha256": "e5db7c203507e68226696857794c135a078b0788ed8c7a427b3b43afef0ee83b",
+      "line": 306,
+      "expression": "_(\"total sections to detect: %d\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/analyze.c",
+      "source_sha256": "e5db7c203507e68226696857794c135a078b0788ed8c7a427b3b43afef0ee83b",
+      "line": 352,
+      "expression": "_(\"Noise detected at %d points.\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/analyze.c",
+      "source_sha256": "e5db7c203507e68226696857794c135a078b0788ed8c7a427b3b43afef0ee83b",
+      "line": 358,
+      "expression": "_(\"No noise detected.\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/analyze.c",
+      "source_sha256": "e5db7c203507e68226696857794c135a078b0788ed8c7a427b3b43afef0ee83b",
+      "line": 363,
+      "expression": "_(\"Average SNR is %.2f dB (%.2f %%) at %d points.\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/analyze.c",
+      "source_sha256": "e5db7c203507e68226696857794c135a078b0788ed8c7a427b3b43afef0ee83b",
+      "line": 447,
+      "expression": "_(\"Invalid frame number for analysis: %d\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/analyze.c",
+      "source_sha256": "e5db7c203507e68226696857794c135a078b0788ed8c7a427b3b43afef0ee83b",
+      "line": 452,
+      "expression": "_(\"\\nBAT analysis: signal has %d frames at %d Hz,\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/analyze.c",
+      "source_sha256": "e5db7c203507e68226696857794c135a078b0788ed8c7a427b3b43afef0ee83b",
+      "line": 454,
+      "expression": "_(\" %d channels, %d bytes per sample.\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/analyze.c",
+      "source_sha256": "e5db7c203507e68226696857794c135a078b0788ed8c7a427b3b43afef0ee83b",
+      "line": 464,
+      "expression": "_(\"Cannot open file: %s %d\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/analyze.c",
+      "source_sha256": "e5db7c203507e68226696857794c135a078b0788ed8c7a427b3b43afef0ee83b",
+      "line": 485,
+      "expression": "_(\"\\nChannel %i - \")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/analyze.c",
+      "source_sha256": "e5db7c203507e68226696857794c135a078b0788ed8c7a427b3b43afef0ee83b",
+      "line": 486,
+      "expression": "_(\"Checking for target frequency %2.2f Hz\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/analyze.c",
+      "source_sha256": "e5db7c203507e68226696857794c135a078b0788ed8c7a427b3b43afef0ee83b",
+      "line": 498,
+      "expression": "_(\"\\nChecking for SNR: \")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/analyze.c",
+      "source_sha256": "e5db7c203507e68226696857794c135a078b0788ed8c7a427b3b43afef0ee83b",
+      "line": 499,
+      "expression": "_(\"Threshold is %.2f dB (%.2f%%)\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/latencytest.c",
+      "source_sha256": "f4ac487544af5d72da9012ce43c79e5fe08c3a4024bf97aae12be63499921a51",
+      "line": 87,
+      "expression": "_(\"Test%d, round trip latency %dms\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/latencytest.c",
+      "source_sha256": "f4ac487544af5d72da9012ce43c79e5fe08c3a4024bf97aae12be63499921a51",
+      "line": 111,
+      "expression": "_(\"Final round trip latency: %dms\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/latencytest.c",
+      "source_sha256": "f4ac487544af5d72da9012ce43c79e5fe08c3a4024bf97aae12be63499921a51",
+      "line": 140,
+      "expression": "_(\"Could not detect signal.\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/signal.c",
+      "source_sha256": "a683410fa8cebb5a8f96df1264f1a80492feedb06a818483461bd9da9c4b8434",
+      "line": 100,
+      "expression": "_(\"Not enough memory.\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/signal.c",
+      "source_sha256": "a683410fa8cebb5a8f96df1264f1a80492feedb06a818483461bd9da9c4b8434",
+      "line": 135,
+      "expression": "_(\"Invalid PCM format: %d\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/signal.c",
+      "source_sha256": "a683410fa8cebb5a8f96df1264f1a80492feedb06a818483461bd9da9c4b8434",
+      "line": 158,
+      "expression": "_(\"Not enough memory.\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/tinyalsa.c",
+      "source_sha256": "cbb6b7584c584511b33600f066986c647da3cecb349f36189b04a05107d8d908",
+      "line": 54,
+      "expression": "_(\"Invalid format!\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/tinyalsa.c",
+      "source_sha256": "cbb6b7584c584511b33600f066986c647da3cecb349f36189b04a05107d8d908",
+      "line": 98,
+      "expression": "_(\"%s is %u%s, device only supports >= %u%s!\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/tinyalsa.c",
+      "source_sha256": "cbb6b7584c584511b33600f066986c647da3cecb349f36189b04a05107d8d908",
+      "line": 106,
+      "expression": "_(\"%s is %u%s, device only supports <= %u%s!\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/tinyalsa.c",
+      "source_sha256": "cbb6b7584c584511b33600f066986c647da3cecb349f36189b04a05107d8d908",
+      "line": 128,
+      "expression": "_(\"Unable to open PCM device %u!\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/tinyalsa.c",
+      "source_sha256": "cbb6b7584c584511b33600f066986c647da3cecb349f36189b04a05107d8d908",
+      "line": 169,
+      "expression": "_(\"Play sample with %d frames buffer\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/tinyalsa.c",
+      "source_sha256": "cbb6b7584c584511b33600f066986c647da3cecb349f36189b04a05107d8d908",
+      "line": 209,
+      "expression": "_(\"Cannot open file: %s %d\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/tinyalsa.c",
+      "source_sha256": "cbb6b7584c584511b33600f066986c647da3cecb349f36189b04a05107d8d908",
+      "line": 276,
+      "expression": "_(\"Invalid tiny device: %s\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/tinyalsa.c",
+      "source_sha256": "cbb6b7584c584511b33600f066986c647da3cecb349f36189b04a05107d8d908",
+      "line": 291,
+      "expression": "_(\"Entering playback thread (tinyalsa).\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/tinyalsa.c",
+      "source_sha256": "cbb6b7584c584511b33600f066986c647da3cecb349f36189b04a05107d8d908",
+      "line": 322,
+      "expression": "_(\"Unable to open PCM device %u (%s)!\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/tinyalsa.c",
+      "source_sha256": "cbb6b7584c584511b33600f066986c647da3cecb349f36189b04a05107d8d908",
+      "line": 338,
+      "expression": "_(\"Playing generated audio sine wave\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/tinyalsa.c",
+      "source_sha256": "cbb6b7584c584511b33600f066986c647da3cecb349f36189b04a05107d8d908",
+      "line": 340,
+      "expression": "_(\" endlessly\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/tinyalsa.c",
+      "source_sha256": "cbb6b7584c584511b33600f066986c647da3cecb349f36189b04a05107d8d908",
+      "line": 341,
+      "expression": "_(\"\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/tinyalsa.c",
+      "source_sha256": "cbb6b7584c584511b33600f066986c647da3cecb349f36189b04a05107d8d908",
+      "line": 343,
+      "expression": "_(\"Playing input audio file: %s\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/tinyalsa.c",
+      "source_sha256": "cbb6b7584c584511b33600f066986c647da3cecb349f36189b04a05107d8d908",
+      "line": 348,
+      "expression": "_(\"Cannot open file: %s %d\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/tinyalsa.c",
+      "source_sha256": "cbb6b7584c584511b33600f066986c647da3cecb349f36189b04a05107d8d908",
+      "line": 396,
+      "expression": "_(\"Cannot open file: %s %d\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/tinyalsa.c",
+      "source_sha256": "cbb6b7584c584511b33600f066986c647da3cecb349f36189b04a05107d8d908",
+      "line": 441,
+      "expression": "_(\"Cannot open file: %s %d\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/tinyalsa.c",
+      "source_sha256": "cbb6b7584c584511b33600f066986c647da3cecb349f36189b04a05107d8d908",
+      "line": 489,
+      "expression": "_(\"Entering capture thread (tinyalsa).\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/tinyalsa.c",
+      "source_sha256": "cbb6b7584c584511b33600f066986c647da3cecb349f36189b04a05107d8d908",
+      "line": 513,
+      "expression": "_(\"Unable to open PCM device (%s)!\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_alsa-utils",
+      "file": "bat/tinyalsa.c",
+      "source_sha256": "cbb6b7584c584511b33600f066986c647da3cecb349f36189b04a05107d8d908",
+      "line": 532,
+      "expression": "_(\"Recording ...\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": true
+    },
+    {
+      "repository": "openharmony/third_party_elfutils",
+      "file": "lib/printversion.c",
+      "source_sha256": "3c26b64063918a6d5c256c4e7bc855c3351610e95dade027ea42f0ea2569a375",
+      "line": 39,
+      "expression": "_(\"\\\nCopyright (C) %s The elfutils developers <%s>.\\n\\\nThis is free software; see the source for copying conditions.  There is NO\\n\\\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\\n\\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": false
+    },
+    {
+      "repository": "openharmony/third_party_elfutils",
+      "file": "src/ar.c",
+      "source_sha256": "7b683b1d237ad918bdab6db3b5e3b825180ada4046db6594e397d7027676066d",
+      "line": 1235,
+      "expression": "_(\"%s: no entry %s in archive!\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": false
+    },
+    {
+      "repository": "openharmony/third_party_elfutils",
+      "file": "src/ar.c",
+      "source_sha256": "7b683b1d237ad918bdab6db3b5e3b825180ada4046db6594e397d7027676066d",
+      "line": 1287,
+      "expression": "_(\"cannot get ELF descriptor for %s: %s\\n\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": false
+    },
+    {
+      "repository": "openharmony/third_party_elfutils",
+      "file": "src/elfcmp.c",
+      "source_sha256": "1b3101cdac591c29fe1842508e656c4c5a8cb53ce336e8ce0df8e24eb90658c3",
+      "line": 704,
+      "expression": "_(\"Invalid value '%s' for --gaps parameter.\")",
+      "wrapper_argument_is_literal_sequence": true,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": false
+    },
+    {
+      "repository": "openharmony/third_party_toybox",
+      "file": "kconfig/conf.c",
+      "source_sha256": "ef54cc0e8b3e88a849d8ebc3fd1c3698b24fb6dbe76ced8ccf8fb407bee62efc",
+      "line": 606,
+      "expression": "_(\"\\n*** \"PROJECT_NAME\" configuration requires explicit update.\\n\\n\")",
+      "wrapper_argument_is_literal_sequence": false,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": false
+    },
+    {
+      "repository": "openharmony/third_party_toybox",
+      "file": "kconfig/conf.c",
+      "source_sha256": "ef54cc0e8b3e88a849d8ebc3fd1c3698b24fb6dbe76ced8ccf8fb407bee62efc",
+      "line": 622,
+      "expression": "_(\"\\n*** Error writing \"PROJECT_NAME\" configuration.\\n\\n\")",
+      "wrapper_argument_is_literal_sequence": false,
+      "same_file_underscore_define": false,
+      "direct_gettext_header": false
+    }
+  ]
+}

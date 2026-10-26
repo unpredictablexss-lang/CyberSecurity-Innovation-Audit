@@ -1,0 +1,1441 @@
+﻿review_sample_id,repository,commit,file,line,source_sha256,source_binding_status,source_context,reviewer_disposition,reviewer_rationale,evidence_reference,confidence,reviewer_id
+1c65b7d8ecc1953f,openharmony/arkcompiler_jsvm,254663b8d3f36b272094c84f610d5ca114f1d8a6,src/js_native_api_v8.cpp,5327,0c9a4524faf135eb57fa32be6cf10e65b4354083f57380ea859eca39ebb1334a,source_hash_matched,"5323:     JSVM_API_ENTER(env, K_JSVM_ACCESS_V8_CONTEXT);
+5324:     CHECK_ARG(env, result);
+5325: 
+5326:     *result = v8impl::JsValueFromV8LocalValue(v8::Set::New(env->isolate));
+5327:     ADD_VAL_TO_SCOPE_CHECK(env, *result);
+5328: 
+5329:     return ClearLastError(env);
+5330: }
+5331: ",,,,,
+f48f61c4b46c07dd,openharmony/commonlibrary_c_utils,7a9af76276aca8f53347fb89c07850e014905521,base/test/benchmarktest/parcel_benchmark_test/parcel_benchmark_test.cpp,1340,a1b092d0f9253546a218e178a71b8566541ffbfc657943b09efd2c549f849cdb,source_hash_matched,"1336:         AssertEqual(result, true, ""result did not equal true as expected."", state);
+1337: 
+1338:         const struct Padded *padReadNew =
+1339:             reinterpret_cast<const struct Padded *>(parcel.ReadUnpadBuffer(sizeof(struct Padded)));
+1340:         ValidatePadded(*padReadNew, pad, state);
+1341:         AssertEqual(parcel.GetWritePosition(), parcel.GetReadPosition(),
+1342:             ""parcel.GetWritePosition() did not equal parcel.GetReadPosition() as expected."", state);
+1343: 
+1344:         result = parcel.WriteUnpadBuffer(static_cast<const void *>(&unpad), sizeof(struct Unpadded));",,,,,
+65de697cf379526d,openharmony/arkui_napi,bfe8fad581ca6112e7d55c38ca60150753f4af35,native_engine/native_api.cpp,165,913b9f357493296ff3c4823c1d8daf0b0aba2e077bc887313f5a96082ec14f9e,source_hash_matched,"161:     CHECK_ENV(env);
+162:     CHECK_ARG(env, result);
+163: 
+164:     *result = reinterpret_cast<napi_extended_error_info*>(reinterpret_cast<NativeEngine*>(env)->GetLastError());
+165:     if ((*result)->error_code == napi_ok) {
+166:         napi_clear_last_error(env);
+167:     }
+168: 
+169:     return napi_ok;",,,,,
+01d76a970dd1d3ac,openharmony/security_code_signature,71e80ff12b13943c23eae35f0919d547ec72e898,test/unittest/sign_and_enforce_test.cpp,130,15c1c79b64aa080354783f931b892759cfb0348107a893c749d53f24ac12cb9d,source_hash_matched,"126:     PKCS7_SIGNER_INFO *signer = GetSignerInfo(p7);
+127:     if (signer == nullptr) {
+128:         return false;
+129:     }
+130:     modifyFunc(signer);
+131:     if (!DumpPKCS7Data(p7, dst)) {
+132:         return false;
+133:     }
+134:     PKCS7_free(p7);",,,,,
+b30ee2aadc263e71,openharmony/third_party_toybox,7ef9f95da6dfe39b5dd0d743b8a42f52f46fb460,porting/liteos_a/toys/pending/awk.c,3185,f240e9b6c4f337e6eefc336435fe11d5a172d872dd224ff160dee2da3aa244f5,source_hash_matched,"3181:             if (fmtc == 's') fpvar(outfp, pfmt, cnt2, s);
+3182:             else if (fmtc == 'c') fpvar(outfp, pfmt, cnt2, (wint_t)n);
+3183:             else if (strchr(""di"", fmtc)) fpvar(outfp, pfmt, cnt2, (long)n);
+3184:             else if (strchr(""ouxX"", fmtc)) fpvar(outfp, pfmt, cnt2, (unsigned long)n);
+3185:             else fpvar(outfp, pfmt, cnt2, n);
+3186:             break;
+3187:           case 3:
+3188:             if (fmtc == 's') fpvar(outfp, pfmt, cnt1, cnt2, s);
+3189:             else if (fmtc == 'c') fpvar(outfp, pfmt, cnt1, cnt2, (wint_t)n);",,,,,
+ff564eebd7944419,openharmony/third_party_astc-encoder,8e80377515d9f8d94ce89815235cc8d041eff3d0,Source/ThirdParty/tinyexr.h,5940,ef108a208e2208420c953bf4c28d6f2d50373beaa9b7ab1ff72f8becddd2074d,source_hash_matched,"5936:   p[1] = (mz_uint8)(v >> 8);
+5937:   p[2] = (mz_uint8)(v >> 16);
+5938:   p[3] = (mz_uint8)(v >> 24);
+5939: }
+5940: #define MZ_WRITE_LE16(p, v) mz_write_le16((mz_uint8 *)(p), (mz_uint16)(v))
+5941: #define MZ_WRITE_LE32(p, v) mz_write_le32((mz_uint8 *)(p), (mz_uint32)(v))
+5942: 
+5943: mz_bool mz_zip_writer_init(mz_zip_archive *pZip, mz_uint64 existing_size) {
+5944:   if ((!pZip) || (pZip->m_pState) || (!pZip->m_pWrite) ||",,,,,
+9a130c5f941b5c43,openharmony/third_party_libcoap,f58139dbcb72402d460fec3c106bb1f9fbc5e3fe,tests/test_oscore.c,861,e76dbfb0306fb473e23ab130411a867c0f27c91df40e8f591ddc5f6d85cdf014,source_hash_matched,"857:   coap_pdu_t *osc_pdu = NULL;
+858:   coap_session_t *session = NULL;
+859: 
+860:   FailIf_CU_ASSERT_PTR_NOT_NULL(incoming_pdu);
+861:   FailIf_CU_ASSERT_PTR_NOT_NULL(pdu);
+862: 
+863:   oscore_conf = coap_new_oscore_conf(conf, NULL, NULL, 0);
+864:   FailIf_CU_ASSERT_PTR_NOT_NULL(oscore_conf);
+865:   coap_context_oscore_server(ctx, oscore_conf);",,,,,
+3718fa1b1d7f433f,openharmony/third_party_lzma,c2159c2f51186143ef1c848f757b38a7b00d104f,C/Ppmd7Enc.c,301,fd084fa2bbee0bda7e6d07ff6e6c5f241c080b0f3b848eec5ee1d1ee3b92fde2,source_hash_matched,"297: 
+298:     {
+299:       const CPpmd_State *s2 = Ppmd7_GetStats(p, p->MinContext);
+300:       s--;
+301:       MASK(s->Symbol) = 0;
+302:       do
+303:       {
+304:         const unsigned sym0 = s2[0].Symbol;
+305:         const unsigned sym1 = s2[1].Symbol;",,,,,
+89fac6bddec48b47,openharmony/device_board_revoview,e76669e702448a93aa030f45a22e7a13af07c331,wukong100/audio_alsa/vendor_render.c,458,e196fb88856d0e8840646b592c7dcc53664eb45a0539122ab00e87de44ca65bf,source_hash_matched,"454:     if (ret != HDF_SUCCESS) {
+455:         AUDIO_FUNC_LOGE(""Write left volume fail!"");
+456:         return HDF_FAILURE;
+457:     }
+458:     ret = SndElementWriteInt(cardIns, &priData->ctrlRightVolume, volume);
+459:     if (ret != HDF_SUCCESS) {
+460:         AUDIO_FUNC_LOGE(""Write right volume fail!"");
+461:         return HDF_FAILURE;
+462:     }",,,,,
+47331b4d5d319931,openharmony/global_resource_management,a29041cdf859e1f053cb0d5f5323b6d65321b746,interfaces/js/innerkits/core/src/resource_manager_napi_async_impl.cpp,150,8d9d31a1429f663bc9248e8376be0200dd04b3d7611c3627a7055a6686f47dda,source_hash_matched,"146:         }
+147:     } else {
+148:         do {
+149:             napi_value callback = nullptr;
+150:             napi_status status = napi_get_reference_value(env, dataContext->callbackRef_, &callback);
+151:             if (status != napi_ok) {
+152:                 RESMGR_HILOGE(RESMGR_JS_TAG, ""napi_get_reference_value failed status=%{public}d"", status);
+153:                 break;
+154:             }",,,,,
+646cc8b5f90084e3,openharmony/kernel_linux_common_modules,c334b466f75c021b9564ebc1cc371b4ae0b64092,newip/third_party/linux-5.10/net/newip/tcp_nip_input.c,1851,e3d5fb092725658cf9c0022fd08f9a9e9bca2e65392d00050d6e7fa8d8b37056,source_hash_matched,"1847: 	tp->rcvq_space.time = jiffies;
+1848: 	tp->rcvq_space.seq = tp->copied_seq;
+1849: 	maxwin = tcp_full_space(sk);
+1850: 	if (tp->window_clamp >= maxwin) {
+1851: 		tp->window_clamp = maxwin;
+1852: 		if (tcp_app_win && maxwin > TCP_NUM_4 * tp->advmss)
+1853: 			tp->window_clamp = max(maxwin -
+1854: 					       (maxwin >> tcp_app_win),
+1855: 					       TCP_NUM_4 * tp->advmss);",,,,,
+2f4bcda78ee34dab,openharmony/third_party_libtiff,d4a0516c477dfbaf1153ae295893ab75aadd63d4,libtiff/tif_zip.c,560,27370635498d254548a9ef2eaab9a17a6bbbed72c344a20be739738bb9e03881,source_hash_matched,"556:     assert(sp != 0);
+557: 
+558:     (void)TIFFPredictorCleanup(tif);
+559: 
+560:     tif->tif_tagmethods.vgetfield = sp->vgetparent;
+561:     tif->tif_tagmethods.vsetfield = sp->vsetparent;
+562: 
+563:     if (sp->state & ZSTATE_INIT_ENCODE)
+564:     {",,,,,
+39c3c47d139c657c,openharmony/telephony_core_service,accd8c7931a5001041ddf638959da0ae6f31b1a6,frameworks/js/sim/src/napi_sim.cpp,1972,890554166b144abb71b46c3c84851883ecfa4f25c4ebdabb3fd8cc15473e00fa,source_hash_matched,"1968:         asyncContext->context.resolved = true;
+1969:     } else {
+1970:         asyncContext->context.resolved = false;
+1971:     }
+1972:     asyncContext->context.errorCode = errorCode;
+1973: }
+1974: 
+1975: void GetShowNumberCallback(napi_env env, napi_status status, void *data)
+1976: {",,,,,
+7d9f0270e811dedc,openharmony/arkui_napi,bfe8fad581ca6112e7d55c38ca60150753f4af35,native_engine/impl/ark/ark_idle_monitor.cpp,1121,2e58f2777f88e8d6dbc05f0438ef5f48e017d53e42116113b56cf9a9c6b951ce,source_hash_matched,"1117:     HILOG_DEBUG(""ArkIdleMonitor: try trigger %s start"", gcTypeStr);
+1118:     uv_async_send(async);
+1119: 
+1120:     {
+1121:         std::unique_lock<std::mutex> lock(data->mtx);
+1122:         data->cv.wait(lock, [data]() { return data->finished; });
+1123:         HILOG_DEBUG(""ArkIdleMonitor: try trigger %s end"", gcTypeStr);
+1124:     }
+1125:     delete data;",,,,,
+5a72ad0ce12c4988,openharmony/resourceschedule_background_task_mgr,67f2ba893cb6d3b58d9272e0686551307566c3b5,interfaces/kits/napi/src/bg_continuous_task_napi_module.cpp,1699,ad6794fdd5cb5ca1c65394d078fa2f1a0888296b4e6d77018f5e705e4fb24d65,source_hash_matched,"1695:     std::unique_ptr<AsyncCallbackInfo> callbackPtr {asyncCallbackInfo};
+1696:     napi_value result {nullptr};
+1697:     if (asyncCallbackInfo->errCode == ERR_OK) {
+1698:         napi_create_int32(env, asyncCallbackInfo->authResult, &result);
+1699:         NAPI_CALL_RETURN_VOID(env, napi_resolve_deferred(env, asyncCallbackInfo->deferred, result));
+1700:     } else {
+1701:         std::string errMsg = Common::FindErrMsg(env, asyncCallbackInfo->errCode);
+1702:         int32_t errCodeInfo = Common::FindErrCode(env, asyncCallbackInfo->errCode);
+1703:         result = Common::GetCallbackErrorValue(env, errCodeInfo, errMsg);",,,,,
+538463057cbf3263,openharmony/communication_ipc,5903fd5f7332a427cb3f6915b0202ee5c76c63b5,test/unittest/common/ipc_skeleton_unittest.cpp,501,79f656736357fa1368ded398d42a72281a55753803f5fe6dace0591642209437,source_hash_matched,"497:     std::string testStr = """";
+498: 
+499:     auto result = skeleton.SetCallingIdentity(testStr);
+500:     ASSERT_TRUE(result);
+501:     std::fill(current->invokers_, current->invokers_ + IPCThreadSkeleton::INVOKER_MAX_COUNT, nullptr);
+502:     delete invoker;
+503: }
+504: 
+505: /**",,,,,
+02895be96b5804d0,openharmony/global_i18n_lite,e32bac677b7289ed27d3b8fc6efbc05ece626fc5,frameworks/i18n/test/unittest/lite/common/hyphenation_test.cpp,511,f2d97adb75f2fa7b6d036d39570cf155d95af0e415c8c3ba1fc28bc385cc1c28,source_hash_matched,"507:     auto result = hyphen->GetBreakCandidate(""ийпінхастгфпінхаст"");
+508:     EXPECT_EQ(result[10], 1);
+509:     result = hyphen->GetBreakCandidate(""кільце"");
+510:     EXPECT_EQ(result[4], 1);
+511:     result = hyphen->GetBreakCandidate(""низько""); // низь-ко
+512:     EXPECT_EQ(result[4], 1);
+513:     result = hyphen->GetBreakCandidate(""об’ява""); // об’-ява
+514:     EXPECT_EQ(result[3], 1);
+515:     result = hyphen->GetBreakCandidate(""багатоступінчастий""); // багато-ступінчастий",,,,,
+11c367457b657d34,openharmony/distributeddatamgr_data_object,827569602678d9d4d5614c4675d88e9b54ef6913,frameworks/jskitsimpl/src/adaptor/js_distributedobjectstore.cpp,195,9b856e24ba0225df97a807728e602196bc4b515943716ebde7974598a1cf9a4b,source_hash_matched,"191:     }
+192:     DistributedObjectStore *objectInfo = DistributedObjectStore::GetInstance(bundleName);
+193:     NAPI_ASSERT_ERRCODE_V9(env, objectInfo != nullptr, version, innerError);
+194:     uint32_t result = 0;
+195:     DistributedObject *object = objectInfo->CreateObject(sessionId, result);
+196:     NAPI_ASSERT_ERRCODE_V9(env, result != ERR_EXIST, version, std::make_shared<DatabaseError>());
+197:     NAPI_ASSERT_ERRCODE_V9(env, result != ERR_NO_PERMISSION, version, std::make_shared<PermissionError>());
+198:     NAPI_ASSERT_ERRCODE_V9(env, result == SUCCESS && object != nullptr, version, innerError);
+199:     return NewDistributedObject(env, objectInfo, object, objectId);",,,,,
+1c2ff0ad22e8d1b1,openharmony/security_device_auth,21a357fe07ac0a61ce0929040251a712f94adef3,test/fuzztest/creds_manager/credsmanager_fuzzer/credsmanager_fuzzer.cpp,1860,03af02d168e959cf247c1fe108868acc6c52a87426e941d944314e30c79575f9,source_hash_matched,"1856:     }
+1857:     
+1858:     DeleteDatabase();
+1859:     const DeviceGroupManager *gm = GetGmInstance();
+1860:     gm->regCallback(TEST_APP_ID.c_str(), &g_gmCallback);
+1861:     
+1862:     FuzzedDataProvider fdp(data, size);
+1863:     uint32_t testId = fdp.ConsumeIntegral<uint32_t>();
+1864:     ",,,,,
+0874810594906671,openharmony/commonlibrary_ets_utils,3d88ba0f02b94b6e7e8cd78903525cb96aa08c6a,js_concurrent_module/taskpool/task_manager.cpp,1979,e987d2864b9f7f906fee94e187db3abd10b61efdac20e36d8b81246663c520d4,source_hash_matched,"1975:     }
+1976:     if (task->onStartExecutionCallBackInfo_ == nullptr) {
+1977:         return true;
+1978:     }
+1979:     auto hostEnv = task->GetEnv();
+1980:     auto workerEngine = reinterpret_cast<NativeEngine*>(hostEnv);
+1981:     workerEngine->IncreaseListeningCounter();
+1982:     auto onStartTask = [taskId]([[maybe_unused]] void* data) {
+1983:         Task* task = TaskManager::GetInstance().GetTask(taskId);",,,,,
+68a7c40afabf7fb7,openharmony/distributeddatamgr_relational_store,42f13ea84e2f90ed511a2bd4aa5be14c5996eba8,test/ndk/unittest/rdb_cursor_test.cpp,222,f4eb0aaa195e166d88045ea8ef04ecfa1f47b0460255dbcd51c66615b252ff1a,source_hash_matched,"218:     EXPECT_EQ(errCode, OH_Rdb_ErrCode::RDB_E_INVALID_ARGS);
+219:     errCode = cursor->getColumnType(cursor, 5, nullptr);
+220:     EXPECT_EQ(errCode, OH_Rdb_ErrCode::RDB_E_INVALID_ARGS);
+221: 
+222:     predicates->destroy(predicates);
+223:     cursor->destroy(cursor);
+224: }
+225: 
+226: /**",,,,,
+57dcf12b99ef585b,openharmony/third_party_pcre2,55345649f818c7627b854f19bc494ef4eed88dbf,pcre2/src/pcre2_jit_char_inc.h,1768,df4b2d4704b0ff9f1c8492b0fe6aad7df7c539647a1a48d1d339a38beb298dec,source_hash_matched,"1764: 
+1765: /* Optimizing character pairs, if their difference is power of 2. */
+1766: if (is_powerof2(other_cases[1] ^ other_cases[0]))
+1767:   {
+1768:   OP2(SLJIT_OR, TMP2, 0, TMP1, 0, SLJIT_IMM, (sljit_sw)(other_cases[1] ^ other_cases[0]));
+1769:   OP2U(SLJIT_SUB | SLJIT_SET_Z, TMP2, 0, SLJIT_IMM, other_cases[1]);
+1770:   OP_FLAGS(SLJIT_MOV, TMP2, 0, SLJIT_EQUAL);
+1771:   other_cases += 2;
+1772:   }",,,,,
+1f3f8fa302fbbade,openharmony/third_party_cares,d5552d4b76243e859d851d09784d36b3fae49525,src/lib/dsa/ares_htable.c,239,b0981032c67c06cd863eff2fc2e9a4892de3347f672e96e75f8f10ce643da9e3,source_hash_matched,"235:   for (i = 0; i < old_size; i++) {
+236:     ares_llist_node_t *node;
+237: 
+238:     /* Nothing in this bucket */
+239:     if (htable->buckets[i] == NULL) {
+240:       continue;
+241:     }
+242: 
+243:     /* Fast path optimization (most likely case), there is likely only a single",,,,,
+e4d718001ac09146,openharmony/multimedia_media_foundation,486aae6c8ed9c22499e6bc171748fb44fe7d88b0,tests/unittest/pcm_convert/pcm_convert_unit_test.cpp,626,769f1db32ff8fe4078a13b1effbef43682fb98ba509fdbd5495eb80cee505604,source_hash_matched,"622:         SAMPLE_S16LE, SAMPLE_F32LE, output);
+623:     EXPECT_EQ(status, Status::OK);
+624: 
+625:     float* outSamples = reinterpret_cast<float*>(output);
+626:     EXPECT_NEAR(outSamples[0], -1000.0f / 32768.0f, 0.001f);
+627:     EXPECT_NEAR(outSamples[1], 500.0f / 32768.0f, 0.001f);
+628:     EXPECT_NEAR(outSamples[2], 20000.0f / 32768.0f, 0.001f);
+629:     EXPECT_NEAR(outSamples[3], -30000.0f / 32768.0f, 0.001f);
+630: }",,,,,
+4a0c5abfd16651a7,openharmony/third_party_pcre2,55345649f818c7627b854f19bc494ef4eed88dbf,pcre2/src/pcre2_jit_compile.c,9474,3597ad6b7cf6f1d7a14d62e4dde5380c35f42e3f4f5ff33adcc2b2baca077bfc,source_hash_matched,"9470:     compile_time_checks_must_be_grouped_together);
+9471:   has_alternatives = ((*matchingpath >= OP_RREF && *matchingpath <= OP_TRUE) || *matchingpath == OP_FAIL) ? FALSE : TRUE;
+9472:   }
+9473: 
+9474: if (SLJIT_UNLIKELY(opcode == OP_COND) && (*cc == OP_KETRMAX || *cc == OP_KETRMIN))
+9475:   opcode = OP_SCOND;
+9476: 
+9477: if (opcode == OP_CBRA || opcode == OP_SCBRA)
+9478:   {",,,,,
+b7587de585dd573f,openharmony/third_party_ntfs-3g,c6a9cfa018db3838c282f6f91f3b26a99211174a,libntfs-3g/attrib.c,1451,6aedf07ff7fedda8d4dbcac078f9ef9882ca74625f13144112b4a104831772e5,source_hash_matched,"1447: 		errno = eo;
+1448: 		goto err_out;
+1449: 	}
+1450: 	na->unused_runs = 2;
+1451: 	na->rl = *rl;
+1452: 	if ((*update_from == -1) || (from_vcn < *update_from))
+1453: 		*update_from = from_vcn;
+1454: 	*rl = ntfs_attr_find_vcn(na, cur_vcn);
+1455: 	if (!*rl) {",,,,,
+836814073817d3a6,openharmony/third_party_toybox,7ef9f95da6dfe39b5dd0d743b8a42f52f46fb460,toys/net/ping.c,273,95963bc1c44113ee853148964f8824d03cb2936582aed6c0e4989d84231adb84,source_hash_matched,"269:     // Time to send the next packet?
+270:     if (!tW && tnext-tnow <= 0) {
+271:       tnext += TT.i;
+272: 
+273:       memset(ih, 0, sizeof(*ih));
+274:       ih->type = (ai->ai_family == AF_INET) ? 8 : 128;
+275:       ih->un.echo.id = getpid();
+276:       ih->un.echo.sequence = ++seq;
+277:       if (TT.s >= 4) *(unsigned *)(ih+1) = tnow;",,,,,
+2db9acb9d9a0e662,openharmony/accessibility,2b7c2fb019bba5a7b303d25c36107ca849114cfb,interfaces/kits/napi/accessibility_extension_module_loader/src/napi_accessibility_extension_context.cpp,1115,0c2299fb028841daeea09ebc4fa81f18d0cc18b2a0a9c2106e79802b34a9fa31,source_hash_matched,"1111:             *ret = context->InjectGesture(gesturePath);
+1112:         };
+1113:         NapiAsyncTask::CompleteCallback complete =
+1114:             [ret, gesturePath](napi_env env, NapiAsyncTask& task, int32_t status) {
+1115:             if (*ret == RET_OK) {
+1116:                 task.Resolve(env, CreateJsUndefined(env));
+1117:             } else {
+1118:                 HILOG_ERROR(""Gesture inject failed. ret: %{public}d."", *ret);
+1119:                 NAccessibilityErrMsg errMsg = QueryRetMsg(*ret);",,,,,
+a7d6b44647762e6f,openharmony/third_party_glslang,53966d1606002aa856824954d614fc3e0499cecd,glslang/MachineIndependent/ParseHelper.cpp,7434,9aca811d27f60677044fc0d53268eaa72c0216ce1f170bc95573d3ca061b96d0,source_hash_matched,"7430:     //      if any are assigned, need to be updated here and in the merge/link step
+7431:     // fixBlockUniformOffsets(updatedBlock->getWritableType().getQualifier(), *updatedBlock->getWritableType().getWritableStruct());
+7432: 
+7433:     // checks on update buffer object
+7434:     layoutObjectCheck(loc, *updatedBlock);
+7435: 
+7436:     TSymbol* symbol = symbolTable.find(identifier);
+7437: 
+7438:     if (!symbol) {",,,,,
+5b71e4b449c3fcca,openharmony/notification_distributed_notification_service,cd6542acc0d516ba57a7473d1e8400d0b8730894,frameworks/reminder/src/reminder_request.cpp,666,0a89c1712a4342f5201ba16dd6c11ede45f8ee18a75bbfc41e395f4110145b9a,source_hash_matched,"662: {
+663:     char* pEnd = nullptr;
+664:     errno = 0;
+665:     int64_t res = std::strtol(str.c_str(), &pEnd, 10);
+666:     if (errno == ERANGE || pEnd == str.c_str() || *pEnd != '\0' ||
+667:         (res < std::numeric_limits<int32_t>::min()) ||
+668:         res > std::numeric_limits<int32_t>::max()) {
+669:         return 0;
+670:     }",,,,,
+0cc4ede7b73098b5,openharmony/kernel_linux_common_modules,c334b466f75c021b9564ebc1cc371b4ae0b64092,tzdriver/core/smc_smp.c,565,44b718578dad7ab191b1ad10d1221282a665b66e2f97f65370cb1fc34d9ce385,source_hash_matched,"561: 		return;
+562: 
+563: 	spin_lock(&g_pend_lock);
+564: 	list_for_each_entry(pe, &g_pending_head, list) {
+565: 		func(pe);
+566: 	}
+567: 	spin_unlock(&g_pend_lock);
+568: }
+569: ",,,,,
+eef1881743e1a049,openharmony/third_party_toybox,7ef9f95da6dfe39b5dd0d743b8a42f52f46fb460,toys/pending/awk.c,3186,45f80f6b7cb9a35f6fd282f24155d16b20f9d6a2a3fa542898db03d5e6ee96bc,source_hash_matched,"3182:         }
+3183:         if (fmtc == 'c' && n > 0x10ffff) n = 0xfffd;  // musl won't take larger ""wchar""
+3184:         switch (nargsneeded) {
+3185:           case 1:
+3186:             if (fmtc == 's') fpvar(outfp, pfmt, s);
+3187:             else if (fmtc == 'c') fpvar(outfp, pfmt, (wint_t)n);
+3188:             else if (strchr(""di"", fmtc)) fpvar(outfp, pfmt, (long)n);
+3189:             else if (strchr(""ouxX"", fmtc)) fpvar(outfp, pfmt, (unsigned long)n);
+3190:             else fpvar(outfp, pfmt, n);",,,,,
+14e59ea7d5778def,openharmony/third_party_astc-encoder,8e80377515d9f8d94ce89815235cc8d041eff3d0,Source/ThirdParty/stb_image_write.h,1019,cbd5f0ad7a9cf4468affb36354a1d2338034f2c12473cf1a8e32053cb6914a05,source_hash_matched,"1015:       stbiw__sbpush(out, STBIW_UCHAR(s1));
+1016:    }
+1017:    *out_len = stbiw__sbn(out);
+1018:    // make returned pointer freeable
+1019:    STBIW_MEMMOVE(stbiw__sbraw(out), out, *out_len);
+1020:    return (unsigned char *) stbiw__sbraw(out);
+1021: #endif // STBIW_ZLIB_COMPRESS
+1022: }
+1023: ",,,,,
+316ccd1eeed5a94c,openharmony/third_party_glfw,06908271f2f9bf6ccfaacc45adf29ce29aeb70eb,deps/stb_image_write.h,1020,cbd5f0ad7a9cf4468affb36354a1d2338034f2c12473cf1a8e32053cb6914a05,source_hash_matched,"1016:    }
+1017:    *out_len = stbiw__sbn(out);
+1018:    // make returned pointer freeable
+1019:    STBIW_MEMMOVE(stbiw__sbraw(out), out, *out_len);
+1020:    return (unsigned char *) stbiw__sbraw(out);
+1021: #endif // STBIW_ZLIB_COMPRESS
+1022: }
+1023: 
+1024: static unsigned int stbiw__crc32(unsigned char *buffer, int len)",,,,,
+f4c8ee18d3d33533,openharmony/security_device_auth,21a357fe07ac0a61ce0929040251a712f94adef3,services/data_manager/cred_data_manager/inc/cred_tlv_parser.h,301,6c15a152bea33df780336cbb5899bb5feb88d0c5ade91838b29b9775a6f2e5c0,source_hash_matched,"297:     uint32_t index = 0; \
+298:     TlvElementName *element = NULL; \
+299:     FOR_EACH_HC_VECTOR(realTlv->data, index, element) { \
+300:         if (element != NULL) { \
+301:             CRED_TLV_DEINIT((*element)); \
+302:         } \
+303:     } \
+304:     DESTROY_HC_VECTOR(Vec##TlvVecName, &((TlvVecName *)tlv)->data); \
+305: } \",,,,,
+529569ff2504cb64,openharmony/third_party_pcre2,55345649f818c7627b854f19bc494ef4eed88dbf,pcre2/src/pcre2_compile.c,10919,54a8fb643749f0a7753f68d65f4e9e0dbc4728ed04461b580a0fba3b35d57b7d,source_hash_matched,"10915:   minimum length must be at least 1. */
+10916: 
+10917:   if (firstcuflags < REQ_NONE)
+10918:     {
+10919:     re->first_codeunit = firstcu;
+10920:     re->flags |= PCRE2_FIRSTSET;
+10921:     minminlength++;
+10922: 
+10923:     /* Handle caseless first code units. */",,,,,
+f3bfe60e16792bfa,openharmony/third_party_ntfs-3g,c6a9cfa018db3838c282f6f91f3b26a99211174a,ntfsprogs/ntfsinfo.c,1855,d5b95462b14e0056df1d881abc7f8ac0d06d52a740dc03f012bfa7414b9d114c,source_hash_matched,"1851: 	COLLATION_NTOFS_SECURITY_HASH, COLLATION_NTOFS_ULONGS */
+1852: 
+1853: 	printf(""\tIndex Block Size:\t %u (0x%x)\n"",
+1854: 			(unsigned)le32_to_cpu(index_root->index_block_size),
+1855: 			(unsigned)le32_to_cpu(index_root->index_block_size));
+1856: 	if (le32_to_cpu(index_root->index_block_size) < ni->vol->cluster_size)
+1857: 		printf(""\t512-byte Units Per Block:\t %u (0x%x)\n"",
+1858: 			(unsigned)index_root->clusters_per_index_block,
+1859: 			(unsigned)index_root->clusters_per_index_block);",,,,,
+17406dac780df791,openharmony/kernel_uniproton,c3dd7016e6fb554b42acdcba94375c5788161510,src/fs/littlefs/lfs_adapter.c,537,5856993eb8ff627a68902eb96023facf7e79b12c6293ebe4f04b3ebe1cadee4e,source_hash_matched,"533:         return FS_NOK;
+534:     }
+535: 
+536:     pthread_mutex_lock(&g_fsLocalMutex);
+537:     ret = lfs_file_close((lfs_t *)mp->mData, lfsHandle);
+538:     pthread_mutex_unlock(&g_fsLocalMutex);
+539: 
+540:     if (ret != 0) {
+541:         errno = OsLfsErrno(ret);",,,,,
+ceb0983cadc9c31d,openharmony/kernel_liteos_m,32beca78be1fd2a23c8b275a6c5853fa38dbd67f,kal/posix/src/mqueue.c,342,fa8b7ea48daef5d2e212161c043d0b5f0eeeea278be8801377e9e3346bfad4fb,source_hash_matched,"338:     /* find the personal and remove */
+339:     if (mqueueCB->mq_personal == privateMqPersonal) {
+340:         mqueueCB->mq_personal = privateMqPersonal->mq_next;
+341:     } else {
+342:         for (tmp = mqueueCB->mq_personal; tmp->mq_next != NULL; tmp = tmp->mq_next) {
+343:             if (tmp->mq_next == privateMqPersonal) {
+344:                 break;
+345:             }
+346:         }",,,,,
+ec5cfdc9653a6f8c,openharmony/resourceschedule_background_task_mgr,67f2ba893cb6d3b58d9272e0686551307566c3b5,interfaces/kits/napi/src/bg_continuous_task_napi_module.cpp,1849,ad6794fdd5cb5ca1c65394d078fa2f1a0888296b4e6d77018f5e705e4fb24d65,source_hash_matched,"1845:         asyncCallbackInfo = nullptr;
+1846:         Common::HandleErrCode(env, ERR_BGTASK_CONTINUOUS_BACKGROUND_TASK_PARAM_INVALID, true);
+1847:         return WrapVoidToJS(env);
+1848:     }
+1849:     asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::GetBackgroundTaskState(asyncCallbackInfo->taskState);
+1850:     if (asyncCallbackInfo->errCode != ERR_OK) {
+1851:         Common::HandleErrCode(env, asyncCallbackInfo->errCode, true);
+1852:         if (asyncCallbackInfo != nullptr) {
+1853:             delete asyncCallbackInfo;",,,,,
+fb4c4adf9d6524bb,openharmony/multimedia_camera_lite,4e47221967da4b0139eaebba37ed1a7aecad5233,test/unittest/camera_lite_test.cpp,1886,d9d3c271f8c406e61dbe9451dad4b6da137bad99b8e28615c4bb71a471b1bc30,source_hash_matched,"1882:     ASSERT_TRUE(GetCameraId(cameraKit, cameraList, cameraId));
+1883:     SampleCameraStateMng camStateMng(eventHdlr);
+1884:     g_onCaptureTriggerStartedFlag = false;
+1885:     g_onCaptureTriggerCompletedFlag = false;
+1886:     cameraKit->CreateCamera(cameraId, camStateMng, eventHdlr);
+1887:     sleep(2);
+1888:     camStateMng.Stop();
+1889:     sleep(2);
+1890:     camStateMng.Capture();",,,,,
+336a2667d32ce354,openharmony/distributeddatamgr_data_object,827569602678d9d4d5614c4675d88e9b54ef6913,frameworks/jskitsimpl/collaboration_edit/src/napi_collaboration_edit_object.cpp,176,6102d83fe3d7c33d864b531013b8b8cd93ad6df5e18ddfe92ebf6a2f37e6b378,source_hash_matched,"172:     ASSERT_THROW(env, status == napi_ok, Status::INVALID_ARGUMENT, ""read editUnitName go wrong"");
+173:     std::shared_ptr<RdAdapter> adapter = std::make_shared<RdAdapter>();
+174:     std::string tableName = std::to_string(LABEL_FRAGMENT) + ""_"" + editUnitName;
+175:     adapter->SetTableName(tableName);
+176:     adapter->SetDBStore(editObject->GetDBStore());
+177:     int32_t retCode = adapter->CloseUndoManager();
+178:     ASSERT_THROW(env, retCode == SUCCESS, retCode, ""close undo manager go wrong."");
+179:     LOG_INFO(""Close undo manager successfully."");
+180:     return nullptr;",,,,,
+50132dc2a1de9094,openharmony/security_certificate_framework,e270363a042bf8f0126881c76d1341ad457cc187,test/unittest/v1.0/src/crypto_x509_cert_cms_parser_test_mock.cpp,1030,07e984a63eb3762df26360ab2a3770c4218174130f931530967d601c82c78c43,source_hash_matched,"1026:     CfResult res = HcfCreateCmsParser(&cmsParser);
+1027:     EXPECT_EQ(res, CF_SUCCESS);
+1028:     EXPECT_NE(cmsParser, nullptr);
+1029: 
+1030:     res = cmsParser->setRawData(cmsParser, &cmsData, CMS_PEM);
+1031:     EXPECT_EQ(res, CF_SUCCESS);
+1032: 
+1033:     HcfCmsParserDecryptEnvelopedDataOptions *decryptOptions =
+1034:         static_cast<HcfCmsParserDecryptEnvelopedDataOptions *>(",,,,,
+f7c722e0ee12e3ab,openharmony/third_party_littlefs,d05544b226c01ff23df50082721d4701274db04f,runners/bench_runner.c,1828,7f8b243201733a5b2b23db3807f77ac06ab4434577461e27cd2ea1b3acd23a55,source_hash_matched,"1824:                                     = BENCH_LIT(sizes[0]);
+1825:                             geometry->defines[ERASE_SIZE_i]
+1826:                                     = BENCH_LIT(sizes[1]);
+1827:                         } else {
+1828:                             geometry->defines[ERASE_SIZE_i]
+1829:                                     = BENCH_LIT(sizes[0]);
+1830:                         }
+1831:                         if (count >= 4) {
+1832:                             geometry->defines[ERASE_COUNT_i]",,,,,
+947280e2b872b344,openharmony/third_party_unity,d3ffab559a177a171b87cb1bbd4c6d611a439e28,src/unity.c,1720,b90e735a54cf3b3765ab6caa955d11a1488ee73d9c6152cdc98576c2d17cb871,source_hash_matched,"1716: 
+1717:         /* if both pointers not null compare the strings */
+1718:         if (expd && act)
+1719:         {
+1720:             for (i = 0; expd[i] || act[i]; i++)
+1721:             {
+1722:                 if (expd[i] != act[i])
+1723:                 {
+1724:                     Unity.CurrentTestFailed = 1;",,,,,
+7d60be54b8d0b67c,openharmony/security_certificate_framework,e270363a042bf8f0126881c76d1341ad457cc187,frameworks/js/napi/certificate/src/napi_common.cpp,139,001fce466646ec2cf65d0e69c0204ad0be4f95f0e966a41235827f33f7e2c5f2,source_hash_matched,"135:             FreeCfBlobArray(blobs, i);
+136:             blobs = nullptr;
+137:             return CF_ERR_MALLOC;
+138:         }
+139:         (void)memcpy_s(blobs[i].data, size, paramSet->params[i + 1].blob.data, size);
+140:         blobs[i].size = size;
+141:     }
+142: 
+143:     outArray->data = blobs;",,,,,
+0e13aded42432691,openharmony/third_party_popt,9274fa66362f73f8079785698602c171337d69e1,src/popt.c,1344,97de2df582f1adc3c3de0f156c17c580d66ca6cf85522d25d3e65e50fc00ad05,source_hash_matched,"1340: 	    const char * nextCharArg = con->os->nextCharArg;
+1341: 
+1342: 	    con->os->nextCharArg = NULL;
+1343: 
+1344: 	    if (handleAlias(con, NULL, 0, *nextCharArg, nextCharArg + 1))
+1345: 		continue;
+1346: 
+1347: 	    if (handleExec(con, NULL, *nextCharArg)) {
+1348: 		/* Restore rest of short options for further processing */",,,,,
+fb55c21c5791d3d5,openharmony/distributeddatamgr_data_object,827569602678d9d4d5614c4675d88e9b54ef6913,frameworks/jskitsimpl/collaboration_edit/src/napi_collaboration_edit_object.cpp,527,6102d83fe3d7c33d864b531013b8b8cd93ad6df5e18ddfe92ebf6a2f37e6b378,source_hash_matched,"523:     napi_status status = napi_unwrap(env, self, reinterpret_cast<void **>(&editObject));
+524:     ASSERT_THROW(env, status == napi_ok, status, ""unwrap object go wrong"");
+525: 
+526:     std::string applyInfo;
+527:     int32_t ret = (*editObject->dbStore_).ApplyUpdate(applyInfo);
+528:     ASSERT_THROW(env, ret == OK, ret, ""ApplyUpdate go wrong"");
+529:     napi_value result;
+530:     ret = Parser::ParseJsonStrToJsUpdateNode(env, applyInfo, editObject->dbStore_, result);
+531:     ASSERT_THROW(env, ret == OK, ret, ""ParseJsonStrToJsUpdateNode go wrong"");",,,,,
+b326c9a4e00a2ddf,openharmony/third_party_toybox,7ef9f95da6dfe39b5dd0d743b8a42f52f46fb460,toys/other/makedevs.c,67,cc3bca70559ae20cc191b65f1bd95076b3847c1fa2f0e64cfdfdf42754601ed0,source_hash_matched,"63:     struct stat st;
+64: 
+65:     line_no++;
+66:     while (isspace(*ptr)) ptr++;
+67:     if (!*ptr || *ptr == '#') continue;
+68:     node = ptr;
+69: 
+70:     while (*ptr && !isspace(*ptr)) ptr++;
+71:     if (*ptr) *(ptr++) = 0;",,,,,
+bf0000c1bbefb599,openharmony/third_party_ninja,db3ae63e137be63bbc42318e45a53e4e406dd406,src/third_party/emhash/hash_table8.hpp,159,1d13b3e96ac5cf84a573e9727c4dc937fa5b4b70e4604761aa279ca5fe65607d,source_hash_matched,"155:             auto cur = *this; kv_ --;
+156:             return cur;
+157:         }
+158: 
+159:         reference operator*() const { return *kv_; }
+160:         pointer operator->() const { return kv_; }
+161: 
+162:         bool operator == (const iterator& rhs) const { return kv_ == rhs.kv_; }
+163:         bool operator != (const iterator& rhs) const { return kv_ != rhs.kv_; }",,,,,
+cd75dc1d8f01aa2d,openharmony/graphic_graphics_effect,301090efad684ab97ff3ba44883f3a90d1b259a1,include/core/ge_visual_effect_impl.h,84,21aa5c4e38b58988c62096284550f6edd3da367a6ea5a90c4446db99c7a9f7d5,source_hash_matched,"80:             return;
+81:         }
+82: 
+83:         // Use generated helper to set parameter by tag
+84:         SetParamInternal(*params_, tag, value);
+85:     }
+86: 
+87:     /// Set parameter by string tag (runtime lookup to enum, then dispatch)
+88:     template<typename T>",,,,,
+490d07951c800436,openharmony/arkcompiler_jsvm,254663b8d3f36b272094c84f610d5ca114f1d8a6,src/js_native_api_v8.cpp,1687,0c9a4524faf135eb57fa32be6cf10e65b4354083f57380ea859eca39ebb1334a,source_hash_matched,"1683:                 ? v8::String::NewFromUtf8(isolate, jsvmOrigin->sourceMapUrl).ToLocalChecked().As<v8::Value>()
+1684:                 : v8::Local<v8::Value>();
+1685:         auto resourceName = v8::String::NewFromUtf8(isolate, sourceString.c_str()).ToLocalChecked();
+1686:         v8Origin = new v8::ScriptOrigin(resourceName, jsvmOrigin ? jsvmOrigin->resourceLineOffset : 0,
+1687:                                         jsvmOrigin ? jsvmOrigin->resourceColumnOffset : 0, false, -1, sourceMapUrl);
+1688:         if (enableSourceMap && sourceMapPtr) {
+1689:             v8impl::SetFileToSourceMapMapping(jsvmOrigin->resourceName, sourceMapPtr);
+1690:             isolate->SetPrepareStackTraceCallback(PrepareStackTraceCallback);
+1691:         }",,,,,
+18b8c6d420ec38eb,openharmony/kernel_linux_common_modules,c334b466f75c021b9564ebc1cc371b4ae0b64092,newip/third_party/linux-5.10/net/newip/af_ninet.c,752,c5fc27ae82686d3391c002230ad6b6f4f78f264847d4ac3136514166ea95692b,source_hash_matched,"748: 		answer = list_entry(lh, struct inet_protosw, list);
+749: 
+750: 		/* Check only the non-wild match. */
+751: 		if (answer->flags & INET_PROTOSW_PERMANENT) {
+752: 			if (protocol == answer->protocol)
+753: 				break;
+754: 			last_perm = lh;
+755: 		}
+756: ",,,,,
+3277802e5342f8f9,openharmony/third_party_abseil-cpp,0456d6dfc868a38e0fa533ed6863f4804cd16fa2,absl/base/internal/exception_safety_testing.h,164,4b51ff59a234561858eca35136e02207f8c2f2d1e12319fb7a084c495a636bdb,source_hash_matched,"160: 
+161:     TrackedAddress& tracked_address = it->second;
+162:     if (!tracked_address.is_alive) {
+163:       ADD_FAILURE() << ErrorMessage(address, tracked_address.description,
+164:                                     current_tracker_instance_->countdown_,
+165:                                     ""Object was re-destroyed."");
+166:     }
+167:     tracked_address.is_alive = false;
+168:   }",,,,,
+76826d1e8b6e75b5,openharmony/third_party_elfio,170523065b93acc77b163a87a7bbb9872037becf,elfio/elfio_relocation.hpp,443,970a2db5bbf09fa1d7780210063d44f7da0a1512fb3963b45d3028be463ac104,source_hash_matched,"439:         entry.r_offset = ( *convertor )( entry.r_offset );
+440:         entry.r_info   = ( *convertor )( entry.r_info );
+441:         entry.r_addend = ( *convertor )( entry.r_addend );
+442: 
+443:         relocation_section->append_data( reinterpret_cast<char*>( &entry ),
+444:                                          sizeof( entry ) );
+445:     }
+446: 
+447:     //------------------------------------------------------------------------------",,,,,
+ed589f2957ce01e2,openharmony/powermgr_battery_statistics,271a545acc0ececc746cfe0bb7c1501943df7c64,test/fuzztest/entityupdate_fuzzer/entityupdate_fuzzer_test.cpp,57,2b7f4aff30b7217675561babd3af9359d8c05246b6176ffb407faa1e42d05aaa,source_hash_matched,"53:         if (data == nullptr || size < MIN_ENTITY_DATA_SIZE) {
+54:             return;
+55:         }
+56: 
+57:         auto core = service_->GetBatteryStatsCore();
+58:         if (core == nullptr) {
+59:             return;
+60:         }
+61: ",,,,,
+458a3fff05c8695e,openharmony/third_party_json,82f689380591b58b99578e6744a4f5afd2162084,tests/abi/include/nlohmann/json_v3_10_5.hpp,10219,ae9b8041c6f46ef23526d2a2796165301ba47810cb359d3c39700c3d210a3cc6,source_hash_matched,"10215: 
+10216:             case 'd':
+10217:             {
+10218:                 float number{};
+10219:                 return get_number(input_format_t::ubjson, number) && sax->number_float(static_cast<number_float_t>(number), """");
+10220:             }
+10221: 
+10222:             case 'D':
+10223:             {",,,,,
+ae1964388f80bda1,openharmony/arkcompiler_jsvm,254663b8d3f36b272094c84f610d5ca114f1d8a6,src/inspector/inspector_utils.h,184,7ae94143da2c9fb88c41d7ea800a2b1a567242111a7a91eae0e7f48c78e73a66,source_hash_matched,"180:         CHECK_LE(len + 1, GetCapacity());
+181:         SetLength(len);
+182: 
+183:         // T() is 0 for integer types, nullptr for pointers, etc.
+184:         buf[len] = T();
+185:     }
+186: 
+187:     void Invalidate()
+188:     {",,,,,
+98deb6435a85d57c,openharmony/third_party_ninja,db3ae63e137be63bbc42318e45a53e4e406dd406,src/third_party/emhash/hash_table8.hpp,1131,1d13b3e96ac5cf84a573e9727c4dc937fa5b4b70e4604761aa279ca5fe65607d,source_hash_matched,"1127:             auto& next_bucket = _index[bucket].next;
+1128:             if ((int)next_bucket < 0)
+1129:                 _index[bucket] = {1, slot | ((size_type)(key_hash) & ~_mask)};
+1130:             else {
+1131:                 _index[bucket].slot |= (size_type)(key_hash) & ~_mask;
+1132:                 next_bucket ++;
+1133:             }
+1134:         }
+1135:         return true;",,,,,
+5e8c18dc5bcb3d47,openharmony/update_updater,b3ca30fb660c463580447345929c717d00f207be,test/unittest/package/pkg_manager_unittest.cpp,180,8ac1645d57f5e75a9ecf34f13d8a0ee3440eec273b6a3119d92ffa2c7230b85e,source_hash_matched,"176:         std::string path = TEST_PATH_TO + testCombinePkgName;
+177:         std::unique_ptr<TestPkgStream> stream = std::make_unique<TestPkgStream>(pkgManager_, path);
+178:         EXPECT_NE(stream, nullptr);
+179:         constexpr size_t buffSize = 10;
+180:         uint8_t buff[buffSize];
+181:         size_t size = sizeof(buff);
+182:         size_t start = 0;
+183:         size_t readLen = 0;
+184:         PkgBuffer buffer(buff, sizeof(buff));",,,,,
+71cbbb75bd1bc444,openharmony/useriam_fingerprint_auth,ffed8d838100776096db53b87cfef0908540b8fa,test/fuzztest/fingerprintauthallinoneexecutorhdi_fuzzer/fingerprint_auth_all_in_one_executor_hdi_fuzzer.cpp,108,2199f2382278a107a8c6d88045190286dcd5746cdb41e472b85af4610e17a581,source_hash_matched,"104: 
+105:     int32_t SendMessage(uint64_t scheduleId, int32_t srcRole, const std::vector<uint8_t> &msg)
+106:     {
+107:         IF_FALSE_LOGE_AND_RETURN_VAL(fuzzParcel_ != nullptr, 0);
+108:         return (*fuzzParcel_).ReadInt32();
+109:     }
+110: 
+111:     int32_t GetProperty(const std::vector<uint64_t> &templateIdList, const std::vector<int32_t> &propertyTypes,
+112:         Property &property)",,,,,
+1d856d8fe470e850,openharmony/useriam_face_auth,747484cdd86b057efb6f752ccd67f41106a25695,test/fuzztest/faceauthallinoneexecutorhdi_fuzzer/face_auth_all_in_one_executor_hdi_fuzzer.cpp,119,4ab08587330e9defed3cf8384e5abba0b8f4e422a335a02f47aaf49dc6f451e1,source_hash_matched,"115:         Property &property)
+116:     {
+117:         IF_FALSE_LOGE_AND_RETURN_VAL(fuzzParcel_ != nullptr, 0);
+118:         FillFuzzHdiProperty(*fuzzParcel_, property);
+119:         return (*fuzzParcel_).ReadInt32();
+120:     }
+121: 
+122:     int32_t SetCachedTemplates(const std::vector<uint64_t> &templateIdList)
+123:     {",,,,,
+1337fb9d7a253b06,openharmony/customization_enterprise_device_management,e4c22622553891d78f5bae026ab4203ea17f8738,test/unittest/services/edm/src/language_manager_test.cpp,55,0f005272825ec1c2a6ce73eff10859f982c85e09cfee58d02da7e21f25bf6618,source_hash_matched,"51:         bundleMgrMock_ = std::make_shared<EdmBundleManagerImplMock>();
+52:         factoryMock_ = std::make_shared<ExternalManagerFactoryMock>();
+53:         permissionCheckerMock_ = std::make_shared<PermissionCheckerMock>();
+54:         PermissionChecker::instance_ = permissionCheckerMock_;
+55:         EXPECT_CALL(*permissionCheckerMock_, GetExternalManagerFactory).WillRepeatedly(DoAll(Return(factoryMock_)));
+56:         EXPECT_CALL(*factoryMock_, CreateBundleManager).WillRepeatedly(DoAll(Return(bundleMgrMock_)));
+57:     }
+58: 
+59:     void TearDown() override",,,,,
+de67716e18b31c83,openharmony/arkcompiler_jsvm,254663b8d3f36b272094c84f610d5ca114f1d8a6,src/js_native_api_v8.cpp,1754,0c9a4524faf135eb57fa32be6cf10e65b4354083f57380ea859eca39ebb1334a,source_hash_matched,"1750:     v8::Local<v8::Value> v8Script = v8impl::V8LocalValueFromJsValue(script);
+1751: 
+1752:     RETURN_STATUS_IF_FALSE(env, v8Script->IsString(), JSVM_STRING_EXPECTED);
+1753: 
+1754:     v8::ScriptCompiler::Source scriptSource(v8Script.As<v8::String>(),
+1755:         *optionResolver.v8Origin,
+1756:         optionResolver.cachedData,
+1757:         optionResolver.consumeCodeCacheTask);
+1758:     auto maybeScript = v8::ScriptCompiler::Compile(context, &scriptSource, optionResolver.v8Option);",,,,,
+5e3338c1295499d9,openharmony/third_party_libphonenumber,2de2013af7738ff72ee2f06e1bab6e290f276d11,cpp/src/phonenumbers/phonemetadata.pb.cc,2124,51382ad810d95cca03ea60bfa7100850c66a4d2a7b1ea1489fe5d6d85f576f8a,source_hash_matched,"2120:       ABSL_DCHECK(from._impl_.voip_ != nullptr);
+2121:       if (_this->_impl_.voip_ == nullptr) {
+2122:         _this->_impl_.voip_ = ::google::protobuf::MessageLite::CopyConstruct(arena, *from._impl_.voip_);
+2123:       } else {
+2124:         _this->_impl_.voip_->MergeFrom(*from._impl_.voip_);
+2125:       }
+2126:     }
+2127:     if (CheckHasBit(cached_has_bits, 0x00040000U)) {
+2128:       ABSL_DCHECK(from._impl_.pager_ != nullptr);",,,,,
+a7272004976bff9a,openharmony/third_party_json,82f689380591b58b99578e6744a4f5afd2162084,include/nlohmann/json.hpp,713,88d7eb42b19599cab48856576dd4ea52538df72ad7c57200c50de98bda246458,source_hash_matched,"709:         switch (m_data.m_type)
+710:         {
+711:             case value_t::array:
+712:             {
+713:                 for (auto& element : *m_data.m_value.array)
+714:                 {
+715:                     element.m_parent = this;
+716:                 }
+717:                 break;",,,,,
+65cfb49e4ae1a76d,openharmony/notification_eventhandler,cff2becb5b538e70e6c0192562e116b910cff5eb,frameworks/eventhandler/src/event_queue_ffrt.cpp,480,581f4780dac2e1e432e351abc3edc9a19894a3af550a427d8525059b604b5ea2,source_hash_matched,"476:     std::function<void()> task = MakeCopyableFunction([ffrtEvent = std::move(event)]() {
+477:         auto handler = new (std::nothrow) std::shared_ptr<EventHandler>(ffrtEvent->GetOwner());
+478:         if (handler && (*handler)) {
+479:             ffrt_queue_t* queue = reinterpret_cast<ffrt_queue_t*>(
+480:                 (*handler)->GetEventRunner()->GetEventQueue()->GetFfrtQueue());
+481:             if (queue != nullptr) {
+482:                 ffrt_queue_set_eventhandler(*queue, (void*)handler);
+483:             }
+484:             (*handler)->DistributeEvent(ffrtEvent);",,,,,
+1e29dfc5161b5f9e,openharmony/account_os_account,af2e349854d83ffd0f4e766e0a8b315388d7315a,services/accountmgr/src/os_account_subprofile/os_account_sub_profile_subscribe_manager.cpp,58,d4d5eb4e9c6fd76bd7fa447d40d79a83956db6c625480f70ea7035472f76baec,source_hash_matched,"54: OsAccountSubProfileSubscribeManager& OsAccountSubProfileSubscribeManager::GetInstance()
+55: {
+56:     /* returned reference is managed by static pointer, caller does not need to free */
+57:     static OsAccountSubProfileSubscribeManager* instance = new (std::nothrow) OsAccountSubProfileSubscribeManager();
+58:     return *instance;
+59: }
+60: 
+61: OsAccountSubProfileSubscribeRecordPtr OsAccountSubProfileSubscribeManager::FindSubscribeRecordByEventListener(
+62:     const sptr<IRemoteObject> &eventListener)",,,,,
+be11d431dca0a54e,openharmony/communication_netstack,77ba82dbc3c2adaf3722674fd9dfdfc709ca69c6,utils/napi_utils/include/module_template.h,251,358d84bd5bedb3f0bf3c79993d8d97edcf2f99aaa910e602b1b7b2ae2e05d826,source_hash_matched,"247:         NETSTACK_LOGD(""%{public}s is invoked in callback mode"", asyncWorkName.c_str());
+248:     }
+249:     context->CreateReference(thisVal);
+250:     if (Work != nullptr) {
+251:         if (!Work(env, thisVal, context)) {
+252:             NETSTACK_LOGE(""work failed error code = %{public}d"", context->GetErrorCode());
+253:         }
+254:     }
+255:     auto sm = context->GetSharedManager();",,,,,
+ba8ba9b82ba84588,openharmony/commonlibrary_memory_utils,1d131f49823cbb67fdd684595342185af6e7043c,libpurgeablemem/test/purgeable_dmabuf_test.cpp,451,7b95da7854a8b7ecead2406396479cf108ce903b802b41e2140305792ce46bff,source_hash_matched,"447:     EXPECT_EQ(pobj->IsPurged(), true);
+448:     unsigned int buildCountBefore = pobj->buildDataCount_;
+449:     /* DisablePurgeable rebuilds the purged content first, then disables the feature */
+450:     EXPECT_TRUE(pobj->DisablePurgeable());
+451:     EXPECT_FALSE(pobj->isSupport_);
+452:     EXPECT_EQ(pobj->buildDataCount_, buildCountBefore + 1);
+453:     EXPECT_TRUE(ReadVerifyDmabufContent(pobj, alphabet, ALPHABET_CMP_LEN));
+454:     /* after disable, reclaim cannot destroy the content, no rebuild happens */
+455:     LoopReclaimPurgeableDma(1);",,,,,
+c788ea965e8715dd,openharmony/sensors_sensor,571dd5b5b5f58b7a6cb2834c55a57bba86ad3c43,vibration_convert/interfaces/js/src/vibrator_convert_js.cpp,198,cdfec1918e851529d2b4d18fc3b1415a6fab3b80d8004d7df42b32a6decc35a3,source_hash_matched,"194:     std::shared_ptr<AudioParsing> audioParsing = vConvert->GetInterfaces();
+195:     CHKPP(audioParsing);
+196:     asyncCallbackInfo->error.code = audioParsing->GetAudioAttribute(asyncCallbackInfo->audioAttribute);
+197: 
+198:     asyncCallbackInfo->callbackType = AUDIO_ATTRIBUTE_CALLBACK;
+199:     if ((argc > 0) && (IsMatchNapiType(env, args[0], napi_function))) {
+200:         CHKCP((napi_create_reference(env, args[0], 1, &asyncCallbackInfo->callback[0]) == napi_ok),
+201:             ""napi_create_reference failed"");
+202:         EmitHapticAsyncCallbackWork(asyncCallbackInfo);",,,,,
+374f57c0bcdf4a4b,openharmony/communication_ipc,5903fd5f7332a427cb3f6915b0202ee5c76c63b5,ipc/native/src/napi/src/napi_remote_proxy.cpp,169,c38074f2c170765e13924d90634fa7be36506af2dd10a87d52081d75c436e6ad,source_hash_matched,"165:     NAPI_ASSERT(env, sendRequestParam != nullptr, ""new sendRequestParam failed"");
+166:     std::string remoteDescriptor = Str16ToStr8(target->GetObjectDescriptor());
+167:     if (!remoteDescriptor.empty()) {
+168:         sendRequestParam->traceValue = remoteDescriptor + std::to_string(code);
+169:         sendRequestParam->traceId = bytraceId.fetch_add(1, std::memory_order_seq_cst);
+170:         StartAsyncTrace(HITRACE_TAG_RPC, (sendRequestParam->traceValue).c_str(), sendRequestParam->traceId);
+171:     }
+172: 
+173:     napi_create_reference(env, argv[ARGV_INDEX_0], 1, &sendRequestParam->jsCodeRef);",,,,,
+37bb176e12870449,openharmony/multimedia_player_framework,bf414c4586149e0e374a4e4f746be64e814bba45,frameworks/taihe/soundpool/src/sound_pool_callback_taihe.cpp,293,181613fb25aa78fe3fba78e1e256cbee858de67db8ed388971bc344d3f10736a,source_hash_matched,"289:     }
+290:     cb->autoRef = refMap_.at(SoundPoolEvent::EVENT_ERROR_OCCURRED);
+291:     cb->callbackName = SoundPoolEvent::EVENT_ERROR_OCCURRED;
+292:     cb->errorCode = errorCode;
+293:     cb->errorMsg = msg;
+294:     bool ret = mainHandler_->PostTask([thisWeak = weak_from_this(), cb]() {
+295:         if (auto thisValid = thisWeak.lock()) {
+296:             thisValid->OnTaiheErrorOccurredCallBack(cb);
+297:         } else {",,,,,
+07c32e39357b74ac,openharmony/commonlibrary_memory_utils,1d131f49823cbb67fdd684595342185af6e7043c,libpurgeablemem/test/purgeable_dmabuf_test.cpp,1335,7b95da7854a8b7ecead2406396479cf108ce903b802b41e2140305792ce46bff,source_hash_matched,"1331:     int ret = 1;
+1332:     while (times++ < READ_RETRY_TIMES) {
+1333:         if (pobj->BeginRead()) {
+1334:             ret = strncmp(alphabet, static_cast<char *>(pobj->GetContent()), size - 1);
+1335:             pobj->EndRead();
+1336:             break;
+1337:         } else {
+1338:             std::cout << __func__ << "": ERROR! BeginRead failed."" << std::endl;
+1339:         }",,,,,
+a46768ed9ecd89b2,openharmony/bundlemanager_bundle_framework_lite,d9288004dbcae42fa659b840664fe3a9fc4ff670,services/bundlemgr_lite/bundle_daemon/src/bundle_daemon.cpp,149,d51392b0a2e81dd5711df11d082b767aa9f286481e7b66dbac7805214d94930b,source_hash_matched,"145:     BundleDaemon::GetInstance().bundleMsClient_ = new (std::nothrow) BundleMsClient(svcIdentity);
+146:     if (BundleDaemon::GetInstance().bundleMsClient_ == nullptr) {
+147:         return EC_BADPTR;
+148:     }
+149:     return BundleDaemon::GetInstance().bundleMsClient_->SendReply(EC_SUCCESS);
+150: }
+151: 
+152: static int32_t ObtainStringFromIpc(IpcIo *req, std::string &firstStr, std::string &secondStr)
+153: {",,,,,
+23af7fab68473076,openharmony/notification_distributed_notification_service,cd6542acc0d516ba57a7473d1e8400d0b8730894,services/ans/test/unittest/advanced_notification_service_branch_test.cpp,1760,aa4651c4b3f1e85bbb466fef4d01810836ae74a6fd20c93b8f8b6a094b59eaa3,source_hash_matched,"1756: HWTEST_F(AnsBranchTest, AnsBranchTest_287012, Function | SmallTest | Level1)
+1757: {
+1758:     auto req = new (std::nothrow) NotificationRequest();
+1759:     std::shared_ptr<NotificationTrigger> notificationTrigger = std::make_shared<NotificationTrigger>();
+1760:     req->SetNotificationTrigger(notificationTrigger);
+1761:     AdvancedNotificationService::PublishNotificationParameter parameter;
+1762:     parameter.request = req;
+1763:     auto result = advancedNotificationService_->OnNotifyDelayedNotification(parameter);
+1764:     ASSERT_NE(result, ERR_OK);",,,,,
+8f827c0ffd345070,openharmony/notification_distributed_notification_service,cd6542acc0d516ba57a7473d1e8400d0b8730894,frameworks/core/test/unittest/ans_manager_proxy_test/ans_manager_proxy_unit_test.cpp,4083,1ca600962803d979d3c67f0b1c9223d773fd2bc2466d11faaf9b335bb514a35c,source_hash_matched,"4079:     std::shared_ptr<AnsManagerProxy> proxy = std::make_shared<AnsManagerProxy>(iremoteObject);
+4080:     ASSERT_NE(nullptr, proxy);
+4081:     auto subscriber = new (std::nothrow) TestSubscriber();
+4082:     sptr<NotificationSubscribeInfo> subInfo = new (std::nothrow) NotificationSubscribeInfo();
+4083:     int32_t result = proxy->Subscribe(subscriber->GetImpl(), subInfo, subscriber->subscribedFlags_);
+4084:     EXPECT_EQ(DEAD_OBJECT, result);
+4085: }
+4086: 
+4087: /*",,,,,
+5c55b38b830cdd83,openharmony/third_party_astc-encoder,8e80377515d9f8d94ce89815235cc8d041eff3d0,Source/astcenc_entry.cpp,1150,9e4b65a95acecd52c3c0b51b784107bfde1476af5f5fe691cfaee962d18c3c02,source_hash_matched,"1146: 			return ASTCENC_ERR_OUT_OF_MEM;
+1147: 		}
+1148: 		imgRGBA.data[0] = new(std::nothrow)
+1149: 			uint16_t[imgRGBA.dim_x * imgRGBA.dim_y * COMPONENT_NUM];
+1150: 		if (imgRGBA.data[0] == nullptr)
+1151: 		{
+1152: 			free_image_inside(&imgRGBA);
+1153: 			return ASTCENC_ERR_OUT_OF_MEM;
+1154: 		}",,,,,
+d77f4e9248523b4d,openharmony/powermgr_display_manager,6b2ee24ce30ca93a3fba451b912e0af59538b794,brightness_manager/test/unittest/src/brightness_light_lux_buffer_test.cpp,455,cac2946f243166c596b270a6980147cbd25a1030faa210728367bf2fd0868c3b,source_hash_matched,"451:     for (int i = 0; i < capacity; i++) {
+452:         lightLuxManager.Push(123, 233);
+453:     }
+454:     lightLuxManager.Push(123, 233);
+455:     EXPECT_EQ(lightLuxManager.mBufferTime[32], 123);
+456:     EXPECT_EQ(lightLuxManager.mBufferData[32], 233);
+457:     EXPECT_EQ(lightLuxManager.mEnd, 33);
+458:     EXPECT_EQ(lightLuxManager.mStart, 0);
+459:     EXPECT_EQ(lightLuxManager.mCount, 33);",,,,,
+297460026cc0380e,openharmony/security_dlp_permission_service,cd354dae7911341962d7af3625e9c5c0f6dbbaec,interfaces/kits/identify_sensitive_content/napi/src/napi_identify_sensitive_content.cpp,130,d454d1e0c2f52133bd315f73c6f91980869865c7f6c433f9facf6255a1f38c1f,source_hash_matched,"126:                 LOG_ERROR(""keywords length exceeds UINT32_MAX"");
+127:                 return DIA_ERR_INVALID_PARAM;
+128:             }
+129:             policyCTmp[i].keywords[j].data = const_cast<char *>(scanFileAsyncContext->policies[i].keywords[j].c_str());
+130:             policyCTmp[i].keywords[j].dataLength = scanFileAsyncContext->policies[i].keywords[j].length();
+131:         }
+132:         // regex
+133:         if (scanFileAsyncContext->policies[i].regex.length() > UINT32_MAX) {
+134:             LOG_ERROR(""regex length exceeds UINT32_MAX"");",,,,,
+29d748fdea0cdfb2,openharmony/advertising_ads_framework,eb8ca56a98bd570b9d65dae3bc28225d34d70fac,frameworks/js/napi/ads/src/ad_load_napi_common.cpp,73,a6ec678f97df38aeca33f776043dd9d2f0a410bb4539dfe59a4814a6d93be949,source_hash_matched,"69:         *work = nullptr;
+70:         *loop = nullptr;
+71:         return false;
+72:     }
+73:     (*param)->env = env;
+74:     return true;
+75: }
+76: 
+77: AdLoadListenerCallback::AdLoadListenerCallback(napi_env env, AdJSCallback callback) : env_(env), callback_(callback) {}",,,,,
+93cd5bc6246de3e9,openharmony/multimedia_image_effect,5c90c1fa907220fed73f92c62881d94bf38280b8,frameworks/native/effect/pipeline/factory/filter_factory.cpp,29,a200c807cb2715234000304d6fbe3e19596ff215438ecd1f7743e5e1f28ac1a8,source_hash_matched,"25: {
+26:     if (instance_ == nullptr) {
+27:         instance_ = new (std::nothrow) FilterFactory;
+28:     }
+29:     return *instance_;
+30: }
+31: 
+32: void FilterFactory::DestroyInstance()
+33: {",,,,,
+e8b8064948e00dc5,openharmony/notification_distributed_notification_service,cd6542acc0d516ba57a7473d1e8400d0b8730894,frameworks/core/test/unittest/ans_manager_proxy_test/ans_manager_proxy_unit_test.cpp,487,1ca600962803d979d3c67f0b1c9223d773fd2bc2466d11faaf9b335bb514a35c,source_hash_matched,"483:         << ""AnsManagerProxyUnitTest, CancelAllTest_0200, TestSize.Level1"";
+484:     MockWriteInterfaceToken(true);
+485:     sptr<MockIRemoteObject> iremoteObject = new (std::nothrow) MockIRemoteObject();
+486:     ASSERT_NE(nullptr, iremoteObject);
+487:     EXPECT_CALL(*iremoteObject, SendRequest(_, _, _, _))
+488:         .WillRepeatedly(DoAll(Invoke(std::bind(SendRequestReplace, _1, _2, _3, _4,
+489:         ERR_OK, true, false, false)), Return(NO_ERROR)));
+490:     std::shared_ptr<AnsManagerProxy> proxy = std::make_shared<AnsManagerProxy>(iremoteObject);
+491:     ASSERT_NE(nullptr, proxy);",,,,,
+8e5439df5a8fe1e6,openharmony/third_party_spirv-headers,21491fca94ca5b2d9e4fa2f366fdfaa5115d5878,tools/buildHeaders/jsoncpp/dist/jsoncpp.cpp,2148,53b7bc4bc70a44e2bf76535f95f048e6d0e8c1d6ac3d4d7f4f6558a8fbe6c86e,source_hash_matched,"2144: //! [CharReaderBuilderDefaults]
+2145:   (*settings)[""collectComments""] = true;
+2146:   (*settings)[""allowComments""] = true;
+2147:   (*settings)[""strictRoot""] = false;
+2148:   (*settings)[""allowDroppedNullPlaceholders""] = false;
+2149:   (*settings)[""allowNumericKeys""] = false;
+2150:   (*settings)[""allowSingleQuotes""] = false;
+2151:   (*settings)[""stackLimit""] = 1000;
+2152:   (*settings)[""failIfExtra""] = false;",,,,,
+1d187b6fc94f31fc,openharmony/third_party_re2,7357c59bd6ae06f75fca32a9eb8be6e5caaa787b,re2/re2.cc,645,b0f3cd7c638c4c38adb5ac806f9efc27d6d8ef871a0d166dd0099338a44a0c7e,source_hash_matched,"641: static int ascii_strcasecmp(const char* a, const char* b, size_t len) {
+642:   const char* ae = a + len;
+643: 
+644:   for (; a < ae; a++, b++) {
+645:     uint8_t x = *a;
+646:     uint8_t y = *b;
+647:     if ('A' <= y && y <= 'Z')
+648:       y += 'a' - 'A';
+649:     if (x != y)",,,,,
+d0e7dc55435b39a2,openharmony/arkui_ui_lite,cfe27c3b816d12e2ab64a78d952dcaae49626c12,interfaces/kits/common/spannable_string.h,196,21581a915b46a2d997663f0c84afdd093a5fe44f50cef52c15edbc1c669a6199,source_hash_matched,"192:             // case E, no change
+193:         } else if (startIndex > tempStart && endIndex < tempEnd) {
+194:             // case F
+195:             tempList.Insert(*tempSpan, tempLeft);
+196:             tempList.Insert(*tempSpan, tempRight);
+197:             *tempSpan = tempList.Remove(*tempSpan)->prev_;
+198:         } else {
+199:             /* it shall not go here */
+200:         }",,,,,
+0f44769d9319cd9d,openharmony/third_party_sqlite,34478e73d5a6d22237edacea92b331fb76127982,src/shell.c,22910,210ba7d0616f707e19d70771d195c40870b56be28b89fbed15f44aabb9a9a4fd,source_hash_matched,"22906:         zErrMsg = 0;
+22907:       }
+22908:     }
+22909:     if( xForEach ){
+22910:       xForEach(p, newDb, (const char*)zName);
+22911:     }
+22912:     sputz(stdout, ""done\n"");
+22913:   }
+22914:   if( rc!=SQLITE_DONE ){",,,,,
+c35b44a87c406da4,openharmony/third_party_libtiff,d4a0516c477dfbaf1153ae295893ab75aadd63d4,libtiff/tif_dirinfo.c,501,fe6a13a1f177435b8ca3ab5d4ff6d41fd630532752ab52b247f7689cff155c78,source_hash_matched,"497:     char *element, *end;
+498: 
+499:     end = (char *)base + *nmemb * size;
+500:     for (element = (char *)base; element < end; element += size)
+501:         if (!compar(key, element)) /* key found */
+502:             return element;
+503: 
+504:     return NULL;
+505: }",,,,,
+4f1ff2ec182bda03,openharmony/third_party_lwip,83886e5c2bebe98dc85976deceaccecfd627b950,src/netif/ppp/eap.c,2289,7d0829d25a8f464f791e5de7e938952ba127b729d9aaa8b3360f2c3aee37260c,source_hash_matched,"2285: 					printer(arg, "" f<%X>"", uval);
+2286: 				}
+2287: 				if ((vallen = len) > SHA_DIGESTSIZE)
+2288: 					vallen = SHA_DIGESTSIZE;
+2289: 				printer(arg, "" <M2%.*B%s>"", len, inp,
+2290: 				    len < SHA_DIGESTSIZE ? ""?"" : """");
+2291: 				INCPTR(vallen, inp);
+2292: 				len -= vallen;
+2293: 				if (len > 0) {",,,,,
+9a61a85b248fe3c1,openharmony/third_party_sane-airscan,23f08604c5e46b11c0952f8a52ae5cd20a464b48,airscan.h,587,32e7334786e1c75d4ad05dc784679b05ba9714c9a73252d2ae16255d41134b91,source_hash_matched,"583: 
+584:     len --;
+585:     p = a[i];
+586:     memmove(&a[i], &a[i + 1], sizeof(void*) * (len - i));
+587:     mem_shrink(a, len);
+588:     a[len] = NULL;
+589: 
+590:     return p;
+591: }",,,,,
+b51cca7ad4649caf,openharmony/third_party_libtiff,d4a0516c477dfbaf1153ae295893ab75aadd63d4,libtiff/tif_lzw.c,1386,1b303edca601934232d9901eecc1de7c804e56dc6396a226d1fa49abaa2c4456,source_hash_matched,"1382:     if (LZWDecoderState(tif)->dec_codetab)
+1383:         _TIFFfreeExt(tif, LZWDecoderState(tif)->dec_codetab);
+1384: 
+1385:     if (LZWEncoderState(tif)->enc_hashtab)
+1386:         _TIFFfreeExt(tif, LZWEncoderState(tif)->enc_hashtab);
+1387: 
+1388:     _TIFFfreeExt(tif, tif->tif_data);
+1389:     tif->tif_data = NULL;
+1390: ",,,,,
+d22f9bbfdd62adba,openharmony/third_party_lwip,83886e5c2bebe98dc85976deceaccecfd627b950,src/apps/mdns/mdns.c,2771,abb4846a0d85cc75f7ff82e8503a9d93bc3309a3760e71d50d1f50c8986b8263,source_hash_matched,"2767:   struct mdns_host* mdns;
+2768:   LWIP_ASSERT_CORE_LOCKED();
+2769:   LWIP_ERROR(""mdns_resp_restart: netif != NULL"", (netif != NULL), return);
+2770: 
+2771:   mdns = NETIF_TO_HOST(netif);
+2772:   if (mdns == NULL) {
+2773:     return;
+2774:   }
+2775:   /* Make sure timer is not running */",,,,,
+92816c560ea4dbc6,openharmony/third_party_littlefs,d05544b226c01ff23df50082721d4701274db04f,lfs.c,3694,723f48c516b3451e9b7202739c692fa6ebe48a531ee202974a7b896e0abf4022,source_hash_matched,"3690:     if (nsize < 0) {
+3691:         return nsize;
+3692:     }
+3693: 
+3694:     file->flags &= ~LFS_F_ERRED;
+3695:     return nsize;
+3696: }
+3697: #endif
+3698: ",,,,,
+c29c068b5664d1e1,openharmony/third_party_littlefs,d05544b226c01ff23df50082721d4701274db04f,lfs.c,3676,723f48c516b3451e9b7202739c692fa6ebe48a531ee202974a7b896e0abf4022,source_hash_matched,"3672:         // Larger than file limit?
+3673:         return LFS_ERR_FBIG;
+3674:     }
+3675: 
+3676:     if (!(file->flags & LFS_F_WRITING) && file->pos > file->ctz.size) {
+3677:         // fill with zeros
+3678:         lfs_off_t pos = file->pos;
+3679:         file->pos = file->ctz.size;
+3680: ",,,,,
+8624b2c5a30b0494,openharmony/third_party_littlefs,d05544b226c01ff23df50082721d4701274db04f,lfs.c,2279,723f48c516b3451e9b7202739c692fa6ebe48a531ee202974a7b896e0abf4022,source_hash_matched,"2275:             .ptag = dir->etag,
+2276:             .crc = 0xffffffff,
+2277: 
+2278:             .begin = dir->off,
+2279:             .end = (lfs->cfg->metadata_max ?
+2280:                 lfs->cfg->metadata_max : lfs->cfg->block_size) - 8,
+2281:         };
+2282: 
+2283:         // traverse attrs that need to be written out",,,,,
+97186a7a354e04cd,openharmony/third_party_zlib,0a0c45d7e478826b59e67cc613be3e4b6957432c,trees.c,695,a16217d5ea6d8342ff08afe5207b1dab620f05610e121dda55b4f9aae9de4f68,source_hash_matched,"691:         /* and insert the new node in the heap */
+692:         s->heap[SMALLEST] = node++;
+693:         pqdownheap(s, tree, SMALLEST);
+694: 
+695:     } while (s->heap_len >= 2);
+696: 
+697:     s->heap[--(s->heap_max)] = s->heap[SMALLEST];
+698: 
+699:     /* At this point, the fields freq and dad are set. We can now",,,,,
+13981bcab2ea71f6,openharmony/third_party_glfw,06908271f2f9bf6ccfaacc45adf29ce29aeb70eb,deps/nuklear.h,16932,ef5ccb732c1d6733b237c322557b2ce427683b97aece7fd1d923c508a951f35e,source_hash_matched,"16928:         int pressed, in_body, in_header;
+16929: #ifdef NK_BUTTON_TRIGGER_ON_RELEASE
+16930:         pressed = nk_input_is_mouse_released(&ctx->input, NK_BUTTON_LEFT);
+16931: #else
+16932:         pressed = nk_input_is_mouse_pressed(&ctx->input, NK_BUTTON_LEFT);
+16933: #endif
+16934:         in_body = nk_input_is_mouse_hovering_rect(&ctx->input, body);
+16935:         in_header = nk_input_is_mouse_hovering_rect(&ctx->input, header);
+16936:         if (pressed && (!in_body || in_header))",,,,,
+fcfe48d786ecb763,openharmony/third_party_vulkan-loader,2397d20f93ba40685d25ceeb7266c0a3637efe43,loader/generated/vk_loader_extensions.c,12782,e530dd9791ac075eceda7338acf3131cab7a1884267323f68ded4cb9b0ca8ec9,source_hash_matched,"12778:         } else if (0 == strcmp(pCreateInfo->ppEnabledExtensionNames[i], VK_KHR_DEVICE_GROUP_CREATION_EXTENSION_NAME)) {
+12779:             ptr_instance->enabled_known_extensions.khr_device_group_creation = 1;
+12780: 
+12781:     // ---- VK_KHR_external_memory_capabilities extension commands
+12782:         } else if (0 == strcmp(pCreateInfo->ppEnabledExtensionNames[i], VK_KHR_EXTERNAL_MEMORY_CAPABILITIES_EXTENSION_NAME)) {
+12783:             ptr_instance->enabled_known_extensions.khr_external_memory_capabilities = 1;
+12784: 
+12785:     // ---- VK_KHR_external_semaphore_capabilities extension commands
+12786:         } else if (0 == strcmp(pCreateInfo->ppEnabledExtensionNames[i], VK_KHR_EXTERNAL_SEMAPHORE_CAPABILITIES_EXTENSION_NAME)) {",,,,,
+abd9d57f2c390b0e,openharmony/third_party_libcoap,f58139dbcb72402d460fec3c106bb1f9fbc5e3fe,src/coap_openssl.c,3231,c045700a7a27bfee44feedf91aca1bb28b86afc8e02f2e0627cca66c207bf3ff,source_hash_matched,"3227:                                    const char *ca_file,
+3228:                                    const char *ca_dir
+3229:                                   ) {
+3230:   coap_openssl_context_t *context =
+3231:       ((coap_openssl_context_t *)ctx->dtls_context);
+3232:   if (context->dtls.ctx) {
+3233:     if (!SSL_CTX_load_verify_locations(context->dtls.ctx, ca_file, ca_dir)) {
+3234:       coap_log_warn(""Unable to install root CAs (%s/%s)\n"",
+3235:                     ca_file ? ca_file : ""NULL"", ca_dir ? ca_dir : ""NULL"");",,,,,
+dba8a01cb655fee0,openharmony/device_soc_unisoc,1b9566731492969ba21a6e465f37954fa45680e8,p7885/hardware/omx_il/components/video/avc/dec/hw/SPRDAVCDecoderOhos.cpp,1005,8ab97e03aa97162064aec94d06306a934419ac9dd2f83784d20427df7e6865d0,source_hash_matched,"1001:     bufferCtrl->bufferFd = BUFFER_SIZE_ZERO;
+1002:     bufferCtrl->width = 0;
+1003:     bufferCtrl->height = 0;
+1004:     bufferCtrl->stride = 0;
+1005:     bufferCtrl->nativeBufferFd = -1;
+1006: }
+1007: 
+1008: OMX_ERRORTYPE SPRDAVCDecoderOhos::initOhosInputPrivate(
+1009:     OMX_BUFFERHEADERTYPE *header, BufferPrivateStruct *bufferPrivate)",,,,,
+4ea232cc5758c31c,openharmony/third_party_vulkan-loader,2397d20f93ba40685d25ceeb7266c0a3637efe43,loader/generated/vk_dispatch_table_helper.h,672,a2d29aa682030941b2f60b101af1ea1fb81921edc17a25ab2afd5489ba71bcd6,source_hash_matched,"668:     table->CmdSetShadingRateImageEnableNV = (PFN_vkCmdSetShadingRateImageEnableNV)gpa(device, ""vkCmdSetShadingRateImageEnableNV"");
+669:     table->CmdSetRepresentativeFragmentTestEnableNV =
+670:         (PFN_vkCmdSetRepresentativeFragmentTestEnableNV)gpa(device, ""vkCmdSetRepresentativeFragmentTestEnableNV"");
+671:     table->CmdSetCoverageReductionModeNV = (PFN_vkCmdSetCoverageReductionModeNV)gpa(device, ""vkCmdSetCoverageReductionModeNV"");
+672:     table->GetShaderModuleIdentifierEXT = (PFN_vkGetShaderModuleIdentifierEXT)gpa(device, ""vkGetShaderModuleIdentifierEXT"");
+673:     table->GetShaderModuleCreateInfoIdentifierEXT =
+674:         (PFN_vkGetShaderModuleCreateInfoIdentifierEXT)gpa(device, ""vkGetShaderModuleCreateInfoIdentifierEXT"");
+675:     table->CreateOpticalFlowSessionNV = (PFN_vkCreateOpticalFlowSessionNV)gpa(device, ""vkCreateOpticalFlowSessionNV"");
+676:     table->DestroyOpticalFlowSessionNV = (PFN_vkDestroyOpticalFlowSessionNV)gpa(device, ""vkDestroyOpticalFlowSessionNV"");",,,,,
+3f1118e3cd5dcc38,openharmony/third_party_libfuse,713346ec4dcfd7d79433ba934e5a484f9bbd4cdf,lib/fuse_opt.c,196,6d16382e0267b1eeb856eb16047022b0993af036f009c7f729a2e8a9e1247382,source_hash_matched,"192: static const struct fuse_opt *find_opt(const struct fuse_opt *opt,
+193: 				       const char *arg, unsigned *sepp)
+194: {
+195: 	for (; opt && opt->templ; opt++)
+196: 		if (match_template(opt->templ, arg, sepp))
+197: 			return opt;
+198: 	return NULL;
+199: }
+200: ",,,,,
+dad8eb86ef7ebffa,openharmony/device_soc_unisoc,1b9566731492969ba21a6e465f37954fa45680e8,p7885/hardware/display/src/display_gfx/display_gfx.cpp,319,14a690aef3350a4470cd1edb08839289498febdb9eb5923d8a697116f3bc3bd5,source_hash_matched,"315:     osdLayerUser->params.palletEn = 0;
+316: 
+317:     osdLayerUser->common.type = GSP_OSD_LAYER;
+318:     osdLayerUser->common.enable = 1;
+319:     osdLayerUser->common.waitFd = -1;
+320:     osdLayerUser->common.shareFd = dstSource->phyAddr;
+321:     return true;
+322: }
+323: ",,,,,
+35aa2ee780f9376e,openharmony/device_soc_unisoc,1b9566731492969ba21a6e465f37954fa45680e8,p7885/hardware/omx_il/libstagefrighthw/SprdVideoEncoderOMXComponent.cpp,108,06198a4a33794085e4d30724ede8c1ff20acfc596135bdccdb352900fad92f9c,source_hash_matched,"104: {
+105:     def->nPortIndex = config.portIndex;
+106:     def->eDir = config.dir;
+107:     def->nBufferCountMin = config.numBuffers;
+108:     def->nBufferCountActual = config.numBuffers;
+109:     def->nBufferSize = config.bufferSize;
+110:     def->bEnabled = OMX_TRUE;
+111:     def->bPopulated = OMX_FALSE;
+112:     def->eDomain = OMX_PortDomainVideo;",,,,,
+1883881b4eaaf34d,openharmony/third_party_dav1d,9b933ddace1dab1b274fdce10c444ffdca3de8cb,src/decode.c,2239,76ad2857e2086bea347b5c5f9e5d163c868dbf376894abb108bd42f7b7d2511a,source_hash_matched,"2235:             break;
+2236:         case PARTITION_T_TOP_SPLIT: {
+2237:             if (decode_b(t, bl, b[0], PARTITION_T_TOP_SPLIT, EDGE_ALL_TR_AND_BL))
+2238:                 return -1;
+2239:             t->bx += hsz;
+2240:             if (decode_b(t, bl, b[0], PARTITION_T_TOP_SPLIT, node->v[1]))
+2241:                 return -1;
+2242:             t->bx -= hsz;
+2243:             t->by += hsz;",,,,,
+6cd0d69c14c25d2f,openharmony/telephony_ril_adapter,bc7b07807fd1f904fc4d072979e66b3207027180,services/hril/src/hril_network.cpp,926,7bd498dadad6b8d456ffd159724d22ed15124718767267d9071fcdcaeec1054d,source_hash_matched,"922:             break;
+923:         case NETWORK_TYPE_WCDMA:
+924:             cellInfo.serviceCells.wcdma.arfcn = cellPtr->ServiceCellParas.wcdma.arfcn;
+925:             cellInfo.serviceCells.wcdma.psc = cellPtr->ServiceCellParas.wcdma.psc;
+926:             cellInfo.serviceCells.wcdma.rscp = cellPtr->ServiceCellParas.wcdma.rscp;
+927:             cellInfo.serviceCells.wcdma.ecno = cellPtr->ServiceCellParas.wcdma.ecno;
+928:             break;
+929:         case NETWORK_TYPE_CDMA:
+930:             FillCellNearbyInfoCdma(cellInfo, cellPtr);",,,,,
+5da5ec6f05f092e3,openharmony/third_party_libcoap,f58139dbcb72402d460fec3c106bb1f9fbc5e3fe,src/coap_proxy.c,285,185f5602f3054085b02e1e516a6222a6dc6f9e8789a8a03a135d7319e0ffd66a,source_hash_matched,"281: 
+282:   /* See if we are already connected to the Server */
+283:   for (i = 0; i < proxy_list_count; i++) {
+284:     if (coap_string_equal(&proxy_list[i].uri.host, &server_use->uri.host) &&
+285:         proxy_list[i].uri.port == server_use->uri.port &&
+286:         proxy_list[i].uri.scheme == server_use->uri.scheme) {
+287:       if (!server_list->track_client_session) {
+288:         coap_ticks(&proxy_list[i].last_used);
+289:         return &proxy_list[i];",,,,,
+f510801ceb28aba6,openharmony/third_party_libuv,9a772139aaf711a9156764a41bcd2fdd476aef5f,src/win/process.c,860,3613437d5b1511789fe4ea9ba6c3ab228c9d42a8d2eec56227f6d6919e917d91,source_hash_matched,"856: 
+857: void uv__process_close(uv_loop_t* loop, uv_process_t* handle) {
+858:   uv__handle_closing(handle);
+859: 
+860:   if (handle->wait_handle != INVALID_HANDLE_VALUE) {
+861:     /* This blocks until either the wait was cancelled, or the callback has
+862:      * completed. */
+863:     BOOL r = UnregisterWaitEx(handle->wait_handle, INVALID_HANDLE_VALUE);
+864:     if (!r) {",,,,,
+10a3137ff04a8a40,openharmony/third_party_lwip,83886e5c2bebe98dc85976deceaccecfd627b950,src/apps/snmp/snmp_threadsync.c,186,e286f7a611a7ae080cc5f8d309dc3ee82091721cc274baca333c0d4308795f39,source_hash_matched,"182: 
+183:   memset(&call_data->proxy_instance, 0, sizeof(call_data->proxy_instance));
+184: 
+185:   instance->reference.ptr = call_data;
+186:   snmp_oid_assign(&call_data->proxy_instance.instance_oid, instance->instance_oid.id, instance->instance_oid.len);
+187: 
+188:   call_data->proxy_instance.node = &threadsync_node->target->node;
+189:   call_data->threadsync_node     = threadsync_node;
+190: ",,,,,
+f1043d965a28856f,openharmony/security_certificate_framework,e270363a042bf8f0126881c76d1341ad457cc187,frameworks/adapter/v1.0/src/x509_cert_cms_generator_openssl.c,1517,e6e1ff5ec0c75fc3cf5663418df80de43c05f5d7de6810df70ae08d4b2253834,source_hash_matched,"1513:         BIO_free(outBio);
+1514:         return CF_ERR_MALLOC;
+1515:     }
+1516: 
+1517:     if (memcpy_s(out->data, buf->length, buf->data, buf->length) != EOK) {
+1518:         LOGE(""Failed to copy decrypted data"");
+1519:         CfFree(out->data);
+1520:         out->data = NULL;
+1521:         BIO_free(outBio);",,,,,
+10623db9003a7381,openharmony/tee_tee_os_kernel,f4ef1dbe90ad73d57a1084719a314e5ba6830bb2,user/system-services/system-servers/procmgr/libs/libchcoreelf/libchcoreelf.c,280,a9d2c16892c55d93471cdae429e23f6119194a0dd18b60827312f77956fdc577,source_hash_matched,"276:             header->sh_addralign = be32toh(header_32->sh_addralign);
+277:             header->sh_entsize = be32toh(header_32->sh_entsize);
+278:         } else if (ELF_BITS_64(elf_header->e_indent)) {
+279:             header_64 = (struct elf_section_header *)code;
+280:             header->sh_name = be32toh(header_64->sh_name);
+281:             header->sh_type = be32toh(header_64->sh_type);
+282:             header->sh_flags = be64toh(header_64->sh_flags);
+283:             header->sh_addr = be64toh(header_64->sh_addr);
+284:             header->sh_offset = be64toh(header_64->sh_offset);",,,,,
+220131d1b92f0e90,openharmony/security_device_auth,21a357fe07ac0a61ce0929040251a712f94adef3,services/legacy/identity_manager/src/credential_operator.c,126,ef695c4c4a80d5e93ac4e769a88d3392bb1dee16856469bf700fcbc8e4c32ab5,source_hash_matched,"122:     if (memcpy_s(keyAliasBuff->val + usedLen, totalLen - usedLen, keyType->val, keyType->length) != EOK) {
+123:         LOGE(""Copy keyType failed."");
+124:         return HC_ERR_MEMORY_COPY;
+125:     }
+126:     usedLen = usedLen + keyType->length;
+127:     if (memcpy_s(keyAliasBuff->val + usedLen, totalLen - usedLen, authId->val, authId->length) != EOK) {
+128:         LOGE(""Copy authId failed."");
+129:         return HC_ERR_MEMORY_COPY;
+130:     }",,,,,
+96c79cab44ed25c8,openharmony/tee_tee_os_framework,a3bc9d9818e262f36e82ea4d7774d67845d61dd1,lib/teelib/libcrypto_hal/src/boringssl/soft_hash.c,189,162eef38adb2d38847a14c76b380f4083cbbec15f38c204e5b53bee8be5fd498,source_hash_matched,"185:         return SHA224_Update((SHA256_CTX *)(uintptr_t)(ctx->ctx_buffer), in_buffer, data_in->size);
+186:     case CRYPTO_TYPE_DIGEST_SHA256:
+187:         return SHA256_Update((SHA256_CTX *)(uintptr_t)(ctx->ctx_buffer), in_buffer, data_in->size);
+188:     case CRYPTO_TYPE_DIGEST_SHA384:
+189:         return SHA384_Update((SHA512_CTX *)(uintptr_t)(ctx->ctx_buffer), in_buffer, data_in->size);
+190:     case CRYPTO_TYPE_DIGEST_SHA512:
+191:         return SHA512_Update((SHA512_CTX *)(uintptr_t)(ctx->ctx_buffer), in_buffer, data_in->size);
+192:     default:
+193:         return BORINGSSL_ERR;",,,,,
+7aca5f22b5155f92,openharmony/third_party_opus,9368c2c8218e99543adc6565614bc5be956b520a,celt/bands.c,1154,fc7ddcc7a46135c2cd89016025e4b96d30e9b514565610115467405d78d63ec6,source_hash_matched,"1150:                   /* Noise */
+1151:                   for (j=0;j<N;j++)
+1152:                   {
+1153:                      ctx->seed = celt_lcg_rand(ctx->seed);
+1154:                      X[j] = SHL32((celt_norm)((opus_int32)ctx->seed>>20), NORM_SHIFT-14);
+1155:                   }
+1156:                   cm = cm_mask;
+1157:                } else {
+1158:                   /* Folded spectrum */",,,,,
+eb198b56755254cd,openharmony/third_party_FreeBSD,74f769337b059bc4ee13123e7ce159b8b7447e71,sys/dev/usb/storage/umass.c,2728,aacf1809c22fec22c8268c4bebed7a199ae7ba88ac779dc79c094a3e79884078,source_hash_matched,"2724: 		usb_err(""memcpy_s failed, %d\n"", ret);
+2725: 		return (-1);
+2726: 	}
+2727: 
+2728: 	sc->info.sectornum= usbhost_getbe64(resp.lba) + 1;
+2729: 	sc->info.sectorsize= usbhost_getbe32(resp.blklen);
+2730: 
+2731: 	return (0);
+2732: }",,,,,
+8057c9afe567aa24,openharmony/startup_appspawn,7cc8c0d149a72120a27341e36ae3d564a6827e89,modules/sandbox/normal/sandbox_common.cpp,1208,6aa4338999b6db8c0a7a5831eed58cca4f720ab7e98f74810d6a76b5a4626056,source_hash_matched,"1204:             ReportMountFullHisysevent(APPSPAWN_SANDBOX_MOUNT_FULL);
+1205:         }
+1206: #endif
+1207:         if (errno == ENOENT && IsNeededCheckPathStatus(appProperty, arg->srcPath)) {
+1208:             VerifyDirRecursive(arg->srcPath);
+1209:         }
+1210:         return ret;
+1211:     }
+1212: ",,,,,
+8883c3d99162ac29,openharmony/third_party_libuv,9a772139aaf711a9156764a41bcd2fdd476aef5f,src/unix/tcp.c,136,ab401c3846448501842b4c5a1973beceab00955aebecbbc05e64b71472f19053,source_hash_matched,"132:     err = new_socket(tcp, domain, 0);
+133:     if (err) {
+134:       uv__queue_remove(&tcp->handle_queue);
+135:       if (tcp->io_watcher.fd != -1)
+136:         uv__close(tcp->io_watcher.fd);
+137:       tcp->io_watcher.fd = -1;
+138:       return err;
+139:     }
+140:   }",,,,,
+6e74daf27838cf36,openharmony/security_device_auth,21a357fe07ac0a61ce0929040251a712f94adef3,services/legacy/identity_manager/src/cert_operation.c,314,b1d7430126f527cf4a7090851d1b549912fc5119092538b4b9aeb05c9e4781ee,source_hash_matched,"310:         FreeJson(pkInfoPeer);
+311:         return HC_ERR_JSON_GET;
+312:     }
+313:     FreeJson(pkInfoPeer);
+314:     peerPkBuff->length = pkSize;
+315:     return HC_SUCCESS;
+316: }
+317: 
+318: static int32_t GetSharedSecretForAccountInPake(int32_t osAccountId, const char *userId, const char *authId,",,,,,
+b68e27758adaddc4,openharmony/communication_netmanager_base,d1a2c26d3dc07e4582b6d32417fe9a0f7d2359d7,frameworks/js/napi/netpolicy/src/netpolicy_exec.cpp,356,efafaacf398068045bd8ec4cb4118832e840228cea5638607eb2eff856b44bf6,source_hash_matched,"352: }
+353: 
+354: napi_value NetPolicyExec::GetDeviceIdleTrustlistCallback(GetDeviceIdleTrustlistContext *context)
+355: {
+356:     napi_value list = NapiUtils::CreateArray(context->GetEnv(), context->uids_.size());
+357:     uint32_t index = 0;
+358:     for (const auto &uid : context->uids_) {
+359:         napi_value element = NapiUtils::CreateUint32(context->GetEnv(), uid);
+360:         NapiUtils::SetArrayElement(context->GetEnv(), list, index++, element);",,,,,
+d0d13ec67660f6af,openharmony/third_party_toybox,7ef9f95da6dfe39b5dd0d743b8a42f52f46fb460,toys/pending/bc.c,2142,0ef11c637868b13945c0d33f46e316050ff4098aaa2c0013c23730b75d4d119e,source_hash_matched,"2138: }
+2139: 
+2140: void bc_num_expand(BcNum *n, size_t req) {
+2141:   req = req >= BC_NUM_DEF_SIZE ? req : BC_NUM_DEF_SIZE;
+2142:   if (req > n->cap) {
+2143:     n->num = xrealloc(n->num, req);
+2144:     n->cap = req;
+2145:   }
+2146: }",,,,,
+9548c7c203bc1dba,openharmony/third_party_elfutils,61c7376b0f1c1df91c00bf782836b796a6f32c05,libelf/gelf_update_rela.c,67,20a79c848535a4262686465844454608b55e98d2ea95d3b3cde855fee011a6f8,source_hash_matched,"63: 
+64:       /* There is the possibility that the values in the input are
+65: 	 too large.  */
+66:       if (unlikely (src->r_offset > 0xffffffffull)
+67: 	  || unlikely (GELF_R_SYM (src->r_info) > 0xffffff)
+68: 	  || unlikely (GELF_R_TYPE (src->r_info) > 0xff)
+69: 	  || unlikely (src->r_addend < -0x80000000ll)
+70: 	  || unlikely (src->r_addend > 0x7fffffffll))
+71: 	{",,,,,
+7668b474ce3c6d43,openharmony/commonlibrary_memory_utils,1d131f49823cbb67fdd684595342185af6e7043c,libpurgeablemem/test/purgeable_cpp_test.cpp,495,c389cac23415b67422fc06286db1676e2605bfe0f1ee4e1eb76490e9b9122620,source_hash_matched,"491: void LoopPrintAlphabet(PurgeableMem *pdata, unsigned int loopCount)
+492: {
+493:     std::cout << ""inter "" << __func__ << std::endl;
+494:     for (unsigned int i = 0; i < loopCount; i++) {
+495:         if (!pdata->BeginRead()) {
+496:             std::cout << __func__ << "": "" << i << "". ERROR! BeginRead failed."" << std::endl;
+497:             break;
+498:         }
+499:         pdata->EndRead();",,,,,
+659b1fa3c9f213e1,openharmony/third_party_ninja,db3ae63e137be63bbc42318e45a53e4e406dd406,src/graph.cc,715,cc0f3578325e77600c2979bccce28f9139cf38f333d51c5f5fc8b57809413e37,source_hash_matched,"711:       PreallocateSpace(edge, static_cast<int>(depfile_ins->size()));
+712: 
+713:   // Add all its in-edges.
+714:   for (std::vector<StringPiece>::iterator i = depfile_ins->begin();
+715:        i != depfile_ins->end(); ++i, ++implicit_dep) {
+716:     uint64_t slash_bits;
+717:     CanonicalizePath(const_cast<char*>(i->str_), &i->len_, &slash_bits);
+718:     Node* node = state_->GetNode(*i, slash_bits);
+719:     *implicit_dep = node;",,,,,
+cfd1ed9c3977e27e,openharmony/systemabilitymgr_samgr,08e2a552b839ea7727251cb9b749a5c1dd9cfeff,interfaces/innerkits/samgr_proxy/include/system_process_status_change_stub.h,35,a3700f360cddda887f1e74f38400c25b0c900e6cd1911bddbbfcd4c0cfc2f44a,source_hash_matched,"31:     // Thus to keep ABI compatibilities as long as there are no real interface changes.
+32:     static int32_t LocalSystemProcessStarted(SystemProcessStatusChangeStub *stub,
+33:         MessageParcel& data, MessageParcel& reply)  __attribute__((always_inline))
+34:     {
+35:         return stub->OnSystemProcessStartedInner(data, reply);
+36:     }
+37:     static int32_t LocalSystemProcessStopped(SystemProcessStatusChangeStub *stub,
+38:         MessageParcel& data, MessageParcel& reply) __attribute__((always_inline))
+39:     {",,,,,
+2397ee7a049567a3,openharmony/print_print_fwk,e3be37f0fc61d4d5c74dd6c1e4fde53f83eeec81,test/fuzztest/remoteservice_fuzzer/remoteservice_fuzzer.cpp,56,437e2fab24bd5452f04c0e5bbbc1ac1102588cc9c83f98ddef94c57eea71010a,source_hash_matched,"52:     Json::Value item(Json::objectValue);
+53:     if (dataProvider->ConsumeBool()) {
+54:         item[""devId""] = dataProvider->ConsumeRandomLengthString(MAX_STRING_LENGTH);
+55:     }
+56:     if (dataProvider->ConsumeBool()) {
+57:         item[""devName""] = dataProvider->ConsumeRandomLengthString(MAX_STRING_LENGTH);
+58:     }
+59:     uint8_t statusChoice = dataProvider->ConsumeIntegralInRange<uint8_t>(0, 3);
+60:     if (statusChoice == 0) {",,,,,
+857cd643513a6dc0,openharmony/global_i18n,5e1210b17e720af2748685ee65bd480709c08a52,interfaces/ets/ani/i18n/src/entity_recognizer_addon.cpp,99,976182a0bf3e93466499a77b6070856d9e73344bb756644fe18c550c5a7fe650,source_hash_matched,"95:     VariableConverter::SetStringMember(env, ret, ""type"", type);
+96:     if (ANI_OK != env->Object_SetPropertyByName_Int(ret, ""begin"", begin)) {
+97:         HILOG_ERROR_I18N(""CreateEntityInfoItem: Set property 'begin' failed"");
+98:     }
+99:     if (ANI_OK != env->Object_SetPropertyByName_Int(ret, ""end"", end)) {
+100:         HILOG_ERROR_I18N(""CreateEntityInfoItem: Set property 'end' failed"");
+101:     }
+102:     return ret;
+103: }",,,,,
+d4d127d37c1e937a,openharmony/third_party_xmp_toolkit_sdk,04054b65245a125cf181ac9edf13dfac08fc47f6,XMPFiles/source/FormatSupport/SWF_Support.cpp,232,34c7310abcd5e7b34a2a503e388a022ab419fa123ccca2c611b3138937d1ea2d,source_hash_matched,"228: 	
+229: 	PutUns32LE ( SWF_IO::CompressedSignature, &bufferOut[0] );
+230: 	bufferOut[3] = dataIn[3];	// Copy the SWF version.
+231: 	PutUns32LE ( (XMP_Uns32)lengthIn, &bufferOut[4] );
+232: 	fileOut->Write ( bufferOut, SWF_IO::HeaderPrefixSize );
+233: 	
+234: 	// Feed the input to the compression engine in one step, write the output as available.
+235: 
+236: 	zipState.next_in   = (Bytef*)&dataIn[SWF_IO::HeaderPrefixSize];",,,,,
+bfb872485676e0db,openharmony/third_party_spirv-tools,43f5cb45a7c1ba14b44d7caf639aa7d96012a14b,source/opt/amd_ext_to_khr.cpp,76,5266cf103348e2916d298e4790db18232fa74fb2bac9e8769491e60f84f6599d,source_hash_matched,"72:       IRContext::kAnalysisDefUse | IRContext::kAnalysisInstrToBlockMapping);
+73: 
+74:   uint32_t op1 = inst->GetSingleWordInOperand(2);
+75:   uint32_t op2 = inst->GetSingleWordInOperand(3);
+76:   uint32_t op3 = inst->GetSingleWordInOperand(4);
+77: 
+78:   Instruction* temp = ir_builder.AddNaryExtendedInstruction(
+79:       inst->type_id(), glsl405_ext_inst_id, opcode, {op1, op2});
+80: ",,,,,
+b191526b324302f5,openharmony/third_party_littlefs,d05544b226c01ff23df50082721d4701274db04f,runners/bench_runner.c,1049,7f8b243201733a5b2b23db3807f77ac06ab4434577461e27cd2ea1b3acd23a55,source_hash_matched,"1045: 
+1046:             *(intmax_t*)mappend(
+1047:                 (void**)&defines->defines[i].values,
+1048:                 sizeof(intmax_t),
+1049:                 &defines->defines[i].value_count,
+1050:                 &defines->defines[i].value_capacity) = value;
+1051: 
+1052:             return;
+1053:         }",,,,,
+e936e7ca5ea92534,openharmony/third_party_brotli,e9c6cd7a0e109ae8d527ec17bdd8076777f37429,c/enc/backward_references_hq.c,593,fd418f50cea8f5a579d20b40ff7040e9ff4029e151095f4eaf9c1b6bcf15c680,source_hash_matched,"589:   size_t index = num_bytes;
+590:   size_t num_commands = 0;
+591:   while ((nodes[index].dcode_insert_length & 0x7FFFFFF) == 0 &&
+592:       nodes[index].length == 1) --index;
+593:   nodes[index].u.next = BROTLI_UINT32_MAX;
+594:   while (index != 0) {
+595:     size_t len = ZopfliNodeCommandLength(&nodes[index]);
+596:     index -= len;
+597:     nodes[index].u.next = (uint32_t)len;",,,,,
+965713d8a7cb1115,openharmony/third_party_cups-filters,3430c32fa92b06533333f04264f01f984b9fbc92,cupsfilters/cmyk.c,731,dbbca97fe205c0405980c9e324aac16ea55a2d0f3bc17acfc1d4b1ac2d7e26ed,source_hash_matched,"727: 	      output[1] = ink_limit * output[1] / ink;
+728: 	      output[2] = ink_limit * output[2] / ink;
+729: 	      output[3] = ink_limit * output[3] / ink;
+730: 	      output[4] = ink_limit * output[4] / ink;
+731: 	      output[5] = ink_limit * output[5] / ink;
+732: 	      output[6] = ink_limit * output[6] / ink;
+733: 	    }
+734: 	  }
+735: ",,,,,
+dc39959cc3eb3ba1,openharmony/third_party_meshoptimizer,a13ea9ee01d23e1e780d03eb403610a17e529229,extern/cgltf.h,3512,4c5094a5febd18852af0ba0971ad979e1ed2090f71b47b951ea3bf4c7e7b6d8f,source_hash_matched,"3508: 			++i;
+3509: 
+3510: 			for (int k = 0; k < indices_size; ++k)
+3511: 			{
+3512: 				CGLTF_CHECK_KEY(tokens[i]);
+3513: 
+3514: 				if (cgltf_json_strcmp(tokens+i, json_chunk, ""bufferView"") == 0)
+3515: 				{
+3516: 					++i;",,,,,
+05cad99017aa98a0,openharmony/third_party_lwip,83886e5c2bebe98dc85976deceaccecfd627b950,src/apps/netbiosns/netbiosns.c,335,81b263c5ca478185b87032faa08c26a4cde5161a7c8118a9c70f83e94d839002,source_hash_matched,"331: 
+332:   /* Fill with ""space"" coding */
+333:   for (; idx < name_dec_len - 1;) {
+334:     name_dec[idx++] = 'C';
+335:     name_dec[idx++] = 'A';
+336:   }
+337: 
+338:   /* Terminate string */
+339:   name_dec[idx] = '\0';",,,,,
+eb7730aa57fbbc36,openharmony/third_party_mbedtls,0ce934012a60624f0e6fa33a7ab0fb64ce2c7031,programs/pkey/rsa_sign_pss.c,116,706e5e14b977780d206c2305ed26dcb6549972b3c708778d25c756802cbc21bf,source_hash_matched,"112: 
+113:     if ((ret = mbedtls_md_file(
+114:              mbedtls_md_info_from_type(MBEDTLS_MD_SHA256),
+115:              argv[2], hash)) != 0) {
+116:         mbedtls_printf("" failed\n  ! Could not open or read %s\n\n"", argv[2]);
+117:         goto exit;
+118:     }
+119: 
+120:     if ((ret = mbedtls_pk_sign(&pk, MBEDTLS_MD_SHA256, hash, 0,",,,,,
+55c77210e42525c7,openharmony/third_party_lwip,83886e5c2bebe98dc85976deceaccecfd627b950,src/netif/lowpan6_common.c,335,a7d78c5b3ee87db5d6daef00063286a566b2b9a1a14b2ab9d559dd6409433adc,source_hash_matched,"331: 
+332:     buffer[lowpan6_header_len] = 0xf0;
+333: 
+334:     /* determine port compression mode. */
+335:     if ((inptr[0] == 0xf0) && ((inptr[1] & 0xf0) == 0xb0) &&
+336:         (inptr[2] == 0xf0) && ((inptr[3] & 0xf0) == 0xb0)) {
+337:       /* Compress source and dest ports. */
+338:       buffer[lowpan6_header_len++] |= 0x03;
+339:       buffer[lowpan6_header_len++] = ((inptr[1] & 0x0f) << 4) | (inptr[3] & 0x0f);",,,,,
+149d073eb16f1f73,openharmony/third_party_spirv-headers,21491fca94ca5b2d9e4fa2f366fdfaa5115d5878,include/spirv/unified1/spirv.hpp,2287,9d5ced230a2c06dbcf70d45b711b850a810a2cd5c42e66ef29b1d3674e577bc2,source_hash_matched,"2283:     case OpFOrdEqual: *hasResult = true; *hasResultType = true; break;
+2284:     case OpFUnordEqual: *hasResult = true; *hasResultType = true; break;
+2285:     case OpFOrdNotEqual: *hasResult = true; *hasResultType = true; break;
+2286:     case OpFUnordNotEqual: *hasResult = true; *hasResultType = true; break;
+2287:     case OpFOrdLessThan: *hasResult = true; *hasResultType = true; break;
+2288:     case OpFUnordLessThan: *hasResult = true; *hasResultType = true; break;
+2289:     case OpFOrdGreaterThan: *hasResult = true; *hasResultType = true; break;
+2290:     case OpFUnordGreaterThan: *hasResult = true; *hasResultType = true; break;
+2291:     case OpFOrdLessThanEqual: *hasResult = true; *hasResultType = true; break;",,,,,
+820755bc342656f2,openharmony/third_party_libedit,c520bb78f39505356ceb61c1c9f56dd73f8e7f85,src/vis.c,217,ad4ae9122f2101a9a8ae10812679a4ec46276cf36bfe43d40afce881c7780435,source_hash_matched,"213: 		switch (c) {
+214: 		case L'\n':
+215: 			*dst++ = L'\\'; *dst++ = L'n';
+216: 			return dst;
+217: 		case L'\r':
+218: 			*dst++ = L'\\'; *dst++ = L'r';
+219: 			return dst;
+220: 		case L'\b':
+221: 			*dst++ = L'\\'; *dst++ = L'b';",,,,,
+9cbac17f28a76cb1,openharmony/third_party_alsa-utils,68ec55a382e3a4c50c05a1b2bf97737f70c87185,alsaucm/usecase.c,155,85f03f9b886eb8ceaec916a022d5a80a7e319718be32f832ad5de9ea2219203c,source_hash_matched,"151: 		if (c == '\0')
+152: 			return 0;
+153: 		if (c == '\""' || c == '\'') {
+154: 			start = ++line;
+155: 			while (*line && *line != c)
+156: 				line++;
+157: 			if (*line) {
+158: 				*line = '\0';
+159: 				line++;",,,,,
+e1bc6905d5489aa2,openharmony/third_party_alsa-utils,68ec55a382e3a4c50c05a1b2bf97737f70c87185,amixer/amixer.c,1736,a2847a08ca51e1f47c057eab810cf495bd14a5d9cca50d14cd1face4923614b3,source_hash_matched,"1732: 		token[n] = buf;
+1733: 		for (dst = buf; *buf && *buf != '\n'; buf++) {
+1734: 			if (esc)
+1735: 				esc = 0;
+1736: 			else if (isspace(*buf) && !quote) {
+1737: 				buf++;
+1738: 				break;
+1739: 			} else if (*buf == '\\') {
+1740: 				esc = 1;",,,,,
+f90ef10ea6d3edbb,openharmony/third_party_optimized_routines,a52a7d4792ef1618a854271e2421e2ab66d24f99,math/test/mathtest.c,966,0c8b00ae2abbbb201dd0c4bec25f87a40e8a2da6733f6fd64e421c3838792c99,source_hash_matched,"962:     special_op *sop;
+963:     char *str;
+964: 
+965:     if(result) {
+966:         *failp += sprintf(*failp,"" %s="",text);
+967:         sop = find_special_op_from_op(result[0],result[1],is_double_rettype(rettype));
+968:         if(sop) {
+969:             *failp += sprintf(*failp,""%s"",sop->name);
+970:         } else {",,,,,
+86370b366b91e633,openharmony/third_party_lzma,c2159c2f51186143ef1c848f757b38a7b00d104f,C/7zArcIn.c,1267,df22c29253eb783404c90ee4d96076db822a902cdb3c490ba404f159c94cfc82,source_hash_matched,"1263:         else
+1264:         {
+1265:           UInt32 index;
+1266:           RINOK(SzReadNumber32(sd, &index))
+1267:           if (index >= *numTempBufs)
+1268:             return SZ_ERROR_ARCHIVE;
+1269:           sdSwitch.Data = (tempBufs)[index].data;
+1270:           sdSwitch.Size = (tempBufs)[index].size;
+1271:           sdPtr = &sdSwitch;",,,,,
+126c16d957922ccb,openharmony/third_party_elfio,170523065b93acc77b163a87a7bbb9872037becf,elfio/elfio_header.hpp,114,0ac260cc79554f9378539221dbba08b732d1ec8775ccbab333c57d8a6bb5e003,source_hash_matched,"110: 
+111:     //------------------------------------------------------------------------------
+112:     bool save( std::ostream& stream ) const override
+113:     {
+114:         stream.seekp( ( *translator )[0] );
+115:         stream.write( reinterpret_cast<const char*>( &header ),
+116:                       sizeof( header ) );
+117: 
+118:         return stream.good();",,,,,
+51b4c33c6163e5de,openharmony/third_party_googletest,cc04e6f4e30df6a3e1c913ee14ffb30eee203c30,googlemock/test/gmock-actions_test.cc,2114,802ae9695ebd9a54580b11ec31b0a928b33a476765607e5706dcb82aaf00d75a,source_hash_matched,"2110:   *ptr = 43;
+2111:   return result;
+2112: }
+2113: 
+2114: int Deref(std::unique_ptr<int> ptr) { return *ptr; }
+2115: 
+2116: struct Double {
+2117:   template <typename T>
+2118:   T operator()(T t) {",,,,,
+841f6fd6f99261e5,openharmony/distributedhardware_mechbody_controller,6e875a2dc5a7748bfdcbec1ccf9f1153574fa03e,services/src/motion/mc_motion_manager.cpp,2807,4347f8fb83e12afdd5e79888466bb57243cfa7713ea1cbb2ec023bf32fd72058,source_hash_matched,"2803:     cameraTrackingLayoutCmd->SetTimeoutCallback(SetTimeout);
+2804:     sendAdapter_->SendCommand(cameraTrackingLayoutCmd);
+2805:     {
+2806:         std::unique_lock <std::mutex> lock(deviceStatusMutex_);
+2807:         deviceStatus_->layoutParams = *layoutParams;
+2808:     }
+2809:     HILOGI(""SetCameraTrackingLayout end."");
+2810:     return ERR_OK;
+2811: }",,,,,
+a659ce80b7c59af3,openharmony/telephony_sms_mms,41cef006c6c4b7fdc9ee0bb8d9ae659ee2ebbfd8,frameworks/js/napi/src/napi_mms_pdu_helper.cpp,28,630c3364b468c625edd954aa44e6384122e02bae8d9f21288bf8d016c7345a74,source_hash_matched,"24: 
+25: bool NapiMmsPduHelper::Run(void (*func)(std::shared_ptr<NapiMmsPduHelper>), std::shared_ptr<NapiMmsPduHelper> helper)
+26:     __attribute__((no_sanitize(""cfi"")))
+27: {
+28:     TelFFRTUtils::Submit([=]() { func(helper); });
+29:     TELEPHONY_LOGI(""Thread running"");
+30:     return WaitForResult(WAIT_TIME_SECOND);
+31: }
+32: ",,,,,
+7471e2df219be1f4,openharmony/device_board_revoview,e76669e702448a93aa030f45a22e7a13af07c331,wukong100/camera/vdi_impl/v4l2/driver_adapter/src/v4l2_buffer.cpp,163,fdf35632734de0a13674cca332f29fe3fc271ceafb2f72b76ef9cce70101516f,source_hash_matched,"159:             (unsigned long)frameSpec->buffer_->GetVirAddress();
+160:         buf.length = 1;
+161:     } else if (bufferType_ == V4L2_BUF_TYPE_VIDEO_CAPTURE) {
+162:         buf.length = frameSpec->buffer_->GetSize();
+163:         buf.m.userptr = (unsigned long)frameSpec->buffer_->GetVirAddress();
+164:     }
+165:     return;
+166: }
+167: ",,,,,
+dc2cdfdb9a74c9d2,openharmony/theme_wallpaper_mgr,e34c9b5b5c7dcdd0f2ddb2a98b0fa16d701353c3,frameworks/js/napi/napi_wallpaper_ability.cpp,521,45624fc9eaa9cfcf143d0359cf626170e18492273c17a2e6836bc2bcb4f27f4c,source_hash_matched,"517: 
+518:             return napi_invalid_arg;
+519:         }
+520:         context->uri = WallpaperJSUtil::Convert2String(env, argv[0]);
+521:         auto res = napi_get_value_int32(env, argv[1], &context->wallpaperType);
+522:         if (res != napi_ok) {
+523:             HILOG_ERROR(""get wallpaperType failed, res:%{public}d"", res);
+524:             return res;
+525:         }",,,,,
+0f97b870a334777e,openharmony/multimedia_camera_framework,35445b57d739a41cb916330935e61f1e83d982ca,mediastream/src/filter/muxer_filter.cpp,256,084f961b2cd8cbcba073805a44c788967e09984057dab6328509e316c6c00ffd,source_hash_matched,"252:     std::string mimeType;
+253:     meta->Get<Tag::MIME_TYPE>(mimeType);
+254:     if (mimeType.find(""audio/"") == 0) {
+255:         if (mimeType == ""audio/mp4a-latm"") {
+256:             meta->Set<Tag::AUDIO_AAC_IS_ADTS>(isAdts_);
+257:             meta->Set<Tag::MEDIA_PROFILE>(audCodecProfile_);
+258:         }
+259:         Plugins::MediaType type = Plugins::MediaType::UNKNOWN;
+260:         meta->Get<Tag::MEDIA_TYPE>(type);",,,,,
+882fb2f6e047b960,openharmony/distributedhardware_device_manager,635d5abb57685c88c325407910db315f3714829f,services/implementation/src/authentication_v2/auth_stages/auth_credential.cpp,711,ce475820ea66c0bedaa720dd7a41278f5318aad45f0f842d92b8d4e4a52ecf37,source_hash_matched,"707:         // Agree lnn credentials and public key
+708:         tmpCredId = context->accesser.lnnCredentialId;
+709:         ret = AgreeCredential(DM_AUTH_SCOPE_LNN, context);
+710:         if (ret != DM_OK) {
+711:             context->hiChainAuthConnector->DeleteCredential(osAccountId, tmpCredId);
+712:             context->SetCredentialId(DM_AUTH_LOCAL_SIDE, DM_AUTH_SCOPE_LNN, """");
+713:             return ret;
+714:         }
+715:         context->accesser.isGeneratedLnnCredThisBind = true;",,,,,
+d1a413734da65b7a,openharmony/resourceschedule_soc_perf,142d89b90d8acda93dc4c17904e9456340474d82,services/core/src/socperf_thread_wrap.cpp,465,7adbaf04d994b8267ac9dc93702af89dc24acd12af7f8e591aae5ff3d31d4a81,source_hash_matched,"461:     std::shared_ptr<ResAction> resAction, std::shared_ptr<ResStatus> resStatus)
+462: {
+463:     for (auto iter = resStatus->resActionList[type].begin();
+464:          iter != resStatus->resActionList[type].end(); ++iter) {
+465:         if (resAction->TotalSame(*iter)) {
+466:             resStatus->resActionList[type].erase(iter);
+467:             if (resAction->interaction) {
+468:                 boostResCnt--;
+469:             }",,,,,
+fcc1b8492fae1066,openharmony/multimedia_drm_framework,4686beb02d6a413c9e16a2fa24db0d3e5651c9eb,frameworks/native/test/fuzztest/drmservice_fuzzer/drmservice_fuzzer.cpp,322,56697260315ffec642fe9227ada443c3179b55bab9fefcaa07d9ef089194ba72,source_hash_matched,"318:         if (!data.WriteUint8(rawData[i])) {
+319:             return false;
+320:         }
+321:     }
+322:     mediaKeySystemServicePtr->OnRemoteRequest(
+323:         static_cast<uint32_t>(IMediaKeySystemServiceIpcCode::COMMAND_SET_CONFIGURATION_BYTE_ARRAY),
+324:         data, reply, option);
+325:     return true;
+326: }",,,,,
+79243d6209bcb4e0,openharmony/base_location,fd1b0ea9cf280bb479f4da68272fedc65097ae6f,services/location_locator/locator/source/request_manager.cpp,128,8923b51d1abf71b56f4529310882a06cc919bf906488df900b9bce02f06dd13a,source_hash_matched,"124:             return false;
+125:         }
+126:     } else if (!isStart && request->GetApproximatelyPermState()) {
+127:         DecreaseWorkingPidsCount(request->GetPid());
+128:         bool isNeedStop = IsNeedStopUsingPermission(request->GetPid());
+129:         if (isNeedStop) {
+130:             ret = PrivacyKit::StopUsingPermission(callingTokenId, ACCESS_APPROXIMATELY_LOCATION, request->GetPid());
+131:             if (ret != ERRCODE_SUCCESS && locatorAbility->IsHapCaller(callingTokenId)) {
+132:                 LBSLOGE(REQUEST_MANAGER, ""StopUsingPermission failed ret=%{public}d"", ret);",,,,,
+dde0532c72fac225,openharmony/telephony_core_service,accd8c7931a5001041ddf638959da0ae6f31b1a6,services/sim/src/icc_dialling_numbers_handler.cpp,284,0d3eaf5536f5d2155ae0e5741f6acd734ef9ccb5bf785fee39a4dcc6ad371f1a,source_hash_matched,"280:     int i = 0;
+281:     for (std::vector<std::string>::iterator it = dataList.begin(); it != dataList.end(); ++it, i++) {
+282:         std::string item = *it;
+283:         std::shared_ptr<DiallingNumbersInfo> diallingNumber =
+284:             std::make_shared<DiallingNumbersInfo>(loadRequest->GetElementaryFileId(), 1 + i);
+285:         FetchDiallingNumberContent(diallingNumber, item, nullptr);
+286:         diallingNumberList->push_back(diallingNumber);
+287:     }
+288: }",,,,,
+e4d3e048b681543c,openharmony/distributeddatamgr_relational_store,42f13ea84e2f90ed511a2bd4aa5be14c5996eba8,test/native/rdb/unittest/rdb_double_write_binlog_test.cpp,1691,135957382f978a509d77484cadebc4125979cbad39442a9a5d7b8f724686b402,source_hash_matched,"1687:         int end = (i + 1) * batchSize;
+1688:         std::string sql = ""update test set name = '"" + data + ""' where id >= "" + std::to_string(start) +
+1689:                           "" and id < "" + std::to_string(end) + "";"";
+1690:         auto begin = std::chrono::high_resolution_clock::now();
+1691:         int ret = rdbStore->ExecuteSql(sql);
+1692:         auto stop = std::chrono::high_resolution_clock::now();
+1693:         EXPECT_EQ(ret, E_OK);
+1694:         totalCost += std::chrono::duration_cast<std::chrono::microseconds>(stop - begin).count();
+1695:     }",,,,,
+c6633fd8da42db3b,openharmony/resourceschedule_soc_perf,142d89b90d8acda93dc4c17904e9456340474d82,services/core/src/socperf.cpp,105,4f95c37e99c063d15f60adb74ae12483e409e753544cf535dc2e772f238d32ec,source_hash_matched,"101:         perfActionsInfo.find(newCmdId) != perfActionsInfo.end()) {
+102:         SOC_PERF_LOGE(""Already have event %{public}d"", newCmdId);
+103:         return;
+104:     }
+105:     std::shared_ptr<Actions> oldActions = perfActionsInfo[oldCmdId];
+106:     std::shared_ptr<Actions> newActions = std::make_shared<Actions>(newCmdId, oldActions->name);
+107:     newActions->id = newCmdId;
+108:     newActions->name = oldActions->name;
+109:     newActions->actionList = oldActions->actionList;",,,,,
+1414563e8e00e1de,openharmony/systemabilitymgr_samgr,08e2a552b839ea7727251cb9b749a5c1dd9cfeff,services/samgr/native/test/unittest/src/system_ability_manager_dumper_test.cpp,1557,5c52051ee662cd74aaa4ef9a7ebd043c3be022a9d4bb1eaaac93dcf51c92cbbe,source_hash_matched,"1553: void RestoreDumpManager(std::map<int32_t, std::shared_ptr<MultiSystemAbilityManager>>& managers,
+1554:     int32_t userId, bool existed, const std::shared_ptr<MultiSystemAbilityManager>& original)
+1555: {
+1556:     if (existed) {
+1557:         managers[userId] = original;
+1558:         return;
+1559:     }
+1560:     managers.erase(userId);
+1561: }",,,,,
+ea52602e6b901fb3,openharmony/filemanagement_storage_service,cf373c3bf087167d946e20a1455d90132d82543c,services/storage_daemon/disk_manager/src/volume/volume_operator_factory.cpp,40,c46ce8a24fed9dfe926c906516c035471c24479425affa6efb5b0f23b2e8fbb8,source_hash_matched,"36: {
+37:     LOGI(""VolumeOperatorFactory::RegisterOperators start"");
+38: 
+39:     operators[""vfat""] = std::make_shared<VfatOperator>();
+40:     operators[""ntfs""] = std::make_shared<NtfsOperator>();
+41:     operators[""exfat""] = std::make_shared<ExfatOperator>();
+42:     operators[""f2fs""] = std::make_shared<HmfsOperator>();
+43:     operators[""hmfs""] = std::make_shared<HmfsOperator>();
+44:     operators[""ext4""] = std::make_shared<Ext4Operator>();",,,,,
+b5a24ae098e86fa1,openharmony/third_party_rust_cxx,838c2274fe36df840031993db258bdcfdd5b7098,tests/ffi/tests.cc,341,f45bdf9206f55ad86b69d522847be600d5d33f7e52d6345ae9a543d7bce383f4,source_hash_matched,"337:   }
+338: }
+339: 
+340: void c_take_unique_ptr_string(std::unique_ptr<std::string> s) {
+341:   if (*s == ""2020"") {
+342:     cxx_test_suite_set_correct();
+343:   }
+344: }
+345: ",,,,,
+e0c6816488debab5,openharmony/resourceschedule_work_scheduler,ccafa70606a151cb7f416e35571dfef52c31f07f,frameworks/extension/src/js_work_scheduler_extension.cpp,34,60390a955645f52ab3e2f2af3cd74ffd1b36133bfcc2057b583ae8388d68598b,source_hash_matched,"30: namespace WorkScheduler {
+31: 
+32: JsWorkSchedulerExtension* JsWorkSchedulerExtension::Create(const std::unique_ptr<AbilityRuntime::Runtime>& runtime)
+33: {
+34:     return new JsWorkSchedulerExtension(static_cast<AbilityRuntime::JsRuntime&>(*runtime));
+35: }
+36: 
+37: JsWorkSchedulerExtension::JsWorkSchedulerExtension(AbilityRuntime::JsRuntime& jsRuntime) : jsRuntime_(jsRuntime) {}
+38: JsWorkSchedulerExtension::~JsWorkSchedulerExtension()",,,,,
+67c5f2494b6d29bc,openharmony/base_location,fd1b0ea9cf280bb479f4da68272fedc65097ae6f,frameworks/native/fence_extension_ability/src/js_fence_extension.cpp,104,ae2f0e4b9b46a7ead83ab59c0c5d49932ee035c1217b9ed14446624fda84aef9,source_hash_matched,"100: }
+101: 
+102: JsFenceExtension *JsFenceExtension::Create(const std::unique_ptr<AbilityRuntime::Runtime> &runtime)
+103: {
+104:     return new (std::nothrow) JsFenceExtension(static_cast<AbilityRuntime::JsRuntime &>(*runtime));
+105: }
+106: 
+107: JsFenceExtension::JsFenceExtension(AbilityRuntime::JsRuntime &jsRuntime) : jsRuntime_(jsRuntime)
+108: {}",,,,,

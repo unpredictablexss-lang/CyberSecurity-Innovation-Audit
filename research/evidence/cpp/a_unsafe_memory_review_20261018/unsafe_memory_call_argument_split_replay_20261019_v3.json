@@ -1,0 +1,76 @@
+{
+  "schema_version": "ohscanner.a-unsafe-memory-call-shared-argument-replay-v1",
+  "source_run_signature": "1696df82f39e2564e0821c0ad2e837a00c6d83f9276bf5e0c38a3bd1f511700b",
+  "scanner_commit": "0d9357ea22224b72c9756864dbd14b71a4723924",
+  "candidate_results_sha256": "e6473b915a82f751e517c1953014f19a1963ad5b8891d7aaee6923b715756f25",
+  "base_commit": "4593a7c9b6977eb81172d01b46cc59daf46f5d45",
+  "scope": "Only the existing unsafe-memory-call rule observations are replayed; this is a 235-file candidate subset, not a full scan.",
+  "detector": {
+    "id": "ohscanner.cpp.unsafe_memory_call",
+    "rule_id": "ohcpp-unsafe-memory-call-candidate-001",
+    "before_version": "0.1.0",
+    "after_version": "0.5.0",
+    "before_dependency_source_sha256": {
+      "detector": "cd4825a5387c5fd2415a7b5ac8d6fc7989a2222bd7f699507e63ad4c4b443e52",
+      "memory_safety_helper": "1d060929a5252afadd39ae7be50c08fb88757df02bbecf2f5afd124c6125d101"
+    },
+    "after_detector_source_sha256": "7eb831c1e7091c4726c8e5c07d848660920269472b0fb80a5a368332a314fae2",
+    "after_dependency_source_sha256": {
+      "detector": "7eb831c1e7091c4726c8e5c07d848660920269472b0fb80a5a368332a314fae2",
+      "memory_safety_helper": "0093c43edacd9467c43256c3a5928cbe303c87c0fd783bd7e6c4fa317455cb54"
+    }
+  },
+  "source_identity": {
+    "candidate_rows": 662,
+    "unique_source_files": 235,
+    "source_hashes_matched": 235
+  },
+  "before": {
+    "candidate_rows_reproduced": 662
+  },
+  "after": {
+    "candidate_rows": 662
+  },
+  "after_file_outcomes": {
+    "complete": 230,
+    "partial": 5
+  },
+  "after_signature_unknown_files": [
+    {
+      "repository": "openharmony/third_party_lame",
+      "file": "frontend/console.c",
+      "source_sha256": "c9812de3985cdd40ea9ae4a5a75d8463005b2d27d9c86b11296e327040d92598"
+    },
+    {
+      "repository": "openharmony/third_party_ntfs-3g",
+      "file": "ntfsprogs/ntfsrecover.c",
+      "source_sha256": "fe94b6de958989cbdc72c07c6d4d382d827f83865e2722907d2ea4a00350ec1e"
+    },
+    {
+      "repository": "openharmony/third_party_toybox",
+      "file": "porting/liteos_a/scripts/mkflags.c",
+      "source_sha256": "9040296d7f973b3a0f3acc21624e1de3fd00f9643de8f88d4bf4a50365e3a6bf"
+    },
+    {
+      "repository": "openharmony/third_party_toybox",
+      "file": "scripts/mkflags.c",
+      "source_sha256": "2cffd7fd4ac90b96a1846c8be6c99674d4475250e8878bf138a629e868d0e8b4"
+    },
+    {
+      "repository": "openharmony/third_party_toybox",
+      "file": "toys/other/acpi.c",
+      "source_sha256": "d963a148d552926472e01c437c6c6053651daf2b3e80074a342e9063dc98e3d2"
+    }
+  ],
+  "changes": {},
+  "examples": {
+    "removed": [],
+    "added": [],
+    "changed": []
+  },
+  "tooling": {
+    "python": "3.13.9",
+    "mode": "in-process replay with pinned detector and memory_safety helper; no CFG or product-build claim"
+  },
+  "interpretation": "This validates the effect of the shared call-argument splitter on the pinned unsafe-memory-call observation subset. It does not label findings as true/false positives or replace independent review."
+}

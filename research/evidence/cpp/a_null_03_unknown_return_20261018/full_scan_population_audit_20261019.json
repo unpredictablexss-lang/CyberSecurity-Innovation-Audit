@@ -1,0 +1,220 @@
+{
+  "audit_status": "PASS",
+  "audited_run": {
+    "manifest_sha256": "52f528dada321a140a29be2d55ef9053fda818cbdca93758425f1a25f6286d55",
+    "run_signature": "1696df82f39e2564e0821c0ad2e837a00c6d83f9276bf5e0c38a3bd1f511700b",
+    "scanner_commit": "0d9357ea22224b72c9756864dbd14b71a4723924"
+  },
+  "candidate_csv_rows": 416577,
+  "candidate_csv_sha256": "e6473b915a82f751e517c1953014f19a1963ad5b8891d7aaee6923b715756f25",
+  "candidate_output_shape_counts": {
+    "analysis_status": {
+      "analyzed": {
+        "fraction": 0.094831,
+        "rows": 38251
+      },
+      "partial": {
+        "fraction": 0.905169,
+        "rows": 365109
+      }
+    },
+    "error_path": {
+      "error_branch_falls_through": {
+        "fraction": 0.010884,
+        "rows": 4390
+      },
+      "exception_unmodeled": {
+        "fraction": 0.003292,
+        "rows": 1328
+      },
+      "not_applicable": {
+        "fraction": 0.985824,
+        "rows": 397642
+      }
+    },
+    "guard_relation": {
+      "none": {
+        "fraction": 0.935923,
+        "rows": 377514
+      },
+      "not_dominating": {
+        "fraction": 0.035569,
+        "rows": 14347
+      },
+      "unknown": {
+        "fraction": 0.028508,
+        "rows": 11499
+      }
+    },
+    "null_source": {
+      "function_return_value_unknown_nullability": {
+        "fraction": 0.157767,
+        "rows": 63637
+      },
+      "local_pointer_explicit_null": {
+        "fraction": 0.045768,
+        "rows": 18461
+      },
+      "member_pointer_explicit_null": {
+        "fraction": 0.008913,
+        "rows": 3595
+      },
+      "member_pointer_unknown": {
+        "fraction": 0.00064,
+        "rows": 258
+      },
+      "nothrow_allocation_may_be_null": {
+        "fraction": 0.024613,
+        "rows": 9928
+      },
+      "parameter_may_be_null": {
+        "fraction": 0.694484,
+        "rows": 280127
+      },
+      "smart_pointer_value_unknown_nullability": {
+        "fraction": 0.067815,
+        "rows": 27354
+      }
+    },
+    "sink": {
+      "dependent_unary_dereference": {
+        "fraction": 0.007081,
+        "rows": 2856
+      },
+      "indirect_call_argument": {
+        "fraction": 0.001116,
+        "rows": 450
+      },
+      "macro_expanded_unary_dereference": {
+        "fraction": 0.00118,
+        "rows": 476
+      },
+      "member_dereference": {
+        "fraction": 0.660405,
+        "rows": 266381
+      },
+      "method_dereference": {
+        "fraction": 0.16849,
+        "rows": 67962
+      },
+      "subscript_dereference": {
+        "fraction": 0.091977,
+        "rows": 37100
+      },
+      "unary_dereference": {
+        "fraction": 0.069752,
+        "rows": 28135
+      }
+    }
+  },
+  "checks": {
+    "compact_summary_checksum_matches": true,
+    "csv_rows_match_summary": true,
+    "detector_summary_checksum_matches": true,
+    "detector_summary_count_matches_unique_ids": true,
+    "diagnostic_ids_nonempty": true,
+    "duplicate_csv_ids_have_single_result_diagnostic": true,
+    "each_shape_dimension_reconciles_to_raw_rows": true,
+    "null_detector_enabled_in_run_config": true,
+    "null_raw_rows_match_cwe_summary": true,
+    "null_raw_rows_match_detector_summary": true,
+    "scan_and_report_identity_match": true
+  },
+  "compact_summary_sha256": "64659a67f03d3b48acca717e0768c3274f51f4b9e574df9151ee79a8b35346db",
+  "detector_summary_candidate_count": 403359,
+  "detector_summary_sha256": "f91e58e697e6a0e53f2e86fdbfc5f5a555bb9e2d619dd317603456d16ced1d55",
+  "duplicate_id_result_diagnostic_counts": {
+    "ohscanner.cpp.null_dereference:48854711691bf099": {
+      "/mnt/d/openHarmonyScanner/openharmony-abcd-full-scan-20261018-final/projects/0001-ability_ability_base-48d8a8559a/result.json": 1
+    }
+  },
+  "duplicate_id_rows": {
+    "ohscanner.cpp.null_dereference:48854711691bf099": [
+      {
+        "analysis_status": "partial",
+        "file": "test/unittest/want/want_test.cpp",
+        "line": "1097",
+        "manifest_commit": "eaeaa31a6d07cf74fdec1c4e48dfe19c64e25cae",
+        "repository": "openharmony/ability_ability_base",
+        "result_path": "/mnt/d/openHarmonyScanner/openharmony-abcd-full-scan-20261018-final/projects/0001-ability_ability_base-48d8a8559a/result.json",
+        "rule_id": "ohcpp-null-dereference-candidate-001"
+      },
+      {
+        "analysis_status": "partial",
+        "file": "test/unittest/want/want_test.cpp",
+        "line": "1097",
+        "manifest_commit": "eaeaa31a6d07cf74fdec1c4e48dfe19c64e25cae",
+        "repository": "openharmony/ability_ability_base",
+        "result_path": "/mnt/d/openHarmonyScanner/openharmony-abcd-full-scan-20261018-final/projects/0001-ability_ability_base-48d8a8559a/result.json",
+        "rule_id": "ohcpp-null-dereference-candidate-001"
+      }
+    ]
+  },
+  "interpretation": "This audit verifies only the pinned local run. The reported count has no bound run/config, so the arithmetic difference is not an explained population delta.",
+  "limitations": [
+    "Candidate rows are not vulnerability ground truth.",
+    "This CSV count does not attest the source tree or reproduce the detector execution environment.",
+    "The 546,559 count remains unbound to a run signature, scanner commit, manifest, or input CSV."
+  ],
+  "null_detector": "ohscanner.cpp.null_dereference",
+  "null_duplicate_diagnostic_ids": [
+    "ohscanner.cpp.null_dereference:48854711691bf099"
+  ],
+  "null_duplicate_id_rows": 1,
+  "null_raw_observation_rows": 403360,
+  "null_rows_by_rule_id": {
+    "ohcpp-null-dereference-candidate-001": 403360
+  },
+  "null_unique_diagnostic_ids": 403359,
+  "reported_count": 546559,
+  "reported_count_source_status": "unbound_task_claim",
+  "reported_minus_audited_raw_rows": 143199,
+  "scan_scope": {
+    "manifest_projects": 525,
+    "note": "本次 manifest 可证实 525 个项目；“807 个库”无法由现有 manifest 证实。",
+    "processed_projects": 525
+  },
+  "top_repositories_by_raw_rows": [
+    {
+      "repository": "openharmony/third_party_libtiff",
+      "rows": 8583
+    },
+    {
+      "repository": "openharmony/third_party_alsa-lib",
+      "rows": 8545
+    },
+    {
+      "repository": "openharmony/third_party_mbedtls",
+      "rows": 8438
+    },
+    {
+      "repository": "openharmony/third_party_ntfs-3g",
+      "rows": 7886
+    },
+    {
+      "repository": "openharmony/security_device_auth",
+      "rows": 7868
+    },
+    {
+      "repository": "openharmony/third_party_spirv-tools",
+      "rows": 7666
+    },
+    {
+      "repository": "openharmony/third_party_elfutils",
+      "rows": 7601
+    },
+    {
+      "repository": "openharmony/notification_distributed_notification_service",
+      "rows": 7359
+    },
+    {
+      "repository": "openharmony/third_party_lwip",
+      "rows": 7347
+    },
+    {
+      "repository": "openharmony/third_party_toybox",
+      "rows": 7050
+    }
+  ],
+  "unique_candidate_repositories": 308
+}

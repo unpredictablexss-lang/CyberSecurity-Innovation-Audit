@@ -1,0 +1,975 @@
+{
+  "blind_queue_sha256": "14ac157d5fa3421853841fa6c10d42d818ce23c6b953e62ac3278013591c63fd",
+  "candidate_csv_sha256": "e6473b915a82f751e517c1953014f19a1963ad5b8891d7aaee6923b715756f25",
+  "checksums": {
+    "CWE汇总.csv": "3755c71e2579513180c9a0a8166f865d90ba4b8cbde70cf2e73a8a68c7df5d2d",
+    "compact-summary.json": "64659a67f03d3b48acca717e0768c3274f51f4b9e574df9151ee79a8b35346db",
+    "workbook_data.json": "cd98c989b1dd36384f8799c18e19026a1f9e08e9debe071569b14bf6f8c66d1f",
+    "交付清单.md": "31da1804c7dbf829cb48d6299df1f82e9dad8583b38df86357718bbe55793144",
+    "候选结果TOP5000.csv": "1befbec50f4c48f7285f26a53c2948d3db5eb429ce2615a28116c0f3e968cf99",
+    "分批反思报告.md": "2e3f1a93a419d842a9537daeac7d2c58973c0280de3334e9b544c12feaa34426",
+    "失败与受限项目.csv": "2281fec015650e43e3711ac5bfc608731e06b9772ae9f32007b59d239190e84e",
+    "总览报告.md": "c5045785c1a657c6d163859b92e0e383add2da0cf6b3a2cfe12392b59b02ac04",
+    "检测器能力.csv": "f91e58e697e6a0e53f2e86fdbfc5f5a555bb9e2d619dd317603456d16ced1d55",
+    "检测器能力与改进报告.md": "aa1436e194631a0589534256fedf2b0922da7e56218b0d9052b8fb6996a20961",
+    "检测线汇总.csv": "c8901bbcedd1368570459a3e026051a4b51979e09e2561d33013bf911dbb2011",
+    "测试与限制报告.md": "245fce4111f71bb6d4eccf8a507893e8beeb3717a37395d98deb5723f41a3e6e",
+    "漏洞候选分类报告.md": "fed0f4d2da8ed68a984ef121cfba3f48af0882ae81ad9f4238b97d7aab6d5989",
+    "项目结果.csv": "d27e01949d054fbf2d1bc5852772f4bdc7a4f0654168dcda38d4f39b63fd5994"
+  },
+  "coordinator_key_sha256": "127a537e53e8b33bfea6576ac2c9ea862e60144731a7524eda19da910835d1db",
+  "csv_result_commit_rule_metadata_matches": 0,
+  "detector_id": "ohscanner.cpp.null_dereference",
+  "duplicate_diagnostic_id_rows": 1,
+  "duplicate_diagnostic_ids": [
+    "ohscanner.cpp.null_dereference:48854711691bf099"
+  ],
+  "expected_population_claim": 546559,
+  "human_review_outcomes": {
+    "pending": 160,
+    "reviewed": 0,
+    "status": "pending_independent_review"
+  },
+  "inclusion_probabilities": {
+    "method": "proportional allocation after a minimum one observation in every nonempty stratum",
+    "strata": [
+      {
+        "population": 93,
+        "probability": 0.010752688172043012,
+        "repository_scale": "Q2",
+        "sample": 1,
+        "sink_shape": "dependent_unary_dereference",
+        "source_role": "function_return_value_unknown_nullability"
+      },
+      {
+        "population": 161,
+        "probability": 0.006211180124223602,
+        "repository_scale": "Q3",
+        "sample": 1,
+        "sink_shape": "dependent_unary_dereference",
+        "source_role": "function_return_value_unknown_nullability"
+      },
+      {
+        "population": 393,
+        "probability": 0.002544529262086514,
+        "repository_scale": "Q4",
+        "sample": 1,
+        "sink_shape": "dependent_unary_dereference",
+        "source_role": "function_return_value_unknown_nullability"
+      },
+      {
+        "population": 2,
+        "probability": 0.5,
+        "repository_scale": "Q3",
+        "sample": 1,
+        "sink_shape": "indirect_call_argument",
+        "source_role": "function_return_value_unknown_nullability"
+      },
+      {
+        "population": 51,
+        "probability": 0.0196078431372549,
+        "repository_scale": "Q4",
+        "sample": 1,
+        "sink_shape": "indirect_call_argument",
+        "source_role": "function_return_value_unknown_nullability"
+      },
+      {
+        "population": 24,
+        "probability": 0.041666666666666664,
+        "repository_scale": "Q2",
+        "sample": 1,
+        "sink_shape": "macro_expanded_unary_dereference",
+        "source_role": "function_return_value_unknown_nullability"
+      },
+      {
+        "population": 31,
+        "probability": 0.03225806451612903,
+        "repository_scale": "Q3",
+        "sample": 1,
+        "sink_shape": "macro_expanded_unary_dereference",
+        "source_role": "function_return_value_unknown_nullability"
+      },
+      {
+        "population": 19,
+        "probability": 0.05263157894736842,
+        "repository_scale": "Q4",
+        "sample": 1,
+        "sink_shape": "macro_expanded_unary_dereference",
+        "source_role": "function_return_value_unknown_nullability"
+      },
+      {
+        "population": 1365,
+        "probability": 0.0007326007326007326,
+        "repository_scale": "Q2",
+        "sample": 1,
+        "sink_shape": "member_dereference",
+        "source_role": "function_return_value_unknown_nullability"
+      },
+      {
+        "population": 12348,
+        "probability": 0.00024295432458697764,
+        "repository_scale": "Q3",
+        "sample": 3,
+        "sink_shape": "member_dereference",
+        "source_role": "function_return_value_unknown_nullability"
+      },
+      {
+        "population": 23677,
+        "probability": 0.00016894032183131308,
+        "repository_scale": "Q4",
+        "sample": 4,
+        "sink_shape": "member_dereference",
+        "source_role": "function_return_value_unknown_nullability"
+      },
+      {
+        "population": 383,
+        "probability": 0.0026109660574412533,
+        "repository_scale": "Q2",
+        "sample": 1,
+        "sink_shape": "method_dereference",
+        "source_role": "function_return_value_unknown_nullability"
+      },
+      {
+        "population": 2281,
+        "probability": 0.00043840420868040335,
+        "repository_scale": "Q3",
+        "sample": 1,
+        "sink_shape": "method_dereference",
+        "source_role": "function_return_value_unknown_nullability"
+      },
+      {
+        "population": 13058,
+        "probability": 0.00022974421810384438,
+        "repository_scale": "Q4",
+        "sample": 3,
+        "sink_shape": "method_dereference",
+        "source_role": "function_return_value_unknown_nullability"
+      },
+      {
+        "population": 662,
+        "probability": 0.0015105740181268882,
+        "repository_scale": "Q2",
+        "sample": 1,
+        "sink_shape": "subscript_dereference",
+        "source_role": "function_return_value_unknown_nullability"
+      },
+      {
+        "population": 1176,
+        "probability": 0.0008503401360544217,
+        "repository_scale": "Q3",
+        "sample": 1,
+        "sink_shape": "subscript_dereference",
+        "source_role": "function_return_value_unknown_nullability"
+      },
+      {
+        "population": 2491,
+        "probability": 0.0004014452027298274,
+        "repository_scale": "Q4",
+        "sample": 1,
+        "sink_shape": "subscript_dereference",
+        "source_role": "function_return_value_unknown_nullability"
+      },
+      {
+        "population": 478,
+        "probability": 0.0020920502092050207,
+        "repository_scale": "Q2",
+        "sample": 1,
+        "sink_shape": "unary_dereference",
+        "source_role": "function_return_value_unknown_nullability"
+      },
+      {
+        "population": 1552,
+        "probability": 0.0006443298969072165,
+        "repository_scale": "Q3",
+        "sample": 1,
+        "sink_shape": "unary_dereference",
+        "source_role": "function_return_value_unknown_nullability"
+      },
+      {
+        "population": 3392,
+        "probability": 0.0005896226415094339,
+        "repository_scale": "Q4",
+        "sample": 2,
+        "sink_shape": "unary_dereference",
+        "source_role": "function_return_value_unknown_nullability"
+      },
+      {
+        "population": 23,
+        "probability": 0.043478260869565216,
+        "repository_scale": "Q3",
+        "sample": 1,
+        "sink_shape": "dependent_unary_dereference",
+        "source_role": "local_pointer_explicit_null"
+      },
+      {
+        "population": 182,
+        "probability": 0.005494505494505495,
+        "repository_scale": "Q4",
+        "sample": 1,
+        "sink_shape": "dependent_unary_dereference",
+        "source_role": "local_pointer_explicit_null"
+      },
+      {
+        "population": 2,
+        "probability": 0.5,
+        "repository_scale": "Q3",
+        "sample": 1,
+        "sink_shape": "indirect_call_argument",
+        "source_role": "local_pointer_explicit_null"
+      },
+      {
+        "population": 8,
+        "probability": 0.125,
+        "repository_scale": "Q4",
+        "sample": 1,
+        "sink_shape": "indirect_call_argument",
+        "source_role": "local_pointer_explicit_null"
+      },
+      {
+        "population": 4,
+        "probability": 0.25,
+        "repository_scale": "Q2",
+        "sample": 1,
+        "sink_shape": "macro_expanded_unary_dereference",
+        "source_role": "local_pointer_explicit_null"
+      },
+      {
+        "population": 2,
+        "probability": 0.5,
+        "repository_scale": "Q3",
+        "sample": 1,
+        "sink_shape": "macro_expanded_unary_dereference",
+        "source_role": "local_pointer_explicit_null"
+      },
+      {
+        "population": 2,
+        "probability": 0.5,
+        "repository_scale": "Q4",
+        "sample": 1,
+        "sink_shape": "macro_expanded_unary_dereference",
+        "source_role": "local_pointer_explicit_null"
+      },
+      {
+        "population": 326,
+        "probability": 0.003067484662576687,
+        "repository_scale": "Q2",
+        "sample": 1,
+        "sink_shape": "member_dereference",
+        "source_role": "local_pointer_explicit_null"
+      },
+      {
+        "population": 3201,
+        "probability": 0.0006248047485160887,
+        "repository_scale": "Q3",
+        "sample": 2,
+        "sink_shape": "member_dereference",
+        "source_role": "local_pointer_explicit_null"
+      },
+      {
+        "population": 8232,
+        "probability": 0.00024295432458697764,
+        "repository_scale": "Q4",
+        "sample": 2,
+        "sink_shape": "member_dereference",
+        "source_role": "local_pointer_explicit_null"
+      },
+      {
+        "population": 49,
+        "probability": 0.02040816326530612,
+        "repository_scale": "Q2",
+        "sample": 1,
+        "sink_shape": "method_dereference",
+        "source_role": "local_pointer_explicit_null"
+      },
+      {
+        "population": 365,
+        "probability": 0.0027397260273972603,
+        "repository_scale": "Q3",
+        "sample": 1,
+        "sink_shape": "method_dereference",
+        "source_role": "local_pointer_explicit_null"
+      },
+      {
+        "population": 2177,
+        "probability": 0.00045934772622875517,
+        "repository_scale": "Q4",
+        "sample": 1,
+        "sink_shape": "method_dereference",
+        "source_role": "local_pointer_explicit_null"
+      },
+      {
+        "population": 156,
+        "probability": 0.00641025641025641,
+        "repository_scale": "Q2",
+        "sample": 1,
+        "sink_shape": "subscript_dereference",
+        "source_role": "local_pointer_explicit_null"
+      },
+      {
+        "population": 521,
+        "probability": 0.0019193857965451055,
+        "repository_scale": "Q3",
+        "sample": 1,
+        "sink_shape": "subscript_dereference",
+        "source_role": "local_pointer_explicit_null"
+      },
+      {
+        "population": 812,
+        "probability": 0.0012315270935960591,
+        "repository_scale": "Q4",
+        "sample": 1,
+        "sink_shape": "subscript_dereference",
+        "source_role": "local_pointer_explicit_null"
+      },
+      {
+        "population": 208,
+        "probability": 0.004807692307692308,
+        "repository_scale": "Q2",
+        "sample": 1,
+        "sink_shape": "unary_dereference",
+        "source_role": "local_pointer_explicit_null"
+      },
+      {
+        "population": 611,
+        "probability": 0.0016366612111292963,
+        "repository_scale": "Q3",
+        "sample": 1,
+        "sink_shape": "unary_dereference",
+        "source_role": "local_pointer_explicit_null"
+      },
+      {
+        "population": 1580,
+        "probability": 0.0006329113924050633,
+        "repository_scale": "Q4",
+        "sample": 1,
+        "sink_shape": "unary_dereference",
+        "source_role": "local_pointer_explicit_null"
+      },
+      {
+        "population": 35,
+        "probability": 0.02857142857142857,
+        "repository_scale": "Q3",
+        "sample": 1,
+        "sink_shape": "dependent_unary_dereference",
+        "source_role": "member_pointer_explicit_null"
+      },
+      {
+        "population": 181,
+        "probability": 0.0055248618784530384,
+        "repository_scale": "Q4",
+        "sample": 1,
+        "sink_shape": "dependent_unary_dereference",
+        "source_role": "member_pointer_explicit_null"
+      },
+      {
+        "population": 9,
+        "probability": 0.1111111111111111,
+        "repository_scale": "Q2",
+        "sample": 1,
+        "sink_shape": "member_dereference",
+        "source_role": "member_pointer_explicit_null"
+      },
+      {
+        "population": 92,
+        "probability": 0.010869565217391304,
+        "repository_scale": "Q3",
+        "sample": 1,
+        "sink_shape": "member_dereference",
+        "source_role": "member_pointer_explicit_null"
+      },
+      {
+        "population": 437,
+        "probability": 0.002288329519450801,
+        "repository_scale": "Q4",
+        "sample": 1,
+        "sink_shape": "member_dereference",
+        "source_role": "member_pointer_explicit_null"
+      },
+      {
+        "population": 119,
+        "probability": 0.008403361344537815,
+        "repository_scale": "Q2",
+        "sample": 1,
+        "sink_shape": "method_dereference",
+        "source_role": "member_pointer_explicit_null"
+      },
+      {
+        "population": 258,
+        "probability": 0.003875968992248062,
+        "repository_scale": "Q3",
+        "sample": 1,
+        "sink_shape": "method_dereference",
+        "source_role": "member_pointer_explicit_null"
+      },
+      {
+        "population": 1990,
+        "probability": 0.0005025125628140704,
+        "repository_scale": "Q4",
+        "sample": 1,
+        "sink_shape": "method_dereference",
+        "source_role": "member_pointer_explicit_null"
+      },
+      {
+        "population": 3,
+        "probability": 0.3333333333333333,
+        "repository_scale": "Q2",
+        "sample": 1,
+        "sink_shape": "subscript_dereference",
+        "source_role": "member_pointer_explicit_null"
+      },
+      {
+        "population": 154,
+        "probability": 0.006493506493506494,
+        "repository_scale": "Q3",
+        "sample": 1,
+        "sink_shape": "subscript_dereference",
+        "source_role": "member_pointer_explicit_null"
+      },
+      {
+        "population": 94,
+        "probability": 0.010638297872340425,
+        "repository_scale": "Q4",
+        "sample": 1,
+        "sink_shape": "subscript_dereference",
+        "source_role": "member_pointer_explicit_null"
+      },
+      {
+        "population": 15,
+        "probability": 0.06666666666666667,
+        "repository_scale": "Q2",
+        "sample": 1,
+        "sink_shape": "unary_dereference",
+        "source_role": "member_pointer_explicit_null"
+      },
+      {
+        "population": 52,
+        "probability": 0.019230769230769232,
+        "repository_scale": "Q3",
+        "sample": 1,
+        "sink_shape": "unary_dereference",
+        "source_role": "member_pointer_explicit_null"
+      },
+      {
+        "population": 156,
+        "probability": 0.00641025641025641,
+        "repository_scale": "Q4",
+        "sample": 1,
+        "sink_shape": "unary_dereference",
+        "source_role": "member_pointer_explicit_null"
+      },
+      {
+        "population": 5,
+        "probability": 0.2,
+        "repository_scale": "Q2",
+        "sample": 1,
+        "sink_shape": "dependent_unary_dereference",
+        "source_role": "member_pointer_unknown"
+      },
+      {
+        "population": 55,
+        "probability": 0.01818181818181818,
+        "repository_scale": "Q3",
+        "sample": 1,
+        "sink_shape": "dependent_unary_dereference",
+        "source_role": "member_pointer_unknown"
+      },
+      {
+        "population": 198,
+        "probability": 0.005050505050505051,
+        "repository_scale": "Q4",
+        "sample": 1,
+        "sink_shape": "dependent_unary_dereference",
+        "source_role": "member_pointer_unknown"
+      },
+      {
+        "population": 6,
+        "probability": 0.16666666666666666,
+        "repository_scale": "Q3",
+        "sample": 1,
+        "sink_shape": "dependent_unary_dereference",
+        "source_role": "nothrow_allocation_may_be_null"
+      },
+      {
+        "population": 20,
+        "probability": 0.05,
+        "repository_scale": "Q4",
+        "sample": 1,
+        "sink_shape": "dependent_unary_dereference",
+        "source_role": "nothrow_allocation_may_be_null"
+      },
+      {
+        "population": 4,
+        "probability": 0.25,
+        "repository_scale": "Q4",
+        "sample": 1,
+        "sink_shape": "indirect_call_argument",
+        "source_role": "nothrow_allocation_may_be_null"
+      },
+      {
+        "population": 8,
+        "probability": 0.125,
+        "repository_scale": "Q2",
+        "sample": 1,
+        "sink_shape": "member_dereference",
+        "source_role": "nothrow_allocation_may_be_null"
+      },
+      {
+        "population": 179,
+        "probability": 0.00558659217877095,
+        "repository_scale": "Q3",
+        "sample": 1,
+        "sink_shape": "member_dereference",
+        "source_role": "nothrow_allocation_may_be_null"
+      },
+      {
+        "population": 3929,
+        "probability": 0.0005090353779587681,
+        "repository_scale": "Q4",
+        "sample": 2,
+        "sink_shape": "member_dereference",
+        "source_role": "nothrow_allocation_may_be_null"
+      },
+      {
+        "population": 95,
+        "probability": 0.010526315789473684,
+        "repository_scale": "Q2",
+        "sample": 1,
+        "sink_shape": "method_dereference",
+        "source_role": "nothrow_allocation_may_be_null"
+      },
+      {
+        "population": 170,
+        "probability": 0.0058823529411764705,
+        "repository_scale": "Q3",
+        "sample": 1,
+        "sink_shape": "method_dereference",
+        "source_role": "nothrow_allocation_may_be_null"
+      },
+      {
+        "population": 4544,
+        "probability": 0.00044014084507042255,
+        "repository_scale": "Q4",
+        "sample": 2,
+        "sink_shape": "method_dereference",
+        "source_role": "nothrow_allocation_may_be_null"
+      },
+      {
+        "population": 2,
+        "probability": 0.5,
+        "repository_scale": "Q2",
+        "sample": 1,
+        "sink_shape": "subscript_dereference",
+        "source_role": "nothrow_allocation_may_be_null"
+      },
+      {
+        "population": 91,
+        "probability": 0.01098901098901099,
+        "repository_scale": "Q3",
+        "sample": 1,
+        "sink_shape": "subscript_dereference",
+        "source_role": "nothrow_allocation_may_be_null"
+      },
+      {
+        "population": 136,
+        "probability": 0.007352941176470588,
+        "repository_scale": "Q4",
+        "sample": 1,
+        "sink_shape": "subscript_dereference",
+        "source_role": "nothrow_allocation_may_be_null"
+      },
+      {
+        "population": 15,
+        "probability": 0.06666666666666667,
+        "repository_scale": "Q2",
+        "sample": 1,
+        "sink_shape": "unary_dereference",
+        "source_role": "nothrow_allocation_may_be_null"
+      },
+      {
+        "population": 72,
+        "probability": 0.013888888888888888,
+        "repository_scale": "Q3",
+        "sample": 1,
+        "sink_shape": "unary_dereference",
+        "source_role": "nothrow_allocation_may_be_null"
+      },
+      {
+        "population": 657,
+        "probability": 0.0015220700152207,
+        "repository_scale": "Q4",
+        "sample": 1,
+        "sink_shape": "unary_dereference",
+        "source_role": "nothrow_allocation_may_be_null"
+      },
+      {
+        "population": 64,
+        "probability": 0.015625,
+        "repository_scale": "Q2",
+        "sample": 1,
+        "sink_shape": "dependent_unary_dereference",
+        "source_role": "parameter_may_be_null"
+      },
+      {
+        "population": 572,
+        "probability": 0.0017482517482517483,
+        "repository_scale": "Q3",
+        "sample": 1,
+        "sink_shape": "dependent_unary_dereference",
+        "source_role": "parameter_may_be_null"
+      },
+      {
+        "population": 762,
+        "probability": 0.0013123359580052493,
+        "repository_scale": "Q4",
+        "sample": 1,
+        "sink_shape": "dependent_unary_dereference",
+        "source_role": "parameter_may_be_null"
+      },
+      {
+        "population": 29,
+        "probability": 0.034482758620689655,
+        "repository_scale": "Q2",
+        "sample": 1,
+        "sink_shape": "indirect_call_argument",
+        "source_role": "parameter_may_be_null"
+      },
+      {
+        "population": 51,
+        "probability": 0.0196078431372549,
+        "repository_scale": "Q3",
+        "sample": 1,
+        "sink_shape": "indirect_call_argument",
+        "source_role": "parameter_may_be_null"
+      },
+      {
+        "population": 302,
+        "probability": 0.0033112582781456954,
+        "repository_scale": "Q4",
+        "sample": 1,
+        "sink_shape": "indirect_call_argument",
+        "source_role": "parameter_may_be_null"
+      },
+      {
+        "population": 113,
+        "probability": 0.008849557522123894,
+        "repository_scale": "Q2",
+        "sample": 1,
+        "sink_shape": "macro_expanded_unary_dereference",
+        "source_role": "parameter_may_be_null"
+      },
+      {
+        "population": 204,
+        "probability": 0.004901960784313725,
+        "repository_scale": "Q3",
+        "sample": 1,
+        "sink_shape": "macro_expanded_unary_dereference",
+        "source_role": "parameter_may_be_null"
+      },
+      {
+        "population": 77,
+        "probability": 0.012987012987012988,
+        "repository_scale": "Q4",
+        "sample": 1,
+        "sink_shape": "macro_expanded_unary_dereference",
+        "source_role": "parameter_may_be_null"
+      },
+      {
+        "population": 17384,
+        "probability": 0.00017257248044178554,
+        "repository_scale": "Q2",
+        "sample": 3,
+        "sink_shape": "member_dereference",
+        "source_role": "parameter_may_be_null"
+      },
+      {
+        "population": 82401,
+        "probability": 0.0001456293006152838,
+        "repository_scale": "Q3",
+        "sample": 12,
+        "sink_shape": "member_dereference",
+        "source_role": "parameter_may_be_null"
+      },
+      {
+        "population": 100104,
+        "probability": 0.00013985455126668266,
+        "repository_scale": "Q4",
+        "sample": 14,
+        "sink_shape": "member_dereference",
+        "source_role": "parameter_may_be_null"
+      },
+      {
+        "population": 610,
+        "probability": 0.001639344262295082,
+        "repository_scale": "Q2",
+        "sample": 1,
+        "sink_shape": "method_dereference",
+        "source_role": "parameter_may_be_null"
+      },
+      {
+        "population": 4642,
+        "probability": 0.00043084877208099956,
+        "repository_scale": "Q3",
+        "sample": 2,
+        "sink_shape": "method_dereference",
+        "source_role": "parameter_may_be_null"
+      },
+      {
+        "population": 23717,
+        "probability": 0.00016865539486444323,
+        "repository_scale": "Q4",
+        "sample": 4,
+        "sink_shape": "method_dereference",
+        "source_role": "parameter_may_be_null"
+      },
+      {
+        "population": 2599,
+        "probability": 0.00038476337052712584,
+        "repository_scale": "Q2",
+        "sample": 1,
+        "sink_shape": "subscript_dereference",
+        "source_role": "parameter_may_be_null"
+      },
+      {
+        "population": 11038,
+        "probability": 0.0002717883674578728,
+        "repository_scale": "Q3",
+        "sample": 3,
+        "sink_shape": "subscript_dereference",
+        "source_role": "parameter_may_be_null"
+      },
+      {
+        "population": 16769,
+        "probability": 0.00017890154451666765,
+        "repository_scale": "Q4",
+        "sample": 3,
+        "sink_shape": "subscript_dereference",
+        "source_role": "parameter_may_be_null"
+      },
+      {
+        "population": 2998,
+        "probability": 0.00066711140760507,
+        "repository_scale": "Q2",
+        "sample": 2,
+        "sink_shape": "unary_dereference",
+        "source_role": "parameter_may_be_null"
+      },
+      {
+        "population": 6462,
+        "probability": 0.00030950170225936243,
+        "repository_scale": "Q3",
+        "sample": 2,
+        "sink_shape": "unary_dereference",
+        "source_role": "parameter_may_be_null"
+      },
+      {
+        "population": 9229,
+        "probability": 0.00021670820240546104,
+        "repository_scale": "Q4",
+        "sample": 2,
+        "sink_shape": "unary_dereference",
+        "source_role": "parameter_may_be_null"
+      },
+      {
+        "population": 15,
+        "probability": 0.06666666666666667,
+        "repository_scale": "Q2",
+        "sample": 1,
+        "sink_shape": "dependent_unary_dereference",
+        "source_role": "smart_pointer_value_unknown_nullability"
+      },
+      {
+        "population": 3,
+        "probability": 0.3333333333333333,
+        "repository_scale": "Q3",
+        "sample": 1,
+        "sink_shape": "dependent_unary_dereference",
+        "source_role": "smart_pointer_value_unknown_nullability"
+      },
+      {
+        "population": 88,
+        "probability": 0.011363636363636364,
+        "repository_scale": "Q4",
+        "sample": 1,
+        "sink_shape": "dependent_unary_dereference",
+        "source_role": "smart_pointer_value_unknown_nullability"
+      },
+      {
+        "population": 1,
+        "probability": 1.0,
+        "repository_scale": "Q4",
+        "sample": 1,
+        "sink_shape": "indirect_call_argument",
+        "source_role": "smart_pointer_value_unknown_nullability"
+      },
+      {
+        "population": 110,
+        "probability": 0.00909090909090909,
+        "repository_scale": "Q2",
+        "sample": 1,
+        "sink_shape": "member_dereference",
+        "source_role": "smart_pointer_value_unknown_nullability"
+      },
+      {
+        "population": 1867,
+        "probability": 0.0005356186395286556,
+        "repository_scale": "Q3",
+        "sample": 1,
+        "sink_shape": "member_dereference",
+        "source_role": "smart_pointer_value_unknown_nullability"
+      },
+      {
+        "population": 10712,
+        "probability": 0.00018670649738610905,
+        "repository_scale": "Q4",
+        "sample": 2,
+        "sink_shape": "member_dereference",
+        "source_role": "smart_pointer_value_unknown_nullability"
+      },
+      {
+        "population": 48,
+        "probability": 0.020833333333333332,
+        "repository_scale": "Q2",
+        "sample": 1,
+        "sink_shape": "method_dereference",
+        "source_role": "smart_pointer_value_unknown_nullability"
+      },
+      {
+        "population": 2090,
+        "probability": 0.0004784688995215311,
+        "repository_scale": "Q3",
+        "sample": 1,
+        "sink_shape": "method_dereference",
+        "source_role": "smart_pointer_value_unknown_nullability"
+      },
+      {
+        "population": 11366,
+        "probability": 0.0002639450994193208,
+        "repository_scale": "Q4",
+        "sample": 3,
+        "sink_shape": "method_dereference",
+        "source_role": "smart_pointer_value_unknown_nullability"
+      },
+      {
+        "population": 2,
+        "probability": 0.5,
+        "repository_scale": "Q2",
+        "sample": 1,
+        "sink_shape": "subscript_dereference",
+        "source_role": "smart_pointer_value_unknown_nullability"
+      },
+      {
+        "population": 34,
+        "probability": 0.029411764705882353,
+        "repository_scale": "Q3",
+        "sample": 1,
+        "sink_shape": "subscript_dereference",
+        "source_role": "smart_pointer_value_unknown_nullability"
+      },
+      {
+        "population": 360,
+        "probability": 0.002777777777777778,
+        "repository_scale": "Q4",
+        "sample": 1,
+        "sink_shape": "subscript_dereference",
+        "source_role": "smart_pointer_value_unknown_nullability"
+      },
+      {
+        "population": 3,
+        "probability": 0.3333333333333333,
+        "repository_scale": "Q2",
+        "sample": 1,
+        "sink_shape": "unary_dereference",
+        "source_role": "smart_pointer_value_unknown_nullability"
+      },
+      {
+        "population": 86,
+        "probability": 0.011627906976744186,
+        "repository_scale": "Q3",
+        "sample": 1,
+        "sink_shape": "unary_dereference",
+        "source_role": "smart_pointer_value_unknown_nullability"
+      },
+      {
+        "population": 569,
+        "probability": 0.0017574692442882249,
+        "repository_scale": "Q4",
+        "sample": 1,
+        "sink_shape": "unary_dereference",
+        "source_role": "smart_pointer_value_unknown_nullability"
+      }
+    ]
+  },
+  "limitations": [
+    "This is a pilot for the pinned 403,360-row run; it is not representative of the unbound 546,559 claim.",
+    "Source role, sink, guard and status counts describe detector output only, not true/false positives.",
+    "Commit fields are cross-checked between CSV and result JSON; selected source bytes are independently hash-matched to result diagnostics.",
+    "Do not share coordinator/review_key.csv with the blind reviewer before labels are frozen.",
+    "A source_hash_mismatch or source_unavailable row remains in the sample and is eligible for not_testable; do not resample it away."
+  ],
+  "observed_raw_population": 403360,
+  "population_claim_status": "unbound_task_claim",
+  "population_delta_observed_minus_claim": -143199,
+  "population_shape_counts": {
+    "analysis_status": {
+      "analyzed": 38251,
+      "partial": 365109
+    },
+    "error_path": {
+      "error_branch_falls_through": 4390,
+      "exception_unmodeled": 1328,
+      "not_applicable": 397642
+    },
+    "guard_relation": {
+      "none": 377514,
+      "not_dominating": 14347,
+      "unknown": 11499
+    },
+    "null_source": {
+      "function_return_value_unknown_nullability": 63637,
+      "local_pointer_explicit_null": 18461,
+      "member_pointer_explicit_null": 3595,
+      "member_pointer_unknown": 258,
+      "nothrow_allocation_may_be_null": 9928,
+      "parameter_may_be_null": 280127,
+      "smart_pointer_value_unknown_nullability": 27354
+    },
+    "sink_shape": {
+      "dependent_unary_dereference": 2856,
+      "indirect_call_argument": 450,
+      "macro_expanded_unary_dereference": 476,
+      "member_dereference": 266381,
+      "method_dereference": 67962,
+      "subscript_dereference": 37100,
+      "unary_dereference": 28135
+    }
+  },
+  "project_summary_sha256": "d27e01949d054fbf2d1bc5852772f4bdc7a4f0654168dcda38d4f39b63fd5994",
+  "provisional_frame": true,
+  "raw_observation_rows": 403360,
+  "report_compact_summary_sha256": "64659a67f03d3b48acca717e0768c3274f51f4b9e574df9151ee79a8b35346db",
+  "report_detector_summary_sha256": "f91e58e697e6a0e53f2e86fdbfc5f5a555bb9e2d619dd317603456d16ced1d55",
+  "report_identity_status": "matched_run_signature_commit_manifest_and_checksums",
+  "repository_scale_quartile_upper_bounds": [
+    1,
+    62,
+    258
+  ],
+  "run_identity": {
+    "manifest_sha256": "52f528dada321a140a29be2d55ef9053fda818cbdca93758425f1a25f6286d55",
+    "run_signature": "1696df82f39e2564e0821c0ad2e837a00c6d83f9276bf5e0c38a3bd1f511700b",
+    "scanner_commit": "0d9357ea22224b72c9756864dbd14b71a4723924"
+  },
+  "sample_size": 160,
+  "sampled_by_source_binding": {
+    "source_hash_matched": 160
+  },
+  "schema_version": "ohscanner.a-null-real-candidate-pilot-v1",
+  "seed": "20261019-null-real-candidate-pilot-v1",
+  "strata_count": 108,
+  "stratification_fields": [
+    "null_source",
+    "sink_shape",
+    "repository_selected_source_files_quartile"
+  ],
+  "unique_diagnostic_ids": 403359
+}

@@ -246,3 +246,5 @@ outputs/reports/workbench/
 # Local review artifacts and dependency links are not source deliverables.
 /outputs/review/
 /web/node_modules
+# Private mapping for blind A-UNSAFE review; keep out of shared commits.
+research/evidence/cpp/a_unsafe_memory_review_20261018/coordinator/review_key.csv

@@ -1,0 +1,19 @@
+{
+  "schema_version": "ohscanner.a-unsafe-blind-queue-readiness-v1",
+  "status": "ready_for_reviewer",
+  "audit_script_sha256": "df76c83b8c4d29b2cb144dee0b708973fa74a11408e32203b425300fe5d359d3",
+  "queue_sha256": "ccbf798b49789a246e854f8aa225f06bd7d7d9b11330dba767392d27e0a1ef16",
+  "source_run_signature": "1696df82f39e2564e0821c0ad2e837a00c6d83f9276bf5e0c38a3bd1f511700b",
+  "source_root": "D:\\openHarmonyScanner\\openharmony",
+  "counts": {
+    "queue_rows": 160,
+    "candidate_rows_bound": 160,
+    "unique_candidate_row_bindings": 160,
+    "source_hashes_matched": 160,
+    "source_contexts_matched": 160,
+    "reviewed_rows": 0,
+    "pending_rows": 160
+  },
+  "failures": {},
+  "scope_limit": "This checks queue/source readiness only. It does not provide human labels or prove vulnerability truth."
+}

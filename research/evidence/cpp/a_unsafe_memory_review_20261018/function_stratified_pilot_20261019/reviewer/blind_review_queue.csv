@@ -1,0 +1,1437 @@
+﻿review_sample_id,repository,commit,file,line,source_sha256,source_binding_status,source_context,reviewer_disposition,reviewer_rationale,evidence_reference,confidence,reviewer_id
+fd86aacf9e276ae9,openharmony/third_party_bzip2,2ce912118a4736129b568db3401af4bc0726d538,bzip2recover.c,128,c3287ded7886b6ebd763468d261a7ec8f99d1dbbd035a27edafc4c689c295256,source_bound,"124: {
+125:    fprintf ( stderr,
+126:              ""%s: `%s' appears to contain more than %d blocks\n"",
+127:             progName, inFileName, max_handled_blocks );
+128:    fprintf ( stderr,
+129:              ""%s: and cannot be handled.  To fix, increase\n"",
+130:              progName );
+131:    fprintf ( stderr, 
+132:              ""%s: BZ_MAX_HANDLED_BLOCKS in bzip2recover.c, and recompile.\n"",",,,,,
+f92b9f6dab1219e8,openharmony/third_party_sane-airscan,23f08604c5e46b11c0952f8a52ae5cd20a464b48,test-multipart.c,23,73038d688487048e675789fb01d3fb03c65b6171e3f07dbe028ef721b032270f,source_bound,"19: {
+20:     va_list ap;
+21: 
+22:     va_start(ap, format);
+23:     vprintf(format, ap);
+24:     printf(""\n"");
+25:     va_end(ap);
+26: 
+27:     exit(1);",,,,,
+c6cfb4e887b55159,openharmony/third_party_libedit,c520bb78f39505356ceb61c1c9f56dd73f8e7f85,examples/fileman.c,127,7517649e3a1b0c2e55c7d00e3a607a17d25de4146b833a74758ea6a40d95a3b5,source_bound,"123: 
+124:          result = history_expand(s, &expansion);
+125: 
+126:          if (result < 0 || result == 2) {
+127:             fprintf(stderr, ""%s\n"", expansion);
+128:          } else {
+129:             add_history(expansion);
+130:             execute_line(expansion);
+131:          }",,,,,
+d440b6d6db8e1f42,openharmony/third_party_astc-encoder,8e80377515d9f8d94ce89815235cc8d041eff3d0,Source/astcenccli_entry.cpp,210,3b53b51ed219a051871a6d495ef2b9ede97bafb6637ca62d9e29071dde9ebf51,source_bound,"206:  */
+207: static inline void print_error(
+208: 	const char* format
+209: ) {
+210: 	fprintf(stderr, ""%s"", format);
+211: }
+212: 
+213: /**
+214:  * @brief Validate CPU ISA support meets the requirements of this build of the library.",,,,,
+24190c9769e0dea2,openharmony/third_party_brotli,e9c6cd7a0e109ae8d527ec17bdd8076777f37429,c/tools/brotli.c,1300,cb6c8ca6668d324d50cd085fc3ddb3f202afe34fb562b5b583c0d7b0cceccd0c,source_bound,"1296:         }
+1297:         return BROTLI_TRUE;
+1298:       }
+1299:     } else {  /* result == BROTLI_DECODER_RESULT_ERROR */
+1300:       fprintf(stderr, ""corrupt input [%s]\n"",
+1301:               PrintablePath(context->current_input_path));
+1302:       if (context->verbosity > 0) {
+1303:         BrotliDecoderErrorCode error = BrotliDecoderGetErrorCode(s);
+1304:         const char* error_str = PrettyDecoderErrorString(error);",,,,,
+87a287800130ec16,openharmony/third_party_vma,1c70f93048799cadb1c2d96e69046ad6803ca1d5,src/Tests.cpp,6780,06c8cff93ba05c1b7c919fb0fc44e17dcc5b6a834f8f4a3472426b0c170c25c9,source_bound,"6776: }
+6777: 
+6778: static void WriteMainTestResultHeader(FILE* file)
+6779: {
+6780:     fprintf(file,
+6781:         ""Code,Time,""
+6782:         ""Threads,Buffers and images,Sizes,Operations,Allocation strategy,Free order,""
+6783:         ""Total Time (us),""
+6784:         ""Allocation Time Min (us),""",,,,,
+0e08fecd60445777,openharmony/third_party_cups-filters,3430c32fa92b06533333f04264f01f984b9fbc92,fontembed/test_ps.c,86,4ff0c045e008cc6e00d854b38c299996aebf9be87a355410a26465c68cbee4b7,source_bound,"82:   fprintf(f,""  100 100 moveto\n"" // content
+83:             ""  /%s findfont 10 scalefont setfont\n"",emb_otf_get_fontname(emb->font->sfnt));
+84:   write_string(f,emb,""Hallo"");
+85: // Note that write_string sets subset bits, but it's too late
+86:   fprintf(f,"" show\n""
+87:             ""showpage\n"");
+88: 
+89:   fprintf(f,""%%%%EOF\n"");
+90:   fclose(f);",,,,,
+69c444d5088e4e4c,openharmony/third_party_libphonenumber,2de2013af7738ff72ee2f06e1bab6e290f276d11,tools/cpp/src/cpp-build/generate_geocoding_data.cc,559,f66f11cfea55dceb3f9a4f1c2b2adfaad2d31802963b474e71612383087647f4,source_bound,"555:   fprintf(output, ""const uint32_t %s[] = {\n"", string_offsets_name.c_str());
+556:   for (size_t i = 0; i < entries.size(); ++i) {
+557:     fprintf(output, "" %u,"", entries[i].offset);
+558:   }
+559:   fprintf(output, ""\n};\n\n"");
+560:   
+561:   fprintf(output, ""const CompressedPrefixDescriptions %s = {\n"", var_name.c_str());
+562:   fprintf(output, ""  %s,\n"", base_prefix_name.c_str());
+563:   fprintf(output, ""  %s,\n"", encoded_deltas_name.c_str());",,,,,
+ebc3e007224092aa,openharmony/third_party_libtiff,d4a0516c477dfbaf1153ae295893ab75aadd63d4,test/test_IFD_enlargement.c,1324,a990f8b2fe0e8994766e9f5caa78ef12d699e9c2ef076bb07988444af8b55893,source_bound,"1320:         goto failure;
+1321:     if (!TIFFSetField(tif, TIFFTAG_PAGENAME,
+1322:                       ""Long Pagename to trigger re-writing""))
+1323:     {
+1324:         fprintf(stderr, ""Can't set TIFFTAG_PAGENAME tag. Testline %d\n"",
+1325:                 __LINE__);
+1326:         goto failure;
+1327:     }
+1328:     /* Suppress error message from 'TIFFRewriteDirectory()' like",,,,,
+ae8633528b082877,openharmony/third_party_libtiff,d4a0516c477dfbaf1153ae295893ab75aadd63d4,test/strip.c,239,6d677564658cecc771bad978bd5f58e51c0de52e6db5b00062cc2fe9ac95b6b9,source_bound,"235:     }
+236:     if (!TIFFGetField(tif, TIFFTAG_SAMPLESPERPIXEL, &value_u16) ||
+237:         value_u16 != spp)
+238:     {
+239:         fprintf(stderr, ""Can't get tag %d.\n"", TIFFTAG_SAMPLESPERPIXEL);
+240:         goto failure;
+241:     }
+242:     if (!TIFFGetField(tif, TIFFTAG_ROWSPERSTRIP, &value_u32) ||
+243:         value_u32 != rowsperstrip)",,,,,
+4fc98146a450ab7f,openharmony/third_party_cups-filters,3430c32fa92b06533333f04264f01f984b9fbc92,filter/rastertoescpx.c,850,f6a73a8fafd530c0625cb1f89108447c2eb3236102082b713f1670817fdb8106,source_bound,"846:   DotAvailList  = NULL;
+847:   DotUsedList   = NULL;
+848:   DotBuffers[0] = NULL;
+849: 
+850:   fprintf(stderr, ""DEBUG: model_number = %x\n"", ppd->model_number);
+851: 
+852:   if (DotRowMax > 1)
+853:   {
+854:    /*",,,,,
+cd5bd778cb77e8b7,openharmony/third_party_libexif,27df1716930f82a6cfb1400ba12ea170925c6778,contrib/examples/write-exif.c,265,87da6fe90ff692c5031b709131183f6106a5764f8e7ee0eb09ef92ae1dfb7741,source_bound,"261: 		return rc;
+262: 	}
+263: 	/* Write EXIF header */
+264: 	if (fwrite(exif_header, exif_header_len, 1, f) != 1) {
+265: 		fprintf(stderr, ""Error writing to file %s\n"", FILE_NAME);
+266: 		goto errout;
+267: 	}
+268: 	/* Write EXIF block length in big-endian order */
+269: 	if (fputc((exif_data_len+2) >> 8, f) < 0) {",,,,,
+5ded73ea5e2687e1,openharmony/third_party_libdrm,a8001c555b01add5635cfecd1542f64606a2188d,radeon/bof.c,256,df956b456a129c6ccf92781e78cc8c9f202f4c2589e30f5e7a5d0e96f626f73e,source_bound,"252: 	case BOF_TYPE_OBJECT:
+253: 		fprintf(stderr, ""%p object [%d %d]\n"", bof, bof->array_size / 2, bof->size);
+254: 		break;
+255: 	case BOF_TYPE_ARRAY:
+256: 		fprintf(stderr, ""%p array [%d %d]\n"", bof, bof->array_size, bof->size);
+257: 		break;
+258: 	default:
+259: 		fprintf(stderr, ""%p unknown [%d]\n"", bof, bof->type);
+260: 		return;",,,,,
+ea6b48a8f4c7d2e7,openharmony/third_party_zlib,0a0c45d7e478826b59e67cc613be3e4b6957432c,examples/zran.c,537,905ea57074995619b25980b95dde0880a7853956515057bfa9122f8defb41cb5,source_bound,"533:         fprintf(stderr, ""zran: extraction failed: %s error\n"",
+534:                 got == Z_MEM_ERROR ? ""out of memory"" : ""input corrupted"");
+535:     else {
+536:         fwrite(buf, 1, got, stdout);
+537:         fprintf(stderr, ""zran: extracted %ld bytes at %lld\n"", got, offset);
+538:     }
+539: 
+540:     // Clean up and exit.
+541:     deflate_index_free(index);",,,,,
+79b272ee3000c185,openharmony/third_party_alsa-utils,68ec55a382e3a4c50c05a1b2bf97737f70c87185,bat/analyze.c,90,e5db7c203507e68226696857794c135a078b0788ed8c7a427b3b43afef0ee83b,source_bound,"86: 		fprintf(bat->err, _("" FAIL: Peak freq too low %2.2f Hz\n""),
+87: 				hz_peak);
+88: 		err = FOUND_WRONG_PEAK;
+89: 	} else if (hz_peak > bat->target_freq[channel] + tolerance) {
+90: 		fprintf(bat->err, _("" FAIL: Peak freq too high %2.2f Hz\n""),
+91: 				hz_peak);
+92: 		err = FOUND_WRONG_PEAK;
+93: 	} else {
+94: 		fprintf(bat->log, _("" PASS: Peak detected""));",,,,,
+c21ba3bc9960b71f,openharmony/third_party_libtiff,d4a0516c477dfbaf1153ae295893ab75aadd63d4,test/test_open_options.c,335,cc9c19e716d26d5fba4a752e5c064236b2850046b73f64d4432584a1f3cfcc84,source_bound,"331:         TIFFSetField(tif, TIFFTAG_BITSPERSAMPLE, 8);
+332:         TIFFWriteScanline(tif, buf, 0, 0);
+333:         if (!TIFFWriteDirectory(tif))
+334:         {
+335:             fprintf(stderr, ""TIFFWriteDirectory() failed for %s.\n"", filename);
+336:             TIFFClose(tif);
+337:             if (tifOut != NULL)
+338:                 *tifOut = NULL;
+339:             return 0x1000;",,,,,
+762d9461a5eb4420,openharmony/third_party_libtiff,d4a0516c477dfbaf1153ae295893ab75aadd63d4,test/test_directory.c,173,5124b62c3c75723224072dd79dc1a87ad01d521867778504a231af20bc086ea8,source_bound,"169: 
+170:     /* Write dummy pixel data. */
+171:     if (TIFFWriteScanline(tif, buf, 0, 0) == -1 && !is_corrupted)
+172:     {
+173:         fprintf(stderr, ""Can't write image data.\n"");
+174:         return 1;
+175:     }
+176: 
+177:     return 0;",,,,,
+b89e4646f7854faa,openharmony/third_party_libdrm,a8001c555b01add5635cfecd1542f64606a2188d,tests/tegra/vic-flip.c,196,14f813c3abecc293df093354da2f04e277bf551d903b86e46a81ad4333f2ad91,source_bound,"192:     }
+193: 
+194:     err = drm_tegra_pushbuf_begin(pushbuf, 32, &ptr);
+195:     if (err < 0) {
+196:         fprintf(stderr, ""failed to prepare push buffer: %s\n"", strerror(-err));
+197:         return err;
+198:     }
+199: 
+200:     err = vic->ops->flip(vic, output, input);",,,,,
+6c3e4ba831ff999d,openharmony/third_party_cups-filters,3430c32fa92b06533333f04264f01f984b9fbc92,filter/texttotext.c,541,b6898871fce6242025cde24628952f94292a0522221fec426733c776ce32b122,source_bound,"537:     else
+538:       fprintf(stderr, ""DEBUG: Invalid value for Collate: %s, using default value.\n"",
+539: 	      val);
+540:   }
+541:   fprintf(stderr, ""DEBUG: Collate copies: %s\n"",
+542: 	  (collate ? ""Yes"" : ""No""));
+543: 
+544:   /* Create a string to insert as the newline mark */
+545:   if (newline_char == LF)",,,,,
+d0cb218d79e499f0,openharmony/third_party_libtiff,d4a0516c477dfbaf1153ae295893ab75aadd63d4,tools/tiff2ps.c,2252,5eb87213b42e5153e2eae6db163a160df1ce9fc524e51eaa87d45c23310e0910,source_bound,"2248:                 if (g4_options & GROUP4OPT_UNCOMPRESSED)
+2249:                     fputs(""\t /Uncompressed true\n"", fd);
+2250:             }
+2251:             if (!(tile_width == w && w == 1728U))
+2252:                 fprintf(fd, ""\t /Columns %"" PRIu32 ""\n"", tile_width);
+2253:             fprintf(fd, ""\t /Rows %s\n"", im_h);
+2254:             if (compression == COMPRESSION_CCITTRLE ||
+2255:                 compression == COMPRESSION_CCITTRLEW)
+2256:             {",,,,,
+d6720f76b667cbb0,openharmony/third_party_cups-filters,3430c32fa92b06533333f04264f01f984b9fbc92,filter/sys5ippprinter.c,736,a28bec58e28b8114f15ebd2e61659b75b3a0a1cf619692fa1d7c068d337d95a8,source_bound,"732:     if ((pid = wait(&status)) < 0)
+733:     {
+734:       if (errno == EINTR && job_canceled)
+735:       {
+736: 	fprintf(stderr, ""DEBUG: Job canceled, killing filters ...\n"");
+737: 	for (pid_entry = (filter_pid_t *)cupsArrayFirst(pids);
+738: 	     pid_entry;
+739: 	     pid_entry = (filter_pid_t *)cupsArrayNext(pids))
+740: 	  kill(pid_entry->pid, SIGTERM);",,,,,
+1a4f6091ba33b0b7,openharmony/third_party_libtiff,d4a0516c477dfbaf1153ae295893ab75aadd63d4,test/rewrite_tag.c,60,413219fb5dbe78dd88e1f3e8d694c12540e907462fe9a7eae7a9bbf8c78f4ef6,source_bound,"56:     tif = TIFFOpen(filename, ""w"");
+57: 
+58:     if (!tif)
+59:     {
+60:         fprintf(stderr, ""Can't create test TIFF file %s.\n"", filename);
+61:         return 1;
+62:     }
+63: 
+64:     if (!TIFFSetField(tif, TIFFTAG_COMPRESSION, COMPRESSION_PACKBITS))",,,,,
+b707cf2196ed2ccc,openharmony/third_party_libtiff,d4a0516c477dfbaf1153ae295893ab75aadd63d4,tools/tiff2ps.c,1295,5eb87213b42e5153e2eae6db163a160df1ce9fc524e51eaa87d45c23310e0910,source_bound,"1291:                 }
+1292:                 else /* Image scaled */
+1293:                 {
+1294:                     if (strlen(pageOrientation))
+1295:                         fprintf(fd, ""%%%%PageOrientation: %s\n"",
+1296:                                 pageOrientation);
+1297:                     else
+1298:                         fprintf(fd, ""%%%%PageOrientation: %s\n"",
+1299:                                 (reqwidth > reqheight) ? ""Landscape""",,,,,
+17e0b812aad88ac2,openharmony/third_party_libtiff,d4a0516c477dfbaf1153ae295893ab75aadd63d4,test/test_directory.c,374,5124b62c3c75723224072dd79dc1a87ad01d521867778504a231af20bc086ea8,source_bound,"370:     /* Create a file and write N_DIRECTORIES (10) directories to it. */
+371:     tif = TIFFOpen(filename, openModeStrings[openMode]);
+372:     if (!tif)
+373:     {
+374:         fprintf(stderr, ""Can't create %s\n"", filename);
+375:         return 1;
+376:     }
+377:     TIFFSetDirectory(tif, 0);
+378:     CHECKCURDIRNUM_M(tif, expected_curdir, __LINE__);",,,,,
+eadc31675e497eff,openharmony/third_party_cups-filters,3430c32fa92b06533333f04264f01f984b9fbc92,filter/rastertopclx.c,1930,a43439138bd02d3b9c5667d26907f88adceb3d23f71adfaa812ac81d8469a548,source_bound,"1926:       if ((y & 127) == 0)
+1927:       {
+1928:         fprintf(stderr, ""INFO: Printing page %d, %d%% complete.\n"",
+1929: 		Page, 100 * y / header.cupsHeight);
+1930:         fprintf(stderr, ""ATTR: job-media-progress=%d\n"",
+1931: 		100 * y / header.cupsHeight);
+1932:       }
+1933: 
+1934:      /*",,,,,
+6cf6f04d0c51b7fc,openharmony/third_party_libtiff,d4a0516c477dfbaf1153ae295893ab75aadd63d4,test/check_tag.c,43,32588d3a8f182fe31e94753bb59784bb6b15564dc44700cd9139e43b4b69a9ea,source_bound,"39:         return -1;
+40:     }
+41:     if (tmp != value)
+42:     {
+43:         fprintf(stderr, ""Wrong SHORT value fetched for tag %"" PRIu32 "".\n"",
+44:                 field);
+45:         return -1;
+46:     }
+47: ",,,,,
+0c44d370f4f6b24f,openharmony/third_party_brotli,e9c6cd7a0e109ae8d527ec17bdd8076777f37429,c/tools/brotli.c,741,cb6c8ca6668d324d50cd085fc3ddb3f202afe34fb562b5b583c0d7b0cceccd0c,source_bound,"737: ""  -o FILE, --output=FILE      output file (only if 1 input file)\n"");
+738:   fprintf(media,
+739: ""  -q NUM, --quality=NUM       compression level (%d-%d)\n"",
+740:           BROTLI_MIN_QUALITY, BROTLI_MAX_QUALITY);
+741:   fprintf(media,
+742: ""  -t, --test                  test compressed file integrity\n""
+743: ""  -v, --verbose               verbose mode\n"");
+744:   fprintf(media,
+745: ""  -w NUM, --lgwin=NUM         set LZ77 window size (0, %d-%d)\n""",,,,,
+d35b23b5bb6cf771,openharmony/third_party_libtiff,d4a0516c477dfbaf1153ae295893ab75aadd63d4,test/test_IFD_enlargement.c,1803,a990f8b2fe0e8994766e9f5caa78ef12d699e9c2ef076bb07988444af8b55893,source_bound,"1799:     retval += test_SubIFD_enlargement(""test_SubIFD_enlargementBig.tif"", TRUE);  ntest++;
+1800:     if (retval != retvalLast) { fprintf(stderr, ""    >>>> Test %d FAILED. <<<<\n\n"", ntest); retvalLast = retval; }
+1801: 
+1802:     retval += test_CheckpointDirectory(""test_CheckpointDirectory.tif"", FALSE);  ntest++;
+1803:     if (retval != retvalLast) { fprintf(stderr, ""    >>>> Test %d FAILED. <<<<\n\n"", ntest); retvalLast = retval; }
+1804:     retval += test_CheckpointDirectory(""test_CheckpointDirectoryBig.tif"", TRUE);  ntest++;
+1805:     if (retval != retvalLast) { fprintf(stderr, ""    >>>> Test %d FAILED. <<<<\n\n"", ntest); retvalLast = retval; }
+1806: 
+1807:     retval += test_OddDataSizes(""test_OddDataSizes.tif"", 0);  ntest++;",,,,,
+cd6ff3dcd0bb0f66,openharmony/third_party_alsa-lib,b3e1f598becc8d3ada82b58f1853d12d7fc51c61,test/latency.c,756,caff9a2e0b08ac22e203cdc6ef94cba58698afe882314350a92186c026419351,source_bound,"752: 			fprintf(stderr, ""write error\n"");
+753: 			break;
+754: 		}
+755: 		if (writebuf(phandle, buffer, latency, &frames_out) < 0) {
+756: 			fprintf(stderr, ""write error\n"");
+757: 			break;
+758: 		}
+759: 
+760: 		if (realtime_check)",,,,,
+a7884e277ee5e8e5,openharmony/third_party_libtiff,d4a0516c477dfbaf1153ae295893ab75aadd63d4,tools/tiff2ps.c,2287,5eb87213b42e5153e2eae6db163a160df1ce9fc524e51eaa87d45c23310e0910,source_bound,"2283:                 if (predictor > 1)
+2284:                 {
+2285:                     fprintf(fd, ""\t %% PostScript Level 3 only."");
+2286:                     fputs(""\n\t<<\n"", fd);
+2287:                     fprintf(fd, ""\t /Predictor %"" PRIu16 ""\n"", predictor);
+2288:                     fprintf(fd, ""\t /Columns %"" PRIu32 ""\n"", tile_width);
+2289:                     fprintf(fd, ""\t /Colors %"" PRIu16 ""\n"", samplesperpixel);
+2290:                     fprintf(fd, ""\t /BitsPerComponent %"" PRIu16 ""\n"",
+2291:                             bitspersample);",,,,,
+3a396784a8cf6502,openharmony/third_party_libtiff,d4a0516c477dfbaf1153ae295893ab75aadd63d4,test/test_directory.c,73,5124b62c3c75723224072dd79dc1a87ad01d521867778504a231af20bc086ea8,source_bound,"69: 
+70:     tdir_t curdir = TIFFCurrentDirectory(tif);
+71:     if (curdir != expected_dirnum)
+72:     {
+73:         fprintf(stderr,
+74:                 ""Error: curdir %d is different to expected one %d at line %d\n"",
+75:                 curdir, expected_dirnum, line);
+76:         return 1;
+77:     }",,,,,
+75715c77a36bc979,openharmony/third_party_libtiff,d4a0516c477dfbaf1153ae295893ab75aadd63d4,libtiff/tif_print.c,470,f4c888f2a94c5a6914a28a9cb1516a7bb273fbaebbe5259fcf8526701aa685fe,source_bound,"466:                 td->td_ycbcrsubsampling[0], td->td_ycbcrsubsampling[1]);
+467:     }
+468:     if (TIFFFieldSet(tif, FIELD_YCBCRPOSITIONING))
+469:     {
+470:         fprintf(fd, ""  YCbCr Positioning: "");
+471:         switch (td->td_ycbcrpositioning)
+472:         {
+473:             case YCBCRPOSITION_CENTERED:
+474:                 fprintf(fd, ""centered\n"");",,,,,
+62f94ad2e2821bbd,openharmony/third_party_libtiff,d4a0516c477dfbaf1153ae295893ab75aadd63d4,test/test_directory.c,134,5124b62c3c75723224072dd79dc1a87ad01d521867778504a231af20bc086ea8,source_bound,"130:         }
+131:     }
+132:     if (!TIFFSetField(tif, TIFFTAG_IMAGELENGTH, length))
+133:     {
+134:         fprintf(stderr, ""Can't set ImageLength tag.\n"");
+135:         return 1;
+136:     }
+137:     if (!TIFFSetField(tif, TIFFTAG_BITSPERSAMPLE, bps))
+138:     {",,,,,
+ce3c10d6cabad5a5,openharmony/third_party_brotli,e9c6cd7a0e109ae8d527ec17bdd8076777f37429,c/tools/brotli.c,1372,cb6c8ca6668d324d50cd085fc3ddb3f202afe34fb562b5b583c0d7b0cceccd0c,source_bound,"1368:           is_eof ? BROTLI_OPERATION_FINISH : BROTLI_OPERATION_PROCESS,
+1369:           &context->available_in, &context->next_in,
+1370:           &context->available_out, &context->next_out, NULL)) {
+1371:         /* Should detect OOM? */
+1372:         fprintf(stderr, ""failed to compress data [%s]\n"",
+1373:                 PrintablePath(context->current_input_path));
+1374:         return BROTLI_FALSE;
+1375:       }
+1376:     }",,,,,
+6a74a9d326f23014,openharmony/third_party_libfuse,713346ec4dcfd7d79433ba934e5a484f9bbd4cdf,lib/fuse_log.c,63,b6cf8dd0b4bc67528ede5f2d9dce3444f168be44369af34f1cbf935283da102b,source_bound,"59: 		char log[MAX_SYSLOG_LINE_LEN];
+60: 		vsnprintf(log, MAX_SYSLOG_LINE_LEN, fmt, ap);
+61: 		syslog(sys_log_level, ""%s"", log);
+62: 	} else {
+63: 		vfprintf(stderr, fmt, ap);
+64: 	}
+65: }
+66: 
+67: static fuse_log_func_t log_func = default_log_func;",,,,,
+1984bdd558f5238e,openharmony/third_party_libtiff,d4a0516c477dfbaf1153ae295893ab75aadd63d4,test/test_IFD_enlargement.c,729,a990f8b2fe0e8994766e9f5caa78ef12d699e9c2ef076bb07988444af8b55893,source_bound,"725:     }
+726:     if (!TIFFSetField(tif, TIFFTAG_XMLPACKET, (uint32_t)strlen(xmldata1),
+727:                       xmldata1))
+728:     {
+729:         fprintf(stderr, ""Can't set TIFFTAG_XMLPACKET tag. Testline %d\n"",
+730:                 __LINE__);
+731:         goto failure;
+732:     }
+733:     /* Suppress error message from 'TIFFRewriteDirectory()' like",,,,,
+5990c78e5c536437,openharmony/third_party_brotli,e9c6cd7a0e109ae8d527ec17bdd8076777f37429,c/tools/brotli.c,434,cb6c8ca6668d324d50cd085fc3ddb3f202afe34fb562b5b583c0d7b0cceccd0c,source_bound,"430:         }
+431:         /* o/q/w/C/D/S with parameter is expected */
+432:         if (c != 'o' && c != 'q' && c != 'w' && c != 'C' && c != 'D' &&
+433:             c != 'S') {
+434:           fprintf(stderr, ""invalid argument -%c\n"", c);
+435:           return COMMAND_INVALID;
+436:         }
+437:         if (j + 1 != arg_len) {
+438:           fprintf(stderr, ""expected parameter for argument -%c\n"", c);",,,,,
+a05224af3f8b6bf9,openharmony/third_party_libdrm,a8001c555b01add5635cfecd1542f64606a2188d,tests/amdgpu/amdgpu_test.c,544,9f714eb2e161daabb129978ff2d5e25bb45a129996c86f224b241803b70491f5,source_bound,"540: 	/* This test was ran on GFX9 only */
+541: 	//if (family_id < AMDGPU_FAMILY_AI || family_id > AMDGPU_FAMILY_RV)
+542: 		if (amdgpu_set_test_active(DEADLOCK_TESTS_STR,
+543: 				""compute ring bad slow dispatch test (set amdgpu.lockup_timeout=50,50)"", CU_FALSE))
+544: 			fprintf(stderr, ""test deactivation failed - %s\n"", CU_get_error_msg());
+545: 
+546: 	//if (family_id < AMDGPU_FAMILY_AI || family_id > AMDGPU_FAMILY_RV)
+547: 		if (amdgpu_set_test_active(DEADLOCK_TESTS_STR,
+548: 				""gfx ring bad draw test (set amdgpu.lockup_timeout=50)"", CU_FALSE))",,,,,
+c311d9ef79f2114a,openharmony/third_party_libexif,27df1716930f82a6cfb1400ba12ea170925c6778,test/test-fuzzer-persistent.c,86,e698a5223118a35060f3eb17678ebc0eb9a54fb644bed3d388017532de8593aa,source_bound,"82: 		exif_byte_order_get_name (exif_data_get_byte_order (d)));
+83: 
+84: 	md = exif_data_get_mnote_data (d);
+85: 	if (!md) {
+86: 		fprintf (stderr, ""Could not parse maker note!\n"");
+87: 		return 1;
+88: 	}
+89: 
+90: 	exif_mnote_data_ref (md);",,,,,
+4e31483309e304d2,openharmony/third_party_libphonenumber,2de2013af7738ff72ee2f06e1bab6e290f276d11,tools/cpp/src/cpp-build/generate_geocoding_data.cc,370,f66f11cfea55dceb3f9a4f1c2b2adfaad2d31802963b474e71612383087647f4,source_bound,"366:   fprintf(output, ""\n"");
+367: }
+368: 
+369: void WriteArrayAndSize(const string& name, FILE* output) {
+370:   fprintf(output, ""  %s,\n"", name.c_str());
+371:   fprintf(output, ""  sizeof(%s)/sizeof(*%s),\n"", name.c_str(), name.c_str());
+372: }
+373: 
+374: // Writes a PrefixDescriptions variable named ""name"", with its prefixes field",,,,,
+16fa0de484e8bc49,openharmony/third_party_libphonenumber,2de2013af7738ff72ee2f06e1bab6e290f276d11,tools/cpp/src/cpp-build/generate_geocoding_data.cc,566,f66f11cfea55dceb3f9a4f1c2b2adfaad2d31802963b474e71612383087647f4,source_bound,"562:   fprintf(output, ""  %s,\n"", base_prefix_name.c_str());
+563:   fprintf(output, ""  %s,\n"", encoded_deltas_name.c_str());
+564:   fprintf(output, ""  sizeof(%s),\n"", encoded_deltas_name.c_str());
+565:   fprintf(output, ""  %s,\n"", desc_indices_name.c_str());
+566:   fprintf(output, ""  sizeof(%s)/sizeof(*%s),\n"", desc_indices_name.c_str(), desc_indices_name.c_str());
+567:   fprintf(output, ""  %s,\n"", possible_lengths_name.c_str());
+568:   fprintf(output, ""  sizeof(%s)/sizeof(*%s),\n"", possible_lengths_name.c_str(), possible_lengths_name.c_str());
+569:   fprintf(output, ""  %s,\n"", string_pool_name.c_str());
+570:   fprintf(output, ""  %s,\n"", string_offsets_name.c_str());",,,,,
+5b93409774d32753,openharmony/third_party_cups-filters,3430c32fa92b06533333f04264f01f984b9fbc92,filter/rastertoescpx.c,157,f6a73a8fafd530c0625cb1f89108447c2eb3236102082b713f1670817fdb8106,source_bound,"153:   fprintf(stderr, ""DEBUG: StartPage...\n"");
+154:   fprintf(stderr, ""DEBUG: MediaClass = \""%s\""\n"", header->MediaClass);
+155:   fprintf(stderr, ""DEBUG: MediaColor = \""%s\""\n"", header->MediaColor);
+156:   fprintf(stderr, ""DEBUG: MediaType = \""%s\""\n"", header->MediaType);
+157:   fprintf(stderr, ""DEBUG: OutputType = \""%s\""\n"", header->OutputType);
+158: 
+159:   fprintf(stderr, ""DEBUG: AdvanceDistance = %d\n"", header->AdvanceDistance);
+160:   fprintf(stderr, ""DEBUG: AdvanceMedia = %d\n"", header->AdvanceMedia);
+161:   fprintf(stderr, ""DEBUG: Collate = %d\n"", header->Collate);",,,,,
+61ff1863c7b03750,openharmony/third_party_libtiff,d4a0516c477dfbaf1153ae295893ab75aadd63d4,libtiff/tif_print.c,119,f4c888f2a94c5a6914a28a9cb1516a7bb273fbaebbe5259fcf8526701aa685fe,source_bound,"115:                  fip->field_type == TIFF_SRATIONAL)
+116:         {
+117:             int tv_size = TIFFFieldSetGetSize(fip);
+118:             if (tv_size == 8)
+119:                 fprintf(fd, ""%lf"", ((double *)raw_data)[j]);
+120:             else
+121:                 fprintf(fd, ""%f"", ((float *)raw_data)[j]);
+122:         }
+123:         else if (fip->field_type == TIFF_FLOAT)",,,,,
+46764d38510d28e3,openharmony/third_party_cups-filters,3430c32fa92b06533333f04264f01f984b9fbc92,filter/texttotext.c,218,b6898871fce6242025cde24628952f94292a0522221fec426733c776ce32b122,source_bound,"214:     */
+215: 
+216:     if ((fd = cupsTempFd(tempfile, sizeof(tempfile))) < 0)
+217:     {
+218:       fprintf(stderr, ""ERROR: Unable to copy input text file"");
+219:       goto error;
+220:     }
+221: 
+222:     fprintf(stderr, ""DEBUG: sys5ippprinter - copying to temp print file \""%s\""\n"",",,,,,
+467bc1fdcdecbe22,openharmony/third_party_brotli,e9c6cd7a0e109ae8d527ec17bdd8076777f37429,c/tools/brotli.c,466,cb6c8ca6668d324d50cd085fc3ddb3f202afe34fb562b5b583c0d7b0cceccd0c,source_bound,"462:             return COMMAND_INVALID;
+463:           }
+464:         } else if (c == 'w') {
+465:           if (lgwin_set) {
+466:             fprintf(stderr, ""lgwin parameter already set\n"");
+467:             return COMMAND_INVALID;
+468:           }
+469:           lgwin_set = ParseInt(argv[i], 0,
+470:                                BROTLI_MAX_WINDOW_BITS, &params->lgwin);",,,,,
+07c9920e7ac38777,openharmony/third_party_libtiff,d4a0516c477dfbaf1153ae295893ab75aadd63d4,test/raw_decode.c,84,d1fa2e5a516012e817b636c2f740650be09b5ff1cf57bed4988d0fb26780febb,source_bound,"80:     {
+81:         return 0;
+82:     }
+83: 
+84:     fprintf(stderr, ""Pixel %d did not match expected results.\n"", pixel);
+85:     fprintf(stderr,
+86:             ""Got R=%d (expected %d..%d), G=%d (expected %d..%d), B=%d ""
+87:             ""(expected %d..%d)\n"",
+88:             rgb[0], min_red, max_red, rgb[1], min_green, max_green, rgb[2],",,,,,
+b7558cac7beed449,openharmony/third_party_cups-filters,3430c32fa92b06533333f04264f01f984b9fbc92,filter/texttotext.c,280,b6898871fce6242025cde24628952f94292a0522221fec426733c776ce32b122,source_bound,"276:       (ppd_attr = ppdFindAttr(ppd, ""DefaultPageSize"", NULL)) != NULL ||
+277:       (ppd_attr = ppdFindAttr(ppd, ""DefaultPageRegion"", NULL)) != NULL) {
+278:     if (val == NULL)
+279:       val = ppd_attr->value;
+280:     fprintf(stderr, ""DEBUG: PageSize: %s\n"", val);
+281:     snprintf(buffer, sizeof(buffer), ""Default%sNumLines"", val);
+282:     if ((val2 = cupsGetOption(buffer + 7, num_options, options)) != NULL ||
+283: 	(ppd_attr = ppdFindAttr(ppd, buffer, NULL)) != NULL) {
+284:       if (val2 == NULL)",,,,,
+cbe0fb03f0e570a1,openharmony/third_party_meshoptimizer,a13ea9ee01d23e1e780d03eb403610a17e529229,gltf/parsegltf.cpp,172,3593e41458f217a7d9eb5d9e47ff9752c2c32982f2a73b46a3bbe501dd0a0899,source_bound,"168: 			const cgltf_primitive& primitive = mesh.primitives[pi];
+169: 
+170: 			if (primitive.type == cgltf_primitive_type_points && primitive.indices)
+171: 			{
+172: 				fprintf(stderr, ""Warning: ignoring primitive %d of mesh %d because indexed points are not supported\n"", int(pi), int(mi));
+173: 				continue;
+174: 			}
+175: 
+176: 			meshes.push_back(Mesh());",,,,,
+280637a71c03ee35,openharmony/third_party_alsa-utils,68ec55a382e3a4c50c05a1b2bf97737f70c87185,seq/aplaymidi2/aplaymidi2.c,36,9d1fe887a8f708725c401717435cc5bc9ccce80b38368a312650f632807c0409,source_bound,"32: {
+33: 	va_list ap;
+34: 
+35: 	va_start(ap, msg);
+36: 	vfprintf(stderr, msg, ap);
+37: 	va_end(ap);
+38: 	fputc('\n', stderr);
+39: }
+40: ",,,,,
+4831f1dcca754ccc,openharmony/third_party_libdrm,a8001c555b01add5635cfecd1542f64606a2188d,tests/amdgpu/vcn_tests.c,1225,3a977c46acab0cfec98a75d39e0c6ba5af25025c26155ba7a10dae6d50c465bf,source_bound,"1221: 				 buffer_size - buffer_pos);
+1222: 		if (ret == 0) {
+1223: 			done = 1;
+1224: 			if (buffer_pos == 0) {
+1225: 				fprintf (stderr,
+1226: 				 ""couldn't find start code in buffer from 0\n"");
+1227: 			}
+1228: 		} else {
+1229: 		/* have a complete NAL from buffer_pos to end */",,,,,
+1e0ee047db544438,openharmony/third_party_cups-filters,3430c32fa92b06533333f04264f01f984b9fbc92,backend/implicitclass.c,247,f03a4aeb682f87f0530a795d1a6146d884379399bf369bd1b5d9749cde75a3ad,source_bound,"243:       cups_option_t *options = NULL;
+244:       int fd;
+245:       char buffer[8192];
+246: 
+247:       fprintf(stderr, ""DEBUG: Received destination host name from cups-browsed: printer-uri %s\n"",
+248: 	      ptr1);
+249: 
+250:       /* Parse the command line options and prepare them for the new print
+251: 	 job */",,,,,
+ed080ef861fb82bc,openharmony/third_party_cups-filters,3430c32fa92b06533333f04264f01f984b9fbc92,filter/gstoraster.c,699,fd83396c21b22888cb7f3266f45df443ffa276ba2993554cf1e152f29685f173,source_bound,"695:     /* stdin */
+696: 
+697:     fd = cupsTempFd(buf,BUFSIZ);
+698:     if (fd < 0) {
+699:       fprintf(stderr, ""ERROR: Can't create temporary file\n"");
+700:       goto out;
+701:     }
+702: 
+703:     filename = strdup(buf);",,,,,
+f959595727da68aa,openharmony/third_party_libtiff,d4a0516c477dfbaf1153ae295893ab75aadd63d4,test/raw_decode.c,250,d1fa2e5a516012e817b636c2f740650be09b5ff1cf57bed4988d0fb26780febb,source_bound,"246:     rgba_buffer = (uint32_t *)malloc(sz);
+247: 
+248:     if (!TIFFReadRGBATile(tif, 1 * 128, 2 * 128, rgba_buffer))
+249:     {
+250:         fprintf(stderr, ""TIFFReadRGBATile() returned failure code.\n"");
+251:         return 1;
+252:     }
+253: 
+254:     /*",,,,,
+0da9541fc460d139,openharmony/third_party_xmp_toolkit_sdk,04054b65245a125cf181ac9edf13dfac08fc47f6,XMPCore/source/ExpatAdapter.cpp,193,1de4a5ef012f1350eafa30fcf2388e9794dd43b430acb236b17a4a5f585948d1,source_bound,"189: #if XMP_DebugBuild & DumpXMLParseEvents
+190: 
+191: 	static inline void PrintIndent ( FILE * file, size_t count )
+192: 	{
+193: 		for ( ; count > 0; --count ) fprintf ( file, ""  "" );
+194: 	}
+195: 
+196: #endif
+197: ",,,,,
+e7063de106dde174,openharmony/third_party_xmp_toolkit_sdk,04054b65245a125cf181ac9edf13dfac08fc47f6,samples/source/UnicodeParseSerialize.cpp,358,a6206f051cd9cd4535c9c4be98bf1c732e3c47fbf8b7efaee3d56df66372ccdc,source_bound,"354: 	#if IncludeUTF32
+355: 		FullUnicodeParse ( log, ""UTF-32BE"", u32bPacket.size(), u32bPacket, fullUnicode );
+356: 		FullUnicodeParse ( log, ""UTF-32LE"", u32lPacket.size(), u32lPacket, fullUnicode );
+357: 	#endif
+358: 	fprintf ( log, ""Full packet, no BOM, buffered parsing tests done\n"" );
+359: 
+360: #if 0	// Skip the partial buffer tests, there seem to be problems, but no client uses partial buffers.
+361: 
+362: 	for ( i = 1; i <= 3; ++i ) {",,,,,
+aea7870264271d56,openharmony/third_party_xmp_toolkit_sdk,04054b65245a125cf181ac9edf13dfac08fc47f6,samples/source/UnicodeCorrectness.cpp,666,90792ea066632979c68ae24f6869540c432677a9334f54aae62e34bebe2204d2,source_bound,"662: 		CodePoint_from_UTF16BE ( u16, 1, &cp, &len );
+663: 		if ( (len != 1) || (cp != 0x1234) ) fprintf ( log, ""  *** CodePoint_from_UTF16BE failure for U+1234\n"" );
+664: 		u16[0] = 0xFEDC;
+665: 		CodePoint_from_UTF16BE ( u16, 1, &cp, &len );
+666: 		if ( (len != 1) || (cp != 0xFEDC) ) fprintf ( log, ""  *** CodePoint_from_UTF16BE failure for U+FEDC\n"" );
+667: 		u16[0] = 0xD812; u16[1] = 0xDC34;
+668: 		CodePoint_from_UTF16BE ( u16, 2, &cp, &len );
+669: 		if ( (len != 2) || (cp != 0x14834) ) fprintf ( log, ""  *** CodePoint_from_UTF16BE failure for U+14834\n"" );
+670: 	} else {",,,,,
+b507cfcefc014691,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/msg-ring.c,296,121cc2a5221bc73bd73a7c571a5b8de69a53ea5193126794fe0eb9b136ba9498,source_bound,"292: 	}
+293: 
+294: 	ret = io_uring_wait_cqe(&ring, &cqe);
+295: 	if (ret < 0) {
+296: 		fprintf(stderr, ""wait completion %d\n"", ret);
+297: 		goto err;
+298: 	}
+299: 	if (cqe->res != 0 || cqe->user_data != 1) {
+300: 		fprintf(stderr, ""invalid cqe\n"");",,,,,
+a7f2ecb846d0de52,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/epwait.c,256,f4af6138be7087d8ef9a44b2cc2f93ffb47fd030f0029881ea51a6c03c9f39a8,source_bound,"252: 	ret = t_create_ring(32, &ring, flags);
+253: 	if (ret == T_SETUP_SKIP) {
+254: 		return 0;
+255: 	} else if (ret != T_SETUP_OK) {
+256: 		fprintf(stderr, ""ring create failed %x -> %d\n"", flags, ret);
+257: 		return 1;
+258: 	}
+259: 
+260: 	for (i = 0; i < NPIPES; i++) {",,,,,
+4661c797818e9c48,openharmony/third_party_xmp_toolkit_sdk,04054b65245a125cf181ac9edf13dfac08fc47f6,samples/source/UnicodeCorrectness.cpp,1471,90792ea066632979c68ae24f6869540c432677a9334f54aae62e34bebe2204d2,source_bound,"1467: 	if ( len16 != 0x80*(1+1+1+2) ) fprintf ( log, ""  *** CodePoint_to_UTF16BE length failure, %d\n"", len16 );
+1468: 	sU16[len16] = NativeUTF16BE(0xDC00);	// Isolated low surrogate.
+1469: 
+1470: 	UTF16BE_to_UTF8 ( sU16, len16, sU8, sizeof(sU8), &len16x, &len8x );
+1471: 	if ( (len16 != len16x) || (len8 != len8x) ) fprintf ( log, ""  *** UTF16BE_to_UTF8 length failure, %d -> %d\n"", len16x, len8x );
+1472: 
+1473: 	sU8[len8] = 0xFF;
+1474: 	for ( i = 0, len8 = 0; i < 0x80; ++i ) {
+1475: 		CodePoint_from_UTF8 ( &sU8[len8], 8, &cpx, &len8x );",,,,,
+17b32be0501cc20e,openharmony/third_party_json,82f689380591b58b99578e6744a4f5afd2162084,tests/thirdparty/Fuzzer/test/SingleStrncmpTest.cpp,13,ab5cf684bceee376c817481c20d7d54cc1fca93172e69085dd63640350ef6a67,source_bound,"9: 
+10: extern ""C"" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
+11:   char *S = (char*)Data;
+12:   if (Size >= 6 && !strncmp(S, ""qwerty"", 6)) {
+13:     fprintf(stderr, ""BINGO\n"");
+14:     exit(1);
+15:   }
+16:   return 0;
+17: }",,,,,
+bde4c110b15499ca,openharmony/third_party_opus,9368c2c8218e99543adc6565614bc5be956b520a,celt/dump_modes/dump_modes_arm_ne10.c,147,833bfb56b0bffb749643329086c232ea99a19746a4b9af93293beb92fc97482f,source_bound,"143: 
+144:       fprintf(file, ""static const arch_fft_state cfg_arch_%d = {\n"",
+145:               mode->mdct.kfft[k]->nfft);
+146:       fprintf(file, ""1,\n"");
+147:       fprintf(file, ""(void *)&%s_%d,\n"",
+148:               NE10_FFT_STATE_TYPE_T_STR, mode->mdct.kfft[k]->nfft);
+149:       fprintf(file, ""};\n\n"");
+150:    }
+151:    fprintf(file, ""#endif  /* end NE10_FFT_PARAMS%d_%d */\n"", mode->Fs, mdctSize);",,,,,
+6a7c1db044246a2b,openharmony/third_party_xmp_toolkit_sdk,04054b65245a125cf181ac9edf13dfac08fc47f6,samples/source/UnicodeCorrectness.cpp,2664,90792ea066632979c68ae24f6869540c432677a9334f54aae62e34bebe2204d2,source_bound,"2660: 
+2661: 	sU16[len16] = NativeUTF16BE(0xDC00);	// Isolated low surrogate.
+2662: 	for ( i = 0, cp = cpLo; cp < cpHi; i += len16x, ++cp ) {
+2663: 		CodePoint_from_UTF16BE ( &sU16[i], 4, &cpx, &len16x );
+2664: 		if ( (len16x != 1) || (cpx != cp) ) fprintf ( log, ""  *** UTF32LE_to_UTF16BE failure for U+%.4X\n"", cp );
+2665: 	}
+2666: 	if ( i != len16 ) fprintf ( log, ""  *** UTF32LE_to_UTF16BE consume failure, %d != %d\n"", i, len16 );
+2667: 
+2668: 	fprintf ( log, ""  UTF32LE_to_UTF16BE done for %.4X..%.4X\n"", cpLo, cpHi-1 );",,,,,
+42d54f95d2132ad5,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/poll-mshot-update.c,283,09dfd1a6f5816e2dcafbe421819a174d3ea67299cce3d7ae44b08e8e5f569320,source_bound,"279: 		return T_EXIT_SKIP;
+280: 
+281: 	ret = has_poll_update();
+282: 	if (ret < 0) {
+283: 		fprintf(stderr, ""poll update check failed %i\n"", ret);
+284: 		return -1;
+285: 	} else if (!ret) {
+286: 		fprintf(stderr, ""no poll update, skip\n"");
+287: 		return 0;",,,,,
+0bb58562f96e6b36,openharmony/third_party_opus,9368c2c8218e99543adc6565614bc5be956b520a,celt/dump_modes/dump_modes_arm_ne10.c,121,833bfb56b0bffb749643329086c232ea99a19746a4b9af93293beb92fc97482f,source_bound,"117:       cfg = (NE10_FFT_CFG_TYPE_T)mode->mdct.kfft[k]->arch_fft->priv;
+118:       if (!cfg) {
+119:          fprintf(file, ""/* Ne10 does not support scaled FFT for length = %d */\n"",
+120:                  mode->mdct.kfft[k]->nfft);
+121:          fprintf(file, ""static const arch_fft_state cfg_arch_%d = {\n"", mode->mdct.kfft[k]->nfft);
+122:          fprintf(file, ""0,\n"");
+123:          fprintf(file, ""NULL\n"");
+124:          fprintf(file, ""};\n"");
+125:          continue;",,,,,
+28d515cedc264c5b,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/stdout.c,60,5188aa09fb8ed6d9b6e51948f153f8bb7cadebd03a05dabbf40088aba42631a9,source_bound,"56: 	sqe->user_data = 2;
+57: 
+58: 	ret = io_uring_submit(ring);
+59: 	if (ret < 0) {
+60: 		fprintf(stderr, ""sqe submit failed: %d\n"", ret);
+61: 		goto err;
+62: 	} else if (ret != 2) {
+63: 		fprintf(stderr, ""Submitted only %d\n"", ret);
+64: 		goto err;",,,,,
+d72bc6278040bc6b,openharmony/third_party_opus,9368c2c8218e99543adc6565614bc5be956b520a,celt/tests/test_unit_mathops.c,164,1885422de5dae7b37292f7d7560e8a71cfaba320f860c16312b57f9015fc5de6,source_bound,"160:       }
+161: 
+162:       if (error > error_threshold)
+163:       {
+164:          fprintf (stderr,
+165:                   ""celt_log2 failed: ""
+166:                   ""fabs((1.442695040888963387*log(x))-celt_log2(x))>%15.25e ""
+167:                   ""(x = %f, error = %15.25e)\n"", error_threshold, x, error);
+168:          ret = 1;",,,,,
+b02f29a00ec4548b,openharmony/third_party_xmp_toolkit_sdk,04054b65245a125cf181ac9edf13dfac08fc47f6,samples/source/UnicodeCorrectness.cpp,89,90792ea066632979c68ae24f6869540c432677a9334f54aae62e34bebe2204d2,source_bound,"85: 	size_t    len;
+86: 
+87: 	try {
+88: 		CodePoint_to_UTF16BE ( cp, u16, sizeof(u16), &len );		
+89: 		fprintf ( log, ""  *** CodePoint_to_UTF16BE failure, no exception for 0x%X\n"", cp );
+90: 	} catch ( ... ) {
+91: 		// Do nothing, the exception is expected.
+92: 	}
+93: ",,,,,
+da66b93f73c08d01,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/connect.c,321,7259c5ca91051dece0fa7a457cfcaf2785297553613853145280f59441c2e33e,source_bound,"317: 	sqe->flags |= IOSQE_IO_LINK;
+318: 
+319: 	sqe = io_uring_get_sqe(ring);
+320: 	if (!sqe) {
+321: 		fprintf(stderr, ""unable to get sqe\n"");
+322: 		goto err;
+323: 	}
+324: 	io_uring_prep_link_timeout(sqe, &ts, 0);
+325: 	sqe->user_data = 2;",,,,,
+3cd99a347ccc0e7d,openharmony/third_party_elfutils,61c7376b0f1c1df91c00bf782836b796a6f32c05,libasm/asm_newcomsym.c,93,387d4cabff82d4aa720d9c19aecebfe5436a576a311f64cf6daab2fd599a2842,source_bound,"89:      the alignment recorded by storing it into the offset field.  */
+90:   result->offset = align;
+91: 
+92:   if (unlikely (ctx->textp))
+93:     fprintf (ctx->out.file, ""\t.comm %s, %"" PRIuMAX "", %"" PRIuMAX ""\n"",
+94: 	     name, (uintmax_t) size, (uintmax_t) align);
+95:   else
+96:     {
+97:       /* Put the symbol in the hash table so that we can later find it.  */",,,,,
+32911857e0bce218,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/sq-space_left.c,107,f9d24399bf074a7a1c5cda6741f873a66bfcb2e6f9992a1c86931e4ba27dd365,source_bound,"103: 	ret = io_uring_submit(&ring);
+104: 
+105: 	/* should submit 8 successfully, then error #9 and stop */
+106: 	if (ret != 9) {
+107: 		fprintf(stderr, ""submitted %d, wanted 9\n"", ret);
+108: 		goto err;
+109: 	}
+110: 
+111: 	/* should now have 8 ready, with 9 gone */",,,,,
+2642f85853620ba0,openharmony/third_party_opus,9368c2c8218e99543adc6565614bc5be956b520a,celt/tests/test_unit_entropy.c,215,3c3012064d79fb0826cda7989d028f037d5b6a5640eddb1156e00b711c32dda0,source_bound,"211:     }
+212:     for(j=0;j<sz;j++){
+213:       sym=ec_dec_uint(&dec,ft);
+214:       if(sym!=data[j]){
+215:         fprintf(stderr,
+216:          ""Decoded %i instead of %i with ft of %i at position %i of %i (Random seed: %u).\n"",
+217:          sym,data[j],ft,j,sz,seed);
+218:         ret=-1;
+219:       }",,,,,
+8ea47c68e2943c8d,openharmony/third_party_libuv,9a772139aaf711a9156764a41bcd2fdd476aef5f,test/benchmark-loop-count.c,101,55e686033ba8ea875a3eeb28f48da770273f6a8374d51025a31a95af79b40b83,source_bound,"97:   uv_timer_start(&timer_handle, timer_cb, 5000, 0);
+98: 
+99:   uv_run(loop, UV_RUN_DEFAULT);
+100: 
+101:   fprintf(stderr, ""loop_count: %lu ticks (%.0f ticks/s)\n"", ticks, ticks / 5.0);
+102:   fflush(stderr);
+103: 
+104:   MAKE_VALGRIND_HAPPY(loop);
+105:   return 0;",,,,,
+661bfefc8084b255,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/sq-poll-dup.c,191,0b201f9ab282ee6523d8be3f1a4d28f970ded005a4bcdb08b76fa71e87031070,source_bound,"187: 		unlink(fname);
+188: 
+189: 	ret = test(fd, 0, 0);
+190: 	if (ret) {
+191: 		fprintf(stderr, ""test 0 0 failed\n"");
+192: 		goto err;
+193: 	}
+194: 
+195: 	ret = test(fd, 0, 1);",,,,,
+6820b20169e1a5cb,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/zcrx.c,459,e915518ddae887b63beba90f42d8716d3dd7e66e3b50a0de0a741f2844013c21,source_bound,"455: 		fprintf(stderr, ""unexpected F_MORE for invalid fd\n"");
+456: 		return T_EXIT_FAIL;
+457: 	}
+458: 	if (cqe->res != -EINVAL) {
+459: 		fprintf(stderr, ""zcrx recv with non-existent zcrx ifq\n"");
+460: 		return T_EXIT_FAIL;
+461: 	}
+462: 	io_uring_cqe_seen(&ring, cqe);
+463: ",,,,,
+a5c274f7e4bd44f6,openharmony/third_party_xmp_toolkit_sdk,04054b65245a125cf181ac9edf13dfac08fc47f6,samples/source/UnicodePerformance.cpp,304,cffe20715766195a4ebc74df320628c5c7a784b189726b83c49f305ab61f88aa,source_bound,"300: 	time ( &now );
+301: 	snprintf ( buffer, sizeof(buffer), ""// Finished test for Unicode conversion performance, %s"", ctime ( &now ) );
+302: 
+303: 	fprintf ( log, ""\n// "" );
+304: 	for ( size_t i = 4; i < strlen(buffer); ++i ) fprintf ( log, ""="" );
+305: 	fprintf ( log, ""\n%s\n"", buffer );
+306: 
+307: 	fclose ( log );
+308: 	return 0;",,,,,
+a01b5ce595352e91,openharmony/third_party_opus,9368c2c8218e99543adc6565614bc5be956b520a,celt/dump_modes/dump_modes.c,228,75f90e07a34a8ac9968e84d8bbe1fd76c6d193b89f6c8eac8b9b1b3dc0ddd0cc,source_bound,"224:       for (k=0;k<=mode->mdct.maxshift;k++)
+225:       {
+226:          fprintf(file, ""#ifndef FFT_STATE%d_%d_%d\n"", mode->Fs, mdctSize, k);
+227:          fprintf(file, ""#define FFT_STATE%d_%d_%d\n"", mode->Fs, mdctSize, k);
+228:          fprintf (file, ""static const kiss_fft_state fft_state%d_%d_%d = {\n"",
+229:                mode->Fs, mdctSize, k);
+230:          fprintf (file, ""%d,    /* nfft */\n"", mode->mdct.kfft[k]->nfft);
+231: 
+232: #if defined(FIXED_POINT) && defined(ENABLE_QEXT)",,,,,
+9026c310618d11bd,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/link-timeout.c,526,4abda33e012e1c6ec0139bfe3e4e5fd74d91a43e42df30619327e2bef7aa4ff6,source_bound,"522: 			break;
+523: 		case 2:
+524: 			if (cqe->res != -EALREADY && cqe->res != -ETIME &&
+525: 			    cqe->res != 0) {
+526: 				fprintf(stderr, ""Link timeout got %d\n"", cqe->res);
+527: 				goto err;
+528: 			}
+529: 			break;
+530: 		}",,,,,
+3c234ed00cf7674c,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/send_recvmsg.c,421,4890fa2b4ed672cffe7103a8eb909c5e211afcc7cc6265dd0a2491d30d677087,source_bound,"417: 	}
+418: 
+419: 	ret = test(1, 0, 1, 1, 1);
+420: 	if (ret) {
+421: 		fprintf(stderr, ""send_recvmsg async 1 0 1 1 1 failed\n"");
+422: 		return 1;
+423: 	}
+424: 
+425: 	ret = test(0, 1, 0, 1, 1);",,,,,
+fa91170675a48813,openharmony/third_party_nghttp2,f2036c104d3fd1d50fcc826bd19053956016b968,src/deflatehd.cc,160,12199e4d2e60bb893f4e9ab954997e88854bad71ae9056c8ed573bd129d0daad,source_bound,"156:     const char *name;
+157:     json_t *value;
+158: 
+159:     if (!json_is_object(nv_pair) || json_object_size(nv_pair) != 1) {
+160:       fprintf(stderr, ""bad formatted name/value pair object at %d\n"", seq);
+161:       return -1;
+162:     }
+163: 
+164:     json_object_foreach(nv_pair, name, value) {",,,,,
+f7e4b937d2bc67f0,openharmony/third_party_opus,9368c2c8218e99543adc6565614bc5be956b520a,celt/tests/test_unit_entropy.c,98,3c3012064d79fb0826cda7989d028f037d5b6a5640eddb1156e00b711c32dda0,source_bound,"94:       nbits=ec_tell(&enc);
+95:       ec_enc_bits(&enc,i,ftb);
+96:       nbits2=ec_tell(&enc);
+97:       if(nbits2-nbits!=ftb){
+98:         fprintf(stderr,""Used %li bits to encode %i bits directly.\n"",
+99:          nbits2-nbits,ftb);
+100:         ret=-1;
+101:       }
+102:     }",,,,,
+38250403f922fbb0,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/pipe-reuse.c,58,975da576fd1d79165a230592dd26334642de35057840b208eed18167aecd1fe2,source_bound,"54: 	memset(ptr, 0x22, sizeof(wbuf) / 2);
+55: 
+56: 	ret = write(fds[1], wbuf, sizeof(wbuf) / 2);
+57: 	if (ret != sizeof(wbuf) / 2) {
+58: 		fprintf(stderr, ""Bad write\n"");
+59: 		ret = 1;
+60: 		goto err;
+61: 	}
+62: ",,,,,
+60cfde284a685d0f,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/poll-mshot-overflow.c,167,b752f2439cdeb0efe999dd60e15162f5cc2a273f9048460ce53e8fac8936dded,source_bound,"163: 	}
+164: 
+165: 	sqe = io_uring_get_sqe(&ring);
+166: 	if (!sqe) {
+167: 		fprintf(stderr, ""get sqe failed\n"");
+168: 		return -1;
+169: 	}
+170: 	io_uring_prep_poll_multishot(sqe, fds[0], POLLIN);
+171: 	io_uring_sqe_set_data64(sqe, 1);",,,,,
+cd80e099528e844a,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/read-mshot.c,506,5c38b71f46147e5ac321122565bfa2c5f5eb421234625ab634418474e34b0eb5,source_bound,"502: 		return T_EXIT_SKIP;
+503: 
+504: 	ret = test(0, 0, 0, 0);
+505: 	if (ret) {
+506: 		fprintf(stderr, ""test 0 0 0 failed\n"");
+507: 		return T_EXIT_FAIL;
+508: 	}
+509: 	if (no_buf_ring || no_read_mshot) {
+510: 		printf(""skip\n"");",,,,,
+9b79d549b69acf60,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/500f9fbadef8.c,56,c8533a95638b163acc37ae46edebd594b54eb94fab2ec23f57732b5a4049844e,source_bound,"52: 	blocks = BLOCKS;
+53: 	do {
+54: 		sqe = io_uring_get_sqe(&ring);
+55: 		if (!sqe) {
+56: 			fprintf(stderr, ""get sqe failed\n"");
+57: 			goto err;
+58: 		}
+59: 		io_uring_prep_writev(sqe, fd, &iov, 1, offset);
+60: 		ret = io_uring_submit_and_wait(&ring, 1);",,,,,
+06bd8ffef8cb8233,openharmony/third_party_iptables,ee2df27ef936cf1dac28c2bfb2dd17f6eb71fd47,iptables/iptables-restore.c,167,32706c08fd9173f95d9400119a00e9bc597b9c6c85038284aed7401b68ece7dc,source_bound,"163: 	}
+164: 	else in = stdin;
+165: 
+166: 	if (wait_interval_set && !wait) {
+167: 		fprintf(stderr, ""Option --wait-interval requires option --wait\n"");
+168: 		exit(1);
+169: 	}
+170: 
+171: 	/* Grab standard input. */",,,,,
+1fc13d939ae8ee88,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/read-mshot.c,576,5c38b71f46147e5ac321122565bfa2c5f5eb421234625ab634418474e34b0eb5,source_bound,"572: 	}
+573: 
+574: 	ret = test(0, 1, 1, 1);
+575: 	if (ret) {
+576: 		fprintf(stderr, ""test 0 1 1 1 failed\n"");
+577: 		return T_EXIT_FAIL;
+578: 	}
+579: 
+580: 	ret = test(1, 0, 0, 1);",,,,,
+c9ebe4f3da1c8992,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/unlink.c,38,eef4589aae2fda180b672f83f80bdd718ca9df7642e5377c04c7265fbcd25891,source_bound,"34: 	io_uring_prep_unlink(sqe, buf, AT_REMOVEDIR);
+35: 
+36: 	ret = io_uring_submit(ring);
+37: 	if (ret <= 0) {
+38: 		fprintf(stderr, ""sqe submit failed: %d\n"", ret);
+39: 		goto err;
+40: 	}
+41: 
+42: 	ret = io_uring_wait_cqe(ring, &cqe);",,,,,
+51c5f0c61db37a48,openharmony/third_party_opus,9368c2c8218e99543adc6565614bc5be956b520a,silk/debug.c,143,1958d5e7580532722c590bac325ac5873da69712c13f187f2c5284d2b7ead48b,source_bound,"139:         int k;
+140:         FILE *fp;
+141:         /* print results to file */
+142:         fp = fopen(file_name, ""w"");
+143:         fprintf(fp, ""                                min         avg         max      count\n"");
+144:         for( k = 0; k < silk_Timer_nTimers; k++ )
+145:         {
+146:             if (silk_Timer_depth[k] == 0) {
+147:                 fprintf(fp, ""%-28s"", silk_Timer_tags[k]);",,,,,
+10b3579c35c94c60,openharmony/third_party_ncurses,4f2875a075e2963868579698a3b6665549b266e6,test/dump_window.c,152,18313d93d9ebdc6407d10f584dac9d0f6da8f7fc11fd33d06834580aac98f304,source_bound,"148: 			    fprintf(dumpfp, ""\tc|%.*s|\n"", maxx, cvec);
+149: 			if (avec)
+150: 			    fprintf(dumpfp, ""\ta|%.*s|\n"", maxx, avec);
+151: 			if (pvec)
+152: 			    fprintf(dumpfp, ""\tp|%.*s|\n"", maxx, pvec);
+153: 		    }
+154: 		}
+155: 		if (pass) {
+156: 		    free(cvec);",,,,,
+afb370155683eefa,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/sqe-mixed-nop.c,51,05c2e4d42f61934385d236961311d9d48764bfc1c037f0506e9a1500cdd3e01c,source_bound,"47: 		fprintf(stderr, ""wait completion %d\n"", ret);
+48: 	} else if (cqe->res != 0) {
+49: 		fprintf(stderr, ""Completion error:%d\n"", cqe->res);
+50: 	} else if (cqe->user_data != seq) {
+51: 		fprintf(stderr, ""Unexpected user_data: %ld\n"", (long) cqe->user_data);
+52: 	} else {
+53: 		io_uring_cqe_seen(ring, cqe);
+54: 		return T_EXIT_PASS;
+55: 	}",,,,,
+48aebd152f39766f,openharmony/third_party_elfutils,61c7376b0f1c1df91c00bf782836b796a6f32c05,tests/elfstrmerge.c,534,5ec79523e409501b9d9812bcf510bb37fceae03de9ab2d2bdf1d64b38c9f5a74,source_bound,"530: 		      fail_elf_idx (""Couldn't get symbol"", fname, i);
+531: 
+532: 		    if (GELF_ST_TYPE (sym.st_info) == STT_SECTION
+533: 			&& sym.st_shndx == shdrstrndx)
+534: 		      fprintf (stderr, ""WARNING:""
+535: 			       "" symbol table [%zd] contains section symbol %zd""
+536: 			       "" for old shdrstrndx %zd\n"", ndx, i, shdrstrndx);
+537: 		    else if (sym.st_shndx != SHN_UNDEF
+538: 			     && sym.st_shndx < SHN_LORESERVE)",,,,,
+676766103c3a69f7,openharmony/third_party_xmp_toolkit_sdk,04054b65245a125cf181ac9edf13dfac08fc47f6,samples/source/UnicodeCorrectness.cpp,2043,90792ea066632979c68ae24f6869540c432677a9334f54aae62e34bebe2204d2,source_bound,"2039: 		if ( sU32[len32] != NativeUTF32BE(i+0x10000) ) fprintf ( log, ""  *** UTF16BE_to_UTF32BE failure for U+%.4X\n"", i+0x10000 );
+2040: 		++len32;
+2041: 	}
+2042: 
+2043: 	fprintf ( log, ""  UTF16BE_to_UTF32BE done for mixed values\n"" );
+2044: 	
+2045: 	// Test empty buffers and buffers ending in mid character.
+2046: 
+2047: 	len16 = 0x8000*(1+2); len32 = 0x8000*(1+1);",,,,,
+078e514b9f612e14,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/madvise.c,169,b8a79d9f50a41a43c108a647b106567a0551e722b1b5109c47b994c0a0d68a29,source_bound,"165: 	}
+166: 
+167: 	/* too hard to reliably test, just ignore */
+168: 	if ((0) && bad > good)
+169: 		fprintf(stderr, ""Suspicious timings (%u > %u)\n"", bad, good);
+170: 	if (fname != argv[1])
+171: 		unlink(fname);
+172: 	io_uring_queue_exit(&ring);
+173: 	return T_EXIT_PASS;",,,,,
+05aefc955bddb26c,openharmony/third_party_elfutils,61c7376b0f1c1df91c00bf782836b796a6f32c05,src/ar.c,422,7b683b1d237ad918bdab6db3b5e3b825180ada4046db6594e397d7027676066d,source_bound,"418: not_found (int argc, char *argv[argc], bool found[argc])
+419: {
+420:   for (int i = 0; i < argc; ++i)
+421:     if (!found[i])
+422:       printf (_(""no entry %s in archive\n""), argv[i]);
+423: }
+424: 
+425: 
+426: static int",,,,,
+c808f7f89614ae76,openharmony/third_party_ncurses,4f2875a075e2963868579698a3b6665549b266e6,Ada95/gen/gen.c,232,c441d0ec899728630946d95312c7479e25232c4b783165c0c56e0cf941fb6d84,source_bound,"228: 	      __FILE__);
+229:     }
+230:   fprintf(fp, ""--  Do not edit this file directly.\n"");
+231:   fprintf(fp, ""--  The values provided here may vary on your system.\n"");
+232:   fprintf(fp, ""\n"");
+233:   fprintf(fp, ""with System;\n"");
+234:   fprintf(fp, ""package Terminal_Interface.Curses_Constants is\n"");
+235:   fprintf(fp, ""   pragma Pure;\n"");
+236:   fprintf(fp, ""\n"");",,,,,
+73fff7ad94941171,openharmony/third_party_xmp_toolkit_sdk,04054b65245a125cf181ac9edf13dfac08fc47f6,samples/source/XMPFilesCoverage.cpp,258,5fb945ae8952a881568f2866bbdfdda8dd3ff45e7b93e450457c0bda4d122d7c,source_bound,"254: 	xmpFile.CloseFile ( closeOptions );
+255: 
+256: 	fprintf ( sLogFile, ""\n"" );
+257: 	OpenTestFile ( fileName, kXMPFiles_OpenForRead, &xmpMeta, &xmpFile );
+258: 	fprintf ( sLogFile, ""Modified XMP from %s\n"", fileName );
+259: 	xmpMeta.DumpObject ( DumpToFile, sLogFile );
+260: 	xmpFile.CloseFile();
+261: 
+262: 	fprintf ( sLogFile, ""\nDone testing %s\n"", fileName );",,,,,
+b5065478b93d05d7,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/send_recvmsg.c,302,4890fa2b4ed672cffe7103a8eb909c5e211afcc7cc6265dd0a2491d30d677087,source_bound,"298: 	}
+299: 
+300: 	ret = io_uring_wait_cqe(&ring, &cqe);
+301: 	if (cqe->res < 0) {
+302: 		fprintf(stderr, ""%s: failed cqe: %d\n"", __FUNCTION__, cqe->res);
+303: 		goto err;
+304: 	}
+305: 
+306: 	close(sockfd);",,,,,
+bbadaf0c882db9ee,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/stdout.c,217,5188aa09fb8ed6d9b6e51948f153f8bb7cadebd03a05dabbf40088aba42631a9,source_bound,"213: 	}
+214: 
+215: 	ret = test_stdout_io(&ring);
+216: 	if (ret) {
+217: 		fprintf(stderr, ""test_pipe_io failed\n"");
+218: 		return ret;
+219: 	}
+220: 
+221: 	ret = test_stdout_io_fixed(&ring);",,,,,
+ba589cd5e5eff2f3,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/sync-cancel.c,219,0bf6054b0cbe1e7e1316b23a9229d10fadbd1c157c0a0b23b0a81bf32d7787a5,source_bound,"215: 
+216: 
+217: 	ret = test_sync_cancel(&ring, 1, 1, 0, 0);
+218: 	if (ret) {
+219: 		fprintf(stderr, ""test_sync_cancel 1 1 0 0 failed\n"");
+220: 		return T_EXIT_FAIL;
+221: 	}
+222: 
+223: 	ret = test_sync_cancel(&ring, 0, 0, 1, 0);",,,,,
+949823f6a5f0cf51,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/timeout.c,1974,d5a96a40b42d155b1329f336832bc5c1ec51da61ca6b5fc27455c4bfdee78f4d,source_bound,"1970: 	}
+1971: 
+1972: 	ret = test_timeout_link_cancel();
+1973: 	if (ret) {
+1974: 		fprintf(stderr, ""test_timeout_link_cancel failed\n"");
+1975: 		return ret;
+1976: 	}
+1977: 
+1978: 	ret = test_not_failing_links();",,,,,
+e968d445ed8c5893,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/regbuf-clone.c,107,40f5c9b14de1b5047b26b4e0b36195b73e43831d03e4a3fdea2f3fd3ae84e3c6,source_bound,"103: 		return T_EXIT_FAIL;
+104: 	}
+105: 	ret = io_uring_queue_init(1, &dst, 0);
+106: 	if (ret) {
+107: 		fprintf(stderr, ""ring_init: %d\n"", ret);
+108: 		return T_EXIT_FAIL;
+109: 	}
+110: 
+111: 	for (i = 0; i < NR_VECS; i++) {",,,,,
+e76cce14d073c24c,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/timeout.c,574,d5a96a40b42d155b1329f336832bc5c1ec51da61ca6b5fc27455c4bfdee78f4d,source_bound,"570: 				__FUNCTION__, i+1);
+571: 			goto err;
+572: 		}
+573: 		if (cqe->res != -ETIME) {
+574: 			fprintf(stderr, ""%s: Req %d timeout: %s\n"",
+575: 				__FUNCTION__, i+1, strerror(cqe->res));
+576: 			goto err;
+577: 		}
+578: 		exp = mtime_since_now(&tv);",,,,,
+b424ab1bffa88f16,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/recv-bundle-short-ooo.c,209,145ee5f22e2591eb4481e709d344b16b713ea8b73de2375e60f937884050f41f,source_bound,"205: 		} else if (cqe->res == -EINVAL) {
+206: 			/* no recv mshot support */
+207: 			no_recv_mshot = 1;
+208: 		} else if (cqe->res != -ENOBUFS) {
+209: 			fprintf(stderr, ""CQE res %d\n"", cqe->res);
+210: 			return 1;
+211: 		}
+212: 		return 0;
+213: 	}",,,,,
+051141b1d0d60d99,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/fsync.c,173,843232fc66502729158e70206ef9f080b5ae0769682e641822886e7196a173cc,source_bound,"169: 	sqe->user_data = 1;
+170: 
+171: 	ret = io_uring_submit(ring);
+172: 	if (ret != 1) {
+173: 		fprintf(stderr, ""submit failed: %d\n"", ret);
+174: 		return 1;
+175: 	}
+176: 	ret = io_uring_wait_cqe(ring, &cqe);
+177: 	if (ret) {",,,,,
+aeb4f6e36359c3b5,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/poll-ring.c,43,bc083021842be5e780075d5b81a6b8d659f8394cf7d9b485b24bb59c4c77e623,source_bound,"39: 	io_uring_sqe_set_data(sqe, sqe);
+40: 
+41: 	ret = io_uring_submit(&ring);
+42: 	if (ret <= 0) {
+43: 		fprintf(stderr, ""child: sqe submit failed: %d\n"", ret);
+44: 		return 1;
+45: 	}
+46: 
+47: 	return 0;",,,,,
+46c27aa4d4a9bc5e,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/io-cancel.c,433,1401d0718c56813d724ee5140dd840789df1c337c40b62f7f001455019335dd0,source_bound,"429: 		}
+430: 		if ((cqe->user_data == 1 && cqe->res != -ECANCELED) ||
+431: 		    (cqe->user_data == 2 && cqe->res != -ECANCELED) ||
+432: 		    (cqe->user_data == 3 && cqe->res != -ETIME)) {
+433: 			fprintf(stderr, ""user_data %i res %i\n"",
+434: 				(unsigned)cqe->user_data, cqe->res);
+435: 			return 1;
+436: 		}
+437: 		io_uring_cqe_seen(&ring, cqe);",,,,,
+16f5c221dbc61d67,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/lfs-openat.c,200,f77fa3fb5e7bede2c81e7272088956b61c3f2630ba1df2094cf72d032fbc4714,source_bound,"196: 	}
+197: 
+198: 	fd = dup(ring.ring_fd);
+199: 	if (fd < 0) {
+200: 		fprintf(stderr, ""dup() failed: %s\n"", strerror(-fd));
+201: 		return 1;
+202: 	}
+203: 
+204: 	/*",,,,,
+6e4b27690d423f8a,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/read-mshot.c,441,5c38b71f46147e5ac321122565bfa2c5f5eb421234625ab634418474e34b0eb5,source_bound,"437: 	p.flags = IORING_SETUP_CQSIZE;
+438: 	p.cq_entries = NR_BUFS;
+439: 	ret = io_uring_queue_init_params(1, &ring, &p);
+440: 	if (ret) {
+441: 		fprintf(stderr, ""ring setup failed: %d\n"", ret);
+442: 		return 1;
+443: 	}
+444: 
+445: 	fd = mkstemp(fname);",,,,,
+6e0820b37f4b5192,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/splice.c,165,04e311affb860024a459ac4e481983abf48277911220c51cbea1552786c917c2,source_bound,"161: 		}
+162: 
+163: 		ret = io_uring_wait_cqe(ring, &cqe);
+164: 		if (ret < 0) {
+165: 			fprintf(stderr, ""wait completion %d\n"", cqe->res);
+166: 			return ret;
+167: 		}
+168: 
+169: 		if (cqe->res <= 0) {",,,,,
+73efb57877d51d1f,openharmony/third_party_libnl,50736ffd5f57f88ab51e713b4cf75ecf8630cae7,libnl/src/lib/utils.c,98,40ce01e365d95f7cb7dea11a0b94cb01feb10c483fbd002889338081e1d94c28,source_bound,"94: 			buf = strerror_l(err, loc);
+95: #else
+96: 		buf = strerror(err);
+97: #endif
+98: 		fprintf(stderr, ""%s\n"", buf);
+99: #ifdef HAVE_STRERROR_L
+100: 		if (loc != (locale_t)0)
+101: 			freelocale(loc);
+102: #endif",,,,,
+f919f37e930db29f,openharmony/third_party_elfutils,61c7376b0f1c1df91c00bf782836b796a6f32c05,tests/newscn.c,38,229384a8259e32e21bca743f427498623a670d2156788621b2b2ee454b0af2da,source_bound,"34:   Elf_Scn *section;
+35: 
+36:   if (elf_version (EV_CURRENT) == EV_NONE)
+37:     {
+38:       fprintf (stderr, ""library fd of date\n"");
+39:       exit (1);
+40:     }
+41: 
+42:   char name[] = ""test.XXXXXX"";",,,,,
+4854478e3351d4b7,openharmony/third_party_opus,9368c2c8218e99543adc6565614bc5be956b520a,celt/tests/test_unit_entropy.c,334,3c3012064d79fb0826cda7989d028f037d5b6a5640eddb1156e00b711c32dda0,source_bound,"330:   ec_enc_bit_logp(&enc,0,1);
+331:   ec_enc_bit_logp(&enc,0,2);
+332:   ec_enc_patch_initial_bits(&enc,3,2);
+333:   if(enc.error){
+334:     fprintf(stderr,""patch_initial_bits failed"");
+335:     ret=-1;
+336:   }
+337:   ec_enc_patch_initial_bits(&enc,0,5);
+338:   if(!enc.error){",,,,,
+f6ca1296f7314359,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/wq-aff.c,54,855260a317892b2ac22b63745bac1b30df6c3fdba0b88c38a7f3c78629ce6d75,source_bound,"50: 		fprintf(stderr, ""More than one CPU set in mask\n"");
+51: 		return T_EXIT_FAIL;
+52: 	}
+53: 	if (!CPU_ISSET(cpu, &set)) {
+54: 		fprintf(stderr, ""Wrong CPU set in mask\n"");
+55: 		return T_EXIT_FAIL;
+56: 	}
+57: 
+58: 	return T_EXIT_PASS;",,,,,
+007b7a86415c7668,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/short-read.c,45,f69e741b14b71e87d89bc74bbf92234a7fdbf94fb0e2faadae845efa59009970,source_bound,"41: 	}
+42: 
+43: 	ret = io_uring_queue_init(32, &ring, 0);
+44: 	if (ret) {
+45: 		fprintf(stderr, ""queue init failed: %d\n"", ret);
+46: 		return ret;
+47: 	}
+48: 
+49: 	sqe = io_uring_get_sqe(&ring);",,,,,
+65c2a7240e2fea7b,openharmony/third_party_opus,9368c2c8218e99543adc6565614bc5be956b520a,tests/test_opus_padding.c,91,de5a2b5f9f2fc15eb39a406d8ab00f645239c67ff2f0361393c89a75d50b148f,source_bound,"87:   fprintf(stderr, ""Testing %s padding.\n"", oversion);
+88: 
+89:   test_overflow();
+90: 
+91:   fprintf(stderr, ""All padding tests passed.\n"");
+92: 
+93:   return 0;
+94: }",,,,,
+49aabd7928c5b8eb,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/vec-regbuf.c,538,1fc8b3419832727fe75843c15e5a8170881bdb9c758d179496113d4aea416b1b,source_bound,"534: 	total_len = t_iovec_data_length(vecs, nr_vec);
+535: 
+536: 	expected = malloc(total_len);
+537: 	if (!expected) {
+538: 		fprintf(stderr, ""malloc failed\n"");
+539: 		return 1;
+540: 	}
+541: 
+542: 	/* Fill expected buffer with pattern */",,,,,
+f6f1d7b129c99b9d,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/regbuf-clone.c,270,40f5c9b14de1b5047b26b4e0b36195b73e43831d03e4a3fdea2f3fd3ae84e3c6,source_bound,"266: 	}
+267: 
+268: 	ret = io_uring_clone_buffers_offset(&dst, &src, 0, 0, nr, IORING_REGISTER_DST_REPLACE);
+269: 	if (ret) {
+270: 		fprintf(stderr, ""Buffer replace failed: %d\n"", ret);
+271: 		return T_EXIT_FAIL;
+272: 	}
+273: 
+274: 	ret = use_buf(&dst, vecs[0].iov_base, 0);",,,,,
+48bfc21a92e05b6b,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/buf-ring.c,244,227e4db27fbfea6172f90a28d98bc14e3682e0c103b0679c0706abfd7192638a,source_bound,"240: 	reg.bgid = bgid;
+241: 
+242: 	ret = io_uring_register_buf_ring(&ring, &reg, 0);
+243: 	if (ret)
+244: 		fprintf(stderr, ""register buf ring failed %d\n"", ret);
+245: 
+246: 	if (mprotect(ptr + pagesize, pagesize, PROT_READ | PROT_WRITE))
+247: 		fprintf(stderr, ""reverting mprotect failed %d\n"", errno);
+248: ",,,,,
+4c9d83fcf80e55ad,openharmony/third_party_xmp_toolkit_sdk,04054b65245a125cf181ac9edf13dfac08fc47f6,samples/source/UnicodeCorrectness.cpp,694,90792ea066632979c68ae24f6869540c432677a9334f54aae62e34bebe2204d2,source_bound,"690: 		if ( (cp != cpx) || (len != 1) ) fprintf ( log, ""  *** CodePoint_from_UTF16BE failure for U+%.4X\n"", cpx );
+691: 		CodePoint_from_UTF16BE ( u16, 2, &cp, &len );
+692: 		if ( (cp != cpx) || (len != 1) ) fprintf ( log, ""  *** CodePoint_from_UTF16BE failure for U+%.4X\n"", cpx );
+693: 	}
+694: 	fprintf ( log, ""  CodePoint_from_UTF16BE done for %.4X..%.4X\n"", cp0, cpx );
+695: 	
+696: 	// Test the high part of the BMP, E000..FFFF.
+697: 	cp0 = 0xE000;
+698: 	for ( i = cp0; i < 0x10000; ++i ) {",,,,,
+49b1bf5e3a6d9234,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/fd-install.c,195,9c3a1a65e8284d802959540f0344d35505ce0037c3343a2346a7fa0f6251012a,source_bound,"191: 		fprintf(stderr, ""wait cqe %d\n"", ret);
+192: 		return T_EXIT_FAIL;
+193: 	}
+194: 	if (cqe->res != -EBADF) {
+195: 		fprintf(stderr, ""unexpected cqe res %d\n"", cqe->res);
+196: 		return T_EXIT_FAIL;
+197: 	}
+198: 
+199: 	io_uring_cqe_seen(ring, cqe);",,,,,
+17bb48ce6a287e85,openharmony/third_party_xmp_toolkit_sdk,04054b65245a125cf181ac9edf13dfac08fc47f6,XMPCore/source/ExpatAdapter.cpp,328,1de4a5ef012f1350eafa30fcf2388e9794dd43b430acb236b17a4a5f585948d1,source_bound,"324: 	
+325: 	#if XMP_DebugBuild & DumpXMLParseEvents
+326: 		if ( thiz->parseLog != 0 ) {
+327: 			PrintIndent ( thiz->parseLog, thiz->elemNesting );
+328: 			fprintf ( thiz->parseLog, ""StartElement: %s, %d attrs"", name, attrCount );
+329: 			for ( XMP_StringPtr* attr = attrs; *attr != 0; attr += 2 ) {
+330: 				XMP_StringPtr attrName = *attr;
+331: 				XMP_StringPtr attrValue = *(attr+1);
+332: 				fprintf ( thiz->parseLog, "", %s = \""%s\"""", attrName, attrValue );",,,,,
+78aa2477fe06ad56,openharmony/third_party_toybox,7ef9f95da6dfe39b5dd0d743b8a42f52f46fb460,toys/posix/cksum.c,61,deb7424ccc7eb2fe1b3e8d93913985b7e9870bdff411f6fa634692b42fbfba1f,source_bound,"57:                     : (crc<<8) ^ crc_table[(crc>>24)^toybuf[i]];
+58:     if (done) break;
+59:   }
+60: 
+61:   printf(FLAG(H) ? ""%08x"" : ""%u"", FLAG(I) ? crc : ~crc);
+62:   if (!FLAG(N)) printf("" %llu"", llen);
+63:   if (toys.optc) printf("" %s"", name);
+64:   xputc('\n');
+65: }",,,,,
+0e413edfd735617a,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/futex-kill.c,105,17a465a84b1a1b19a7685c1a143646767b232325c461c21d77dcc1ff4bd086b3,source_bound,"101: 	}
+102: 
+103: 	ret = test(0, 1, 1);
+104: 	if (ret == T_EXIT_FAIL) {
+105: 		fprintf(stderr, ""test 0 1 1 failed\n"");
+106: 		return T_EXIT_FAIL;
+107: 	}
+108: 
+109: ",,,,,
+621033e1e7febcf9,openharmony/third_party_bzip2,2ce912118a4736129b568db3401af4bc0726d538,bzlib_private.h,65,c0cda4f35ee1f2d54c9beacd524f8d28e0dbf8494aca30d854af3f143af4341b,source_bound,"61: 
+62: #if BZ_DEBUG
+63: #define AssertD(cond,msg) \
+64:    { if (!(cond)) {       \
+65:       fprintf ( stderr,   \
+66:         ""\n\nlibbzip2(debug build): internal error\n\t%s\n"", msg );\
+67:       exit(1); \
+68:    }}
+69: #else",,,,,
+944fd1c823c4347b,openharmony/third_party_alsa-lib,b3e1f598becc8d3ada82b58f1853d12d7fc51c61,test/lsb/test.h,20,57916b7f86fc14415b555467fde45b838ae5b7d56564fd09ea4402859dd8db5d,source_bound,"16: 
+17: #define ALSA_CHECK(fn) ({ \
+18: 		int err = fn; \
+19: 		if (err < 0) { \
+20: 			fprintf(stderr, ""%s:%d: ALSA function call failed (%s): %s\n"", \
+21: 				__FILE__, __LINE__, snd_strerror(err), #fn); \
+22: 			any_test_failed = 1; \
+23: 		} \
+24: 		err; \",,,,,
+b5510118dbda5dd3,openharmony/third_party_cups-filters,3430c32fa92b06533333f04264f01f984b9fbc92,fontembed/test_pdf.c,45,59eae3cbb71d52841332fbbdd493c22785837d499ba979a1ff9db919ca18956a,source_bound,"41:   stream_len+=ftell(f); \
+42:   fprintf(f,""endstream\n"" \
+43:             ""endobj\n""); \
+44:   OBJ; \
+45:   fprintf(f,""%d\n"",stream_len); \
+46:   ENDOBJ;
+47: 
+48: static inline void write_string(FILE *f,EMB_PARAMS *emb,const char *str) // {{{
+49: {",,,,,
+277c2effbdbc53f9,openharmony/tee_tee_os_framework,a3bc9d9818e262f36e82ea4d7774d67845d61dd1,test/xts/utils/include/test_log.h,25,25d478420419b5a07ab2ec92b46454bff2ff24fcd3bfcbd8998a8062ca75898b,source_bound,"21: } while (0)
+22: 
+23: #define TEST_PRINT_ERROR(fmt, ...)                                                  \
+24: do {                                                                                \
+25:         fprintf(stderr, ""[Err] [%s, %d] "" fmt ""\n"", FILENAME, __LINE__, ##__VA_ARGS__);   \
+26: } while (0)
+27: 
+28: #endif",,,,,
+65abe146d3ca955c,openharmony/vendor_hisilicon,1514a40919c328f4ff34e93bdb6cd4a5f7b1f945,hispark_pegasus/demo/mqtt_demo/iot_log.h,79,7c45a26cf5229313e34aba98bc29decf7a38787a66882faa0e5f25180812ca47,source_bound,"75: #ifndef IOT_PRINT
+76: #define IOT_PRINT(fmt, ...) \
+77:     do \
+78:     { \
+79:         printf(fmt, ##__VA_ARGS__); \
+80:     }while (0)
+81: #endif
+82: 
+83: #ifdef CONFIG_LINKLOG_ENABLE",,,,,
+286da180f37197ce,openharmony/third_party_popt,9274fa66362f73f8079785698602c171337d69e1,src/popt.c,1200,97de2df582f1adc3c3de0f156c17c580d66ca6cf85522d25d3e65e50fc00ad05,source_bound,"1196:     case POPT_ARG_MAINCALL:
+1197: 	con->maincall = opt->arg;
+1198: 	break;
+1199:     default:
+1200: 	fprintf(stdout, POPT_(""option type (%u) not implemented in popt\n""),
+1201: 		poptArgType(opt));
+1202: 	exit(EXIT_FAILURE);
+1203: 	break;
+1204:     }",,,,,
+d22f847b3fa5e1b7,openharmony/third_party_ntfs-3g,c6a9cfa018db3838c282f6f91f3b26a99211174a,libfuse-lite/fuse_kern_chan.c,52,b26ba9a174100f7e83667ab4106c547b271f956e1a92fec10be2242a68c611e9,source_bound,"48:             perror(""fuse: reading device"");
+49:         return -err;
+50:     }
+51:     if ((size_t) res < sizeof(struct fuse_in_header)) {
+52:         fprintf(stderr, ""short read on fuse device\n"");
+53:         return -EIO;
+54:     }
+55:     return res;
+56: }",,,,,
+1c31a0dc0ace81a2,openharmony/third_party_cups-filters,3430c32fa92b06533333f04264f01f984b9fbc92,backend/implicitclass.c,405,f03a4aeb682f87f0530a795d1a6146d884379399bf369bd1b5d9749cde75a3ad,source_bound,"401: 	int status;
+402: 	waitpid(pid, &status, 0);
+403: 	if (WIFEXITED(status)) {
+404: 	  exit_status = WEXITSTATUS(status);
+405: 	  fprintf(stderr, ""DEBUG: The IPP Backend exited with the status %d\n"",
+406: 		  exit_status);
+407: 	}
+408: 	return exit_status;
+409:       }",,,,,
+60769dc821c5bdde,openharmony/third_party_alsa-utils,68ec55a382e3a4c50c05a1b2bf97737f70c87185,bat/alsa.c,173,c092508aa9e603e357b077e787cc20fca39a3cd7aefe09f438b69934ec488d0b,source_bound,"169: 		if (snd_pcm_hw_params_get_period_size_min(params,
+170: 				&period_size, 0) < 0) {
+171: 			fprintf(bat->err,
+172: 					_(""Get parameter from device error: ""));
+173: 			fprintf(bat->err, _(""period size min: %d %s: %s(%d)\n""),
+174: 					(int) period_size,
+175: 					device_name, snd_strerror(err), err);
+176: 			return -EINVAL;
+177: 		}",,,,,
+6b10351c3d20cdd9,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/recv-mshot-fair.c,467,bbc5a70457c321533b70189103cfd954a026a58d8f411783113025f21d2a5718,source_bound,"463: 	}
+464: 
+465: 	ret = test(2, 0, 0, IORING_SETUP_DEFER_TASKRUN | IORING_SETUP_SINGLE_ISSUER, &r);
+466: 	if (ret) {
+467: 		fprintf(stderr, ""test DEFER failed\n"");
+468: 		return T_EXIT_FAIL;
+469: 	}
+470: 
+471: 	if (r.unfair || r.mshot_too_big) {",,,,,
+231c369514a4081a,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/io-cancel.c,49,1401d0718c56813d724ee5140dd840789df1c337c40b62f7f001455019335dd0,source_bound,"45: 	}
+46: 
+47: 	ret = io_uring_submit(ring);
+48: 	if (ret != BUFFERS) {
+49: 		fprintf(stderr, ""submit got %d, wanted %d\n"", ret, BUFFERS);
+50: 		goto err;
+51: 	}
+52: 
+53: 	return 0;",,,,,
+8375bb9cff3b07f0,openharmony/third_party_iptables,ee2df27ef936cf1dac28c2bfb2dd17f6eb71fd47,iptables/xtables-save.c,171,512966dd089989f5bf563dc50d422106cfc5cf305c801d7bad185cfc4acf620d,source_bound,"167: 			break;
+168: 		case 'f':
+169: 			file = fopen(optarg, ""w"");
+170: 			if (file == NULL) {
+171: 				fprintf(stderr, ""Failed to open file, error: %s\n"",
+172: 					strerror(errno));
+173: 				exit(1);
+174: 			}
+175: 			ret = dup2(fileno(file), STDOUT_FILENO);",,,,,
+cd3fedff6f9927f2,openharmony/third_party_liburing,06e732fdcfb3051952ad7f257f0cacda19fc80e0,test/recv-multishot.c,49,fad09f20184754e4ccee66ed5b19e80db4154be4ae089ac6cdbfad5e1fb98385,source_bound,"45: 	if (memcmp(&expected, &in->sin_addr, sizeof(in->sin_addr))) {
+46: 		char buff[256];
+47: 		const char *addr = inet_ntop(AF_INET, &in->sin_addr, buff, sizeof(buff));
+48: 
+49: 		fprintf(stderr, ""unexpected address %s\n"", addr ? addr : ""INVALID"");
+50: 		return -1;
+51: 	}
+52: 	return 0;
+53: }",,,,,
+10134f70e4e0f7c5,openharmony/third_party_opus,9368c2c8218e99543adc6565614bc5be956b520a,silk/debug.c,118,1958d5e7580532722c590bac325ac5873da69712c13f187f2c5284d2b7ead48b,source_bound,"114:                 fprintf(fp, ""%-28s"", silk_Timer_tags[k]);
+115:             } else if (silk_Timer_depth[k] == 1) {
+116:                 fprintf(fp, "" %-27s"", silk_Timer_tags[k]);
+117:             } else if (silk_Timer_depth[k] == 2) {
+118:                 fprintf(fp, ""  %-26s"", silk_Timer_tags[k]);
+119:             } else if (silk_Timer_depth[k] == 3) {
+120:                 fprintf(fp, ""   %-25s"", silk_Timer_tags[k]);
+121:             } else {
+122:                 fprintf(fp, ""    %-24s"", silk_Timer_tags[k]);",,,,,
+78a43b9d2d9844eb,openharmony/third_party_libuv,9a772139aaf711a9156764a41bcd2fdd476aef5f,test/test-getsockname.c,180,ac054ef39d6c300a03a5295003fc0deafcb44889fa4915ae7dec09dafe149642,source_bound,"176:   ASSERT_OK(uv_ip4_addr(""0.0.0.0"", server_port, &addr));
+177: 
+178:   r = uv_tcp_init(loop, &tcpServer);
+179:   if (r) {
+180:     fprintf(stderr, ""Socket creation error\n"");
+181:     return 1;
+182:   }
+183: 
+184:   r = uv_tcp_bind(&tcpServer, (const struct sockaddr*) &addr, 0);",,,,,
+9f7a2665a95c4d94,openharmony/third_party_libnl,50736ffd5f57f88ab51e713b4cf75ecf8630cae7,libnl/lib/xfrm/selector.c,78,35aafb86fe529ba5a63eabce833d9a00dd5d9182cd0591258148c8202776a78d,source_bound,"74: 		return;
+75: 
+76: 	if (sel->refcnt != 1)
+77: 	{
+78: 		fprintf(stderr, ""BUG: %s:%d\n"", __FILE__, __LINE__);
+79: 		assert(0);
+80: 	}
+81: 
+82: 	nl_addr_put (sel->daddr);",,,,,
+d1ec3d45d1b96cca,openharmony/third_party_rust_linux-raw-sys,69ed916408b32330f7835a341448106e98e688d5,gen/ioctl/list.c,3,f67ac71040f57500b39df67974ad11deb51f549bff74c6d1e3d76cc2b0e5d2cb,source_bound,"1: // Manually declare things so that we don't pick up any extraneous userspace
+2: // headers.
+3: int printf(const char *, ...);
+4: 
+5: typedef __UINT32_TYPE__ u32;
+6: typedef __UINT64_TYPE__ u64;
+7: typedef __INT64_TYPE__ int64_t;",,,,,
+1300002d2a828ab0,openharmony/third_party_googletest,cc04e6f4e30df6a3e1c913ee14ffb30eee203c30,googletest/samples/sample9_unittest.cc,54,66e830e1cd61bbcc8117ebce7c631ed6c23411e167537a84fbbd6a527cea16e2,source_bound,"50:   void OnTestProgramStart(const UnitTest& /* unit_test */) override {}
+51: 
+52:   // Called after all test activities have ended.
+53:   void OnTestProgramEnd(const UnitTest& unit_test) override {
+54:     fprintf(stdout, ""TEST %s\n"", unit_test.Passed() ? ""PASSED"" : ""FAILED"");
+55:     fflush(stdout);
+56:   }
+57: 
+58:   // Called before a test starts.",,,,,
+cc45d484e6965df1,openharmony/third_party_libabigail,083177cdb81703aa5c35865184c7844e21d1e63a,tests/data/test-diff-dwarf/test42-PR21296-clanggcc.cc,21,930e7ba8719c298f46a5424cb9b9d4141e618c1a7df6d6961c1bb7d92d169da3,source_bound,"17:    STR(STR&& O): C(O.C) { O.C = 0; }
+18:    char* C;
+19: };
+20: 
+21: extern ""C"" int printf(const char*,...);
+22: 
+23: namespace std
+24: {
+25: ",,,,,
+1785515bfda690b7,openharmony/third_party_sane-airscan,23f08604c5e46b11c0952f8a52ae5cd20a464b48,airscan-devops.c,857,85fd02bd985dacc2576003d469e83cc83ceda3e712a84f0d349f30f08fc6ad4a,source_bound,"853:         break;
+854: 
+855:     case OPT_JUSTIFICATION_Y:
+856:         s = id_justification_sane_name(opt->caps.justification_y);
+857:         strcpy(value, s ? s : """");
+858:         break;
+859: 
+860:     default:
+861:         status = SANE_STATUS_INVAL;",,,,,
+c064287da64d15f3,openharmony/third_party_sane-airscan,23f08604c5e46b11c0952f8a52ae5cd20a464b48,airscan-devops.c,803,85fd02bd985dacc2576003d469e83cc83ceda3e712a84f0d349f30f08fc6ad4a,source_bound,"799:         strcpy(value, id_colormode_sane_name(opt->colormode_emul));
+800:         break;
+801: 
+802:     case OPT_SCAN_INTENT:
+803:         strcpy(value, id_scanintent_sane_name(opt->scanintent));
+804:         break;
+805: 
+806:     case OPT_SCAN_SOURCE:
+807:         strcpy(value, id_source_sane_name(opt->src));",,,,,
+1549faf2a5d0a5a4,openharmony/third_party_cups-filters,3430c32fa92b06533333f04264f01f984b9fbc92,filter/imagetoraster.c,1118,b396432e3fd5463aff45d3c4e4deb8cc97567b943eb8f6d09736a51e42c1b96d,source_bound,"1114:    /*
+1115:     * Set the new custom size...
+1116:     */
+1117: 
+1118:     strcpy(header.cupsPageSizeName, ""Custom"");
+1119: 
+1120:     header.cupsPageSize[0] = width + 0.5;
+1121:     header.cupsPageSize[1] = length + 0.5;
+1122:     header.PageSize[0]     = width + 0.5;",,,,,
+ac21b544a7e56ff3,openharmony/third_party_libexif,27df1716930f82a6cfb1400ba12ea170925c6778,libexif/olympus/exif-mnote-data-olympus.c,174,9353772b9470f2cde2de597f044fa0833de1c65e7f12dd44ff33c0bdbf1b98e4,source_bound,"170: 			return;
+171: 		}
+172: 
+173: 		/* Write the header and the number of entries. */
+174: 		strcpy ((char *)*buf, ""Nikon"");
+175: 		(*buf)[6] = (unsigned char)n->version;
+176: 
+177: 		if (n->version != nikonV1) {
+178: 			exif_set_short (*buf + 10, n->order, (ExifShort) (",,,,,
+c18524033996acfe,openharmony/third_party_cups-filters,3430c32fa92b06533333f04264f01f984b9fbc92,backend/serial.c,996,d4eb175b988795e750877c410b8946f96c34e9abb4733eaabb772792bf7cfd0c,source_bound,"992: 
+993:   for (i = 0; i < 16; i ++) /* Should be up to 65536 boards... */
+994:     for (j = 0; j < 32; j ++)
+995:     {
+996:       sprintf(device, ""/dev/ttyc%d%c"", i, funky_hex[j]);
+997:       if ((fd = open(device, O_WRONLY | O_NOCTTY | O_NDELAY)) >= 0)
+998:       {
+999: 	close(fd);
+1000: 	printf(""serial serial:%s?baud=115200 \""Unknown\"" \""Cyclades #%d Serial Port #%d\""\n"",",,,,,
+6073d8ab540d9121,openharmony/third_party_cups-filters,3430c32fa92b06533333f04264f01f984b9fbc92,cupsfilters/testcmyk.c,149,bac7765d4dcb0fbac7f48b9f29a6517c2c715f3d431a263040387e1cb2423142,source_bound,"145:   */
+146: 
+147:   for (i = 0; i < num_comps; i ++)
+148:   {
+149:     sprintf(filename, ""%s%d.pgm"", basename, i);
+150:     out[i] = fopen(filename, ""wb"");
+151: 
+152:     fprintf(out[i], ""P5\n%d %d 255\n"", width, height);
+153:   }",,,,,
+087f75b8e4de8651,openharmony/third_party_alsa-utils,68ec55a382e3a4c50c05a1b2bf97737f70c87185,seq/aseqsend/aseqsend.c,161,b29d9f45b8273d9be60eadc66df0c4f2fe954ddb7b0a3667e87bee9ca3298c00,source_bound,"157: 		strcat(s, "" "");
+158: 	} else {
+159: 		s[0] = '\0';
+160: 	}
+161: 	strcat(s, str);
+162: 	free(send_hex);
+163: 	send_hex = s;
+164: }
+165: ",,,,,
+8ff996443b5b97ed,openharmony/third_party_toybox,7ef9f95da6dfe39b5dd0d743b8a42f52f46fb460,toys/other/ascii.c,44,f0ffcabda5322826cb2b6b0de8af9294ad3075f59a5101e0a9da8ae398a5dbb5,source_bound,"40:                  ""DC3DC4NAKSYNETBCANEM SUBESCFS GS RS US "";
+41: 
+42: static void codepoint(unsigned wc)
+43: {
+44:   char *s = toybuf + sprintf(toybuf, ""U+%04X : "", wc), *ss;
+45:   unsigned n, i;
+46: 
+47:   if (wc>31 && wc!=127) {
+48:     s += n = wctoutf8(ss = s, wc);",,,,,
+07ff5ef99a7591cf,openharmony/third_party_opus,9368c2c8218e99543adc6565614bc5be956b520a,dnn/osce.c,1943,ee368fd5c11b7a657b6d20b00ab9909e90f0e78c6f77e6aaef80f5050ca8d7eb,source_bound,"1939:     strcat(feature_file, ""_features.f32"");
+1940:     f_features = fopen(feature_file, ""rb"");
+1941:     if (f_features == NULL)
+1942:     {
+1943:         sprintf(message, ""could not open file %s"", feature_file);
+1944:         perror(message);
+1945:         exit(1);
+1946:     }
+1947: ",,,,,
+89a0cb9209f3ecd5,openharmony/third_party_toybox,7ef9f95da6dfe39b5dd0d743b8a42f52f46fb460,porting/liteos_a/lib/xwrap.c,19,0f877619ecb30802e8ccc54e7a4a8ea989d126e6617fbadc0b227d731c68a15e,source_bound,"15: // still broken behavior. (And leaving the string unterminated is INSANE.)
+16: void xstrncpy(char *dest, char *src, size_t size)
+17: {
+18:   if (strlen(src)+1 > size) error_exit(""'%s' > %ld bytes"", src, (long)size);
+19:   strcpy(dest, src);
+20: }
+21: 
+22: void xstrncat(char *dest, char *src, size_t size)
+23: {",,,,,
+00dcc246324d4499,openharmony/tee_tee_os_kernel,f4ef1dbe90ad73d57a1084719a314e5ba6830bb2,user/system-services/chcore-libc/libchcore/porting/overrides/src/chcore-port/syscall_dispatcher.c,309,f81ed008e6a3b86f49c3a57155e03a6d257ec096ec294fe15edb8e68c4303d4d,source_bound,"305:         debug(""ignore SYS_umask\n"");
+306:         return 0;
+307:     case SYS_uname: {
+308:         struct utsname *buf = (struct utsname *)a;
+309:         strcpy(buf->sysname, ""ChCore"");
+310:         strcpy(buf->nodename, """");
+311:         strcpy(buf->release, ""0.0.0"");
+312:         strcpy(buf->version, ""0.0.0"");
+313:         strcpy(buf->machine, """");",,,,,
+48d749746cb3a644,openharmony/third_party_iptables,ee2df27ef936cf1dac28c2bfb2dd17f6eb71fd47,iptables/nft-ruleparse.c,635,df86ec26871050344fce78a943694357c477dd4cbe0f40d0b727950421478697,source_bound,"631: 	m = xtables_calloc(1, sizeof(struct xt_entry_match) + mt_len);
+632: 	memcpy(&m->data, mt_info, mt_len);
+633: 	m->u.match_size = mt_len + XT_ALIGN(sizeof(struct xt_entry_match));
+634: 	m->u.user.revision = nftnl_expr_get_u32(e, NFTNL_EXPR_TG_REV);
+635: 	strcpy(m->u.user.name, match->name);
+636: 
+637: 	match->m = m;
+638: 
+639: 	if (ctx->h->ops->rule_parse->match != NULL)",,,,,
+e2da29118cebd085,openharmony/third_party_opus,9368c2c8218e99543adc6565614bc5be956b520a,silk/debug.h,111,6f02588379145c4ddcbd01dfaf8bb55d06b1f477120d7eb24e389ec57004388d,source_bound,"107:         if (ID == -1) {                                     \
+108:             ID = silk_Timer_nTimers;                        \
+109:             silk_Timer_nTimers++;                           \
+110:             silk_Timer_depth[ID] = silk_Timer_depth_ctr;    \
+111:             strcpy(silk_Timer_tags[ID], #TAG_NAME);         \
+112:             silk_Timer_cnt[ID] = 0;                         \
+113:             silk_Timer_sum[ID] = 0;                         \
+114:             silk_Timer_min[ID] = 0xFFFFFFFF;                \
+115:             silk_Timer_max[ID] = 0;                         \",,,,,
+e0a9fbc0d62e5c73,openharmony/third_party_sane-airscan,23f08604c5e46b11c0952f8a52ae5cd20a464b48,airscan-ip.c,85,5b364fcb4d06609ee97d4f40b0f7968ab9fc1cbf3d9ff199e66d517ae994f836,source_bound,"81:                 inet_ntop(AF_INET6, &addr_in6->sin6_addr,
+82:                     straddr.text + 1, sizeof(straddr.text) - 2);
+83:                 if (withzone && addr_in6->sin6_scope_id != 0 &&
+84:                     ip_sockaddr_is_linklocal(addr)) {
+85:                     sprintf(straddr.text + strlen(straddr.text), ""%%%d"",
+86:                         addr_in6->sin6_scope_id);
+87:                 }
+88:                 strcat(straddr.text, ""]"");
+89:         }",,,,,
+3b4e58392a3c2184,openharmony/third_party_cups-filters,3430c32fa92b06533333f04264f01f984b9fbc92,filter/foomatic-rip/options.c,1243,2bf4f971dfd16f58ec7ec338408a6529aae7c2430fa202a05d7e7d67ad67f014,source_bound,"1239:                 repl = tmpstr;
+1240:                 p = psrc + 4;
+1241:             }
+1242:             else if (!prefixcmp(psrc, ""min"")) {
+1243:                 sprintf(tmpstr, ""%02d"", t->tm_min);
+1244:                 repl = tmpstr;
+1245:                 p = psrc + 3;
+1246:             }
+1247:             else if (!prefixcmp(psrc, ""sec"")) {",,,,,
+12d5e2b92fb2d5d9,openharmony/third_party_ntfs-3g,c6a9cfa018db3838c282f6f91f3b26a99211174a,libntfs-3g/reparse.c,647,e4ac0065da6bb71f126f2b006c8b3cb195fadc480fcd05b44dc961d269f49af5,source_bound,"643: 			if (fulltarget) {
+644: 				strcpy(fulltarget,mnt_point);
+645: 				strcat(fulltarget,""/"");
+646: 				strcat(fulltarget,mappingdir);
+647: 				strcat(fulltarget,target);
+648: 			}
+649: 		}
+650: 		if (target)
+651: 			free(target);",,,,,
+6aa909f9144be97c,openharmony/third_party_toybox,7ef9f95da6dfe39b5dd0d743b8a42f52f46fb460,porting/liteos_a/lib/dirtree.c,64,e6aa38666ca7d50238afcc1ba3c39e2ced266ddf1bb2076f9a0ae6a1f605a93c,source_bound,"60:     : offsetof(struct dirtree, st));
+61:   dt->parent = parent;
+62:   dt->again = statless ? 2 : 0;
+63:   if (!statless) memcpy(&dt->st, &st, sizeof(struct stat));
+64:   strcpy(dt->name, name ? name : """");
+65:   if (linklen) dt->symlink = memcpy(len+(char *)dt, libbuf, linklen);
+66: 
+67:   return dt;
+68: ",,,,,
+97dd59884ef3efd6,openharmony/kernel_liteos_m,32beca78be1fd2a23c8b275a6c5853fa38dbd67f,components/lms/lms_libc.c,59,e4d6efd8c97e96b0f9bd2fc9b8f1ed4fb5200cb56875f903e62db0fbc6e5e0e4,source_bound,"55:     return __memcpy(dest, src, len);
+56: }
+57: 
+58: #undef strcat
+59: char *strcat(char *s, const char *append)
+60: {
+61:     if ((s == NULL) || (append == NULL)) {
+62:         return NULL;
+63:     }",,,,,

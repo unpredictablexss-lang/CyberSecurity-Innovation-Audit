@@ -1,0 +1,184 @@
+{
+  "schema_version": "ohscanner.a-unsafe-literal-format-conditional-replay-v1",
+  "source_run_signature": "1696df82f39e2564e0821c0ad2e837a00c6d83f9276bf5e0c38a3bd1f511700b",
+  "scanner_commit": "0d9357ea22224b72c9756864dbd14b71a4723924",
+  "candidate_results_sha256": "e6473b915a82f751e517c1953014f19a1963ad5b8891d7aaee6923b715756f25",
+  "before_detector": {
+    "version": "0.1.0",
+    "source_sha256": "cd4825a5387c5fd2415a7b5ac8d6fc7989a2222bd7f699507e63ad4c4b443e52"
+  },
+  "after_detector": {
+    "version": "0.4.0",
+    "source_sha256": "8d155c46244981c8c914650f5c762b9c6689d9a023fdc98bf2e1599df9d7cc74"
+  },
+  "scope": "All scan observations for format-rule candidates whose recorded expression contains a conditional operator; exact original source hashes are required.",
+  "counts": {
+    "candidate_rows": 14,
+    "unique_source_files": 7,
+    "source_hashes_matched": 7,
+    "baseline_reproduced": 14,
+    "literal_conditionals_suppressed": 8,
+    "macro_or_dynamic_conditionals_retained": 6
+  },
+  "rows": [
+    {
+      "repository": "openharmony/applications_sample_wifi_iot",
+      "file": "app/samgr/bootstrap_example.c",
+      "line": 158,
+      "column": 5,
+      "source_sha256": "e87b34e38679e2a949895cab856258e17007e40a8bce5884ffd174caaf17311a",
+      "diagnostic_id": "ohscanner.cpp.unsafe_memory_call:e6fc44ba0384170a",
+      "classification": "literal_arms",
+      "before_present": true,
+      "after_present": false
+    },
+    {
+      "repository": "openharmony/applications_sample_wifi_iot",
+      "file": "app/samgr/bootstrap_example.c",
+      "line": 169,
+      "column": 5,
+      "source_sha256": "e87b34e38679e2a949895cab856258e17007e40a8bce5884ffd174caaf17311a",
+      "diagnostic_id": "ohscanner.cpp.unsafe_memory_call:0f8b564361df8072",
+      "classification": "literal_arms",
+      "before_present": true,
+      "after_present": false
+    },
+    {
+      "repository": "openharmony/third_party_FreeBSD",
+      "file": "sbin/newfs_msdos/mkfs_msdos.c",
+      "line": 1016,
+      "column": 2,
+      "source_sha256": "7428fe745ef3f865e358cb2d94b91bcbef531bc5648c24c6a2ec5c8faec84d38",
+      "diagnostic_id": "ohscanner.cpp.unsafe_memory_call:150f8d23762dc8b0",
+      "classification": "literal_arms",
+      "before_present": true,
+      "after_present": false
+    },
+    {
+      "repository": "openharmony/third_party_FreeBSD",
+      "file": "sbin/newfs_msdos/mkfs_msdos.c",
+      "line": 1018,
+      "column": 2,
+      "source_sha256": "7428fe745ef3f865e358cb2d94b91bcbef531bc5648c24c6a2ec5c8faec84d38",
+      "diagnostic_id": "ohscanner.cpp.unsafe_memory_call:92045f06c550f9ed",
+      "classification": "literal_arms",
+      "before_present": true,
+      "after_present": false
+    },
+    {
+      "repository": "openharmony/third_party_elfutils",
+      "file": "src/size.c",
+      "line": 435,
+      "column": 4,
+      "source_sha256": "bf8ad1d0b7151d2726a7549644c8cdaf23710abf165b5b50d2b164d460385dc0",
+      "diagnostic_id": "ohscanner.cpp.unsafe_memory_call:3743588d95065272",
+      "classification": "nonliteral_or_macro_arms",
+      "before_present": true,
+      "after_present": true
+    },
+    {
+      "repository": "openharmony/third_party_elfutils",
+      "file": "src/size.c",
+      "line": 489,
+      "column": 7,
+      "source_sha256": "bf8ad1d0b7151d2726a7549644c8cdaf23710abf165b5b50d2b164d460385dc0",
+      "diagnostic_id": "ohscanner.cpp.unsafe_memory_call:52848ed1d4add5c2",
+      "classification": "nonliteral_or_macro_arms",
+      "before_present": true,
+      "after_present": true
+    },
+    {
+      "repository": "openharmony/third_party_elfutils",
+      "file": "src/size.c",
+      "line": 545,
+      "column": 3,
+      "source_sha256": "bf8ad1d0b7151d2726a7549644c8cdaf23710abf165b5b50d2b164d460385dc0",
+      "diagnostic_id": "ohscanner.cpp.unsafe_memory_call:356df2dae711d48d",
+      "classification": "nonliteral_or_macro_arms",
+      "before_present": true,
+      "after_present": true
+    },
+    {
+      "repository": "openharmony/third_party_elfutils",
+      "file": "src/size.c",
+      "line": 613,
+      "column": 7,
+      "source_sha256": "bf8ad1d0b7151d2726a7549644c8cdaf23710abf165b5b50d2b164d460385dc0",
+      "diagnostic_id": "ohscanner.cpp.unsafe_memory_call:31b4b067a1436555",
+      "classification": "nonliteral_or_macro_arms",
+      "before_present": true,
+      "after_present": true
+    },
+    {
+      "repository": "openharmony/third_party_elfutils",
+      "file": "src/strings.c",
+      "line": 353,
+      "column": 3,
+      "source_sha256": "6c7261bdde52d387add9b63e94525c8289d5dde8f95a04ecd1769239439ccd91",
+      "diagnostic_id": "ohscanner.cpp.unsafe_memory_call:01c2d0af7ed38200",
+      "classification": "nonliteral_or_macro_arms",
+      "before_present": true,
+      "after_present": true
+    },
+    {
+      "repository": "openharmony/third_party_elfutils",
+      "file": "src/strings.c",
+      "line": 421,
+      "column": 3,
+      "source_sha256": "6c7261bdde52d387add9b63e94525c8289d5dde8f95a04ecd1769239439ccd91",
+      "diagnostic_id": "ohscanner.cpp.unsafe_memory_call:d63c174ae9a65a58",
+      "classification": "nonliteral_or_macro_arms",
+      "before_present": true,
+      "after_present": true
+    },
+    {
+      "repository": "openharmony/third_party_ntfs-3g",
+      "file": "ntfsprogs/ntfsinfo.c",
+      "line": 2041,
+      "column": 3,
+      "source_sha256": "d5b95462b14e0056df1d881abc7f8ac0d06d52a740dc03f012bfa7414b9d114c",
+      "diagnostic_id": "ohscanner.cpp.unsafe_memory_call:94915ee470131e8c",
+      "classification": "literal_arms",
+      "before_present": true,
+      "after_present": false
+    },
+    {
+      "repository": "openharmony/third_party_ntfs-3g",
+      "file": "ntfsprogs/ntfsinfo.c",
+      "line": 2159,
+      "column": 4,
+      "source_sha256": "d5b95462b14e0056df1d881abc7f8ac0d06d52a740dc03f012bfa7414b9d114c",
+      "diagnostic_id": "ohscanner.cpp.unsafe_memory_call:89763aa8da009b36",
+      "classification": "literal_arms",
+      "before_present": true,
+      "after_present": false
+    },
+    {
+      "repository": "openharmony/third_party_ntfs-3g",
+      "file": "ntfsprogs/ntfsrecover.c",
+      "line": 397,
+      "column": 4,
+      "source_sha256": "fe94b6de958989cbdc72c07c6d4d382d827f83865e2722907d2ea4a00350ec1e",
+      "diagnostic_id": "ohscanner.cpp.unsafe_memory_call:ca44be74a2b84e91",
+      "classification": "literal_arms",
+      "before_present": true,
+      "after_present": false
+    },
+    {
+      "repository": "openharmony/third_party_toybox",
+      "file": "toys/posix/cksum.c",
+      "line": 61,
+      "column": 3,
+      "source_sha256": "deb7424ccc7eb2fe1b3e8d93913985b7e9870bdff411f6fa634692b42fbfba1f",
+      "diagnostic_id": "ohscanner.cpp.unsafe_memory_call:b9f07e612c429fce",
+      "classification": "literal_arms",
+      "before_present": true,
+      "after_present": false
+    }
+  ],
+  "tooling": {
+    "python": "3.13.9",
+    "mode": "in-process pinned source replay; no CFG or accuracy claim"
+  },
+  "interpretation": "This replay validates a syntax-based suppression boundary on exact previously observed source locations. It does not establish security safety, exploitability, or a false-positive rate."
+}

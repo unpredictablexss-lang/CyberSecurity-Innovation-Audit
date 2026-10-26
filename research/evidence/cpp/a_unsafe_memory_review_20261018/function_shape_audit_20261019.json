@@ -1,0 +1,215 @@
+{
+  "audit_status": "PASS",
+  "candidate_csv_sha256": "e6473b915a82f751e517c1953014f19a1963ad5b8891d7aaee6923b715756f25",
+  "compact_summary_sha256": "64659a67f03d3b48acca717e0768c3274f51f4b9e574df9151ee79a8b35346db",
+  "detector_summary_sha256": "f91e58e697e6a0e53f2e86fdbfc5f5a555bb9e2d619dd317603456d16ced1d55",
+  "expected_population_claim": 8994,
+  "frame_status": "provisional_population_mismatch",
+  "function_shape_population": [
+    {
+      "function_shape": "free_function",
+      "population": 8004,
+      "population_share_of_frame": 0.858522,
+      "rule_id": "ohcpp-format-string-candidate-002"
+    },
+    {
+      "function_shape": "macro_definition_body",
+      "population": 123,
+      "population_share_of_frame": 0.013193,
+      "rule_id": "ohcpp-format-string-candidate-002"
+    },
+    {
+      "function_shape": "member_method",
+      "population": 524,
+      "population_share_of_frame": 0.056205,
+      "rule_id": "ohcpp-format-string-candidate-002"
+    },
+    {
+      "function_shape": "outside_named_function",
+      "population": 10,
+      "population_share_of_frame": 0.001073,
+      "rule_id": "ohcpp-format-string-candidate-002"
+    },
+    {
+      "function_shape": "free_function",
+      "population": 599,
+      "population_share_of_frame": 0.06425,
+      "rule_id": "ohcpp-unsafe-memory-call-candidate-001"
+    },
+    {
+      "function_shape": "macro_definition_body",
+      "population": 4,
+      "population_share_of_frame": 0.000429,
+      "rule_id": "ohcpp-unsafe-memory-call-candidate-001"
+    },
+    {
+      "function_shape": "member_method",
+      "population": 57,
+      "population_share_of_frame": 0.006114,
+      "rule_id": "ohcpp-unsafe-memory-call-candidate-001"
+    },
+    {
+      "function_shape": "outside_named_function",
+      "population": 2,
+      "population_share_of_frame": 0.000215,
+      "rule_id": "ohcpp-unsafe-memory-call-candidate-001"
+    }
+  ],
+  "function_shape_strata": [
+    {
+      "function_shape": "free_function",
+      "population": 174,
+      "repository_scale": "Q2",
+      "rule_id": "ohcpp-format-string-candidate-002"
+    },
+    {
+      "function_shape": "free_function",
+      "population": 3213,
+      "repository_scale": "Q3",
+      "rule_id": "ohcpp-format-string-candidate-002"
+    },
+    {
+      "function_shape": "free_function",
+      "population": 4617,
+      "repository_scale": "Q4",
+      "rule_id": "ohcpp-format-string-candidate-002"
+    },
+    {
+      "function_shape": "macro_definition_body",
+      "population": 11,
+      "repository_scale": "Q2",
+      "rule_id": "ohcpp-format-string-candidate-002"
+    },
+    {
+      "function_shape": "macro_definition_body",
+      "population": 44,
+      "repository_scale": "Q3",
+      "rule_id": "ohcpp-format-string-candidate-002"
+    },
+    {
+      "function_shape": "macro_definition_body",
+      "population": 68,
+      "repository_scale": "Q4",
+      "rule_id": "ohcpp-format-string-candidate-002"
+    },
+    {
+      "function_shape": "member_method",
+      "population": 1,
+      "repository_scale": "Q2",
+      "rule_id": "ohcpp-format-string-candidate-002"
+    },
+    {
+      "function_shape": "member_method",
+      "population": 138,
+      "repository_scale": "Q3",
+      "rule_id": "ohcpp-format-string-candidate-002"
+    },
+    {
+      "function_shape": "member_method",
+      "population": 385,
+      "repository_scale": "Q4",
+      "rule_id": "ohcpp-format-string-candidate-002"
+    },
+    {
+      "function_shape": "outside_named_function",
+      "population": 1,
+      "repository_scale": "Q2",
+      "rule_id": "ohcpp-format-string-candidate-002"
+    },
+    {
+      "function_shape": "outside_named_function",
+      "population": 6,
+      "repository_scale": "Q3",
+      "rule_id": "ohcpp-format-string-candidate-002"
+    },
+    {
+      "function_shape": "outside_named_function",
+      "population": 3,
+      "repository_scale": "Q4",
+      "rule_id": "ohcpp-format-string-candidate-002"
+    },
+    {
+      "function_shape": "free_function",
+      "population": 56,
+      "repository_scale": "Q2",
+      "rule_id": "ohcpp-unsafe-memory-call-candidate-001"
+    },
+    {
+      "function_shape": "free_function",
+      "population": 285,
+      "repository_scale": "Q3",
+      "rule_id": "ohcpp-unsafe-memory-call-candidate-001"
+    },
+    {
+      "function_shape": "free_function",
+      "population": 258,
+      "repository_scale": "Q4",
+      "rule_id": "ohcpp-unsafe-memory-call-candidate-001"
+    },
+    {
+      "function_shape": "macro_definition_body",
+      "population": 4,
+      "repository_scale": "Q4",
+      "rule_id": "ohcpp-unsafe-memory-call-candidate-001"
+    },
+    {
+      "function_shape": "member_method",
+      "population": 4,
+      "repository_scale": "Q2",
+      "rule_id": "ohcpp-unsafe-memory-call-candidate-001"
+    },
+    {
+      "function_shape": "member_method",
+      "population": 41,
+      "repository_scale": "Q3",
+      "rule_id": "ohcpp-unsafe-memory-call-candidate-001"
+    },
+    {
+      "function_shape": "member_method",
+      "population": 12,
+      "repository_scale": "Q4",
+      "rule_id": "ohcpp-unsafe-memory-call-candidate-001"
+    },
+    {
+      "function_shape": "outside_named_function",
+      "population": 2,
+      "repository_scale": "Q4",
+      "rule_id": "ohcpp-unsafe-memory-call-candidate-001"
+    }
+  ],
+  "function_shape_strata_count": 20,
+  "limitations": [
+    "The observed 9,323-row frame is not the unbound 8,994 target population.",
+    "Function shape comes from the scanner's bounded lexical span helper over exact source-hash-matched files; it does not resolve lambdas, compile flags, overloads, macros, aliasing, CFG, reachability, or vulnerability truth.",
+    "Source-unavailable and hash-mismatch rows remain in explicit strata and are not dropped or resampled.",
+    "Function-shape and repository-size distributions describe the detector output only; human review is still required before changing rules."
+  ],
+  "observed_raw_population": 9323,
+  "observed_unique_diagnostic_ids": 9323,
+  "parser": {
+    "classification": "innermost named enclosing function category only; not a vulnerability/flow judgment",
+    "implementation": "src.ohscanner.detectors.cpp.shared_ptr_race_detector",
+    "library": "bounded lexical function-span extraction"
+  },
+  "population_by_rule": {
+    "ohcpp-format-string-candidate-002": 8661,
+    "ohcpp-unsafe-memory-call-candidate-001": 662
+  },
+  "population_delta_observed_minus_claim": 329,
+  "project_summary_sha256": "d27e01949d054fbf2d1bc5852772f4bdc7a4f0654168dcda38d4f39b63fd5994",
+  "repository_scale_quartile_upper_bounds_selected_source_files": [
+    1,
+    62,
+    258
+  ],
+  "run_identity": {
+    "manifest_sha256": "52f528dada321a140a29be2d55ef9053fda818cbdca93758425f1a25f6286d55",
+    "run_signature": "1696df82f39e2564e0821c0ad2e837a00c6d83f9276bf5e0c38a3bd1f511700b",
+    "scanner_commit": "0d9357ea22224b72c9756864dbd14b71a4723924"
+  },
+  "schema_version": "ohscanner.a-unsafe-function-shape-audit-v1",
+  "source_hash_status_by_raw_rows": {
+    "source_hash_matched": 9323
+  },
+  "source_root": "D:\\openHarmonyScanner\\openharmony"
+}

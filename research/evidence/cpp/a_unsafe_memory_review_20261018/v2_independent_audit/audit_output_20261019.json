@@ -1,0 +1,44 @@
+{
+  "audit_status": "PASS",
+  "candidate_csv_total_rows": 416577,
+  "checks": {
+    "all_rows_source_bound": true,
+    "cross_repo_dimension": true,
+    "diagnostic_id_audit": true,
+    "manifest_expected_population": true,
+    "mismatch_is_explicit_and_provisional": true,
+    "raw_dimension": true,
+    "review_dimension": true,
+    "row_count_matches": true,
+    "sample_size": true,
+    "schema_valid": true,
+    "target_rule_counts": true,
+    "within_repo_dimension_not_established": true
+  },
+  "cross_repository_cluster_count": 0,
+  "cross_repository_exact_source_clusters": [],
+  "duplicate_diagnostic_id_rows": 0,
+  "errors": [],
+  "expected_population": 8994,
+  "human_review_pending": 160,
+  "human_reviewed": 0,
+  "joined_source_bound_rows": 9323,
+  "limitations": [
+    "The expected population differs from the observed candidate frame; sampling remains provisional.",
+    "Within-repository root-cause clusters are not established from these raw records.",
+    "The 160 observations are pending independent human review; candidates are not vulnerability ground truth."
+  ],
+  "observed_population": 9323,
+  "population_assessment": "PARTIAL",
+  "population_delta_observed_minus_expected": 329,
+  "raw_rows_in_cross_repository_clusters": 0,
+  "referenced_result_json_files": 104,
+  "sample_size": 160,
+  "schema_error": null,
+  "target_rows": 9323,
+  "target_rows_by_rule": {
+    "ohcpp-format-string-candidate-002": 8661,
+    "ohcpp-unsafe-memory-call-candidate-001": 662
+  },
+  "unique_diagnostic_ids": 9323
+}

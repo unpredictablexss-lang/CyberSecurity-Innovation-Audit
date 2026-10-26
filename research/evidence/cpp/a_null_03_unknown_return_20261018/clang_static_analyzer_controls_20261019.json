@@ -1,0 +1,62 @@
+{
+  "schema_version": "ohscanner.a-null-clang-static-analyzer-controls-v1",
+  "date": "2026-10-19",
+  "tool": "Debian clang version 21.1.8 (10)",
+  "compile_database": null,
+  "invocation": [
+    "clang++",
+    "--analyze",
+    "-std=c++17",
+    "-Xclang",
+    "-analyzer-checker=core.NullDereference",
+    "-Xclang",
+    "-analyzer-output=text"
+  ],
+  "caller_context_invocation_template": "printf '%s\\n' '<caller source>' | clang++ --analyze -std=c++17 -x c++ -include <fixture> - -Xclang -analyzer-checker=core.NullDereference -Xclang -analyzer-output=text",
+  "controls": [
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/fixed_error_path_multistatement.cpp",
+      "sha256": "849a777e54aa8a6e0f6c869e2cf598e8c804d6aea46dc67a17c1c78a1a2bd20c",
+      "standalone_diagnostic_count": 0
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/positive_error_path_falls_through.cpp",
+      "sha256": "b71af37a8b50b0b1e7440be4f60339a48dd2decb13e5267556fa398a98dad6bc",
+      "standalone_diagnostic_count": 1,
+      "diagnostic_line": 10
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/fixed_short_circuit.cpp",
+      "sha256": "76c5c52f25f2830cf66db94dd705fcf9a460615e360b77f508cc696452d7578f",
+      "standalone_diagnostic_count": 0
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/fixed_alias_early_return.cpp",
+      "sha256": "97d9f6d7c6343f221dd5046b6838da77456475267e4c7f667c6a5341fff3530a",
+      "standalone_diagnostic_count": 0
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/positive_parameter_unguarded.cpp",
+      "sha256": "272c119cd5f831e0d28423d9d8db0561ccc1bd973a4ac6cc97ecab76ff847502",
+      "standalone_diagnostic_count": 0,
+      "with_caller_context": {
+        "caller_source": "int main(){ return positive_parameter_unguarded(nullptr); }",
+        "diagnostic_count": 1,
+        "interpretation": "the analyzer reports when the same translation unit supplies an explicit null call"
+      },
+      "nonnull_caller_context_diagnostic_count": 0
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/positive_return_value_unknown.cpp",
+      "sha256": "b3a7051b771a03677f1eee497ef7af174339c3a92e5921469d30122ba810be4b",
+      "standalone_diagnostic_count": 0,
+      "interpretation": "an unresolved external return without caller/model evidence remains unknown to this invocation"
+    }
+  ],
+  "limitations": [
+    "This experiment used minimal standalone compiler arguments, not the OpenHarmony product compile database.",
+    "The caller wrapper is synthetic and is not product reachability evidence.",
+    "Clang diagnostics were inspected only; no detector integration or automated finding import was implemented.",
+    "No warning is not a safety verdict; unsupported or unmodeled source remains unknown."
+  ]
+}

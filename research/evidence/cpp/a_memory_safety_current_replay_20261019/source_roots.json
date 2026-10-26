@@ -1,0 +1,27 @@
+{
+  "communication_dsoftbus": {
+    "remote": "https://gitcode.com/openharmony/communication_dsoftbus.git",
+    "ref": "refs/keep-around/652f88e0261ce4d0610f73cc451c26b84d2597af",
+    "path": "D:\\openHarmonyScanner\\tmp\\a-null-pinned-component-sources\\communication_dsoftbus.git"
+  },
+  "distributeddatamgr_kv_store": {
+    "remote": "https://gitcode.com/openharmony/distributeddatamgr_kv_store.git",
+    "ref": "refs/keep-around/acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+    "path": "D:\\openHarmonyScanner\\tmp\\a-null-pinned-component-sources\\distributeddatamgr_kv_store.git"
+  },
+  "security_access_token": {
+    "remote": "https://github.com/openharmony/security_access_token.git",
+    "ref": "HEAD",
+    "path": "D:\\openHarmonyScanner\\tmp\\a-null-pinned-component-sources\\security_access_token.git"
+  },
+  "update_updateservice": {
+    "remote": "https://github.com/openharmony/update_updateservice.git",
+    "ref": "HEAD",
+    "path": "D:\\openHarmonyScanner\\tmp\\a-null-pinned-component-sources\\update_updateservice.git"
+  },
+  "window_window_manager": {
+    "remote": "https://github.com/openharmony/window_window_manager.git",
+    "ref": "HEAD",
+    "path": "D:\\openHarmonyScanner\\tmp\\a-null-pinned-component-sources\\window_window_manager.git"
+  }
+}
